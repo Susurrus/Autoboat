@@ -1,4 +1,6 @@
-%% Renders the boat at a given point in times
+%% Renders the boat onto a matlab plot.
+% Given a position, heading, and rudder angle the boat is drawn accordingly
+% on screen.
 % rudder angle in radians: -1..1 - -1 means hard left
 % boat angle in radians: 0..2*pi cw from top
 function [] = render_boat(boat_position_x, boat_position_y, rudder_angle, boat_heading)
