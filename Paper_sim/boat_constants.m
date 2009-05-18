@@ -20,6 +20,7 @@ max_batt_angle = 1.309; % Maximum angle for the battery tray: 75 degrees(radians
 rudder_angle_max = 1;   % Maximum angle of the rudder (radians)
 
 % Experimental constants
+% These are approximated constants. Need to be experimentally determined and then they will be known.
 
 K_t = 0.5;              % Thrust coefficient
 C_d_sea_surge = 340;    % Coefficient of drag for forward motion through water
@@ -31,7 +32,7 @@ proportional_band = .5;      % Proportional band of the rudder response (radians
 rudder_stall_angle = .279;   % Stall angle for the rudder:16 degrees[from http://www.boatdesign.net/forums/sailboats/rudder-angle-effective-size-rudder-10724.html] (radians)
 rudder_area = .0945;    % Area of the rudder [see notes for calculation] (square meters)
 rudder_lift_coefficient = 1.15; % Coefficient of lift for the rudder
-rudder_span = .4572;    % Distance of rudder along rotation axis (meters)
+rudder_span = .4572;    % Distance to rudder along rotation axis (meters)
 cp_x = 3.4224;          % Distance from fixed-body origin along x-axis of center of pressure of the rudder (m)
 cp_z = .2032;           % Distance from fixed-body origin along z-axis of center of pressure of the rudder (m)
 

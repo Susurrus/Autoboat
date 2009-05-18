@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.126"
+    ComputedModelVersion    "1.130"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -44,10 +44,10 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Administrator"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri May 15 21:35:50 2009"
-  ModelVersionFormat	  "1.%<AutoIncrement:126>"
+  LastModifiedDate	  "Sun May 17 22:46:24 2009"
+  ModelVersionFormat	  "1.%<AutoIncrement:130>"
   ConfigurationManager	  "None"
-  SimulationMode	  "normal"
+  SimulationMode	  "accelerator"
   LinearizationMsg	  "none"
   Profile		  off
   ParamWorkspaceSource	  "MATLABWorkspace"
@@ -105,7 +105,7 @@ Model {
 	  $ObjectID		  2
 	  Version		  "1.2.0"
 	  StartTime		  "0.0"
-	  StopTime		  "10000"
+	  StopTime		  "1000"
 	  AbsTol		  "auto"
 	  FixedStep		  ".01"
 	  InitialStep		  "auto"
@@ -512,12 +512,6 @@ Model {
       SampleTime	      "-1"
     }
     Block {
-      BlockType		      Demux
-      Outputs		      "4"
-      DisplayOption	      "none"
-      BusSelectionMode	      off
-    }
-    Block {
       BlockType		      Fcn
       Expr		      "sin(u[1])"
       SampleTime	      "-1"
@@ -581,14 +575,6 @@ Model {
       LockScale		      off
       RndMeth		      "Floor"
       SaturateOnIntegerOverflow	on
-    }
-    Block {
-      BlockType		      MATLABFcn
-      MATLABFcn		      "sin"
-      OutputDimensions	      "-1"
-      OutputSignalType	      "auto"
-      Output1D		      on
-      SampleTime	      "-1"
     }
     Block {
       BlockType		      Mux
@@ -661,6 +647,15 @@ Model {
       PortCounts	      "[]"
     }
     Block {
+      BlockType		      Step
+      Time		      "1"
+      Before		      "0"
+      After		      "1"
+      SampleTime	      "-1"
+      VectorParams1D	      on
+      ZeroCross		      on
+    }
+    Block {
       BlockType		      SubSystem
       ShowPortLabels	      "FromPortIcon"
       Permissions	      "ReadWrite"
@@ -694,6 +689,17 @@ Model {
       SampleTime	      "-1"
     }
     Block {
+      BlockType		      Switch
+      Criteria		      "u2 >= Threshold"
+      Threshold		      "0"
+      InputSameDT	      on
+      OutDataTypeMode	      "Inherit via internal rule"
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      ZeroCross		      on
+      SampleTime	      "-1"
+    }
+    Block {
       BlockType		      Trigonometry
       Operator		      "sin"
       OutputSignalType	      "auto"
@@ -720,7 +726,7 @@ Model {
   }
   System {
     Name		    "Boat_model_paper"
-    Location		    [2, 82, 1270, 754]
+    Location		    [6, 82, 1274, 679]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -735,56 +741,8 @@ Model {
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
     Block {
-      BlockType		      Demux
-      Name		      "Demux"
-      Ports		      [1, 3]
-      Position		      [435, 146, 440, 184]
-      BackgroundColor	      "black"
-      ShowName		      off
-      Outputs		      "3"
-      DisplayOption	      "bar"
-    }
-    Block {
-      BlockType		      Reference
-      Name		      "Joystick Input"
-      Ports		      [0, 2]
-      Position		      [220, 146, 315, 219]
-      SourceBlock	      "vrlib/Joystick Input"
-      SourceType	      "Joystick Input"
-      joyid		      "1"
-      adjustports	      on
-      forcefeed		      off
-    }
-    Block {
-      BlockType		      MATLABFcn
-      Name		      "MATLAB Fcn"
-      Ports		      [1]
-      Position		      [1060, 305, 1120, 335]
-      MATLABFcn		      "render_boat(u(1),u(2),u(3),u(4))"
-      OutputDimensions	      "0"
-      Output1D		      off
-    }
-    Block {
-      BlockType		      Mux
-      Name		      "Mux1"
-      Ports		      [4, 1]
-      Position		      [1020, 301, 1025, 339]
-      ShowName		      off
-      DisplayOption	      "bar"
-    }
-    Block {
-      BlockType		      Gain
-      Name		      "Opposite"
-      Position		      [515, 249, 560, 281]
-      ShowName		      off
-      Gain		      "-1"
-      ParameterDataTypeMode   "Inherit via internal rule"
-      OutDataTypeMode	      "Inherit via internal rule"
-      SaturateOnIntegerOverflow	off
-    }
-    Block {
       BlockType		      SubSystem
-      Name		      "Plant"
+      Name		      "Boat sim"
       Ports		      [2, 5]
       Position		      [595, 146, 765, 304]
       MinAlgLoopOccurrences   off
@@ -792,8 +750,8 @@ Model {
       FunctionWithSeparateData off
       MaskHideContents	      off
       System {
-	Name			"Plant"
-	Location		[2, 78, 1278, 750]
+	Name			"Boat sim"
+	Location		[6, 82, 1257, 662]
 	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -820,125 +778,8 @@ Model {
 	  IconDisplay		  "Port number"
 	}
 	Block {
-	  BlockType		  Constant
-	  Name			  "Constant"
-	  Position		  [1005, 115, 1035, 145]
-	  ShowName		  off
-	  Value			  "e_0"
-	}
-	Block {
-	  BlockType		  Constant
-	  Name			  "Constant1"
-	  Position		  [1005, 235, 1035, 265]
-	  ShowName		  off
-	  Value			  "n_0"
-	}
-	Block {
-	  BlockType		  Constant
-	  Name			  "Constant4"
-	  Position		  [1075, 485, 1105, 515]
-	  ShowName		  off
-	  Value			  "psi_0"
-	}
-	Block {
-	  BlockType		  Constant
-	  Name			  "Constant5"
-	  Position		  [1080, 520, 1110, 550]
-	  ShowName		  off
-	  Value			  "pi/2"
-	}
-	Block {
-	  BlockType		  Integrator
-	  Name			  "Integrator"
-	  Ports			  [1, 1]
-	  Position		  [1130, 405, 1160, 435]
-	  ShowName		  off
-	  IgnoreLimit		  off
-	}
-	Block {
-	  BlockType		  Integrator
-	  Name			  "Integrator1"
-	  Ports			  [1, 1]
-	  Position		  [1000, 520, 1030, 550]
-	  ShowName		  off
-	  IgnoreLimit		  off
-	}
-	Block {
-	  BlockType		  Integrator
-	  Name			  "Integrator3"
-	  Ports			  [1, 1]
-	  Position		  [850, 75, 880, 105]
-	  ShowName		  off
-	  IgnoreLimit		  off
-	}
-	Block {
-	  BlockType		  Integrator
-	  Name			  "Integrator4"
-	  Ports			  [1, 1]
-	  Position		  [850, 195, 880, 225]
-	  ShowName		  off
-	  IgnoreLimit		  off
-	}
-	Block {
-	  BlockType		  Product
-	  Name			  "Product"
-	  Ports			  [2, 1]
-	  Position		  [570, 517, 600, 548]
-	  ShowName		  off
-	  CollapseMode		  "All dimensions"
-	  InputSameDT		  off
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Product
-	  Name			  "Product1"
-	  Ports			  [2, 1]
-	  Position		  [455, 72, 485, 103]
-	  ShowName		  off
-	  CollapseMode		  "All dimensions"
-	  InputSameDT		  off
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Product
-	  Name			  "Product2"
-	  Ports			  [3, 1]
-	  Position		  [490, 129, 520, 161]
-	  ShowName		  off
-	  Inputs		  "3"
-	  CollapseMode		  "All dimensions"
-	  InputSameDT		  off
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Product
-	  Name			  "Product3"
-	  Ports			  [3, 1]
-	  Position		  [520, 259, 550, 291]
-	  ShowName		  off
-	  Inputs		  "3"
-	  CollapseMode		  "All dimensions"
-	  InputSameDT		  off
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Product
-	  Name			  "Product5"
-	  Ports			  [2, 1]
-	  Position		  [520, 191, 550, 224]
-	  ShowName		  off
-	  CollapseMode		  "All dimensions"
-	  InputSameDT		  off
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
 	  BlockType		  SubSystem
-	  Name			  "Subsystem"
+	  Name			  "Boat plant"
 	  Ports			  [2, 5]
 	  Position		  [135, 126, 300, 244]
 	  MinAlgLoopOccurrences	  off
@@ -946,9 +787,9 @@ Model {
 	  FunctionWithSeparateData off
 	  MaskHideContents	  off
 	  System {
-	    Name		    "Subsystem"
-	    Location		    [2, 82, 1270, 754]
-	    Open		    off
+	    Name		    "Boat plant"
+	    Location		    [2, 78, 1278, 750]
+	    Open		    on
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -974,16 +815,6 @@ Model {
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
-	      BlockType		      Gain
-	      Name		      "Convert to\nforce2"
-	      Position		      [165, 287, 190, 323]
-	      ShowName		      off
-	      Gain		      "rudder_angle_dot_max/proportional_band"
-	      ParameterDataTypeMode   "Inherit via internal rule"
-	      OutDataTypeMode	      "Inherit via internal rule"
-	      SaturateOnIntegerOverflow	off
-	    }
-	    Block {
 	      BlockType		      Integrator
 	      Name		      "Convert to velocity"
 	      Ports		      [1, 1]
@@ -996,17 +827,6 @@ Model {
 		RTWStorageClass		"Auto"
 		DataLoggingNameMode	"SignalName"
 	      }
-	    }
-	    Block {
-	      BlockType		      Integrator
-	      Name		      "Convert to velocity1"
-	      Ports		      [1, 1]
-	      Position		      [250, 290, 280, 320]
-	      ShowName		      off
-	      LimitOutput	      on
-	      UpperSaturationLimit    "rudder_angle_max"
-	      LowerSaturationLimit    "-rudder_angle_max"
-	      IgnoreLimit	      off
 	    }
 	    Block {
 	      BlockType		      Integrator
@@ -1084,7 +904,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "Rudder"
-		  Position		  [30, 118, 60, 132]
+		  Position		  [30, 133, 60, 147]
 		  Port			  "2"
 		  IconDisplay		  "Port number"
 		}
@@ -1173,6 +993,23 @@ Model {
 		  SaturateOnIntegerOverflow off
 		}
 		Block {
+		  BlockType		  Scope
+		  Name			  "Scope"
+		  Ports			  [1]
+		  Position		  [550, 59, 580, 91]
+		  Floating		  off
+		  Location		  [1, 52, 1281, 769]
+		  Open			  off
+		  NumInputPorts		  "1"
+		  List {
+		    ListType		    AxesTitles
+		    axes1		    "%<SignalLabel>"
+		  }
+		  SaveName		  "ScopeData1"
+		  DataFormat		  "StructureWithTime"
+		  SampleTime		  "0"
+		}
+		Block {
 		  BlockType		  Sum
 		  Name			  "Sum1"
 		  Ports			  [2, 1]
@@ -1189,7 +1026,7 @@ Model {
 		  BlockType		  Trigonometry
 		  Name			  "Trigonometric\nFunction"
 		  Ports			  [1, 1]
-		  Position		  [485, 110, 515, 140]
+		  Position		  [485, 125, 515, 155]
 		  ShowName		  off
 		  Operator		  "tan"
 		  OutputSignalType	  "real"
@@ -1277,8 +1114,16 @@ Model {
 		Line {
 		  SrcBlock		  "Sum1"
 		  SrcPort		  1
-		  DstBlock		  "X"
-		  DstPort		  1
+		  Points		  [95, 0]
+		  Branch {
+		    DstBlock		    "X"
+		    DstPort		    1
+		  }
+		  Branch {
+		    Points		    [0, 20]
+		    DstBlock		    "Scope"
+		    DstPort		    1
+		  }
 		}
 		Line {
 		  SrcBlock		  "Rudder"
@@ -1295,7 +1140,6 @@ Model {
 		Line {
 		  SrcBlock		  "Trigonometric\nFunction"
 		  SrcPort		  1
-		  Points		  [25, 0; 0, 15]
 		  DstBlock		  "Product3"
 		  DstPort		  1
 		}
@@ -1321,6 +1165,140 @@ Model {
 	      }
 	    }
 	    Block {
+	      BlockType		      SubSystem
+	      Name		      "Rudder dynamics"
+	      Ports		      [1, 1]
+	      Position		      [65, 342, 205, 408]
+	      MinAlgLoopOccurrences   off
+	      RTWSystemCode	      "Auto"
+	      FunctionWithSeparateData off
+	      MaskHideContents	      off
+	      System {
+		Name			"Rudder dynamics"
+		Location		[272, 381, 674, 485]
+		Open			off
+		ModelBrowserVisibility	off
+		ModelBrowserWidth	200
+		ScreenColor		"white"
+		PaperOrientation	"landscape"
+		PaperPositionMode	"auto"
+		PaperType		"usletter"
+		PaperUnits		"inches"
+		TiledPaperMargins	"[0.500000, 0.500000, 0.500000, 0.5000"
+"00]"
+		TiledPageScale		1
+		ShowPageBoundaries	off
+		ZoomFactor		"100"
+		Block {
+		  BlockType		  Inport
+		  Name			  "Rudder control"
+		  Position		  [25, 40, 55, 54]
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Gain
+		  Name			  "Convert to\nforce2"
+		  Position		  [180, 27, 205, 63]
+		  ShowName		  off
+		  Gain			  "rudder_angle_dot_max/proportional_b"
+"and"
+		  ParameterDataTypeMode	  "Inherit via internal rule"
+		  OutDataTypeMode	  "Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Integrator
+		  Name			  "Convert to velocity1"
+		  Ports			  [1, 1]
+		  Position		  [265, 30, 295, 60]
+		  ShowName		  off
+		  LimitOutput		  on
+		  UpperSaturationLimit	  "rudder_angle_max"
+		  LowerSaturationLimit	  "-rudder_angle_max"
+		  IgnoreLimit		  off
+		}
+		Block {
+		  BlockType		  Saturate
+		  Name			  "Rudder limiter1"
+		  Position		  [80, 30, 110, 60]
+		  ShowName		  off
+		  UpperLimit		  "rudder_angle_max"
+		  LowerLimit		  "-rudder_angle_max"
+		}
+		Block {
+		  BlockType		  Saturate
+		  Name			  "Rudder limiter2"
+		  Position		  [225, 30, 250, 60]
+		  ShowName		  off
+		  UpperLimit		  "rudder_angle_dot_max"
+		  LowerLimit		  "-rudder_angle_dot_max"
+		}
+		Block {
+		  BlockType		  Sum
+		  Name			  "Sum1"
+		  Ports			  [2, 1]
+		  Position		  [130, 35, 150, 55]
+		  ShowName		  off
+		  IconShape		  "round"
+		  Inputs		  "|+-"
+		  CollapseMode		  "All dimensions"
+		  InputSameDT		  off
+		  OutDataTypeMode	  "Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "Rudder actual"
+		  Position		  [330, 40, 360, 54]
+		  IconDisplay		  "Port number"
+		}
+		Line {
+		  SrcBlock		  "Convert to velocity1"
+		  SrcPort		  1
+		  Points		  [10, 0]
+		  Branch {
+		    DstBlock		    "Rudder actual"
+		    DstPort		    1
+		  }
+		  Branch {
+		    Points		    [0, 25]
+		    DstBlock		    "Sum1"
+		    DstPort		    2
+		  }
+		}
+		Line {
+		  SrcBlock		  "Sum1"
+		  SrcPort		  1
+		  DstBlock		  "Convert to\nforce2"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Rudder limiter1"
+		  SrcPort		  1
+		  DstBlock		  "Sum1"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Rudder limiter2"
+		  SrcPort		  1
+		  DstBlock		  "Convert to velocity1"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Convert to\nforce2"
+		  SrcPort		  1
+		  DstBlock		  "Rudder limiter2"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Rudder control"
+		  SrcPort		  1
+		  DstBlock		  "Rudder limiter1"
+		  DstPort		  1
+		}
+	      }
+	    }
+	    Block {
 	      BlockType		      Saturate
 	      Name		      "Rudder limiter"
 	      Position		      [80, 105, 110, 135]
@@ -1329,33 +1307,38 @@ Model {
 	      LowerLimit	      "0"
 	    }
 	    Block {
-	      BlockType		      Saturate
-	      Name		      "Rudder limiter1"
-	      Position		      [65, 290, 95, 320]
-	      ShowName		      off
-	      UpperLimit	      "rudder_angle_max"
-	      LowerLimit	      "-rudder_angle_max"
+	      BlockType		      Scope
+	      Name		      "Scope"
+	      Ports		      [1]
+	      Position		      [930, 79, 960, 111]
+	      Floating		      off
+	      Location		      [1, 52, 1281, 769]
+	      Open		      off
+	      NumInputPorts	      "1"
+	      List {
+		ListType		AxesTitles
+		axes1			"%<SignalLabel>"
+	      }
+	      SaveName		      "ScopeData2"
+	      DataFormat	      "StructureWithTime"
+	      SampleTime	      "0"
 	    }
 	    Block {
-	      BlockType		      Saturate
-	      Name		      "Rudder limiter2"
-	      Position		      [210, 290, 235, 320]
-	      ShowName		      off
-	      UpperLimit	      "rudder_angle_dot_max"
-	      LowerLimit	      "-rudder_angle_dot_max"
-	    }
-	    Block {
-	      BlockType		      Sum
-	      Name		      "Sum1"
-	      Ports		      [2, 1]
-	      Position		      [115, 295, 135, 315]
-	      ShowName		      off
-	      IconShape		      "round"
-	      Inputs		      "|+-"
-	      CollapseMode	      "All dimensions"
-	      InputSameDT	      off
-	      OutDataTypeMode	      "Inherit via internal rule"
-	      SaturateOnIntegerOverflow	off
+	      BlockType		      Scope
+	      Name		      "Scope1"
+	      Ports		      [1]
+	      Position		      [1075, 79, 1105, 111]
+	      Floating		      off
+	      Location		      [1, 52, 1281, 769]
+	      Open		      off
+	      NumInputPorts	      "1"
+	      List {
+		ListType		AxesTitles
+		axes1			"%<SignalLabel>"
+	      }
+	      SaveName		      "ScopeData3"
+	      DataFormat	      "StructureWithTime"
+	      SampleTime	      "0"
 	    }
 	    Block {
 	      BlockType		      SubSystem
@@ -3654,23 +3637,25 @@ Model {
 	      Labels		      [0, 0]
 	      SrcBlock		      "Convert to velocity"
 	      SrcPort		      1
-	      Points		      [60, 0]
+	      Points		      [20, 0]
 	      Branch {
-		DstBlock		"u"
-		DstPort			1
-	      }
-	      Branch {
-		Labels			[1, 0]
-		Points			[0, -65; -370, 0]
+		Points			[40, 0]
 		Branch {
-		  Points		  [-225, 0]
+		  DstBlock		  "u"
+		  DstPort		  1
+		}
+		Branch {
+		  Labels		  [1, 0]
+		  Points		  [0, -65; -370, 0]
 		  Branch {
+		    Points		    [-225, 0]
+		    Branch {
 		    Labels		    [0, 0]
 		    Points		    [0, 295]
 		    DstBlock		    "r_plant"
 		    DstPort		    3
-		  }
-		  Branch {
+		    }
+		    Branch {
 		    Points		    [-170, 0]
 		    Branch {
 		    Points		    [-155, 0; 0, 180]
@@ -3682,13 +3667,18 @@ Model {
 		    DstBlock		    "v_plant"
 		    DstPort		    4
 		    }
+		    }
+		  }
+		  Branch {
+		    Points		    [0, 425]
+		    DstBlock		    "p_plant"
+		    DstPort		    3
 		  }
 		}
-		Branch {
-		  Points		  [0, 425]
-		  DstBlock		  "p_plant"
-		  DstPort		  3
-		}
+	      }
+	      Branch {
+		DstBlock		"Scope1"
+		DstPort			1
 	      }
 	    }
 	    Line {
@@ -3701,7 +3691,7 @@ Model {
 	    Line {
 	      SrcBlock		      "Rudder"
 	      SrcPort		      1
-	      DstBlock		      "Rudder limiter1"
+	      DstBlock		      "Rudder dynamics"
 	      DstPort		      1
 	    }
 	    Line {
@@ -3796,8 +3786,15 @@ Model {
 	    Line {
 	      SrcBlock		      "u_plant"
 	      SrcPort		      1
-	      DstBlock		      "Convert to velocity"
-	      DstPort		      1
+	      Points		      [65, 0]
+	      Branch {
+		DstBlock		"Convert to velocity"
+		DstPort			1
+	      }
+	      Branch {
+		DstBlock		"Scope"
+		DstPort			1
+	      }
 	    }
 	    Line {
 	      SrcBlock		      "Forces & Moments"
@@ -3885,52 +3882,138 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "Convert to velocity1"
+	      SrcBlock		      "Rudder dynamics"
 	      SrcPort		      1
-	      Points		      [10, 0]
+	      Points		      [30, 0; 0, -70]
 	      Branch {
-		Points			[0, 25]
-		Branch {
-		  DstBlock		  "Sum1"
-		  DstPort		  2
-		}
-		Branch {
-		  Points		  [0, 300]
-		  DstBlock		  "rudder"
-		  DstPort		  1
-		}
-	      }
-	      Branch {
-		Points			[0, -40; -125, 0; 0, -110]
+		Points			[-75, 0; 0, -150]
 		DstBlock		"Forces & Moments"
 		DstPort			2
 	      }
-	    }
-	    Line {
-	      SrcBlock		      "Sum1"
-	      SrcPort		      1
-	      DstBlock		      "Convert to\nforce2"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Rudder limiter1"
-	      SrcPort		      1
-	      DstBlock		      "Sum1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Rudder limiter2"
-	      SrcPort		      1
-	      DstBlock		      "Convert to velocity1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Convert to\nforce2"
-	      SrcPort		      1
-	      DstBlock		      "Rudder limiter2"
-	      DstPort		      1
+	      Branch {
+		Points			[0, 325]
+		DstBlock		"rudder"
+		DstPort			1
+	      }
 	    }
 	  }
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant"
+	  Position		  [1005, 115, 1035, 145]
+	  ShowName		  off
+	  Value			  "e_0"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant1"
+	  Position		  [1005, 235, 1035, 265]
+	  ShowName		  off
+	  Value			  "n_0"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant4"
+	  Position		  [1075, 485, 1105, 515]
+	  ShowName		  off
+	  Value			  "psi_0"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant5"
+	  Position		  [1080, 520, 1110, 550]
+	  ShowName		  off
+	  Value			  "pi/2"
+	}
+	Block {
+	  BlockType		  Integrator
+	  Name			  "Integrator"
+	  Ports			  [1, 1]
+	  Position		  [1130, 405, 1160, 435]
+	  ShowName		  off
+	  IgnoreLimit		  off
+	}
+	Block {
+	  BlockType		  Integrator
+	  Name			  "Integrator1"
+	  Ports			  [1, 1]
+	  Position		  [1000, 520, 1030, 550]
+	  ShowName		  off
+	  IgnoreLimit		  off
+	}
+	Block {
+	  BlockType		  Integrator
+	  Name			  "Integrator3"
+	  Ports			  [1, 1]
+	  Position		  [850, 75, 880, 105]
+	  ShowName		  off
+	  IgnoreLimit		  off
+	}
+	Block {
+	  BlockType		  Integrator
+	  Name			  "Integrator4"
+	  Ports			  [1, 1]
+	  Position		  [850, 195, 880, 225]
+	  ShowName		  off
+	  IgnoreLimit		  off
+	}
+	Block {
+	  BlockType		  Product
+	  Name			  "Product"
+	  Ports			  [2, 1]
+	  Position		  [570, 517, 600, 548]
+	  ShowName		  off
+	  CollapseMode		  "All dimensions"
+	  InputSameDT		  off
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Product
+	  Name			  "Product1"
+	  Ports			  [2, 1]
+	  Position		  [455, 72, 485, 103]
+	  ShowName		  off
+	  CollapseMode		  "All dimensions"
+	  InputSameDT		  off
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Product
+	  Name			  "Product2"
+	  Ports			  [3, 1]
+	  Position		  [490, 129, 520, 161]
+	  ShowName		  off
+	  Inputs		  "3"
+	  CollapseMode		  "All dimensions"
+	  InputSameDT		  off
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Product
+	  Name			  "Product3"
+	  Ports			  [3, 1]
+	  Position		  [520, 259, 550, 291]
+	  ShowName		  off
+	  Inputs		  "3"
+	  CollapseMode		  "All dimensions"
+	  InputSameDT		  off
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Product
+	  Name			  "Product5"
+	  Ports			  [2, 1]
+	  Position		  [520, 191, 550, 224]
+	  ShowName		  off
+	  CollapseMode		  "All dimensions"
+	  InputSameDT		  off
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
 	}
 	Block {
 	  BlockType		  Sum
@@ -4037,7 +4120,7 @@ Model {
 	}
 	Block {
 	  BlockType		  Outport
-	  Name			  "phi"
+	  Name			  "roll"
 	  Position		  [1200, 413, 1230, 427]
 	  Port			  "3"
 	  IconDisplay		  "Port number"
@@ -4045,7 +4128,7 @@ Model {
 	}
 	Block {
 	  BlockType		  Outport
-	  Name			  "psi"
+	  Name			  "yaw"
 	  Position		  [1200, 528, 1230, 542]
 	  Port			  "4"
 	  IconDisplay		  "Port number"
@@ -4054,7 +4137,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "rudder"
-	  Position		  [1175, 348, 1205, 362]
+	  Position		  [1200, 348, 1230, 362]
 	  Port			  "5"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -4062,17 +4145,17 @@ Model {
 	Line {
 	  SrcBlock		  "Throttle"
 	  SrcPort		  1
-	  DstBlock		  "Subsystem"
+	  DstBlock		  "Boat plant"
 	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Rudder"
 	  SrcPort		  1
-	  DstBlock		  "Subsystem"
+	  DstBlock		  "Boat plant"
 	  DstPort		  2
 	}
 	Line {
-	  SrcBlock		  "Subsystem"
+	  SrcBlock		  "Boat plant"
 	  SrcPort		  3
 	  Points		  [5, 0; 0, 235]
 	  DstBlock		  "Integrator"
@@ -4101,7 +4184,7 @@ Model {
 	  }
 	}
 	Line {
-	  SrcBlock		  "Subsystem"
+	  SrcBlock		  "Boat plant"
 	  SrcPort		  4
 	  Points		  [20, 0; 0, 310; 230, 0]
 	  DstBlock		  "Product"
@@ -4127,7 +4210,7 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Subsystem"
+	  SrcBlock		  "Boat plant"
 	  SrcPort		  1
 	  Points		  [65, 0; 0, 5]
 	  Branch {
@@ -4169,7 +4252,7 @@ Model {
 	  }
 	}
 	Line {
-	  SrcBlock		  "Subsystem"
+	  SrcBlock		  "Boat plant"
 	  SrcPort		  2
 	  Points		  [0, 10; 170, 0]
 	  Branch {
@@ -4206,7 +4289,7 @@ Model {
 	  SrcPort		  1
 	  Points		  [10, 0]
 	  Branch {
-	    DstBlock		    "phi"
+	    DstBlock		    "roll"
 	    DstPort		    1
 	  }
 	  Branch {
@@ -4242,7 +4325,7 @@ Model {
 	  Points		  [15, 0; 0, 55]
 	  Branch {
 	    Points		    [0, 0]
-	    DstBlock		    "psi"
+	    DstBlock		    "yaw"
 	    DstPort		    1
 	  }
 	  Branch {
@@ -4258,7 +4341,7 @@ Model {
 	  }
 	}
 	Line {
-	  SrcBlock		  "Subsystem"
+	  SrcBlock		  "Boat plant"
 	  SrcPort		  5
 	  Points		  [310, 0; 0, 120]
 	  DstBlock		  "rudder"
@@ -4311,6 +4394,66 @@ Model {
       }
     }
     Block {
+      BlockType		      Constant
+      Name		      "Constant"
+      Position		      [400, 120, 430, 150]
+      ShowName		      off
+    }
+    Block {
+      BlockType		      Constant
+      Name		      "Constant1"
+      Position		      [400, 220, 430, 250]
+      ShowName		      off
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Manual Switch"
+      Ports		      [2, 1]
+      Position		      [520, 167, 550, 203]
+      ShowName		      off
+      SourceBlock	      "simulink/Signal\nRouting/Manual Switch"
+      SourceType	      "Manual Switch"
+      ShowPortLabels	      "FromPortIcon"
+      SystemSampleTime	      "-1"
+      FunctionWithSeparateData off
+      RTWMemSecFuncInitTerm   "Inherit from model"
+      RTWMemSecFuncExecute    "Inherit from model"
+      RTWMemSecDataConstants  "Inherit from model"
+      RTWMemSecDataInternal   "Inherit from model"
+      RTWMemSecDataParameters "Inherit from model"
+      sw		      "1"
+      action		      "0"
+      varsize		      off
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Manual Switch1"
+      Ports		      [2, 1]
+      Position		      [520, 267, 550, 303]
+      ShowName		      off
+      SourceBlock	      "simulink/Signal\nRouting/Manual Switch"
+      SourceType	      "Manual Switch"
+      ShowPortLabels	      "FromPortIcon"
+      SystemSampleTime	      "-1"
+      FunctionWithSeparateData off
+      RTWMemSecFuncInitTerm   "Inherit from model"
+      RTWMemSecFuncExecute    "Inherit from model"
+      RTWMemSecDataConstants  "Inherit from model"
+      RTWMemSecDataInternal   "Inherit from model"
+      RTWMemSecDataParameters "Inherit from model"
+      sw		      "1"
+      action		      "0"
+      varsize		      off
+    }
+    Block {
+      BlockType		      Mux
+      Name		      "Mux1"
+      Ports		      [4, 1]
+      Position		      [1020, 301, 1025, 339]
+      ShowName		      off
+      DisplayOption	      "bar"
+    }
+    Block {
       BlockType		      Reference
       Name		      "Position"
       Ports		      [2]
@@ -4333,7 +4476,7 @@ Model {
     }
     Block {
       BlockType		      Scope
-      Name		      "Scope"
+      Name		      "Roll"
       Ports		      [1]
       Position		      [815, 209, 845, 241]
       Floating		      off
@@ -4347,40 +4490,46 @@ Model {
       DataFormat	      "StructureWithTime"
       SampleTime	      "0"
     }
-    Line {
-      SrcBlock		      "Demux"
-      SrcPort		      1
-      Points		      [50, 0; 0, 30]
-      DstBlock		      "Plant"
-      DstPort		      1
+    Block {
+      BlockType		      Step
+      Name		      "Step"
+      Position		      [400, 180, 430, 210]
+      ShowName		      off
+      Time		      "5"
+      SampleTime	      "0"
     }
-    Line {
-      SrcBlock		      "Demux"
-      SrcPort		      3
-      Points		      [30, 0; 0, 90]
-      DstBlock		      "Opposite"
-      DstPort		      1
+    Block {
+      BlockType		      Step
+      Name		      "Step1"
+      Position		      [400, 280, 430, 310]
+      ShowName		      off
+      Time		      "5"
+      SampleTime	      "0"
     }
-    Line {
-      SrcBlock		      "Joystick Input"
-      SrcPort		      1
-      DstBlock		      "Demux"
-      DstPort		      1
+    Block {
+      BlockType		      Scope
+      Name		      "Yaw"
+      Ports		      [1]
+      Position		      [885, 344, 915, 376]
+      Floating		      off
+      Location		      [1, 52, 1281, 769]
+      Open		      off
+      NumInputPorts	      "1"
+      List {
+	ListType		AxesTitles
+	axes1			"%<SignalLabel>"
+      }
+      SaveName		      "ScopeData4"
+      DataFormat	      "StructureWithTime"
+      SampleTime	      "0"
     }
     Line {
       SrcBlock		      "Mux1"
       SrcPort		      1
-      DstBlock		      "MATLAB Fcn"
-      DstPort		      1
+      Points		      [25, 0]
     }
     Line {
-      SrcBlock		      "Opposite"
-      SrcPort		      1
-      DstBlock		      "Plant"
-      DstPort		      2
-    }
-    Line {
-      SrcBlock		      "Plant"
+      SrcBlock		      "Boat sim"
       SrcPort		      1
       Points		      [235, 0; 0, 15]
       Branch {
@@ -4393,39 +4542,84 @@ Model {
       }
     }
     Line {
-      SrcBlock		      "Plant"
+      SrcBlock		      "Boat sim"
       SrcPort		      2
-      Points		      [0, 10; 220, 0]
+      Points		      [220, 0]
       Branch {
-	Points			[30, 0]
 	DstBlock		"Position"
 	DstPort			2
       }
       Branch {
-	Points			[0, 110]
+	Points			[0, 120]
 	DstBlock		"Mux1"
 	DstPort			2
       }
     }
     Line {
-      SrcBlock		      "Plant"
+      Labels		      [0, 0]
+      SrcBlock		      "Boat sim"
       SrcPort		      4
       Points		      [100, 0; 0, 80]
-      DstBlock		      "Mux1"
-      DstPort		      4
+      Branch {
+	DstBlock		"Mux1"
+	DstPort			4
+      }
+      Branch {
+	DstBlock		"Yaw"
+	DstPort			1
+      }
     }
     Line {
-      SrcBlock		      "Plant"
+      SrcBlock		      "Boat sim"
       SrcPort		      3
-      DstBlock		      "Scope"
+      DstBlock		      "Roll"
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Plant"
+      SrcBlock		      "Boat sim"
       SrcPort		      5
       Points		      [230, 0; 0, 40]
       DstBlock		      "Mux1"
       DstPort		      3
+    }
+    Line {
+      SrcBlock		      "Step"
+      SrcPort		      1
+      DstBlock		      "Manual Switch"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Manual Switch"
+      SrcPort		      1
+      DstBlock		      "Boat sim"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Constant"
+      SrcPort		      1
+      Points		      [35, 0; 0, 40]
+      DstBlock		      "Manual Switch"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Step1"
+      SrcPort		      1
+      DstBlock		      "Manual Switch1"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Manual Switch1"
+      SrcPort		      1
+      Points		      [25, 0]
+      DstBlock		      "Boat sim"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Constant1"
+      SrcPort		      1
+      Points		      [35, 0; 0, 40]
+      DstBlock		      "Manual Switch1"
+      DstPort		      1
     }
   }
 }
