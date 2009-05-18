@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.130"
+    ComputedModelVersion    "1.141"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -44,10 +44,10 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Administrator"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun May 17 22:46:24 2009"
-  ModelVersionFormat	  "1.%<AutoIncrement:130>"
+  LastModifiedDate	  "Mon May 18 01:46:28 2009"
+  ModelVersionFormat	  "1.%<AutoIncrement:141>"
   ConfigurationManager	  "None"
-  SimulationMode	  "accelerator"
+  SimulationMode	  "normal"
   LinearizationMsg	  "none"
   Profile		  off
   ParamWorkspaceSource	  "MATLABWorkspace"
@@ -489,6 +489,12 @@ Model {
   }
   BlockParameterDefaults {
     Block {
+      BlockType		      Abs
+      SaturateOnIntegerOverflow	on
+      ZeroCross		      on
+      SampleTime	      "-1"
+    }
+    Block {
       BlockType		      Constant
       Value		      "1"
       VectorParams1D	      on
@@ -510,6 +516,12 @@ Model {
       RndMeth		      "Zero"
       SaturateOnIntegerOverflow	on
       SampleTime	      "-1"
+    }
+    Block {
+      BlockType		      Demux
+      Outputs		      "4"
+      DisplayOption	      "none"
+      BusSelectionMode	      off
     }
     Block {
       BlockType		      Fcn
@@ -641,10 +653,22 @@ Model {
       SampleTime	      "-1"
     }
     Block {
+      BlockType		      Selector
+      NumberOfDimensions      "1"
+      IndexMode		      "One-based"
+      InputPortWidth	      "-1"
+      SampleTime	      "-1"
+    }
+    Block {
       BlockType		      "S-Function"
       FunctionName	      "system"
       SFunctionModules	      "''"
       PortCounts	      "[]"
+    }
+    Block {
+      BlockType		      Signum
+      ZeroCross		      on
+      SampleTime	      "-1"
     }
     Block {
       BlockType		      Step
@@ -804,13 +828,13 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "Throttle"
-	      Position		      [30, 113, 60, 127]
+	      Position		      [30, 108, 60, 122]
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
 	      BlockType		      Inport
 	      Name		      "Rudder"
-	      Position		      [15, 298, 45, 312]
+	      Position		      [15, 368, 45, 382]
 	      Port		      "2"
 	      IconDisplay	      "Port number"
 	    }
@@ -873,8 +897,8 @@ Model {
 	    Block {
 	      BlockType		      SubSystem
 	      Name		      "Forces & Moments"
-	      Ports		      [3, 4]
-	      Position		      [200, 103, 315, 202]
+	      Ports		      [5, 4]
+	      Position		      [200, 105, 315, 205]
 	      MinAlgLoopOccurrences   off
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
@@ -894,7 +918,7 @@ Model {
 "00]"
 		TiledPageScale		1
 		ShowPageBoundaries	off
-		ZoomFactor		"100"
+		ZoomFactor		"108"
 		Block {
 		  BlockType		  Inport
 		  Name			  "Throttle"
@@ -904,53 +928,52 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "Rudder"
-		  Position		  [30, 133, 60, 147]
+		  Position		  [30, 348, 60, 362]
 		  Port			  "2"
 		  IconDisplay		  "Port number"
 		}
 		Block {
 		  BlockType		  Inport
-		  Name			  "Velocity"
-		  Position		  [25, 203, 55, 217]
+		  Name			  "u"
+		  Position		  [30, 418, 60, 432]
 		  Port			  "3"
 		  IconDisplay		  "Port number"
 		}
 		Block {
+		  BlockType		  Inport
+		  Name			  "v"
+		  Position		  [30, 453, 60, 467]
+		  Port			  "4"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "r"
+		  Position		  [30, 488, 60, 502]
+		  Port			  "5"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Abs
+		  Name			  "Abs"
+		  Position		  [640, 340, 670, 370]
+		  ShowName		  off
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
 		  BlockType		  Gain
 		  Name			  "C_d"
-		  Position		  [200, 181, 350, 239]
+		  Position		  [235, 108, 275, 152]
 		  Gain			  "C_d_sea_surge"
 		  ParameterDataTypeMode	  "Inherit via internal rule"
 		  OutDataTypeMode	  "Inherit via internal rule"
 		  SaturateOnIntegerOverflow off
-		  Port {
-		    PortNumber		    1
-		    Name		    "Drag force"
-		    RTWStorageClass	    "Auto"
-		    DataLoggingNameMode	    "SignalName"
-		  }
 		}
 		Block {
 		  BlockType		  Gain
 		  Name			  "Convert to\nRPS"
 		  Position		  [140, 35, 200, 75]
 		  Gain			  "450/60"
-		  ParameterDataTypeMode	  "Inherit via internal rule"
-		  OutDataTypeMode	  "Inherit via internal rule"
-		  SaturateOnIntegerOverflow off
-		  Port {
-		    PortNumber		    1
-		    Name		    "RPS"
-		    RTWStorageClass	    "Auto"
-		    DataLoggingNameMode	    "SignalName"
-		  }
-		}
-		Block {
-		  BlockType		  Gain
-		  Name			  "Convert to\nforce2"
-		  Position		  [655, 130, 715, 170]
-		  ShowName		  off
-		  Gain			  "1/wheelbase"
 		  ParameterDataTypeMode	  "Inherit via internal rule"
 		  OutDataTypeMode	  "Inherit via internal rule"
 		  SaturateOnIntegerOverflow off
@@ -963,57 +986,226 @@ Model {
 		  Expr			  "rho_w*(d_prop^4)*K_t*abs(u)*u"
 		}
 		Block {
+		  BlockType		  Reference
+		  Name			  "Cross Product"
+		  Ports			  [2, 1]
+		  Position		  [990, 431, 1020, 464]
+		  SourceBlock		  "vrlib/Utilities/Cross Product"
+		  SourceType		  "Cross Product"
+		  ShowPortLabels	  "FromPortIcon"
+		  SystemSampleTime	  "-1"
+		  FunctionWithSeparateData off
+		  RTWMemSecFuncInitTerm	  "Inherit from model"
+		  RTWMemSecFuncExecute	  "Inherit from model"
+		  RTWMemSecDataConstants  "Inherit from model"
+		  RTWMemSecDataInternal	  "Inherit from model"
+		  RTWMemSecDataParameters "Inherit from model"
+		}
+		Block {
+		  BlockType		  Demux
+		  Name			  "Demux"
+		  Ports			  [1, 3]
+		  Position		  [1045, 431, 1050, 469]
+		  BackgroundColor	  "black"
+		  ShowName		  off
+		  Outputs		  "3"
+		  DisplayOption		  "bar"
+		}
+		Block {
+		  BlockType		  Product
+		  Name			  "Divide"
+		  Ports			  [2, 1]
+		  Position		  [240, 417, 270, 448]
+		  Inputs		  "*/"
+		  CollapseMode		  "All dimensions"
+		  InputSameDT		  off
+		  OutDataTypeMode	  "Inherit via internal rule"
+		  OutScaling		  "2^-10"
+		  RndMeth		  "Floor"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
 		  BlockType		  Fcn
 		  Name			  "Fcn3"
-		  Position		  [100, 195, 160, 225]
+		  Position		  [140, 115, 200, 145]
+		  ShowName		  off
 		  Expr			  "abs(u)*u"
 		}
 		Block {
-		  BlockType		  Constant
-		  Name			  "Initial east"
-		  Position		  [1000, 110, 1030, 140]
+		  BlockType		  Gain
+		  Name			  "Gain"
+		  Position		  [145, 275, 205, 315]
 		  ShowName		  off
-		  Value			  "0"
+		  Gain			  "Wf"
+		  ParameterDataTypeMode	  "Inherit via internal rule"
+		  OutDataTypeMode	  "Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Gain
+		  Name			  "Gain1"
+		  Position		  [354, 185, 416, 245]
+		  Orientation		  "down"
+		  NamePlacement		  "alternate"
+		  ShowName		  off
+		  Gain			  "C_T^2"
+		  ParameterDataTypeMode	  "Inherit via internal rule"
+		  OutDataTypeMode	  "Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Gain
+		  Name			  "Gain2"
+		  Position		  [480, 275, 515, 315]
+		  ShowName		  off
+		  Gain			  "rho_w*C_F*rudder_area"
+		  ParameterDataTypeMode	  "Inherit via internal rule"
+		  OutDataTypeMode	  "Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Gain
+		  Name			  "Gain3"
+		  Position		  [115, 475, 175, 515]
+		  ShowName		  off
+		  Gain			  "x_cp - x_cg"
+		  ParameterDataTypeMode	  "Inherit via internal rule"
+		  OutDataTypeMode	  "Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Gain
+		  Name			  "Gain4"
+		  Position		  [500, 395, 535, 435]
+		  ShowName		  off
+		  Gain			  "pi/(2*delta_stall)"
+		  ParameterDataTypeMode	  "Inherit via internal rule"
+		  OutDataTypeMode	  "Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
 		}
 		Block {
 		  BlockType		  Constant
 		  Name			  "Initial east1"
-		  Position		  [1000, 170, 1030, 200]
+		  Position		  [865, 440, 895, 470]
+		  ShowName		  off
+		  Value			  "[cp_x 0 cp_z] - [cg_x 0 cg_z]"
+		}
+		Block {
+		  BlockType		  Constant
+		  Name			  "Initial east2"
+		  Position		  [835, 405, 865, 435]
 		  ShowName		  off
 		  Value			  "0"
 		}
 		Block {
+		  BlockType		  Math
+		  Name			  "Math\nFunction"
+		  Ports			  [1, 1]
+		  Position		  [260, 280, 290, 310]
+		  Operator		  "square"
+		}
+		Block {
+		  BlockType		  Mux
+		  Name			  "Mux"
+		  Ports			  [3, 1]
+		  Position		  [945, 401, 950, 439]
+		  ShowName		  off
+		  Inputs		  "3"
+		  DisplayOption		  "bar"
+		}
+		Block {
 		  BlockType		  Product
-		  Name			  "Product3"
+		  Name			  "Product"
 		  Ports			  [2, 1]
-		  Position		  [585, 132, 615, 163]
+		  Position		  [620, 392, 650, 423]
+		  ShowName		  off
 		  CollapseMode		  "All dimensions"
 		  InputSameDT		  off
 		  OutDataTypeMode	  "Inherit via internal rule"
 		  SaturateOnIntegerOverflow off
 		}
 		Block {
-		  BlockType		  Scope
-		  Name			  "Scope"
-		  Ports			  [1]
-		  Position		  [550, 59, 580, 91]
-		  Floating		  off
-		  Location		  [1, 52, 1281, 769]
-		  Open			  off
-		  NumInputPorts		  "1"
-		  List {
-		    ListType		    AxesTitles
-		    axes1		    "%<SignalLabel>"
-		  }
-		  SaveName		  "ScopeData1"
-		  DataFormat		  "StructureWithTime"
-		  SampleTime		  "0"
+		  BlockType		  Product
+		  Name			  "Product1"
+		  Ports			  [2, 1]
+		  Position		  [620, 272, 650, 303]
+		  ShowName		  off
+		  CollapseMode		  "All dimensions"
+		  InputSameDT		  off
+		  OutDataTypeMode	  "Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Product
+		  Name			  "Product2"
+		  Ports			  [2, 1]
+		  Position		  [770, 107, 800, 138]
+		  ShowName		  off
+		  CollapseMode		  "All dimensions"
+		  InputSameDT		  off
+		  OutDataTypeMode	  "Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Product
+		  Name			  "Product3"
+		  Ports			  [2, 1]
+		  Position		  [820, 332, 850, 363]
+		  ShowName		  off
+		  CollapseMode		  "All dimensions"
+		  InputSameDT		  off
+		  OutDataTypeMode	  "Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Saturate
+		  Name			  "Saturation"
+		  Position		  [140, 425, 170, 455]
+		  ShowName		  off
+		  UpperLimit		  "inf"
+		  LowerLimit		  "0.00001"
+		}
+		Block {
+		  BlockType		  Signum
+		  Name			  "Sign"
+		  Position		  [545, 240, 575, 270]
 		}
 		Block {
 		  BlockType		  Sum
 		  Name			  "Sum1"
+		  Ports			  [3, 1]
+		  Position		  [880, 49, 915, 91]
+		  ShowName		  off
+		  Inputs		  "+++"
+		  CollapseMode		  "All dimensions"
+		  InputSameDT		  off
+		  OutDataTypeMode	  "Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Sum
+		  Name			  "Sum2"
 		  Ports			  [2, 1]
-		  Position		  [410, 45, 430, 65]
+		  Position		  [375, 285, 395, 305]
+		  ShowName		  off
+		  IconShape		  "round"
+		  Inputs		  "++|"
+		  CollapseMode		  "All dimensions"
+		  InputSameDT		  off
+		  OutDataTypeMode	  "Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		  Port {
+		    PortNumber		    1
+		    Name		    "V_av squared"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		  }
+		}
+		Block {
+		  BlockType		  Sum
+		  Name			  "Sum3"
+		  Ports			  [2, 1]
+		  Position		  [335, 345, 355, 365]
 		  ShowName		  off
 		  IconShape		  "round"
 		  Inputs		  "|+-"
@@ -1021,27 +1213,86 @@ Model {
 		  InputSameDT		  off
 		  OutDataTypeMode	  "Inherit via internal rule"
 		  SaturateOnIntegerOverflow off
+		  Port {
+		    PortNumber		    1
+		    Name		    "delta_attack"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		  }
+		}
+		Block {
+		  BlockType		  Sum
+		  Name			  "Sum4"
+		  Ports			  [2, 1]
+		  Position		  [190, 450, 210, 470]
+		  ShowName		  off
+		  IconShape		  "round"
+		  Inputs		  "|++"
+		  CollapseMode		  "All dimensions"
+		  InputSameDT		  off
+		  OutDataTypeMode	  "Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Switch
+		  Name			  "Switch"
+		  Position		  [705, 340, 735, 370]
+		  Threshold		  "delta_stall"
+		  InputSameDT		  off
+		  SaturateOnIntegerOverflow off
 		}
 		Block {
 		  BlockType		  Trigonometry
 		  Name			  "Trigonometric\nFunction"
 		  Ports			  [1, 1]
-		  Position		  [485, 125, 515, 155]
+		  Position		  [310, 420, 340, 450]
 		  ShowName		  off
-		  Operator		  "tan"
-		  OutputSignalType	  "real"
+		  Operator		  "atan"
+		}
+		Block {
+		  BlockType		  Trigonometry
+		  Name			  "Trigonometric\nFunction1"
+		  Ports			  [1, 1]
+		  Position		  [550, 400, 580, 430]
+		  ShowName		  off
+		}
+		Block {
+		  BlockType		  Trigonometry
+		  Name			  "Trigonometric\nFunction2"
+		  Ports			  [1, 1]
+		  Position		  [690, 155, 720, 185]
+		  ShowName		  off
+		}
+		Block {
+		  BlockType		  Trigonometry
+		  Name			  "Trigonometric\nFunction3"
+		  Ports			  [1, 1]
+		  Position		  [690, 215, 720, 245]
+		  ShowName		  off
+		  Operator		  "cos"
+		}
+		Block {
+		  BlockType		  Reference
+		  Name			  "Unary Minus"
+		  Ports			  [1, 1]
+		  Position		  [825, 80, 855, 110]
+		  ShowName		  off
+		  SourceBlock		  "simulink/Math\nOperations/Unary Min"
+"us"
+		  SourceType		  "Unary Minus"
+		  DoSatur		  off
 		}
 		Block {
 		  BlockType		  Outport
 		  Name			  "X"
-		  Position		  [1125, 48, 1155, 62]
+		  Position		  [1125, 63, 1155, 77]
 		  IconDisplay		  "Port number"
 		  BusOutputAsStruct	  off
 		}
 		Block {
 		  BlockType		  Outport
 		  Name			  "Y"
-		  Position		  [1125, 118, 1155, 132]
+		  Position		  [1130, 343, 1160, 357]
 		  Port			  "2"
 		  IconDisplay		  "Port number"
 		  BusOutputAsStruct	  off
@@ -1049,7 +1300,7 @@ Model {
 		Block {
 		  BlockType		  Outport
 		  Name			  "K"
-		  Position		  [1125, 178, 1155, 192]
+		  Position		  [1130, 393, 1160, 407]
 		  Port			  "3"
 		  IconDisplay		  "Port number"
 		  BusOutputAsStruct	  off
@@ -1057,14 +1308,12 @@ Model {
 		Block {
 		  BlockType		  Outport
 		  Name			  "N"
-		  Position		  [1125, 238, 1155, 252]
+		  Position		  [1130, 453, 1160, 467]
 		  Port			  "4"
 		  IconDisplay		  "Port number"
 		  BusOutputAsStruct	  off
 		}
 		Line {
-		  Name			  "RPS"
-		  Labels		  [-1, 0]
 		  SrcBlock		  "Convert to\nRPS"
 		  SrcPort		  1
 		  DstBlock		  "Convert to force"
@@ -1077,32 +1326,45 @@ Model {
 		  DstPort		  1
 		}
 		Line {
-		  Name			  "Drag force"
-		  Labels		  [0, 0]
 		  SrcBlock		  "C_d"
 		  SrcPort		  1
-		  Points		  [65, 0]
+		  Points		  [430, 0; 0, -60]
 		  DstBlock		  "Sum1"
 		  DstPort		  2
 		}
 		Line {
 		  SrcBlock		  "Convert to force"
 		  SrcPort		  1
-		  DstBlock		  "Sum1"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Velocity"
-		  SrcPort		  1
-		  Points		  [15, 0]
+		  Points		  [20, 0]
 		  Branch {
-		    DstBlock		    "Fcn3"
+		    DstBlock		    "Sum1"
 		    DstPort		    1
 		  }
 		  Branch {
-		    Points		    [0, 120; 480, 0; 0, -175]
-		    DstBlock		    "Product3"
-		    DstPort		    2
+		    Labels		    [2, 0]
+		    Points		    [0, 105; -30, 0]
+		    DstBlock		    "Gain1"
+		    DstPort		    1
+		  }
+		}
+		Line {
+		  SrcBlock		  "u"
+		  SrcPort		  1
+		  Points		  [60, 0]
+		  Branch {
+		    Points		    [0, -130]
+		    Branch {
+		    DstBlock		    "Fcn3"
+		    DstPort		    1
+		    }
+		    Branch {
+		    DstBlock		    "Gain"
+		    DstPort		    1
+		    }
+		  }
+		  Branch {
+		    DstBlock		    "Saturation"
+		    DstPort		    1
 		  }
 		}
 		Line {
@@ -1114,53 +1376,271 @@ Model {
 		Line {
 		  SrcBlock		  "Sum1"
 		  SrcPort		  1
-		  Points		  [95, 0]
+		  Points		  [10, 0]
 		  Branch {
 		    DstBlock		    "X"
 		    DstPort		    1
 		  }
 		  Branch {
-		    Points		    [0, 20]
-		    DstBlock		    "Scope"
+		    DstBlock		    "Mux"
 		    DstPort		    1
 		  }
 		}
 		Line {
+		  SrcBlock		  "Gain"
+		  SrcPort		  1
+		  DstBlock		  "Math\nFunction"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Gain1"
+		  SrcPort		  1
+		  DstBlock		  "Sum2"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Math\nFunction"
+		  SrcPort		  1
+		  DstBlock		  "Sum2"
+		  DstPort		  2
+		}
+		Line {
+		  Name			  "V_av squared"
+		  Labels		  [0, 0]
+		  SrcBlock		  "Sum2"
+		  SrcPort		  1
+		  DstBlock		  "Gain2"
+		  DstPort		  1
+		}
+		Line {
 		  SrcBlock		  "Rudder"
+		  SrcPort		  1
+		  Points		  [170, 0]
+		  Branch {
+		    DstBlock		    "Sum3"
+		    DstPort		    1
+		  }
+		  Branch {
+		    Points		    [0, -185; 425, 0]
+		    Branch {
+		    DstBlock		    "Trigonometric\nFunction2"
+		    DstPort		    1
+		    }
+		    Branch {
+		    Points		    [0, 60]
+		    DstBlock		    "Trigonometric\nFunction3"
+		    DstPort		    1
+		    }
+		  }
+		}
+		Line {
+		  SrcBlock		  "r"
+		  SrcPort		  1
+		  DstBlock		  "Gain3"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Gain3"
+		  SrcPort		  1
+		  Points		  [20, 0]
+		  DstBlock		  "Sum4"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "v"
+		  SrcPort		  1
+		  DstBlock		  "Sum4"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Divide"
 		  SrcPort		  1
 		  DstBlock		  "Trigonometric\nFunction"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Product3"
+		  SrcBlock		  "Sum4"
 		  SrcPort		  1
-		  DstBlock		  "Convert to\nforce2"
+		  Points		  [5, 0; 0, -35]
+		  DstBlock		  "Divide"
 		  DstPort		  1
 		}
 		Line {
 		  SrcBlock		  "Trigonometric\nFunction"
 		  SrcPort		  1
+		  DstBlock		  "Sum3"
+		  DstPort		  2
+		}
+		Line {
+		  Name			  "delta_attack"
+		  Labels		  [0, 0]
+		  SrcBlock		  "Sum3"
+		  SrcPort		  1
+		  Points		  [170, 0]
+		  Branch {
+		    DstBlock		    "Abs"
+		    DstPort		    1
+		  }
+		  Branch {
+		    DstBlock		    "Sign"
+		    DstPort		    1
+		  }
+		  Branch {
+		    Points		    [-45, 0]
+		    DstBlock		    "Gain4"
+		    DstPort		    1
+		  }
+		}
+		Line {
+		  SrcBlock		  "Abs"
+		  SrcPort		  1
+		  DstBlock		  "Switch"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "Product"
+		  SrcPort		  1
+		  Points		  [35, 0]
+		  DstBlock		  "Switch"
+		  DstPort		  3
+		}
+		Line {
+		  SrcBlock		  "Trigonometric\nFunction1"
+		  SrcPort		  1
+		  DstBlock		  "Product"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "Gain2"
+		  SrcPort		  1
+		  Points		  [85, 0]
+		  Branch {
+		    DstBlock		    "Product"
+		    DstPort		    1
+		  }
+		  Branch {
+		    DstBlock		    "Product1"
+		    DstPort		    2
+		  }
+		}
+		Line {
+		  SrcBlock		  "Product1"
+		  SrcPort		  1
+		  Points		  [35, 0]
+		  DstBlock		  "Switch"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Sign"
+		  SrcPort		  1
+		  Points		  [25, 0]
+		  DstBlock		  "Product1"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Gain4"
+		  SrcPort		  1
+		  DstBlock		  "Trigonometric\nFunction1"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Unary Minus"
+		  SrcPort		  1
+		  Points		  [5, 0]
+		  DstBlock		  "Sum1"
+		  DstPort		  3
+		}
+		Line {
+		  SrcBlock		  "Product2"
+		  SrcPort		  1
+		  Points		  [5, 0]
+		  DstBlock		  "Unary Minus"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Trigonometric\nFunction2"
+		  SrcPort		  1
+		  Points		  [15, 0; 0, -55]
+		  DstBlock		  "Product2"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Trigonometric\nFunction3"
+		  SrcPort		  1
+		  Points		  [25, 0; 0, 110]
 		  DstBlock		  "Product3"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Convert to\nforce2"
+		  SrcBlock		  "Product3"
 		  SrcPort		  1
-		  Points		  [200, 0; 0, 95]
-		  DstBlock		  "N"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Initial east"
-		  SrcPort		  1
-		  DstBlock		  "Y"
-		  DstPort		  1
+		  Points		  [60, 0]
+		  Branch {
+		    DstBlock		    "Y"
+		    DstPort		    1
+		  }
+		  Branch {
+		    Points		    [0, 0; 0, 80]
+		    DstBlock		    "Mux"
+		    DstPort		    3
+		  }
 		}
 		Line {
 		  SrcBlock		  "Initial east1"
 		  SrcPort		  1
+		  DstBlock		  "Cross Product"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "Cross Product"
+		  SrcPort		  1
+		  DstBlock		  "Demux"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Demux"
+		  SrcPort		  1
+		  Points		  [30, 0; 0, -40]
 		  DstBlock		  "K"
 		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Demux"
+		  SrcPort		  3
+		  DstBlock		  "N"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Initial east2"
+		  SrcPort		  1
+		  DstBlock		  "Mux"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "Switch"
+		  SrcPort		  1
+		  Points		  [15, 0]
+		  Branch {
+		    DstBlock		    "Product2"
+		    DstPort		    2
+		  }
+		  Branch {
+		    DstBlock		    "Product3"
+		    DstPort		    2
+		  }
+		}
+		Line {
+		  SrcBlock		  "Mux"
+		  SrcPort		  1
+		  Points		  [10, 0; 0, 20]
+		  DstBlock		  "Cross Product"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Saturation"
+		  SrcPort		  1
+		  DstBlock		  "Divide"
+		  DstPort		  2
 		}
 	      }
 	    }
@@ -1192,7 +1672,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "Rudder control"
-		  Position		  [25, 40, 55, 54]
+		  Position		  [25, 38, 55, 52]
 		  IconDisplay		  "Port number"
 		}
 		Block {
@@ -1249,8 +1729,9 @@ Model {
 		Block {
 		  BlockType		  Outport
 		  Name			  "Rudder actual"
-		  Position		  [330, 40, 360, 54]
+		  Position		  [330, 38, 360, 52]
 		  IconDisplay		  "Port number"
+		  BusOutputAsStruct	  off
 		}
 		Line {
 		  SrcBlock		  "Convert to velocity1"
@@ -1301,7 +1782,7 @@ Model {
 	    Block {
 	      BlockType		      Saturate
 	      Name		      "Rudder limiter"
-	      Position		      [80, 105, 110, 135]
+	      Position		      [80, 100, 110, 130]
 	      ShowName		      off
 	      UpperLimit	      "1"
 	      LowerLimit	      "0"
@@ -1462,14 +1943,14 @@ Model {
 		  Name			  "Phase shift5"
 		  Position		  [15, 500, 45, 530]
 		  ShowName		  off
-		  Value			  "cg_x"
+		  Value			  "x_cg"
 		}
 		Block {
 		  BlockType		  Constant
 		  Name			  "Phase shift6"
 		  Position		  [15, 465, 45, 495]
 		  ShowName		  off
-		  Value			  "cg_z"
+		  Value			  "z_cg"
 		}
 		Block {
 		  BlockType		  Constant
@@ -2138,14 +2619,14 @@ Model {
 		  Name			  "Phase shift5"
 		  Position		  [120, 505, 150, 535]
 		  ShowName		  off
-		  Value			  "cg_x"
+		  Value			  "x_cg"
 		}
 		Block {
 		  BlockType		  Constant
 		  Name			  "Phase shift6"
 		  Position		  [120, 470, 150, 500]
 		  ShowName		  off
-		  Value			  "cg_z"
+		  Value			  "z_cg"
 		}
 		Block {
 		  BlockType		  Constant
@@ -2776,7 +3257,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "p"
-		  Position		  [25, 43, 55, 57]
+		  Position		  [25, 58, 55, 72]
 		  Port			  "2"
 		  IconDisplay		  "Port number"
 		}
@@ -2817,16 +3298,16 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Phase shift1"
-		  Position		  [30, 85, 60, 115]
+		  Position		  [25, 85, 55, 115]
 		  ShowName		  off
-		  Value			  "cg_x"
+		  Value			  "x_cg"
 		}
 		Block {
 		  BlockType		  Constant
 		  Name			  "Phase shift3"
-		  Position		  [30, 15, 60, 45]
+		  Position		  [25, 15, 55, 45]
 		  ShowName		  off
-		  Value			  "cg_z"
+		  Value			  "z_cg"
 		}
 		Block {
 		  BlockType		  Product
@@ -2913,21 +3394,20 @@ Model {
 		Line {
 		  SrcBlock		  "Phase shift3"
 		  SrcPort		  1
-		  Points		  [185, 0]
+		  Points		  [190, 0]
 		  DstBlock		  "Product2"
 		  DstPort		  1
 		}
 		Line {
 		  SrcBlock		  "p"
 		  SrcPort		  1
-		  Points		  [100, 0; 0, 15]
 		  DstBlock		  "Product2"
 		  DstPort		  2
 		}
 		Line {
 		  SrcBlock		  "Phase shift1"
 		  SrcPort		  1
-		  Points		  [205, 0]
+		  Points		  [210, 0]
 		  DstBlock		  "Product1"
 		  DstPort		  1
 		}
@@ -3102,7 +3582,7 @@ Model {
 		  Name			  "Phase shift1"
 		  Position		  [55, 375, 85, 405]
 		  ShowName		  off
-		  Value			  "cg_x"
+		  Value			  "x_cg"
 		}
 		Block {
 		  BlockType		  Constant
@@ -3116,7 +3596,7 @@ Model {
 		  Name			  "Phase shift3"
 		  Position		  [55, 340, 85, 370]
 		  ShowName		  off
-		  Value			  "cg_z"
+		  Value			  "z_cg"
 		}
 		Block {
 		  BlockType		  Constant
@@ -3658,7 +4138,7 @@ Model {
 		    Branch {
 		    Points		    [-170, 0]
 		    Branch {
-		    Points		    [-155, 0; 0, 180]
+		    Points		    [-155, 0; 0, 145]
 		    DstBlock		    "Forces & Moments"
 		    DstPort		    3
 		    }
@@ -3684,7 +4164,7 @@ Model {
 	    Line {
 	      SrcBlock		      "Forces & Moments"
 	      SrcPort		      1
-	      Points		      [40, 0; 0, -65]
+	      Points		      [40, 0; 0, -70]
 	      DstBlock		      "u_plant"
 	      DstPort		      1
 	    }
@@ -3711,10 +4191,17 @@ Model {
 		DstPort			1
 	      }
 	      Branch {
-		Labels			[0, 0]
+		Labels			[1, 0]
 		Points			[0, -175; -430, 0]
-		DstBlock		"u_plant"
-		DstPort			4
+		Branch {
+		  DstBlock		  "u_plant"
+		  DstPort		  4
+		}
+		Branch {
+		  Points		  [0, 110; -585, 0]
+		  DstBlock		  "Forces & Moments"
+		  DstPort		  4
+		}
 	      }
 	    }
 	    Line {
@@ -3772,8 +4259,15 @@ Model {
 		    Branch {
 		    Labels		    [1, 0]
 		    Points		    [-125, 0; 0, -55]
+		    Branch {
 		    DstBlock		    "r_plant"
 		    DstPort		    4
+		    }
+		    Branch {
+		    Points		    [-345, 0; 0, -135]
+		    DstBlock		    "Forces & Moments"
+		    DstPort		    5
+		    }
 		    }
 		  }
 		  Branch {
@@ -3799,7 +4293,7 @@ Model {
 	    Line {
 	      SrcBlock		      "Forces & Moments"
 	      SrcPort		      4
-	      Points		      [25, 0]
+	      Points		      [0, -5; 25, 0]
 	      Branch {
 		Points			[0, 345]
 		DstBlock		"v_plant"
@@ -3821,7 +4315,7 @@ Model {
 	    Line {
 	      SrcBlock		      "Forces & Moments"
 	      SrcPort		      3
-	      Points		      [55, 0; 0, 190]
+	      Points		      [55, 0; 0, 185]
 	      Branch {
 		Points			[0, 100]
 		Branch {
@@ -3844,7 +4338,7 @@ Model {
 	      SrcPort		      2
 	      Points		      [40, 0]
 	      Branch {
-		Points			[0, 345]
+		Points			[0, 340]
 		DstBlock		"v_plant"
 		DstPort			1
 	      }
@@ -3855,7 +4349,7 @@ Model {
 		  DstPort		  1
 		}
 		Branch {
-		  Points		  [125, 0; 0, 245]
+		  Points		  [125, 0; 0, 240]
 		  DstBlock		  "p_plant"
 		  DstPort		  1
 		}
@@ -3886,7 +4380,7 @@ Model {
 	      SrcPort		      1
 	      Points		      [30, 0; 0, -70]
 	      Branch {
-		Points			[-75, 0; 0, -150]
+		Points			[-75, 0; 0, -170]
 		DstBlock		"Forces & Moments"
 		DstPort			2
 	      }
@@ -4398,6 +4892,7 @@ Model {
       Name		      "Constant"
       Position		      [400, 120, 430, 150]
       ShowName		      off
+      Value		      "0"
     }
     Block {
       BlockType		      Constant

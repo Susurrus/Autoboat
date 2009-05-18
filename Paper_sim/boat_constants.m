@@ -1,4 +1,4 @@
-%% Declare boat constants
+%% Declare initial boat constants
 
 % Initial conditions
 
@@ -23,21 +23,27 @@ rudder_angle_max = 1;   % Maximum angle of the rudder (radians)
 % These are approximated constants. Need to be experimentally determined and then they will be known.
 
 K_t = 0.5;              % Thrust coefficient
-C_d_sea_surge = 340;    % Coefficient of drag for forward motion through water
-cg_x = .0508;           % Center of gravity relative to boat center: 1/6' (m)
-cg_z = .0508;           % Center of gravity relative to boat center: 1/6' (m)
+C_d_sea_surge = -340;   % Coefficient of drag for forward motion through water
+x_cg = .0508;           % Center of gravity relative to boat center: 1/6' (m)
+z_cg = .0508;           % Center of gravity relative to boat center: 1/6' (m)
 % Boat center is at 6.5' by the waterline by the axis of symmetry
 rudder_angle_dot_max = 10;   % Maximum rate of change of rudder angle (radians/s)
 proportional_band = .5;      % Proportional band of the rudder response (radians)
-rudder_stall_angle = .279;   % Stall angle for the rudder:16 degrees[from http://www.boatdesign.net/forums/sailboats/rudder-angle-effective-size-rudder-10724.html] (radians)
+delta_stall = .279;     % Stall angle for the rudder:16 degrees[from http://www.boatdesign.net/forums/sailboats/rudder-angle-effective-size-rudder-10724.html] (radians)
 rudder_area = .0945;    % Area of the rudder [see notes for calculation] (square meters)
-rudder_lift_coefficient = 1.15; % Coefficient of lift for the rudder
+C_F = 1.15; % Coefficient of lift for the rudder (dimensionless)
 rudder_span = .4572;    % Distance to rudder along rotation axis (meters)
-cp_x = 3.4224;          % Distance from fixed-body origin along x-axis of center of pressure of the rudder (m)
-cp_z = .2032;           % Distance from fixed-body origin along z-axis of center of pressure of the rudder (m)
+x_cp = 3.4224;          % Distance from fixed-body origin along x-axis of center of pressure of the rudder (m)
+z_cp = .2032;           % Distance from fixed-body origin along z-axis of center of pressure of the rudder (m)
+t = 0.1;                % Thrust deduction number (dimensionless)
+Wt = 0.1;               % Taylor wake fraction
 
+%% Calculated physical constants
 % Moments of Inertia
 % Approximated using l=13,w=3,h=4 for a solid cuboid
 I_xx = mass/12*(3^2+4^2);
 I_yy = mass/12*(13^2+4^2);
 I_zz = mass/12*(13^2+3^2);
+
+Wf = 1 - Wt;            % Wake factor
+C_T = 6.4/(pi*rho_w*rudder_span*d_prop); % Thrust-loading coefficient
