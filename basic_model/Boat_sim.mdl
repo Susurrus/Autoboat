@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.93"
+    ComputedModelVersion    "1.96"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -44,8 +44,8 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Administrator"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon May 18 14:17:15 2009"
-  ModelVersionFormat	  "1.%<AutoIncrement:93>"
+  LastModifiedDate	  "Mon May 18 15:03:42 2009"
+  ModelVersionFormat	  "1.%<AutoIncrement:96>"
   ConfigurationManager	  "None"
   SimulationMode	  "accelerator"
   LinearizationMsg	  "none"
@@ -512,6 +512,10 @@ Model {
       SampleTime	      "-1"
     }
     Block {
+      BlockType		      DigitalClock
+      SampleTime	      "1"
+    }
+    Block {
       BlockType		      Fcn
       Expr		      "sin(u[1])"
       SampleTime	      "-1"
@@ -702,7 +706,7 @@ Model {
   }
   System {
     Name		    "Boat_sim"
-    Location		    [2, 82, 1270, 754]
+    Location		    [2, 78, 1278, 750]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -719,15 +723,39 @@ Model {
     Block {
       BlockType		      Constant
       Name		      "Constant"
-      Position		      [375, 240, 405, 270]
+      Position		      [375, 205, 405, 235]
       ShowName		      off
     }
     Block {
       BlockType		      Constant
       Name		      "Constant1"
-      Position		      [375, 165, 405, 195]
+      Position		      [375, 155, 405, 185]
       ShowName		      off
       Value		      ".01"
+    }
+    Block {
+      BlockType		      Constant
+      Name		      "Constant2"
+      Position		      [375, 255, 405, 285]
+      ShowName		      off
+      Value		      "0.3"
+    }
+    Block {
+      BlockType		      Scope
+      Name		      "Heading"
+      Ports		      [1]
+      Position		      [785, 354, 815, 386]
+      Floating		      off
+      Location		      [5, 51, 1285, 769]
+      Open		      off
+      NumInputPorts	      "1"
+      List {
+	ListType		AxesTitles
+	axes1			"%<SignalLabel>"
+      }
+      DataFormat	      "StructureWithTime"
+      LimitDataPoints	      off
+      SampleTime	      "0"
     }
     Block {
       BlockType		      MATLABFcn
@@ -742,7 +770,7 @@ Model {
       BlockType		      Mux
       Name		      "Mux"
       Ports		      [3, 1]
-      Position		      [710, 236, 715, 274]
+      Position		      [715, 221, 720, 259]
       ShowName		      off
       Inputs		      "3"
       DisplayOption	      "bar"
@@ -758,15 +786,15 @@ Model {
     Block {
       BlockType		      SubSystem
       Name		      "Plant"
-      Ports		      [2, 6]
-      Position		      [455, 140, 625, 295]
+      Ports		      [3, 7]
+      Position		      [455, 142, 625, 298]
       MinAlgLoopOccurrences   off
       RTWSystemCode	      "Auto"
       FunctionWithSeparateData off
       MaskHideContents	      off
       System {
 	Name			"Plant"
-	Location		[2, 82, 1270, 754]
+	Location		[2, 78, 1278, 750]
 	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -790,6 +818,13 @@ Model {
 	  Name			  "Throttle"
 	  Position		  [60, 113, 90, 127]
 	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "Tray angle"
+	  Position		  [60, 183, 90, 197]
+	  Port			  "3"
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -829,7 +864,7 @@ Model {
 	Block {
 	  BlockType		  SubSystem
 	  Name			  "Forces & Moments"
-	  Ports			  [3, 4]
+	  Ports			  [4, 2]
 	  Position		  [520, 103, 635, 202]
 	  MinAlgLoopOccurrences	  off
 	  RTWSystemCode		  "Auto"
@@ -837,7 +872,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Forces & Moments"
-	    Location		    [2, 82, 1270, 754]
+	    Location		    [2, 78, 1278, 750]
 	    Open		    on
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -866,8 +901,15 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "Velocity"
-	      Position		      [25, 203, 55, 217]
+	      Position		      [30, 203, 60, 217]
 	      Port		      "3"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "Tray angle"
+	      Position		      [30, 278, 60, 292]
+	      Port		      "4"
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
@@ -907,10 +949,47 @@ Model {
 	      Expr		      "rho_w*(d_prop^4)*K_t*abs(u)*u"
 	    }
 	    Block {
+	      BlockType		      DigitalClock
+	      Name		      "Digital Clock"
+	      Position		      [155, 323, 220, 347]
+	      ShowName		      off
+	      SampleTime	      "-1"
+	    }
+	    Block {
 	      BlockType		      Fcn
 	      Name		      "Fcn3"
 	      Position		      [100, 195, 160, 225]
 	      Expr		      "abs(u)*u"
+	    }
+	    Block {
+	      BlockType		      Gain
+	      Name		      "Gain"
+	      Position		      [260, 317, 290, 353]
+	      ShowName		      off
+	      Gain		      "2*pi/roll_period"
+	      ParameterDataTypeMode   "Inherit via internal rule"
+	      OutDataTypeMode	      "Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Gain
+	      Name		      "Gain1"
+	      Position		      [375, 317, 405, 353]
+	      ShowName		      off
+	      Gain		      "sea_state*pi/(3*max_sea_state)"
+	      ParameterDataTypeMode   "Inherit via internal rule"
+	      OutDataTypeMode	      "Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Gain
+	      Name		      "Gain2"
+	      Position		      [100, 267, 130, 303]
+	      ShowName		      off
+	      Gain		      "0.5"
+	      ParameterDataTypeMode   "Inherit via internal rule"
+	      OutDataTypeMode	      "Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
 	    }
 	    Block {
 	      BlockType		      Sum
@@ -926,33 +1005,37 @@ Model {
 	      SaturateOnIntegerOverflow	off
 	    }
 	    Block {
+	      BlockType		      Sum
+	      Name		      "Sum2"
+	      Ports		      [2, 1]
+	      Position		      [435, 275, 455, 295]
+	      ShowName		      off
+	      IconShape		      "round"
+	      Inputs		      "|++"
+	      CollapseMode	      "All dimensions"
+	      InputSameDT	      off
+	      OutDataTypeMode	      "Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Trigonometry
+	      Name		      "Trigonometric\nFunction"
+	      Ports		      [1, 1]
+	      Position		      [315, 320, 345, 350]
+	      ShowName		      off
+	    }
+	    Block {
 	      BlockType		      Outport
 	      Name		      "X"
-	      Position		      [1125, 43, 1155, 57]
+	      Position		      [450, 48, 480, 62]
 	      IconDisplay	      "Port number"
 	      BusOutputAsStruct	      off
 	    }
 	    Block {
 	      BlockType		      Outport
-	      Name		      "Y"
-	      Position		      [1125, 118, 1155, 132]
+	      Name		      "Roll"
+	      Position		      [485, 278, 515, 292]
 	      Port		      "2"
-	      IconDisplay	      "Port number"
-	      BusOutputAsStruct	      off
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "K"
-	      Position		      [1125, 178, 1155, 192]
-	      Port		      "3"
-	      IconDisplay	      "Port number"
-	      BusOutputAsStruct	      off
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "N"
-	      Position		      [1125, 238, 1155, 252]
-	      Port		      "4"
 	      IconDisplay	      "Port number"
 	      BusOutputAsStruct	      off
 	    }
@@ -1000,8 +1083,50 @@ Model {
 	    Line {
 	      SrcBlock		      "Sum1"
 	      SrcPort		      1
-	      Points		      [685, 0]
 	      DstBlock		      "X"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Digital Clock"
+	      SrcPort		      1
+	      DstBlock		      "Gain"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Gain"
+	      SrcPort		      1
+	      DstBlock		      "Trigonometric\nFunction"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Trigonometric\nFunction"
+	      SrcPort		      1
+	      DstBlock		      "Gain1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Tray angle"
+	      SrcPort		      1
+	      DstBlock		      "Gain2"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Gain2"
+	      SrcPort		      1
+	      DstBlock		      "Sum2"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Gain1"
+	      SrcPort		      1
+	      Points		      [35, 0]
+	      DstBlock		      "Sum2"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Sum2"
+	      SrcPort		      1
+	      DstBlock		      "Roll"
 	      DstPort		      1
 	    }
 	  }
@@ -1343,6 +1468,14 @@ Model {
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
 	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "Roll"
+	  Position		  [670, 173, 700, 187]
+	  Port			  "7"
+	  IconDisplay		  "Port number"
+	  BusOutputAsStruct	  off
+	}
 	Line {
 	  SrcBlock		  "Trigonometric\nFunction2"
 	  SrcPort		  1
@@ -1398,7 +1531,7 @@ Model {
 		}
 		Branch {
 		  Labels		  [0, 0]
-		  Points		  [0, -60; -370, 0; 0, -40]
+		  Points		  [0, -60; -370, 0; 0, -65]
 		  DstBlock		  "Forces & Moments"
 		  DstPort		  3
 		}
@@ -1430,6 +1563,7 @@ Model {
 	Line {
 	  SrcBlock		  "Forces & Moments"
 	  SrcPort		  1
+	  Points		  [0, -15]
 	  DstBlock		  "Convert to\nacceleration"
 	  DstPort		  1
 	}
@@ -1464,7 +1598,7 @@ Model {
 	    DstPort		    1
 	  }
 	  Branch {
-	    Points		    [-315, 0; 0, -230; 185, 0; 0, 30]
+	    Points		    [-315, 0; 0, -200; 185, 0]
 	    Branch {
 	      Points		      [0, -180]
 	      DstBlock		      "Trigonometric\nFunction2"
@@ -1517,6 +1651,7 @@ Model {
 	Line {
 	  SrcBlock		  "Throttle limiter"
 	  SrcPort		  1
+	  Points		  [190, 0]
 	  DstBlock		  "Forces & Moments"
 	  DstPort		  1
 	}
@@ -1552,7 +1687,7 @@ Model {
 	  SrcPort		  1
 	  Points		  [180, 0]
 	  Branch {
-	    Points		    [0, -150]
+	    Points		    [0, -165]
 	    DstBlock		    "Forces & Moments"
 	    DstPort		    2
 	  }
@@ -1568,6 +1703,18 @@ Model {
 	      DstPort		      1
 	    }
 	  }
+	}
+	Line {
+	  SrcBlock		  "Forces & Moments"
+	  SrcPort		  2
+	  DstBlock		  "Roll"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Tray angle"
+	  SrcPort		  1
+	  DstBlock		  "Forces & Moments"
+	  DstPort		  4
 	}
       }
     }
@@ -1594,9 +1741,27 @@ Model {
     }
     Block {
       BlockType		      Scope
+      Name		      "Roll"
+      Ports		      [1]
+      Position		      [690, 264, 720, 296]
+      Floating		      off
+      Location		      [1, 52, 1281, 769]
+      Open		      off
+      NumInputPorts	      "1"
+      List {
+	ListType		AxesTitles
+	axes1			"%<SignalLabel>"
+      }
+      SaveName		      "ScopeData2"
+      DataFormat	      "StructureWithTime"
+      LimitDataPoints	      off
+      SampleTime	      "0"
+    }
+    Block {
+      BlockType		      Scope
       Name		      "Scope"
       Ports		      [1]
-      Position		      [790, 239, 820, 271]
+      Position		      [790, 224, 820, 256]
       Floating		      off
       Location		      [1, 52, 1281, 769]
       Open		      off
@@ -1610,34 +1775,16 @@ Model {
       LimitDataPoints	      off
       SampleTime	      "0"
     }
-    Block {
-      BlockType		      Scope
-      Name		      "Scope1"
-      Ports		      [1]
-      Position		      [785, 354, 815, 386]
-      Floating		      off
-      Location		      [5, 51, 1285, 769]
-      Open		      off
-      NumInputPorts	      "1"
-      List {
-	ListType		AxesTitles
-	axes1			"%<SignalLabel>"
-      }
-      DataFormat	      "StructureWithTime"
-      LimitDataPoints	      off
-      SampleTime	      "0"
-    }
     Line {
       SrcBlock		      "Plant"
       SrcPort		      1
       Points		      [205, 0]
       Branch {
-	Points			[0, 140]
+	Points			[0, 135]
 	DstBlock		"Mux1"
 	DstPort			1
       }
       Branch {
-	Points			[30, 0]
 	DstBlock		"Position"
 	DstPort			1
       }
@@ -1660,27 +1807,28 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      3
-      Points		      [65, 0]
+      Points		      [70, 0]
       DstBlock		      "Mux"
       DstPort		      1
     }
     Line {
       SrcBlock		      "Plant"
       SrcPort		      5
-      Points		      [0, 10; 15, 0]
+      Points		      [5, 0; 0, 10]
       Branch {
-	Points			[0, 60; 90, 0]
+	Points			[0, 75; 100, 0]
 	Branch {
 	  DstBlock		  "Mux1"
 	  DstPort		  4
 	}
 	Branch {
 	  Points		  [0, 45]
-	  DstBlock		  "Scope1"
+	  DstBlock		  "Heading"
 	  DstPort		  1
 	}
       }
       Branch {
+	Points			[0, 0]
 	DstBlock		"Mux"
 	DstPort			3
       }
@@ -1688,7 +1836,7 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      4
-      Points		      [15, 0; 0, 25]
+      Points		      [15, 0; 0, 20]
       DstBlock		      "Mux"
       DstPort		      2
     }
@@ -1707,7 +1855,7 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      6
-      Points		      [120, 0; 0, 35]
+      Points		      [40, 0; 0, 55]
       DstBlock		      "Mux1"
       DstPort		      3
     }
@@ -1721,6 +1869,18 @@ Model {
       SrcBlock		      "Constant1"
       SrcPort		      1
       DstBlock		      "Plant"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Constant2"
+      SrcPort		      1
+      DstBlock		      "Plant"
+      DstPort		      3
+    }
+    Line {
+      SrcBlock		      "Plant"
+      SrcPort		      7
+      DstBlock		      "Roll"
       DstPort		      1
     }
   }
