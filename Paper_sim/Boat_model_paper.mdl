@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.141"
+    ComputedModelVersion    "1.144"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -44,10 +44,10 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Administrator"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon May 18 01:46:28 2009"
-  ModelVersionFormat	  "1.%<AutoIncrement:141>"
+  LastModifiedDate	  "Mon May 18 12:39:49 2009"
+  ModelVersionFormat	  "1.%<AutoIncrement:144>"
   ConfigurationManager	  "None"
-  SimulationMode	  "normal"
+  SimulationMode	  "accelerator"
   LinearizationMsg	  "none"
   Profile		  off
   ParamWorkspaceSource	  "MATLABWorkspace"
@@ -105,7 +105,7 @@ Model {
 	  $ObjectID		  2
 	  Version		  "1.2.0"
 	  StartTime		  "0.0"
-	  StopTime		  "1000"
+	  StopTime		  "500"
 	  AbsTol		  "auto"
 	  FixedStep		  ".01"
 	  InitialStep		  "auto"
@@ -589,6 +589,14 @@ Model {
       SaturateOnIntegerOverflow	on
     }
     Block {
+      BlockType		      MATLABFcn
+      MATLABFcn		      "sin"
+      OutputDimensions	      "-1"
+      OutputSignalType	      "auto"
+      Output1D		      on
+      SampleTime	      "-1"
+    }
+    Block {
       BlockType		      Mux
       Inputs		      "4"
       DisplayOption	      "none"
@@ -750,7 +758,7 @@ Model {
   }
   System {
     Name		    "Boat_model_paper"
-    Location		    [6, 82, 1274, 679]
+    Location		    [2, 78, 1278, 750]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -775,7 +783,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Boat sim"
-	Location		[6, 82, 1257, 662]
+	Location		[2, 78, 1261, 733]
 	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -812,7 +820,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Boat plant"
-	    Location		    [2, 78, 1278, 750]
+	    Location		    [2, 78, 1261, 733]
 	    Open		    on
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -905,7 +913,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Forces & Moments"
-		Location		[2, 82, 1270, 754]
+		Location		[2, 78, 1278, 750]
 		Open			on
 		ModelBrowserVisibility	off
 		ModelBrowserWidth	200
@@ -1016,6 +1024,7 @@ Model {
 		  Name			  "Divide"
 		  Ports			  [2, 1]
 		  Position		  [240, 417, 270, 448]
+		  ShowName		  off
 		  Inputs		  "*/"
 		  CollapseMode		  "All dimensions"
 		  InputSameDT		  off
@@ -1058,7 +1067,7 @@ Model {
 		  Name			  "Gain2"
 		  Position		  [480, 275, 515, 315]
 		  ShowName		  off
-		  Gain			  "rho_w*C_F*rudder_area"
+		  Gain			  "0.5*rho_w*C_F*rudder_area"
 		  ParameterDataTypeMode	  "Inherit via internal rule"
 		  OutDataTypeMode	  "Inherit via internal rule"
 		  SaturateOnIntegerOverflow off
@@ -1086,14 +1095,16 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Initial east1"
-		  Position		  [865, 440, 895, 470]
+		  Position		  [960, 365, 990, 395]
+		  Orientation		  "down"
+		  NamePlacement		  "alternate"
 		  ShowName		  off
-		  Value			  "[cp_x 0 cp_z] - [cg_x 0 cg_z]"
+		  Value			  "[x_cp 0 z_cp] - [x_cg 0 z_cg]"
 		}
 		Block {
 		  BlockType		  Constant
 		  Name			  "Initial east2"
-		  Position		  [835, 405, 865, 435]
+		  Position		  [835, 450, 865, 480]
 		  ShowName		  off
 		  Value			  "0"
 		}
@@ -1102,13 +1113,14 @@ Model {
 		  Name			  "Math\nFunction"
 		  Ports			  [1, 1]
 		  Position		  [260, 280, 290, 310]
+		  ShowName		  off
 		  Operator		  "square"
 		}
 		Block {
 		  BlockType		  Mux
 		  Name			  "Mux"
 		  Ports			  [3, 1]
-		  Position		  [945, 401, 950, 439]
+		  Position		  [945, 436, 950, 474]
 		  ShowName		  off
 		  Inputs		  "3"
 		  DisplayOption		  "bar"
@@ -1156,6 +1168,57 @@ Model {
 		  InputSameDT		  off
 		  OutDataTypeMode	  "Inherit via internal rule"
 		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Scope
+		  Name			  "Roll"
+		  Ports			  [1]
+		  Position		  [440, 384, 470, 416]
+		  Floating		  off
+		  Location		  [5, 52, 1285, 769]
+		  Open			  off
+		  NumInputPorts		  "1"
+		  List {
+		    ListType		    AxesTitles
+		    axes1		    "%<SignalLabel>"
+		  }
+		  SaveName		  "ScopeData1"
+		  DataFormat		  "StructureWithTime"
+		  SampleTime		  "0"
+		}
+		Block {
+		  BlockType		  Scope
+		  Name			  "Roll1"
+		  Ports			  [1]
+		  Position		  [770, 369, 800, 401]
+		  Floating		  off
+		  Location		  [5, 52, 1285, 769]
+		  Open			  off
+		  NumInputPorts		  "1"
+		  List {
+		    ListType		    AxesTitles
+		    axes1		    "%<SignalLabel>"
+		  }
+		  SaveName		  "ScopeData5"
+		  DataFormat		  "StructureWithTime"
+		  SampleTime		  "0"
+		}
+		Block {
+		  BlockType		  Scope
+		  Name			  "Roll2"
+		  Ports			  [1]
+		  Position		  [890, 104, 920, 136]
+		  Floating		  off
+		  Location		  [5, 52, 1285, 769]
+		  Open			  off
+		  NumInputPorts		  "1"
+		  List {
+		    ListType		    AxesTitles
+		    axes1		    "%<SignalLabel>"
+		  }
+		  SaveName		  "ScopeData6"
+		  DataFormat		  "StructureWithTime"
+		  SampleTime		  "0"
 		}
 		Block {
 		  BlockType		  Saturate
@@ -1253,7 +1316,7 @@ Model {
 		  BlockType		  Trigonometry
 		  Name			  "Trigonometric\nFunction1"
 		  Ports			  [1, 1]
-		  Position		  [550, 400, 580, 430]
+		  Position		  [555, 400, 585, 430]
 		  ShowName		  off
 		}
 		Block {
@@ -1476,18 +1539,25 @@ Model {
 		  Labels		  [0, 0]
 		  SrcBlock		  "Sum3"
 		  SrcPort		  1
-		  Points		  [170, 0]
+		  Points		  [65, 0]
 		  Branch {
+		    Points		    [105, 0]
+		    Branch {
 		    DstBlock		    "Abs"
 		    DstPort		    1
-		  }
-		  Branch {
+		    }
+		    Branch {
 		    DstBlock		    "Sign"
 		    DstPort		    1
-		  }
-		  Branch {
+		    }
+		    Branch {
 		    Points		    [-45, 0]
 		    DstBlock		    "Gain4"
+		    DstPort		    1
+		    }
+		  }
+		  Branch {
+		    DstBlock		    "Roll"
 		    DstPort		    1
 		  }
 		}
@@ -1547,8 +1617,15 @@ Model {
 		  SrcBlock		  "Unary Minus"
 		  SrcPort		  1
 		  Points		  [5, 0]
-		  DstBlock		  "Sum1"
-		  DstPort		  3
+		  Branch {
+		    DstBlock		    "Sum1"
+		    DstPort		    3
+		  }
+		  Branch {
+		    Points		    [0, 25]
+		    DstBlock		    "Roll2"
+		    DstPort		    1
+		  }
 		}
 		Line {
 		  SrcBlock		  "Product2"
@@ -1580,16 +1657,10 @@ Model {
 		    DstPort		    1
 		  }
 		  Branch {
-		    Points		    [0, 0; 0, 80]
+		    Points		    [0, 105]
 		    DstBlock		    "Mux"
-		    DstPort		    3
+		    DstPort		    2
 		  }
-		}
-		Line {
-		  SrcBlock		  "Initial east1"
-		  SrcPort		  1
-		  DstBlock		  "Cross Product"
-		  DstPort		  2
 		}
 		Line {
 		  SrcBlock		  "Cross Product"
@@ -1611,12 +1682,6 @@ Model {
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Initial east2"
-		  SrcPort		  1
-		  DstBlock		  "Mux"
-		  DstPort		  2
-		}
-		Line {
 		  SrcBlock		  "Switch"
 		  SrcPort		  1
 		  Points		  [15, 0]
@@ -1628,19 +1693,34 @@ Model {
 		    DstBlock		    "Product3"
 		    DstPort		    2
 		  }
-		}
-		Line {
-		  SrcBlock		  "Mux"
-		  SrcPort		  1
-		  Points		  [10, 0; 0, 20]
-		  DstBlock		  "Cross Product"
-		  DstPort		  1
+		  Branch {
+		    DstBlock		    "Roll1"
+		    DstPort		    1
+		  }
 		}
 		Line {
 		  SrcBlock		  "Saturation"
 		  SrcPort		  1
 		  DstBlock		  "Divide"
 		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "Initial east2"
+		  SrcPort		  1
+		  DstBlock		  "Mux"
+		  DstPort		  3
+		}
+		Line {
+		  SrcBlock		  "Mux"
+		  SrcPort		  1
+		  DstBlock		  "Cross Product"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "Initial east1"
+		  SrcPort		  1
+		  DstBlock		  "Cross Product"
+		  DstPort		  1
 		}
 	      }
 	    }
@@ -1793,7 +1873,7 @@ Model {
 	      Ports		      [1]
 	      Position		      [930, 79, 960, 111]
 	      Floating		      off
-	      Location		      [1, 52, 1281, 769]
+	      Location		      [5, 52, 1285, 769]
 	      Open		      off
 	      NumInputPorts	      "1"
 	      List {
@@ -1810,7 +1890,7 @@ Model {
 	      Ports		      [1]
 	      Position		      [1075, 79, 1105, 111]
 	      Floating		      off
-	      Location		      [1, 52, 1281, 769]
+	      Location		      [5, 52, 1285, 769]
 	      Open		      off
 	      NumInputPorts	      "1"
 	      List {
@@ -2514,8 +2594,8 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"r_plant"
-		Location		[2, 82, 1270, 754]
-		Open			off
+		Location		[2, 78, 1278, 750]
+		Open			on
 		ModelBrowserVisibility	off
 		ModelBrowserWidth	200
 		ScreenColor		"white"
@@ -4378,14 +4458,14 @@ Model {
 	    Line {
 	      SrcBlock		      "Rudder dynamics"
 	      SrcPort		      1
-	      Points		      [30, 0; 0, -70]
+	      Points		      [30, 0]
 	      Branch {
-		Points			[-75, 0; 0, -170]
+		Points			[0, -95; -80, 0; 0, -145]
 		DstBlock		"Forces & Moments"
 		DstPort			2
 	      }
 	      Branch {
-		Points			[0, 325]
+		Points			[0, 255]
 		DstBlock		"rudder"
 		DstPort			1
 	      }
@@ -4892,13 +4972,21 @@ Model {
       Name		      "Constant"
       Position		      [400, 120, 430, 150]
       ShowName		      off
-      Value		      "0"
+      Value		      ".1"
     }
     Block {
       BlockType		      Constant
       Name		      "Constant1"
       Position		      [400, 220, 430, 250]
       ShowName		      off
+    }
+    Block {
+      BlockType		      MATLABFcn
+      Name		      "MATLAB Fcn"
+      Ports		      [1]
+      Position		      [1070, 305, 1130, 335]
+      MATLABFcn		      "render_boat(u(1), u(2), u(3), u(4))"
+      OutputDimensions	      "0"
     }
     Block {
       BlockType		      Reference
@@ -5007,7 +5095,7 @@ Model {
       Ports		      [1]
       Position		      [885, 344, 915, 376]
       Floating		      off
-      Location		      [1, 52, 1281, 769]
+      Location		      [5, 52, 1285, 769]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -5021,7 +5109,8 @@ Model {
     Line {
       SrcBlock		      "Mux1"
       SrcPort		      1
-      Points		      [25, 0]
+      DstBlock		      "MATLAB Fcn"
+      DstPort		      1
     }
     Line {
       SrcBlock		      "Boat sim"
