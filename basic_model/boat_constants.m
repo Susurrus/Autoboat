@@ -8,6 +8,7 @@ phi_0 = 0;              % Initial heading
 sea_state = 0;          % The sea state on the Beaufort Scale
 T_step = 0.01;          % Simulation timestep
 battery_tray_angle = 0; % Battery tray angle
+initial_charge = 20;    % Initial boat charge (J)
 
 % Known constants
 
@@ -34,3 +35,4 @@ cg_z = .0508;           % Center of gravity relative to boat center: 1/6' (m)
 rudder_angle_dot_max = 10;   % Maximum rate of change of rudder angle (radians/s)
 proportional_band = .5;      % Proportional band of the rudder response (radians)
 roll_period = 3;        % Periodicity of roll. (s)
+power_coefficients = [5.6667 9.6667 0]; % Power coefficients for use in the motor current draw calculations
