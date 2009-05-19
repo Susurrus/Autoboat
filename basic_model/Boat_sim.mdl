@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.96"
+    ComputedModelVersion    "1.108"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -44,8 +44,8 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Administrator"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon May 18 15:03:42 2009"
-  ModelVersionFormat	  "1.%<AutoIncrement:96>"
+  LastModifiedDate	  "Mon May 18 17:32:24 2009"
+  ModelVersionFormat	  "1.%<AutoIncrement:108>"
   ConfigurationManager	  "None"
   SimulationMode	  "accelerator"
   LinearizationMsg	  "none"
@@ -706,7 +706,7 @@ Model {
   }
   System {
     Name		    "Boat_sim"
-    Location		    [2, 78, 1278, 750]
+    Location		    [2, 82, 1270, 754]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -723,7 +723,7 @@ Model {
     Block {
       BlockType		      Constant
       Name		      "Constant"
-      Position		      [375, 205, 405, 235]
+      Position		      [335, 175, 365, 205]
       ShowName		      off
     }
     Block {
@@ -736,9 +736,41 @@ Model {
     Block {
       BlockType		      Constant
       Name		      "Constant2"
-      Position		      [375, 255, 405, 285]
+      Position		      [375, 195, 405, 225]
       ShowName		      off
       Value		      "0.3"
+      SampleTime	      "-1"
+    }
+    Block {
+      BlockType		      Constant
+      Name		      "Constant3"
+      Position		      [340, 215, 370, 245]
+      ShowName		      off
+      Value		      "0.3"
+      SampleTime	      "-1"
+    }
+    Block {
+      BlockType		      Constant
+      Name		      "Constant4"
+      Position		      [375, 235, 405, 265]
+      ShowName		      off
+      Value		      "0.3"
+      SampleTime	      "-1"
+    }
+    Block {
+      BlockType		      Constant
+      Name		      "Constant5"
+      Position		      [375, 275, 405, 305]
+      ShowName		      off
+      Value		      "pi/2"
+      SampleTime	      "-1"
+    }
+    Block {
+      BlockType		      Constant
+      Name		      "Constant6"
+      Position		      [340, 255, 370, 285]
+      ShowName		      off
+      SampleTime	      "-1"
     }
     Block {
       BlockType		      Scope
@@ -786,15 +818,15 @@ Model {
     Block {
       BlockType		      SubSystem
       Name		      "Plant"
-      Ports		      [3, 7]
-      Position		      [455, 142, 625, 298]
+      Ports		      [7, 7]
+      Position		      [455, 152, 625, 308]
       MinAlgLoopOccurrences   off
       RTWSystemCode	      "Auto"
       FunctionWithSeparateData off
       MaskHideContents	      off
       System {
 	Name			"Plant"
-	Location		[2, 78, 1278, 750]
+	Location		[2, 82, 1270, 754]
 	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -810,29 +842,77 @@ Model {
 	Block {
 	  BlockType		  Inport
 	  Name			  "Rudder"
-	  Position		  [60, 148, 90, 162]
+	  Position		  [65, 188, 95, 202]
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "Throttle"
-	  Position		  [60, 113, 90, 127]
+	  Position		  [65, 148, 95, 162]
 	  Port			  "2"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "Tray angle"
-	  Position		  [60, 183, 90, 197]
+	  Position		  [65, 223, 95, 237]
 	  Port			  "3"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "Wind speed"
+	  Position		  [65, 48, 95, 62]
+	  Port			  "4"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "Wind heading"
+	  Position		  [65, 93, 95, 107]
+	  Port			  "5"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "Current speed"
+	  Position		  [55, 378, 85, 392]
+	  Port			  "6"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "Current heading"
+	  Position		  [55, 418, 85, 432]
+	  Port			  "7"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Gain
 	  Name			  "Convert to\nacceleration"
-	  Position		  [695, 95, 755, 135]
+	  Position		  [700, 150, 760, 190]
 	  ShowName		  off
 	  Gain			  "1/mass"
+	  ParameterDataTypeMode	  "Inherit via internal rule"
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Gain
+	  Name			  "Convert to\nacceleration1"
+	  Position		  [135, 36, 165, 74]
+	  ShowName		  off
+	  Gain			  "wind_effect"
+	  ParameterDataTypeMode	  "Inherit via internal rule"
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Gain
+	  Name			  "Convert to\nacceleration2"
+	  Position		  [400, 366, 430, 404]
+	  ShowName		  off
+	  Gain			  "current_effect"
 	  ParameterDataTypeMode	  "Inherit via internal rule"
 	  OutDataTypeMode	  "Inherit via internal rule"
 	  SaturateOnIntegerOverflow off
@@ -841,14 +921,14 @@ Model {
 	  BlockType		  Integrator
 	  Name			  "Convert to velocity"
 	  Ports			  [1, 1]
-	  Position		  [820, 115, 850, 145]
+	  Position		  [825, 155, 855, 185]
 	  ShowName		  off
 	  IgnoreLimit		  off
 	}
 	Block {
 	  BlockType		  Gain
 	  Name			  "Divide by\nwheelbase"
-	  Position		  [1005, 314, 1090, 366]
+	  Position		  [780, 419, 865, 471]
 	  Gain			  "1/wheelbase"
 	  ParameterDataTypeMode	  "Inherit via internal rule"
 	  OutDataTypeMode	  "Inherit via internal rule"
@@ -858,22 +938,22 @@ Model {
 	  BlockType		  Integrator
 	  Name			  "East Integrator"
 	  Ports			  [1, 1]
-	  Position		  [1000, 205, 1030, 235]
+	  Position		  [1020, 245, 1050, 275]
 	  IgnoreLimit		  off
 	}
 	Block {
 	  BlockType		  SubSystem
 	  Name			  "Forces & Moments"
 	  Ports			  [4, 2]
-	  Position		  [520, 103, 635, 202]
+	  Position		  [525, 143, 640, 242]
 	  MinAlgLoopOccurrences	  off
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Forces & Moments"
-	    Location		    [2, 78, 1278, 750]
-	    Open		    on
+	    Location		    [2, 82, 1270, 754]
+	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -1027,7 +1107,7 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "X"
-	      Position		      [450, 48, 480, 62]
+	      Position		      [485, 48, 515, 62]
 	      IconDisplay	      "Port number"
 	      BusOutputAsStruct	      off
 	    }
@@ -1135,7 +1215,7 @@ Model {
 	  BlockType		  Integrator
 	  Name			  "Heading Integrator"
 	  Ports			  [1, 1]
-	  Position		  [550, 425, 580, 455]
+	  Position		  [555, 490, 585, 520]
 	  Orientation		  "left"
 	  NamePlacement		  "alternate"
 	  IgnoreLimit		  off
@@ -1149,43 +1229,48 @@ Model {
 	Block {
 	  BlockType		  Constant
 	  Name			  "Initial east"
-	  Position		  [1115, 235, 1145, 265]
+	  Position		  [1120, 275, 1150, 305]
 	  Orientation		  "left"
 	  Value			  "e_0"
+	  SampleTime		  "-1"
 	}
 	Block {
 	  BlockType		  Constant
 	  Name			  "Initial heading"
-	  Position		  [510, 465, 540, 495]
+	  Position		  [515, 530, 545, 560]
 	  Orientation		  "left"
 	  Value			  "phi_0"
+	  SampleTime		  "-1"
 	}
 	Block {
 	  BlockType		  Constant
 	  Name			  "Initial north"
-	  Position		  [1115, 160, 1145, 190]
+	  Position		  [1120, 185, 1150, 215]
 	  Orientation		  "left"
 	  Value			  "n_0"
+	  SampleTime		  "-1"
 	}
 	Block {
 	  BlockType		  Integrator
 	  Name			  "North Integrator"
 	  Ports			  [1, 1]
-	  Position		  [1005, 105, 1035, 135]
+	  Position		  [1010, 130, 1040, 160]
 	  IgnoreLimit		  off
 	}
 	Block {
 	  BlockType		  Constant
 	  Name			  "Phase shift2"
-	  Position		  [420, 490, 450, 520]
+	  Position		  [425, 555, 455, 585]
 	  ShowName		  off
 	  Value			  "pi/2"
+	  SampleTime		  "-1"
 	}
 	Block {
 	  BlockType		  Product
 	  Name			  "Product1"
 	  Ports			  [2, 1]
-	  Position		  [910, 222, 940, 253]
+	  Position		  [905, 252, 935, 283]
+	  ShowName		  off
 	  CollapseMode		  "All dimensions"
 	  InputSameDT		  off
 	  OutDataTypeMode	  "Inherit via internal rule"
@@ -1195,7 +1280,8 @@ Model {
 	  BlockType		  Product
 	  Name			  "Product2"
 	  Ports			  [2, 1]
-	  Position		  [880, 100, 910, 140]
+	  Position		  [885, 140, 915, 180]
+	  ShowName		  off
 	  CollapseMode		  "All dimensions"
 	  InputSameDT		  off
 	  OutDataTypeMode	  "Inherit via internal rule"
@@ -1205,7 +1291,51 @@ Model {
 	  BlockType		  Product
 	  Name			  "Product3"
 	  Ports			  [2, 1]
-	  Position		  [955, 322, 985, 353]
+	  Position		  [730, 427, 760, 458]
+	  ShowName		  off
+	  CollapseMode		  "All dimensions"
+	  InputSameDT		  off
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Product
+	  Name			  "Product4"
+	  Ports			  [2, 1]
+	  Position		  [885, 70, 915, 110]
+	  ShowName		  off
+	  CollapseMode		  "All dimensions"
+	  InputSameDT		  off
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Product
+	  Name			  "Product5"
+	  Ports			  [2, 1]
+	  Position		  [910, 322, 940, 353]
+	  ShowName		  off
+	  CollapseMode		  "All dimensions"
+	  InputSameDT		  off
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Product
+	  Name			  "Product6"
+	  Ports			  [2, 1]
+	  Position		  [910, 357, 940, 388]
+	  ShowName		  off
+	  CollapseMode		  "All dimensions"
+	  InputSameDT		  off
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Product
+	  Name			  "Product7"
+	  Ports			  [2, 1]
+	  Position		  [885, 25, 915, 65]
 	  ShowName		  off
 	  CollapseMode		  "All dimensions"
 	  InputSameDT		  off
@@ -1216,7 +1346,7 @@ Model {
 	  BlockType		  SubSystem
 	  Name			  "Rudder dynamics"
 	  Ports			  [1, 1]
-	  Position		  [175, 272, 315, 338]
+	  Position		  [180, 247, 320, 313]
 	  MinAlgLoopOccurrences	  off
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
@@ -1347,9 +1477,23 @@ Model {
 	}
 	Block {
 	  BlockType		  Sum
+	  Name			  "Sum1"
+	  Ports			  [3, 1]
+	  Position		  [945, 130, 975, 160]
+	  NamePlacement		  "alternate"
+	  ShowName		  off
+	  IconShape		  "round"
+	  Inputs		  "+++|"
+	  CollapseMode		  "All dimensions"
+	  InputSameDT		  off
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Sum
 	  Name			  "Sum2"
 	  Ports			  [3, 1]
-	  Position		  [450, 440, 480, 470]
+	  Position		  [455, 505, 485, 535]
 	  Orientation		  "left"
 	  NamePlacement		  "alternate"
 	  ShowName		  off
@@ -1364,7 +1508,7 @@ Model {
 	  BlockType		  Sum
 	  Name			  "Sum3"
 	  Ports			  [2, 1]
-	  Position		  [1075, 105, 1105, 135]
+	  Position		  [1080, 130, 1110, 160]
 	  NamePlacement		  "alternate"
 	  ShowName		  off
 	  IconShape		  "round"
@@ -1378,7 +1522,7 @@ Model {
 	  BlockType		  Sum
 	  Name			  "Sum4"
 	  Ports			  [2, 1]
-	  Position		  [1070, 205, 1100, 235]
+	  Position		  [1075, 245, 1105, 275]
 	  NamePlacement		  "alternate"
 	  ShowName		  off
 	  IconShape		  "round"
@@ -1389,9 +1533,23 @@ Model {
 	  SaturateOnIntegerOverflow off
 	}
 	Block {
+	  BlockType		  Sum
+	  Name			  "Sum5"
+	  Ports			  [3, 1]
+	  Position		  [965, 255, 995, 285]
+	  NamePlacement		  "alternate"
+	  ShowName		  off
+	  IconShape		  "round"
+	  Inputs		  "|+++"
+	  CollapseMode		  "All dimensions"
+	  InputSameDT		  off
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
 	  BlockType		  Saturate
 	  Name			  "Throttle limiter"
-	  Position		  [280, 105, 310, 135]
+	  Position		  [285, 140, 315, 170]
 	  UpperLimit		  "1"
 	  LowerLimit		  "0"
 	}
@@ -1399,7 +1557,7 @@ Model {
 	  BlockType		  Trigonometry
 	  Name			  "Trigonometric\nFunction"
 	  Ports			  [1, 1]
-	  Position		  [900, 360, 930, 390]
+	  Position		  [670, 435, 700, 465]
 	  ShowName		  off
 	  Operator		  "tan"
 	  OutputSignalType	  "real"
@@ -1408,30 +1566,64 @@ Model {
 	  BlockType		  Trigonometry
 	  Name			  "Trigonometric\nFunction1"
 	  Ports			  [1, 1]
-	  Position		  [665, 240, 695, 270]
+	  Position		  [670, 280, 700, 310]
 	  ShowName		  off
+	  Operator		  "cos"
 	  OutputSignalType	  "real"
 	}
 	Block {
 	  BlockType		  Trigonometry
 	  Name			  "Trigonometric\nFunction2"
 	  Ports			  [1, 1]
-	  Position		  [665, 60, 695, 90]
+	  Position		  [660, 120, 690, 150]
+	  ShowName		  off
+	  OutputSignalType	  "real"
+	}
+	Block {
+	  BlockType		  Trigonometry
+	  Name			  "Trigonometric\nFunction3"
+	  Ports			  [1, 1]
+	  Position		  [660, 85, 690, 115]
+	  ShowName		  off
+	  OutputSignalType	  "real"
+	}
+	Block {
+	  BlockType		  Trigonometry
+	  Name			  "Trigonometric\nFunction4"
+	  Ports			  [1, 1]
+	  Position		  [670, 315, 700, 345]
 	  ShowName		  off
 	  Operator		  "cos"
 	  OutputSignalType	  "real"
 	}
 	Block {
+	  BlockType		  Trigonometry
+	  Name			  "Trigonometric\nFunction5"
+	  Ports			  [1, 1]
+	  Position		  [670, 350, 700, 380]
+	  ShowName		  off
+	  Operator		  "cos"
+	  OutputSignalType	  "real"
+	}
+	Block {
+	  BlockType		  Trigonometry
+	  Name			  "Trigonometric\nFunction6"
+	  Ports			  [1, 1]
+	  Position		  [660, 20, 690, 50]
+	  ShowName		  off
+	  OutputSignalType	  "real"
+	}
+	Block {
 	  BlockType		  Outport
 	  Name			  "North position"
-	  Position		  [1155, 113, 1185, 127]
+	  Position		  [1160, 138, 1190, 152]
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
 	}
 	Block {
 	  BlockType		  Outport
 	  Name			  "East position"
-	  Position		  [1170, 213, 1200, 227]
+	  Position		  [1175, 253, 1205, 267]
 	  Port			  "2"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -1439,7 +1631,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Surge\nVelocity"
-	  Position		  [1115, 283, 1145, 297]
+	  Position		  [895, 398, 925, 412]
 	  Port			  "3"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -1447,7 +1639,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Surge\nAcceleration"
-	  Position		  [820, 158, 850, 172]
+	  Position		  [815, 198, 845, 212]
 	  Port			  "4"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -1455,7 +1647,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Heading"
-	  Position		  [375, 468, 405, 482]
+	  Position		  [380, 533, 410, 547]
 	  Port			  "5"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -1463,7 +1655,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Rudder Angle"
-	  Position		  [885, 403, 915, 417]
+	  Position		  [670, 473, 700, 487]
 	  Port			  "6"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -1471,7 +1663,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Roll"
-	  Position		  [670, 173, 700, 187]
+	  Position		  [675, 213, 705, 227]
 	  Port			  "7"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -1479,14 +1671,13 @@ Model {
 	Line {
 	  SrcBlock		  "Trigonometric\nFunction2"
 	  SrcPort		  1
-	  Points		  [155, 0; 0, 35]
+	  Points		  [165, 0; 0, 15]
 	  DstBlock		  "Product2"
 	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Trigonometric\nFunction"
 	  SrcPort		  1
-	  Points		  [5, 0]
 	  DstBlock		  "Product3"
 	  DstPort		  2
 	}
@@ -1497,16 +1688,9 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Product1"
-	  SrcPort		  1
-	  Points		  [0, -20]
-	  DstBlock		  "East Integrator"
-	  DstPort		  1
-	}
-	Line {
 	  SrcBlock		  "Divide by\nwheelbase"
 	  SrcPort		  1
-	  Points		  [20, 0; 0, 100]
+	  Points		  [5, 0; 0, 60]
 	  DstBlock		  "Heading Integrator"
 	  DstPort		  1
 	}
@@ -1515,55 +1699,40 @@ Model {
 	  SrcPort		  1
 	  Points		  [0, 0]
 	  Branch {
-	    Points		    [0, 100; 0, 0]
+	    DstBlock		    "Product2"
+	    DstPort		    2
+	  }
+	  Branch {
+	    Points		    [0, 100]
 	    Branch {
+	      Points		      [30, 0]
 	      DstBlock		      "Product1"
 	      DstPort		      1
 	    }
 	    Branch {
-	      Points		      [0, 60; 0, 0]
-	      Branch {
-		Points			[0, 0]
-		Branch {
-		  Points		  [0, 0; 0, 40]
-		  DstBlock		  "Product3"
-		  DstPort		  1
-		}
-		Branch {
-		  Labels		  [0, 0]
-		  Points		  [0, -60; -370, 0; 0, -65]
-		  DstBlock		  "Forces & Moments"
-		  DstPort		  3
-		}
-	      }
+	      Points		      [0, 135]
 	      Branch {
 		DstBlock		"Surge\nVelocity"
 		DstPort			1
 	      }
+	      Branch {
+		Points			[-145, 0]
+		Branch {
+		  DstBlock		  "Product3"
+		  DstPort		  1
+		}
+		Branch {
+		  Points		  [-225, 0; 0, -200]
+		  DstBlock		  "Forces & Moments"
+		  DstPort		  3
+		}
+	      }
 	    }
-	  }
-	  Branch {
-	    DstBlock		    "Product2"
-	    DstPort		    2
-	  }
-	}
-	Line {
-	  SrcBlock		  "Convert to\nacceleration"
-	  SrcPort		  1
-	  Points		  [45, 0; 0, 15]
-	  Branch {
-	    DstBlock		    "Convert to velocity"
-	    DstPort		    1
-	  }
-	  Branch {
-	    DstBlock		    "Surge\nAcceleration"
-	    DstPort		    1
 	  }
 	}
 	Line {
 	  SrcBlock		  "Forces & Moments"
 	  SrcPort		  1
-	  Points		  [0, -15]
 	  DstBlock		  "Convert to\nacceleration"
 	  DstPort		  1
 	}
@@ -1598,14 +1767,13 @@ Model {
 	    DstPort		    1
 	  }
 	  Branch {
-	    Points		    [-315, 0; 0, -200; 185, 0]
+	    Points		    [0, -225]
 	    Branch {
-	      Points		      [0, -180]
+	      Points		      [0, -160]
 	      DstBlock		      "Trigonometric\nFunction2"
 	      DstPort		      1
 	    }
 	    Branch {
-	      Points		      [5, 0]
 	      DstBlock		      "Trigonometric\nFunction1"
 	      DstPort		      1
 	    }
@@ -1651,7 +1819,6 @@ Model {
 	Line {
 	  SrcBlock		  "Throttle limiter"
 	  SrcPort		  1
-	  Points		  [190, 0]
 	  DstBlock		  "Forces & Moments"
 	  DstPort		  1
 	}
@@ -1663,22 +1830,16 @@ Model {
 	  DstPort		  3
 	}
 	Line {
-	  SrcBlock		  "Product2"
-	  SrcPort		  1
-	  DstBlock		  "North Integrator"
-	  DstPort		  1
-	}
-	Line {
 	  SrcBlock		  "Trigonometric\nFunction1"
 	  SrcPort		  1
-	  Points		  [0, -10]
+	  Points		  [0, -20]
 	  DstBlock		  "Product1"
 	  DstPort		  2
 	}
 	Line {
 	  SrcBlock		  "Rudder"
 	  SrcPort		  1
-	  Points		  [30, 0; 0, 150]
+	  Points		  [15, 0; 0, 85]
 	  DstBlock		  "Rudder dynamics"
 	  DstPort		  1
 	}
@@ -1687,18 +1848,18 @@ Model {
 	  SrcPort		  1
 	  Points		  [180, 0]
 	  Branch {
-	    Points		    [0, -165]
+	    Points		    [0, -100]
 	    DstBlock		    "Forces & Moments"
 	    DstPort		    2
 	  }
 	  Branch {
-	    Points		    [0, 70; 365, 0]
+	    Points		    [0, 170; 135, 0]
 	    Branch {
 	      DstBlock		      "Trigonometric\nFunction"
 	      DstPort		      1
 	    }
 	    Branch {
-	      Points		      [0, 35]
+	      Points		      [0, 30]
 	      DstBlock		      "Rudder Angle"
 	      DstPort		      1
 	    }
@@ -1716,13 +1877,175 @@ Model {
 	  DstBlock		  "Forces & Moments"
 	  DstPort		  4
 	}
+	Line {
+	  SrcBlock		  "Sum1"
+	  SrcPort		  1
+	  DstBlock		  "North Integrator"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Product2"
+	  SrcPort		  1
+	  DstBlock		  "Sum1"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Product4"
+	  SrcPort		  1
+	  Points		  [15, 0; 0, 40]
+	  DstBlock		  "Sum1"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Trigonometric\nFunction3"
+	  SrcPort		  1
+	  DstBlock		  "Product4"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Wind heading"
+	  SrcPort		  1
+	  Points		  [375, 0]
+	  Branch {
+	    DstBlock		    "Trigonometric\nFunction3"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, 230]
+	    DstBlock		    "Trigonometric\nFunction4"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  SrcBlock		  "Wind speed"
+	  SrcPort		  1
+	  DstBlock		  "Convert to\nacceleration1"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Convert to\nacceleration1"
+	  SrcPort		  1
+	  Points		  [0, 25; 610, 0]
+	  Branch {
+	    Points		    [0, 0]
+	    DstBlock		    "Product4"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, 265]
+	    DstBlock		    "Product5"
+	    DstPort		    2
+	  }
+	}
+	Line {
+	  SrcBlock		  "Trigonometric\nFunction4"
+	  SrcPort		  1
+	  DstBlock		  "Product5"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Product1"
+	  SrcPort		  1
+	  Points		  [14, 0]
+	  DstBlock		  "Sum5"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Sum5"
+	  SrcPort		  1
+	  Points		  [0, -10]
+	  DstBlock		  "East Integrator"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Product5"
+	  SrcPort		  1
+	  Points		  [9, 0]
+	  DstBlock		  "Sum5"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Product6"
+	  SrcPort		  1
+	  Points		  [35, 0]
+	  DstBlock		  "Sum5"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Trigonometric\nFunction5"
+	  SrcPort		  1
+	  DstBlock		  "Product6"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Current heading"
+	  SrcPort		  1
+	  Points		  [290, 0; 0, -60]
+	  Branch {
+	    DstBlock		    "Trigonometric\nFunction5"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, -330]
+	    DstBlock		    "Trigonometric\nFunction6"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  Labels		  [1, 0]
+	  SrcBlock		  "Current speed"
+	  SrcPort		  1
+	  DstBlock		  "Convert to\nacceleration2"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Product7"
+	  SrcPort		  1
+	  Points		  [40, 0]
+	  DstBlock		  "Sum1"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Trigonometric\nFunction6"
+	  SrcPort		  1
+	  DstBlock		  "Product7"
+	  DstPort		  1
+	}
+	Line {
+	  Labels		  [1, 0]
+	  SrcBlock		  "Convert to\nacceleration2"
+	  SrcPort		  1
+	  Points		  [10, 0; 0, -5]
+	  Branch {
+	    Points		    [0, -325]
+	    DstBlock		    "Product7"
+	    DstPort		    2
+	  }
+	  Branch {
+	    DstBlock		    "Product6"
+	    DstPort		    2
+	  }
+	}
+	Line {
+	  SrcBlock		  "Convert to\nacceleration"
+	  SrcPort		  1
+	  Points		  [35, 0]
+	  Branch {
+	    DstBlock		    "Convert to velocity"
+	    DstPort		    1
+	  }
+	  Branch {
+	    DstBlock		    "Surge\nAcceleration"
+	    DstPort		    1
+	  }
+	}
       }
     }
     Block {
       BlockType		      Reference
       Name		      "Position"
       Ports		      [2]
-      Position		      [880, 150, 910, 185]
+      Position		      [880, 155, 910, 190]
       SourceBlock	      "simulink/Sinks/XY Graph"
       SourceType	      "XY scope."
       ShowPortLabels	      "FromPortIcon"
@@ -1743,7 +2066,7 @@ Model {
       BlockType		      Scope
       Name		      "Roll"
       Ports		      [1]
-      Position		      [690, 264, 720, 296]
+      Position		      [690, 269, 720, 301]
       Floating		      off
       Location		      [1, 52, 1281, 769]
       Open		      off
@@ -1778,9 +2101,9 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      1
-      Points		      [205, 0]
+      Points		      [0, -5; 205, 0]
       Branch {
-	Points			[0, 135]
+	Points			[0, 130]
 	DstBlock		"Mux1"
 	DstPort			1
       }
@@ -1792,14 +2115,13 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      2
-      Points		      [140, 0]
+      Points		      [0, -10; 140, 0]
       Branch {
 	Points			[0, 125]
 	DstBlock		"Mux1"
 	DstPort			2
       }
       Branch {
-	Points			[95, 0]
 	DstBlock		"Position"
 	DstPort			2
       }
@@ -1814,7 +2136,7 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      5
-      Points		      [5, 0; 0, 10]
+      Points		      [5, 0]
       Branch {
 	Points			[0, 75; 100, 0]
 	Branch {
@@ -1836,7 +2158,7 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      4
-      Points		      [15, 0; 0, 20]
+      Points		      [0, 10]
       DstBlock		      "Mux"
       DstPort		      2
     }
@@ -1855,7 +2177,7 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      6
-      Points		      [40, 0; 0, 55]
+      Points		      [40, 0; 0, 45]
       DstBlock		      "Mux1"
       DstPort		      3
     }
@@ -1880,8 +2202,33 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      7
+      Points		      [0, -5]
       DstBlock		      "Roll"
       DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Constant3"
+      SrcPort		      1
+      DstBlock		      "Plant"
+      DstPort		      4
+    }
+    Line {
+      SrcBlock		      "Constant4"
+      SrcPort		      1
+      DstBlock		      "Plant"
+      DstPort		      5
+    }
+    Line {
+      SrcBlock		      "Constant6"
+      SrcPort		      1
+      DstBlock		      "Plant"
+      DstPort		      6
+    }
+    Line {
+      SrcBlock		      "Constant5"
+      SrcPort		      1
+      DstBlock		      "Plant"
+      DstPort		      7
     }
   }
 }

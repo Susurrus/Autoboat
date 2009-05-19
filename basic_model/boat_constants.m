@@ -24,6 +24,8 @@ rudder_angle_max = 1;   % Maximum angle of the rudder (radians)
 
 % Experimental constants
 
+wind_effect = 0.1;      % Wind effect coefficient. What % of the wind velocity affects the boat velocity
+current_effect = 0.1;   % Ocean current effect coefficient. What % of the current velocity affects the boat velocity
 K_t = 0.5;              % Thrust coefficient
 C_d_sea_surge = 340;    % Coefficient of drag for forward motion through water
 cg_x = .0508;           % Center of gravity relative to boat center: 1/6' (m)
