@@ -15,8 +15,8 @@ location.latitude = 36.955379;
 location.altitude = 1000;
 
 % Should be more than 90 degrees zenith to be dark.
-sun = sun_position(time,location)
+sun = sun_position(time,location);
 
 % Convert to radians
 sun.azimuth = pi/180*sun.azimuth;
-sun.zenith = pi/180*sun.zenith;
+sun.zenith = pi/180*sun.zenith
