@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.5"
+    ComputedModelVersion    "1.13"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -16,7 +16,7 @@ Model {
   LibraryLinkDisplay	  "none"
   WideLines		  off
   ShowLineDimensions	  off
-  ShowPortDataTypes	  off
+  ShowPortDataTypes	  on
   ShowLoopsOnError	  on
   IgnoreBidirectionalLines off
   ShowStorageClass	  off
@@ -44,8 +44,8 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Administrator"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Jul 10 10:59:50 2009"
-  ModelVersionFormat	  "1.%<AutoIncrement:5>"
+  LastModifiedDate	  "Fri Jul 10 13:51:30 2009"
+  ModelVersionFormat	  "1.%<AutoIncrement:13>"
   ConfigurationManager	  "None"
   SimulationMode	  "normal"
   LinearizationMsg	  "none"
@@ -607,6 +607,18 @@ Model {
   }
   BlockParameterDefaults {
     Block {
+      BlockType		      Constant
+      Value		      "1"
+      VectorParams1D	      on
+      SamplingMode	      "Sample based"
+      OutDataTypeMode	      "Inherit from 'Constant value'"
+      OutDataType	      "sfix(16)"
+      ConRadixGroup	      "Use specified scaling"
+      OutScaling	      "2^0"
+      SampleTime	      "inf"
+      FramePeriod	      "inf"
+    }
+    Block {
       BlockType		      Gain
       Gain		      "1"
       Multiplication	      "Element-wise(K.*u)"
@@ -645,6 +657,17 @@ Model {
       SimViewingDevice	      off
       DataTypeOverride	      "UseLocalSettings"
       MinMaxOverflowLogging   "UseLocalSettings"
+    }
+    Block {
+      BlockType		      Switch
+      Criteria		      "u2 >= Threshold"
+      Threshold		      "0"
+      InputSameDT	      on
+      OutDataTypeMode	      "Inherit via internal rule"
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      ZeroCross		      on
+      SampleTime	      "-1"
     }
   }
   AnnotationDefaults {
@@ -686,7 +709,7 @@ Model {
       Name		      "ADC Input"
       Tag		      "dsPIC_ADC"
       Ports		      [0, 1]
-      Position		      [55, 191, 205, 249]
+      Position		      [20, 191, 170, 249]
       NamePlacement	      "alternate"
       ShowName		      off
       Priority		      "5"
@@ -726,6 +749,27 @@ Model {
       SourceType	      ""
     }
     Block {
+      BlockType		      Constant
+      Name		      "Constant"
+      Position		      [275, 270, 305, 300]
+      ShowName		      off
+      Value		      "0"
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Digital Input"
+      Tag		      "dsPIC_Digital_Input"
+      Ports		      [0, 1]
+      Position		      [45, 265, 160, 305]
+      ShowName		      off
+      SourceBlock	      "dsPICdrivers/Digital I//O/Digital Input"
+      SourceType	      ""
+      PORT		      "D"
+      Pin		      "[6]"
+      SampleTime	      "-1"
+      OrderingInOutPopup      "None"
+    }
+    Block {
       BlockType		      Reference
       Name		      "DocBlock"
       Ports		      []
@@ -748,7 +792,7 @@ Model {
     Block {
       BlockType		      Gain
       Name		      "Gain"
-      Position		      [285, 205, 315, 235]
+      Position		      [215, 205, 245, 235]
       ShowName		      off
       Gain		      "1e-6*OC1max/.01"
       ParameterDataTypeMode   "Inherit via internal rule"
@@ -758,7 +802,7 @@ Model {
     Block {
       BlockType		      Gain
       Name		      "Gain1"
-      Position		      [385, 175, 415, 205]
+      Position		      [445, 175, 475, 205]
       ShowName		      off
       Gain		      ".5"
       ParameterDataTypeMode   "Inherit via internal rule"
@@ -793,7 +837,7 @@ Model {
       IOautoConf	      on
       typePort		      "[ 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  "
 "0  0  0  0  0  0  8  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0 "
-" 0  0  0  0  0  0  0  7  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0"
+" 0  0  0  0  0  0  0  7  0  0  0  0  0  9  0  0  0  0  0  0  0  0  0  0  0  0"
 "  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  "
 "0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0 ]"
       TRIS		      "[ 65535  65535  65535  65534  65535  65535  655"
@@ -835,19 +879,14 @@ Model {
       PortNumber	      "[0]"
       MaxValues		      "[49999]"
     }
-    Line {
-      SrcBlock		      "Gain"
-      SrcPort		      1
-      Points		      [15, 0]
-      Branch {
-	DstBlock		"Output Compare"
-	DstPort			2
-      }
-      Branch {
-	Points			[0, -30]
-	DstBlock		"Gain1"
-	DstPort			1
-      }
+    Block {
+      BlockType		      Switch
+      Name		      "Switch"
+      Position		      [330, 235, 360, 265]
+      ShowName		      off
+      InputSameDT	      off
+      OutDataTypeMode	      "Inherit via back propagation"
+      SaturateOnIntegerOverflow	off
     }
     Line {
       SrcBlock		      "Gain1"
@@ -861,24 +900,62 @@ Model {
       DstBlock		      "Gain"
       DstPort		      1
     }
+    Line {
+      SrcBlock		      "Gain"
+      SrcPort		      1
+      Points		      [30, 0; 0, 20]
+      DstBlock		      "Switch"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Switch"
+      SrcPort		      1
+      Points		      [30, 0; 0, -30]
+      Branch {
+	Points			[0, -30]
+	DstBlock		"Gain1"
+	DstPort			1
+      }
+      Branch {
+	DstBlock		"Output Compare"
+	DstPort			2
+      }
+    }
+    Line {
+      SrcBlock		      "Digital Input"
+      SrcPort		      1
+      Points		      [75, 0; 0, -35]
+      DstBlock		      "Switch"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Constant"
+      SrcPort		      1
+      Points		      [5, 0]
+      DstBlock		      "Switch"
+      DstPort		      3
+    }
   }
 }
 MatData {
   NumRecords		  1
   DataRecord {
     Tag			    DataTag0
-    Data		    "  %)30     .    F (   8    (     @         %    "
+    Data		    "  %)30     .    2 ,   8    (     @         %    "
 "\"     $    !     0         %  0 \"     $    0    =F5R<VEO;@!C;VYT96YT  X    "
 "X    !@    @    &          4    (     0    $    !          D    (    FIF9F9F9"
-"\\3\\.    \" (   8    (    !          %    \"     $   #1 0   0         0    T"
-"0$  %1H:7,@;6]D96P@9&5M;VYS=')A=&5S(&AO=R!T;R!U<V4@=&AE($]U='!U=\"!#;VUP87)E("
+"\\3\\.    N (   8    (    !          %    \"     $   \"' @   0         0    A"
+"P(  %1H:7,@;6]D96P@9&5M;VYS=')A=&5S(&AO=R!T;R!U<V4@=&AE($]U='!U=\"!#;VUP87)E("
 "&)L;V-K('!R;W9I9&5D('=I=&@@3'5B:6XG<R!B;&]C:W-E=\"X@1G5R=&AE<B!D;V-U;65N=&%T:"
 "6]N(&-A;B!B92!F;W5N9\"!O;@T*:&ES('=E8G-I=&4N#0H-\"E1H:7,@;6]D96P@=V%S(&1E<VEG"
 ";F5D(&9O<B!T:&4@17AP;&]R97(Q-B!B;V%R9\"!A;F0@=7-E<R!T:&4@3T,Q+U)$,\"!P;W)T(&9"
 "O<B!05TT@;W5T<'5T(&%N9\"!!3C4@9F]R(&EN<'5T(\"AO;B!T:&4@17AP;&]R97(Q-B!B;V%R9"
-"\"P@#0IT:&ES(&ES(&-O;FYE8W1E9\"!T;R!A;B!O;F)O87)D('!O=&5N=&EO;65T97(I+@T*#0I"
-"\">2!V87)Y:6YG(&EN('1H92!I;G!U=\"!V;VQT86=E('EO=2!S:&]U;&0@<V5E(&$@-3 E(&1U='"
-"D@8WEC;&4@4%=-(&]U='!U=\"!W:71H('1H92!P97)I;V0@8VAA;F=I;F<@8F5T=V5E;B!A8F]U="
-"\" Q,#5U<R!A;F0@,2XP,FUS+@         "
+"\"P@#0IT:&ES(&ES(&-O;FYE8W1E9\"!T;R!A;B!O;F)O87)D('!O=&5N=&EO;65T97(I+B!4:&4@"
+"4%=-(&ES(&5N86)L960@8GD@9&5F875L=\"!B=70@8G5T('!R;W9I9&EN9R!A(&AI9V@@<VEG;F%L"
+"(&]N(%)$,\" H=&AE(&QE9G0M;6]S= T*8G5T=&]N('-W:71C:\"!O;B!T:&4@17AP;&]R97(Q-B!"
+"B;V%R9\"P@=&AE(&]U='!U=\"!C86X@8F4@9&5A8W1I=F%T960@8GD@<V5T=&EN9R!T:&4@<&5R:6"
+"]D('1O(# N#0H-\"D)Y('9A<GEI;F<@:6X@=&AE(&EN<'5T('9O;'1A9V4@>6]U('-H;W5L9\"!S9"
+"64@82 U,\"4@9'5T>2!C>6-L92!05TT@;W5T<'5T('=I=&@@=&AE('!E<FEO9\"!C:&%N9VEN9R!B"
+"971W965N(&%B;W5T(#$P-75S(&%N9\" Q+C R;7,N  "
   }
 }
