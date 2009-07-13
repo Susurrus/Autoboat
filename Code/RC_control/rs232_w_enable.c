@@ -21,7 +21,7 @@ extern void send_short(short num, unsigned char enable) {
   // Make sure we limit our integer value. This ensures we generate a proper command.
   if (enable) {
     char ss[9];
-    sprintf(ss, "%d\r\n", num); // Convert our number into ASCII from base10
+    sprintf(ss, "%6d\r\n", num); // Convert our number into ASCII from base10
     char i = 0;
     while (i < 9) {
       while(U2STAbits.UTXBF==1); // Wait for buffer to be ready for more data
