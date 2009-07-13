@@ -17,7 +17,7 @@ extern void send_cc_command(short num, unsigned char enable) {
   // Make sure we limit our integer value. This ensures we generate a proper command.
   if (num <= 1023 && num >= -1024 && enable) {
     char ss[8];
-    sprintf(ss, "%.4d\r\n", num); // Convert our number into ASCII from base10
+    sprintf(ss, "CC%.4d\r\n", num); // Convert our number into ASCII from base10
     char i = 0;
     while (i < 8) {
       while(U2STAbits.UTXBF==1); // Wait for buffer to be ready for more data
