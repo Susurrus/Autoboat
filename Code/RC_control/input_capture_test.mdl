@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.45"
+    ComputedModelVersion    "1.53"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -42,10 +42,10 @@ Model {
   Creator		  "Administrator"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "Administrator"
+  LastModifiedBy	  "bmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Jul 10 11:03:34 2009"
-  ModelVersionFormat	  "1.%<AutoIncrement:45>"
+  LastModifiedDate	  "Mon Jul 13 11:03:34 2009"
+  ModelVersionFormat	  "1.%<AutoIncrement:53>"
   ConfigurationManager	  "None"
   SimulationMode	  "normal"
   LinearizationMsg	  "none"
@@ -322,7 +322,7 @@ Model {
 	  ConfigurationMode	  "Optimized"
 	  ProcessScript		  "dspic_make_rtw_hook"
 	  ConfigAtBuild		  off
-	  CustomSource		  "acs300_commands.c"
+	  CustomSource		  "rs232_w_enable.c"
 	  IncludeHyperlinkInReport off
 	  LaunchReport		  off
 	  TargetLang		  "C"
@@ -640,10 +640,78 @@ Model {
       SampleTime	      "-1"
     }
     Block {
+      BlockType		      Inport
+      Port		      "1"
+      UseBusObject	      off
+      BusObject		      "BusObject"
+      BusOutputAsStruct	      off
+      PortDimensions	      "-1"
+      SampleTime	      "-1"
+      DataType		      "auto"
+      OutDataType	      "sfix(16)"
+      OutScaling	      "2^0"
+      SignalType	      "auto"
+      SamplingMode	      "auto"
+      LatchByDelayingOutsideSignal off
+      LatchByCopyingInsideSignal off
+      Interpolate	      on
+    }
+    Block {
+      BlockType		      Outport
+      Port		      "1"
+      UseBusObject	      off
+      BusObject		      "BusObject"
+      BusOutputAsStruct	      off
+      PortDimensions	      "-1"
+      SampleTime	      "-1"
+      DataType		      "auto"
+      OutDataType	      "sfix(16)"
+      OutScaling	      "2^0"
+      SignalType	      "auto"
+      SamplingMode	      "auto"
+      OutputWhenDisabled      "held"
+      InitialOutput	      "[]"
+    }
+    Block {
+      BlockType		      RelationalOperator
+      Operator		      ">="
+      InputSameDT	      on
+      LogicOutDataTypeMode    "Logical (see Configuration Parameters: Optimiza"
+"tion)"
+      LogicDataType	      "uint(8)"
+      ZeroCross		      on
+      SampleTime	      "-1"
+    }
+    Block {
       BlockType		      "S-Function"
       FunctionName	      "system"
       SFunctionModules	      "''"
       PortCounts	      "[]"
+    }
+    Block {
+      BlockType		      SubSystem
+      ShowPortLabels	      "FromPortIcon"
+      Permissions	      "ReadWrite"
+      PermitHierarchicalResolution "All"
+      TreatAsAtomicUnit	      off
+      SystemSampleTime	      "-1"
+      RTWFcnNameOpts	      "Auto"
+      RTWFileNameOpts	      "Auto"
+      RTWMemSecFuncInitTerm   "Inherit from model"
+      RTWMemSecFuncExecute    "Inherit from model"
+      RTWMemSecDataConstants  "Inherit from model"
+      RTWMemSecDataInternal   "Inherit from model"
+      RTWMemSecDataParameters "Inherit from model"
+      SimViewingDevice	      off
+      DataTypeOverride	      "UseLocalSettings"
+      MinMaxOverflowLogging   "UseLocalSettings"
+    }
+    Block {
+      BlockType		      UnitDelay
+      X0		      "0"
+      SampleTime	      "1"
+      StateMustResolveToSignalObject off
+      RTWStateStorageClass    "Auto"
     }
   }
   AnnotationDefaults {
@@ -666,7 +734,7 @@ Model {
   }
   System {
     Name		    "input_capture_test"
-    Location		    [2, 82, 1270, 754]
+    Location		    [98, 279, 1366, 951]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -707,6 +775,44 @@ Model {
       SaturateOnIntegerOverflow	off
     }
     Block {
+      BlockType		      Reference
+      Name		      "Detect\nChange"
+      Ports		      [1, 1]
+      Position		      [655, 205, 715, 235]
+      SourceBlock	      "simulink/Logic and Bit\nOperations/Detect\nChan"
+"ge"
+      SourceType	      "Detect Change"
+      ShowPortLabels	      "FromPortIcon"
+      SystemSampleTime	      "-1"
+      FunctionWithSeparateData off
+      RTWMemSecFuncInitTerm   "Inherit from model"
+      RTWMemSecFuncExecute    "Inherit from model"
+      RTWMemSecDataConstants  "Inherit from model"
+      RTWMemSecDataInternal   "Inherit from model"
+      RTWMemSecDataParameters "Inherit from model"
+      vinit		      "0"
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "DocBlock"
+      Ports		      []
+      Position		      [472, 35, 512, 74]
+      ShowName		      off
+      UserDataPersistent      on
+      UserData		      "DataTag0"
+      SourceBlock	      "simulink/Model-Wide\nUtilities/DocBlock"
+      SourceType	      "DocBlock"
+      ShowPortLabels	      "FromPortIcon"
+      SystemSampleTime	      "-1"
+      FunctionWithSeparateData off
+      RTWMemSecFuncInitTerm   "Inherit from model"
+      RTWMemSecFuncExecute    "Inherit from model"
+      RTWMemSecDataConstants  "Inherit from model"
+      RTWMemSecDataInternal   "Inherit from model"
+      RTWMemSecDataParameters "Inherit from model"
+      DocumentType	      "Text"
+    }
+    Block {
       BlockType		      Gain
       Name		      "Gain"
       Position		      [465, 145, 495, 175]
@@ -720,7 +826,7 @@ Model {
       Name		      "Input Capture"
       Tag		      "dsPIC_PWM_IC"
       Ports		      [0, 2]
-      Position		      [20, 146, 170, 204]
+      Position		      [50, 146, 200, 204]
       Priority		      "5"
       SourceBlock	      "dsPICdrivers/Peripheral I//O/Input Capture"
       SourceType	      "Input driver for Input Capture Peripheral"
@@ -787,18 +893,6 @@ Model {
     }
     Block {
       BlockType		      Reference
-      Name		      "Tx Output"
-      Tag		      "dsPIC_TX"
-      Ports		      [1]
-      Position		      [530, 144, 600, 176]
-      Priority		      "5"
-      SourceBlock	      "dsPICdrivers/Serial PORT/Tx Output"
-      SourceType	      "Serial Transmition"
-      UART		      "2"
-      OrderingInOutPopup      "None"
-    }
-    Block {
-      BlockType		      Reference
       Name		      "UART Configuration"
       Tag		      "dsPIC_config_UART"
       Ports		      []
@@ -829,6 +923,61 @@ Model {
 "r : 0.16026  ||  max 3.8462 Bytes / Step"
       RealBaud		      "0"
     }
+    Block {
+      BlockType		      Reference
+      Name		      "Weighted\nMoving Average"
+      Ports		      [1, 1]
+      Position		      [555, 202, 625, 238]
+      SourceBlock	      "simulink/Discrete/Weighted\nMoving Average"
+      SourceType	      "Weighted Moving Average"
+      mgainval		      "[.3 .4 .3]"
+      vinit		      "0.0"
+      samptime		      ".1"
+      GainDataTypeScalingMode "Inherit via internal rule"
+      GainDataType	      "uint(16)"
+      MatRadixGroup	      "Best Precision: Matrix-wise"
+      GainScaling	      "2^-10"
+      OutputDataTypeScalingMode	"Inherit via back propagation"
+      OutDataType	      "sfix(16)"
+      OutScaling	      "2^-10"
+      LockScale		      off
+      RndMeth		      "Floor"
+      DoSatur		      off
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "cc_command"
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      [2]
+      Position		      [750, 145, 890, 200]
+      ShowName		      off
+      List {
+	ListType		RTWdata
+	FctDeclaration		"extern void send_short(int16_T u1, uint8_T u2"
+");"
+	FctCall			"send_short(%u1, %u2);"
+	fctName			"send_short"
+	INPUT_SIZE		"1"
+	OUTPUT_SIZE		"1"
+	NBR_INPUT		"2"
+	NBR_OUTPUT		"0"
+      }
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      fctName		      "'send_short'"
+      INPUT_SIZE	      "1"
+      INPUT1		      "int16"
+      INPUT2		      "uint8"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "--"
+      SampleTime	      "-1"
+      InputType		      "[ 3 2 ]"
+      OutputType	      "[ ]"
+      FctDeclaration	      "extern void send_short(int16_T u1, uint8_T u2);"
+      FctCall		      "send_short(%u1, %u2);"
+      OrderingInOutPopup      "None"
+    }
     Line {
       SrcBlock		      "Input Capture"
       SrcPort		      1
@@ -850,8 +999,43 @@ Model {
     Line {
       SrcBlock		      "Gain"
       SrcPort		      1
-      DstBlock		      "Tx Output"
+      Points		      [15, 0]
+      Branch {
+	DstBlock		"cc_command"
+	DstPort			1
+      }
+      Branch {
+	Points			[0, 60]
+	DstBlock		"Weighted\nMoving Average"
+	DstPort			1
+      }
+    }
+    Line {
+      SrcBlock		      "Weighted\nMoving Average"
+      SrcPort		      1
+      DstBlock		      "Detect\nChange"
       DstPort		      1
     }
+    Line {
+      SrcBlock		      "Detect\nChange"
+      SrcPort		      1
+      Points		      [5, 0; 0, -35]
+      DstBlock		      "cc_command"
+      DstPort		      2
+    }
+  }
+}
+MatData {
+  NumRecords		  1
+  DataRecord {
+    Tag			    DataTag0
+    Data		    "  %)30     .    H $   8    (     @         %    "
+"\"     $    !     0         %  0 \"     $    0    =F5R<VEO;@!C;VYT96YT  X    "
+"X    !@    @    &          4    (     0    $    !          D    (    FIF9F9F9"
+"\\3\\.    $ $   8    (    !          %    \"     $   #:     0         0    V@"
+"   %1H:7,@<WES=&5M(&ES(&1E<VEG;F5D(&9O<B!U<V4@=VET:\"!T:&4@17AP;&]R97(@,38@8F"
+"]A<F0N($ET(')E<75I<F5S('1H92!F;VQL;W=I;F<@8V]N;F5C=&EO;G,@87,@9F]L;&]W<SH-\"E"
+"!O<G0@4D0X(\"T@*&EN<'5T*2!05TUE9\"!I;G!U=\"!F<F]M(%)#(')E8V5I=F5R<PT*4V5R:6%L"
+"(&-O;FYE8W1I;VX@+2!-86EN(&1R:79E(&)O87)D#0I0;W=E<B M(&-O;FYE8W1E9 T*        "
   }
 }
