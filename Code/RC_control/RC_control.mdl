@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.123"
+    ComputedModelVersion    "1.235"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -42,10 +42,10 @@ Model {
   Creator		  "Administrator"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "Administrator"
+  LastModifiedBy	  "bmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Jul 10 16:56:03 2009"
-  ModelVersionFormat	  "1.%<AutoIncrement:123>"
+  LastModifiedDate	  "Wed Jul 15 14:32:27 2009"
+  ModelVersionFormat	  "1.%<AutoIncrement:235>"
   ConfigurationManager	  "None"
   SimulationMode	  "normal"
   LinearizationMsg	  "none"
@@ -322,7 +322,24 @@ Model {
 	  ConfigurationMode	  "Optimized"
 	  ProcessScript		  "dspic_make_rtw_hook"
 	  ConfigAtBuild		  off
-	  CustomSource		  "acs300_commands.c"
+	  CustomSource		  "acs300_commands.c\nrs232_w_enable.c\nInputC"
+"apture_Interrupt_w_Timeout.c"
+	  CustomInitializer	  "#include \"InCap.h\"\n    T5CONbits.TON = 0"
+"; // Stop any 16-bit Timer5 operation\n    T4CONbits.TON = 0; // Stop any 16/"
+"32-bit Timer4 operation\n    T4CONbits.T32 = 1; // Enable 32-bit Timer mode\n"
+"    T4CONbits.TCS = 0; // Select internal instruction cycle clock\n    T4CONb"
+"its.TGATE = 0; // Disable Gated Timer mode\n    T4CONbits.TCKPS = 0b00;// Sel"
+"ect 1:1 Prescaler\n    TMR5 = 0x00; // Clear 32-bit Timer (msw)\n    TMR4 = 0"
+"x00; // Clear 32-bit Timer (lsw)\n    PR5 = 0x0010; // Load 32-bit period val"
+"ue (msw)\n    PR4 = 0x0000; // Load 32-bit period value (lsw)\n    IPC7bits.T"
+"5IP = 0x01; // Set Timer5 Interrupt Priority Level\n    IFS1bits.T5IF = 0; //"
+" Clear Timer5 Interrupt Flag\n    IEC1bits.T5IE = 1; // Enable Timer5 interru"
+"pt\n    T4CONbits.TON = 1; // Start 32-bit Timer\n    \n    // Configure our "
+"input captures\n    OpenCapture1(IC_IDLE_CON & IC_TIMER2_SRC & IC_INT_1CAPTUR"
+"E &\n                 IC_EVERY_RISE_EDGE);\n    ConfigIntCapture1(IC_INT_ON &"
+" IC_INT_PRIOR_7);\n    OpenCapture2(IC_IDLE_CON & IC_TIMER2_SRC & IC_INT_1CAP"
+"TURE &\n                 IC_EVERY_RISE_EDGE);\n    ConfigIntCapture2(IC_INT_O"
+"N & IC_INT_PRIOR_7);"
 	  IncludeHyperlinkInReport off
 	  LaunchReport		  off
 	  TargetLang		  "C"
@@ -463,7 +480,7 @@ Model {
 		  ExtModeStaticAlloc	  off
 		  ExtModeStaticAllocSize  1000000
 		  ExtModeTesting	  off
-		  ExtModeMexFile	  "ext_comm"
+		  ExtModeMexFile	  "noextcomm"
 		  ExtModeIntrfLevel	  "Level1"
 		  InlinedParameterPlacement "NonHierarchical"
 		  TargetOS		  "BareBoardExample"
@@ -613,6 +630,18 @@ Model {
       SaturateOnIntegerOverflow	on
     }
     Block {
+      BlockType		      Constant
+      Value		      "1"
+      VectorParams1D	      on
+      SamplingMode	      "Sample based"
+      OutDataTypeMode	      "Inherit from 'Constant value'"
+      OutDataType	      "sfix(16)"
+      ConRadixGroup	      "Use specified scaling"
+      OutScaling	      "2^0"
+      SampleTime	      "inf"
+      FramePeriod	      "inf"
+    }
+    Block {
       BlockType		      DataTypeConversion
       OutDataTypeMode	      "Inherit via back propagation"
       OutDataType	      "sfix(16)"
@@ -687,12 +716,35 @@ Model {
       InitialOutput	      "[]"
     }
     Block {
+      BlockType		      Product
+      Inputs		      "2"
+      Multiplication	      "Element-wise(.*)"
+      CollapseMode	      "All dimensions"
+      CollapseDim	      "1"
+      InputSameDT	      on
+      OutDataTypeMode	      "Same as first input"
+      OutDataType	      "sfix(16)"
+      OutScaling	      "2^0"
+      LockScale		      off
+      RndMeth		      "Zero"
+      SaturateOnIntegerOverflow	on
+      SampleTime	      "-1"
+    }
+    Block {
       BlockType		      RelationalOperator
       Operator		      ">="
       InputSameDT	      on
       LogicOutDataTypeMode    "Logical (see Configuration Parameters: Optimiza"
 "tion)"
       LogicDataType	      "uint(8)"
+      ZeroCross		      on
+      SampleTime	      "-1"
+    }
+    Block {
+      BlockType		      Saturate
+      UpperLimit	      "0.5"
+      LowerLimit	      "-0.5"
+      LinearizeAsGain	      on
       ZeroCross		      on
       SampleTime	      "-1"
     }
@@ -757,9 +809,6 @@ Model {
       SampleTime	      "-1"
     }
     Block {
-      BlockType		      Terminator
-    }
-    Block {
       BlockType		      UnitDelay
       X0		      "0"
       SampleTime	      "1"
@@ -787,7 +836,7 @@ Model {
   }
   System {
     Name		    "RC_control"
-    Location		    [2, 82, 1270, 737]
+    Location		    [2, 70, 1598, 1152]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -799,14 +848,14 @@ Model {
     TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
     TiledPageScale	    1
     ShowPageBoundaries	    off
-    ZoomFactor		    "158"
+    ZoomFactor		    "160"
     ReportName		    "simulink-default.rpt"
     Block {
       BlockType		      Reference
       Name		      "ADC Input"
       Tag		      "dsPIC_ADC"
       Ports		      [0, 1]
-      Position		      [220, 257, 280, 283]
+      Position		      [120, 267, 200, 293]
       ShowName		      off
       Priority		      "5"
       List {
@@ -819,7 +868,7 @@ Model {
       ADC_MODE		      "Continuous sampling & get last channel value"
       NbrSampleStep	      "1"
       VoltRefpopup	      "AVdd  -  AVss"
-      OutFormatBitspopup      "ssss sssd dddd dddd : Signed Integer"
+      OutFormatBitspopup      "0000 00dd dddd dddd : Integer"
       InterruptPriority	      "6"
       ANCHANNELS	      "[5]"
       MaxName		      "ANmax = 1023"
@@ -828,7 +877,7 @@ Model {
       SAMC		      "1"
       Temperature	      "25"
       DMAChannel	      "0"
-      SampleTime	      "-1"
+      SampleTime	      ".1"
       Status		      "OK  |  Tsmp=1.625e-007 |  T/Channel=2.113e-006 "
 "|  Tall=2.113e-006"
       SSRC		      "auto convert"
@@ -836,7 +885,7 @@ Model {
     Block {
       BlockType		      Bias
       Name		      "Bias"
-      Position		      [255, 315, 295, 345]
+      Position		      [255, 355, 295, 385]
       ShowName		      off
       Bias		      "-7500"
       SaturateOnIntegerOverflow	off
@@ -844,20 +893,94 @@ Model {
     Block {
       BlockType		      Bias
       Name		      "Bias1"
-      Position		      [210, 205, 250, 235]
+      Position		      [225, 215, 265, 245]
       ShowName		      off
       Bias		      "-5000"
       SaturateOnIntegerOverflow	off
     }
     Block {
+      BlockType		      Bias
+      Name		      "Bias2"
+      Position		      [255, 266, 285, 294]
+      ShowName		      off
+      Bias		      "-345"
+      SaturateOnIntegerOverflow	off
+    }
+    Block {
       BlockType		      Reference
-      Name		      "Compare\nTo Zero1"
+      Name		      "C Function Call"
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      [0, 1]
+      Position		      [15, 350, 140, 390]
+      ShowName		      off
+      List {
+	ListType		RTWdata
+	FctDeclaration		"extern uint16_T get_IC1_Hightime();"
+	FctCall			"%y1 = get_IC1_Hightime();"
+	fctName			"get_IC1_Hightime"
+	INPUT_SIZE		"1"
+	OUTPUT_SIZE		"1"
+	NBR_INPUT		"0"
+	NBR_OUTPUT		"1"
+      }
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      fctName		      "'get_IC1_Hightime'"
+      INPUT_SIZE	      "1"
+      INPUT1		      "--"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "uint16"
+      SampleTime	      "-1"
+      InputType		      "[ ]"
+      OutputType	      "[ 4 ]"
+      FctDeclaration	      "extern uint16_T get_IC1_Hightime();"
+      FctCall		      "%y1 = get_IC1_Hightime();"
+      OrderingInOutPopup      "None"
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "C Function Call1"
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      [0, 1]
+      Position		      [15, 415, 140, 455]
+      ShowName		      off
+      List {
+	ListType		RTWdata
+	FctDeclaration		"extern uint16_T get_IC2_Hightime();"
+	FctCall			"%y1 = get_IC2_Hightime();"
+	fctName			"get_IC2_Hightime"
+	INPUT_SIZE		"1"
+	OUTPUT_SIZE		"1"
+	NBR_INPUT		"0"
+	NBR_OUTPUT		"1"
+      }
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      fctName		      "'get_IC2_Hightime'"
+      INPUT_SIZE	      "1"
+      INPUT1		      "--"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "uint16"
+      SampleTime	      "-1"
+      InputType		      "[ ]"
+      OutputType	      "[ 4 ]"
+      FctDeclaration	      "extern uint16_T get_IC2_Hightime();"
+      FctCall		      "%y1 = get_IC2_Hightime();"
+      OrderingInOutPopup      "None"
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Compare\nTo Constant1"
       Ports		      [1, 1]
-      Position		      [425, 255, 455, 285]
+      Position		      [495, 239, 530, 261]
       ShowName		      off
       SourceBlock	      "simulink/Logic and Bit\nOperations/Compare\nTo "
-"Zero"
-      SourceType	      "Compare To Zero"
+"Constant"
+      SourceType	      "Compare To Constant"
       ShowPortLabels	      "FromPortIcon"
       SystemSampleTime	      "-1"
       FunctionWithSeparateData off
@@ -866,21 +989,43 @@ Model {
       RTWMemSecDataConstants  "Inherit from model"
       RTWMemSecDataInternal   "Inherit from model"
       RTWMemSecDataParameters "Inherit from model"
-      relop		      "~="
+      relop		      ">="
+      const		      "-30"
       LogicOutDataTypeMode    "boolean"
       ZeroCross		      off
     }
     Block {
       BlockType		      Reference
-      Name		      "Compare\nTo Zero2"
+      Name		      "Compare\nTo Constant2"
       Ports		      [1, 1]
-      Position		      [390, 185, 420, 215]
-      Orientation	      "up"
-      NamePlacement	      "alternate"
+      Position		      [495, 294, 530, 316]
       ShowName		      off
       SourceBlock	      "simulink/Logic and Bit\nOperations/Compare\nTo "
-"Zero"
-      SourceType	      "Compare To Zero"
+"Constant"
+      SourceType	      "Compare To Constant"
+      ShowPortLabels	      "FromPortIcon"
+      SystemSampleTime	      "-1"
+      FunctionWithSeparateData off
+      RTWMemSecFuncInitTerm   "Inherit from model"
+      RTWMemSecFuncExecute    "Inherit from model"
+      RTWMemSecDataConstants  "Inherit from model"
+      RTWMemSecDataInternal   "Inherit from model"
+      RTWMemSecDataParameters "Inherit from model"
+      relop		      "<="
+      const		      "30"
+      LogicOutDataTypeMode    "boolean"
+      ZeroCross		      off
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Compare\nTo Constant3"
+      Ports		      [1, 1]
+      Position		      [463, 190, 497, 225]
+      Orientation	      "up"
+      ShowName		      off
+      SourceBlock	      "simulink/Logic and Bit\nOperations/Compare\nTo "
+"Constant"
+      SourceType	      "Compare To Constant"
       ShowPortLabels	      "FromPortIcon"
       SystemSampleTime	      "-1"
       FunctionWithSeparateData off
@@ -890,6 +1035,49 @@ Model {
       RTWMemSecDataInternal   "Inherit from model"
       RTWMemSecDataParameters "Inherit from model"
       relop		      "<"
+      const		      "-30"
+      LogicOutDataTypeMode    "boolean"
+      ZeroCross		      off
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Compare\nTo Zero"
+      Ports		      [1, 1]
+      Position		      [540, 310, 570, 340]
+      ShowName		      off
+      SourceBlock	      "simulink/Logic and Bit\nOperations/Compare\nTo "
+"Zero"
+      SourceType	      "Compare To Zero"
+      ShowPortLabels	      "FromPortIcon"
+      SystemSampleTime	      "-1"
+      FunctionWithSeparateData off
+      RTWMemSecFuncInitTerm   "Inherit from model"
+      RTWMemSecFuncExecute    "Inherit from model"
+      RTWMemSecDataConstants  "Inherit from model"
+      RTWMemSecDataInternal   "Inherit from model"
+      RTWMemSecDataParameters "Inherit from model"
+      relop		      "=="
+      LogicOutDataTypeMode    "boolean"
+      ZeroCross		      off
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Compare\nTo Zero1"
+      Ports		      [1, 1]
+      Position		      [200, 390, 230, 420]
+      ShowName		      off
+      SourceBlock	      "simulink/Logic and Bit\nOperations/Compare\nTo "
+"Zero"
+      SourceType	      "Compare To Zero"
+      ShowPortLabels	      "FromPortIcon"
+      SystemSampleTime	      "-1"
+      FunctionWithSeparateData off
+      RTWMemSecFuncInitTerm   "Inherit from model"
+      RTWMemSecFuncExecute    "Inherit from model"
+      RTWMemSecDataConstants  "Inherit from model"
+      RTWMemSecDataInternal   "Inherit from model"
+      RTWMemSecDataParameters "Inherit from model"
+      relop		      "=="
       LogicOutDataTypeMode    "boolean"
       ZeroCross		      off
     }
@@ -924,9 +1112,23 @@ Model {
       SourceType	      ""
     }
     Block {
+      BlockType		      Constant
+      Name		      "Constant1"
+      Position		      [650, 180, 680, 210]
+      ShowName		      off
+      Value		      "0"
+      OutDataTypeMode	      "Inherit via back propagation"
+      Port {
+	PortNumber		1
+	Name			"Enable"
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
+    }
+    Block {
       BlockType		      DataTypeConversion
       Name		      "Data Type Conversion1"
-      Position		      [170, 321, 215, 339]
+      Position		      [200, 361, 230, 379]
       ShowName		      off
       OutDataTypeMode	      "int16"
       RndMeth		      "Floor"
@@ -935,7 +1137,7 @@ Model {
     Block {
       BlockType		      DataTypeConversion
       Name		      "Data Type Conversion2"
-      Position		      [135, 246, 180, 264]
+      Position		      [215, 271, 240, 289]
       ShowName		      off
       OutDataTypeMode	      "int16"
       RndMeth		      "Floor"
@@ -943,8 +1145,17 @@ Model {
     }
     Block {
       BlockType		      DataTypeConversion
-      Name		      "Data Type Conversion5"
-      Position		      [565, 234, 585, 266]
+      Name		      "Data Type Conversion3"
+      Position		      [180, 221, 205, 239]
+      ShowName		      off
+      OutDataTypeMode	      "int16"
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	off
+    }
+    Block {
+      BlockType		      DataTypeConversion
+      Name		      "Data Type Conversion4"
+      Position		      [745, 271, 775, 289]
       ShowName		      off
       RndMeth		      "Floor"
       SaturateOnIntegerOverflow	off
@@ -953,7 +1164,7 @@ Model {
       BlockType		      Reference
       Name		      "Detect\nChange"
       Ports		      [1, 1]
-      Position		      [520, 335, 580, 365]
+      Position		      [630, 365, 690, 395]
       SourceBlock	      "simulink/Logic and Bit\nOperations/Detect\nChan"
 "ge"
       SourceType	      "Detect Change"
@@ -972,13 +1183,13 @@ Model {
       Name		      "Digital Input1"
       Tag		      "dsPIC_Digital_Input"
       Ports		      [0, 2]
-      Position		      [15, 120, 130, 160]
+      Position		      [140, 130, 255, 170]
       ShowName		      off
       SourceBlock	      "dsPICdrivers/Digital I//O/Digital Input"
       SourceType	      ""
       PORT		      "D"
       Pin		      "[6 13]"
-      SampleTime	      "-1"
+      SampleTime	      ".1"
       OrderingInOutPopup      "None"
       Port {
 	PortNumber		1
@@ -995,9 +1206,25 @@ Model {
     }
     Block {
       BlockType		      Reference
+      Name		      "Digital Output Write"
+      Tag		      "dsPIC_Digital_Output"
+      Ports		      [2]
+      Position		      [740, 165, 855, 205]
+      NamePlacement	      "alternate"
+      ShowName		      off
+      Priority		      "5"
+      SourceBlock	      "dsPICdrivers/Digital I//O/Digital Output Write"
+      SourceType	      ""
+      PORT		      "B"
+      Pin		      "[2 3]"
+      Simultaneous	      off
+      OrderingInOutPopup      "None"
+    }
+    Block {
+      BlockType		      Reference
       Name		      "DocBlock"
       Ports		      []
-      Position		      [37, 190, 77, 229]
+      Position		      [537, 30, 577, 69]
       ShowName		      off
       UserDataPersistent      on
       UserData		      "DataTag0"
@@ -1016,7 +1243,7 @@ Model {
     Block {
       BlockType		      Gain
       Name		      "Gain1"
-      Position		      [335, 315, 365, 345]
+      Position		      [320, 355, 350, 385]
       ShowName		      off
       Gain		      "1/5"
       ParameterDataTypeMode   "Inherit via internal rule"
@@ -1026,17 +1253,23 @@ Model {
     Block {
       BlockType		      Gain
       Name		      "Gain2"
-      Position		      [600, 235, 630, 265]
+      Position		      [800, 265, 830, 295]
       ShowName		      off
-      Gain		      "1e-6*OC1max/.01"
+      Gain		      "1e-3*OC2max/.01"
       ParameterDataTypeMode   "Inherit via internal rule"
       OutDataTypeMode	      "Inherit via back propagation"
       SaturateOnIntegerOverflow	off
+      Port {
+	PortNumber		1
+	Name			"Step"
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
     }
     Block {
       BlockType		      Gain
       Name		      "Gain3"
-      Position		      [655, 210, 685, 240]
+      Position		      [855, 240, 885, 270]
       ShowName		      off
       Gain		      ".5"
       ParameterDataTypeMode   "Inherit via internal rule"
@@ -1046,7 +1279,7 @@ Model {
     Block {
       BlockType		      Gain
       Name		      "Gain4"
-      Position		      [280, 205, 310, 235]
+      Position		      [280, 215, 310, 245]
       ShowName		      off
       Gain		      "1/5"
       ParameterDataTypeMode   "Inherit via internal rule"
@@ -1054,56 +1287,20 @@ Model {
       SaturateOnIntegerOverflow	off
     }
     Block {
-      BlockType		      Reference
-      Name		      "Input Capture"
-      Tag		      "dsPIC_PWM_IC"
-      Ports		      [0, 2]
-      Position		      [15, 322, 90, 358]
+      BlockType		      Gain
+      Name		      "Gain5"
+      Position		      [300, 266, 320, 294]
       ShowName		      off
-      Priority		      "5"
-      SourceBlock	      "dsPICdrivers/Peripheral I//O/Input Capture"
-      SourceType	      "Input driver for Input Capture Peripheral"
-      IntPriority	      "7"
-      Channel		      "[1]"
-      Channel_UP_Down_Periode "[1]"
-      MaxChannel	      "[0.002]"
-      SafeMarge		      "[10]"
-      MaxName		      " ' IC1max ' "
-      Precision		      "[13.425]"
-      Timer		      "[2]"
-      ChangeDetected	      "[1]"
-      ChangeDetectedPortRef   "3"
-      SampleTime	      "-1"
-      Status		      "OK"
-    }
-    Block {
-      BlockType		      Reference
-      Name		      "Input Capture1"
-      Tag		      "dsPIC_PWM_IC"
-      Ports		      [0, 2]
-      Position		      [15, 244, 95, 286]
-      ShowName		      off
-      Priority		      "5"
-      SourceBlock	      "dsPICdrivers/Peripheral I//O/Input Capture"
-      SourceType	      "Input driver for Input Capture Peripheral"
-      IntPriority	      "7"
-      Channel		      "[ 2 ]"
-      Channel_UP_Down_Periode "[1]"
-      MaxChannel	      "[0.002]"
-      SafeMarge		      "[10]"
-      MaxName		      " ' IC2max ' "
-      Precision		      "[13.425]"
-      Timer		      "[2]"
-      ChangeDetected	      "[1]"
-      ChangeDetectedPortRef   "3"
-      SampleTime	      "-1"
-      Status		      "OK"
+      Gain		      "3"
+      ParameterDataTypeMode   "Inherit via internal rule"
+      OutDataTypeMode	      "Inherit via back propagation"
+      SaturateOnIntegerOverflow	off
     }
     Block {
       BlockType		      Logic
-      Name		      "Logical\nOperator"
+      Name		      "Logical\nOperator1"
       Ports		      [1, 1]
-      Position		      [490, 254, 520, 286]
+      Position		      [550, 140, 580, 160]
       ShowName		      off
       Operator		      "NOT"
       AllPortsSameDT	      off
@@ -1111,10 +1308,31 @@ Model {
     }
     Block {
       BlockType		      Logic
-      Name		      "Logical\nOperator1"
+      Name		      "Logical\nOperator2"
       Ports		      [2, 1]
-      Position		      [505, 131, 535, 164]
+      Position		      [560, 260, 590, 295]
       ShowName		      off
+      Operator		      "NAND"
+      AllPortsSameDT	      off
+      OutDataTypeMode	      "Boolean"
+    }
+    Block {
+      BlockType		      Logic
+      Name		      "Logical\nOperator3"
+      Ports		      [3, 1]
+      Position		      [685, 262, 715, 298]
+      ShowName		      off
+      Inputs		      "3"
+      AllPortsSameDT	      off
+      OutDataTypeMode	      "Boolean"
+    }
+    Block {
+      BlockType		      Logic
+      Name		      "Logical\nOperator4"
+      Ports		      [1, 1]
+      Position		      [265, 395, 295, 415]
+      ShowName		      off
+      Operator		      "NOT"
       AllPortsSameDT	      off
       OutDataTypeMode	      "Boolean"
     }
@@ -1144,14 +1362,16 @@ Model {
       tmr2345		      "[8  0  0  0  0  0  0  0]"
       tmr2345cfg	      "[-1 -1 -1 -1 -1 -1 -1 -1]"
       IOautoConf	      on
-      typePort		      "[ 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  "
-"0  0  0  0  0  0  8  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0 "
-" 0  0  0  0  0  0  0  0  7  0  0  0  0  9  0  6  6  0  0  0  9  0  0  0  0  0"
-"  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  4  0  0  0  0  0  0  0  "
-"0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0 ]"
-      TRIS		      "[ 65535  65535  65535  65533  65535  65535  655"
+      typePort		      "[ 0   0  10  10   0   0   0   0   0   0   0   0"
+"   0   0   0   0   0   0  10  10   0   8   0   0   0   0   0   0   0   0   0 "
+"  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   7  "
+" 0   0   0   0   9   0   0   0   0   0   0   9   0   0   0   0   0   0   0   "
+"0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   4   0   0   0   0"
+"   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0 "
+"  0   0   0   0 ]"
+      TRIS		      "[ 65523  65523  65535  65533  65535  65535  655"
 "35 ]"
-      ADPCFG		      "0"
+      ADPCFG		      "12"
       MasterBusyPort	      "None"
       MasterOverloadPort      "None"
       FOSC		      "Quartz (XT - HS)"
@@ -1171,7 +1391,7 @@ Model {
       Name		      "Output Compare"
       Tag		      "dsPIC_PWM_out"
       Ports		      [2]
-      Position		      [700, 210, 800, 265]
+      Position		      [910, 241, 990, 294]
       ShowName		      off
       Priority		      "5"
       SourceBlock	      "dsPICdrivers/Peripheral I//O/Output Compare"
@@ -1190,10 +1410,44 @@ Model {
       MaxValues		      "[49999]"
     }
     Block {
+      BlockType		      Product
+      Name		      "Product"
+      Ports		      [2, 1]
+      Position		      [540, 362, 570, 393]
+      CollapseMode	      "All dimensions"
+      InputSameDT	      off
+      OutDataTypeMode	      "Inherit via internal rule"
+      SaturateOnIntegerOverflow	off
+    }
+    Block {
+      BlockType		      Saturate
+      Name		      "Saturation"
+      Position		      [340, 265, 360, 295]
+      ShowName		      off
+      UpperLimit	      "1023"
+      LowerLimit	      "0"
+    }
+    Block {
+      BlockType		      Saturate
+      Name		      "Saturation1"
+      Position		      [325, 215, 345, 245]
+      ShowName		      off
+      UpperLimit	      "1023"
+      LowerLimit	      "0"
+    }
+    Block {
+      BlockType		      Saturate
+      Name		      "Saturation2"
+      Position		      [370, 355, 390, 385]
+      ShowName		      off
+      UpperLimit	      "1023"
+      LowerLimit	      "-1023"
+    }
+    Block {
       BlockType		      Sum
       Name		      "Sum"
       Ports		      [2, 1]
-      Position		      [355, 260, 375, 280]
+      Position		      [455, 270, 475, 290]
       ShowName		      off
       IconShape		      "round"
       Inputs		      "+-|"
@@ -1201,27 +1455,22 @@ Model {
       InputSameDT	      off
       OutDataTypeMode	      "Inherit via back propagation"
       SaturateOnIntegerOverflow	off
+      Port {
+	PortNumber		1
+	Name			"Direction"
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
     }
     Block {
       BlockType		      Switch
       Name		      "Switch"
-      Position		      [330, 125, 360, 155]
+      Position		      [455, 135, 485, 165]
       ShowName		      off
-      Criteria		      "u2 ~= 0"
+      Criteria		      "u2 > Threshold"
+      Threshold		      "50"
       InputSameDT	      off
       SaturateOnIntegerOverflow	off
-    }
-    Block {
-      BlockType		      Terminator
-      Name		      "Terminator"
-      Position		      [130, 340, 150, 360]
-      ShowName		      off
-    }
-    Block {
-      BlockType		      Terminator
-      Name		      "Terminator1"
-      Position		      [115, 265, 135, 285]
-      ShowName		      off
     }
     Block {
       BlockType		      Reference
@@ -1258,7 +1507,52 @@ Model {
       BlockType		      Reference
       Name		      "Weighted\nMoving Average"
       Ports		      [1, 1]
-      Position		      [390, 332, 460, 368]
+      Position		      [445, 352, 515, 388]
+      ShowName		      off
+      SourceBlock	      "simulink/Discrete/Weighted\nMoving Average"
+      SourceType	      "Weighted Moving Average"
+      mgainval		      "[.3 .4 .3]"
+      vinit		      "0.0"
+      samptime		      ".1"
+      GainDataTypeScalingMode "Inherit via internal rule"
+      GainDataType	      "uint(16)"
+      MatRadixGroup	      "Best Precision: Matrix-wise"
+      GainScaling	      "2^-10"
+      OutputDataTypeScalingMode	"Inherit via back propagation"
+      OutDataType	      "sfix(16)"
+      OutScaling	      "2^-10"
+      LockScale		      off
+      RndMeth		      "Floor"
+      DoSatur		      off
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Weighted\nMoving Average1"
+      Ports		      [1, 1]
+      Position		      [380, 263, 435, 297]
+      ShowName		      off
+      SourceBlock	      "simulink/Discrete/Weighted\nMoving Average"
+      SourceType	      "Weighted Moving Average"
+      mgainval		      "[.3 .4 .3]"
+      vinit		      "0.0"
+      samptime		      ".1"
+      GainDataTypeScalingMode "Inherit via internal rule"
+      GainDataType	      "uint(16)"
+      MatRadixGroup	      "Best Precision: Matrix-wise"
+      GainScaling	      "2^-10"
+      OutputDataTypeScalingMode	"Inherit via back propagation"
+      OutDataType	      "sfix(16)"
+      OutScaling	      "2^-10"
+      LockScale		      off
+      RndMeth		      "Floor"
+      DoSatur		      off
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Weighted\nMoving Average2"
+      Ports		      [1, 1]
+      Position		      [360, 212, 430, 248]
+      ShowName		      off
       SourceBlock	      "simulink/Discrete/Weighted\nMoving Average"
       SourceType	      "Weighted Moving Average"
       mgainval		      "[.3 .4 .3]"
@@ -1280,7 +1574,7 @@ Model {
       Name		      "cc_command"
       Tag		      "dsPIC_dsPIC_CFunctionCall"
       Ports		      [2]
-      Position		      [620, 320, 745, 360]
+      Position		      [790, 340, 915, 380]
       ShowName		      off
       List {
 	ListType		RTWdata
@@ -1311,6 +1605,20 @@ Model {
       OrderingInOutPopup      "None"
     }
     Line {
+      SrcBlock		      "C Function Call1"
+      SrcPort		      1
+      Points		      [15, 0; 0, -30; -45, 0; 0, -80]
+      Branch {
+	Points			[0, -95]
+	DstBlock		"Data Type Conversion3"
+	DstPort			1
+      }
+      Branch {
+	DstBlock		"Compare\nTo Zero"
+	DstPort			1
+      }
+    }
+    Line {
       Name		      "Starboard Hall"
       Labels		      [0, 0]
       SrcBlock		      "Digital Input1"
@@ -1327,49 +1635,188 @@ Model {
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Switch"
-      SrcPort		      1
-      DstBlock		      "Logical\nOperator1"
-      DstPort		      1
-    }
-    Line {
       SrcBlock		      "Gain3"
       SrcPort		      1
       DstBlock		      "Output Compare"
       DstPort		      1
     }
     Line {
+      Name		      "Step"
       SrcBlock		      "Gain2"
       SrcPort		      1
-      Points		      [5, 0]
+      Points		      [0, 0]
       Branch {
+	Labels			[1, 0]
 	DstBlock		"Output Compare"
 	DstPort			2
       }
       Branch {
+	Points			[0, 0; 0, -25]
 	DstBlock		"Gain3"
 	DstPort			1
       }
     }
     Line {
-      SrcBlock		      "Compare\nTo Zero2"
+      SrcBlock		      "Bias1"
       SrcPort		      1
-      Points		      [0, -20; -100, 0; 0, -20]
-      DstBlock		      "Switch"
-      DstPort		      2
-    }
-    Line {
-      Labels		      [2, 0]
-      SrcBlock		      "Logical\nOperator1"
-      SrcPort		      1
-      Points		      [10, 0]
-      DstBlock		      "Data Type Conversion5"
+      DstBlock		      "Gain4"
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Data Type Conversion5"
+      SrcBlock		      "Data Type Conversion3"
+      SrcPort		      1
+      DstBlock		      "Bias1"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Weighted\nMoving Average2"
+      SrcPort		      1
+      Points		      [30, 0]
+      DstBlock		      "Sum"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Compare\nTo Constant2"
+      SrcPort		      1
+      Points		      [5, 0; 0, -20]
+      DstBlock		      "Logical\nOperator2"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Compare\nTo Constant1"
+      SrcPort		      1
+      Points		      [5, 0; 0, 20]
+      DstBlock		      "Logical\nOperator2"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Switch"
+      SrcPort		      1
+      DstBlock		      "Logical\nOperator1"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Logical\nOperator2"
+      SrcPort		      1
+      DstBlock		      "Logical\nOperator3"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Data Type Conversion4"
       SrcPort		      1
       DstBlock		      "Gain2"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Logical\nOperator3"
+      SrcPort		      1
+      DstBlock		      "Data Type Conversion4"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Compare\nTo Zero"
+      SrcPort		      1
+      Points		      [60, 0; 0, -35]
+      DstBlock		      "Logical\nOperator3"
+      DstPort		      3
+    }
+    Line {
+      Name		      "Direction"
+      SrcBlock		      "Sum"
+      SrcPort		      1
+      Points		      [0, 0]
+      Branch {
+	Points			[0, -30]
+	Branch {
+	  DstBlock		  "Compare\nTo Constant1"
+	  DstPort		  1
+	}
+	Branch {
+	  DstBlock		  "Compare\nTo Constant3"
+	  DstPort		  1
+	}
+      }
+      Branch {
+	DstBlock		"Compare\nTo Constant2"
+	DstPort			1
+      }
+    }
+    Line {
+      SrcBlock		      "Logical\nOperator1"
+      SrcPort		      1
+      Points		      [45, 0; 0, 120]
+      DstBlock		      "Logical\nOperator3"
+      DstPort		      1
+    }
+    Line {
+      Name		      "Enable"
+      Labels		      [0, 1]
+      SrcBlock		      "Constant1"
+      SrcPort		      1
+      DstBlock		      "Digital Output Write"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "ADC Input"
+      SrcPort		      1
+      DstBlock		      "Data Type Conversion2"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Bias2"
+      SrcPort		      1
+      DstBlock		      "Gain5"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Weighted\nMoving Average1"
+      SrcPort		      1
+      DstBlock		      "Sum"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Gain5"
+      SrcPort		      1
+      DstBlock		      "Saturation"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Compare\nTo Constant3"
+      SrcPort		      1
+      Points		      [0, -10]
+      Branch {
+	Points			[0, 0; -45, 0; 0, -25]
+	DstBlock		"Switch"
+	DstPort			2
+      }
+      Branch {
+	Labels			[-1, 1]
+	DstBlock		"Digital Output Write"
+	DstPort			1
+      }
+    }
+    Line {
+      SrcBlock		      "Data Type Conversion2"
+      SrcPort		      1
+      DstBlock		      "Bias2"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Saturation"
+      SrcPort		      1
+      DstBlock		      "Weighted\nMoving Average1"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Saturation1"
+      SrcPort		      1
+      DstBlock		      "Weighted\nMoving Average2"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Gain4"
+      SrcPort		      1
+      DstBlock		      "Saturation1"
       DstPort		      1
     }
     Line {
@@ -1385,106 +1832,70 @@ Model {
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Input Capture"
-      SrcPort		      1
-      DstBlock		      "Data Type Conversion1"
-      DstPort		      1
-    }
-    Line {
       SrcBlock		      "Gain1"
       SrcPort		      1
-      Points		      [5, 0]
+      DstBlock		      "Saturation2"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Saturation2"
+      SrcPort		      1
+      DstBlock		      "Weighted\nMoving Average"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "C Function Call"
+      SrcPort		      1
+      Points		      [30, 0]
       Branch {
-	Labels			[1, 0]
-	DstBlock		"cc_command"
+	DstBlock		"Data Type Conversion1"
 	DstPort			1
       }
       Branch {
-	DstBlock		"Weighted\nMoving Average"
-	DstPort			1
-      }
-    }
-    Line {
-      SrcBlock		      "Detect\nChange"
-      SrcPort		      1
-      DstBlock		      "cc_command"
-      DstPort		      2
-    }
-    Line {
-      SrcBlock		      "Weighted\nMoving Average"
-      SrcPort		      1
-      DstBlock		      "Detect\nChange"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Input Capture"
-      SrcPort		      2
-      DstBlock		      "Terminator"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Input Capture1"
-      SrcPort		      2
-      DstBlock		      "Terminator1"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Input Capture1"
-      SrcPort		      1
-      DstBlock		      "Data Type Conversion2"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "ADC Input"
-      SrcPort		      1
-      DstBlock		      "Sum"
-      DstPort		      2
-    }
-    Line {
-      SrcBlock		      "Sum"
-      SrcPort		      1
-      Points		      [25, 0]
-      Branch {
+	Points			[0, 35]
 	DstBlock		"Compare\nTo Zero1"
-	DstPort			1
-      }
-      Branch {
-	DstBlock		"Compare\nTo Zero2"
 	DstPort			1
       }
     }
     Line {
       SrcBlock		      "Compare\nTo Zero1"
       SrcPort		      1
-      DstBlock		      "Logical\nOperator"
+      DstBlock		      "Logical\nOperator4"
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Logical\nOperator"
+      SrcBlock		      "Product"
       SrcPort		      1
-      Points		      [10, 0; 0, -85; -45, 0]
-      DstBlock		      "Logical\nOperator1"
+      Points		      [10, 0]
+      Branch {
+	DstBlock		"Detect\nChange"
+	DstPort			1
+      }
+      Branch {
+	Points			[0, -30]
+	DstBlock		"cc_command"
+	DstPort			1
+      }
+    }
+    Line {
+      SrcBlock		      "Weighted\nMoving Average"
+      SrcPort		      1
+      DstBlock		      "Product"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Logical\nOperator4"
+      SrcPort		      1
+      Points		      [220, 0; 0, -20]
+      DstBlock		      "Product"
       DstPort		      2
     }
     Line {
-      SrcBlock		      "Bias1"
+      SrcBlock		      "Detect\nChange"
       SrcPort		      1
-      DstBlock		      "Gain4"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Gain4"
-      SrcPort		      1
-      Points		      [50, 0]
-      DstBlock		      "Sum"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Data Type Conversion2"
-      SrcPort		      1
-      Points		      [5, 0; 0, -35]
-      DstBlock		      "Bias1"
-      DstPort		      1
+      Points		      [35, 0; 0, -10]
+      DstBlock		      "cc_command"
+      DstPort		      2
     }
   }
 }
@@ -1492,19 +1903,24 @@ MatData {
   NumRecords		  1
   DataRecord {
     Tag			    DataTag0
-    Data		    "  %)30     .    H (   8    (     @         %    "
+    Data		    "  %)30     .    H ,   8    (     @         %    "
 "\"     $    !     0         %  0 \"     $    0    =F5R<VEO;@!C;VYT96YT  X    "
 "X    !@    @    &          4    (     0    $    !          D    (    FIF9F9F9"
-"\\3\\.    $ (   8    (    !          %    \"     $   #@ 0   0         0    X "
-"$  %1H:7,@<WES=&5M(&ES(&1E<VEG;F5D(&9O<B!U<V4@=VET:\"!T:&4@17AP;&]R97(@,38@8F"
-"]A<F0N($ET(')E<75I<F5S('1H92!F;VQL;W=I;F<@8V]N;F5C=&EO;G,@87,@9F]L;&]W<SH-\"E"
-"!O<G0@1#8@+2 H:6YP=70I(%!O<G0@2&%L;\"!%9F9E8W0@4V5N<V]R#0I0;W)T($0W(\"T@*&EN<"
-"'5T*2!3=&%R8F]A<F0@2&%L;\"!%9F9E8W0@4V5N<V]R#0I0;W)T($0Q,R M(\"AI;G!U=\"D@0V5"
-"N=&5R($AA;&P@169F96-T(%-E;G-O<@T*4&]R=\"!/0S$@+2 H;W5T<'5T*2!3=&5P(&]U='!U=\""
-"!F;W(@<G5D9&5R(&1R:79E<B!B;V%R9 T*1W)O=6YD(\"T@*&]U='!U=\"D@16YA8FQE(&]U='!U="
-"\"!F;W(@<G5D9&5R(&1R:79E<B!B;V%R9 T*4&]R=\"!!-B M(\"AO=71P=70I($1I<F5C=&EO;B!"
-"O=71P=70@9F]R(')U9&1E<B!D<FEV97(@8F]A<F0-\"E-E<FEA;\"!C;VYN96-T:6]N(\"T@36%I;"
-"B!D<FEV92!B;V%R9 T*4&]W97(@+2!C;VYN96-T960-\"@"
+"\\3\\.    $ ,   8    (    !          %    \"     $   #: @   0         0    V@"
+"(  %1H:7,@<WES=&5M(&ES(&1E<VEG;F5D(&9O<B!U<V4@=VET:\"!T:&4@17AP;&]R97(@,38@8F"
+"]A<F0N($ET(')E<75I<F5S('1H92!F;VQL;W=I;F<@8V]N;F5C=&EO;G,Z#0I0;W)T($0V(\"T@*&"
+"EN<'5T*2!0;W)T($AA;&P@169F96-T(%-E;G-O<@T*4&]R=\"!$,3,@+2 H:6YP=70I(%-T87)B;V"
+"%R9\"!(86QL($5F9F5C=\"!396YS;W(-\"E!O<G0@3T,Q(\"T@*&]U='!U=\"D@4W1E<\"!O=71P="
+"70@9F]R(')U9&1E<B!D<FEV97(@8F]A<F0-\"E!O<G0@0C,@+2 H;W5T<'5T*2!%;F%B;&4@;W5T<"
+"'5T(&9O<B!R=61D97(@9')I=F5R(&)O87)D+\"!W:7)E9\"!L;W<N#0I0;W)T($(R(\"T@*&]U='!"
+"U=\"D@1&ER96-T:6]N(&]U='!U=\"!F;W(@<G5D9&5R(&1R:79E<B!B;V%R9 T*4V5R:6%L(&-O;F"
+"YE8W1I;VX@+2!-86EN(&1R:79E(&)O87)D#0I0;W=E<B M(&-O;FYE8W1E9 T*#0I4:&ES(&UO9&5"
+"L('!R;W9I9&5S(')E;6]T92!C;VYT<F]L(&9O<B!T:&4@<F]B;V%T('9I82!S=&%N9&%R9\"!20R!"
+"H87)D=V%R92!R96QY:6YG(&]N(%!732!S:6=N86QS+@T*270@97AP96-T<R!A(')A;F=E(&]F(#$N"
+"-RTS+C)6(&9O<B!T:&4@<G5D9&5R('!O<VET:6]N('!O=&5N=&EO;65T97(@=VET:\" S+C)6(&)E"
+":6YG(&AA<F0@=&\\@<&]R=\"X-\"@T*5$]$3SH@26UP;&5M96YT(&9A:6QS869E('-E='1I;F<@<'"
+")O<'5L<VEO;B!M;W1O<B!T;R P(&EF(&-O;FYE8W1I;VX@=&\\@4D,@:&%R9'=A<F4@;&]S=\"X  "
+"      "
   }
 }
 
