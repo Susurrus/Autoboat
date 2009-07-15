@@ -1,4 +1,4 @@
-#include <stdio.h>
+ #include <stdio.h>
 #include <p33fxxxx.h>
 #include <string.h>
 
@@ -16,10 +16,10 @@ extern void send_cc_command(short num, unsigned char enable) {
   }
   // Make sure we limit our integer value. This ensures we generate a proper command.
   if (num <= 1023 && num >= -1024 && enable) {
-    char ss[8];
+    char ss[9];
     sprintf(ss, "CC%.4d\r\n", num); // Convert our number into ASCII from base10
     char i = 0;
-    while (i < 8) {
+    while (i < 9) {
       while(U2STAbits.UTXBF==1); // Wait for buffer to be ready for more data
       U2TXREG = ss[i];
       ++i;
