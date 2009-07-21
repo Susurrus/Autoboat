@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.292"
+    ComputedModelVersion    "1.301"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -44,8 +44,8 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Jul 20 11:09:52 2009"
-  ModelVersionFormat	  "1.%<AutoIncrement:292>"
+  LastModifiedDate	  "Tue Jul 21 09:27:42 2009"
+  ModelVersionFormat	  "1.%<AutoIncrement:301>"
   ConfigurationManager	  "None"
   SimulationMode	  "normal"
   LinearizationMsg	  "none"
@@ -339,9 +339,9 @@ Model {
 "R2_SRC & IC_INT_1CAPTURE &\n                 IC_EVERY_RISE_EDGE);\n    Config"
 "IntCapture1(IC_INT_ON & IC_INT_PRIOR_7);\n    OpenCapture2(IC_IDLE_CON & IC_T"
 "IMER2_SRC & IC_INT_1CAPTURE &\n                 IC_EVERY_RISE_EDGE);\n    Con"
-"figIntCapture2(IC_INT_ON & IC_INT_PRIOR_7);\n\n// Configure PORTA7 and F7 to "
-"be open-drain\nODCGbits.ODCG1 = 1;\nODCDbits.ODCD5 = 1;\n\n// Enable serial o"
-"utput\nU2STAbits.UTXEN = 1;"
+"figIntCapture2(IC_INT_ON & IC_INT_PRIOR_7);\n\n// Configure ports D1, D5, G9 "
+"to be open-drain, as 5V outputs are needed\nODCGbits.ODCG9 = 1;\nODCDbits.ODC"
+"D5 = 1;\nODCDbits.ODCD1 = 1;\n\n// Enable serial output\nU2STAbits.UTXEN = 1;"
 	  IncludeHyperlinkInReport off
 	  LaunchReport		  off
 	  TargetLang		  "C"
@@ -903,7 +903,7 @@ Model {
     Block {
       BlockType		      Bias
       Name		      "Bias2"
-      Position		      [255, 266, 285, 294]
+      Position		      [240, 266, 270, 294]
       ShowName		      off
       Bias		      "-345"
       SaturateOnIntegerOverflow	off
@@ -913,7 +913,7 @@ Model {
       Name		      "C Function Call"
       Tag		      "dsPIC_dsPIC_CFunctionCall"
       Ports		      [0, 1]
-      Position		      [15, 350, 140, 390]
+      Position		      [20, 350, 145, 390]
       ShowName		      off
       List {
 	ListType		RTWdata
@@ -1215,13 +1215,6 @@ Model {
     }
     Block {
       BlockType		      Constant
-      Name		      "Constant3"
-      Position		      [205, 470, 235, 500]
-      ShowName		      off
-      OutDataTypeMode	      "Inherit via back propagation"
-    }
-    Block {
-      BlockType		      Constant
       Name		      "Constant4"
       Position		      [665, 200, 695, 230]
       ShowName		      off
@@ -1231,7 +1224,7 @@ Model {
     Block {
       BlockType		      DataTypeConversion
       Name		      "Data Type Conversion1"
-      Position		      [200, 361, 230, 379]
+      Position		      [195, 361, 225, 379]
       ShowName		      off
       OutDataTypeMode	      "int16"
       RndMeth		      "Floor"
@@ -1824,40 +1817,6 @@ Model {
       FctCall		      "send_sr_command(%u1, %u2);"
       OrderingInOutPopup      "None"
     }
-    Block {
-      BlockType		      Reference
-      Name		      "cc_command2"
-      Tag		      "dsPIC_dsPIC_CFunctionCall"
-      Ports		      [2]
-      Position		      [270, 455, 395, 495]
-      ShowName		      off
-      List {
-	ListType		RTWdata
-	FctDeclaration		"extern void send_short(int16_T u1, uint8_T u2"
-");"
-	FctCall			"send_short(%u1, %u2);"
-	fctName			"send_short"
-	INPUT_SIZE		"1"
-	OUTPUT_SIZE		"1"
-	NBR_INPUT		"2"
-	NBR_OUTPUT		"0"
-      }
-      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
-      SourceType	      "C Function Call"
-      fctName		      "'send_short'"
-      INPUT_SIZE	      "1"
-      INPUT1		      "int16"
-      INPUT2		      "uint8"
-      INPUT3		      "--"
-      OUTPUT_SIZE	      "1"
-      OUTPUT1		      "--"
-      SampleTime	      "-1"
-      InputType		      "[ 3 2 ]"
-      OutputType	      "[ ]"
-      FctDeclaration	      "extern void send_short(int16_T u1, uint8_T u2);"
-      FctCall		      "send_short(%u1, %u2);"
-      OrderingInOutPopup      "None"
-    }
     Line {
       SrcBlock		      "C Function Call1"
       SrcPort		      1
@@ -2078,20 +2037,6 @@ Model {
       DstPort		      1
     }
     Line {
-      SrcBlock		      "C Function Call"
-      SrcPort		      1
-      Points		      [30, 0]
-      Branch {
-	DstBlock		"Data Type Conversion1"
-	DstPort			1
-      }
-      Branch {
-	Points			[0, 35]
-	DstBlock		"Compare\nTo Zero1"
-	DstPort			1
-      }
-    }
-    Line {
       SrcBlock		      "Compare\nTo Zero1"
       SrcPort		      1
       DstBlock		      "Logical\nOperator4"
@@ -2173,16 +2118,8 @@ Model {
     Line {
       SrcBlock		      "Data Type Conversion2"
       SrcPort		      1
-      Points		      [10, 0]
-      Branch {
-	DstBlock		"Bias2"
-	DstPort			1
-      }
-      Branch {
-	Points			[0, 185]
-	DstBlock		"cc_command2"
-	DstPort			1
-      }
+      DstBlock		      "Bias2"
+      DstPort		      1
     }
     Line {
       SrcBlock		      "Constant1"
@@ -2278,16 +2215,24 @@ Model {
       DstPort		      2
     }
     Line {
-      SrcBlock		      "Constant3"
-      SrcPort		      1
-      DstBlock		      "cc_command2"
-      DstPort		      2
-    }
-    Line {
       SrcBlock		      "Constant4"
       SrcPort		      1
       DstBlock		      "Digital Output Write1"
       DstPort		      1
+    }
+    Line {
+      SrcBlock		      "C Function Call"
+      SrcPort		      1
+      Points		      [20, 0]
+      Branch {
+	DstBlock		"Data Type Conversion1"
+	DstPort			1
+      }
+      Branch {
+	Points			[0, 35]
+	DstBlock		"Compare\nTo Zero1"
+	DstPort			1
+      }
     }
   }
 }
@@ -2295,35 +2240,38 @@ MatData {
   NumRecords		  1
   DataRecord {
     Tag			    DataTag0
-    Data		    "  %)30     .    $ 8   8    (     @         %    "
+    Data		    "  %)30     .    Z 8   8    (     @         %    "
 "\"     $    !     0         %  0 \"     $    0    =F5R<VEO;@!C;VYT96YT  X    "
 "X    !@    @    &          4    (     0    $    !          D    (    FIF9F9F9"
-"\\3\\.    @ 4   8    (    !          %    \"     $   !.!0   0         0    3@"
-"4  %1H:7,@<WES=&5M(&ES(&1E<VEG;F5D(&9O<B!U<V4@=VET:\"!T:&4@17AP;&]R97(@,38@8F"
-"]A<F0N($ET(')E<75I<F5S('1H92!F;VQL;W=I;F<@8V]N;F5C=&EO;G,Z#0I0;W)T($0V(\"T@*&"
-"EN<'5T*2!0;W)T($AA;&P@169F96-T(%-E;G-O<@T*4&]R=\"!\"-R M(\"AI;G!U=\"D@4&]S:71"
-"I;VX@<&]T(&9O<B!T:&4@<G5D9&5R#0I0;W)T($0Q,R M(\"AI;G!U=\"D@4W1A<F)O87)D($AA;&"
-"P@169F96-T(%-E;G-O<@T*4&]R=\"!/0S(O4D0Q(\"T@*&]U='!U=\"D@4W1E<\"!O=71P=70@9F]"
-"R(')U9&1E<B!D<FEV97(@8F]A<F0-\"E!O<G0@1SD@+2 H;W5T<'5T*2!%;F%B;&4@;W5T<'5T(&9"
-"O<B!R=61D97(@9')I=F5R(&)O87)D+\"!W:7)E9\"!L;W<N#0I0;W)T($0U(\"T@*&]U='!U=\"D@"
-"1&ER96-T:6]N(&]U='!U=\"!F;W(@<G5D9&5R(&1R:79E<B!B;V%R9 T*4V5R:6%L(&-O;FYE8W1I"
-";VX@+2!-86EN(&1R:79E(&)O87)D#0I0;W=E<B M(&-O;FYE8W1E9 T*#0I4:&ES(&UO9&5L('!R;"
-"W9I9&5S(')E;6]T92!C;VYT<F]L(&9O<B!T:&4@<F]B;V%T('9I82!S=&%N9&%R9\"!20R!H87)D="
-"V%R92!R96QY:6YG(&]N(%!732!S:6=N86QS+@T*270@97AP96-T<R!A(')A;F=E(&]F(#$N-RTS+C"
-")6(&9O<B!T:&4@<G5D9&5R('!O<VET:6]N('!O=&5N=&EO;65T97(@=VET:\" S+C)6(&)E:6YG(&"
-"AA<F0@=&\\@<&]R=\"X-\"@T*02!F86EL<V%F92!H87,@8F5E;B!I;7!L96UE;G1E9\"P@=&AO=6="
-"H(')A=&AE<B!C<G5D96QY+\"!T;R!D971E8W0@82!L;W-S(&]F(%)#(&-O;FYE8W1I;VX@86YD('1"
-"O( T*<F5D=6-E('!R;W!E;&QE<B!S<&5E9\"!T;R!Z97)O(&%N9\"!D:7-A8FQE(')U9&1E<B!C;V"
-"YT<F]L+B!4:&ES('=O<FMS(&)Y('5S:6YG(&$@-3!M<R!T:6UE<B!T:&%T(&ES#0IS970@979E<GD"
-"@:6YP=70@8V%P='5R92!E=F5N=\"X@268@:70@97AP:7)E<R H=&AE(#4M8VAA;FYE;\"!05TT@:6"
-"YP=70@=V4G<F4@=7-I;F<@:&%V92 R,&US('!E<FEO9',I#0IT:&5N('=E(&%S<W5M92!T:&5R92!"
-"I<R!A(&QO<W,@:6X@8V]N;F5C=&EO;BX@4F5C;VYN96-T:6]N(&%U=&]M871I8V%L;'D@<W1A<G1S"
-"('1H92!05TT@<VEG;F%L<R!U<\" -\"F%G86EN(&%N9\"!T:&5Y(&-O;G1I;G5E('1O(&)E(')E86"
-"0@8GD@=&AE(&1S4$E#+B!4:&4@8V]D92!)(&%M('5S:6YG(&1O97-N)W0@<V5E;2!T;R!W;W)K(&9"
-"O<B!T:&4-\"F9I<G-T(&EN<'5T(&-A<'1U<F4@86YD($DG;2!N;W0@8V5R=&%I;B!W:'D@870@=&A"
-"I<R!T:6UE+B!!<R!T:&4@8VQE87)I;F<@979E;G0@=V]R:W,@9F]R(&)O=&@@:6YP=70-\"F-A<'1"
-"U<F5S+\"!)(&%M('5S:6YG(&EN<'5T(&-A<'1U<F4@='=O('1O(&1E=&5C=\"!A(&1I<V-O;FYE8W"
-"0N   "
+"\\3\\.    6 8   8    (    !          %    \"     $    A!@   0         0    (0"
+"8  %1H:7,@<WES=&5M(&ES(&1E<VEG;F5D(&9O<B!U<V4@=VET:\"!T:&4@17AP;&]R97(@,38@8F"
+"]A<F0N($ET(')E<75I<F5S('1H92!F;VQL;W=I;F<@8V]N;F5C=&EO;G,Z#0I0;W)T($0X(\"T@*&"
+"EN<'5T*2!05TT@:6YP=70@9F]R('1H<F]T=&QE(&9R;VT@4D,@<F5C96EV97(@*#)M<R!H:6=H(#T"
+"@;6%X(&9O<G=A<F0L(#%M<R!H:6=H(#T@;6%X(')E=F5R<V4I#0I0;W)T($0Y(\"T@*&EN<'5T*2!"
+"05TT@:6YP=70@9F]R(')U9&1E<B!F<F]M(%)#(')E8V5I=F5R(\"@R;7,@:&EG:\" ](&AA<F0@<&"
+"]R=\"P@,6US(&AI9V@@/2!H87)D('-T97)N*0T*4&]R=\"!$-B M(\"AI;G!U=\"D@4&]R=\"!(86"
+"QL($5F9F5C=\"!396YS;W(-\"E!O<G0@0C<@+2 H:6YP=70I(%!O<VET:6]N('!O=\"!F;W(@=&AE"
+"(')U9&1E<@T*4&]R=\"!$,3,@+2 H:6YP=70I(%-T87)B;V%R9\"!(86QL($5F9F5C=\"!396YS;W"
+"(-\"E!O<G0@3T,R+U)$,2 M(\"AO=71P=70I(%-T97 @;W5T<'5T(&9O<B!R=61D97(@9')I=F5R("
+"&)O87)D#0I0;W)T($<Y(\"T@*&]U='!U=\"D@16YA8FQE(&]U='!U=\"!F;W(@<G5D9&5R(&1R:79"
+"E<B!B;V%R9\"P@=VER960@;&]W+@T*4&]R=\"!$-2 M(\"AO=71P=70I($1I<F5C=&EO;B!O=71P="
+"70@9F]R(')U9&1E<B!D<FEV97(@8F]A<F0-\"E-E<FEA;\"!C;VYN96-T:6]N(\"T@36%I;B!D<FE"
+"V92!B;V%R9 T*4&]W97(@+2!C;VYN96-T960-\"@T*5&AI<R!M;V1E;\"!P<F]V:61E<R!R96UO=&"
+"4@8V]N=')O;\"!F;W(@=&AE(')O8F]A=\"!V:6$@<W1A;F1A<F0@4D,@:&%R9'=A<F4@<F5L>6EN9"
+"R!O;B!05TT@<VEG;F%L<RX-\"DET(&5X<&5C=',@82!R86YG92!O9B Q+C<M,RXR5B!F;W(@=&AE("
+"')U9&1E<B!P;W-I=&EO;B!P;W1E;G1I;VUE=&5R('=I=&@@,RXR5B!B96EN9R!H87)D('1O('!O<G"
+"0N#0H-\"D$@9F%I;'-A9F4@:&%S(&)E96X@:6UP;&5M96YT960L('1H;W5G:\"!R871H97(@8W)U9"
+"&5L>2P@=&\\@9&5T96-T(&$@;&]S<R!O9B!20R!C;VYN96-T:6]N(&%N9\"!T;R -\"G)E9'5C92!"
+"P<F]P96QL97(@<W!E960@=&\\@>F5R;R!A;F0@9&ES86)L92!R=61D97(@8V]N=')O;\"X@5&AI<R"
+"!W;W)K<R!B>2!U<VEN9R!A(#4P;7,@=&EM97(@=&AA=\"!I<PT*<V5T(&5V97)Y(&EN<'5T(&-A<'"
+"1U<F4@979E;G0N($EF(&ET(&5X<&ER97,@*'1H92 U+6-H86YN96P@4%=-(&EN<'5T('=E)W)E('5"
+"S:6YG(&AA=F4@,C!M<R!P97)I;V1S*0T*=&AE;B!W92!A<W-U;64@=&AE<F4@:7,@82!L;W-S(&EN"
+"(&-O;FYE8W1I;VXN(%)E8V]N;F5C=&EO;B!A=71O;6%T:6-A;&QY('-T87)T<R!T:&4@4%=-('-I9"
+"VYA;',@=7 @#0IA9V%I;B!A;F0@=&AE>2!C;VYT:6YU92!T;R!B92!R96%D(&)Y('1H92!D<U!)0R"
+"X@5&AE(&-O9&4@22!A;2!U<VEN9R!D;V5S;B=T('-E96T@=&\\@=V]R:R!F;W(@=&AE#0IF:7)S="
+"\"!I;G!U=\"!C87!T=7)E(&%N9\"!))VT@;F]T(&-E<G1A:6X@=VAY(&%T('1H:7,@=&EM92X@07,"
+"@=&AE(&-L96%R:6YG(&5V96YT('=O<FMS(&9O<B!B;W1H(&EN<'5T#0IC87!T=7)E<RP@22!A;2!U"
+"<VEN9R!I;G!U=\"!C87!T=7)E('1W;R!T;R!D971E8W0@82!D:7-C;VYN96-T+@         "
   }
 }
 
