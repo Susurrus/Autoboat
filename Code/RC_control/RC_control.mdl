@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.301"
+    ComputedModelVersion    "1.306"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -44,8 +44,8 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Jul 21 09:27:42 2009"
-  ModelVersionFormat	  "1.%<AutoIncrement:301>"
+  LastModifiedDate	  "Tue Jul 21 10:04:41 2009"
+  ModelVersionFormat	  "1.%<AutoIncrement:306>"
   ConfigurationManager	  "None"
   SimulationMode	  "normal"
   LinearizationMsg	  "none"
@@ -1215,6 +1215,13 @@ Model {
     }
     Block {
       BlockType		      Constant
+      Name		      "Constant3"
+      Position		      [300, 185, 330, 215]
+      ShowName		      off
+      OutDataTypeMode	      "Inherit via back propagation"
+    }
+    Block {
+      BlockType		      Constant
       Name		      "Constant4"
       Position		      [665, 200, 695, 230]
       ShowName		      off
@@ -1257,6 +1264,22 @@ Model {
       SaturateOnIntegerOverflow	off
     }
     Block {
+      BlockType		      DataTypeConversion
+      Name		      "Data Type Conversion5"
+      Position		      [350, 161, 370, 179]
+      ShowName		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	off
+    }
+    Block {
+      BlockType		      DataTypeConversion
+      Name		      "Data Type Conversion6"
+      Position		      [345, 176, 370, 194]
+      ShowName		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	off
+    }
+    Block {
       BlockType		      Reference
       Name		      "Detect\nChange"
       Ports		      [1, 1]
@@ -1278,13 +1301,13 @@ Model {
       BlockType		      Reference
       Name		      "Digital Input1"
       Tag		      "dsPIC_Digital_Input"
-      Ports		      [0, 2]
-      Position		      [140, 130, 255, 170]
+      Ports		      [0, 1]
+      Position		      [140, 110, 255, 150]
       ShowName		      off
       SourceBlock	      "dsPICdrivers/Digital I//O/Digital Input"
       SourceType	      ""
-      PORT		      "D"
-      Pin		      "[6 13]"
+      PORT		      "F"
+      Pin		      "[3]"
       SampleTime	      ".1"
       OrderingInOutPopup      "None"
       Port {
@@ -1293,8 +1316,22 @@ Model {
 	RTWStorageClass		"Auto"
 	DataLoggingNameMode	"SignalName"
       }
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Digital Input2"
+      Tag		      "dsPIC_Digital_Input"
+      Ports		      [0, 1]
+      Position		      [140, 150, 255, 190]
+      ShowName		      off
+      SourceBlock	      "dsPICdrivers/Digital I//O/Digital Input"
+      SourceType	      ""
+      PORT		      "G"
+      Pin		      "[3]"
+      SampleTime	      ".1"
+      OrderingInOutPopup      "None"
       Port {
-	PortNumber		2
+	PortNumber		1
 	Name			"Starboard Hall"
 	RTWStorageClass		"Auto"
 	DataLoggingNameMode	"SignalName"
@@ -1535,9 +1572,9 @@ Model {
       typePort		      "[ 0   0   0   0   0   0   0   0   0   0   0   0"
 "   0   0   0   0   0   0   0   0   0   0   0   8   0   0   0   0   0   0   0 "
 "  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   7  "
-" 0   0   0  10   9   0   0   0   0   0   0   9   0   0   0   0   0   0   0   "
-"0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   4   0   0   0   0"
-"   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0  10   0   0 "
+" 0   0   0  10   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   "
+"0   0   0   0   0   0   0   0   0   0   0   0   0   0   9   4   0   0   0   0"
+"   0   0   0   0   0   0   0   0   0   0   9   0   0   0   0   0  10   0   0 "
 "  0   0   0   0 ]"
       TRIS		      "[ 65535  65535  65535  65501  65535  65535  650"
 "23 ]"
@@ -1817,6 +1854,41 @@ Model {
       FctCall		      "send_sr_command(%u1, %u2);"
       OrderingInOutPopup      "None"
     }
+    Block {
+      BlockType		      Reference
+      Name		      "cc_command2"
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      [3]
+      Position		      [390, 165, 515, 205]
+      ShowName		      off
+      List {
+	ListType		RTWdata
+	FctDeclaration		"extern void send_2_shorts(int16_T u1, int16_T"
+" u2, uint8_T u3);"
+	FctCall			"send_2_shorts(%u1, %u2, %u3);"
+	fctName			"send_2_shorts"
+	INPUT_SIZE		"1"
+	OUTPUT_SIZE		"1"
+	NBR_INPUT		"3"
+	NBR_OUTPUT		"0"
+      }
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      fctName		      "'send_2_shorts'"
+      INPUT_SIZE	      "1"
+      INPUT1		      "int16"
+      INPUT2		      "int16"
+      INPUT3		      "uint8"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "--"
+      SampleTime	      "-1"
+      InputType		      "[ 3 3 2 ]"
+      OutputType	      "[ ]"
+      FctDeclaration	      "extern void send_2_shorts(int16_T u1, int16_T u"
+"2, uint8_T u3);"
+      FctCall		      "send_2_shorts(%u1, %u2, %u3);"
+      OrderingInOutPopup      "None"
+    }
     Line {
       SrcBlock		      "C Function Call1"
       SrcPort		      1
@@ -1855,18 +1927,32 @@ Model {
     Line {
       Name		      "Starboard Hall"
       Labels		      [0, 0]
-      SrcBlock		      "Digital Input1"
-      SrcPort		      2
-      DstBlock		      "Switch"
-      DstPort		      3
+      SrcBlock		      "Digital Input2"
+      SrcPort		      1
+      Points		      [0, -10; 70, 0]
+      Branch {
+	DstBlock		"Switch"
+	DstPort			3
+      }
+      Branch {
+	DstBlock		"Data Type Conversion6"
+	DstPort			1
+      }
     }
     Line {
       Name		      "Port Hall"
       Labels		      [0, 0]
       SrcBlock		      "Digital Input1"
       SrcPort		      1
-      DstBlock		      "Switch"
-      DstPort		      1
+      Points		      [0, 10; 75, 0]
+      Branch {
+	DstBlock		"Switch"
+	DstPort			1
+      }
+      Branch {
+	DstBlock		"Data Type Conversion5"
+	DstPort			1
+      }
     }
     Line {
       SrcBlock		      "Gain3"
@@ -2233,6 +2319,24 @@ Model {
 	DstBlock		"Compare\nTo Zero1"
 	DstPort			1
       }
+    }
+    Line {
+      SrcBlock		      "Constant3"
+      SrcPort		      1
+      DstBlock		      "cc_command2"
+      DstPort		      3
+    }
+    Line {
+      SrcBlock		      "Data Type Conversion6"
+      SrcPort		      1
+      DstBlock		      "cc_command2"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Data Type Conversion5"
+      SrcPort		      1
+      DstBlock		      "cc_command2"
+      DstPort		      1
     }
   }
 }
