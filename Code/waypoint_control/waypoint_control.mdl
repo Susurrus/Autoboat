@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.153"
+    ComputedModelVersion    "1.210"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -44,8 +44,8 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Jul 27 17:14:01 2009"
-  ModelVersionFormat	  "1.%<AutoIncrement:153>"
+  LastModifiedDate	  "Tue Jul 28 12:43:07 2009"
+  ModelVersionFormat	  "1.%<AutoIncrement:210>"
   ConfigurationManager	  "None"
   SimulationMode	  "accelerator"
   LinearizationMsg	  "none"
@@ -522,6 +522,13 @@ Model {
       SampleTime	      "1"
     }
     Block {
+      BlockType		      Display
+      Format		      "short"
+      Decimation	      "10"
+      Floating		      off
+      SampleTime	      "-1"
+    }
+    Block {
       BlockType		      Fcn
       Expr		      "sin(u[1])"
       SampleTime	      "-1"
@@ -573,18 +580,6 @@ Model {
       IgnoreLimit	      off
       ZeroCross		      on
       ContinuousStateAttributes	"''"
-    }
-    Block {
-      BlockType		      Math
-      Operator		      "exp"
-      OutputSignalType	      "auto"
-      SampleTime	      "-1"
-      OutDataTypeMode	      "Same as first input"
-      OutDataType	      "sfix(16)"
-      OutScaling	      "2^0"
-      LockScale		      off
-      RndMeth		      "Floor"
-      SaturateOnIntegerOverflow	on
     }
     Block {
       BlockType		      MATLABFcn
@@ -698,6 +693,9 @@ Model {
       SampleTime	      "-1"
     }
     Block {
+      BlockType		      Terminator
+    }
+    Block {
       BlockType		      Trigonometry
       Operator		      "sin"
       OutputSignalType	      "auto"
@@ -739,24 +737,6 @@ Model {
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
     Block {
-      BlockType		      Scope
-      Name		      "Charge"
-      Ports		      [1]
-      Position		      [685, 409, 715, 441]
-      Floating		      off
-      Location		      [6, 52, 1286, 769]
-      Open		      off
-      NumInputPorts	      "1"
-      List {
-	ListType		AxesTitles
-	axes1			"%<SignalLabel>"
-      }
-      SaveName		      "ScopeData3"
-      DataFormat	      "StructureWithTime"
-      LimitDataPoints	      off
-      SampleTime	      "0"
-    }
-    Block {
       BlockType		      Constant
       Name		      "Constant"
       Position		      [375, 220, 405, 250]
@@ -775,6 +755,32 @@ Model {
       Position		      [375, 280, 405, 310]
       ShowName		      off
       Value		      "0"
+    }
+    Block {
+      BlockType		      Display
+      Name		      "Display"
+      Ports		      [1]
+      Position		      [950, 114, 1105, 146]
+      Format		      "long"
+      Decimation	      "1"
+      Lockdown		      off
+    }
+    Block {
+      BlockType		      Display
+      Name		      "Display1"
+      Ports		      [1]
+      Position		      [940, 205, 1095, 235]
+      Format		      "long"
+      Decimation	      "1"
+      Lockdown		      off
+    }
+    Block {
+      BlockType		      Display
+      Name		      "Display2"
+      Ports		      [1]
+      Position		      [685, 75, 775, 105]
+      Decimation	      "1"
+      Lockdown		      off
     }
     Block {
       BlockType		      Scope
@@ -822,7 +828,7 @@ Model {
     Block {
       BlockType		      SubSystem
       Name		      "Plant"
-      Ports		      [3, 8]
+      Ports		      [3, 7]
       Position		      [455, 145, 625, 325]
       MinAlgLoopOccurrences   off
       RTWSystemCode	      "Auto"
@@ -864,17 +870,40 @@ Model {
 	  IconDisplay		  "Port number"
 	}
 	Block {
+	  BlockType		  Gain
+	  Name			  "Convert to\nacceleration"
+	  Position		  [600, 150, 660, 190]
+	  ShowName		  off
+	  Gain			  "1/20"
+	  ParameterDataTypeMode	  "Inherit via internal rule"
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
 	  BlockType		  SubSystem
-	  Name			  "Charge Plant"
-	  Ports			  [1, 1]
-	  Position		  [880, 443, 960, 527]
+	  Name			  "Convert to GPS"
+	  Ports			  [3, 2]
+	  Position		  [810, 251, 970, 349]
 	  MinAlgLoopOccurrences	  off
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
+	  Array {
+	    Type		    "Handle"
+	    Dimension		    0
+	    PropName		    "AvailSigsLoadSave"
+	  }
 	  MaskHideContents	  off
+	  MaskType		  "Stateflow"
+	  MaskDescription	  "Embedded MATLAB block"
+	  MaskDisplay		  "disp('vreckon');"
+	  MaskSelfModifiable	  on
+	  MaskIconFrame		  on
+	  MaskIconOpaque	  off
+	  MaskIconRotate	  "none"
+	  MaskIconUnits		  "autoscale"
 	  System {
-	    Name		    "Charge Plant"
-	    Location		    [2, 82, 1270, 754]
+	    Name		    "Convert to GPS"
+	    Location		    [257, 457, 812, 717]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -889,289 +918,172 @@ Model {
 	    ZoomFactor		    "100"
 	    Block {
 	      BlockType		      Inport
-	      Name		      "Velocity"
-	      Position		      [45, 63, 75, 77]
+	      Name		      "lat1"
+	      Position		      [20, 101, 40, 119]
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
-	      BlockType		      Sum
-	      Name		      "Add"
-	      Ports		      [3, 1]
-	      Position		      [435, 109, 465, 141]
-	      ShowName		      off
-	      Inputs		      "+++"
-	      CollapseMode	      "All dimensions"
-	      InputSameDT	      off
-	      OutDataTypeMode	      "Inherit via internal rule"
-	      OutScaling	      "2^-10"
-	      SaturateOnIntegerOverflow	off
+	      BlockType		      Inport
+	      Name		      "s"
+	      Position		      [20, 136, 40, 154]
+	      Port		      "2"
+	      IconDisplay	      "Port number"
 	    }
 	    Block {
-	      BlockType		      Sum
-	      Name		      "Add1"
-	      Ports		      [3, 1]
-	      Position		      [565, 108, 595, 142]
-	      ShowName		      off
-	      Inputs		      "+-+"
-	      CollapseMode	      "All dimensions"
-	      InputSameDT	      off
-	      OutDataTypeMode	      "Inherit via internal rule"
-	      OutScaling	      "2^-10"
-	      SaturateOnIntegerOverflow	off
-	    }
-	    Block {
-	      BlockType		      Gain
-	      Name		      "Convert to\nacceleration1"
-	      Position		      [155, 51, 185, 89]
-	      ShowName		      off
-	      Gain		      "1/0.5144444"
-	      ParameterDataTypeMode   "Inherit via internal rule"
-	      OutDataTypeMode	      "Inherit via internal rule"
-	      SaturateOnIntegerOverflow	off
-	    }
-	    Block {
-	      BlockType		      Integrator
-	      Name		      "Convert to velocity"
-	      Ports		      [1, 1]
-	      Position		      [505, 110, 535, 140]
-	      ShowName		      off
-	      IgnoreLimit	      off
+	      BlockType		      Inport
+	      Name		      "a12"
+	      Position		      [20, 171, 40, 189]
+	      Port		      "3"
+	      IconDisplay	      "Port number"
 	    }
 	    Block {
 	      BlockType		      Demux
-	      Name		      "Demux"
-	      Ports		      [1, 3]
-	      Position		      [155, 101, 160, 139]
-	      BackgroundColor	      "black"
-	      ShowName		      off
-	      Outputs		      "3"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Math
-	      Name		      "Math\nFunction"
+	      Name		      " Demux "
 	      Ports		      [1, 1]
-	      Position		      [255, 55, 285, 85]
-	      ShowName		      off
-	      Operator		      "square"
+	      Position		      [270, 205, 320, 245]
+	      Outputs		      "1"
 	    }
 	    Block {
-	      BlockType		      Constant
-	      Name		      "Phase shift1"
-	      Position		      [455, 63, 535, 97]
-	      ShowName		      off
-	      Value		      "initial_charge"
-	      SampleTime	      "-1"
+	      BlockType		      "S-Function"
+	      Name		      " SFunction "
+	      Tag		      "Stateflow S-Function waypoint_control 2"
+	      Ports		      [3, 3]
+	      Position		      [180, 104, 230, 206]
+	      FunctionName	      "sf_sfun"
+	      PortCounts	      "[3 3]"
+	      Port {
+		PortNumber		2
+		Name			"d_lat2"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	      Port {
+		PortNumber		3
+		Name			"d_lon2"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
 	    }
 	    Block {
-	      BlockType		      Constant
-	      Name		      "Phase shift2"
-	      Position		      [20, 101, 125, 139]
-	      ShowName		      off
-	      Value		      "power_coefficients"
-	      SampleTime	      "-1"
-	    }
-	    Block {
-	      BlockType		      Product
-	      Name		      "Product"
-	      Ports		      [2, 1]
-	      Position		      [350, 62, 380, 93]
-	      ShowName		      off
-	      CollapseMode	      "All dimensions"
-	      InputSameDT	      off
-	      OutDataTypeMode	      "Inherit via internal rule"
-	      SaturateOnIntegerOverflow	off
-	    }
-	    Block {
-	      BlockType		      Product
-	      Name		      "Product1"
-	      Ports		      [2, 1]
-	      Position		      [350, 107, 380, 138]
-	      ShowName		      off
-	      CollapseMode	      "All dimensions"
-	      InputSameDT	      off
-	      OutDataTypeMode	      "Inherit via internal rule"
-	      SaturateOnIntegerOverflow	off
+	      BlockType		      Terminator
+	      Name		      " Terminator "
+	      Position		      [460, 216, 480, 234]
 	    }
 	    Block {
 	      BlockType		      Outport
-	      Name		      "Charge"
-	      Position		      [640, 113, 670, 127]
+	      Name		      "d_lat2"
+	      Position		      [460, 101, 480, 119]
 	      IconDisplay	      "Port number"
 	      BusOutputAsStruct	      off
 	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "d_lon2"
+	      Position		      [460, 136, 480, 154]
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
 	    Line {
-	      SrcBlock		      "Velocity"
+	      SrcBlock		      " SFunction "
 	      SrcPort		      1
-	      DstBlock		      "Convert to\nacceleration1"
+	      Points		      [0, 105]
+	      DstBlock		      " Demux "
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "Convert to\nacceleration1"
+	      SrcBlock		      " Demux "
 	      SrcPort		      1
-	      Points		      [35, 0]
-	      Branch {
-		DstBlock		"Math\nFunction"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, 45]
-		DstBlock		"Product1"
-		DstPort			1
-	      }
-	    }
-	    Line {
-	      SrcBlock		      "Phase shift2"
-	      SrcPort		      1
-	      DstBlock		      "Demux"
+	      DstBlock		      " Terminator "
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "Math\nFunction"
+	      SrcBlock		      "lat1"
 	      SrcPort		      1
-	      DstBlock		      "Product"
+	      DstBlock		      " SFunction "
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "Demux"
-	      SrcPort		      1
-	      Points		      [25, 0; 0, -15; 145, 0]
-	      DstBlock		      "Product"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Demux"
+	      Name		      "d_lat2"
+	      Labels		      [0, 0]
+	      SrcBlock		      " SFunction "
 	      SrcPort		      2
-	      Points		      [45, 0; 0, 10]
-	      DstBlock		      "Product1"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Product1"
-	      SrcPort		      1
-	      DstBlock		      "Add"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Product"
-	      SrcPort		      1
-	      Points		      [5, 0; 0, 35]
-	      DstBlock		      "Add"
+	      DstBlock		      "d_lat2"
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "Demux"
+	      Name		      "d_lon2"
+	      Labels		      [0, 0]
+	      SrcBlock		      " SFunction "
 	      SrcPort		      3
-	      Points		      [30, 0; 0, 20; 195, 0; 0, -15]
-	      DstBlock		      "Add"
+	      DstBlock		      "d_lon2"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "s"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "a12"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
 	      DstPort		      3
 	    }
-	    Line {
-	      SrcBlock		      "Add"
-	      SrcPort		      1
-	      DstBlock		      "Convert to velocity"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Convert to velocity"
-	      SrcPort		      1
-	      DstBlock		      "Add1"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Phase shift1"
-	      SrcPort		      1
-	      Points		      [10, 0]
-	      DstBlock		      "Add1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Add1"
-	      SrcPort		      1
-	      Points		      [0, -5]
-	      DstBlock		      "Charge"
-	      DstPort		      1
-	    }
 	  }
-	}
-	Block {
-	  BlockType		  Constant
-	  Name			  "Constant1"
-	  Position		  [300, 365, 330, 395]
-	  ShowName		  off
-	  Value			  "v_0"
-	}
-	Block {
-	  BlockType		  Constant
-	  Name			  "Constant3"
-	  Position		  [50, 40, 120, 70]
-	  ShowName		  off
-	  Value			  "wind_speed_0"
-	}
-	Block {
-	  BlockType		  Constant
-	  Name			  "Constant4"
-	  Position		  [30, 85, 120, 115]
-	  ShowName		  off
-	  Value			  "wind_heading_0"
-	}
-	Block {
-	  BlockType		  Gain
-	  Name			  "Convert to\nacceleration"
-	  Position		  [700, 150, 760, 190]
-	  ShowName		  off
-	  Gain			  "1/mass"
-	  ParameterDataTypeMode	  "Inherit via internal rule"
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Gain
-	  Name			  "Convert to\nacceleration1"
-	  Position		  [145, 36, 175, 74]
-	  ShowName		  off
-	  Gain			  "wind_effect"
-	  ParameterDataTypeMode	  "Inherit via internal rule"
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Gain
-	  Name			  "Convert to\nacceleration2"
-	  Position		  [400, 361, 430, 399]
-	  ShowName		  off
-	  Gain			  "current_effect"
-	  ParameterDataTypeMode	  "Inherit via internal rule"
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
 	}
 	Block {
 	  BlockType		  Integrator
 	  Name			  "Convert to velocity"
 	  Ports			  [1, 1]
-	  Position		  [825, 155, 855, 185]
+	  Position		  [685, 155, 715, 185]
 	  ShowName		  off
+	  IgnoreLimit		  off
+	}
+	Block {
+	  BlockType		  Display
+	  Name			  "Display1"
+	  Ports			  [1]
+	  Position		  [1010, 117, 1195, 143]
+	  Format		  "long"
+	  Decimation		  "1"
+	  Lockdown		  off
+	}
+	Block {
+	  BlockType		  Display
+	  Name			  "Display2"
+	  Ports			  [1]
+	  Position		  [790, 122, 975, 148]
+	  Format		  "long"
+	  Decimation		  "1"
+	  Lockdown		  off
+	}
+	Block {
+	  BlockType		  Integrator
+	  Name			  "Distance Integrator"
+	  Ports			  [1, 1]
+	  Position		  [740, 255, 770, 285]
 	  IgnoreLimit		  off
 	}
 	Block {
 	  BlockType		  Integrator
 	  Name			  "East Integrator"
 	  Ports			  [1, 1]
-	  Position		  [1020, 245, 1050, 275]
+	  Position		  [1030, 310, 1060, 340]
 	  IgnoreLimit		  off
 	}
 	Block {
 	  BlockType		  SubSystem
 	  Name			  "Forces & Moments"
 	  Ports			  [4, 2]
-	  Position		  [525, 143, 640, 242]
+	  Position		  [430, 143, 545, 242]
 	  MinAlgLoopOccurrences	  off
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Forces & Moments"
-	    Location		    [2, 82, 1270, 754]
+	    Location		    [149, 459, 1417, 1131]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -1252,7 +1164,7 @@ Model {
 	      Name		      "Digital Clock"
 	      Position		      [155, 323, 220, 347]
 	      ShowName		      off
-	      SampleTime	      "-1"
+	      SampleTime	      ".01"
 	    }
 	    Block {
 	      BlockType		      Fcn
@@ -1434,15 +1346,15 @@ Model {
 	  BlockType		  SubSystem
 	  Name			  "Heading plant"
 	  Ports			  [2, 1]
-	  Position		  [545, 438, 625, 522]
+	  Position		  [455, 438, 535, 522]
 	  MinAlgLoopOccurrences	  off
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Heading plant"
-	    Location		    [2, 70, 1598, 1152]
-	    Open		    on
+	    Location		    [2, 74, 1590, 1156]
+	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -1595,98 +1507,32 @@ Model {
 	}
 	Block {
 	  BlockType		  Constant
-	  Name			  "Initial east"
-	  Position		  [1120, 275, 1150, 305]
+	  Name			  "Initial latitude"
+	  Position		  [1135, 270, 1165, 300]
 	  Orientation		  "left"
-	  Value			  "e_0"
+	  Value			  "lat_0"
 	  SampleTime		  "-1"
 	}
 	Block {
 	  BlockType		  Constant
-	  Name			  "Initial north"
-	  Position		  [1120, 185, 1150, 215]
+	  Name			  "Initial longitude"
+	  Position		  [1140, 355, 1170, 385]
 	  Orientation		  "left"
-	  Value			  "n_0"
+	  Value			  "long_0"
 	  SampleTime		  "-1"
 	}
 	Block {
 	  BlockType		  Integrator
 	  Name			  "North Integrator"
 	  Ports			  [1, 1]
-	  Position		  [1010, 130, 1040, 160]
+	  Position		  [1030, 220, 1060, 250]
 	  IgnoreLimit		  off
-	}
-	Block {
-	  BlockType		  Product
-	  Name			  "Product1"
-	  Ports			  [2, 1]
-	  Position		  [905, 252, 935, 283]
-	  ShowName		  off
-	  CollapseMode		  "All dimensions"
-	  InputSameDT		  off
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Product
-	  Name			  "Product2"
-	  Ports			  [2, 1]
-	  Position		  [885, 140, 915, 180]
-	  ShowName		  off
-	  CollapseMode		  "All dimensions"
-	  InputSameDT		  off
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Product
-	  Name			  "Product4"
-	  Ports			  [2, 1]
-	  Position		  [885, 70, 915, 110]
-	  ShowName		  off
-	  CollapseMode		  "All dimensions"
-	  InputSameDT		  off
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Product
-	  Name			  "Product5"
-	  Ports			  [2, 1]
-	  Position		  [910, 322, 940, 353]
-	  ShowName		  off
-	  CollapseMode		  "All dimensions"
-	  InputSameDT		  off
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Product
-	  Name			  "Product6"
-	  Ports			  [2, 1]
-	  Position		  [910, 357, 940, 388]
-	  ShowName		  off
-	  CollapseMode		  "All dimensions"
-	  InputSameDT		  off
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Product
-	  Name			  "Product7"
-	  Ports			  [2, 1]
-	  Position		  [885, 25, 915, 65]
-	  ShowName		  off
-	  CollapseMode		  "All dimensions"
-	  InputSameDT		  off
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
 	}
 	Block {
 	  BlockType		  SubSystem
 	  Name			  "Rudder dynamics"
 	  Ports			  [1, 1]
-	  Position		  [180, 247, 320, 313]
+	  Position		  [200, 247, 340, 313]
 	  MinAlgLoopOccurrences	  off
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
@@ -1819,7 +1665,7 @@ Model {
 	  BlockType		  Scope
 	  Name			  "Scope"
 	  Ports			  [1]
-	  Position		  [540, 554, 570, 586]
+	  Position		  [450, 554, 480, 586]
 	  Floating		  off
 	  Location		  [6, 52, 1286, 769]
 	  Open			  off
@@ -1837,23 +1683,9 @@ Model {
 	}
 	Block {
 	  BlockType		  Sum
-	  Name			  "Sum1"
-	  Ports			  [3, 1]
-	  Position		  [945, 130, 975, 160]
-	  NamePlacement		  "alternate"
-	  ShowName		  off
-	  IconShape		  "round"
-	  Inputs		  "+++|"
-	  CollapseMode		  "All dimensions"
-	  InputSameDT		  off
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Sum
 	  Name			  "Sum3"
 	  Ports			  [2, 1]
-	  Position		  [1080, 130, 1110, 160]
+	  Position		  [1080, 220, 1110, 250]
 	  NamePlacement		  "alternate"
 	  ShowName		  off
 	  IconShape		  "round"
@@ -1867,7 +1699,7 @@ Model {
 	  BlockType		  Sum
 	  Name			  "Sum4"
 	  Ports			  [2, 1]
-	  Position		  [1075, 245, 1105, 275]
+	  Position		  [1085, 310, 1115, 340]
 	  NamePlacement		  "alternate"
 	  ShowName		  off
 	  IconShape		  "round"
@@ -1878,71 +1710,23 @@ Model {
 	  SaturateOnIntegerOverflow off
 	}
 	Block {
-	  BlockType		  Sum
-	  Name			  "Sum5"
-	  Ports			  [3, 1]
-	  Position		  [965, 270, 995, 300]
-	  NamePlacement		  "alternate"
-	  ShowName		  off
-	  IconShape		  "round"
-	  Inputs		  "|+++"
-	  CollapseMode		  "All dimensions"
-	  InputSameDT		  off
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
 	  BlockType		  Saturate
 	  Name			  "Throttle limiter"
-	  Position		  [285, 140, 315, 170]
+	  Position		  [245, 140, 275, 170]
 	  UpperLimit		  "1"
 	  LowerLimit		  "0"
 	}
 	Block {
-	  BlockType		  Trigonometry
-	  Name			  "Trigonometric\nFunction1"
-	  Ports			  [1, 1]
-	  Position		  [670, 280, 700, 310]
-	  ShowName		  off
-	  Operator		  "cos"
-	  OutputSignalType	  "real"
-	}
-	Block {
-	  BlockType		  Trigonometry
-	  Name			  "Trigonometric\nFunction2"
-	  Ports			  [1, 1]
-	  Position		  [660, 120, 690, 150]
-	  ShowName		  off
-	  OutputSignalType	  "real"
-	}
-	Block {
-	  BlockType		  Trigonometry
-	  Name			  "Trigonometric\nFunction3"
-	  Ports			  [1, 1]
-	  Position		  [660, 85, 690, 115]
-	  ShowName		  off
-	  OutputSignalType	  "real"
-	}
-	Block {
-	  BlockType		  Trigonometry
-	  Name			  "Trigonometric\nFunction4"
-	  Ports			  [1, 1]
-	  Position		  [670, 315, 700, 345]
-	  ShowName		  off
-	  Operator		  "cos"
-	  OutputSignalType	  "real"
-	}
-	Block {
 	  BlockType		  Outport
 	  Name			  "North position"
-	  Position		  [1160, 138, 1190, 152]
+	  Position		  [1135, 228, 1165, 242]
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
 	}
 	Block {
 	  BlockType		  Outport
 	  Name			  "East position"
-	  Position		  [1175, 253, 1205, 267]
+	  Position		  [1140, 318, 1170, 332]
 	  Port			  "2"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -1950,7 +1734,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Surge\nVelocity"
-	  Position		  [895, 398, 925, 412]
+	  Position		  [755, 398, 785, 412]
 	  Port			  "3"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -1958,7 +1742,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Surge\nAcceleration"
-	  Position		  [815, 198, 845, 212]
+	  Position		  [700, 83, 730, 97]
 	  Port			  "4"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -1966,7 +1750,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Heading"
-	  Position		  [380, 558, 410, 572]
+	  Position		  [575, 473, 605, 487]
 	  Port			  "5"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -1974,7 +1758,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Rudder Angle"
-	  Position		  [540, 613, 570, 627]
+	  Position		  [450, 613, 480, 627]
 	  Port			  "6"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -1982,72 +1766,45 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Roll"
-	  Position		  [675, 213, 705, 227]
+	  Position		  [585, 213, 615, 227]
 	  Port			  "7"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
 	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "Charge"
-	  Position		  [990, 478, 1020, 492]
-	  Port			  "8"
-	  IconDisplay		  "Port number"
-	  BusOutputAsStruct	  off
-	}
-	Line {
-	  SrcBlock		  "Trigonometric\nFunction2"
-	  SrcPort		  1
-	  Points		  [20, 0]
-	  Branch {
-	    Points		    [145, 0; 0, 15]
-	    DstBlock		    "Product2"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, -100]
-	    DstBlock		    "Product7"
-	    DstPort		    1
-	  }
-	}
 	Line {
 	  SrcBlock		  "Convert to velocity"
 	  SrcPort		  1
-	  Points		  [0, 0]
+	  Points		  [5, 0; 0, 100; 0, 0]
 	  Branch {
-	    DstBlock		    "Product2"
-	    DstPort		    2
+	    DstBlock		    "Distance Integrator"
+	    DstPort		    1
 	  }
 	  Branch {
-	    Points		    [0, 90]
+	    Points		    [0, 0; 0, 30]
 	    Branch {
-	      DstBlock		      "Product1"
-	      DstPort		      1
-	    }
-	    Branch {
-	      Points		      [0, 145]
+	      Points		      [0, 105]
 	      Branch {
 		DstBlock		"Surge\nVelocity"
 		DstPort			1
 	      }
 	      Branch {
-		Points			[0, 80]
-		DstBlock		"Charge Plant"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[-330, 0]
+		Points			[-325, 0]
 		Branch {
-		  Points		  [-40, 0; 0, -200]
+		  Points		  [0, -200]
 		  DstBlock		  "Forces & Moments"
 		  DstPort		  3
 		}
 		Branch {
 		  Labels		  [0, 0]
+		  Points		  [0, 55]
 		  DstBlock		  "Heading plant"
 		  DstPort		  1
 		}
 	      }
+	    }
+	    Branch {
+	      DstBlock		      "Convert to GPS"
+	      DstPort		      2
 	    }
 	  }
 	}
@@ -2064,46 +1821,25 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  Labels		  [3, 0]
-	  SrcBlock		  "Heading plant"
+	  SrcBlock		  "Initial latitude"
 	  SrcPort		  1
-	  Points		  [10, 0; 0, 65; -285, 0]
-	  Branch {
-	    Points		    [0, 20]
-	    DstBlock		    "Heading"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, -250]
-	    Branch {
-	      Points		      [0, -160]
-	      DstBlock		      "Trigonometric\nFunction2"
-	      DstPort		      1
-	    }
-	    Branch {
-	      DstBlock		      "Trigonometric\nFunction1"
-	      DstPort		      1
-	    }
-	  }
-	}
-	Line {
-	  SrcBlock		  "Initial north"
-	  SrcPort		  1
-	  Points		  [-20, 0]
+	  Points		  [-35, 0]
 	  DstBlock		  "Sum3"
 	  DstPort		  2
 	}
 	Line {
-	  SrcBlock		  "North Integrator"
-	  SrcPort		  1
-	  DstBlock		  "Sum3"
-	  DstPort		  1
-	}
-	Line {
 	  SrcBlock		  "Sum3"
 	  SrcPort		  1
-	  DstBlock		  "North position"
-	  DstPort		  1
+	  Points		  [5, 0]
+	  Branch {
+	    DstBlock		    "North position"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, -40; -325, 0]
+	    DstBlock		    "Convert to GPS"
+	    DstPort		    1
+	  }
 	}
 	Line {
 	  SrcBlock		  "East Integrator"
@@ -2118,8 +1854,9 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Initial east"
+	  SrcBlock		  "Initial longitude"
 	  SrcPort		  1
+	  Points		  [-35, 0]
 	  DstBlock		  "Sum4"
 	  DstPort		  2
 	}
@@ -2130,21 +1867,6 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Trigonometric\nFunction1"
-	  SrcPort		  1
-	  Points		  [20, 0]
-	  Branch {
-	    Points		    [0, -20]
-	    DstBlock		    "Product1"
-	    DstPort		    2
-	  }
-	  Branch {
-	    Points		    [0, 70]
-	    DstBlock		    "Product6"
-	    DstPort		    1
-	  }
-	}
-	Line {
 	  SrcBlock		  "Rudder command"
 	  SrcPort		  1
 	  DstBlock		  "Rudder dynamics"
@@ -2153,9 +1875,8 @@ Model {
 	Line {
 	  SrcBlock		  "Rudder dynamics"
 	  SrcPort		  1
-	  Points		  [180, 0]
+	  Points		  [70, 0]
 	  Branch {
-	    Points		    [0, -100]
 	    DstBlock		    "Forces & Moments"
 	    DstPort		    2
 	  }
@@ -2193,145 +1914,63 @@ Model {
 	  DstPort		  4
 	}
 	Line {
-	  SrcBlock		  "Sum1"
+	  SrcBlock		  "Distance Integrator"
 	  SrcPort		  1
-	  DstBlock		  "North Integrator"
+	  DstBlock		  "Display2"
 	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Product2"
-	  SrcPort		  1
-	  DstBlock		  "Sum1"
-	  DstPort		  3
-	}
-	Line {
-	  SrcBlock		  "Product4"
-	  SrcPort		  1
-	  Points		  [15, 0; 0, 40]
-	  DstBlock		  "Sum1"
-	  DstPort		  2
-	}
-	Line {
-	  SrcBlock		  "Trigonometric\nFunction3"
-	  SrcPort		  1
-	  DstBlock		  "Product4"
-	  DstPort		  2
-	}
-	Line {
-	  SrcBlock		  "Constant4"
-	  SrcPort		  1
-	  Points		  [350, 0]
-	  Branch {
-	    DstBlock		    "Trigonometric\nFunction3"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, 230]
-	    DstBlock		    "Trigonometric\nFunction4"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  SrcBlock		  "Constant3"
-	  SrcPort		  1
-	  DstBlock		  "Convert to\nacceleration1"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Convert to\nacceleration1"
-	  SrcPort		  1
-	  Points		  [0, 25; 600, 0]
-	  Branch {
-	    Points		    [0, 0]
-	    DstBlock		    "Product4"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, 265]
-	    DstBlock		    "Product5"
-	    DstPort		    2
-	  }
-	}
-	Line {
-	  SrcBlock		  "Trigonometric\nFunction4"
-	  SrcPort		  1
-	  DstBlock		  "Product5"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Product1"
-	  SrcPort		  1
-	  DstBlock		  "Sum5"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Sum5"
-	  SrcPort		  1
-	  Points		  [0, -25]
-	  DstBlock		  "East Integrator"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Product5"
-	  SrcPort		  1
-	  Points		  [9, 0]
-	  DstBlock		  "Sum5"
-	  DstPort		  2
-	}
-	Line {
-	  SrcBlock		  "Product6"
-	  SrcPort		  1
-	  Points		  [35, 0]
-	  DstBlock		  "Sum5"
-	  DstPort		  3
-	}
-	Line {
-	  Labels		  [1, 0]
-	  SrcBlock		  "Constant1"
-	  SrcPort		  1
-	  DstBlock		  "Convert to\nacceleration2"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Product7"
-	  SrcPort		  1
-	  Points		  [40, 0]
-	  DstBlock		  "Sum1"
-	  DstPort		  1
-	}
-	Line {
-	  Labels		  [1, 0]
-	  SrcBlock		  "Convert to\nacceleration2"
-	  SrcPort		  1
-	  Points		  [10, 0]
-	  Branch {
-	    Points		    [0, -325]
-	    DstBlock		    "Product7"
-	    DstPort		    2
-	  }
-	  Branch {
-	    DstBlock		    "Product6"
-	    DstPort		    2
-	  }
 	}
 	Line {
 	  SrcBlock		  "Convert to\nacceleration"
 	  SrcPort		  1
-	  Points		  [35, 0]
+	  Points		  [5, 0]
+	  Branch {
+	    Points		    [0, -80]
+	    DstBlock		    "Surge\nAcceleration"
+	    DstPort		    1
+	  }
 	  Branch {
 	    DstBlock		    "Convert to velocity"
 	    DstPort		    1
 	  }
+	}
+	Line {
+	  SrcBlock		  "Heading plant"
+	  SrcPort		  1
+	  Points		  [15, 0]
 	  Branch {
-	    DstBlock		    "Surge\nAcceleration"
+	    DstBlock		    "Heading"
 	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, -150]
+	    DstBlock		    "Convert to GPS"
+	    DstPort		    3
 	  }
 	}
 	Line {
-	  SrcBlock		  "Charge Plant"
+	  SrcBlock		  "North Integrator"
 	  SrcPort		  1
-	  DstBlock		  "Charge"
+	  DstBlock		  "Sum3"
 	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Convert to GPS"
+	  SrcPort		  2
+	  DstBlock		  "East Integrator"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Convert to GPS"
+	  SrcPort		  1
+	  Points		  [0, -40; 20, 0]
+	  Branch {
+	    DstBlock		    "North Integrator"
+	    DstPort		    1
+	  }
+	  Branch {
+	    DstBlock		    "Display1"
+	    DstPort		    1
+	  }
 	}
       }
     }
@@ -2350,19 +1989,19 @@ Model {
       RTWMemSecDataConstants  "Inherit from model"
       RTWMemSecDataInternal   "Inherit from model"
       RTWMemSecDataParameters "Inherit from model"
-      xmin		      "-500"
-      xmax		      "500"
-      ymin		      "-500"
-      ymax		      "500"
+      xmin		      "-200"
+      xmax		      "200"
+      ymin		      "-200"
+      ymax		      "200"
       st		      "-1"
     }
     Block {
       BlockType		      Scope
       Name		      "Roll"
       Ports		      [1]
-      Position		      [690, 269, 720, 301]
+      Position		      [690, 349, 720, 381]
       Floating		      off
-      Location		      [5, 52, 1285, 769]
+      Location		      [6, 52, 1286, 769]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -2397,15 +2036,23 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      1
-      Points		      [205, 0]
+      Points		      [0, 5; 205, 0]
       Branch {
 	Points			[0, 130]
 	DstBlock		"Mux1"
 	DstPort			1
       }
       Branch {
-	DstBlock		"Position"
-	DstPort			1
+	Points			[20, 0]
+	Branch {
+	  DstBlock		  "Position"
+	  DstPort		  1
+	}
+	Branch {
+	  Points		  [0, -35]
+	  DstBlock		  "Display"
+	  DstPort		  1
+	}
       }
     }
     Line {
@@ -2418,21 +2065,37 @@ Model {
 	DstPort			2
       }
       Branch {
-	DstBlock		"Position"
-	DstPort			2
+	Points			[85, 0]
+	Branch {
+	  DstBlock		  "Position"
+	  DstPort		  2
+	}
+	Branch {
+	  Points		  [0, 40]
+	  DstBlock		  "Display1"
+	  DstPort		  1
+	}
       }
     }
     Line {
       SrcBlock		      "Plant"
       SrcPort		      3
-      Points		      [70, 0]
-      DstBlock		      "Mux"
-      DstPort		      1
+      Points		      [20, 0]
+      Branch {
+	Points			[50, 0]
+	DstBlock		"Mux"
+	DstPort			1
+      }
+      Branch {
+	Points			[0, -120]
+	DstBlock		"Display2"
+	DstPort			1
+      }
     }
     Line {
       SrcBlock		      "Plant"
       SrcPort		      5
-      Points		      [0, 5; 30, 0]
+      Points		      [0, -10; 30, 0]
       Branch {
 	Points			[0, 75; 75, 0]
 	Branch {
@@ -2453,7 +2116,7 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      4
-      Points		      [25, 0; 0, 15]
+      Points		      [25, 0; 0, 5]
       DstBlock		      "Mux"
       DstPort		      2
     }
@@ -2472,7 +2135,7 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      6
-      Points		      [40, 0; 0, 50]
+      Points		      [40, 0; 0, 30]
       DstBlock		      "Mux1"
       DstPort		      3
     }
@@ -2497,15 +2160,362 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      7
+      Points		      [0, 55]
       DstBlock		      "Roll"
       DstPort		      1
     }
-    Line {
-      SrcBlock		      "Plant"
-      SrcPort		      8
-      Points		      [15, 0; 0, 120]
-      DstBlock		      "Charge"
-      DstPort		      1
-    }
   }
+}
+
+# Finite State Machines
+#
+#    Stateflow Version 6.6 (R2007a) dated Jan 30 2007, 03:33:34
+#
+#
+
+Stateflow {
+
+	machine {
+		id                   		1
+		name                 		"waypoint_control"
+		created              		"28-Jul-2009 10:28:46"
+		isLibrary            		0
+		firstTarget          		12
+		sfVersion            		66014000
+	}
+
+	chart {
+		id                                        		2
+		name                                      		"Plant/Convert to GPS"
+		windowPosition                            		[352.266 253.688 200.25 189.75]
+		viewLimits                                		[0 156.75 0 153.75]
+		screen                                    		[1 1 1600 1200 1.333333333333333]
+		treeNode                                  		[0 3 0 0]
+		firstTransition                           		5
+		firstJunction                             		4
+		viewObj                                   		2
+		machine                                   		1
+		subviewS {
+		}
+		decomposition                             		CLUSTER_CHART
+		type                                      		EML_CHART
+		firstData                                 		6
+		chartFileNumber                           		2
+		disableImplicitCasting                    		1
+		eml {
+			name       		"vreckon"
+		}
+	}
+
+	state {
+		id                           		3
+		labelString                  		"eML_blk_kernel()"
+		position                     		[18 64.5 118 66]
+		fontSize                     		12
+		chart                        		2
+		treeNode                     		[2 0 0 0]
+		superState                   		SUBCHART
+		subviewer                    		2
+		type                         		FUNC_STATE
+		decomposition                		CLUSTER_STATE
+		eml {
+			isEML                    		1
+			script                   		"function [d_lat2,d_lon2] = vreckon(lat1,s,a12)\n"
+						"% RECKON - Using the WGS-84 Earth ellipsoid, travel a given"
+						" distance along\n"
+						"%          a given azimuth starting at a given initial poin"
+						"t, and return\n"
+						"%          the endpoint within a few millimeters of accurac"
+						"y, using\n"
+						"%          Vincenty's algorithm.\n"
+						"%\n"
+						"% USAGE:\n"
+						"% [lat2,lon2] = vreckon(lat1, lon1, s, a12)\n"
+						"%\n"
+						"% VARIABLES:\n"
+						"% lat1 = inital latitude (degrees)\n"
+						"% lon1 = initial longitude (degrees)\n"
+						"% s    = distance (meters)\n"
+						"% a12  = intial azimuth (degrees)\n"
+						"% lat2, lon2 = second point (degrees)\n"
+						"% a21  = reverse azimuth (degrees), at final point facing b"
+						"ack toward the\n"
+						"%        intial point\n"
+						"%\n"
+						"% This algorithm was modified slightly for use with embedde"
+						"d Matlab and\n"
+						"% for the constraints of its use in this project by Bryant "
+						"Mairs 07/2009\n"
+						"%\n"
+						"% Original algorithm source:\n"
+						"% T. Vincenty, \"Direct and Inverse Solutions of Geodesics "
+						"on the Ellipsoid\n"
+						"% with Application of Nested Equations\", Survey Review, vo"
+						"l. 23, no. 176,\n"
+						"% April 1975, pp 88-93.\n"
+						"% Available at: http://www.ngs.noaa.gov/PUBS_LIB/inverse.pd"
+						"f\n"
+						"%\n"
+						"% Notes: \n"
+						"% (1) The Vincenty reckoning algorithm was transcribed verb"
+						"atim into\n"
+						"%     JavaScript by Chris Veness. It was modified and trans"
+						"lated to Matlab\n"
+						"%     by Michael Kleder. Mr. Veness's website is:\n"
+						"%     http://www.movable-type.co.uk/scripts/latlong-vincent"
+						"y-direct.html\n"
+						"% (2) Error correcting code, polar error corrections, WGS84"
+						" ellipsoid\n"
+						"%     parameters, testing, and comments by Michael Kleder.\n"
+						"% (3) By convention, when starting at a pole, the longitude"
+						" of the initial\n"
+						"%     point (otherwise meaningless) determines the longitud"
+						"e line along\n"
+						"%     which to traverse, and hence the longitude of the fin"
+						"al point.\n"
+						"% (4) The convention noted in (3) above creates a discrepan"
+						"cy with VDIST\n"
+						"%     when the the intial or final point is at a pole. In t"
+						"he VDIST\n"
+						"%     function, when traversing from a pole, the azimuth is"
+						"  0 when\n"
+						"%     heading away from the south pole and 180 when heading"
+						" away from the\n"
+						"%     north pole. In contrast, this VRECKON function uses t"
+						"he azimuth as\n"
+						"%     noted in (3) above when traversing away form a pole.\n"
+						"% (5) In testing, where the traversal subtends no more than"
+						" 178 degrees,\n"
+						"%     this function correctly inverts the VDIST function to"
+						" within 0.2\n"
+						"%     millimeters of distance, 5e-10 degrees of forward azi"
+						"muth,\n"
+						"%     and 5e-10 degrees of reverse azimuth. Precision reduc"
+						"es as test\n"
+						"%     points approach antipodal because the precision of VD"
+						"IST is reduced\n"
+						"%     for nearly antipodal points. (A warning is given by V"
+						"DIST.)\n"
+						"% (6) Tested but no warranty. Use at your own risk.\n"
+						"% (7) Ver 1.0, Michael Kleder, November 2007\n"
+						"\n"
+						"a = 6378137; % semimajor axis\n"
+						"b = 6356752.31424518; % semiminor axis\n"
+						"f = 1/298.257223563; % flattening coefficient\n"
+						"lat1   = lat1 * .1745329251994329577e-1; % intial latitude "
+						"in radians\n"
+						"% correct for errors at exact poles by adjusting 0.6 millim"
+						"eters:\n"
+						"if abs(pi/2-abs(lat1)) < 1e-10;\n"
+						"    lat1 = sign(lat1)*(pi/2-(1e-10));\n"
+						"end\n"
+						"alpha1 = a12;% * .1745329251994329577e-1; % inital azimuth "
+						"in radians\n"
+						"sinAlpha1 = sin(alpha1);\n"
+						"cosAlpha1 = cos(alpha1);\n"
+						"tanU1 = (1-f) * tan(lat1);\n"
+						"cosU1 = 1 / sqrt(1 + tanU1*tanU1);\n"
+						"sinU1 = tanU1*cosU1;\n"
+						"sigma1 = atan2(tanU1, cosAlpha1);\n"
+						"sinAlpha = cosU1 * sinAlpha1;\n"
+						"cosSqAlpha = 1 - sinAlpha*sinAlpha;\n"
+						"uSq = cosSqAlpha * (a*a - b*b) / (b*b);\n"
+						"A = 1 + uSq/16384*(4096+uSq*(-768+uSq*(320-175*uSq)));\n"
+						"B = uSq/1024 * (256+uSq*(-128+uSq*(74-47*uSq)));\n"
+						"sigma = s / (b*A);\n"
+						"sigmaP = 2*pi;\n"
+						"cos2SigmaM = cos(2*sigma1 + sigma);\n"
+						"sinSigma = sin(sigma);\n"
+						"cosSigma = cos(sigma);\n"
+						"while (abs(sigma-sigmaP) > 1e-18)\n"
+						"    cos2SigmaM = cos(2*sigma1 + sigma);\n"
+						"    sinSigma = sin(sigma);\n"
+						"    cosSigma = cos(sigma);\n"
+						"    deltaSigma = B*sinSigma*(cos2SigmaM+B/4*(cosSigma*(-1+."
+						"..\n"
+						"        2*cos2SigmaM*cos2SigmaM)-...\n"
+						"        B/6*cos2SigmaM*(-3+4*sinSigma*sinSigma)*(-3+...\n"
+						"        4*cos2SigmaM*cos2SigmaM)));\n"
+						"    sigmaP = sigma;\n"
+						"    sigma = s / (b*A) + deltaSigma;\n"
+						"end\n"
+						"tmp = sinU1*sinSigma - cosU1*cosSigma*cosAlpha1;\n"
+						"lat2 = atan2(sinU1*cosSigma + cosU1*sinSigma*cosAlpha1,...\n"
+						"    (1-f)*sqrt(sinAlpha*sinAlpha + tmp*tmp));\n"
+						"lambda = atan2(sinSigma*sinAlpha1, cosU1*cosSigma - ...\n"
+						"    sinU1*sinSigma*cosAlpha1);\n"
+						"C = f/16*cosSqAlpha*(4+f*(4-3*cosSqAlpha));\n"
+						"L = lambda - (1-C) * f * sinAlpha * (sigma + C*sinSigma*(co"
+						"s2SigmaM+...\n"
+						"    C*cosSigma*(-1+2*cos2SigmaM*cos2SigmaM)));\n"
+						"% output degrees\n"
+						"d_lat2 = (lat2 - lat1)* 57.295779513082322865;\n"
+						"d_lon2 = L * 57.295779513082322865;\n"
+						"d_lon2 = mod(d_lon2,360); % follow [0,360] convention\n"
+						"return"
+			editorLayout             		"100 M4x1[105 105 900 732]"
+			treatIntsAsFixpt         		0
+		}
+	}
+
+	junction {
+		id         		4
+		position   		[23.5747 49.5747 7]
+		chart      		2
+		linkNode   		[2 0 0]
+		subviewer  		2
+		type       		CONNECTIVE_JUNCTION
+	}
+
+	transition {
+		id             		5
+		labelString    		"{eML_blk_kernel();}"
+		labelPosition  		[32.125 19.875 102.544 14.964]
+		fontSize       		12
+		src {
+			intersection		[0 0 1 0 23.5747 14.625 0 0]
+		}
+		dst {
+			id          		4
+			intersection		[7 0 -1 -1 23.5747 42.5747 0 0]
+		}
+		midPoint       		[23.5747 24.9468]
+		chart          		2
+		linkNode       		[2 0 0]
+		dataLimits     		[23.575 23.575 14.625 34.575]
+		subviewer      		2
+		drawStyle      		SMART
+		executionOrder 		1
+	}
+
+	data {
+		id                            		6
+		name                          		"lat1"
+		linkNode                      		[2 0 7]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+			}
+			complexity           		SF_COMPLEX_INHERITED
+		}
+		dataType                      		"inherited"
+		fixptType {
+			slope   		1
+			baseType		SF_INT16_TYPE
+		}
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		7
+		name                          		"d_lat2"
+		linkNode                      		[2 6 8]
+		scope                         		OUTPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_NO
+		}
+		dataType                      		"inherited"
+		fixptType {
+			slope   		1
+			baseType		SF_INT16_TYPE
+		}
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		8
+		name                          		"s"
+		linkNode                      		[2 7 9]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_INHERITED
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		9
+		name                          		"d_lon2"
+		linkNode                      		[2 8 10]
+		scope                         		OUTPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_NO
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		10
+		name                          		"a12"
+		linkNode                      		[2 9 0]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_INHERITED
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	instance {
+		id     		11
+		name   		"Plant/Convert to GPS"
+		machine		1
+		chart  		2
+	}
+
+	target {
+		id                        		12
+		name                      		"sfun"
+		description               		"Default Simulink S-Function Target."
+		machine                   		1
+		linkNode                  		[1 0 0]
+	}
 }
