@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.210"
+    ComputedModelVersion    "1.294"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -44,8 +44,8 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Jul 28 12:43:07 2009"
-  ModelVersionFormat	  "1.%<AutoIncrement:210>"
+  LastModifiedDate	  "Tue Jul 28 16:00:19 2009"
+  ModelVersionFormat	  "1.%<AutoIncrement:294>"
   ConfigurationManager	  "None"
   SimulationMode	  "accelerator"
   LinearizationMsg	  "none"
@@ -693,6 +693,17 @@ Model {
       SampleTime	      "-1"
     }
     Block {
+      BlockType		      Switch
+      Criteria		      "u2 >= Threshold"
+      Threshold		      "0"
+      InputSameDT	      on
+      OutDataTypeMode	      "Inherit via internal rule"
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      ZeroCross		      on
+      SampleTime	      "-1"
+    }
+    Block {
       BlockType		      Terminator
     }
     Block {
@@ -737,22 +748,506 @@ Model {
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
     Block {
+      BlockType		      SubSystem
+      Name		      "Autonomous Control"
+      Ports		      [3, 3]
+      Position		      [255, 386, 455, 474]
+      Orientation	      "left"
+      MinAlgLoopOccurrences   off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      MaskHideContents	      off
+      System {
+	Name			"Autonomous Control"
+	Location		[2, 70, 1598, 1152]
+	Open			on
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Inport
+	  Name			  "Current latitude"
+	  Position		  [45, 123, 75, 137]
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "Current longitude"
+	  Position		  [45, 153, 75, 167]
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "Current bearing"
+	  Position		  [45, 218, 75, 232]
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant1"
+	  Position		  [555, 245, 585, 275]
+	  ShowName		  off
+	  Value			  "0"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant2"
+	  Position		  [115, 160, 145, 190]
+	  ShowName		  off
+	  Value			  "36.8"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant3"
+	  Position		  [115, 190, 145, 220]
+	  ShowName		  off
+	  Value			  "-121.8"
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "Desired bearing\nto waypoint"
+	  Ports			  [4, 2]
+	  Position		  [215, 125, 310, 205]
+	  MinAlgLoopOccurrences	  off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  Array {
+	    Type		    "Handle"
+	    Dimension		    0
+	    PropName		    "AvailSigsLoadSave"
+	  }
+	  MaskHideContents	  off
+	  MaskType		  "Stateflow"
+	  MaskDescription	  "Embedded MATLAB block"
+	  MaskDisplay		  "disp('distVincenty');"
+	  MaskSelfModifiable	  on
+	  MaskIconFrame		  on
+	  MaskIconOpaque	  off
+	  MaskIconRotate	  "none"
+	  MaskIconUnits		  "autoscale"
+	  System {
+	    Name		    "Desired bearing\nto waypoint"
+	    Location		    [257, 457, 812, 717]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "lat1"
+	      Position		      [20, 101, 40, 119]
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "lon1"
+	      Position		      [20, 136, 40, 154]
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "lat2"
+	      Position		      [20, 171, 40, 189]
+	      Port		      "3"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "lon2"
+	      Position		      [20, 206, 40, 224]
+	      Port		      "4"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Demux
+	      Name		      " Demux "
+	      Ports		      [1, 1]
+	      Position		      [270, 205, 320, 245]
+	      Outputs		      "1"
+	    }
+	    Block {
+	      BlockType		      "S-Function"
+	      Name		      " SFunction "
+	      Tag		      "Stateflow S-Function waypoint_control 1"
+	      Ports		      [4, 3]
+	      Position		      [180, 102, 230, 203]
+	      FunctionName	      "sf_sfun"
+	      PortCounts	      "[4 3]"
+	      Port {
+		PortNumber		2
+		Name			"distance"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	      Port {
+		PortNumber		3
+		Name			"azimuth"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	    }
+	    Block {
+	      BlockType		      Terminator
+	      Name		      " Terminator "
+	      Position		      [460, 216, 480, 234]
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "distance"
+	      Position		      [460, 101, 480, 119]
+	      IconDisplay	      "Port number"
+	      BusOutputAsStruct	      off
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "azimuth"
+	      Position		      [460, 136, 480, 154]
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Line {
+	      SrcBlock		      " SFunction "
+	      SrcPort		      1
+	      Points		      [0, 105]
+	      DstBlock		      " Demux "
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      " Demux "
+	      SrcPort		      1
+	      DstBlock		      " Terminator "
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "lat1"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      1
+	    }
+	    Line {
+	      Name		      "distance"
+	      Labels		      [0, 0]
+	      SrcBlock		      " SFunction "
+	      SrcPort		      2
+	      DstBlock		      "distance"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "lon1"
+	      SrcPort		      1
+	      Points		      [120, 0]
+	      DstBlock		      " SFunction "
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "lat2"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "lon2"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      4
+	    }
+	    Line {
+	      Name		      "azimuth"
+	      Labels		      [0, 0]
+	      SrcBlock		      " SFunction "
+	      SrcPort		      3
+	      DstBlock		      "azimuth"
+	      DstPort		      1
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  Display
+	  Name			  "Distance to waypoint"
+	  Ports			  [1]
+	  Position		  [395, 18, 540, 52]
+	  Format		  "long"
+	  Decimation		  "1"
+	  Lockdown		  off
+	}
+	Block {
+	  BlockType		  Display
+	  Name			  "Distance to waypoint1"
+	  Ports			  [1]
+	  Position		  [170, 23, 315, 57]
+	  Format		  "long"
+	  Decimation		  "1"
+	  Lockdown		  off
+	}
+	Block {
+	  BlockType		  Display
+	  Name			  "Distance to waypoint2"
+	  Ports			  [1]
+	  Position		  [170, 73, 315, 107]
+	  Format		  "long"
+	  Decimation		  "1"
+	  Lockdown		  off
+	}
+	Block {
+	  BlockType		  Gain
+	  Name			  "Gain"
+	  Position		  [490, 170, 520, 200]
+	  ShowName		  off
+	  Gain			  "3"
+	  ParameterDataTypeMode	  "Inherit via internal rule"
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Gain
+	  Name			  "Gain1"
+	  Position		  [375, 234, 420, 266]
+	  ShowName		  off
+	  Gain			  "1/20"
+	  ParameterDataTypeMode	  "Inherit via internal rule"
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Gain
+	  Name			  "Gain2"
+	  Position		  [360, 135, 390, 165]
+	  Orientation		  "up"
+	  ShowName		  off
+	  Gain			  "180/pi"
+	  ParameterDataTypeMode	  "Inherit via internal rule"
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Display
+	  Name			  "Optimal Heading"
+	  Ports			  [1]
+	  Position		  [395, 73, 540, 107]
+	  Format		  "long"
+	  Decimation		  "1"
+	  Lockdown		  off
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "Scope"
+	  Ports			  [1]
+	  Position		  [660, 94, 690, 126]
+	  Floating		  off
+	  Location		  [1, 45, 1601, 1171]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  SaveName		  "ScopeData3"
+	  DataFormat		  "StructureWithTime"
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Sum
+	  Name			  "Sum"
+	  Ports			  [2, 1]
+	  Position		  [420, 175, 440, 195]
+	  ShowName		  off
+	  IconShape		  "round"
+	  Inputs		  "|+-"
+	  CollapseMode		  "All dimensions"
+	  InputSameDT		  off
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Saturate
+	  Name			  "Throttle limiter"
+	  Position		  [450, 235, 480, 265]
+	  UpperLimit		  "1"
+	  LowerLimit		  "0"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "Rudder command"
+	  Position		  [640, 178, 670, 192]
+	  IconDisplay		  "Port number"
+	  BusOutputAsStruct	  off
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "Throttle command"
+	  Position		  [640, 213, 670, 227]
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	  BusOutputAsStruct	  off
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "Tray angle command"
+	  Position		  [640, 253, 670, 267]
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	  BusOutputAsStruct	  off
+	}
+	Line {
+	  SrcBlock		  "Current latitude"
+	  SrcPort		  1
+	  Points		  [45, 0]
+	  Branch {
+	    Points		    [75, 0]
+	    DstBlock		    "Desired bearing\nto waypoint"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, -90]
+	    DstBlock		    "Distance to waypoint1"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  SrcBlock		  "Current longitude"
+	  SrcPort		  1
+	  Points		  [0, -5; 65, 0]
+	  Branch {
+	    DstBlock		    "Desired bearing\nto waypoint"
+	    DstPort		    2
+	  }
+	  Branch {
+	    Points		    [0, -65]
+	    DstBlock		    "Distance to waypoint2"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  SrcBlock		  "Current bearing"
+	  SrcPort		  1
+	  Points		  [350, 0]
+	  DstBlock		  "Sum"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Throttle limiter"
+	  SrcPort		  1
+	  Points		  [50, 0; 0, -30; 50, 0]
+	  Branch {
+	    DstBlock		    "Throttle command"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, -110]
+	    DstBlock		    "Scope"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  SrcBlock		  "Constant1"
+	  SrcPort		  1
+	  DstBlock		  "Tray angle command"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Sum"
+	  SrcPort		  1
+	  DstBlock		  "Gain"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Gain"
+	  SrcPort		  1
+	  DstBlock		  "Rudder command"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Desired bearing\nto waypoint"
+	  SrcPort		  2
+	  Points		  [60, 0]
+	  Branch {
+	    DstBlock		    "Sum"
+	    DstPort		    1
+	  }
+	  Branch {
+	    DstBlock		    "Gain2"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  SrcBlock		  "Desired bearing\nto waypoint"
+	  SrcPort		  1
+	  Points		  [30, 0]
+	  Branch {
+	    Points		    [0, -110]
+	    DstBlock		    "Distance to waypoint"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, 105]
+	    DstBlock		    "Gain1"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  SrcBlock		  "Constant2"
+	  SrcPort		  1
+	  DstBlock		  "Desired bearing\nto waypoint"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Constant3"
+	  SrcPort		  1
+	  Points		  [25, 0; 0, -10]
+	  DstBlock		  "Desired bearing\nto waypoint"
+	  DstPort		  4
+	}
+	Line {
+	  SrcBlock		  "Gain1"
+	  SrcPort		  1
+	  DstBlock		  "Throttle limiter"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Gain2"
+	  SrcPort		  1
+	  Points		  [0, -40]
+	  DstBlock		  "Optimal Heading"
+	  DstPort		  1
+	}
+      }
+    }
+    Block {
       BlockType		      Constant
       Name		      "Constant"
-      Position		      [375, 220, 405, 250]
+      Position		      [55, 200, 85, 230]
       ShowName		      off
     }
     Block {
       BlockType		      Constant
       Name		      "Constant1"
-      Position		      [375, 160, 405, 190]
+      Position		      [55, 140, 85, 170]
       ShowName		      off
       Value		      "0"
     }
     Block {
       BlockType		      Constant
       Name		      "Constant2"
-      Position		      [375, 280, 405, 310]
+      Position		      [55, 260, 85, 290]
       ShowName		      off
       Value		      "0"
     }
@@ -809,6 +1304,66 @@ Model {
       Output1D		      off
     }
     Block {
+      BlockType		      Reference
+      Name		      "Manual Switch"
+      Ports		      [2, 1]
+      Position		      [165, 147, 195, 183]
+      ShowName		      off
+      SourceBlock	      "simulink/Signal\nRouting/Manual Switch"
+      SourceType	      "Manual Switch"
+      ShowPortLabels	      "FromPortIcon"
+      SystemSampleTime	      "-1"
+      FunctionWithSeparateData off
+      RTWMemSecFuncInitTerm   "Inherit from model"
+      RTWMemSecFuncExecute    "Inherit from model"
+      RTWMemSecDataConstants  "Inherit from model"
+      RTWMemSecDataInternal   "Inherit from model"
+      RTWMemSecDataParameters "Inherit from model"
+      sw		      "0"
+      action		      "0"
+      varsize		      off
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Manual Switch1"
+      Ports		      [2, 1]
+      Position		      [160, 207, 190, 243]
+      ShowName		      off
+      SourceBlock	      "simulink/Signal\nRouting/Manual Switch"
+      SourceType	      "Manual Switch"
+      ShowPortLabels	      "FromPortIcon"
+      SystemSampleTime	      "-1"
+      FunctionWithSeparateData off
+      RTWMemSecFuncInitTerm   "Inherit from model"
+      RTWMemSecFuncExecute    "Inherit from model"
+      RTWMemSecDataConstants  "Inherit from model"
+      RTWMemSecDataInternal   "Inherit from model"
+      RTWMemSecDataParameters "Inherit from model"
+      sw		      "0"
+      action		      "0"
+      varsize		      off
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Manual Switch2"
+      Ports		      [2, 1]
+      Position		      [165, 267, 195, 303]
+      ShowName		      off
+      SourceBlock	      "simulink/Signal\nRouting/Manual Switch"
+      SourceType	      "Manual Switch"
+      ShowPortLabels	      "FromPortIcon"
+      SystemSampleTime	      "-1"
+      FunctionWithSeparateData off
+      RTWMemSecFuncInitTerm   "Inherit from model"
+      RTWMemSecFuncExecute    "Inherit from model"
+      RTWMemSecDataConstants  "Inherit from model"
+      RTWMemSecDataInternal   "Inherit from model"
+      RTWMemSecDataParameters "Inherit from model"
+      sw		      "0"
+      action		      "0"
+      varsize		      off
+    }
+    Block {
       BlockType		      Mux
       Name		      "Mux"
       Ports		      [3, 1]
@@ -829,7 +1384,7 @@ Model {
       BlockType		      SubSystem
       Name		      "Plant"
       Ports		      [3, 7]
-      Position		      [455, 145, 625, 325]
+      Position		      [270, 135, 440, 315]
       MinAlgLoopOccurrences   off
       RTWSystemCode	      "Auto"
       FunctionWithSeparateData off
@@ -1041,29 +1596,20 @@ Model {
 	  IgnoreLimit		  off
 	}
 	Block {
-	  BlockType		  Display
-	  Name			  "Display1"
-	  Ports			  [1]
-	  Position		  [1010, 117, 1195, 143]
-	  Format		  "long"
-	  Decimation		  "1"
-	  Lockdown		  off
-	}
-	Block {
-	  BlockType		  Display
-	  Name			  "Display2"
-	  Ports			  [1]
-	  Position		  [790, 122, 975, 148]
-	  Format		  "long"
-	  Decimation		  "1"
-	  Lockdown		  off
-	}
-	Block {
 	  BlockType		  Integrator
 	  Name			  "Distance Integrator"
 	  Ports			  [1, 1]
 	  Position		  [740, 255, 770, 285]
 	  IgnoreLimit		  off
+	}
+	Block {
+	  BlockType		  Display
+	  Name			  "Distance Traveled"
+	  Ports			  [1]
+	  Position		  [790, 122, 975, 148]
+	  Format		  "long"
+	  Decimation		  "1"
+	  Lockdown		  off
 	}
 	Block {
 	  BlockType		  Integrator
@@ -1353,7 +1899,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Heading plant"
-	    Location		    [2, 74, 1590, 1156]
+	    Location		    [2, 70, 1598, 1152]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -1665,17 +2211,17 @@ Model {
 	  BlockType		  Scope
 	  Name			  "Scope"
 	  Ports			  [1]
-	  Position		  [450, 554, 480, 586]
+	  Position		  [1030, 394, 1060, 426]
 	  Floating		  off
-	  Location		  [6, 52, 1286, 769]
+	  Location		  [255, 420, 1535, 1137]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  List {
 	    ListType		    AxesTitles
 	    axes1		    "%<SignalLabel>"
 	  }
-	  YMin			  "0"
-	  YMax			  "0.1"
+	  YMin			  "-1.75"
+	  YMax			  "2"
 	  SaveName		  "ScopeData4"
 	  DataFormat		  "StructureWithTime"
 	  LimitDataPoints	  off
@@ -1758,7 +2304,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Rudder Angle"
-	  Position		  [450, 613, 480, 627]
+	  Position		  [455, 543, 485, 557]
 	  Port			  "6"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -1888,16 +2434,9 @@ Model {
 	      DstPort		      2
 	    }
 	    Branch {
-	      Points		      [0, 70]
-	      Branch {
-		DstBlock		"Scope"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, 50]
-		DstBlock		"Rudder Angle"
-		DstPort			1
-	      }
+	      Points		      [0, 50]
+	      DstBlock		      "Rudder Angle"
+	      DstPort		      1
 	    }
 	  }
 	}
@@ -1916,7 +2455,7 @@ Model {
 	Line {
 	  SrcBlock		  "Distance Integrator"
 	  SrcPort		  1
-	  DstBlock		  "Display2"
+	  DstBlock		  "Distance Traveled"
 	  DstPort		  1
 	}
 	Line {
@@ -1956,21 +2495,23 @@ Model {
 	Line {
 	  SrcBlock		  "Convert to GPS"
 	  SrcPort		  2
-	  DstBlock		  "East Integrator"
-	  DstPort		  1
+	  Points		  [15, 0]
+	  Branch {
+	    DstBlock		    "East Integrator"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, 85]
+	    DstBlock		    "Scope"
+	    DstPort		    1
+	  }
 	}
 	Line {
 	  SrcBlock		  "Convert to GPS"
 	  SrcPort		  1
-	  Points		  [0, -40; 20, 0]
-	  Branch {
-	    DstBlock		    "North Integrator"
-	    DstPort		    1
-	  }
-	  Branch {
-	    DstBlock		    "Display1"
-	    DstPort		    1
-	  }
+	  Points		  [0, -40]
+	  DstBlock		  "North Integrator"
+	  DstPort		  1
 	}
       }
     }
@@ -1999,7 +2540,7 @@ Model {
       BlockType		      Scope
       Name		      "Roll"
       Ports		      [1]
-      Position		      [690, 349, 720, 381]
+      Position		      [615, 284, 645, 316]
       Floating		      off
       Location		      [6, 52, 1286, 769]
       Open		      off
@@ -2019,7 +2560,7 @@ Model {
       Ports		      [1]
       Position		      [790, 224, 820, 256]
       Floating		      off
-      Location		      [146, 237, 1426, 954]
+      Location		      [255, 420, 1535, 1137]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -2036,58 +2577,74 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      1
-      Points		      [0, 5; 205, 0]
+      Points		      [0, 15; 55, 0]
       Branch {
-	Points			[0, 130]
-	DstBlock		"Mux1"
-	DstPort			1
+	Points			[335, 0]
+	Branch {
+	  Points		  [0, 130]
+	  DstBlock		  "Mux1"
+	  DstPort		  1
+	}
+	Branch {
+	  Points		  [20, 0]
+	  Branch {
+	    DstBlock		    "Position"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, -35]
+	    DstBlock		    "Display"
+	    DstPort		    1
+	  }
+	}
       }
       Branch {
-	Points			[20, 0]
-	Branch {
-	  DstBlock		  "Position"
-	  DstPort		  1
-	}
-	Branch {
-	  Points		  [0, -35]
-	  DstBlock		  "Display"
-	  DstPort		  1
-	}
+	Points			[0, 235]
+	DstBlock		"Autonomous Control"
+	DstPort			1
       }
     }
     Line {
       SrcBlock		      "Plant"
       SrcPort		      2
-      Points		      [0, -5; 140, 0]
+      Points		      [0, 5; 80, 0]
       Branch {
-	Points			[0, 125]
-	DstBlock		"Mux1"
-	DstPort			2
-      }
-      Branch {
-	Points			[85, 0]
+	Points			[245, 0]
 	Branch {
-	  DstBlock		  "Position"
+	  Points		  [0, 125]
+	  DstBlock		  "Mux1"
 	  DstPort		  2
 	}
 	Branch {
-	  Points		  [0, 40]
-	  DstBlock		  "Display1"
-	  DstPort		  1
+	  Points		  [85, 0]
+	  Branch {
+	    DstBlock		    "Position"
+	    DstPort		    2
+	  }
+	  Branch {
+	    Points		    [0, 40]
+	    DstBlock		    "Display1"
+	    DstPort		    1
+	  }
 	}
+      }
+      Branch {
+	Points			[0, 250]
+	DstBlock		"Autonomous Control"
+	DstPort			2
       }
     }
     Line {
       SrcBlock		      "Plant"
       SrcPort		      3
-      Points		      [20, 0]
+      Points		      [205, 0]
       Branch {
 	Points			[50, 0]
 	DstBlock		"Mux"
 	DstPort			1
       }
       Branch {
-	Points			[0, -120]
+	Points			[0, -110]
 	DstBlock		"Display2"
 	DstPort			1
       }
@@ -2095,28 +2652,36 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      5
-      Points		      [0, -10; 30, 0]
+      Points		      [110, 0]
       Branch {
-	Points			[0, 75; 75, 0]
+	Points			[105, 0]
 	Branch {
-	  DstBlock		  "Mux1"
-	  DstPort		  4
+	  Points		  [0, 75; 75, 0]
+	  Branch {
+	    DstBlock		    "Mux1"
+	    DstPort		    4
+	  }
+	  Branch {
+	    Points		    [0, 45]
+	    DstBlock		    "Heading"
+	    DstPort		    1
+	  }
 	}
 	Branch {
-	  Points		  [0, 45]
-	  DstBlock		  "Heading"
-	  DstPort		  1
+	  DstBlock		  "Mux"
+	  DstPort		  3
 	}
       }
       Branch {
-	DstBlock		"Mux"
+	Points			[0, 210]
+	DstBlock		"Autonomous Control"
 	DstPort			3
       }
     }
     Line {
       SrcBlock		      "Plant"
       SrcPort		      4
-      Points		      [25, 0; 0, 5]
+      Points		      [210, 0; 0, 15]
       DstBlock		      "Mux"
       DstPort		      2
     }
@@ -2135,33 +2700,71 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      6
-      Points		      [40, 0; 0, 30]
+      Points		      [225, 0; 0, 40]
       DstBlock		      "Mux1"
-      DstPort		      3
-    }
-    Line {
-      SrcBlock		      "Constant"
-      SrcPort		      1
-      DstBlock		      "Plant"
-      DstPort		      2
-    }
-    Line {
-      SrcBlock		      "Constant1"
-      SrcPort		      1
-      DstBlock		      "Plant"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Constant2"
-      SrcPort		      1
-      DstBlock		      "Plant"
       DstPort		      3
     }
     Line {
       SrcBlock		      "Plant"
       SrcPort		      7
-      Points		      [0, 55]
       DstBlock		      "Roll"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Constant1"
+      SrcPort		      1
+      DstBlock		      "Manual Switch"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Manual Switch"
+      SrcPort		      1
+      DstBlock		      "Plant"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Autonomous Control"
+      SrcPort		      1
+      Points		      [-210, 0; 0, -225]
+      DstBlock		      "Manual Switch"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Constant"
+      SrcPort		      1
+      DstBlock		      "Manual Switch1"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Manual Switch1"
+      SrcPort		      1
+      DstBlock		      "Plant"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Autonomous Control"
+      SrcPort		      2
+      Points		      [-225, 0; 0, -195]
+      DstBlock		      "Manual Switch1"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Autonomous Control"
+      SrcPort		      3
+      Points		      [-240, 0; 0, -165]
+      DstBlock		      "Manual Switch2"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Manual Switch2"
+      SrcPort		      1
+      DstBlock		      "Plant"
+      DstPort		      3
+    }
+    Line {
+      SrcBlock		      "Constant2"
+      SrcPort		      1
+      DstBlock		      "Manual Switch2"
       DstPort		      1
     }
   }
@@ -2180,13 +2783,14 @@ Stateflow {
 		name                 		"waypoint_control"
 		created              		"28-Jul-2009 10:28:46"
 		isLibrary            		0
-		firstTarget          		12
+		firstTarget          		23
 		sfVersion            		66014000
 	}
 
 	chart {
 		id                                        		2
-		name                                      		"Plant/Convert to GPS"
+		name                                      		"Autonomous Control/Desired bearing\n"
+					"to waypoint"
 		windowPosition                            		[352.266 253.688 200.25 189.75]
 		viewLimits                                		[0 156.75 0 153.75]
 		screen                                    		[1 1 1600 1200 1.333333333333333]
@@ -2200,10 +2804,10 @@ Stateflow {
 		decomposition                             		CLUSTER_CHART
 		type                                      		EML_CHART
 		firstData                                 		6
-		chartFileNumber                           		2
+		chartFileNumber                           		1
 		disableImplicitCasting                    		1
 		eml {
-			name       		"vreckon"
+			name       		"distVincenty"
 		}
 	}
 
@@ -2216,6 +2820,301 @@ Stateflow {
 		treeNode                     		[2 0 0 0]
 		superState                   		SUBCHART
 		subviewer                    		2
+		type                         		FUNC_STATE
+		decomposition                		CLUSTER_STATE
+		eml {
+			isEML                    		1
+			script                   		"%% - - - - - - - - - - - - - - - - - - - - - - - - - - - - "
+						"- - - - - - - - - - - - - - - - - - - \n"
+						" %  Vincenty Inverse Solution of Geodesics on the Ellipsoid"
+						" (c) Chris Veness 2002-2008           \n"
+						" % - - - - - - - - - - - - - - - - - - - - - - - - - - - - "
+						"- - - - - - - - - - - - - - - - - - - \n"
+						" %\n"
+						" %\n"
+						" % Calculate geodesic distance (in m) between two points sp"
+						"ecified by latitude/longitude \n"
+						" % (in numeric degrees) using Vincenty inverse formula for "
+						"ellipsoids\n"
+						"%%\n"
+						"function [distance, azimuth] = distVincenty(lat1, lon1, lat"
+						"2, lon2)\n"
+						"  a = 6378137;\n"
+						"  b = 6356752.3142;\n"
+						"  f = 1/298.257223563;  % WGS-84 ellipsiod\n"
+						"  L = (lon2-lon1)*pi/180;\n"
+						"  U1 = atan((1-f) * tan(lat1*pi/180));\n"
+						"  U2 = atan((1-f) * tan(lat2*pi/180));\n"
+						"  sinU1 = sin(U1);\n"
+						"  cosU1 = cos(U1);\n"
+						"  sinU2 = sin(U2);\n"
+						"  cosU2 = cos(U2);\n"
+						"  \n"
+						"  lambda = L;\n"
+						"  iterLimit = 100;\n"
+						"  while true;\n"
+						"    sinLambda = sin(lambda);\n"
+						"    cosLambda = cos(lambda);\n"
+						"    sinSigma = sqrt((cosU2*sinLambda) * (cosU2*sinLambda) +"
+						" (cosU1*sinU2-sinU1*cosU2*cosLambda) * (cosU1*sinU2-sinU1*c"
+						"osU2*cosLambda));\n"
+						"    if sinSigma==0; \n"
+						"        distance = 0; % co-incident points\n"
+						"        azimuth = 0;\n"
+						"        return;\n"
+						"    end\n"
+						"    cosSigma = sinU1*sinU2 + cosU1*cosU2*cosLambda;\n"
+						"    sigma = atan2(sinSigma, cosSigma);\n"
+						"    sinAlpha = cosU1 * cosU2 * sinLambda / sinSigma;\n"
+						"    cosSqAlpha = 1 - sinAlpha*sinAlpha;\n"
+						"    cos2SigmaM = cosSigma - 2*sinU1*sinU2/cosSqAlpha;\n"
+						"    if isNaN(cos2SigmaM);\n"
+						"        cos2SigmaM = 0;  % equatorial line: cosSqAlpha=0 (§"
+						"6)\n"
+						"    end\n"
+						"    C = f/16*cosSqAlpha*(4+f*(4-3*cosSqAlpha));\n"
+						"    lambdaP = lambda;\n"
+						"    lambda = L + (1-C) * f * sinAlpha * (sigma + C*sinSigma"
+						"*(cos2SigmaM+C*cosSigma*(-1+2*cos2SigmaM*cos2SigmaM)));\n"
+						"    iterLimit = iterLimit - 1;\n"
+						"    if abs(lambda-lambdaP) > 1e-12 && iterLimit > 0;\n"
+						"        break;\n"
+						"    end\n"
+						"  end\n"
+						"\n"
+						"  if iterLimit == 0;\n"
+						"      distance = NaN;  %formula failed to converge\n"
+						"      azimuth = NaN;\n"
+						"      return;\n"
+						"  end\n"
+						"\n"
+						"  uSq = cosSqAlpha * (a*a - b*b) / (b*b);\n"
+						"  A = 1 + uSq/16384*(4096+uSq*(-768+uSq*(320-175*uSq)));\n"
+						"  B = uSq/1024 * (256+uSq*(-128+uSq*(74-47*uSq)));\n"
+						"  deltaSigma = B*sinSigma*(cos2SigmaM+B/4*(cosSigma*(-1+2*c"
+						"os2SigmaM*cos2SigmaM) - B/6*cos2SigmaM*(-3+4*sinSigma*sinSi"
+						"gma)*(-3+4*cos2SigmaM*cos2SigmaM)));\n"
+						"  distance = b*A*(sigma-deltaSigma);\n"
+						"  \n"
+						"  % Calculate the heading that would be a direct course fro"
+						"m point 1 to point 2\n"
+						"  azimuth = atan2(cosU2*sin(lambda), cosU1*sinU2 - sinU1*co"
+						"sU2*cos(lambda));\n"
+						" end"
+			editorLayout             		"100 M4x1[105 105 900 732]"
+			treatIntsAsFixpt         		0
+		}
+	}
+
+	junction {
+		id         		4
+		position   		[23.5747 49.5747 7]
+		chart      		2
+		linkNode   		[2 0 0]
+		subviewer  		2
+		type       		CONNECTIVE_JUNCTION
+	}
+
+	transition {
+		id             		5
+		labelString    		"{eML_blk_kernel();}"
+		labelPosition  		[32.125 19.875 102.544 14.964]
+		fontSize       		12
+		src {
+			intersection		[0 0 1 0 23.5747 14.625 0 0]
+		}
+		dst {
+			id          		4
+			intersection		[7 0 -1 -1 23.5747 42.5747 0 0]
+		}
+		midPoint       		[23.5747 24.9468]
+		chart          		2
+		linkNode       		[2 0 0]
+		dataLimits     		[23.575 23.575 14.625 34.575]
+		subviewer      		2
+		drawStyle      		SMART
+		executionOrder 		1
+	}
+
+	data {
+		id                            		6
+		name                          		"lat1"
+		linkNode                      		[2 0 7]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+			}
+			complexity           		SF_COMPLEX_INHERITED
+		}
+		dataType                      		"inherited"
+		fixptType {
+			slope   		1
+			baseType		SF_INT16_TYPE
+		}
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		7
+		name                          		"distance"
+		linkNode                      		[2 6 8]
+		scope                         		OUTPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_NO
+		}
+		dataType                      		"inherited"
+		fixptType {
+			slope   		1
+			baseType		SF_INT16_TYPE
+		}
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		8
+		name                          		"lon1"
+		linkNode                      		[2 7 9]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_INHERITED
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		9
+		name                          		"lat2"
+		linkNode                      		[2 8 10]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_INHERITED
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		10
+		name                          		"lon2"
+		linkNode                      		[2 9 11]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_INHERITED
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		11
+		name                          		"azimuth"
+		linkNode                      		[2 10 0]
+		scope                         		OUTPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_NO
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	instance {
+		id     		12
+		name   		"Autonomous Control/Desired bearing\n"
+					"to waypoint"
+		machine		1
+		chart  		2
+	}
+
+	chart {
+		id                                        		13
+		name                                      		"Plant/Convert to GPS"
+		windowPosition                            		[352.266 253.688 200.25 189.75]
+		viewLimits                                		[0 156.75 0 153.75]
+		screen                                    		[1 1 1600 1200 1.333333333333333]
+		treeNode                                  		[0 14 0 0]
+		firstTransition                           		16
+		firstJunction                             		15
+		viewObj                                   		13
+		machine                                   		1
+		subviewS {
+		}
+		decomposition                             		CLUSTER_CHART
+		type                                      		EML_CHART
+		firstData                                 		17
+		chartFileNumber                           		2
+		disableImplicitCasting                    		1
+		eml {
+			name       		"vreckon"
+		}
+	}
+
+	state {
+		id                           		14
+		labelString                  		"eML_blk_kernel()"
+		position                     		[18 64.5 118 66]
+		fontSize                     		12
+		chart                        		13
+		treeNode                     		[13 0 0 0]
+		superState                   		SUBCHART
+		subviewer                    		13
 		type                         		FUNC_STATE
 		decomposition                		CLUSTER_STATE
 		eml {
@@ -2302,6 +3201,7 @@ Stateflow {
 						"a = 6378137; % semimajor axis\n"
 						"b = 6356752.31424518; % semiminor axis\n"
 						"f = 1/298.257223563; % flattening coefficient\n"
+						"lat1_orig = lat1;\n"
 						"lat1   = lat1 * .1745329251994329577e-1; % intial latitude "
 						"in radians\n"
 						"% correct for errors at exact poles by adjusting 0.6 millim"
@@ -2349,8 +3249,8 @@ Stateflow {
 						"s2SigmaM+...\n"
 						"    C*cosSigma*(-1+2*cos2SigmaM*cos2SigmaM)));\n"
 						"% output degrees\n"
-						"d_lat2 = (lat2 - lat1)* 57.295779513082322865;\n"
-						"d_lon2 = L * 57.295779513082322865;\n"
+						"d_lat2 = lat2*57.295779513082322865 - lat1_orig;\n"
+						"d_lon2 = L*57.295779513082322865;\n"
 						"d_lon2 = mod(d_lon2,360); % follow [0,360] convention\n"
 						"return"
 			editorLayout             		"100 M4x1[105 105 900 732]"
@@ -2359,16 +3259,16 @@ Stateflow {
 	}
 
 	junction {
-		id         		4
+		id         		15
 		position   		[23.5747 49.5747 7]
-		chart      		2
-		linkNode   		[2 0 0]
-		subviewer  		2
+		chart      		13
+		linkNode   		[13 0 0]
+		subviewer  		13
 		type       		CONNECTIVE_JUNCTION
 	}
 
 	transition {
-		id             		5
+		id             		16
 		labelString    		"{eML_blk_kernel();}"
 		labelPosition  		[32.125 19.875 102.544 14.964]
 		fontSize       		12
@@ -2376,22 +3276,22 @@ Stateflow {
 			intersection		[0 0 1 0 23.5747 14.625 0 0]
 		}
 		dst {
-			id          		4
+			id          		15
 			intersection		[7 0 -1 -1 23.5747 42.5747 0 0]
 		}
 		midPoint       		[23.5747 24.9468]
-		chart          		2
-		linkNode       		[2 0 0]
+		chart          		13
+		linkNode       		[13 0 0]
 		dataLimits     		[23.575 23.575 14.625 34.575]
-		subviewer      		2
+		subviewer      		13
 		drawStyle      		SMART
 		executionOrder 		1
 	}
 
 	data {
-		id                            		6
+		id                            		17
 		name                          		"lat1"
-		linkNode                      		[2 0 7]
+		linkNode                      		[13 0 18]
 		scope                         		INPUT_DATA
 		machine                       		1
 		props {
@@ -2412,9 +3312,9 @@ Stateflow {
 	}
 
 	data {
-		id                            		7
+		id                            		18
 		name                          		"d_lat2"
-		linkNode                      		[2 6 8]
+		linkNode                      		[13 17 19]
 		scope                         		OUTPUT_DATA
 		machine                       		1
 		props {
@@ -2436,9 +3336,9 @@ Stateflow {
 	}
 
 	data {
-		id                            		8
+		id                            		19
 		name                          		"s"
-		linkNode                      		[2 7 9]
+		linkNode                      		[13 18 20]
 		scope                         		INPUT_DATA
 		machine                       		1
 		props {
@@ -2459,9 +3359,9 @@ Stateflow {
 	}
 
 	data {
-		id                            		9
+		id                            		20
 		name                          		"d_lon2"
-		linkNode                      		[2 8 10]
+		linkNode                      		[13 19 21]
 		scope                         		OUTPUT_DATA
 		machine                       		1
 		props {
@@ -2482,9 +3382,9 @@ Stateflow {
 	}
 
 	data {
-		id                            		10
+		id                            		21
 		name                          		"a12"
-		linkNode                      		[2 9 0]
+		linkNode                      		[13 20 0]
 		scope                         		INPUT_DATA
 		machine                       		1
 		props {
@@ -2505,14 +3405,14 @@ Stateflow {
 	}
 
 	instance {
-		id     		11
+		id     		22
 		name   		"Plant/Convert to GPS"
 		machine		1
-		chart  		2
+		chart  		13
 	}
 
 	target {
-		id                        		12
+		id                        		23
 		name                      		"sfun"
 		description               		"Default Simulink S-Function Target."
 		machine                   		1
