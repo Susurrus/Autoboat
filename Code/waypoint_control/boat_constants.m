@@ -5,6 +5,9 @@
 e_0 = 0;                % Initial east position
 n_0 = 0;                % Initial north position
 phi_0 = 0;              % Initial heading
+v_0 = 0;                % Initial speed
+wind_speed_0 = 0;       % Initial wind speed
+wind_heading_0 = 0;     % Initial wind heading
 sea_state = 0;          % The sea state on the Beaufort Scale
 T_step = 0.01;          % Simulation timestep
 battery_tray_angle = 0; % Battery tray angle
