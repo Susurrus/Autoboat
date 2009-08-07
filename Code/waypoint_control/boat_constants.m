@@ -2,18 +2,20 @@
 
 % Initial conditions
 
-%e_0 = 0;                % Initial east position
-%n_0 = 0;                % Initial north position
-lat_0 = 36.80611;       % Initial latitude
-long_0 = -121.79639;    % Initial longitude
-phi_0 = 0;              % Initial heading
-v_0 = 0;                % Initial speed
-wind_speed_0 = 0;       % Initial wind speed
-wind_heading_0 = 0;     % Initial wind heading
+lat_0 = 36.80611*pi/180;       % Initial latitude (radians)
+long_0 = -121.79639*pi/180;    % Initial longitude (radians)
+phi_0 = 0;              % Initial heading (radians)
+v_0 = 0;                % Initial speed (m/s)
+wind_speed_0 = 0;       % Initial wind speed (m/s)
+wind_heading_0 = 0;     % Initial wind heading (radians)
 sea_state = 0;          % The sea state on the Beaufort Scale
-T_step = 0.01;          % Simulation timestep
-battery_tray_angle = 0; % Battery tray angle
+T_step = 0.01;          % Simulation timestep (s)
+battery_tray_angle = 0; % Battery tray angle (radians, positive is port
 initial_charge = 20;    % Initial boat charge (J)
+
+% Waypoint stuff
+waypoint_1_lat = 36.8;
+waypoint_1_long = -121.8;
 
 % Known constants
 

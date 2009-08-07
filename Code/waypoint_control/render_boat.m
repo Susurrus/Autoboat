@@ -3,14 +3,15 @@
 % boat angle in radians: 0..2*pi cw from top
 function [] = render_boat(boat_position_x, boat_position_y, rudder_angle, boat_heading)
 
+scale = 10; % Define a multiplier for scaling the whole boat, also affects axes
+
 gcf;
-axis([-200 200 -200 200]);
+axis([boat_position_x - 10*scale boat_position_x + 10*scale boat_position_y - 10*scale boat_position_y + 10*scale]);
 axis('equal'); % Forces Matlab to render plot pixels as square
 hold on;       % Needed to render everything to same figure
 grid on;       % Render a nice grid
 
 % Define boat, rudder, and path points
-scale = 10; % Define a multiplier for scaling the whole boat
 boat_x = scale*[-2.1 2.1 2.1 .75 0 -.75 -2.1];
 boat_y = scale*[-6 -6 0 3.9 6 3.9 0];
 rudder_x = scale*[-.15 .15 .15 -.15];
