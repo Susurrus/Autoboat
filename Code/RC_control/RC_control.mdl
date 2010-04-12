@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.476"
+    ComputedModelVersion    "1.479"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -44,8 +44,8 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Apr 12 15:32:16 2010"
-  ModelVersionFormat	  "1.%<AutoIncrement:476>"
+  LastModifiedDate	  "Mon Apr 12 16:51:25 2010"
+  ModelVersionFormat	  "1.%<AutoIncrement:479>"
   ConfigurationManager	  "None"
   SimulationMode	  "normal"
   LinearizationMsg	  "none"
@@ -482,7 +482,7 @@ Model {
 		  ExtModeStaticAlloc	  off
 		  ExtModeStaticAllocSize  1000000
 		  ExtModeTesting	  off
-		  ExtModeMexFile	  "noextcomm"
+		  ExtModeMexFile	  "ext_comm"
 		  ExtModeIntrfLevel	  "Level1"
 		  InlinedParameterPlacement "NonHierarchical"
 		  TargetOS		  "BareBoardExample"
@@ -546,8 +546,8 @@ Model {
 	      CustomProperty {
 		DataType		"string"
 		Name			"OPTIM_GCC"
-		Value			"-mcpu=33fJ256GP710 -O3 -fschedule-ins"
-"ns -fschedule-insns2"
+		Value			"-mcpu=choose_dsPIC_Target -O3 -fsched"
+"ule-insns -fschedule-insns2"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -559,15 +559,15 @@ Model {
 		DataType		"string"
 		Name			"LDPICTYPE"
 		Value			"-T C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\"
-"support\\dsPIC33F\\gld\\p33fJ256GP710.gld"
+"support\\dsPIC30F\\gld\\pchoose_dsPIC_Target.gld"
 	      }
 	      CustomProperty {
 		DataType		"string"
 		Name			"LDLIBPIC"
 		Value			"C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib"
-"\\libpic30-coff.a  C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\dsPIC33F\\libp33fJ2"
-"56GP710-coff.a C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\libc-coff.a C:\\PROGRA~"
-"1\\MICROC~1\\MPLABC~1\\lib\\libm-coff.a"
+"\\libpic30-coff.a  C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\dsPIC30F\\libpchoos"
+"e_dsPIC_Target-coff.a C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\libc-coff.a C:\\"
+"PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\libm-coff.a"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -578,12 +578,13 @@ Model {
 	      CustomProperty {
 		DataType		"string"
 		Name			"PIC_REF"
-		Value			"33fJ256GP710"
+		Value			"choose_dsPIC_Target"
 	      }
 	      CustomProperty {
 		DataType		"string"
 		Name			"GCCPATH"
-		Value			"''"
+		Value			"'C:\\\\PROGRA~1\\\\MICROC~1\\\\MPLABC"
+"~1\\\\bin\\\\'"
 	      }
 	    }
 	    PropName		    "Components"
@@ -823,7 +824,7 @@ Model {
   }
   System {
     Name		    "RC_control"
-    Location		    [2, 82, 1253, 1000]
+    Location		    [2, 82, 1270, 1000]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -841,7 +842,7 @@ Model {
       BlockType		      Reference
       Name		      "Configuration"
       Ports		      []
-      Position		      [270, 945, 370, 995]
+      Position		      [270, 20, 370, 70]
       BackgroundColor	      "lightBlue"
       DropShadow	      on
       SourceBlock	      "dsPICdrivers/Configuration"
@@ -860,7 +861,7 @@ Model {
       BlockType		      Reference
       Name		      "Configure Model \nfor dsPIC"
       Ports		      []
-      Position		      [20, 939, 132, 995]
+      Position		      [20, 14, 132, 70]
       BackgroundColor	      "yellow"
       DropShadow	      on
       SourceBlock	      "dsPICdrivers/Simulink Configuration/Configure M"
@@ -872,7 +873,7 @@ Model {
       Name		      "Current Command\nto Drive Motor"
       Tag		      "dsPIC_dsPIC_CFunctionCall"
       Ports		      [2]
-      Position		      [725, 340, 850, 380]
+      Position		      [725, 430, 850, 470]
       List {
 	ListType		RTWdata
 	FctDeclaration		"extern void send_cc_command(int16_T u1, uint8"
@@ -906,7 +907,7 @@ Model {
       Name		      "Digital Output Write"
       Tag		      "dsPIC_Digital_Output"
       Ports		      [1]
-      Position		      [725, 167, 855, 203]
+      Position		      [725, 247, 855, 283]
       NamePlacement	      "alternate"
       ShowName		      off
       Priority		      "5"
@@ -919,9 +920,25 @@ Model {
     }
     Block {
       BlockType		      Reference
+      Name		      "Digital Output Write1"
+      Tag		      "dsPIC_Digital_Output"
+      Ports		      [1]
+      Position		      [725, 287, 855, 323]
+      NamePlacement	      "alternate"
+      ShowName		      off
+      Priority		      "5"
+      SourceBlock	      "dsPICdrivers/Digital I//O/Digital Output Write"
+      SourceType	      ""
+      PORT		      "G"
+      Pin		      "[9]"
+      Simultaneous	      off
+      OrderingInOutPopup      "None"
+    }
+    Block {
+      BlockType		      Reference
       Name		      "DocBlock"
       Ports		      []
-      Position		      [532, 955, 572, 994]
+      Position		      [532, 30, 572, 69]
       ShowName		      off
       UserDataPersistent      on
       UserData		      "DataTag0"
@@ -942,7 +959,7 @@ Model {
       Name		      "Drive Motor\nEnable"
       Tag		      "dsPIC_dsPIC_CFunctionCall"
       Ports		      [2]
-      Position		      [725, 440, 850, 480]
+      Position		      [725, 530, 850, 570]
       List {
 	ListType		RTWdata
 	FctDeclaration		"extern void send_sr_command(int16_T u1, uint8"
@@ -976,7 +993,7 @@ Model {
       Name		      "Master"
       Tag		      "dsPIC_MASTER"
       Ports		      []
-      Position		      [154, 945, 254, 995]
+      Position		      [154, 20, 254, 70]
       BackgroundColor	      "lightBlue"
       DropShadow	      on
       Priority		      "1"
@@ -1002,10 +1019,10 @@ Model {
 "  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   7  "
 " 0   0   0  10   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   "
 "0   0   0   0   0   0   0   0   0   0   0   0   0   0   9   4   0   0   0   0"
-"   0   0   0   0   0   0   0   0   0   0   9   0   0   0   0   0  10   0   0 "
+"   0   0   0   0   0   0   0   0   0   0   9   0   0   0   0   0   0   0   0 "
 "  0   0   0   0 ]"
-      TRIS		      "[ 65535  65535  65535  65501  65535  65535  650"
-"23 ]"
+      TRIS		      "[ 65535  65535  65535  65501  65535  65535  655"
+"35 ]"
       ADPCFG		      "0"
       MasterBusyPort	      "None"
       MasterOverloadPort      "None"
@@ -1026,7 +1043,7 @@ Model {
       Name		      "Port Hall"
       Tag		      "dsPIC_Digital_Input"
       Ports		      [0, 1]
-      Position		      [15, 75, 130, 115]
+      Position		      [15, 165, 130, 205]
       SourceBlock	      "dsPICdrivers/Digital I//O/Digital Input"
       SourceType	      ""
       PORT		      "F"
@@ -1038,7 +1055,7 @@ Model {
       BlockType		      SubSystem
       Name		      "Propulsion Control"
       Ports		      [2, 4]
-      Position		      [435, 367, 545, 453]
+      Position		      [435, 457, 545, 543]
       MinAlgLoopOccurrences   off
       RTWSystemCode	      "Auto"
       FunctionWithSeparateData off
@@ -1061,13 +1078,13 @@ Model {
 	Block {
 	  BlockType		  Inport
 	  Name			  "RC Throttle"
-	  Position		  [25, 40, 55, 54]
+	  Position		  [25, 38, 55, 52]
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "RC Rudder"
-	  Position		  [320, 135, 350, 149]
+	  Position		  [320, 133, 350, 147]
 	  Port			  "2"
 	  IconDisplay		  "Port number"
 	}
@@ -1482,29 +1499,33 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "CC"
-	  Position		  [720, 15, 750, 29]
+	  Position		  [720, 13, 750, 27]
 	  IconDisplay		  "Port number"
+	  BusOutputAsStruct	  off
 	}
 	Block {
 	  BlockType		  Outport
 	  Name			  "CC_en"
-	  Position		  [720, 50, 750, 64]
+	  Position		  [720, 48, 750, 62]
 	  Port			  "2"
 	  IconDisplay		  "Port number"
+	  BusOutputAsStruct	  off
 	}
 	Block {
 	  BlockType		  Outport
 	  Name			  "SR"
-	  Position		  [720, 90, 750, 104]
+	  Position		  [720, 88, 750, 102]
 	  Port			  "3"
 	  IconDisplay		  "Port number"
+	  BusOutputAsStruct	  off
 	}
 	Block {
 	  BlockType		  Outport
 	  Name			  "SR_en"
-	  Position		  [720, 140, 750, 154]
+	  Position		  [720, 138, 750, 152]
 	  Port			  "4"
 	  IconDisplay		  "Port number"
+	  BusOutputAsStruct	  off
 	}
 	Line {
 	  SrcBlock		  "Data Type Conversion1"
@@ -1644,7 +1665,7 @@ Model {
       Name		      "RC Rudder Input "
       Tag		      "dsPIC_dsPIC_CFunctionCall"
       Ports		      [0, 1]
-      Position		      [15, 280, 130, 320]
+      Position		      [15, 370, 130, 410]
       List {
 	ListType		RTWdata
 	FctDeclaration		"extern uint16_T get_IC2_Hightime();"
@@ -1676,7 +1697,7 @@ Model {
       Name		      "RC Throttle Input"
       Tag		      "dsPIC_dsPIC_CFunctionCall"
       Ports		      [0, 1]
-      Position		      [15, 371, 130, 409]
+      Position		      [15, 461, 130, 499]
       List {
 	ListType		RTWdata
 	FctDeclaration		"extern uint16_T get_IC1_Hightime();"
@@ -1708,7 +1729,7 @@ Model {
       Name		      "Rudder\nPotentiometer"
       Tag		      "dsPIC_ADC"
       Ports		      [0, 1]
-      Position		      [15, 207, 130, 243]
+      Position		      [15, 297, 130, 333]
       Priority		      "5"
       List {
 	ListType		RTWdata
@@ -1737,8 +1758,8 @@ Model {
     Block {
       BlockType		      SubSystem
       Name		      "Rudder Control"
-      Ports		      [4, 3]
-      Position		      [435, 156, 545, 314]
+      Ports		      [4, 4]
+      Position		      [435, 245, 575, 405]
       MinAlgLoopOccurrences   off
       RTWSystemCode	      "Auto"
       FunctionWithSeparateData off
@@ -1746,7 +1767,7 @@ Model {
       System {
 	Name			"Rudder Control"
 	Location		[244, 513, 1182, 808]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1761,27 +1782,27 @@ Model {
 	Block {
 	  BlockType		  Inport
 	  Name			  "Port Hall \nInput"
-	  Position		  [25, 30, 55, 44]
+	  Position		  [25, 28, 55, 42]
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "Starboard Hall\nInput"
-	  Position		  [25, 80, 55, 94]
+	  Position		  [25, 78, 55, 92]
 	  Port			  "2"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "Rudder\nPosition"
-	  Position		  [25, 140, 55, 154]
+	  Position		  [25, 138, 55, 152]
 	  Port			  "3"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "RC Rudder"
-	  Position		  [25, 195, 55, 209]
+	  Position		  [25, 193, 55, 207]
 	  Port			  "4"
 	  IconDisplay		  "Port number"
 	}
@@ -1893,6 +1914,13 @@ Model {
 	  relop			  "=="
 	  LogicOutDataTypeMode	  "boolean"
 	  ZeroCross		  off
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant"
+	  Position		  [780, 119, 810, 141]
+	  ShowName		  off
+	  Value			  "0"
 	}
 	Block {
 	  BlockType		  DataTypeConversion
@@ -2044,7 +2072,7 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "input"
-	      Position		      [25, 40, 55, 54]
+	      Position		      [25, 38, 55, 52]
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
@@ -2081,8 +2109,9 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "mapped"
-	      Position		      [195, 40, 225, 54]
+	      Position		      [195, 38, 225, 52]
 	      IconDisplay	      "Port number"
+	      BusOutputAsStruct	      off
 	    }
 	    Line {
 	      SrcBlock		      "Saturation"
@@ -2131,7 +2160,7 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "input"
-	      Position		      [25, 40, 55, 54]
+	      Position		      [25, 38, 55, 52]
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
@@ -2186,8 +2215,9 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "mapped"
-	      Position		      [300, 40, 330, 54]
+	      Position		      [300, 38, 330, 52]
 	      IconDisplay	      "Port number"
+	      BusOutputAsStruct	      off
 	    }
 	    Line {
 	      SrcBlock		      "Saturation3"
@@ -2234,22 +2264,33 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Direction"
-	  Position		  [865, 90, 895, 104]
+	  Position		  [865, 88, 895, 102]
 	  IconDisplay		  "Port number"
+	  BusOutputAsStruct	  off
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "!Enable"
+	  Position		  [865, 123, 895, 137]
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	  BusOutputAsStruct	  off
 	}
 	Block {
 	  BlockType		  Outport
 	  Name			  "OC Down"
-	  Position		  [865, 170, 895, 184]
-	  Port			  "2"
+	  Position		  [865, 168, 895, 182]
+	  Port			  "3"
 	  IconDisplay		  "Port number"
+	  BusOutputAsStruct	  off
 	}
 	Block {
 	  BlockType		  Outport
 	  Name			  "OC Period"
-	  Position		  [865, 210, 895, 224]
-	  Port			  "3"
+	  Position		  [865, 208, 895, 222]
+	  Port			  "4"
 	  IconDisplay		  "Port number"
+	  BusOutputAsStruct	  off
 	}
 	Line {
 	  SrcBlock		  "Compare\nTo Constant2"
@@ -2451,6 +2492,12 @@ Model {
 	  DstBlock		  "OC Down"
 	  DstPort		  1
 	}
+	Line {
+	  SrcBlock		  "Constant"
+	  SrcPort		  1
+	  DstBlock		  "!Enable"
+	  DstPort		  1
+	}
 	Annotation {
 	  Position		  [286, 88]
 	}
@@ -2461,7 +2508,7 @@ Model {
       Name		      "Rudder Motor"
       Tag		      "dsPIC_PWM_out"
       Ports		      [2]
-      Position		      [725, 246, 805, 299]
+      Position		      [725, 346, 805, 399]
       Priority		      "5"
       SourceBlock	      "dsPICdrivers/Peripheral I//O/Output Compare"
       SourceType	      "Output Capture Peripheral"
@@ -2483,7 +2530,7 @@ Model {
       Name		      "Starboard Hall"
       Tag		      "dsPIC_Digital_Input"
       Ports		      [0, 1]
-      Position		      [15, 140, 130, 180]
+      Position		      [15, 230, 130, 270]
       SourceBlock	      "dsPICdrivers/Digital I//O/Digital Input"
       SourceType	      ""
       PORT		      "G"
@@ -2496,7 +2543,7 @@ Model {
       Name		      "UART Configuration"
       Tag		      "dsPIC_config_UART"
       Ports		      []
-      Position		      [385, 948, 485, 998]
+      Position		      [385, 23, 485, 73]
       BackgroundColor	      "lightBlue"
       DropShadow	      on
       Priority		      "2"
@@ -2525,7 +2572,7 @@ Model {
     Line {
       SrcBlock		      "RC Rudder Input "
       SrcPort		      1
-      Points		      [210, 0; 0, 0]
+      Points		      [210, 0]
       Branch {
 	Points			[0, 135]
 	DstBlock		"Propulsion Control"
@@ -2540,8 +2587,8 @@ Model {
     }
     Line {
       SrcBlock		      "Rudder Control"
-      SrcPort		      2
-      Points		      [160, 0]
+      SrcPort		      3
+      Points		      [130, 0]
       DstBlock		      "Rudder Motor"
       DstPort		      1
     }
@@ -2589,7 +2636,7 @@ Model {
     }
     Line {
       SrcBlock		      "Rudder Control"
-      SrcPort		      3
+      SrcPort		      4
       DstBlock		      "Rudder Motor"
       DstPort		      2
     }
@@ -2613,6 +2660,12 @@ Model {
       Points		      [160, 0]
       DstBlock		      "Current Command\nto Drive Motor"
       DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Rudder Control"
+      SrcPort		      2
+      DstBlock		      "Digital Output Write1"
+      DstPort		      1
     }
   }
 }
