@@ -1,4 +1,4 @@
-function sun = sun_position(time, location)
+function f = sun_position(time_vec, location_vec)
 % sun = sun_position(time, location)
 %
 % This function compute the sun position (zenith and azimuth angle at the observer
@@ -92,7 +92,14 @@ function sun = sun_position(time, location)
 
 
 % 1. Calculate the Julian Day, and Century. Julian Ephemeris day, century
-% and millenium are calculated using a mean delta_t of 33.184 seconds.  
+% and millenium are calculated using a mean delta_t of 33.184 seconds.
+time.year = time_vec(1);
+time.month = time_vec(2);
+time.day = time_vec(3);
+time.hour = time_vec(4);
+time.min = time_vec(5);
+time.sec = time_vec(6);
+time.UTC = time_vec(7);
 julian = julian_calculation(time);
 
 % 2. Calculate the Earth heliocentric longitude, latitude, and radius
@@ -125,6 +132,9 @@ sun_rigth_ascension = sun_rigth_ascension_calculation(apparent_sun_longitude, tr
 sun_geocentric_declination = sun_geocentric_declination_calculation(apparent_sun_longitude, true_obliquity, sun_geocentric_position);
 
 % 11. Calculate the observer local hour angle (in degrees, westward from south).
+location.longitude = location_vec(1);
+location.latitude = location_vec(2);
+location.altitude = location_vec(3);
 observer_local_hour = observer_local_hour_calculation(apparent_stime_at_greenwich, location, sun_rigth_ascension);
 
 % 12. Calculate the topocentric sun position (rigth ascension, declination and
@@ -137,8 +147,7 @@ topocentric_local_hour = topocentric_local_hour_calculate(observer_local_hour, t
 % 14. Calculate the topocentric zenith and azimuth angle (in degrees)
 sun = sun_topocentric_zenith_angle_calculate(location, topocentric_sun_position, topocentric_local_hour);
 
-
-
+f = [sun.azimuth sun.zenith];
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -169,7 +178,7 @@ else
     time = t_input;
 end
 
-if(time.month == 1 | time.month == 2)
+if(time.month == 1 || time.month == 2)
     Y = time.year - 1;
     M = time.month + 12;
 else

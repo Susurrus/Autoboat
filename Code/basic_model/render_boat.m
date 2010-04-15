@@ -4,16 +4,16 @@
 function [] = render_boat(boat_position_x, boat_position_y, rudder_angle, boat_heading)
 
 gcf;
-axis([-500 500 -500 500]);
+axis([-100 100 -100 100]);
 axis('equal'); % Forces Matlab to render plot pixels as square
 hold on;       % Needed to render everything to same figure
 grid on;       % Render a nice grid
 
 % Define boat, rudder, and path points
-boat_x = 50*[-2.1 2.1 2.1 .75 0 -.75 -2.1];
-boat_y = 50*[-6 -6 0 3.9 6 3.9 0];
-rudder_x = 50*[-.15 .15 .15 -.15];
-rudder_y = 50*[-1.5 -1.5 0 0];
+boat_x = 5*[-2.1 2.1 2.1 .75 0 -.75 -2.1];
+boat_y = 5*[-6 -6 0 3.9 6 3.9 0];
+rudder_x = 5*[-.15 .15 .15 -.15];
+rudder_y = 5*[-1.5 -1.5 0 0];
 
 % Generate some graphic objects for the path, rudder, and boat
 h_rudder = findobj('Tag','rudder');
@@ -42,7 +42,7 @@ new_rudder_x = cos(rudder_angle)*tmp_x - sin(rudder_angle)*tmp_y;
 new_rudder_y = sin(rudder_angle)*tmp_x + cos(rudder_angle)*tmp_y;
 
 % Move rudder into proper position with the boat.
-new_rudder_y = new_rudder_y - 6*50;
+new_rudder_y = new_rudder_y - 6*5;
 
 % Perform boat rotation (rotates rudder and boat)
 tmp_x = new_boat_x;
