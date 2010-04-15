@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.266"
+    ComputedModelVersion    "1.276"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -44,8 +44,8 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Apr 15 15:58:52 2010"
-  ModelVersionFormat	  "1.%<AutoIncrement:266>"
+  LastModifiedDate	  "Thu Apr 15 16:49:19 2010"
+  ModelVersionFormat	  "1.%<AutoIncrement:276>"
   ConfigurationManager	  "None"
   SimulationMode	  "accelerator"
   LinearizationMsg	  "none"
@@ -522,6 +522,13 @@ Model {
       SampleTime	      "1"
     }
     Block {
+      BlockType		      Display
+      Format		      "short"
+      Decimation	      "10"
+      Floating		      off
+      SampleTime	      "-1"
+    }
+    Block {
       BlockType		      From
       IconDisplay	      "Tag"
     }
@@ -778,12 +785,14 @@ Model {
       BlockType		      Constant
       Name		      "Constant"
       Position		      [375, 220, 405, 250]
+      BackgroundColor	      "gray"
       ShowName		      off
     }
     Block {
       BlockType		      Constant
       Name		      "Constant1"
       Position		      [375, 160, 405, 190]
+      BackgroundColor	      "gray"
       ShowName		      off
       Value		      ".3"
     }
@@ -791,6 +800,7 @@ Model {
       BlockType		      Constant
       Name		      "Constant2"
       Position		      [375, 280, 405, 310]
+      BackgroundColor	      "gray"
       ShowName		      off
       Value		      "0"
     }
@@ -823,7 +833,7 @@ Model {
       System {
 	Name			"Plant"
 	Location		[2, 82, 963, 557]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -2113,8 +2123,9 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "now"
-		    Position		    [610, 75, 640, 89]
+		    Position		    [610, 73, 640, 87]
 		    IconDisplay		    "Port number"
+		    BusOutputAsStruct	    off
 		    }
 		    Line {
 		    SrcBlock		    "Digital Clock"
@@ -3292,7 +3303,7 @@ Model {
 	  System {
 	    Name		    "Heading plant"
 	    Location		    [108, 567, 815, 825]
-	    Open		    on
+	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -3496,8 +3507,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Outputs"
-	    Location		    [113, 520, 769, 807]
-	    Open		    off
+	    Location		    [128, 285, 1267, 640]
+	    Open		    on
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -3512,22 +3523,39 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "X"
-	      Position		      [100, 73, 130, 87]
+	      Position		      [105, 158, 135, 172]
 	      BackgroundColor	      "darkGreen"
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
 	      BlockType		      Inport
 	      Name		      "heading"
-	      Position		      [30, 98, 60, 112]
+	      Position		      [35, 183, 65, 197]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "2"
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant"
+	      Position		      [405, 285, 435, 315]
+	      BackgroundColor	      "gray"
+	      ShowName		      off
+	      Value		      "0"
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant1"
+	      Position		      [850, 60, 880, 90]
+	      Orientation	      "left"
+	      BackgroundColor	      "gray"
+	      ShowName		      off
+	      Value		      "0"
+	    }
+	    Block {
 	      BlockType		      Gain
 	      Name		      "Convert to\nacceleration"
-	      Position		      [155, 60, 215, 100]
+	      Position		      [160, 145, 220, 185]
 	      ShowName		      off
 	      Gain		      "1/mass"
 	      ParameterDataTypeMode   "Inherit via internal rule"
@@ -3535,40 +3563,336 @@ Model {
 	      SaturateOnIntegerOverflow	off
 	    }
 	    Block {
+	      BlockType		      Gain
+	      Name		      "Convert to\nacceleration1"
+	      Position		      [890, 140, 950, 180]
+	      ShowName		      off
+	      Gain		      "180/pi"
+	      ParameterDataTypeMode   "Inherit via internal rule"
+	      OutDataTypeMode	      "Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Gain
+	      Name		      "Convert to\nacceleration3"
+	      Position		      [860, 235, 920, 275]
+	      ShowName		      off
+	      Gain		      "180/pi"
+	      ParameterDataTypeMode   "Inherit via internal rule"
+	      OutDataTypeMode	      "Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      SubSystem
+	      Name		      "Convert to ECEF"
+	      Ports		      [2, 1]
+	      Position		      [505, 148, 555, 212]
+	      NamePlacement	      "alternate"
+	      MinAlgLoopOccurrences   off
+	      RTWSystemCode	      "Auto"
+	      FunctionWithSeparateData off
+	      Array {
+		Type			"Handle"
+		Dimension		0
+		PropName		"AvailSigsLoadSave"
+	      }
+	      MaskHideContents	      off
+	      MaskType		      "Stateflow"
+	      MaskDescription	      "Embedded MATLAB block"
+	      MaskDisplay	      "disp('enu2xyz');"
+	      MaskSelfModifiable      on
+	      MaskIconFrame	      on
+	      MaskIconOpaque	      off
+	      MaskIconRotate	      "none"
+	      MaskIconUnits	      "autoscale"
+	      System {
+		Name			"Convert to ECEF"
+		Location		[257, 457, 812, 717]
+		Open			off
+		ModelBrowserVisibility	off
+		ModelBrowserWidth	200
+		ScreenColor		"white"
+		PaperOrientation	"landscape"
+		PaperPositionMode	"auto"
+		PaperType		"usletter"
+		PaperUnits		"inches"
+		TiledPaperMargins	"[0.500000, 0.500000, 0.500000, 0.5000"
+"00]"
+		TiledPageScale		1
+		ShowPageBoundaries	off
+		ZoomFactor		"100"
+		Block {
+		  BlockType		  Inport
+		  Name			  "ref_LLA"
+		  Position		  [20, 101, 40, 119]
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "enu"
+		  Position		  [20, 136, 40, 154]
+		  Port			  "2"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Demux
+		  Name			  " Demux "
+		  Ports			  [1, 1]
+		  Position		  [270, 285, 320, 325]
+		  Outputs		  "1"
+		}
+		Block {
+		  BlockType		  "S-Function"
+		  Name			  " SFunction "
+		  Tag			  "Stateflow S-Function Boat_sim 6"
+		  Ports			  [2, 2]
+		  Position		  [180, 123, 230, 287]
+		  FunctionName		  "sf_sfun"
+		  PortCounts		  "[2 2]"
+		  Port {
+		    PortNumber		    2
+		    Name		    "XYZ"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		  }
+		}
+		Block {
+		  BlockType		  Terminator
+		  Name			  " Terminator "
+		  Position		  [460, 296, 480, 314]
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "XYZ"
+		  Position		  [460, 101, 480, 119]
+		  IconDisplay		  "Port number"
+		  BusOutputAsStruct	  off
+		}
+		Line {
+		  SrcBlock		  " SFunction "
+		  SrcPort		  1
+		  Points		  [0, 140]
+		  DstBlock		  " Demux "
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  " Demux "
+		  SrcPort		  1
+		  DstBlock		  " Terminator "
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "ref_LLA"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "enu"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  2
+		}
+		Line {
+		  Name			  "XYZ"
+		  Labels		  [0, 0]
+		  SrcBlock		  " SFunction "
+		  SrcPort		  2
+		  DstBlock		  "XYZ"
+		  DstPort		  1
+		}
+	      }
+	    }
+	    Block {
+	      BlockType		      SubSystem
+	      Name		      "Convert to LLA"
+	      Ports		      [1, 1]
+	      Position		      [580, 150, 640, 210]
+	      NamePlacement	      "alternate"
+	      MinAlgLoopOccurrences   off
+	      RTWSystemCode	      "Auto"
+	      FunctionWithSeparateData off
+	      Array {
+		Type			"Handle"
+		Dimension		0
+		PropName		"AvailSigsLoadSave"
+	      }
+	      MaskHideContents	      off
+	      MaskType		      "Stateflow"
+	      MaskDescription	      "Embedded MATLAB block"
+	      MaskDisplay	      "disp('xyz2llh');"
+	      MaskSelfModifiable      on
+	      MaskIconFrame	      on
+	      MaskIconOpaque	      off
+	      MaskIconRotate	      "none"
+	      MaskIconUnits	      "autoscale"
+	      System {
+		Name			"Convert to LLA"
+		Location		[257, 457, 812, 717]
+		Open			off
+		ModelBrowserVisibility	off
+		ModelBrowserWidth	200
+		ScreenColor		"white"
+		PaperOrientation	"landscape"
+		PaperPositionMode	"auto"
+		PaperType		"usletter"
+		PaperUnits		"inches"
+		TiledPaperMargins	"[0.500000, 0.500000, 0.500000, 0.5000"
+"00]"
+		TiledPageScale		1
+		ShowPageBoundaries	off
+		ZoomFactor		"100"
+		Block {
+		  BlockType		  Inport
+		  Name			  "XYZ"
+		  Position		  [20, 101, 40, 119]
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Demux
+		  Name			  " Demux "
+		  Ports			  [1, 1]
+		  Position		  [270, 285, 320, 325]
+		  Outputs		  "1"
+		}
+		Block {
+		  BlockType		  "S-Function"
+		  Name			  " SFunction "
+		  Tag			  "Stateflow S-Function Boat_sim 4"
+		  Ports			  [1, 2]
+		  Position		  [180, 123, 230, 287]
+		  FunctionName		  "sf_sfun"
+		  PortCounts		  "[1 2]"
+		  Port {
+		    PortNumber		    2
+		    Name		    "LLA"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		  }
+		}
+		Block {
+		  BlockType		  Terminator
+		  Name			  " Terminator "
+		  Position		  [460, 296, 480, 314]
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "LLA"
+		  Position		  [460, 101, 480, 119]
+		  IconDisplay		  "Port number"
+		  BusOutputAsStruct	  off
+		}
+		Line {
+		  SrcBlock		  " SFunction "
+		  SrcPort		  1
+		  Points		  [0, 140]
+		  DstBlock		  " Demux "
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  " Demux "
+		  SrcPort		  1
+		  DstBlock		  " Terminator "
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "XYZ"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  1
+		}
+		Line {
+		  Name			  "LLA"
+		  Labels		  [0, 0]
+		  SrcBlock		  " SFunction "
+		  SrcPort		  2
+		  DstBlock		  "LLA"
+		  DstPort		  1
+		}
+	      }
+	    }
+	    Block {
 	      BlockType		      Integrator
 	      Name		      "Convert to velocity"
 	      Ports		      [1, 1]
-	      Position		      [280, 65, 310, 95]
+	      Position		      [285, 150, 315, 180]
 	      ShowName		      off
 	      IgnoreLimit	      off
+	    }
+	    Block {
+	      BlockType		      Demux
+	      Name		      "Demux"
+	      Ports		      [1, 3]
+	      Position		      [705, 176, 710, 214]
+	      BackgroundColor	      "black"
+	      ShowName		      off
+	      Outputs		      "3"
+	      DisplayOption	      "bar"
+	    }
+	    Block {
+	      BlockType		      Display
+	      Name		      "Display"
+	      Ports		      [1]
+	      Position		      [985, 84, 1125, 116]
+	      Format		      "long"
+	      Decimation	      "1"
+	      Lockdown		      off
+	    }
+	    Block {
+	      BlockType		      Display
+	      Name		      "Display1"
+	      Ports		      [1]
+	      Position		      [1005, 205, 1125, 235]
+	      Format		      "long"
+	      Decimation	      "1"
+	      Lockdown		      off
 	    }
 	    Block {
 	      BlockType		      Integrator
 	      Name		      "East Integrator"
 	      Ports		      [1, 1]
-	      Position		      [395, 145, 425, 175]
+	      Position		      [730, 225, 760, 255]
 	      ShowName		      off
 	      IgnoreLimit	      off
 	    }
 	    Block {
 	      BlockType		      Constant
-	      Name		      "Initial east"
-	      Position		      [395, 180, 425, 210]
+	      Name		      "Initial latitude"
+	      Position		      [735, 100, 765, 130]
 	      BackgroundColor	      "gray"
-	      Value		      "e_0"
+	      Value		      "lat_0"
 	    }
 	    Block {
 	      BlockType		      Constant
-	      Name		      "Initial north"
-	      Position		      [395, 15, 425, 45]
+	      Name		      "Initial longitude"
+	      Position		      [730, 265, 760, 295]
 	      BackgroundColor	      "gray"
-	      Value		      "n_0"
+	      Value		      "long_0"
+	    }
+	    Block {
+	      BlockType		      Mux
+	      Name		      "Mux"
+	      Ports		      [3, 1]
+	      Position		      [480, 176, 485, 214]
+	      ShowName		      off
+	      Inputs		      "3"
+	      DisplayOption	      "bar"
+	    }
+	    Block {
+	      BlockType		      Mux
+	      Name		      "Mux1"
+	      Ports		      [3, 1]
+	      Position		      [800, 46, 805, 84]
+	      Orientation	      "left"
+	      ShowName		      off
+	      Inputs		      "3"
+	      DisplayOption	      "bar"
 	    }
 	    Block {
 	      BlockType		      Integrator
 	      Name		      "North Integrator"
 	      Ports		      [1, 1]
-	      Position		      [395, 65, 425, 95]
+	      Position		      [735, 150, 765, 180]
 	      ShowName		      off
 	      IgnoreLimit	      off
 	    }
@@ -3576,7 +3900,7 @@ Model {
 	      BlockType		      Product
 	      Name		      "Product1"
 	      Ports		      [2, 1]
-	      Position		      [340, 142, 370, 173]
+	      Position		      [345, 227, 375, 258]
 	      ShowName		      off
 	      CollapseMode	      "All dimensions"
 	      InputSameDT	      off
@@ -3587,7 +3911,7 @@ Model {
 	      BlockType		      Product
 	      Name		      "Product2"
 	      Ports		      [2, 1]
-	      Position		      [340, 62, 370, 93]
+	      Position		      [345, 147, 375, 178]
 	      ShowName		      off
 	      CollapseMode	      "All dimensions"
 	      InputSameDT	      off
@@ -3598,8 +3922,22 @@ Model {
 	      BlockType		      Sum
 	      Name		      "Sum1"
 	      Ports		      [2, 1]
-	      Position		      [460, 57, 490, 88]
+	      Position		      [785, 142, 815, 173]
 	      ShowName		      off
+	      CollapseMode	      "All dimensions"
+	      InputSameDT	      off
+	      OutDataTypeMode	      "Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Sum
+	      Name		      "Sum2"
+	      Ports		      [2, 1]
+	      Position		      [655, 180, 685, 210]
+	      NamePlacement	      "alternate"
+	      ShowName		      off
+	      IconShape		      "round"
+	      Inputs		      "-+|"
 	      CollapseMode	      "All dimensions"
 	      InputSameDT	      off
 	      OutDataTypeMode	      "Inherit via internal rule"
@@ -3609,7 +3947,7 @@ Model {
 	      BlockType		      Sum
 	      Name		      "Sum4"
 	      Ports		      [2, 1]
-	      Position		      [460, 152, 490, 183]
+	      Position		      [785, 237, 815, 268]
 	      ShowName		      off
 	      CollapseMode	      "All dimensions"
 	      InputSameDT	      off
@@ -3617,10 +3955,16 @@ Model {
 	      SaturateOnIntegerOverflow	off
 	    }
 	    Block {
+	      BlockType		      Terminator
+	      Name		      "Terminator"
+	      Position		      [730, 195, 750, 215]
+	      ShowName		      off
+	    }
+	    Block {
 	      BlockType		      Trigonometry
 	      Name		      "Trigonometric\nFunction1"
 	      Ports		      [1, 1]
-	      Position		      [120, 150, 150, 180]
+	      Position		      [125, 235, 155, 265]
 	      ShowName		      off
 	      Operator		      "cos"
 	      OutputSignalType	      "real"
@@ -3629,14 +3973,14 @@ Model {
 	      BlockType		      Trigonometry
 	      Name		      "Trigonometric\nFunction2"
 	      Ports		      [1, 1]
-	      Position		      [115, 30, 145, 60]
+	      Position		      [120, 115, 150, 145]
 	      ShowName		      off
 	      OutputSignalType	      "real"
 	    }
 	    Block {
 	      BlockType		      Outport
-	      Name		      "North"
-	      Position		      [515, 68, 545, 82]
+	      Name		      "latitude"
+	      Position		      [990, 158, 1020, 172]
 	      BackgroundColor	      "yellow"
 	      IconDisplay	      "Port number"
 	      BusOutputAsStruct	      off
@@ -3644,7 +3988,7 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "Acceleration"
-	      Position		      [220, 110, 250, 125]
+	      Position		      [225, 195, 255, 210]
 	      Orientation	      "down"
 	      BackgroundColor	      "yellow"
 	      Port		      "2"
@@ -3653,8 +3997,8 @@ Model {
 	    }
 	    Block {
 	      BlockType		      Outport
-	      Name		      "East"
-	      Position		      [515, 163, 545, 177]
+	      Name		      "longitude"
+	      Position		      [950, 248, 980, 262]
 	      BackgroundColor	      "yellow"
 	      Port		      "3"
 	      IconDisplay	      "Port number"
@@ -3663,7 +4007,7 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "Velocity"
-	      Position		      [340, 108, 370, 122]
+	      Position		      [345, 193, 375, 207]
 	      BackgroundColor	      "yellow"
 	      Port		      "4"
 	      IconDisplay	      "Port number"
@@ -3690,15 +4034,16 @@ Model {
 	      DstPort		      2
 	    }
 	    Line {
-	      SrcBlock		      "Initial east"
+	      SrcBlock		      "Initial longitude"
 	      SrcPort		      1
-	      Points		      [15, 0]
+	      Points		      [5, 0]
 	      DstBlock		      "Sum4"
 	      DstPort		      2
 	    }
 	    Line {
 	      SrcBlock		      "East Integrator"
 	      SrcPort		      1
+	      Points		      [0, 5]
 	      DstBlock		      "Sum4"
 	      DstPort		      1
 	    }
@@ -3734,8 +4079,16 @@ Model {
 	    Line {
 	      SrcBlock		      "Sum1"
 	      SrcPort		      1
-	      DstBlock		      "North"
-	      DstPort		      1
+	      Points		      [15, 0]
+	      Branch {
+		Points			[0, -105]
+		DstBlock		"Mux1"
+		DstPort			1
+	      }
+	      Branch {
+		DstBlock		"Convert to\nacceleration1"
+		DstPort			1
+	      }
 	    }
 	    Line {
 	      SrcBlock		      "X"
@@ -3746,14 +4099,16 @@ Model {
 	    Line {
 	      SrcBlock		      "Sum4"
 	      SrcPort		      1
-	      DstBlock		      "East"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Product2"
-	      SrcPort		      1
-	      DstBlock		      "North Integrator"
-	      DstPort		      1
+	      Points		      [5, 0]
+	      Branch {
+		Points			[0, -190]
+		DstBlock		"Mux1"
+		DstPort			2
+	      }
+	      Branch {
+		DstBlock		"Convert to\nacceleration3"
+		DstPort			1
+	      }
 	    }
 	    Line {
 	      SrcBlock		      "heading"
@@ -3771,15 +4126,8 @@ Model {
 	      }
 	    }
 	    Line {
-	      SrcBlock		      "Product1"
+	      SrcBlock		      "Initial latitude"
 	      SrcPort		      1
-	      DstBlock		      "East Integrator"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Initial north"
-	      SrcPort		      1
-	      Points		      [5, 0; 0, 35]
 	      DstBlock		      "Sum1"
 	      DstPort		      1
 	    }
@@ -3788,6 +4136,121 @@ Model {
 	      SrcPort		      1
 	      DstBlock		      "Sum1"
 	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Convert to ECEF"
+	      SrcPort		      1
+	      DstBlock		      "Convert to LLA"
+	      DstPort		      1
+	    }
+	    Line {
+	      Labels		      [2, 0]
+	      SrcBlock		      "Constant"
+	      SrcPort		      1
+	      Points		      [15, 0; 0, -95]
+	      DstBlock		      "Mux"
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "Mux"
+	      SrcPort		      1
+	      DstBlock		      "Convert to ECEF"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Product1"
+	      SrcPort		      1
+	      Points		      [40, 0; 0, -50]
+	      DstBlock		      "Mux"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Product2"
+	      SrcPort		      1
+	      Points		      [40, 0; 0, 20]
+	      DstBlock		      "Mux"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Constant1"
+	      SrcPort		      1
+	      DstBlock		      "Mux1"
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "Mux1"
+	      SrcPort		      1
+	      Points		      [-125, 0]
+	      Branch {
+		Points			[-195, 0; 0, 100]
+		DstBlock		"Convert to ECEF"
+		DstPort			1
+	      }
+	      Branch {
+		DstBlock		"Sum2"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "Convert to LLA"
+	      SrcPort		      1
+	      Points		      [0, 15]
+	      DstBlock		      "Sum2"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Sum2"
+	      SrcPort		      1
+	      DstBlock		      "Demux"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Demux"
+	      SrcPort		      1
+	      Points		      [0, -20]
+	      DstBlock		      "North Integrator"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Demux"
+	      SrcPort		      2
+	      DstBlock		      "East Integrator"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Demux"
+	      SrcPort		      3
+	      DstBlock		      "Terminator"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Convert to\nacceleration1"
+	      SrcPort		      1
+	      Points		      [10, 0]
+	      Branch {
+		Points			[10, 0]
+		DstBlock		"latitude"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, -60]
+		DstBlock		"Display"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "Convert to\nacceleration3"
+	      SrcPort		      1
+	      Points		      [5, 0]
+	      Branch {
+		DstBlock		"longitude"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, -35]
+		DstBlock		"Display1"
+		DstPort			1
+	      }
 	    }
 	  }
 	}
@@ -4175,7 +4638,7 @@ Model {
 	}
 	Block {
 	  BlockType		  Outport
-	  Name			  "North position"
+	  Name			  "Latitude"
 	  Position		  [800, 383, 830, 397]
 	  BackgroundColor	  "yellow"
 	  Port			  "7"
@@ -4184,7 +4647,7 @@ Model {
 	}
 	Block {
 	  BlockType		  Outport
-	  Name			  "East position"
+	  Name			  "Longitude"
 	  Position		  [800, 418, 830, 432]
 	  BackgroundColor	  "yellow"
 	  Port			  "8"
@@ -4344,13 +4807,13 @@ Model {
 	Line {
 	  SrcBlock		  "From15"
 	  SrcPort		  1
-	  DstBlock		  "East position"
+	  DstBlock		  "Longitude"
 	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "From14"
 	  SrcPort		  1
-	  DstBlock		  "North position"
+	  DstBlock		  "Latitude"
 	  DstPort		  1
 	}
 	Line {
@@ -4388,10 +4851,10 @@ Model {
       RTWMemSecDataConstants  "Inherit from model"
       RTWMemSecDataInternal   "Inherit from model"
       RTWMemSecDataParameters "Inherit from model"
-      xmin		      "-500"
-      xmax		      "500"
-      ymin		      "-500"
-      ymax		      "500"
+      xmin		      "-200"
+      xmax		      "200"
+      ymin		      "-200"
+      ymax		      "200"
       st		      "-1"
     }
     Block {
@@ -4544,7 +5007,7 @@ Stateflow {
 		name                 		"Boat_sim"
 		created              		"13-Apr-2010 16:50:36"
 		isLibrary            		0
-		firstTarget          		37
+		firstTarget          		52
 		sfVersion            		66014000
 	}
 
@@ -4734,8 +5197,6 @@ Stateflow {
 		firstJunction                             		13
 		viewObj                                   		11
 		machine                                   		1
-		subviewS {
-		}
 		decomposition                             		CLUSTER_CHART
 		type                                      		EML_CHART
 		firstData                                 		15
@@ -4887,8 +5348,6 @@ Stateflow {
 		firstJunction                             		21
 		viewObj                                   		19
 		machine                                   		1
-		subviewS {
-		}
 		decomposition                             		CLUSTER_CHART
 		type                                      		EML_CHART
 		firstData                                 		23
@@ -5053,9 +5512,8 @@ Stateflow {
 
 	chart {
 		id                                        		28
-		name                                      		"Plant/Charge Plant/Power Gain from Solar\n"
-					"Subsystem/Calculate Sun Normal/myMux"
-		windowPosition                            		[431.813 179.45 200.25 189.75]
+		name                                      		"Plant/Outputs/Convert to LLA"
+		windowPosition                            		[371.813 104.33 200.25 189.75]
 		viewLimits                                		[0 156.75 0 153.75]
 		screen                                    		[1 1 1280 1024 1.333333333333333]
 		treeNode                                  		[0 29 0 0]
@@ -5063,14 +5521,15 @@ Stateflow {
 		firstJunction                             		30
 		viewObj                                   		28
 		machine                                   		1
+		subviewS {
+		}
 		decomposition                             		CLUSTER_CHART
 		type                                      		EML_CHART
 		firstData                                 		32
-		chartFileNumber                           		5
+		chartFileNumber                           		4
 		disableImplicitCasting                    		1
 		eml {
-			name       		"myMux"
-			noDebugging		1
+			name       		"xyz2llh"
 		}
 	}
 
@@ -5087,9 +5546,40 @@ Stateflow {
 		decomposition                		CLUSTER_STATE
 		eml {
 			isEML                    		1
-			script                   		"function y = myMux(u1, u2, u3)\n"
-						"y = [u1(1); u2(1); u3(1);];"
-			editorLayout             		"100 M4x1[30 228 545 643]"
+			script                   		"function LLA = xyz2llh(XYZ)\n"
+						"  a = 6378137.0; % earth semimajor axis in meters\n"
+						"  f = 1/298.257223563; % reciprocal flattening\n"
+						"  b = a*(1-f);% semi-minor axis\n"
+						" \n"
+						"  e2 = 2*f-f^2;% first eccentricity squared\n"
+						"  ep2 = f*(2-f)/((1-f)^2); % second eccentricity squared\n"
+						" \n"
+						"  X = XYZ(1);\n"
+						"  Y = XYZ(2);\n"
+						"  Z = XYZ(3);\n"
+						"  \n"
+						"  r2 = X.^2+Y.^2;\n"
+						"  r = sqrt(r2);\n"
+						"  E2 = a^2 - b^2;\n"
+						"  F = 54*b^2*Z.^2;\n"
+						"  G = r2 + (1-e2)*Z.^2 - e2*E2;\n"
+						"  c = (e2*e2*F.*r2)./(G.*G.*G);\n"
+						"  s = ( 1 + c + sqrt(c.*c + 2*c) ).^(1/3);\n"
+						"  P = F./(3*(s+1./s+1).^2.*G.*G);\n"
+						"  Q = sqrt(1+2*e2*e2*P);\n"
+						"  ro = -(e2*P.*r)./(1+Q) + sqrt((a*a/2)*(1+1./Q) - ((1-e2)*"
+						"P.*Z.^2)./(Q.*(1+Q)) - P.*r2/2);\n"
+						"  tmp = (r - e2*ro).^2;\n"
+						"  U = sqrt( tmp + Z.^2 );\n"
+						"  V = sqrt( tmp + (1-e2)*Z.^2 );\n"
+						"  zo = (b^2*Z)./(a*V);\n"
+						" \n"
+						"  h = U.*( 1 - b^2./(a*V));\n"
+						"  phi = atan( (Z + ep2*zo)./r );\n"
+						"  lambda = atan2(Y,X);\n"
+						"\n"
+						"  LLA = [phi;lambda;h];"
+			editorLayout             		"100 M4x1[164 45 842 778]"
 			treatIntsAsFixpt         		0
 		}
 	}
@@ -5126,7 +5616,7 @@ Stateflow {
 
 	data {
 		id                            		32
-		name                          		"u1"
+		name                          		"XYZ"
 		linkNode                      		[28 0 33]
 		scope                         		INPUT_DATA
 		machine                       		1
@@ -5149,8 +5639,134 @@ Stateflow {
 
 	data {
 		id                            		33
+		name                          		"LLA"
+		linkNode                      		[28 32 0]
+		scope                         		OUTPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_NO
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	instance {
+		id     		34
+		name   		"Plant/Outputs/Convert to LLA"
+		machine		1
+		chart  		28
+	}
+
+	chart {
+		id                                        		35
+		name                                      		"Plant/Charge Plant/Power Gain from Solar\n"
+					"Subsystem/Calculate Sun Normal/myMux"
+		windowPosition                            		[431.813 179.45 200.25 189.75]
+		viewLimits                                		[0 156.75 0 153.75]
+		screen                                    		[1 1 1280 1024 1.333333333333333]
+		treeNode                                  		[0 36 0 0]
+		firstTransition                           		38
+		firstJunction                             		37
+		viewObj                                   		35
+		machine                                   		1
+		decomposition                             		CLUSTER_CHART
+		type                                      		EML_CHART
+		firstData                                 		39
+		chartFileNumber                           		5
+		disableImplicitCasting                    		1
+		eml {
+			name       		"myMux"
+			noDebugging		1
+		}
+	}
+
+	state {
+		id                           		36
+		labelString                  		"eML_blk_kernel()"
+		position                     		[18 64.5 118 66]
+		fontSize                     		12
+		chart                        		35
+		treeNode                     		[35 0 0 0]
+		superState                   		SUBCHART
+		subviewer                    		35
+		type                         		FUNC_STATE
+		decomposition                		CLUSTER_STATE
+		eml {
+			isEML                    		1
+			script                   		"function y = myMux(u1, u2, u3)\n"
+						"y = [u1(1); u2(1); u3(1);];"
+			editorLayout             		"100 M4x1[30 228 545 643]"
+			treatIntsAsFixpt         		0
+		}
+	}
+
+	junction {
+		id         		37
+		position   		[23.5747 49.5747 7]
+		chart      		35
+		linkNode   		[35 0 0]
+		subviewer  		35
+		type       		CONNECTIVE_JUNCTION
+	}
+
+	transition {
+		id             		38
+		labelString    		"{eML_blk_kernel();}"
+		labelPosition  		[32.125 19.875 102.544 14.964]
+		fontSize       		12
+		src {
+			intersection		[0 0 1 0 23.5747 14.625 0 0]
+		}
+		dst {
+			id          		37
+			intersection		[7 0 -1 -1 23.5747 42.5747 0 0]
+		}
+		midPoint       		[23.5747 24.9468]
+		chart          		35
+		linkNode       		[35 0 0]
+		dataLimits     		[23.575 23.575 14.625 34.575]
+		subviewer      		35
+		drawStyle      		SMART
+		executionOrder 		1
+	}
+
+	data {
+		id                            		39
+		name                          		"u1"
+		linkNode                      		[35 0 40]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+			}
+			complexity           		SF_COMPLEX_INHERITED
+		}
+		dataType                      		"inherited"
+		fixptType {
+			slope   		1
+			baseType		SF_INT16_TYPE
+		}
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		40
 		name                          		"y"
-		linkNode                      		[28 32 34]
+		linkNode                      		[35 39 41]
 		scope                         		OUTPUT_DATA
 		machine                       		1
 		props {
@@ -5172,9 +5788,9 @@ Stateflow {
 	}
 
 	data {
-		id                            		34
+		id                            		41
 		name                          		"u2"
-		linkNode                      		[28 33 35]
+		linkNode                      		[35 40 42]
 		scope                         		INPUT_DATA
 		machine                       		1
 		props {
@@ -5195,9 +5811,9 @@ Stateflow {
 	}
 
 	data {
-		id                            		35
+		id                            		42
 		name                          		"u3"
-		linkNode                      		[28 34 0]
+		linkNode                      		[35 41 0]
 		scope                         		INPUT_DATA
 		machine                       		1
 		props {
@@ -5218,15 +5834,192 @@ Stateflow {
 	}
 
 	instance {
-		id     		36
+		id     		43
 		name   		"Plant/Charge Plant/Power Gain from Solar\n"
 					"Subsystem/Calculate Sun Normal/myMux"
 		machine		1
-		chart  		28
+		chart  		35
+	}
+
+	chart {
+		id                                        		44
+		name                                      		"Plant/Outputs/Convert to ECEF"
+		windowPosition                            		[356.813 123.53 200.25 189.75]
+		viewLimits                                		[0 156.75 0 153.75]
+		screen                                    		[1 1 1280 1024 1.333333333333333]
+		treeNode                                  		[0 45 0 0]
+		firstTransition                           		47
+		firstJunction                             		46
+		viewObj                                   		44
+		machine                                   		1
+		subviewS {
+		}
+		decomposition                             		CLUSTER_CHART
+		type                                      		EML_CHART
+		firstData                                 		48
+		chartFileNumber                           		6
+		disableImplicitCasting                    		1
+		eml {
+			name       		"enu2xyz"
+		}
+	}
+
+	state {
+		id                           		45
+		labelString                  		"eML_blk_kernel()"
+		position                     		[18 64.5 118 66]
+		fontSize                     		12
+		chart                        		44
+		treeNode                     		[44 0 0 0]
+		superState                   		SUBCHART
+		subviewer                    		44
+		type                         		FUNC_STATE
+		decomposition                		CLUSTER_STATE
+		eml {
+			isEML                    		1
+			script                   		"function XYZ  = enu2xyz(ref_LLA, enu)\n"
+						"  % Convert east, north, up coordinates (labeled e, n, u) t"
+						"o ECEF\n"
+						"  % coordinates. The reference point (phi, lambda, h) must "
+						"be given. All distances are in metres\n"
+						" \n"
+						"  lat = ref_LLA(1);\n"
+						"  long = ref_LLA(2);\n"
+						"  h = ref_LLA(3);\n"
+						"  e = enu(1);\n"
+						"  n = enu(2);\n"
+						"  u = enu(3);\n"
+						"  \n"
+						"  % Convert our reference LLA to ECEF\n"
+						"  a = 6378137.0; % earth semimajor axis in meters \n"
+						"  f = 1/298.257223563; % reciprocal flattening \n"
+						"  e2 = 2*f -f^2; % eccentricity squared \n"
+						"  chi = sqrt(1-e2*(sin(lat)).^2); \n"
+						"  Xr = (a./chi +h).*cos(lat).*cos(long); \n"
+						"  Yr = (a./chi +h).*cos(lat).*sin(long); \n"
+						"  Zr = (a*(1-e2)./chi + h).*sin(lat);\n"
+						"\n"
+						"  phiP = atan2(Zr,sqrt(Xr^2+Yr^2)); % Geocentric latitude\n"
+						" \n"
+						"  X = -sin(long)*e - cos(long)*sin(phiP)*n + cos(long)*cos("
+						"phiP)*u + Xr;\n"
+						"  Y =  cos(long)*e - sin(long)*sin(phiP)*n + cos(phiP)*sin("
+						"long)*u + Yr;\n"
+						"  Z = cos(phiP)*n + sin(phiP)*u + Zr;\n"
+						"  XYZ = [X;Y;Z];"
+			editorLayout             		"100 M4x1[422 12 1288 778]"
+			treatIntsAsFixpt         		0
+		}
+	}
+
+	junction {
+		id         		46
+		position   		[23.5747 49.5747 7]
+		chart      		44
+		linkNode   		[44 0 0]
+		subviewer  		44
+		type       		CONNECTIVE_JUNCTION
+	}
+
+	transition {
+		id             		47
+		labelString    		"{eML_blk_kernel();}"
+		labelPosition  		[32.125 19.875 102.544 14.964]
+		fontSize       		12
+		src {
+			intersection		[0 0 1 0 23.5747 14.625 0 0]
+		}
+		dst {
+			id          		46
+			intersection		[7 0 -1 -1 23.5747 42.5747 0 0]
+		}
+		midPoint       		[23.5747 24.9468]
+		chart          		44
+		linkNode       		[44 0 0]
+		dataLimits     		[23.575 23.575 14.625 34.575]
+		subviewer      		44
+		drawStyle      		SMART
+		executionOrder 		1
+	}
+
+	data {
+		id                            		48
+		name                          		"ref_LLA"
+		linkNode                      		[44 0 49]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+			}
+			complexity           		SF_COMPLEX_INHERITED
+		}
+		dataType                      		"inherited"
+		fixptType {
+			slope   		1
+			baseType		SF_INT16_TYPE
+		}
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		49
+		name                          		"XYZ"
+		linkNode                      		[44 48 50]
+		scope                         		OUTPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_NO
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		50
+		name                          		"enu"
+		linkNode                      		[44 49 0]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_INHERITED
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	instance {
+		id     		51
+		name   		"Plant/Outputs/Convert to ECEF"
+		machine		1
+		chart  		44
 	}
 
 	target {
-		id                        		37
+		id                        		52
 		name                      		"sfun"
 		description               		"Default Simulink S-Function Target."
 		machine                   		1
