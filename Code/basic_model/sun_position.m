@@ -147,7 +147,7 @@ topocentric_local_hour = topocentric_local_hour_calculate(observer_local_hour, t
 % 14. Calculate the topocentric zenith and azimuth angle (in degrees)
 sun = sun_topocentric_zenith_angle_calculate(location, topocentric_sun_position, topocentric_local_hour);
 
-f = [sun.azimuth sun.zenith];
+f = pi/180*[sun.azimuth sun.zenith];
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
