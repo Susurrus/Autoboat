@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.305"
+    ComputedModelVersion    "1.326"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -42,10 +42,10 @@ Model {
   Creator		  "Administrator"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "bwmairs"
+  LastModifiedBy	  "Bryn"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Apr 16 19:42:20 2010"
-  ModelVersionFormat	  "1.%<AutoIncrement:305>"
+  LastModifiedDate	  "Sat Apr 24 12:12:24 2010"
+  ModelVersionFormat	  "1.%<AutoIncrement:326>"
   ConfigurationManager	  "None"
   SimulationMode	  "normal"
   LinearizationMsg	  "none"
@@ -644,14 +644,6 @@ Model {
       OutPortSampleTime	      "-1"
     }
     Block {
-      BlockType		      Saturate
-      UpperLimit	      "0.5"
-      LowerLimit	      "-0.5"
-      LinearizeAsGain	      on
-      ZeroCross		      on
-      SampleTime	      "-1"
-    }
-    Block {
       BlockType		      Scope
       ModelBased	      off
       TickLabels	      "OneTimeTick"
@@ -737,7 +729,7 @@ Model {
   }
   System {
     Name		    "Boat_sim"
-    Location		    [6, 82, 735, 463]
+    Location		    [187, 343, 916, 724]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -755,7 +747,7 @@ Model {
       BlockType		      Scope
       Name		      "Charge"
       Ports		      [1]
-      Position		      [395, 119, 425, 151]
+      Position		      [385, 119, 415, 151]
       Floating		      off
       Location		      [5, 52, 1285, 769]
       Open		      off
@@ -792,13 +784,21 @@ Model {
       Position		      [40, 170, 70, 200]
       BackgroundColor	      "gray"
       ShowName		      off
-      Value		      "0"
+      Value		      ".1"
+    }
+    Block {
+      BlockType		      Display
+      Name		      "Display"
+      Ports		      [1]
+      Position		      [445, 100, 535, 130]
+      Decimation	      "1"
+      Lockdown		      off
     }
     Block {
       BlockType		      MATLABFcn
       Name		      "MATLAB Fcn"
       Ports		      [1]
-      Position		      [580, 185, 640, 215]
+      Position		      [500, 185, 560, 215]
       MATLABFcn		      "render_boat(u(1),u(2),u(3),u(4))"
       OutputDimensions	      "0"
       Output1D		      off
@@ -807,7 +807,7 @@ Model {
       BlockType		      Mux
       Name		      "Mux1"
       Ports		      [4, 1]
-      Position		      [540, 181, 545, 219]
+      Position		      [460, 181, 465, 219]
       ShowName		      off
       DisplayOption	      "bar"
     }
@@ -822,7 +822,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Plant"
-	Location		[2, 82, 963, 557]
+	Location		[2, 82, 1229, 716]
 	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -838,14 +838,14 @@ Model {
 	Block {
 	  BlockType		  Inport
 	  Name			  "Commanded Rudder"
-	  Position		  [50, 153, 80, 167]
+	  Position		  [50, 118, 80, 132]
 	  BackgroundColor	  "darkGreen"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "Commanded Throttle"
-	  Position		  [50, 28, 80, 42]
+	  Position		  [55, 38, 85, 52]
 	  BackgroundColor	  "darkGreen"
 	  Port			  "2"
 	  IconDisplay		  "Port number"
@@ -853,16 +853,232 @@ Model {
 	Block {
 	  BlockType		  Inport
 	  Name			  "Commanded Ballast"
-	  Position		  [50, 103, 80, 117]
+	  Position		  [50, 78, 80, 92]
 	  BackgroundColor	  "darkGreen"
 	  Port			  "3"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  SubSystem
+	  Name			  "Actuator\nDynamics"
+	  Ports			  [3, 3]
+	  Position		  [135, 24, 235, 146]
+	  MinAlgLoopOccurrences	  off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  MaskHideContents	  off
+	  System {
+	    Name		    "Actuator\nDynamics"
+	    Location		    [624, 429, 1290, 758]
+	    Open		    on
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "t"
+	      Position		      [25, 35, 55, 49]
+	      BackgroundColor	      "darkGreen"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "b"
+	      Position		      [25, 110, 55, 124]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "r"
+	      Position		      [25, 175, 55, 189]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "3"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion2"
+	      Position		      [75, 174, 120, 186]
+	      ShowName		      off
+	      OutDataTypeMode	      "double"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion3"
+	      Position		      [75, 108, 120, 122]
+	      ShowName		      off
+	      OutDataTypeMode	      "double"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion4"
+	      Position		      [75, 33, 120, 47]
+	      ShowName		      off
+	      OutDataTypeMode	      "double"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Second Order Linear Actuator1"
+	      Ports		      [1, 1]
+	      Position		      [145, 19, 245, 61]
+	      ShowName		      off
+	      SourceBlock	      "aerolibactuator/Second Order Linear Act"
+"uator"
+	      SourceType	      "Second Order Linear Actuator"
+	      ShowPortLabels	      "FromPortIcon"
+	      SystemSampleTime	      "-1"
+	      FunctionWithSeparateData off
+	      RTWMemSecFuncInitTerm   "Inherit from model"
+	      RTWMemSecFuncExecute    "Inherit from model"
+	      RTWMemSecDataConstants  "Inherit from model"
+	      RTWMemSecDataInternal   "Inherit from model"
+	      RTWMemSecDataParameters "Inherit from model"
+	      wn_fin		      "15"
+	      z_fin		      "0.8"
+	      fin_act_0		      "0"
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Second Order Linear Actuator2"
+	      Ports		      [1, 1]
+	      Position		      [145, 94, 245, 136]
+	      ShowName		      off
+	      SourceBlock	      "aerolibactuator/Second Order Linear Act"
+"uator"
+	      SourceType	      "Second Order Linear Actuator"
+	      ShowPortLabels	      "FromPortIcon"
+	      SystemSampleTime	      "-1"
+	      FunctionWithSeparateData off
+	      RTWMemSecFuncInitTerm   "Inherit from model"
+	      RTWMemSecFuncExecute    "Inherit from model"
+	      RTWMemSecDataConstants  "Inherit from model"
+	      RTWMemSecDataInternal   "Inherit from model"
+	      RTWMemSecDataParameters "Inherit from model"
+	      wn_fin		      "15"
+	      z_fin		      "0.8"
+	      fin_act_0		      "0"
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Second Order Linear Actuator3"
+	      Ports		      [1, 1]
+	      Position		      [145, 159, 245, 201]
+	      ShowName		      off
+	      SourceBlock	      "aerolibactuator/Second Order Linear Act"
+"uator"
+	      SourceType	      "Second Order Linear Actuator"
+	      ShowPortLabels	      "FromPortIcon"
+	      SystemSampleTime	      "-1"
+	      FunctionWithSeparateData off
+	      RTWMemSecFuncInitTerm   "Inherit from model"
+	      RTWMemSecFuncExecute    "Inherit from model"
+	      RTWMemSecDataConstants  "Inherit from model"
+	      RTWMemSecDataInternal   "Inherit from model"
+	      RTWMemSecDataParameters "Inherit from model"
+	      wn_fin		      "15"
+	      z_fin		      "0.8"
+	      fin_act_0		      "0"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "t_d"
+	      Position		      [270, 35, 300, 49]
+	      BackgroundColor	      "yellow"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "b_d"
+	      Position		      [270, 110, 300, 124]
+	      BackgroundColor	      "yellow"
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "r_d"
+	      Position		      [270, 175, 300, 189]
+	      BackgroundColor	      "yellow"
+	      Port		      "3"
+	      IconDisplay	      "Port number"
+	    }
+	    Line {
+	      SrcBlock		      "t"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion4"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "b"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion3"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "r"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion2"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Second Order Linear Actuator3"
+	      SrcPort		      1
+	      DstBlock		      "r_d"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Second Order Linear Actuator2"
+	      SrcPort		      1
+	      DstBlock		      "b_d"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Second Order Linear Actuator1"
+	      SrcPort		      1
+	      DstBlock		      "t_d"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion2"
+	      SrcPort		      1
+	      DstBlock		      "Second Order Linear Actuator3"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion3"
+	      SrcPort		      1
+	      DstBlock		      "Second Order Linear Actuator2"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion4"
+	      SrcPort		      1
+	      DstBlock		      "Second Order Linear Actuator1"
+	      DstPort		      1
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  SubSystem
 	  Name			  "Charge Plant"
 	  Ports			  [5, 1]
-	  Position		  [490, 203, 570, 287]
+	  Position		  [460, 323, 540, 407]
 	  MinAlgLoopOccurrences	  off
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
@@ -870,7 +1086,7 @@ Model {
 	  System {
 	    Name		    "Charge Plant"
 	    Location		    [2, 82, 710, 394]
-	    Open		    on
+	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -1008,7 +1224,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "Throttle"
-		  Position		  [100, 60, 130, 74]
+		  Position		  [100, 58, 130, 72]
 		  IconDisplay		  "Port number"
 		}
 		Block {
@@ -1055,8 +1271,9 @@ Model {
 		Block {
 		  BlockType		  Outport
 		  Name			  "Power Drain (W)"
-		  Position		  [405, 75, 435, 89]
+		  Position		  [405, 73, 435, 87]
 		  IconDisplay		  "Port number"
+		  BusOutputAsStruct	  off
 		}
 		Line {
 		  SrcBlock		  "Throttle"
@@ -1269,11 +1486,6 @@ Model {
 		    MinAlgLoopOccurrences   off
 		    RTWSystemCode	    "Auto"
 		    FunctionWithSeparateData off
-		    Array {
-		    Type		    "Handle"
-		    Dimension		    0
-		    PropName		    "AvailSigsLoadSave"
-		    }
 		    MaskHideContents	    off
 		    MaskType		    "Stateflow"
 		    MaskDescription	    "Embedded MATLAB block"
@@ -1625,11 +1837,6 @@ Model {
 		    MinAlgLoopOccurrences   off
 		    RTWSystemCode	    "Auto"
 		    FunctionWithSeparateData off
-		    Array {
-		    Type		    "Handle"
-		    Dimension		    0
-		    PropName		    "AvailSigsLoadSave"
-		    }
 		    MaskHideContents	    off
 		    MaskType		    "Stateflow"
 		    MaskDescription	    "Embedded MATLAB block"
@@ -2151,11 +2358,6 @@ Model {
 		  MinAlgLoopOccurrences	  off
 		  RTWSystemCode		  "Auto"
 		  FunctionWithSeparateData off
-		  Array {
-		    Type		    "Handle"
-		    Dimension		    0
-		    PropName		    "AvailSigsLoadSave"
-		  }
 		  MaskHideContents	  off
 		  MaskType		  "Stateflow"
 		  MaskDescription	  "Embedded MATLAB block"
@@ -2289,11 +2491,6 @@ Model {
 		  MinAlgLoopOccurrences	  off
 		  RTWSystemCode		  "Auto"
 		  FunctionWithSeparateData off
-		  Array {
-		    Type		    "Handle"
-		    Dimension		    0
-		    PropName		    "AvailSigsLoadSave"
-		  }
 		  MaskHideContents	  off
 		  MaskType		  "Stateflow"
 		  MaskDescription	  "Embedded MATLAB block"
@@ -2659,12 +2856,12 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Forces & Moments"
-	    Location		    [303, 626, 896, 1004]
+	    Location		    [48, 164, 850, 642]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
+	    PaperOrientation	    "portrait"
 	    PaperPositionMode	    "auto"
 	    PaperType		    "usletter"
 	    PaperUnits		    "inches"
@@ -2698,7 +2895,7 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "Ballast"
-	      Position		      [30, 278, 60, 292]
+	      Position		      [30, 303, 60, 317]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "4"
 	      IconDisplay	      "Port number"
@@ -2717,6 +2914,34 @@ Model {
 		RTWStorageClass		"Auto"
 		DataLoggingNameMode	"SignalName"
 	      }
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant"
+	      Position		      [190, 348, 245, 362]
+	      ShowName		      off
+	      Value		      "0.7239"
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant1"
+	      Position		      [180, 363, 245, 377]
+	      ShowName		      off
+	      Value		      "65.7708937"
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant2"
+	      Position		      [195, 318, 245, 332]
+	      ShowName		      off
+	      Value		      "0.36195"
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant3"
+	      Position		      [215, 333, 245, 347]
+	      ShowName		      off
+	      Value		      "81.6"
 	    }
 	    Block {
 	      BlockType		      Gain
@@ -2738,6 +2963,20 @@ Model {
 	      Name		      "Convert to force"
 	      Position		      [230, 29, 385, 81]
 	      Expr		      "rho_w*(d_prop^4)*K_t*abs(u)*u"
+	    }
+	    Block {
+	      BlockType		      Product
+	      Name		      "Divide"
+	      Ports		      [5, 1]
+	      Position		      [275, 303, 325, 377]
+	      ShowName		      off
+	      Inputs		      "***//"
+	      CollapseMode	      "All dimensions"
+	      InputSameDT	      off
+	      OutDataTypeMode	      "Inherit via internal rule"
+	      OutScaling	      "2^-10"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
 	    }
 	    Block {
 	      BlockType		      Fcn
@@ -2765,6 +3004,21 @@ Model {
 	      ShowName		      off
 	    }
 	    Block {
+	      BlockType		      Trigonometry
+	      Name		      "Trigonometric\nFunction"
+	      Ports		      [1, 1]
+	      Position		      [355, 325, 385, 355]
+	      ShowName		      off
+	      Operator		      "asin"
+	    }
+	    Block {
+	      BlockType		      Trigonometry
+	      Name		      "Trigonometric\nFunction1"
+	      Ports		      [1, 1]
+	      Position		      [155, 295, 185, 325]
+	      ShowName		      off
+	    }
+	    Block {
 	      BlockType		      Outport
 	      Name		      "X"
 	      Position		      [455, 48, 485, 62]
@@ -2775,7 +3029,7 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "Roll"
-	      Position		      [340, 278, 370, 292]
+	      Position		      [415, 333, 445, 347]
 	      BackgroundColor	      "yellow"
 	      Port		      "2"
 	      IconDisplay	      "Port number"
@@ -2829,15 +3083,57 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "Ballast"
-	      SrcPort		      1
-	      DstBlock		      "Roll"
-	      DstPort		      1
-	    }
-	    Line {
 	      SrcBlock		      "Rudder"
 	      SrcPort		      1
 	      DstBlock		      "Terminator"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Ballast"
+	      SrcPort		      1
+	      DstBlock		      "Trigonometric\nFunction1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Trigonometric\nFunction1"
+	      SrcPort		      1
+	      DstBlock		      "Divide"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Constant2"
+	      SrcPort		      1
+	      DstBlock		      "Divide"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Constant3"
+	      SrcPort		      1
+	      DstBlock		      "Divide"
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "Constant"
+	      SrcPort		      1
+	      DstBlock		      "Divide"
+	      DstPort		      4
+	    }
+	    Line {
+	      SrcBlock		      "Constant1"
+	      SrcPort		      1
+	      DstBlock		      "Divide"
+	      DstPort		      5
+	    }
+	    Line {
+	      SrcBlock		      "Divide"
+	      SrcPort		      1
+	      DstBlock		      "Trigonometric\nFunction"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Trigonometric\nFunction"
+	      SrcPort		      1
+	      DstBlock		      "Roll"
 	      DstPort		      1
 	    }
 	  }
@@ -2845,7 +3141,7 @@ Model {
 	Block {
 	  BlockType		  From
 	  Name			  "From1"
-	  Position		  [425, 205, 475, 225]
+	  Position		  [390, 325, 440, 345]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
@@ -2854,7 +3150,7 @@ Model {
 	Block {
 	  BlockType		  From
 	  Name			  "From10"
-	  Position		  [715, 180, 775, 200]
+	  Position		  [985, 50, 1045, 70]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
@@ -2863,7 +3159,7 @@ Model {
 	Block {
 	  BlockType		  From
 	  Name			  "From11"
-	  Position		  [355, 220, 415, 240]
+	  Position		  [325, 340, 385, 360]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
@@ -2881,7 +3177,7 @@ Model {
 	Block {
 	  BlockType		  From
 	  Name			  "From13"
-	  Position		  [690, 334, 775, 356]
+	  Position		  [960, 204, 1045, 226]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
@@ -2890,7 +3186,7 @@ Model {
 	Block {
 	  BlockType		  From
 	  Name			  "From14"
-	  Position		  [690, 379, 775, 401]
+	  Position		  [960, 249, 1045, 271]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
@@ -2899,7 +3195,7 @@ Model {
 	Block {
 	  BlockType		  From
 	  Name			  "From15"
-	  Position		  [690, 414, 775, 436]
+	  Position		  [960, 284, 1045, 306]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
@@ -2908,7 +3204,7 @@ Model {
 	Block {
 	  BlockType		  From
 	  Name			  "From16"
-	  Position		  [365, 250, 415, 270]
+	  Position		  [335, 370, 385, 390]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
@@ -2917,7 +3213,7 @@ Model {
 	Block {
 	  BlockType		  From
 	  Name			  "From17"
-	  Position		  [420, 265, 470, 285]
+	  Position		  [390, 385, 440, 405]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
@@ -2934,8 +3230,17 @@ Model {
 	}
 	Block {
 	  BlockType		  From
+	  Name			  "From19"
+	  Position		  [355, 98, 410, 122]
+	  BackgroundColor	  "cyan"
+	  ShowName		  off
+	  CloseFcn		  "tagdialog Close"
+	  GotoTag		  "Ballast"
+	}
+	Block {
+	  BlockType		  From
 	  Name			  "From2"
-	  Position		  [70, 210, 120, 230]
+	  Position		  [395, 215, 445, 235]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
@@ -2944,7 +3249,7 @@ Model {
 	Block {
 	  BlockType		  From
 	  Name			  "From3"
-	  Position		  [715, 220, 775, 240]
+	  Position		  [985, 90, 1045, 110]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
@@ -2953,7 +3258,7 @@ Model {
 	Block {
 	  BlockType		  From
 	  Name			  "From4"
-	  Position		  [425, 235, 475, 255]
+	  Position		  [390, 355, 440, 375]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
@@ -2971,7 +3276,7 @@ Model {
 	Block {
 	  BlockType		  From
 	  Name			  "From6"
-	  Position		  [715, 254, 775, 276]
+	  Position		  [985, 124, 1045, 146]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
@@ -2980,7 +3285,7 @@ Model {
 	Block {
 	  BlockType		  From
 	  Name			  "From7"
-	  Position		  [715, 299, 775, 321]
+	  Position		  [985, 169, 1045, 191]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
@@ -2998,7 +3303,7 @@ Model {
 	Block {
 	  BlockType		  From
 	  Name			  "From9"
-	  Position		  [60, 249, 120, 271]
+	  Position		  [385, 254, 445, 276]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
@@ -3008,7 +3313,7 @@ Model {
 	  BlockType		  SubSystem
 	  Name			  "Heading plant"
 	  Ports			  [2, 1]
-	  Position		  [145, 198, 225, 282]
+	  Position		  [470, 203, 550, 287]
 	  MinAlgLoopOccurrences	  off
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
@@ -3059,13 +3364,8 @@ Model {
 	      Ports		      [1, 1]
 	      Position		      [355, 50, 385, 80]
 	      NamePlacement	      "alternate"
+	      ShowName		      off
 	      IgnoreLimit	      off
-	      Port {
-		PortNumber		1
-		Name			"Heading"
-		RTWStorageClass		"Auto"
-		DataLoggingNameMode	"SignalName"
-	      }
 	    }
 	    Block {
 	      BlockType		      Constant
@@ -3159,8 +3459,6 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
-	      Name		      "Heading"
-	      Labels		      [0, 0]
 	      SrcBlock		      "Heading Integrator"
 	      SrcPort		      1
 	      Points		      [90, 0]
@@ -3304,11 +3602,6 @@ Model {
 	      MinAlgLoopOccurrences   off
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
-	      Array {
-		Type			"Handle"
-		Dimension		0
-		PropName		"AvailSigsLoadSave"
-	      }
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
 	      MaskDescription	      "Embedded MATLAB block"
@@ -3425,11 +3718,6 @@ Model {
 	      MinAlgLoopOccurrences   off
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
-	      Array {
-		Type			"Handle"
-		Dimension		0
-		PropName		"AvailSigsLoadSave"
-	      }
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
 	      MaskDescription	      "Embedded MATLAB block"
@@ -3968,272 +4256,6 @@ Model {
 	  }
 	}
 	Block {
-	  BlockType		  SubSystem
-	  Name			  "Rudder Dynamics"
-	  Ports			  [1, 1]
-	  Position		  [130, 146, 270, 174]
-	  MinAlgLoopOccurrences	  off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  MaskHideContents	  off
-	  System {
-	    Name		    "Rudder Dynamics"
-	    Location		    [272, 381, 674, 485]
-	    Open		    off
-	    ModelBrowserVisibility  off
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "usletter"
-	    PaperUnits		    "inches"
-	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "100"
-	    Block {
-	      BlockType		      Inport
-	      Name		      "Rudder control"
-	      Position		      [25, 38, 55, 52]
-	      IconDisplay	      "Port number"
-	    }
-	    Block {
-	      BlockType		      Gain
-	      Name		      "Convert to\nforce2"
-	      Position		      [180, 27, 205, 63]
-	      ShowName		      off
-	      Gain		      "rudder_angle_dot_max/proportional_band"
-	      ParameterDataTypeMode   "Inherit via internal rule"
-	      OutDataTypeMode	      "Inherit via internal rule"
-	      SaturateOnIntegerOverflow	off
-	    }
-	    Block {
-	      BlockType		      Integrator
-	      Name		      "Convert to velocity1"
-	      Ports		      [1, 1]
-	      Position		      [265, 30, 295, 60]
-	      ShowName		      off
-	      LimitOutput	      on
-	      UpperSaturationLimit    "rudder_angle_max"
-	      LowerSaturationLimit    "-rudder_angle_max"
-	      IgnoreLimit	      off
-	    }
-	    Block {
-	      BlockType		      Saturate
-	      Name		      "Rudder limiter1"
-	      Position		      [80, 30, 110, 60]
-	      ShowName		      off
-	      UpperLimit	      "rudder_angle_max"
-	      LowerLimit	      "-rudder_angle_max"
-	    }
-	    Block {
-	      BlockType		      Saturate
-	      Name		      "Rudder limiter2"
-	      Position		      [225, 30, 250, 60]
-	      ShowName		      off
-	      UpperLimit	      "rudder_angle_dot_max"
-	      LowerLimit	      "-rudder_angle_dot_max"
-	    }
-	    Block {
-	      BlockType		      Sum
-	      Name		      "Sum1"
-	      Ports		      [2, 1]
-	      Position		      [130, 35, 150, 55]
-	      ShowName		      off
-	      IconShape		      "round"
-	      Inputs		      "|+-"
-	      CollapseMode	      "All dimensions"
-	      InputSameDT	      off
-	      OutDataTypeMode	      "Inherit via internal rule"
-	      SaturateOnIntegerOverflow	off
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "Rudder actual"
-	      Position		      [330, 38, 360, 52]
-	      IconDisplay	      "Port number"
-	      BusOutputAsStruct	      off
-	    }
-	    Line {
-	      SrcBlock		      "Convert to velocity1"
-	      SrcPort		      1
-	      Points		      [10, 0]
-	      Branch {
-		DstBlock		"Rudder actual"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, 25]
-		DstBlock		"Sum1"
-		DstPort			2
-	      }
-	    }
-	    Line {
-	      SrcBlock		      "Sum1"
-	      SrcPort		      1
-	      DstBlock		      "Convert to\nforce2"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Rudder limiter1"
-	      SrcPort		      1
-	      DstBlock		      "Sum1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Rudder limiter2"
-	      SrcPort		      1
-	      DstBlock		      "Convert to velocity1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Convert to\nforce2"
-	      SrcPort		      1
-	      DstBlock		      "Rudder limiter2"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Rudder control"
-	      SrcPort		      1
-	      DstBlock		      "Rudder limiter1"
-	      DstPort		      1
-	    }
-	  }
-	}
-	Block {
-	  BlockType		  SubSystem
-	  Name			  "Throttle Dynamics"
-	  Ports			  [1, 1]
-	  Position		  [115, 21, 255, 49]
-	  MinAlgLoopOccurrences	  off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  MaskHideContents	  off
-	  System {
-	    Name		    "Throttle Dynamics"
-	    Location		    [211, 178, 668, 424]
-	    Open		    off
-	    ModelBrowserVisibility  off
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "usletter"
-	    PaperUnits		    "inches"
-	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "100"
-	    Block {
-	      BlockType		      Inport
-	      Name		      "Throttle control"
-	      Position		      [55, 108, 85, 122]
-	      IconDisplay	      "Port number"
-	    }
-	    Block {
-	      BlockType		      Gain
-	      Name		      "Convert to\nforce2"
-	      Position		      [210, 97, 235, 133]
-	      ShowName		      off
-	      Gain		      "rudder_angle_dot_max/proportional_band"
-	      ParameterDataTypeMode   "Inherit via internal rule"
-	      OutDataTypeMode	      "Inherit via internal rule"
-	      SaturateOnIntegerOverflow	off
-	    }
-	    Block {
-	      BlockType		      Integrator
-	      Name		      "Convert to velocity1"
-	      Ports		      [1, 1]
-	      Position		      [295, 100, 325, 130]
-	      ShowName		      off
-	      LimitOutput	      on
-	      UpperSaturationLimit    "rudder_angle_max"
-	      LowerSaturationLimit    "-rudder_angle_max"
-	      IgnoreLimit	      off
-	    }
-	    Block {
-	      BlockType		      Saturate
-	      Name		      "Rudder limiter1"
-	      Position		      [110, 100, 140, 130]
-	      ShowName		      off
-	      UpperLimit	      "throttle_max"
-	      LowerLimit	      "-throttle_max"
-	    }
-	    Block {
-	      BlockType		      Saturate
-	      Name		      "Rudder limiter2"
-	      Position		      [255, 100, 280, 130]
-	      ShowName		      off
-	      UpperLimit	      "throttle_dot_max"
-	      LowerLimit	      "-throttle_dot_max"
-	    }
-	    Block {
-	      BlockType		      Sum
-	      Name		      "Sum1"
-	      Ports		      [2, 1]
-	      Position		      [160, 105, 180, 125]
-	      ShowName		      off
-	      IconShape		      "round"
-	      Inputs		      "|+-"
-	      CollapseMode	      "All dimensions"
-	      InputSameDT	      off
-	      OutDataTypeMode	      "Inherit via internal rule"
-	      SaturateOnIntegerOverflow	off
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "Throttle actual"
-	      Position		      [365, 108, 395, 122]
-	      IconDisplay	      "Port number"
-	      BusOutputAsStruct	      off
-	    }
-	    Line {
-	      SrcBlock		      "Convert to velocity1"
-	      SrcPort		      1
-	      Points		      [10, 0]
-	      Branch {
-		DstBlock		"Throttle actual"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, 25]
-		DstBlock		"Sum1"
-		DstPort			2
-	      }
-	    }
-	    Line {
-	      SrcBlock		      "Sum1"
-	      SrcPort		      1
-	      DstBlock		      "Convert to\nforce2"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Rudder limiter1"
-	      SrcPort		      1
-	      DstBlock		      "Sum1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Rudder limiter2"
-	      SrcPort		      1
-	      DstBlock		      "Convert to velocity1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Convert to\nforce2"
-	      SrcPort		      1
-	      DstBlock		      "Rudder limiter2"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Throttle control"
-	      SrcPort		      1
-	      DstBlock		      "Rudder limiter1"
-	      DstPort		      1
-	    }
-	  }
-	}
-	Block {
 	  BlockType		  Goto
 	  Name			  "Wind Heading1"
 	  Position		  [865, 114, 925, 136]
@@ -4254,7 +4276,7 @@ Model {
 	Block {
 	  BlockType		  Goto
 	  Name			  "Wind Heading3"
-	  Position		  [300, 149, 360, 171]
+	  Position		  [260, 114, 320, 136]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "Rudder"
@@ -4263,7 +4285,7 @@ Model {
 	Block {
 	  BlockType		  Goto
 	  Name			  "Wind Heading4"
-	  Position		  [255, 229, 315, 251]
+	  Position		  [580, 234, 640, 256]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "Heading"
@@ -4299,16 +4321,25 @@ Model {
 	Block {
 	  BlockType		  Goto
 	  Name			  "Wind Heading8"
-	  Position		  [280, 24, 340, 46]
+	  Position		  [260, 34, 320, 56]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "Throttle"
 	  TagVisibility		  "local"
 	}
 	Block {
+	  BlockType		  Goto
+	  Name			  "Wind Heading9"
+	  Position		  [260, 74, 320, 96]
+	  BackgroundColor	  "magenta"
+	  ShowName		  off
+	  GotoTag		  "Ballast"
+	  TagVisibility		  "local"
+	}
+	Block {
 	  BlockType		  Outport
 	  Name			  "Surge\nVelocity"
-	  Position		  [800, 258, 830, 272]
+	  Position		  [1070, 128, 1100, 142]
 	  BackgroundColor	  "yellow"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -4316,7 +4347,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Heading"
-	  Position		  [800, 183, 830, 197]
+	  Position		  [1070, 53, 1100, 67]
 	  BackgroundColor	  "yellow"
 	  Port			  "2"
 	  IconDisplay		  "Port number"
@@ -4325,7 +4356,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Rudder Angle"
-	  Position		  [800, 303, 830, 317]
+	  Position		  [1070, 173, 1100, 187]
 	  BackgroundColor	  "yellow"
 	  Port			  "3"
 	  IconDisplay		  "Port number"
@@ -4334,7 +4365,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Roll"
-	  Position		  [800, 223, 830, 237]
+	  Position		  [1070, 93, 1100, 107]
 	  BackgroundColor	  "yellow"
 	  Port			  "4"
 	  IconDisplay		  "Port number"
@@ -4343,7 +4374,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Charge"
-	  Position		  [595, 238, 625, 252]
+	  Position		  [565, 358, 595, 372]
 	  BackgroundColor	  "yellow"
 	  Port			  "5"
 	  IconDisplay		  "Port number"
@@ -4352,7 +4383,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Surge\nAcceleration"
-	  Position		  [800, 338, 830, 352]
+	  Position		  [1070, 208, 1100, 222]
 	  BackgroundColor	  "yellow"
 	  Port			  "6"
 	  IconDisplay		  "Port number"
@@ -4361,7 +4392,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Latitude"
-	  Position		  [800, 383, 830, 397]
+	  Position		  [1070, 253, 1100, 267]
 	  BackgroundColor	  "yellow"
 	  Port			  "7"
 	  IconDisplay		  "Port number"
@@ -4370,7 +4401,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Longitude"
-	  Position		  [800, 418, 830, 432]
+	  Position		  [1070, 288, 1100, 302]
 	  BackgroundColor	  "yellow"
 	  Port			  "8"
 	  IconDisplay		  "Port number"
@@ -4385,7 +4416,7 @@ Model {
 	Line {
 	  SrcBlock		  "Commanded Throttle"
 	  SrcPort		  1
-	  DstBlock		  "Throttle Dynamics"
+	  DstBlock		  "Actuator\nDynamics"
 	  DstPort		  1
 	}
 	Line {
@@ -4403,8 +4434,8 @@ Model {
 	Line {
 	  SrcBlock		  "Commanded Rudder"
 	  SrcPort		  1
-	  DstBlock		  "Rudder Dynamics"
-	  DstPort		  1
+	  DstBlock		  "Actuator\nDynamics"
+	  DstPort		  3
 	}
 	Line {
 	  SrcBlock		  "Forces & Moments"
@@ -4415,8 +4446,8 @@ Model {
 	Line {
 	  SrcBlock		  "Commanded Ballast"
 	  SrcPort		  1
-	  DstBlock		  "Forces & Moments"
-	  DstPort		  4
+	  DstBlock		  "Actuator\nDynamics"
+	  DstPort		  2
 	}
 	Line {
 	  SrcBlock		  "Charge Plant"
@@ -4473,8 +4504,8 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Rudder Dynamics"
-	  SrcPort		  1
+	  SrcBlock		  "Actuator\nDynamics"
+	  SrcPort		  3
 	  DstBlock		  "Wind Heading3"
 	  DstPort		  1
 	}
@@ -4551,7 +4582,7 @@ Model {
 	  DstPort		  4
 	}
 	Line {
-	  SrcBlock		  "Throttle Dynamics"
+	  SrcBlock		  "Actuator\nDynamics"
 	  SrcPort		  1
 	  DstBlock		  "Wind Heading8"
 	  DstPort		  1
@@ -4562,13 +4593,25 @@ Model {
 	  DstBlock		  "Forces & Moments"
 	  DstPort		  1
 	}
+	Line {
+	  SrcBlock		  "From19"
+	  SrcPort		  1
+	  DstBlock		  "Forces & Moments"
+	  DstPort		  4
+	}
+	Line {
+	  SrcBlock		  "Actuator\nDynamics"
+	  SrcPort		  2
+	  DstBlock		  "Wind Heading9"
+	  DstPort		  1
+	}
       }
     }
     Block {
       BlockType		      Reference
       Name		      "Position"
       Ports		      [2]
-      Position		      [545, 45, 575, 80]
+      Position		      [465, 45, 495, 80]
       SourceBlock	      "simulink/Sinks/XY Graph"
       SourceType	      "XY scope."
       ShowPortLabels	      "FromPortIcon"
@@ -4589,7 +4632,8 @@ Model {
       BlockType		      Scope
       Name		      "Rudder"
       Ports		      [1]
-      Position		      [440, 294, 470, 326]
+      Position		      [385, 79, 415, 111]
+      ShowName		      off
       Floating		      off
       Location		      [5, 52, 1285, 769]
       Open		      off
@@ -4605,15 +4649,30 @@ Model {
       SampleTime	      "0"
     }
     Block {
-      BlockType		      Terminator
-      Name		      "Terminator"
-      Position		      [310, 45, 330, 65]
+      BlockType		      Scope
+      Name		      "Rudder1"
+      Ports		      [1]
+      Position		      [560, 144, 590, 176]
       ShowName		      off
+      Floating		      off
+      Location		      [6, 52, 1286, 769]
+      Open		      off
+      NumInputPorts	      "1"
+      List {
+	ListType		AxesTitles
+	axes1			"%<SignalLabel>"
+      }
+      YMin		      "0"
+      YMax		      "0.065"
+      SaveName		      "ScopeData4"
+      DataFormat	      "StructureWithTime"
+      LimitDataPoints	      off
+      SampleTime	      "0"
     }
     Block {
       BlockType		      Terminator
-      Name		      "Terminator1"
-      Position		      [290, 105, 310, 125]
+      Name		      "Terminator"
+      Position		      [310, 45, 330, 65]
       ShowName		      off
     }
     Block {
@@ -4625,7 +4684,7 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      7
-      Points		      [80, 0; 0, -120; 140, 0]
+      Points		      [70, 0; 0, -120; 90, 0]
       Branch {
 	Points			[0, 130]
 	DstBlock		"Mux1"
@@ -4639,7 +4698,7 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      2
-      Points		      [45, 0; 0, 140]
+      Points		      [35, 0; 0, 140]
       DstBlock		      "Mux1"
       DstPort		      4
     }
@@ -4652,13 +4711,13 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      3
-      Points		      [55, 0; 0, 110]
+      Points		      [55, 0; 0, 0]
       Branch {
+	Points			[0, 110]
 	DstBlock		"Mux1"
 	DstPort			3
       }
       Branch {
-	Points			[0, 105]
 	DstBlock		"Rudder"
 	DstPort			1
       }
@@ -4690,7 +4749,7 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      8
-      Points		      [90, 0; 0, -125; 85, 0]
+      Points		      [80, 0; 0, -125; 70, 0]
       Branch {
 	DstBlock		"Position"
 	DstPort			2
@@ -4710,8 +4769,16 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      4
-      DstBlock		      "Terminator1"
-      DstPort		      1
+      Points		      [140, 0]
+      Branch {
+	DstBlock		"Display"
+	DstPort			1
+      }
+      Branch {
+	Points			[0, 45]
+	DstBlock		"Rudder1"
+	DstPort			1
+      }
     }
     Line {
       SrcBlock		      "Plant"
