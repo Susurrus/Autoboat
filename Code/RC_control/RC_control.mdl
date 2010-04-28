@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.479"
+    ComputedModelVersion    "1.519"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -44,8 +44,8 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Apr 12 16:51:25 2010"
-  ModelVersionFormat	  "1.%<AutoIncrement:479>"
+  LastModifiedDate	  "Wed Apr 28 12:34:17 2010"
+  ModelVersionFormat	  "1.%<AutoIncrement:519>"
   ConfigurationManager	  "None"
   SimulationMode	  "normal"
   LinearizationMsg	  "none"
@@ -322,8 +322,6 @@ Model {
 	  ConfigurationMode	  "Optimized"
 	  ProcessScript		  "dspic_make_rtw_hook"
 	  ConfigAtBuild		  off
-	  CustomSource		  "acs300_commands.c\nrs232_w_enable.c\nInputC"
-"apture_Interrupt_w_Timeout.c"
 	  CustomInitializer	  "#include \"InCap.h\"\n#include <p33fxxxx.h>"
 "\n    T5CONbits.TON = 0; // Stop any 16-bit Timer5 operation\n    T4CONbits.T"
 "ON = 0; // Stop any 16/32-bit Timer4 operation\n    T4CONbits.T32 = 1; // Ena"
@@ -482,7 +480,7 @@ Model {
 		  ExtModeStaticAlloc	  off
 		  ExtModeStaticAllocSize  1000000
 		  ExtModeTesting	  off
-		  ExtModeMexFile	  "ext_comm"
+		  ExtModeMexFile	  "noextcomm"
 		  ExtModeIntrfLevel	  "Level1"
 		  InlinedParameterPlacement "NonHierarchical"
 		  TargetOS		  "BareBoardExample"
@@ -546,8 +544,8 @@ Model {
 	      CustomProperty {
 		DataType		"string"
 		Name			"OPTIM_GCC"
-		Value			"-mcpu=choose_dsPIC_Target -O3 -fsched"
-"ule-insns -fschedule-insns2"
+		Value			"-mcpu=33fJ256GP710 -O3 -fschedule-ins"
+"ns -fschedule-insns2"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -558,27 +556,27 @@ Model {
 	      CustomProperty {
 		DataType		"string"
 		Name			"LDPICTYPE"
-		Value			"-T C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\"
-"support\\dsPIC30F\\gld\\pchoose_dsPIC_Target.gld"
+		Value			" -T C:\\PROGRA~1\\MICROC~1\\MPLABC~1"
+"\\support\\dsPIC33F\\gld\\p33fJ256GP710.gld"
 	      }
 	      CustomProperty {
 		DataType		"string"
 		Name			"LDLIBPIC"
-		Value			"C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib"
-"\\libpic30-coff.a  C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\dsPIC30F\\libpchoos"
-"e_dsPIC_Target-coff.a C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\libc-coff.a C:\\"
-"PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\libm-coff.a"
+		Value			" C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\li"
+"b\\libpic30-coff.a C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\dsPIC33F\\libp33fJ2"
+"56GP710-coff.a C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\libc-coff.a C:\\PROGRA~"
+"1\\MICROC~1\\MPLABC~1\\lib\\libm-coff.a"
 	      }
 	      CustomProperty {
 		DataType		"string"
 		Name			"PIC_INCLUDES"
-		Value			"-I C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\"
-"include"
+		Value			" -I C:\\PROGRA~1\\MICROC~1\\MPLABC~1"
+"\\include"
 	      }
 	      CustomProperty {
 		DataType		"string"
 		Name			"PIC_REF"
-		Value			"choose_dsPIC_Target"
+		Value			"33fJ256GP710"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -628,6 +626,11 @@ Model {
   }
   BlockParameterDefaults {
     Block {
+      BlockType		      ArithShift
+      nBitShiftRight	      "0"
+      nBinPtShiftRight	      "0"
+    }
+    Block {
       BlockType		      Bias
       Bias		      "0"
       SaturateOnIntegerOverflow	on
@@ -654,6 +657,42 @@ Model {
       RndMeth		      "Zero"
       SaturateOnIntegerOverflow	on
       SampleTime	      "-1"
+    }
+    Block {
+      BlockType		      Demux
+      Outputs		      "4"
+      DisplayOption	      "none"
+      BusSelectionMode	      off
+    }
+    Block {
+      BlockType		      DiscreteIntegrator
+      IntegratorMethod	      "Integration: Forward Euler"
+      gainval		      "1.0"
+      ExternalReset	      "none"
+      InitialConditionSource  "internal"
+      InitialCondition	      "0"
+      InitialConditionMode    "State and output"
+      SampleTime	      "1"
+      OutDataTypeMode	      "Inherit via internal rule"
+      OutDataType	      "sfix(16)"
+      OutScaling	      "2^0"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	off
+      LimitOutput	      off
+      UpperSaturationLimit    "inf"
+      LowerSaturationLimit    "-inf"
+      ShowSaturationPort      off
+      ShowStatePort	      off
+      IgnoreLimit	      off
+      StateMustResolveToSignalObject off
+      RTWStateStorageClass    "Auto"
+    }
+    Block {
+      BlockType		      EnablePort
+      StatesWhenEnabling      "held"
+      ShowOutputPort	      off
+      ZeroCross		      on
     }
     Block {
       BlockType		      Gain
@@ -717,6 +756,19 @@ Model {
       SamplingMode	      "auto"
       OutputWhenDisabled      "held"
       InitialOutput	      "[]"
+    }
+    Block {
+      BlockType		      Probe
+      ProbeWidth	      on
+      ProbeSampleTime	      on
+      ProbeComplexSignal      on
+      ProbeSignalDimensions   off
+      ProbeFramedSignal	      off
+      ProbeWidthDataType      "double"
+      ProbeSampleTimeDataType "double"
+      ProbeComplexityDataType "double"
+      ProbeDimensionsDataType "double"
+      ProbeFrameDataType      "double"
     }
     Block {
       BlockType		      Product
@@ -797,6 +849,9 @@ Model {
       SampleTime	      "-1"
     }
     Block {
+      BlockType		      Terminator
+    }
+    Block {
       BlockType		      UnitDelay
       X0		      "0"
       SampleTime	      "1"
@@ -839,29 +894,703 @@ Model {
     ZoomFactor		    "102"
     ReportName		    "simulink-default.rpt"
     Block {
-      BlockType		      Reference
-      Name		      "Configuration"
+      BlockType		      SubSystem
+      Name		      "Clear Rudder to Zero\nif Disconnect"
+      Ports		      [2, 1]
+      Position		      [240, 375, 280, 435]
+      MinAlgLoopOccurrences   off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      MaskHideContents	      off
+      System {
+	Name			"Clear Rudder to Zero\nif Disconnect"
+	Location		[451, 413, 991, 634]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Inport
+	  Name			  "Up"
+	  Position		  [25, 23, 55, 37]
+	  BackgroundColor	  "darkGreen"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "Fall"
+	  Position		  [25, 88, 55, 102]
+	  BackgroundColor	  "darkGreen"
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Compare\nTo Constant"
+	  Ports			  [1, 1]
+	  Position		  [195, 36, 225, 54]
+	  ShowName		  off
+	  SourceBlock		  "simulink/Logic and Bit\nOperations/Compare"
+"\nTo Constant"
+	  SourceType		  "Compare To Constant"
+	  ShowPortLabels	  "FromPortIcon"
+	  SystemSampleTime	  "-1"
+	  FunctionWithSeparateData off
+	  RTWMemSecFuncInitTerm	  "Inherit from model"
+	  RTWMemSecFuncExecute	  "Inherit from model"
+	  RTWMemSecDataConstants  "Inherit from model"
+	  RTWMemSecDataInternal	  "Inherit from model"
+	  RTWMemSecDataParameters "Inherit from model"
+	  relop			  "<="
+	  const			  "50"
+	  LogicOutDataTypeMode	  "boolean"
+	  ZeroCross		  off
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant"
+	  Position		  [195, 61, 225, 79]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "0"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant1"
+	  Position		  [25, 66, 55, 84]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	}
+	Block {
+	  BlockType		  DiscreteIntegrator
+	  Name			  "Discrete-Time\nIntegrator"
+	  Ports			  [2, 1]
+	  Position		  [100, 66, 145, 104]
+	  ShowName		  off
+	  IntegratorMethod	  "Accumulation: Forward Euler"
+	  ExternalReset		  "level"
+	  InitialConditionSource  "internal"
+	  SampleTime		  "-1"
+	  IgnoreLimit		  off
+	  ICPrevOutput		  "DiscIntNeverNeededParam"
+	  ICPrevScaledInput	  "DiscIntNeverNeededParam"
+	}
+	Block {
+	  BlockType		  Switch
+	  Name			  "Switch"
+	  Position		  [285, 30, 315, 60]
+	  ShowName		  off
+	  InputSameDT		  off
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "Out"
+	  Position		  [340, 38, 370, 52]
+	  BackgroundColor	  "yellow"
+	  IconDisplay		  "Port number"
+	  BusOutputAsStruct	  off
+	}
+	Line {
+	  SrcBlock		  "Constant1"
+	  SrcPort		  1
+	  DstBlock		  "Discrete-Time\nIntegrator"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Compare\nTo Constant"
+	  SrcPort		  1
+	  DstBlock		  "Switch"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Fall"
+	  SrcPort		  1
+	  DstBlock		  "Discrete-Time\nIntegrator"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Switch"
+	  SrcPort		  1
+	  DstBlock		  "Out"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Constant"
+	  SrcPort		  1
+	  Points		  [40, 0]
+	  DstBlock		  "Switch"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Discrete-Time\nIntegrator"
+	  SrcPort		  1
+	  Points		  [15, 0; 0, -40]
+	  DstBlock		  "Compare\nTo Constant"
+	  DstPort		  1
+	}
+	Line {
+	  Labels		  [0, 0]
+	  SrcBlock		  "Up"
+	  SrcPort		  1
+	  Points		  [210, 0]
+	  DstBlock		  "Switch"
+	  DstPort		  1
+	}
+      }
+    }
+    Block {
+      BlockType		      SubSystem
+      Name		      "Clear Throttle to Zero\nif Disconnect"
+      Ports		      [2, 1]
+      Position		      [240, 465, 280, 525]
+      MinAlgLoopOccurrences   off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      MaskHideContents	      off
+      System {
+	Name			"Clear Throttle to Zero\nif Disconnect"
+	Location		[547, 732, 1087, 953]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Inport
+	  Name			  "Up"
+	  Position		  [25, 23, 55, 37]
+	  BackgroundColor	  "darkGreen"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "Fall"
+	  Position		  [25, 88, 55, 102]
+	  BackgroundColor	  "darkGreen"
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Compare\nTo Constant"
+	  Ports			  [1, 1]
+	  Position		  [195, 36, 225, 54]
+	  ShowName		  off
+	  SourceBlock		  "simulink/Logic and Bit\nOperations/Compare"
+"\nTo Constant"
+	  SourceType		  "Compare To Constant"
+	  ShowPortLabels	  "FromPortIcon"
+	  SystemSampleTime	  "-1"
+	  FunctionWithSeparateData off
+	  RTWMemSecFuncInitTerm	  "Inherit from model"
+	  RTWMemSecFuncExecute	  "Inherit from model"
+	  RTWMemSecDataConstants  "Inherit from model"
+	  RTWMemSecDataInternal	  "Inherit from model"
+	  RTWMemSecDataParameters "Inherit from model"
+	  relop			  "<="
+	  const			  "50"
+	  LogicOutDataTypeMode	  "boolean"
+	  ZeroCross		  off
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant"
+	  Position		  [195, 61, 225, 79]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "0"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant1"
+	  Position		  [25, 66, 55, 84]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	}
+	Block {
+	  BlockType		  DiscreteIntegrator
+	  Name			  "Discrete-Time\nIntegrator"
+	  Ports			  [2, 1]
+	  Position		  [100, 66, 145, 104]
+	  ShowName		  off
+	  IntegratorMethod	  "Accumulation: Forward Euler"
+	  ExternalReset		  "level"
+	  InitialConditionSource  "internal"
+	  SampleTime		  "-1"
+	  IgnoreLimit		  off
+	  ICPrevOutput		  "DiscIntNeverNeededParam"
+	  ICPrevScaledInput	  "DiscIntNeverNeededParam"
+	}
+	Block {
+	  BlockType		  Switch
+	  Name			  "Switch"
+	  Position		  [285, 30, 315, 60]
+	  ShowName		  off
+	  InputSameDT		  off
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "Out"
+	  Position		  [340, 38, 370, 52]
+	  BackgroundColor	  "yellow"
+	  IconDisplay		  "Port number"
+	  BusOutputAsStruct	  off
+	}
+	Line {
+	  Labels		  [0, 0]
+	  SrcBlock		  "Up"
+	  SrcPort		  1
+	  Points		  [210, 0]
+	  DstBlock		  "Switch"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Discrete-Time\nIntegrator"
+	  SrcPort		  1
+	  Points		  [15, 0; 0, -40]
+	  DstBlock		  "Compare\nTo Constant"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Constant"
+	  SrcPort		  1
+	  Points		  [40, 0]
+	  DstBlock		  "Switch"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Switch"
+	  SrcPort		  1
+	  DstBlock		  "Out"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Fall"
+	  SrcPort		  1
+	  DstBlock		  "Discrete-Time\nIntegrator"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Compare\nTo Constant"
+	  SrcPort		  1
+	  DstBlock		  "Switch"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Constant1"
+	  SrcPort		  1
+	  DstBlock		  "Discrete-Time\nIntegrator"
+	  DstPort		  1
+	}
+      }
+    }
+    Block {
+      BlockType		      SubSystem
+      Name		      "Configure ECAN 1"
       Ports		      []
-      Position		      [270, 20, 370, 70]
+      Position		      [270, 19, 385, 71]
       BackgroundColor	      "lightBlue"
       DropShadow	      on
-      SourceBlock	      "dsPICdrivers/Configuration"
-      SourceType	      ""
-      ShowPortLabels	      "FromPortIcon"
-      SystemSampleTime	      "-1"
+      MinAlgLoopOccurrences   off
+      RTWSystemCode	      "Auto"
       FunctionWithSeparateData off
-      RTWMemSecFuncInitTerm   "Inherit from model"
-      RTWMemSecFuncExecute    "Inherit from model"
-      RTWMemSecDataConstants  "Inherit from model"
-      RTWMemSecDataInternal   "Inherit from model"
-      RTWMemSecDataParameters "Inherit from model"
-      double64		      off
+      MaskHideContents	      off
+      MaskType		      "Initialize ECAN 1"
+      MaskDescription	      "Initializes the ECAN 1 module on the dsPIC33f. "
+"Allows for configuration of almost all ECAN options to produce a usable syste"
+"m."
+      MaskPromptString	      "Extended Frames (Standard if unchecked)|Mode|DM"
+"A Reception Channel|DMA Transmission Channel|Baud Rate (bps)|Phase Segment 1|"
+"Propagation Delay|Phase Segment 2|Sync Jump Width|Time Quanta|Triple-sample|D"
+"MA Buffer Size|Reception Buffers|Transmission Buffers|Buffer 0 Transmission P"
+"riority|Buffer 0 Remote Transmit Enable|Buffer 1 Transmission Priority|Buffer"
+" 1 Remote Transmit Enable|Buffer 2 Transmission Priority|Buffer 2 Remote Tran"
+"smit Enable|Buffer 3 Transmission Priority|Buffer 3 Remote Transmit Enable|Bu"
+"ffer 4 Transmission Priority|Buffer 4 Remote Transmit Enable|Buffer 5 Transmi"
+"ssion Priority|Buffer 5 Remote Transmit Enable|Buffer 6 Transmission Priority"
+"|Buffer 6 Remote Transmit Enable|Buffer 7 Transmission Priority|Buffer 7 Remo"
+"te Transmit Enable|Mask 0|Mask 0 Receive Mode|Mask 1|Mask 1 Receive Mode|Mask"
+" 2|Mask 2 Receive Mode|Filters|Filter 0|Filter 0 Mask|Filter 0 Mode|Filter 0 "
+"Buffer|Filter 1|Filter 1 Mask|Filter 1 Mode|Filter 1 Buffer|Filter 2|Filter 2"
+" Mask|Filter 2 Mode|Filter 2 Buffer|Filter 3|Filter 3 Mask|Filter 3 Mode|Filt"
+"er 3 Buffer|Filter 4|Filter 4 Mask|Filter 4 Mode|Filter 4 Buffer|Filter 5|Fil"
+"ter 5 Mask|Filter 5 Mode|Filter 5 Buffer|Filter 6|Filter 6 Mask|Filter 6 Mode"
+"|Filter 6 Buffer|Filter 7|Filter 7 Mask|Filter 7 Mode|Filter 7 Buffer|Filter "
+"8|Filter 8 Mask|Filter 8 Mode|Filter 8 Buffer|Filter 9|Filter 9 Mask|Filter 9"
+" Mode|Filter 9 Buffer|Filter 10|Filter 10 Mask|Filter 10 Mode|Filter 10 Buffe"
+"r|Filter 11|Filter 11 Mask|Filter 11 Mode|Filter 11 Buffer|Filter 12|Filter 1"
+"2 Mask|Filter 12 Mode|Filter 12 Buffer|Filter 13|Filter 13 Mask|Filter 13 Mod"
+"e|Filter 13 Buffer|Filter 14|Filter 14 Mask|Filter 14 Mode|Filter 14 Buffer|F"
+"ilter 15|Filter 15 Mask|Filter 15 Mode|Filter 15 Buffer"
+      MaskStyleString	      "checkbox,popup(Disabled|Listen all|Listen only|"
+"Loopback|Normal),edit,edit,edit,edit,edit,edit,popup(1|2|3|4),edit,checkbox,p"
+"opup(4 buffers|6 buffers|8 buffers|12 buffers|16 buffers|24 buffers|32 buffer"
+"s),edit,edit,popup(Lowest|Low|High|Highest),popup(No|Yes),popup(Lowest|Low|Hi"
+"gh|Highest),popup(No|Yes),popup(Lowest|Low|High|Highest),popup(No|Yes),popup("
+"Lowest|Low|High|Highest),popup(No|Yes),popup(Lowest|Low|High|Highest),popup(N"
+"o|Yes),popup(Lowest|Low|High|Highest),popup(No|Yes),popup(Lowest|Low|High|Hig"
+"hest),popup(No|Yes),popup(Lowest|Low|High|Highest),popup(No|Yes),edit,popup(M"
+"atch std or ext|Obey filter mode),edit,popup(Match std or ext|Obey filter mod"
+"e),edit,popup(Match std or ext|Obey filter mode),edit,edit,popup(--|0|1|2),po"
+"pup(Match only standard|Match only extended),popup(0|1|2|3|4|5|6|7|8|9|10|11|"
+"12|13|14|FIFO),edit,popup(--|0|1|2),popup(Match only standard|Match only exte"
+"nded),popup(0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|FIFO),edit,popup(--|0|1|2),pop"
+"up(Match only standard|Match only extended),popup(0|1|2|3|4|5|6|7|8|9|10|11|1"
+"2|13|14|FIFO),edit,popup(--|0|1|2),popup(Match only standard|Match only exten"
+"ded),popup(0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|FIFO),edit,popup(--|0|1|2),popu"
+"p(Match only standard|Match only extended),popup(0|1|2|3|4|5|6|7|8|9|10|11|12"
+"|13|14|FIFO),edit,popup(--|0|1|2),popup(Match only standard|Match only extend"
+"ed),popup(0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|FIFO),edit,popup(--|0|1|2),popup"
+"(Match only standard|Match only extended),popup(0|1|2|3|4|5|6|7|8|9|10|11|12|"
+"13|14|FIFO),edit,popup(--|0|1|2),popup(Match only standard|Match only extende"
+"d),popup(0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|FIFO),edit,popup(--|0|1|2),popup("
+"Match only standard|Match only extended),popup(0|1|2|3|4|5|6|7|8|9|10|11|12|1"
+"3|14|FIFO),edit,popup(<empty>),popup(Match only standard|Match only extended)"
+",popup(0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|FIFO),edit,popup(--|0|1|2),popup(Ma"
+"tch only standard|Match only extended),popup(0|1|2|3|4|5|6|7|8|9|10|11|12|13|"
+"14|FIFO),edit,popup(--|0|1|2),popup(Match only standard|Match only extended),"
+"popup(0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|FIFO),edit,popup(--|0|1|2),popup(Mat"
+"ch only standard|Match only extended),popup(0|1|2|3|4|5|6|7|8|9|10|11|12|13|1"
+"4|FIFO),edit,popup(--|0|1|2),popup(Match only standard|Match only extended),p"
+"opup(0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|FIFO),edit,popup(--|0|1|2),popup(Matc"
+"h only standard|Match only extended),popup(0|1|2|3|4|5|6|7|8|9|10|11|12|13|14"
+"|FIFO),edit,popup(--|0|1|2),popup(Match only standard|Match only extended),po"
+"pup(0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|FIFO)"
+      MaskTunableValueString  "off,off,off,off,off,off,off,off,off,off,off,off"
+",off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,"
+"off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,o"
+"ff,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,of"
+"f,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off"
+",off,off,off,off,off,off,off,off,off,off,off,off"
+      MaskCallbackString      "|||||tq = 1 + str2num(get_param(gcb, 'ps1')) + "
+"str2num(get_param(gcb, 'pd')) + str2num(get_param(gcb, 'ps2'));\nset_param(gc"
+"b, 'tq', int2str(tq));|tq = 1 + str2num(get_param(gcb, 'ps1')) + str2num(get_"
+"param(gcb, 'pd')) + str2num(get_param(gcb, 'ps2'));\nset_param(gcb, 'tq', int"
+"2str(tq));|tq = 1 + str2num(get_param(gcb, 'ps1')) + str2num(get_param(gcb, '"
+"pd')) + str2num(get_param(gcb, 'ps2'));\nset_param(gcb, 'tq', int2str(tq));||"
+"||||filters = eval(get_param(gcb,'tx_bufs'));\nmVisibilities = get_param(gcb,"
+"'MaskVisibilities');\nmNames = get_param(gcb,'MaskNames');\nfor i = 1:size(mN"
+"ames);\n	n = mNames{i};\n    if size(n,2) > 4 && strcmp(n(1:4), 'buf_'"
+") == 1\n        filterNumber = sscanf(n, 'buf_%d');\n        if isempty(find("
+"filters == filterNumber, 1)) == 0\n             mVisibilities{i} = 'on';\n   "
+"     else\n             mVisibilities{i} = 'off';\n        end\n    end\nend"
+"\nset_param(gcb, 'MaskVisibilities', mVisibilities);|||||||||||||||||||||||fi"
+"lters = eval(get_param(gcb,'filters'));\nmVisibilities = get_param(gcb,'MaskV"
+"isibilities');\nmNames = get_param(gcb,'MaskNames');\nfor i = 1:size(mNames);"
+"\n	n = mNames{i};\n    if size(n,2) > 7 && strcmp(n(1:7), 'filter_') ="
+"= 1\n        filterNumber = sscanf(n, 'filter_%d');\n        if isempty(find("
+"filters == filterNumber, 1)) == 0\n             mVisibilities{i} = 'on';\n   "
+"     else\n             mVisibilities{i} = 'off';\n        end\n    end\nend"
+"\nset_param(gcb, 'MaskVisibilities', mVisibilities);|||||||||||||||||||||||||"
+"|||||||||||||||||||||||||||||||||||||||"
+      MaskEnableString	      "on,on,on,on,on,on,on,on,on,off,on,on,on,on,on,o"
+"n,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,"
+"on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on"
+",on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,o"
+"n,on,on,on,on,on,on,on,on"
+      MaskVisibilityString    "on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on"
+",off,off,off,off,off,off,off,off,off,off,off,off,off,off,on,on,on,on,on,on,on"
+",off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,"
+"off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,o"
+"ff,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,of"
+"f,off,off,off,off,off,off"
+      MaskToolTipString	      "on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on"
+",on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,o"
+"n,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,"
+"on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on,on"
+",on,on,on,on,on,on,on,on"
+      MaskVarAliasString      ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+      MaskVariables	      "frame_setting=@1;mode=&2;dma_rx_chan=@3;dma_tx_"
+"chan=@4;baud=@5;ps1=@6;pd=@7;ps2=@8;sjw=@9;tq=&10;triple_sample=@11;dma_buf_s"
+"ize=@12;rx_bufs=@13;tx_bufs=@14;buf_0_tx_pri=@15;buf_0_rte=@16;buf_1_tx_pri=@"
+"17;buf_1_rte=@18;buf_2_tx_pri=@19;buf_2_rte=@20;buf_3_tx_pri=@21;buf_3_rte=@2"
+"2;buf_4_tx_pri=@23;buf_4_rte=@24;buf_5_tx_pri=@25;buf_5_rte=@26;buf_6_tx_pri="
+"@27;buf_6_rte=@28;buf_7_tx_pri=@29;buf_7_rte=@30;mask_0=@31;mask_0_mide=@32;m"
+"ask_1=@33;mask_1_mide=@34;mask_2=@35;mask_2_mide=@36;filters=@37;filter_0=@38"
+";filter_0_mask=@39;filter_0_exide=@40;filter_0_buf=@41;filter_1=@42;filter_1_"
+"mask=@43;filter_1_exide=@44;filter_1_buf=@45;filter_2=@46;filter_2_mask=@47;f"
+"ilter_2_exide=@48;filter_2_buf=@49;filter_3=@50;filter_3_mask=@51;filter_3_ex"
+"ide=@52;filter_3_buf=@53;filter_4=@54;filter_4_mask=@55;filter_4_exide=@56;fi"
+"lter_4_buf=@57;filter_5=@58;filter_5_mask=@59;filter_5_exide=@60;filter_5_buf"
+"=@61;filter_6=@62;filter_6_mask=@63;filter_6_exide=@64;filter_6_buf=@65;filte"
+"r_7=@66;filter_7_mask=@67;filter_7_exide=@68;filter_7_buf=@69;filter_8=@70;fi"
+"lter_8_mask=@71;filter_8_exide=@72;filter_8_buf=@73;filter_9=@74;filter_9_mas"
+"k=@75;filter_9_exide=@76;filter_9_buf=@77;filter_10=@78;filter_10_mask=@79;fi"
+"lter_10_exide=@80;filter_10_buf=@81;filter_11=@82;filter_11_mask=@83;filter_1"
+"1_exide=@84;filter_11_buf=@85;filter_12=@86;filter_12_mask=@87;filter_12_exid"
+"e=@88;filter_12_buf=@89;filter_13=@90;filter_13_mask=@91;filter_13_exide=@92;"
+"filter_13_buf=@93;filter_14=@94;filter_14_mask=@95;filter_14_exide=@96;filter"
+"_14_buf=@97;filter_15=@98;filter_15_mask=@99;filter_15_exide=@100;filter_15_b"
+"uf=@101;"
+      MaskInitialization      "parameters = uint16(zeros(53,1));\n\n%% Generat"
+"e parameter 1\nparameters(1) = frame_setting;\nmode_id = 0;\nswitch mode\n   "
+" case 'Disabled'\n        mode_id = 1;\n    case 'Loopback'\n        mode_id "
+"= 2;\n    case 'Listen only'\n        mode_id = 3;\n    case 'Listen all'\n  "
+"      mode_id = 7;\nend\nparameters(1) = bitor(parameters(1), bitshift(mode_i"
+"d, 2));\nparameters(1) = bitor(parameters(1), bitshift(dma_rx_chan, 5));\npar"
+"ameters(1) = bitor(parameters(1), bitshift(dma_tx_chan, 8));\n\n%% Generate p"
+"arameter 2\nparameters(2) = baud / 100;\n\n%% Generate parameter 3\nh = find_"
+"system(bdroot(gcb),'FollowLinks','on','LookUnderMasks','all','Tag','dsPIC_MAS"
+"TER');\nfcy = 0;\nif ~isempty(h)\n    OverrideFcy = strcmp(get_param(h{1},'Ov"
+"errideFcy'),'on');\n    if (OverrideFcy == 1)\n        fcy = str2num(get_para"
+"m(h{1},'NewFcy'));     %% overridded fcy\n    else\n        fcy = str2num(get"
+"_param(h{1},'fcy'));\n    end \nend\nparameters(3) = fcy / 1000;\n\n%% Genera"
+"te parameter 4\nparameters(4) = ps1 - 1;\nparameters(4) = bitor(parameters(4)"
+", bitshift(pd - 1, 3));\nparameters(4) = bitor(parameters(4), bitshift(ps2 - "
+"1, 6));\nparameters(4) = bitor(parameters(4), bitshift(sjw - 1, 9));\nif trip"
+"le_sample == 1\n    parameters(4) = bitset(parameters(4),12);\nend\n\n%% Gene"
+"rate parameter 5\nfor k = 1:length(filters)\n    parameters(5) = bitset(param"
+"eters(5),filters(k)+1);\nend;\n\n% Map filter mask values into proper values"
+"\nfilter_masks = [filter_0_mask; filter_1_mask; filter_2_mask; filter_3_mask;"
+" filter_4_mask; filter_5_mask; filter_6_mask; filter_7_mask; filter_8_mask; f"
+"ilter_9_mask; filter_10_mask; filter_11_mask; filter_12_mask; filter_13_mask;"
+" filter_14_mask; filter_15_mask;];\nfilter_masks = filter_masks - 2;\nfilter_"
+"masks(filter_masks == -1) = 3;\n\n%% Generate parameters 6 and 7\nfor k = 1:l"
+"ength(filters);\n    filter = filters(k) + 1;\n    if filter < 9\n        par"
+"ameters(6) = bitor(parameters(6), bitshift(filter_masks(filter),2*(filter-1))"
+");\n    else\n        parameters(7) = bitor(parameters(7), bitshift(filter_ma"
+"sks(filter),2*(filter-9)));\n    end\nend\n\n% Generate parameters 8 and 9\np"
+"arameters(8) = bitshift(bitand(mask_0,hex2dec('18000000')),-27); % EID17-16\n"
+"parameters(8) = bitor(parameters(8), bitshift(bitand(mask_0,hex2dec('7FF')), "
+"5)); % SID\nparameters(8) = bitor(parameters(8), bitshift(mask_0_mide - 1, 3)"
+"); % MIDE\nparameters(9) = bitshift(bitand(mask_0,hex2dec('7FFF800')),-11); %"
+" EID15-0\n\n%% Generate parameters 10 and 11\nparameters(10) = bitshift(bitan"
+"d(mask_1,hex2dec('18000000')),-27); % EID17-16\nparameters(10) = bitor(parame"
+"ters(10), bitshift(bitand(mask_1,hex2dec('7FF')), 5)); % SID\nparameters(10) "
+"= bitor(parameters(10), bitshift(mask_1_mide - 1, 3)); % MIDE\nparameters(11)"
+" = bitshift(bitand(mask_1,hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generate "
+"parameters 12 and 13\nparameters(12) = bitshift(bitand(mask_2,hex2dec('180000"
+"00')),-27); % EID17-16\nparameters(12) = bitor(parameters(12), bitshift(bitan"
+"d(mask_2,hex2dec('7FF')), 5)); % SID\nparameters(12) = bitor(parameters(12), "
+"bitshift(mask_2_mide - 1, 3)); % MIDE\nparameters(13) = bitshift(bitand(mask_"
+"2,hex2dec('7FFF800')),-11); % EID15-0\n\n% Generate parameters 14-17\nbuf_pri"
+"orities = [buf_0_tx_pri;buf_1_tx_pri;buf_2_tx_pri;buf_3_tx_pri;buf_4_tx_pri;b"
+"uf_5_tx_pri;buf_6_tx_pri;buf_7_tx_pri] - 1;\nbuf_rtes = [buf_0_rte;buf_1_rte;"
+"buf_2_rte;buf_3_rte;buf_4_rte;buf_5_rte;buf_6_rte;buf_7_rte] - 1;\n\n% Create"
+" a vector of chars to modify\nregs = uint16(zeros(8,1));\n\n% Go through all "
+"enabled transmission buffers setting appropriate bits\nfor b = 1:size(tx_bufs"
+",1)\n    \n    index = tx_bufs(b) + 1;\n    \n    % Set transmission bit\n   "
+" regs(index) = bitset(regs(index),8);\n\n    % Set priority bits\n    regs(in"
+"dex) = bitor(regs(index), buf_priorities(index));\n\n    % Set remote transmi"
+"t enable bits\n    if buf_rtes(index) == 1\n        regs(index) = bitset(regs"
+"(index),3);\n    end\nend\n\nfor b = 1:size(rx_bufs,1)\n    \n    index = rx_"
+"bufs(b) + 1;\n\n    % Set priority bits\n    regs(index) = bitor(regs(index),"
+" buf_priorities(index));\n\n    % Set remote transmit enable bits\n    if buf"
+"_rtes(index) == 1\n        regs(index) = bitset(regs(index),3);\n    end\nend"
+"\n\n% Map our matrix into registers\nparameters(14) = bitor(bitshift(regs(2),"
+"8), regs(1));\nparameters(15) = bitor(bitshift(regs(4),8), regs(3));\nparamet"
+"ers(16) = bitor(bitshift(regs(6),8), regs(5));\nparameters(17) = bitor(bitshi"
+"ft(regs(8),8), regs(7));\n\n% Map the filter buffer values to corresponding b"
+"it values\nfilter_buffers = [filter_0_buf; filter_1_buf; filter_2_buf; filter"
+"_3_buf; filter_4_buf; filter_5_buf; filter_6_buf; filter_7_buf; filter_8_buf;"
+" filter_9_buf; filter_10_buf; filter_11_buf; filter_12_buf; filter_13_buf; fi"
+"lter_14_buf; filter_15_buf;];\nfilter_buffers = filter_buffers - 1;\n\n%% Gen"
+"erate parameter 18\nif bitget(parameters(5),1) == 1\n    parameters(18) = fil"
+"ter_buffers(1);\nend\nif bitget(parameters(5),2) == 1\n    parameters(18) = b"
+"itor(parameters(18), bitshift(filter_buffers(2), 4));\nend\nif bitget(paramet"
+"ers(5),3) == 1\n    parameters(18) = bitor(parameters(18), bitshift(filter_bu"
+"ffers(3), 8));\nend\nif bitget(parameters(5),4) == 1\n    parameters(18) = bi"
+"tor(parameters(18), bitshift(filter_buffers(4), 12));\nend\n\n%% Generate par"
+"ameter 19\nif bitget(parameters(5),5) == 1\n    parameters(19) = filter_buffe"
+"rs(5);\nend\nif bitget(parameters(5),6) == 1\n    parameters(19) = bitor(para"
+"meters(19), bitshift(filter_buffers(6), 4));\nend\nif bitget(parameters(5),7)"
+" == 1\n    parameters(19) = bitor(parameters(19), bitshift(filter_buffers(7),"
+" 8));\nend\nif bitget(parameters(5),8) == 1\n    parameters(19) = bitor(param"
+"eters(19), bitshift(filter_buffers(8), 12));\nend\n\n%% Generate parameter 20"
+"\nif bitget(parameters(5),9) == 1\n    parameters(20) = filter_buffers(9);\ne"
+"nd\nif bitget(parameters(5),10) == 1\n    parameters(20) = bitor(parameters(2"
+"0), bitshift(filter_buffers(10), 4));\nend\nif bitget(parameters(5),11) == 1"
+"\n    parameters(20) = bitor(parameters(20), bitshift(filter_buffers(11), 8))"
+";\nend\nif bitget(parameters(5),12) == 1\n    parameters(20) = bitor(paramete"
+"rs(20), bitshift(filter_buffers(12), 12));\nend\n\n%% Generate parameter 21\n"
+"if bitget(parameters(5),13) == 1\n    parameters(21) = filter_buffers(13);\ne"
+"nd\nif bitget(parameters(5),14) == 1\n    parameters(21) = bitor(parameters(2"
+"1), bitshift(filter_buffers(14), 4));\nend\nif bitget(parameters(5),15) == 1"
+"\n    parameters(21) = bitor(parameters(21), bitshift(filter_buffers(15), 8))"
+";\nend\nif bitget(parameters(5),16) == 1\n    parameters(21) = bitor(paramete"
+"rs(21), bitshift(filter_buffers(16), 12));\nend\n\n% Generate parameters 22 a"
+"nd 23\nparameters(22) = bitshift(bitand(filter_0,hex2dec('18000000')),-27); %"
+" EID17-16\nparameters(22) = bitor(parameters(22), bitshift(bitand(filter_0,he"
+"x2dec('7FF')), 5)); % SID\nparameters(22) = bitor(parameters(22), bitshift(fi"
+"lter_0_exide - 1, 3)); % EXIDE\nparameters(23) = bitshift(bitand(uint32(filte"
+"r_0),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generate parameters 24 and 25"
+"\nparameters(24) = bitshift(bitand(filter_1,hex2dec('18000000')),-27); % EID1"
+"7-16\nparameters(24) = bitor(parameters(24), bitshift(bitand(filter_1,hex2dec"
+"('7FF')), 5)); % SID\nparameters(24) = bitor(parameters(24), bitshift(filter_"
+"1_exide - 1, 3)); % EXIDE\nparameters(25) = bitshift(bitand(uint32(filter_1),"
+"hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generate parameters 26 and 27\npara"
+"meters(26) = bitshift(bitand(filter_2,hex2dec('18000000')),-27); % EID17-16\n"
+"parameters(26) = bitor(parameters(26), bitshift(bitand(filter_2,hex2dec('7FF'"
+")), 5)); % SID\nparameters(26) = bitor(parameters(26), bitshift(filter_2_exid"
+"e - 1, 3)); % EXIDE\nparameters(27) = bitshift(bitand(uint32(filter_2),hex2de"
+"c('7FFF800')),-11); % EID15-0\n\n%% Generate parameters 28 and 29\nparameters"
+"(28) = bitshift(bitand(filter_3,hex2dec('18000000')),-27); % EID17-16\nparame"
+"ters(28) = bitor(parameters(28), bitshift(bitand(filter_3,hex2dec('7FF')), 5)"
+"); % SID\nparameters(28) = bitor(parameters(28), bitshift(filter_3_exide - 1,"
+" 3)); % EXIDE\nparameters(29) = bitshift(bitand(uint32(filter_3),hex2dec('7FF"
+"F800')),-11); % EID15-0\n\n%% Generate parameters 30 and 31\nparameters(30) ="
+" bitshift(bitand(filter_4,hex2dec('18000000')),-27); % EID17-16\nparameters(3"
+"0) = bitor(parameters(30), bitshift(bitand(filter_4,hex2dec('7FF')), 5)); % S"
+"ID\nparameters(30) = bitor(parameters(30), bitshift(filter_4_exide - 1, 3)); "
+"% EXIDE\nparameters(31) = bitshift(bitand(uint32(filter_4),hex2dec('7FFF800')"
+"),-11); % EID15-0\n\n%% Generate parameters 32 and 33\nparameters(32) = bitsh"
+"ift(bitand(filter_5,hex2dec('18000000')),-27); % EID17-16\nparameters(32) = b"
+"itor(parameters(32), bitshift(bitand(filter_5,hex2dec('7FF')), 5)); % SID\npa"
+"rameters(32) = bitor(parameters(32), bitshift(filter_5_exide - 1, 3)); % EXID"
+"E\nparameters(33) = bitshift(bitand(uint32(filter_5),hex2dec('7FFF800')),-11)"
+"; % EID15-0\n\n%% Generate parameters 34 and 35\nparameters(34) = bitshift(bi"
+"tand(filter_6,hex2dec('18000000')),-27); % EID17-16\nparameters(34) = bitor(p"
+"arameters(34), bitshift(bitand(filter_6,hex2dec('7FF')), 5)); % SID\nparamete"
+"rs(34) = bitor(parameters(34), bitshift(filter_6_exide - 1, 3)); % EXIDE\npar"
+"ameters(35) = bitshift(bitand(uint32(filter_6),hex2dec('7FFF800')),-11); % EI"
+"D15-0\n\n%% Generate parameters 36 and 37\nparameters(36) = bitshift(bitand(f"
+"ilter_7,hex2dec('18000000')),-27); % EID17-16\nparameters(36) = bitor(paramet"
+"ers(36), bitshift(bitand(filter_7,hex2dec('7FF')), 5)); % SID\nparameters(36)"
+" = bitor(parameters(36), bitshift(filter_7_exide - 1, 3)); % EXIDE\nparameter"
+"s(37) = bitshift(bitand(uint32(filter_7),hex2dec('7FFF800')),-11); % EID15-0"
+"\n\n%% Generate parameters 38 and 39\nparameters(38) = bitshift(bitand(filter"
+"_8,hex2dec('18000000')),-27); % EID17-16\nparameters(38) = bitor(parameters(3"
+"8), bitshift(bitand(filter_8,hex2dec('7FF')), 5)); % SID\nparameters(38) = bi"
+"tor(parameters(38), bitshift(filter_8_exide - 1, 3)); % EXIDE\nparameters(39)"
+" = bitshift(bitand(uint32(filter_8),hex2dec('7FFF800')),-11); % EID15-0\n\n%%"
+" Generate parameters 40 and 41\nparameters(40) = bitshift(bitand(filter_9,hex"
+"2dec('18000000')),-27); % EID17-16\nparameters(40) = bitor(parameters(40), bi"
+"tshift(bitand(filter_9,hex2dec('7FF')), 5)); % SID\nparameters(40) = bitor(pa"
+"rameters(40), bitshift(filter_9_exide - 1, 3)); % EXIDE\nparameters(41) = bit"
+"shift(bitand(uint32(filter_9),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Gener"
+"ate parameters 42 and 43\nparameters(42) = bitshift(bitand(filter_10,hex2dec("
+"'18000000')),-27); % EID17-16\nparameters(42) = bitor(parameters(42), bitshif"
+"t(bitand(filter_10,hex2dec('7FF')), 5)); % SID\nparameters(42) = bitor(parame"
+"ters(42), bitshift(filter_10_exide - 1, 3)); % EXIDE\nparameters(43) = bitshi"
+"ft(bitand(uint32(filter_10),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generat"
+"e parameters 44 and 45\nparameters(44) = bitshift(bitand(filter_11,hex2dec('1"
+"8000000')),-27); % EID17-16\nparameters(44) = bitor(parameters(44), bitshift("
+"bitand(filter_11,hex2dec('7FF')), 5)); % SID\nparameters(44) = bitor(paramete"
+"rs(44), bitshift(filter_11_exide - 1, 3)); % EXIDE\nparameters(45) = bitshift"
+"(bitand(uint32(filter_11),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generate "
+"parameters 46 and 47\nparameters(46) = bitshift(bitand(filter_12,hex2dec('180"
+"00000')),-27); % EID17-16\nparameters(46) = bitor(parameters(46), bitshift(bi"
+"tand(filter_12,hex2dec('7FF')), 5)); % SID\nparameters(46) = bitor(parameters"
+"(46), bitshift(filter_12_exide - 1, 3)); % EXIDE\nparameters(47) = bitshift(b"
+"itand(uint32(filter_12),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generate pa"
+"rameters 48 and 49\nparameters(48) = bitshift(bitand(filter_13,hex2dec('18000"
+"000')),-27); % EID17-16\nparameters(48) = bitor(parameters(48), bitshift(bita"
+"nd(filter_13,hex2dec('7FF')), 5)); % SID\nparameters(48) = bitor(parameters(4"
+"8), bitshift(filter_13_exide - 1, 3)); % EXIDE\nparameters(49) = bitshift(bit"
+"and(uint32(filter_13),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generate para"
+"meters 50 and 51\nparameters(50) = bitshift(bitand(filter_14,hex2dec('1800000"
+"0')),-27); % EID17-16\nparameters(50) = bitor(parameters(50), bitshift(bitand"
+"(filter_14,hex2dec('7FF')), 5)); % SID\nparameters(50) = bitor(parameters(50)"
+", bitshift(filter_14_exide - 1, 3)); % EXIDE\nparameters(51) = bitshift(bitan"
+"d(uint32(filter_14),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generate parame"
+"ters 52 and 53\nparameters(52) = bitshift(bitand(filter_15,hex2dec('18000000'"
+")),-27); % EID17-16\nparameters(52) = bitor(parameters(52), bitshift(bitand(f"
+"ilter_15,hex2dec('7FF')), 5)); % SID\nparameters(52) = bitor(parameters(52), "
+"bitshift(filter_15_exide - 1, 3)); % EXIDE\nparameters(53) = bitshift(bitand("
+"uint32(filter_15),hex2dec('7FFF800')),-11); % EID15-0"
+      MaskDisplay	      "text(0.5,0.5,'Configure ECAN1','horizontalAlign"
+"ment','center','verticalAlignment','middle');\n"
+      MaskIconFrame	      on
+      MaskIconOpaque	      on
+      MaskIconRotate	      "none"
+      MaskIconUnits	      "normalized"
+      MaskValueString	      "off|Normal|2|0|250000|8|5|6|4|20|on|6 buffers|["
+"]|[0]|Highest|No|Highest|No|Lowest|No|Lowest|No|Lowest|No|Lowest|No|Lowest|No"
+"|Lowest|No|0|Match std or ext|0|Match std or ext|0|Match std or ext|[]|hex2de"
+"c('400')|0|Match only standard|1|hex2dec('401')|0|Match only standard|2|hex2d"
+"ec('402')|0|Match only standard|3|0|0|Match only standard|0|0|0|Match only st"
+"andard|0|0|0|Match only standard|0|0|0|Match only standard|0|0|0|Match only s"
+"tandard|0|0|0|Match only standard|0|0|<empty>|Match only standard|0|0|0|Match"
+" only standard|0|0|0|Match only standard|0|0|0|Match only standard|0|0|0|Matc"
+"h only standard|0|0|0|Match only standard|0|0|0|Match only standard|0"
+      MaskTabNameString	      ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+      System {
+	Name			"Configure ECAN 1"
+	Location		[41, 188, 446, 336]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Reference
+	  Name			  "C Function Call\n[ecanFunctions.c]"
+	  Tag			  "dsPIC_dsPIC_CFunctionCall"
+	  Ports			  [1]
+	  Position		  [145, 40, 270, 80]
+	  List {
+	    ListType		    RTWdata
+	    FctDeclaration	    "extern void ecan1_init(uint16_T* u1);"
+	    FctCall		    "ecan1_init(*%u1);"
+	    fctName		    "ecan1_init"
+	    INPUT_SIZE		    "53"
+	    OUTPUT_SIZE		    "1"
+	    NBR_INPUT		    "1"
+	    NBR_OUTPUT		    "0"
+	  }
+	  SourceBlock		  "dsPICdrivers/OTHERS/C Function Call"
+	  SourceType		  "C Function Call"
+	  fctName		  "'ecan1_init'"
+	  INPUT_SIZE		  "53"
+	  INPUT1		  "uint16"
+	  INPUT2		  "--"
+	  INPUT3		  "--"
+	  OUTPUT_SIZE		  "1"
+	  OUTPUT1		  "--"
+	  SampleTime		  "Inf"
+	  InputType		  "[ 4 ]"
+	  OutputType		  "[ ]"
+	  FctDeclaration	  "extern void ecan1_init(uint16_T* u1);"
+	  FctCall		  "ecan1_init(*%u1);"
+	  OrderingInOutPopup	  "None"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant"
+	  Position		  [45, 53, 125, 67]
+	  ShowName		  off
+	  Value			  "parameters"
+	  OutDataTypeMode	  "uint16"
+	}
+	Line {
+	  SrcBlock		  "Constant"
+	  SrcPort		  1
+	  DstBlock		  "C Function Call\n[ecanFunctions.c]"
+	  DstPort		  1
+	}
+      }
     }
     Block {
       BlockType		      Reference
       Name		      "Configure Model \nfor dsPIC"
       Ports		      []
-      Position		      [20, 14, 132, 70]
+      Position		      [25, 14, 137, 70]
       BackgroundColor	      "yellow"
       DropShadow	      on
       SourceBlock	      "dsPICdrivers/Simulink Configuration/Configure M"
@@ -870,44 +1599,10 @@ Model {
     }
     Block {
       BlockType		      Reference
-      Name		      "Current Command\nto Drive Motor"
-      Tag		      "dsPIC_dsPIC_CFunctionCall"
-      Ports		      [2]
-      Position		      [725, 430, 850, 470]
-      List {
-	ListType		RTWdata
-	FctDeclaration		"extern void send_cc_command(int16_T u1, uint8"
-"_T u2);"
-	FctCall			"send_cc_command(%u1, %u2);"
-	fctName			"send_cc_command"
-	INPUT_SIZE		"1"
-	OUTPUT_SIZE		"1"
-	NBR_INPUT		"2"
-	NBR_OUTPUT		"0"
-      }
-      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
-      SourceType	      "C Function Call"
-      fctName		      "'send_cc_command'"
-      INPUT_SIZE	      "1"
-      INPUT1		      "int16"
-      INPUT2		      "uint8"
-      INPUT3		      "--"
-      OUTPUT_SIZE	      "1"
-      OUTPUT1		      "--"
-      SampleTime	      "-1"
-      InputType		      "[ 3 2 ]"
-      OutputType	      "[ ]"
-      FctDeclaration	      "extern void send_cc_command(int16_T u1, uint8_T"
-" u2);"
-      FctCall		      "send_cc_command(%u1, %u2);"
-      OrderingInOutPopup      "None"
-    }
-    Block {
-      BlockType		      Reference
       Name		      "Digital Output Write"
       Tag		      "dsPIC_Digital_Output"
       Ports		      [1]
-      Position		      [725, 247, 855, 283]
+      Position		      [745, 247, 875, 283]
       NamePlacement	      "alternate"
       ShowName		      off
       Priority		      "5"
@@ -923,7 +1618,7 @@ Model {
       Name		      "Digital Output Write1"
       Tag		      "dsPIC_Digital_Output"
       Ports		      [1]
-      Position		      [725, 287, 855, 323]
+      Position		      [745, 287, 875, 323]
       NamePlacement	      "alternate"
       ShowName		      off
       Priority		      "5"
@@ -938,7 +1633,7 @@ Model {
       BlockType		      Reference
       Name		      "DocBlock"
       Ports		      []
-      Position		      [532, 30, 572, 69]
+      Position		      [402, 20, 522, 73]
       ShowName		      off
       UserDataPersistent      on
       UserData		      "DataTag0"
@@ -955,38 +1650,1560 @@ Model {
       DocumentType	      "Text"
     }
     Block {
-      BlockType		      Reference
-      Name		      "Drive Motor\nEnable"
-      Tag		      "dsPIC_dsPIC_CFunctionCall"
-      Ports		      [2]
-      Position		      [725, 530, 850, 570]
-      List {
-	ListType		RTWdata
-	FctDeclaration		"extern void send_sr_command(int16_T u1, uint8"
-"_T u2);"
-	FctCall			"send_sr_command(%u1, %u2);"
-	fctName			"send_sr_command"
-	INPUT_SIZE		"1"
-	OUTPUT_SIZE		"1"
-	NBR_INPUT		"2"
-	NBR_OUTPUT		"0"
+      BlockType		      SubSystem
+      Name		      "Drive Motor Enable Message"
+      Ports		      [3]
+      Position		      [745, 534, 905, 596]
+      ShowPortLabels	      "SignalName"
+      MinAlgLoopOccurrences   off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      MaskHideContents	      off
+      MaskType		      "Send ECAN Message"
+      MaskDescription	      "This block allows for the transmission of a mes"
+"sage over the ECAN module."
+      MaskPromptString	      "Buffer|Identifier|Identifier from input|Ide|Rem"
+"ote|Data|Data length|Data from input|Sample time|Trigger on input"
+      MaskStyleString	      "edit,edit,checkbox,checkbox,checkbox,edit,edit,"
+"checkbox,edit,checkbox"
+      MaskTunableValueString  "off,off,off,off,off,off,off,off,off,off"
+      MaskCallbackString      "||mEnables = get_param(gcb,'MaskEnables');\nena"
+"bled = get_param(gcb, 'identifier_from_input');\nif strcmp(enabled,'on');\n  "
+"  replace_block([gcb '/identifier'],'Constant','Inport','noprompt');\n    mEn"
+"ables{2} = 'off';\n    set_param([gcb '/identifier'],'Port','1');\nelse\n    "
+"replace_block([gcb '/identifier'],'Inport','Constant','noprompt');\n    mEnab"
+"les{2} = 'on';\n    set_param([gcb '/identifier'],'Value','identifier');\nend"
+"\nset_param(gcb, 'MaskEnables', mEnables);\n|||data = eval(get_param(gcb, 'da"
+"ta'));\ny = size(data,1);\nx = size(data,2);\nif y > 1 && x > 1\n    error('D"
+"ata must be a 1-dimensional vector')\nelse\n    if or(x > 8, y > 8)\n        "
+"error('Data cannot be larger than 8-bytes');\n    end\nend\n\nset_param(gcb, "
+"'data_length', num2str(length(data)));|data_length = eval(get_param(gcb, 'dat"
+"a_length'));\nif or(data_length < 0, data_length > 9)\n    error('Data cannot"
+" be more than 8 bytes or less than 0.')\nend|mEnables = get_param(gcb,'MaskEn"
+"ables');\nenabled = get_param(gcb, 'data_from_input');\nif strcmp(enabled,'on"
+"');\n    replace_block([gcb '/data'],'Constant','Inport','noprompt');\n    re"
+"place_block([gcb '/data_length'],'Constant','Inport','noprompt');\n    mEnabl"
+"es{6} = 'off';\n    mEnables{7} = 'off';\n    port = 1;\n    if ~isempty(find"
+"_system(gcb,'LookUnderMasks','all','Name','identifier'))\n        port = 2;\n"
+"    end\n    set_param([gcb '/data'],'Port',num2str(port));\n    set_param([g"
+"cb '/data_length'],'Port',num2str(port+1));\nelse\n    replace_block([gcb '/d"
+"ata'],'Inport','Constant','noprompt');\n    replace_block([gcb '/data_length'"
+"],'Inport','Constant','noprompt');\n    mEnables{6} = 'on';\n    mEnables{7} "
+"= 'on';\n    set_param([gcb '/data'],'Value','data');\n    set_param([gcb '/d"
+"ata'],'OutDataTypeMode','uint8');\n    set_param([gcb '/data_length'],'Value'"
+",'data_length');\n    set_param([gcb '/data_length'],'OutDataTypeMode','uint8"
+"');\nend\nset_param(gcb, 'MaskEnables', mEnables);\n||mEnables = get_param(gc"
+"b,'MaskEnables');\nenabled = get_param(gcb, 'trigger_on_input');\nc_func_blk "
+"= find_system(gcb,'LookUnderMasks','all','FunctionName','dsPIC_C_function_Cal"
+"l');\nif strcmp(enabled,'on');\n    mEnables{9} = 'off';\n    %set_param(c_fu"
+"nc_blk,'SampleTime','-1');\n    replace_block([gcb '/trigger'],'Constant','In"
+"port','noprompt');\nelse\n    mEnables{9} = 'on';\n    %set_param(c_func_blk,"
+"'SampleTime','c_func_sample_time');\n    replace_block([gcb '/trigger'],'Inpo"
+"rt','Constant','noprompt');\n    %set_param([gcb '/trigger'],'Value','1');\ne"
+"nd\nset_param(gcb, 'MaskEnables', mEnables);"
+      MaskEnableString	      "on,on,on,on,on,off,off,on,off,on"
+      MaskVisibilityString    "on,on,on,on,on,on,off,on,on,on"
+      MaskToolTipString	      "on,on,on,on,on,on,on,on,on,on"
+      MaskVarAliasString      ",,,,,,,,,"
+      MaskVariables	      "buffer=@1;identifier=@2;identifier_from_input=&"
+"3;ide=@4;remote=@5;data=@6;data_length=@7;data_from_input=&8;c_func_sample_ti"
+"me=@9;trigger_on_input=@10;"
+      MaskDisplay	      "disp('ECAN1 TX');"
+      MaskIconFrame	      on
+      MaskIconOpaque	      off
+      MaskIconRotate	      "none"
+      MaskIconUnits	      "autoscale"
+      MaskValueString	      "0|hex2dec('300')|off|off|off|[hex2dec('11') hex"
+"2dec('12') hex2dec('13') hex2dec('14')]|4|on|1|on"
+      MaskTabNameString	      ",,,,,,,,,"
+      System {
+	Name			"Drive Motor Enable Message"
+	Location		[593, 397, 1236, 799]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Inport
+	  Name			  "trigger"
+	  Position		  [400, 132, 465, 148]
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "data"
+	  Position		  [35, 227, 100, 243]
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "data_length"
+	  Position		  [30, 42, 95, 58]
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "C-function Call"
+	  Ports			  [1, 0, 1]
+	  Position		  [485, 159, 560, 201]
+	  MinAlgLoopOccurrences	  off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  MaskHideContents	  off
+	  System {
+	    Name		    "C-function Call"
+	    Location		    [742, 195, 1106, 379]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "parameters"
+	      Position		      [25, 78, 55, 92]
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      EnablePort
+	      Name		      "Enable"
+	      Ports		      []
+	      Position		      [125, 15, 145, 35]
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "ECAN1 Transmit\n[ecanFunctions.c]"
+	      Tag		      "dsPIC_dsPIC_CFunctionCall"
+	      Ports		      [1]
+	      Position		      [80, 65, 205, 105]
+	      BackgroundColor	      "orange"
+	      List {
+		ListType		RTWdata
+		FctDeclaration		"extern void ecan1_transmit_matlab(uin"
+"t16_T* u1);"
+		FctCall			"ecan1_transmit_matlab(*%u1);"
+		fctName			"ecan1_transmit_matlab"
+		INPUT_SIZE		"8"
+		OUTPUT_SIZE		"1"
+		NBR_INPUT		"1"
+		NBR_OUTPUT		"0"
+	      }
+	      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+	      SourceType	      "C Function Call"
+	      fctName		      "'ecan1_transmit_matlab'"
+	      INPUT_SIZE	      "8"
+	      INPUT1		      "uint16"
+	      INPUT2		      "--"
+	      INPUT3		      "--"
+	      OUTPUT_SIZE	      "1"
+	      OUTPUT1		      "--"
+	      SampleTime	      "c_func_sample_time"
+	      InputType		      "[ 4 ]"
+	      OutputType	      "[ ]"
+	      FctDeclaration	      "extern void ecan1_transmit_matlab(uint1"
+"6_T* u1);"
+	      FctCall		      "ecan1_transmit_matlab(*%u1);"
+	      OrderingInOutPopup      "None"
+	    }
+	    Line {
+	      SrcBlock		      "parameters"
+	      SrcPort		      1
+	      DstBlock		      "ECAN1 Transmit\n[ecanFunctions.c]"
+	      DstPort		      1
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant"
+	  Position		  [60, 17, 100, 33]
+	  ShowName		  off
+	  Value			  "buffer"
+	  OutDataTypeMode	  "uint8"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant2"
+	  Position		  [60, 152, 100, 168]
+	  ShowName		  off
+	  Value			  "ide"
+	  OutDataTypeMode	  "uint8"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant3"
+	  Position		  [60, 172, 100, 188]
+	  ShowName		  off
+	  Value			  "remote"
+	  OutDataTypeMode	  "uint8"
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Extract Bits"
+	  Ports			  [1, 1]
+	  Position		  [220, 107, 295, 143]
+	  ShowName		  off
+	  SourceBlock		  "simulink/Logic and Bit\nOperations/Extract "
+"Bits"
+	  SourceType		  "Extract Bits"
+	  ShowPortLabels	  "FromPortIcon"
+	  SystemSampleTime	  "-1"
+	  FunctionWithSeparateData off
+	  RTWMemSecFuncInitTerm	  "Inherit from model"
+	  RTWMemSecFuncExecute	  "Inherit from model"
+	  RTWMemSecDataConstants  "Inherit from model"
+	  RTWMemSecDataInternal	  "Inherit from model"
+	  RTWMemSecDataParameters "Inherit from model"
+	  bitsToExtract		  "Upper half"
+	  numBits		  "8"
+	  bitIdxRange		  "[0 7]"
+	  outScalingMode	  "Treat bit field as an integer"
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Extract Bits1"
+	  Ports			  [1, 1]
+	  Position		  [220, 63, 295, 97]
+	  ShowName		  off
+	  SourceBlock		  "simulink/Logic and Bit\nOperations/Extract "
+"Bits"
+	  SourceType		  "Extract Bits"
+	  ShowPortLabels	  "FromPortIcon"
+	  SystemSampleTime	  "-1"
+	  FunctionWithSeparateData off
+	  RTWMemSecFuncInitTerm	  "Inherit from model"
+	  RTWMemSecFuncExecute	  "Inherit from model"
+	  RTWMemSecDataConstants  "Inherit from model"
+	  RTWMemSecDataInternal	  "Inherit from model"
+	  RTWMemSecDataParameters "Inherit from model"
+	  bitsToExtract		  "Lower half"
+	  numBits		  "8"
+	  bitIdxRange		  "[0 7]"
+	  outScalingMode	  "Preserve fixed-point scaling"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "identifier"
+	  Position		  [25, 92, 100, 108]
+	  Value			  "identifier"
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "myMux"
+	  Ports			  [5, 1]
+	  Position		  [370, 74, 375, 236]
+	  BackgroundColor	  "black"
+	  ShowName		  off
+	  MinAlgLoopOccurrences	  off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  MaskHideContents	  off
+	  MaskType		  "Stateflow"
+	  MaskDescription	  "Embedded MATLAB block"
+	  MaskDisplay		  "disp('myMux');"
+	  MaskSelfModifiable	  on
+	  MaskIconFrame		  on
+	  MaskIconOpaque	  off
+	  MaskIconRotate	  "none"
+	  MaskIconUnits		  "autoscale"
+	  System {
+	    Name		    "myMux"
+	    Location		    [257, 457, 812, 717]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "u1"
+	      Position		      [20, 101, 40, 119]
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "u2"
+	      Position		      [20, 136, 40, 154]
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "u3"
+	      Position		      [20, 171, 40, 189]
+	      Port		      "3"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "u4"
+	      Position		      [20, 206, 40, 224]
+	      Port		      "4"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "u5"
+	      Position		      [20, 246, 40, 264]
+	      Port		      "5"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Demux
+	      Name		      " Demux "
+	      Ports		      [1, 1]
+	      Position		      [270, 285, 320, 325]
+	      Outputs		      "1"
+	    }
+	    Block {
+	      BlockType		      "S-Function"
+	      Name		      " SFunction "
+	      Tag		      "Stateflow S-Function RC_control 8"
+	      Ports		      [5, 2]
+	      Position		      [180, 105, 230, 285]
+	      FunctionName	      "sf_sfun"
+	      PortCounts	      "[5 2]"
+	      Port {
+		PortNumber		2
+		Name			"y"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	    }
+	    Block {
+	      BlockType		      Terminator
+	      Name		      " Terminator "
+	      Position		      [460, 296, 480, 314]
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "y"
+	      Position		      [460, 101, 480, 119]
+	      IconDisplay	      "Port number"
+	      BusOutputAsStruct	      off
+	    }
+	    Line {
+	      SrcBlock		      " SFunction "
+	      SrcPort		      1
+	      Points		      [0, 155]
+	      DstBlock		      " Demux "
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      " Demux "
+	      SrcPort		      1
+	      DstBlock		      " Terminator "
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "u1"
+	      SrcPort		      1
+	      Points		      [120, 0]
+	      DstBlock		      " SFunction "
+	      DstPort		      1
+	    }
+	    Line {
+	      Name		      "y"
+	      Labels		      [0, 0]
+	      SrcBlock		      " SFunction "
+	      SrcPort		      2
+	      DstBlock		      "y"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "u2"
+	      SrcPort		      1
+	      Points		      [120, 0]
+	      DstBlock		      " SFunction "
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "u3"
+	      SrcPort		      1
+	      Points		      [120, 0]
+	      DstBlock		      " SFunction "
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "u4"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      4
+	    }
+	    Line {
+	      SrcBlock		      "u5"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      5
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "uint8 combiner1"
+	  Ports			  [2, 1]
+	  Position		  [220, 150, 295, 190]
+	  ShowName		  off
+	  MinAlgLoopOccurrences	  off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  MaskHideContents	  off
+	  System {
+	    Name		    "uint8 combiner1"
+	    Location		    [154, 422, 865, 512]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "high-order"
+	      Position		      [25, 13, 55, 27]
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "low-order"
+	      Position		      [25, 48, 55, 62]
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Bitwise\nOperator"
+	      Ports		      [2, 1]
+	      Position		      [305, 26, 345, 64]
+	      ShowName		      off
+	      SourceBlock	      "simulink/Logic and Bit\nOperations/Bitw"
+"ise\nOperator"
+	      SourceType	      "Bitwise Operator"
+	      logicop		      "OR"
+	      UseBitMask	      off
+	      NumInputPorts	      "2"
+	      BitMask		      "bin2dec('11011001')"
+	      BitMaskRealWorld	      "Stored Integer"
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion"
+	      Position		      [85, 49, 135, 61]
+	      ShowName		      off
+	      OutDataTypeMode	      "uint16"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion1"
+	      Position		      [85, 14, 135, 26]
+	      ShowName		      off
+	      OutDataTypeMode	      "uint16"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Shift\nArithmetic"
+	      Ports		      [1, 1]
+	      Position		      [185, 46, 265, 64]
+	      ShowName		      off
+	      SourceBlock	      "simulink/Logic and Bit\nOperations/Shif"
+"t\nArithmetic"
+	      SourceType	      "Shift Arithmetic"
+	      ShowPortLabels	      "FromPortIcon"
+	      SystemSampleTime	      "-1"
+	      FunctionWithSeparateData off
+	      RTWMemSecFuncInitTerm   "Inherit from model"
+	      RTWMemSecFuncExecute    "Inherit from model"
+	      RTWMemSecDataConstants  "Inherit from model"
+	      RTWMemSecDataInternal   "Inherit from model"
+	      RTWMemSecDataParameters "Inherit from model"
+	      nBitShiftRight	      "-8"
+	      nBinPtShiftRight	      "0"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "combined"
+	      Position		      [370, 38, 400, 52]
+	      IconDisplay	      "Port number"
+	      BusOutputAsStruct	      off
+	    }
+	    Line {
+	      SrcBlock		      "low-order"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Bitwise\nOperator"
+	      SrcPort		      1
+	      DstBlock		      "combined"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "high-order"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Shift\nArithmetic"
+	      SrcPort		      1
+	      DstBlock		      "Bitwise\nOperator"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion"
+	      SrcPort		      1
+	      DstBlock		      "Shift\nArithmetic"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion1"
+	      SrcPort		      1
+	      Points		      [140, 0; 0, 15]
+	      DstBlock		      "Bitwise\nOperator"
+	      DstPort		      1
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "uint8 combiner2"
+	  Ports			  [2, 1]
+	  Position		  [220, 15, 295, 55]
+	  ShowName		  off
+	  MinAlgLoopOccurrences	  off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  MaskHideContents	  off
+	  System {
+	    Name		    "uint8 combiner2"
+	    Location		    [262, 392, 973, 505]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "high-order"
+	      Position		      [25, 13, 55, 27]
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "low-order"
+	      Position		      [25, 48, 55, 62]
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Bitwise\nOperator"
+	      Ports		      [2, 1]
+	      Position		      [305, 26, 345, 64]
+	      ShowName		      off
+	      SourceBlock	      "simulink/Logic and Bit\nOperations/Bitw"
+"ise\nOperator"
+	      SourceType	      "Bitwise Operator"
+	      logicop		      "OR"
+	      UseBitMask	      off
+	      NumInputPorts	      "2"
+	      BitMask		      "bin2dec('11011001')"
+	      BitMaskRealWorld	      "Stored Integer"
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion"
+	      Position		      [85, 49, 135, 61]
+	      ShowName		      off
+	      OutDataTypeMode	      "uint16"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion1"
+	      Position		      [85, 14, 135, 26]
+	      ShowName		      off
+	      OutDataTypeMode	      "uint16"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Shift\nArithmetic"
+	      Ports		      [1, 1]
+	      Position		      [185, 46, 265, 64]
+	      ShowName		      off
+	      SourceBlock	      "simulink/Logic and Bit\nOperations/Shif"
+"t\nArithmetic"
+	      SourceType	      "Shift Arithmetic"
+	      ShowPortLabels	      "FromPortIcon"
+	      SystemSampleTime	      "-1"
+	      FunctionWithSeparateData off
+	      RTWMemSecFuncInitTerm   "Inherit from model"
+	      RTWMemSecFuncExecute    "Inherit from model"
+	      RTWMemSecDataConstants  "Inherit from model"
+	      RTWMemSecDataInternal   "Inherit from model"
+	      RTWMemSecDataParameters "Inherit from model"
+	      nBitShiftRight	      "-8"
+	      nBinPtShiftRight	      "0"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "combined"
+	      Position		      [370, 38, 400, 52]
+	      IconDisplay	      "Port number"
+	      BusOutputAsStruct	      off
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion1"
+	      SrcPort		      1
+	      Points		      [140, 0; 0, 15]
+	      DstBlock		      "Bitwise\nOperator"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion"
+	      SrcPort		      1
+	      DstBlock		      "Shift\nArithmetic"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Shift\nArithmetic"
+	      SrcPort		      1
+	      DstBlock		      "Bitwise\nOperator"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "high-order"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Bitwise\nOperator"
+	      SrcPort		      1
+	      DstBlock		      "combined"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "low-order"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion"
+	      DstPort		      1
+	    }
+	  }
+	}
+	Line {
+	  SrcBlock		  "trigger"
+	  SrcPort		  1
+	  Points		  [50, 0]
+	  DstBlock		  "C-function Call"
+	  DstPort		  enable
+	}
+	Line {
+	  SrcBlock		  "myMux"
+	  SrcPort		  1
+	  Points		  [0, 25]
+	  DstBlock		  "C-function Call"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "uint8 combiner2"
+	  SrcPort		  1
+	  Points		  [55, 0]
+	  DstBlock		  "myMux"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Constant"
+	  SrcPort		  1
+	  DstBlock		  "uint8 combiner2"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "data_length"
+	  SrcPort		  1
+	  Points		  [95, 0; 0, -5]
+	  DstBlock		  "uint8 combiner2"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Extract Bits"
+	  SrcPort		  1
+	  Points		  [25, 0; 0, 30]
+	  DstBlock		  "myMux"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Extract Bits1"
+	  SrcPort		  1
+	  Points		  [35, 0; 0, 35; 20, 0]
+	  DstBlock		  "myMux"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "identifier"
+	  SrcPort		  1
+	  Points		  [85, 0]
+	  Branch {
+	    Points		    [0, -20]
+	    DstBlock		    "Extract Bits1"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, 25]
+	    DstBlock		    "Extract Bits"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  SrcBlock		  "uint8 combiner1"
+	  SrcPort		  1
+	  Points		  [55, 0]
+	  DstBlock		  "myMux"
+	  DstPort		  4
+	}
+	Line {
+	  SrcBlock		  "Constant3"
+	  SrcPort		  1
+	  DstBlock		  "uint8 combiner1"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Constant2"
+	  SrcPort		  1
+	  DstBlock		  "uint8 combiner1"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "data"
+	  SrcPort		  1
+	  Points		  [250, 0]
+	  DstBlock		  "myMux"
+	  DstPort		  5
+	}
       }
-      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
-      SourceType	      "C Function Call"
-      fctName		      "'send_sr_command'"
-      INPUT_SIZE	      "1"
-      INPUT1		      "int16"
-      INPUT2		      "uint8"
-      INPUT3		      "--"
-      OUTPUT_SIZE	      "1"
-      OUTPUT1		      "--"
-      SampleTime	      "-1"
-      InputType		      "[ 3 2 ]"
-      OutputType	      "[ ]"
-      FctDeclaration	      "extern void send_sr_command(int16_T u1, uint8_T"
-" u2);"
-      FctCall		      "send_sr_command(%u1, %u2);"
-      OrderingInOutPopup      "None"
+    }
+    Block {
+      BlockType		      SubSystem
+      Name		      "Drive Motor Enable Message1"
+      Ports		      [3]
+      Position		      [745, 453, 905, 517]
+      ShowPortLabels	      "SignalName"
+      MinAlgLoopOccurrences   off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      MaskHideContents	      off
+      MaskType		      "Send ECAN Message"
+      MaskDescription	      "This block allows for the transmission of a mes"
+"sage over the ECAN module."
+      MaskPromptString	      "Buffer|Identifier|Identifier from input|Ide|Rem"
+"ote|Data|Data length|Data from input|Sample time|Trigger on input"
+      MaskStyleString	      "edit,edit,checkbox,checkbox,checkbox,edit,edit,"
+"checkbox,edit,checkbox"
+      MaskTunableValueString  "off,off,off,off,off,off,off,off,off,off"
+      MaskCallbackString      "||mEnables = get_param(gcb,'MaskEnables');\nena"
+"bled = get_param(gcb, 'identifier_from_input');\nif strcmp(enabled,'on');\n  "
+"  replace_block([gcb '/identifier'],'Constant','Inport','noprompt');\n    mEn"
+"ables{2} = 'off';\n    set_param([gcb '/identifier'],'Port','1');\nelse\n    "
+"replace_block([gcb '/identifier'],'Inport','Constant','noprompt');\n    mEnab"
+"les{2} = 'on';\n    set_param([gcb '/identifier'],'Value','identifier');\nend"
+"\nset_param(gcb, 'MaskEnables', mEnables);\n|||data = eval(get_param(gcb, 'da"
+"ta'));\ny = size(data,1);\nx = size(data,2);\nif y > 1 && x > 1\n    error('D"
+"ata must be a 1-dimensional vector')\nelse\n    if or(x > 8, y > 8)\n        "
+"error('Data cannot be larger than 8-bytes');\n    end\nend\n\nset_param(gcb, "
+"'data_length', num2str(length(data)));|data_length = eval(get_param(gcb, 'dat"
+"a_length'));\nif or(data_length < 0, data_length > 9)\n    error('Data cannot"
+" be more than 8 bytes or less than 0.')\nend|mEnables = get_param(gcb,'MaskEn"
+"ables');\nenabled = get_param(gcb, 'data_from_input');\nif strcmp(enabled,'on"
+"');\n    replace_block([gcb '/data'],'Constant','Inport','noprompt');\n    re"
+"place_block([gcb '/data_length'],'Constant','Inport','noprompt');\n    mEnabl"
+"es{6} = 'off';\n    mEnables{7} = 'off';\n    port = 1;\n    if ~isempty(find"
+"_system(gcb,'LookUnderMasks','all','Name','identifier'))\n        port = 2;\n"
+"    end\n    set_param([gcb '/data'],'Port',num2str(port));\n    set_param([g"
+"cb '/data_length'],'Port',num2str(port+1));\nelse\n    replace_block([gcb '/d"
+"ata'],'Inport','Constant','noprompt');\n    replace_block([gcb '/data_length'"
+"],'Inport','Constant','noprompt');\n    mEnables{6} = 'on';\n    mEnables{7} "
+"= 'on';\n    set_param([gcb '/data'],'Value','data');\n    set_param([gcb '/d"
+"ata'],'OutDataTypeMode','uint8');\n    set_param([gcb '/data_length'],'Value'"
+",'data_length');\n    set_param([gcb '/data_length'],'OutDataTypeMode','uint8"
+"');\nend\nset_param(gcb, 'MaskEnables', mEnables);\n||mEnables = get_param(gc"
+"b,'MaskEnables');\nenabled = get_param(gcb, 'trigger_on_input');\nc_func_blk "
+"= find_system(gcb,'LookUnderMasks','all','FunctionName','dsPIC_C_function_Cal"
+"l');\nif strcmp(enabled,'on');\n    mEnables{9} = 'off';\n    %set_param(c_fu"
+"nc_blk,'SampleTime','-1');\n    replace_block([gcb '/trigger'],'Constant','In"
+"port','noprompt');\nelse\n    mEnables{9} = 'on';\n    %set_param(c_func_blk,"
+"'SampleTime','c_func_sample_time');\n    replace_block([gcb '/trigger'],'Inpo"
+"rt','Constant','noprompt');\n    %set_param([gcb '/trigger'],'Value','1');\ne"
+"nd\nset_param(gcb, 'MaskEnables', mEnables);"
+      MaskEnableString	      "on,on,on,on,on,off,off,on,off,on"
+      MaskVisibilityString    "on,on,on,on,on,on,off,on,on,on"
+      MaskToolTipString	      "on,on,on,on,on,on,on,on,on,on"
+      MaskVarAliasString      ",,,,,,,,,"
+      MaskVariables	      "buffer=@1;identifier=@2;identifier_from_input=&"
+"3;ide=@4;remote=@5;data=@6;data_length=@7;data_from_input=&8;c_func_sample_ti"
+"me=@9;trigger_on_input=@10;"
+      MaskDisplay	      "disp('ECAN1 TX');"
+      MaskIconFrame	      on
+      MaskIconOpaque	      off
+      MaskIconRotate	      "none"
+      MaskIconUnits	      "autoscale"
+      MaskValueString	      "0|hex2dec('300')|off|off|off|[hex2dec('11') hex"
+"2dec('12') hex2dec('13') hex2dec('14')]|4|on|1|on"
+      MaskTabNameString	      ",,,,,,,,,"
+      System {
+	Name			"Drive Motor Enable Message1"
+	Location		[51, 557, 694, 955]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Inport
+	  Name			  "trigger"
+	  Position		  [400, 132, 465, 148]
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "data"
+	  Position		  [35, 227, 100, 243]
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "data_length"
+	  Position		  [30, 42, 95, 58]
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "C-function Call"
+	  Ports			  [1, 0, 1]
+	  Position		  [485, 159, 560, 201]
+	  MinAlgLoopOccurrences	  off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  MaskHideContents	  off
+	  System {
+	    Name		    "C-function Call"
+	    Location		    [742, 195, 1106, 379]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "parameters"
+	      Position		      [25, 78, 55, 92]
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      EnablePort
+	      Name		      "Enable"
+	      Ports		      []
+	      Position		      [125, 15, 145, 35]
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "ECAN1 Transmit\n[ecanFunctions.c]"
+	      Tag		      "dsPIC_dsPIC_CFunctionCall"
+	      Ports		      [1]
+	      Position		      [80, 65, 205, 105]
+	      BackgroundColor	      "orange"
+	      List {
+		ListType		RTWdata
+		FctDeclaration		"extern void ecan1_transmit_matlab(uin"
+"t16_T* u1);"
+		FctCall			"ecan1_transmit_matlab(*%u1);"
+		fctName			"ecan1_transmit_matlab"
+		INPUT_SIZE		"8"
+		OUTPUT_SIZE		"1"
+		NBR_INPUT		"1"
+		NBR_OUTPUT		"0"
+	      }
+	      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+	      SourceType	      "C Function Call"
+	      fctName		      "'ecan1_transmit_matlab'"
+	      INPUT_SIZE	      "8"
+	      INPUT1		      "uint16"
+	      INPUT2		      "--"
+	      INPUT3		      "--"
+	      OUTPUT_SIZE	      "1"
+	      OUTPUT1		      "--"
+	      SampleTime	      "c_func_sample_time"
+	      InputType		      "[ 4 ]"
+	      OutputType	      "[ ]"
+	      FctDeclaration	      "extern void ecan1_transmit_matlab(uint1"
+"6_T* u1);"
+	      FctCall		      "ecan1_transmit_matlab(*%u1);"
+	      OrderingInOutPopup      "None"
+	    }
+	    Line {
+	      SrcBlock		      "parameters"
+	      SrcPort		      1
+	      DstBlock		      "ECAN1 Transmit\n[ecanFunctions.c]"
+	      DstPort		      1
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant"
+	  Position		  [60, 17, 100, 33]
+	  ShowName		  off
+	  Value			  "buffer"
+	  OutDataTypeMode	  "uint8"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant2"
+	  Position		  [60, 152, 100, 168]
+	  ShowName		  off
+	  Value			  "ide"
+	  OutDataTypeMode	  "uint8"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant3"
+	  Position		  [60, 172, 100, 188]
+	  ShowName		  off
+	  Value			  "remote"
+	  OutDataTypeMode	  "uint8"
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Extract Bits"
+	  Ports			  [1, 1]
+	  Position		  [220, 107, 295, 143]
+	  ShowName		  off
+	  SourceBlock		  "simulink/Logic and Bit\nOperations/Extract "
+"Bits"
+	  SourceType		  "Extract Bits"
+	  ShowPortLabels	  "FromPortIcon"
+	  SystemSampleTime	  "-1"
+	  FunctionWithSeparateData off
+	  RTWMemSecFuncInitTerm	  "Inherit from model"
+	  RTWMemSecFuncExecute	  "Inherit from model"
+	  RTWMemSecDataConstants  "Inherit from model"
+	  RTWMemSecDataInternal	  "Inherit from model"
+	  RTWMemSecDataParameters "Inherit from model"
+	  bitsToExtract		  "Upper half"
+	  numBits		  "8"
+	  bitIdxRange		  "[0 7]"
+	  outScalingMode	  "Treat bit field as an integer"
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Extract Bits1"
+	  Ports			  [1, 1]
+	  Position		  [220, 63, 295, 97]
+	  ShowName		  off
+	  SourceBlock		  "simulink/Logic and Bit\nOperations/Extract "
+"Bits"
+	  SourceType		  "Extract Bits"
+	  ShowPortLabels	  "FromPortIcon"
+	  SystemSampleTime	  "-1"
+	  FunctionWithSeparateData off
+	  RTWMemSecFuncInitTerm	  "Inherit from model"
+	  RTWMemSecFuncExecute	  "Inherit from model"
+	  RTWMemSecDataConstants  "Inherit from model"
+	  RTWMemSecDataInternal	  "Inherit from model"
+	  RTWMemSecDataParameters "Inherit from model"
+	  bitsToExtract		  "Lower half"
+	  numBits		  "8"
+	  bitIdxRange		  "[0 7]"
+	  outScalingMode	  "Preserve fixed-point scaling"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "identifier"
+	  Position		  [25, 92, 100, 108]
+	  Value			  "identifier"
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "myMux"
+	  Ports			  [5, 1]
+	  Position		  [370, 74, 375, 236]
+	  BackgroundColor	  "black"
+	  ShowName		  off
+	  MinAlgLoopOccurrences	  off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  MaskHideContents	  off
+	  MaskType		  "Stateflow"
+	  MaskDescription	  "Embedded MATLAB block"
+	  MaskDisplay		  "disp('myMux');"
+	  MaskSelfModifiable	  on
+	  MaskIconFrame		  on
+	  MaskIconOpaque	  off
+	  MaskIconRotate	  "none"
+	  MaskIconUnits		  "autoscale"
+	  System {
+	    Name		    "myMux"
+	    Location		    [257, 457, 812, 717]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "u1"
+	      Position		      [20, 101, 40, 119]
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "u2"
+	      Position		      [20, 136, 40, 154]
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "u3"
+	      Position		      [20, 171, 40, 189]
+	      Port		      "3"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "u4"
+	      Position		      [20, 206, 40, 224]
+	      Port		      "4"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "u5"
+	      Position		      [20, 246, 40, 264]
+	      Port		      "5"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Demux
+	      Name		      " Demux "
+	      Ports		      [1, 1]
+	      Position		      [270, 285, 320, 325]
+	      Outputs		      "1"
+	    }
+	    Block {
+	      BlockType		      "S-Function"
+	      Name		      " SFunction "
+	      Tag		      "Stateflow S-Function RC_control 2"
+	      Ports		      [5, 2]
+	      Position		      [180, 105, 230, 285]
+	      FunctionName	      "sf_sfun"
+	      PortCounts	      "[5 2]"
+	      Port {
+		PortNumber		2
+		Name			"y"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	    }
+	    Block {
+	      BlockType		      Terminator
+	      Name		      " Terminator "
+	      Position		      [460, 296, 480, 314]
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "y"
+	      Position		      [460, 101, 480, 119]
+	      IconDisplay	      "Port number"
+	      BusOutputAsStruct	      off
+	    }
+	    Line {
+	      SrcBlock		      "u5"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      5
+	    }
+	    Line {
+	      SrcBlock		      "u4"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      4
+	    }
+	    Line {
+	      SrcBlock		      "u3"
+	      SrcPort		      1
+	      Points		      [120, 0]
+	      DstBlock		      " SFunction "
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "u2"
+	      SrcPort		      1
+	      Points		      [120, 0]
+	      DstBlock		      " SFunction "
+	      DstPort		      2
+	    }
+	    Line {
+	      Name		      "y"
+	      Labels		      [0, 0]
+	      SrcBlock		      " SFunction "
+	      SrcPort		      2
+	      DstBlock		      "y"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "u1"
+	      SrcPort		      1
+	      Points		      [120, 0]
+	      DstBlock		      " SFunction "
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      " Demux "
+	      SrcPort		      1
+	      DstBlock		      " Terminator "
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      " SFunction "
+	      SrcPort		      1
+	      Points		      [0, 155]
+	      DstBlock		      " Demux "
+	      DstPort		      1
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "uint8 combiner1"
+	  Ports			  [2, 1]
+	  Position		  [220, 150, 295, 190]
+	  ShowName		  off
+	  MinAlgLoopOccurrences	  off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  MaskHideContents	  off
+	  System {
+	    Name		    "uint8 combiner1"
+	    Location		    [154, 422, 865, 512]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "high-order"
+	      Position		      [25, 13, 55, 27]
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "low-order"
+	      Position		      [25, 48, 55, 62]
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Bitwise\nOperator"
+	      Ports		      [2, 1]
+	      Position		      [305, 26, 345, 64]
+	      ShowName		      off
+	      SourceBlock	      "simulink/Logic and Bit\nOperations/Bitw"
+"ise\nOperator"
+	      SourceType	      "Bitwise Operator"
+	      logicop		      "OR"
+	      UseBitMask	      off
+	      NumInputPorts	      "2"
+	      BitMask		      "bin2dec('11011001')"
+	      BitMaskRealWorld	      "Stored Integer"
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion"
+	      Position		      [85, 49, 135, 61]
+	      ShowName		      off
+	      OutDataTypeMode	      "uint16"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion1"
+	      Position		      [85, 14, 135, 26]
+	      ShowName		      off
+	      OutDataTypeMode	      "uint16"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Shift\nArithmetic"
+	      Ports		      [1, 1]
+	      Position		      [185, 46, 265, 64]
+	      ShowName		      off
+	      SourceBlock	      "simulink/Logic and Bit\nOperations/Shif"
+"t\nArithmetic"
+	      SourceType	      "Shift Arithmetic"
+	      ShowPortLabels	      "FromPortIcon"
+	      SystemSampleTime	      "-1"
+	      FunctionWithSeparateData off
+	      RTWMemSecFuncInitTerm   "Inherit from model"
+	      RTWMemSecFuncExecute    "Inherit from model"
+	      RTWMemSecDataConstants  "Inherit from model"
+	      RTWMemSecDataInternal   "Inherit from model"
+	      RTWMemSecDataParameters "Inherit from model"
+	      nBitShiftRight	      "-8"
+	      nBinPtShiftRight	      "0"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "combined"
+	      Position		      [370, 38, 400, 52]
+	      IconDisplay	      "Port number"
+	      BusOutputAsStruct	      off
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion1"
+	      SrcPort		      1
+	      Points		      [140, 0; 0, 15]
+	      DstBlock		      "Bitwise\nOperator"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion"
+	      SrcPort		      1
+	      DstBlock		      "Shift\nArithmetic"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Shift\nArithmetic"
+	      SrcPort		      1
+	      DstBlock		      "Bitwise\nOperator"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "high-order"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Bitwise\nOperator"
+	      SrcPort		      1
+	      DstBlock		      "combined"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "low-order"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion"
+	      DstPort		      1
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "uint8 combiner2"
+	  Ports			  [2, 1]
+	  Position		  [220, 15, 295, 55]
+	  ShowName		  off
+	  MinAlgLoopOccurrences	  off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  MaskHideContents	  off
+	  System {
+	    Name		    "uint8 combiner2"
+	    Location		    [262, 392, 973, 505]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "high-order"
+	      Position		      [25, 13, 55, 27]
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "low-order"
+	      Position		      [25, 48, 55, 62]
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Bitwise\nOperator"
+	      Ports		      [2, 1]
+	      Position		      [305, 26, 345, 64]
+	      ShowName		      off
+	      SourceBlock	      "simulink/Logic and Bit\nOperations/Bitw"
+"ise\nOperator"
+	      SourceType	      "Bitwise Operator"
+	      logicop		      "OR"
+	      UseBitMask	      off
+	      NumInputPorts	      "2"
+	      BitMask		      "bin2dec('11011001')"
+	      BitMaskRealWorld	      "Stored Integer"
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion"
+	      Position		      [85, 49, 135, 61]
+	      ShowName		      off
+	      OutDataTypeMode	      "uint16"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion1"
+	      Position		      [85, 14, 135, 26]
+	      ShowName		      off
+	      OutDataTypeMode	      "uint16"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Shift\nArithmetic"
+	      Ports		      [1, 1]
+	      Position		      [185, 46, 265, 64]
+	      ShowName		      off
+	      SourceBlock	      "simulink/Logic and Bit\nOperations/Shif"
+"t\nArithmetic"
+	      SourceType	      "Shift Arithmetic"
+	      ShowPortLabels	      "FromPortIcon"
+	      SystemSampleTime	      "-1"
+	      FunctionWithSeparateData off
+	      RTWMemSecFuncInitTerm   "Inherit from model"
+	      RTWMemSecFuncExecute    "Inherit from model"
+	      RTWMemSecDataConstants  "Inherit from model"
+	      RTWMemSecDataInternal   "Inherit from model"
+	      RTWMemSecDataParameters "Inherit from model"
+	      nBitShiftRight	      "-8"
+	      nBinPtShiftRight	      "0"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "combined"
+	      Position		      [370, 38, 400, 52]
+	      IconDisplay	      "Port number"
+	      BusOutputAsStruct	      off
+	    }
+	    Line {
+	      SrcBlock		      "low-order"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Bitwise\nOperator"
+	      SrcPort		      1
+	      DstBlock		      "combined"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "high-order"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Shift\nArithmetic"
+	      SrcPort		      1
+	      DstBlock		      "Bitwise\nOperator"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion"
+	      SrcPort		      1
+	      DstBlock		      "Shift\nArithmetic"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion1"
+	      SrcPort		      1
+	      Points		      [140, 0; 0, 15]
+	      DstBlock		      "Bitwise\nOperator"
+	      DstPort		      1
+	    }
+	  }
+	}
+	Line {
+	  SrcBlock		  "data"
+	  SrcPort		  1
+	  Points		  [250, 0]
+	  DstBlock		  "myMux"
+	  DstPort		  5
+	}
+	Line {
+	  SrcBlock		  "Constant2"
+	  SrcPort		  1
+	  DstBlock		  "uint8 combiner1"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Constant3"
+	  SrcPort		  1
+	  DstBlock		  "uint8 combiner1"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "uint8 combiner1"
+	  SrcPort		  1
+	  Points		  [55, 0]
+	  DstBlock		  "myMux"
+	  DstPort		  4
+	}
+	Line {
+	  SrcBlock		  "identifier"
+	  SrcPort		  1
+	  Points		  [85, 0]
+	  Branch {
+	    Points		    [0, 25]
+	    DstBlock		    "Extract Bits"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, -20]
+	    DstBlock		    "Extract Bits1"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  SrcBlock		  "Extract Bits1"
+	  SrcPort		  1
+	  Points		  [35, 0; 0, 35; 20, 0]
+	  DstBlock		  "myMux"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Extract Bits"
+	  SrcPort		  1
+	  Points		  [25, 0; 0, 30]
+	  DstBlock		  "myMux"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "data_length"
+	  SrcPort		  1
+	  Points		  [95, 0; 0, -5]
+	  DstBlock		  "uint8 combiner2"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Constant"
+	  SrcPort		  1
+	  DstBlock		  "uint8 combiner2"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "uint8 combiner2"
+	  SrcPort		  1
+	  Points		  [55, 0]
+	  DstBlock		  "myMux"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "myMux"
+	  SrcPort		  1
+	  Points		  [0, 25]
+	  DstBlock		  "C-function Call"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "trigger"
+	  SrcPort		  1
+	  Points		  [50, 0]
+	  DstBlock		  "C-function Call"
+	  DstPort		  enable
+	}
+      }
     }
     Block {
       BlockType		      Reference
@@ -1011,18 +3228,18 @@ Model {
       fcyDesired_33f	      "40000000"
       tmr1		      "[1  39999  0]"
       tmr1Info		      "Time Step : 0.001  ;   Error : 0%  PR1=39999"
-      tmr2345		      "[8  0  0  0  0  0  0  0]"
+      tmr2345		      "[8  1  0  0  0  0  0  0]"
       tmr2345cfg	      "[-1 -1 -1 -1 -1 -1 -1 -1]"
       IOautoConf	      on
       typePort		      "[ 0   0   0   0   0   0   0   0   0   0   0   0"
 "   0   0   0   0   8   0   0   0   0   0   0   0   0   0   0   0   0   0   0 "
 "  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   7  "
-" 0   0   0  10   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   "
-"0   0   0   0   0   0   0   0   0   0   0   0   0   0   9   4   0   0   0   0"
-"   0   0   0   0   0   0   0   0   0   0   9   0   0   0   0   0   0   0   0 "
+" 0   0   0  10   0   0   6   6   0   0   0   0   0   0   0   0   0   0   0   "
+"0   0   0   0   0   0   0   0   0   0   0   0   0   0   9   0   0   0   0   0"
+"   0   0   0   0   0   0   0   0   0   0   9   0   0   0   0   0  10   0   0 "
 "  0   0   0   0 ]"
-      TRIS		      "[ 65535  65535  65535  65501  65535  65535  655"
-"35 ]"
+      TRIS		      "[ 65535  65535  65535  65501  65535  65535  650"
+"23 ]"
       ADPCFG		      "0"
       MasterBusyPort	      "None"
       MasterOverloadPort      "None"
@@ -1032,6 +3249,8 @@ Model {
       FPBOR		      "<empty>"
       PWRT		      "disable"
       MCLR		      "<empty>"
+      ICD		      "ICS_NONE"
+      JTAGEN		      "JTAGEN_OFF"
       PowerSave		      off
       OverrideFcy	      off
       NewFcy		      "1e6"
@@ -1039,11 +3258,31 @@ Model {
 "5  65535]"
     }
     Block {
+      BlockType		      Probe
+      Name		      "Message Length"
+      Ports		      [1, 1]
+      Position		      [665, 575, 720, 595]
+      ShowName		      off
+      ProbeSampleTime	      off
+      ProbeComplexSignal      off
+      ProbeWidthDataType      "uint8"
+    }
+    Block {
+      BlockType		      Probe
+      Name		      "Message Length1"
+      Ports		      [1, 1]
+      Position		      [665, 495, 720, 515]
+      ShowName		      off
+      ProbeSampleTime	      off
+      ProbeComplexSignal      off
+      ProbeWidthDataType      "uint8"
+    }
+    Block {
       BlockType		      Reference
       Name		      "Port Hall"
       Tag		      "dsPIC_Digital_Input"
       Ports		      [0, 1]
-      Position		      [15, 165, 130, 205]
+      Position		      [50, 165, 165, 205]
       SourceBlock	      "dsPICdrivers/Digital I//O/Digital Input"
       SourceType	      ""
       PORT		      "F"
@@ -1055,14 +3294,14 @@ Model {
       BlockType		      SubSystem
       Name		      "Propulsion Control"
       Ports		      [2, 4]
-      Position		      [435, 457, 545, 543]
+      Position		      [435, 472, 545, 558]
       MinAlgLoopOccurrences   off
       RTWSystemCode	      "Auto"
       FunctionWithSeparateData off
       MaskHideContents	      off
       System {
 	Name			"Propulsion Control"
-	Location		[377, 679, 1167, 878]
+	Location		[170, 610, 1137, 952]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -1079,22 +3318,308 @@ Model {
 	  BlockType		  Inport
 	  Name			  "RC Throttle"
 	  Position		  [25, 38, 55, 52]
+	  BackgroundColor	  "darkGreen"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "RC Rudder"
-	  Position		  [320, 133, 350, 147]
+	  Position		  [25, 133, 55, 147]
+	  BackgroundColor	  "darkGreen"
 	  Port			  "2"
 	  IconDisplay		  "Port number"
 	}
 	Block {
-	  BlockType		  Bias
-	  Name			  "Bias"
-	  Position		  [160, 30, 200, 60]
-	  ShowName		  off
-	  Bias			  "-7500"
-	  SaturateOnIntegerOverflow off
+	  BlockType		  SubSystem
+	  Name			  "Build CAN CC message"
+	  Ports			  [1, 1]
+	  Position		  [470, 9, 530, 31]
+	  MinAlgLoopOccurrences	  off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  MaskHideContents	  off
+	  System {
+	    Name		    "Build CAN CC message"
+	    Location		    [465, 432, 1189, 610]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "CC"
+	      Position		      [15, 98, 45, 112]
+	      BackgroundColor	      "darkGreen"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant"
+	      Position		      [130, 20, 160, 40]
+	      BackgroundColor	      "gray"
+	      ShowName		      off
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant3"
+	      Position		      [130, 50, 160, 70]
+	      BackgroundColor	      "gray"
+	      ShowName		      off
+	      Value		      "5"
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Extract Bits"
+	      Ports		      [1, 1]
+	      Position		      [85, 78, 160, 102]
+	      ShowName		      off
+	      SourceBlock	      "simulink/Logic and Bit\nOperations/Extr"
+"act Bits"
+	      SourceType	      "Extract Bits"
+	      ShowPortLabels	      "FromPortIcon"
+	      SystemSampleTime	      "-1"
+	      FunctionWithSeparateData off
+	      RTWMemSecFuncInitTerm   "Inherit from model"
+	      RTWMemSecFuncExecute    "Inherit from model"
+	      RTWMemSecDataConstants  "Inherit from model"
+	      RTWMemSecDataInternal   "Inherit from model"
+	      RTWMemSecDataParameters "Inherit from model"
+	      bitsToExtract	      "Upper half"
+	      numBits		      "8"
+	      bitIdxRange	      "[0 7]"
+	      outScalingMode	      "Preserve fixed-point scaling"
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Extract Bits1"
+	      Ports		      [1, 1]
+	      Position		      [85, 108, 160, 132]
+	      ShowName		      off
+	      SourceBlock	      "simulink/Logic and Bit\nOperations/Extr"
+"act Bits"
+	      SourceType	      "Extract Bits"
+	      ShowPortLabels	      "FromPortIcon"
+	      SystemSampleTime	      "-1"
+	      FunctionWithSeparateData off
+	      RTWMemSecFuncInitTerm   "Inherit from model"
+	      RTWMemSecFuncExecute    "Inherit from model"
+	      RTWMemSecDataConstants  "Inherit from model"
+	      RTWMemSecDataInternal   "Inherit from model"
+	      RTWMemSecDataParameters "Inherit from model"
+	      bitsToExtract	      "Lower half"
+	      numBits		      "8"
+	      bitIdxRange	      "[0 7]"
+	      outScalingMode	      "Preserve fixed-point scaling"
+	    }
+	    Block {
+	      BlockType		      SubSystem
+	      Name		      "myMux"
+	      Ports		      [4, 1]
+	      Position		      [185, 17, 190, 133]
+	      BackgroundColor	      "black"
+	      ShowName		      off
+	      MinAlgLoopOccurrences   off
+	      RTWSystemCode	      "Auto"
+	      FunctionWithSeparateData off
+	      MaskHideContents	      off
+	      MaskType		      "Stateflow"
+	      MaskDescription	      "Embedded MATLAB block"
+	      MaskDisplay	      "disp('myMux');"
+	      MaskSelfModifiable      on
+	      MaskIconFrame	      on
+	      MaskIconOpaque	      off
+	      MaskIconRotate	      "none"
+	      MaskIconUnits	      "autoscale"
+	      System {
+		Name			"myMux"
+		Location		[257, 457, 812, 717]
+		Open			off
+		ModelBrowserVisibility	off
+		ModelBrowserWidth	200
+		ScreenColor		"white"
+		PaperOrientation	"landscape"
+		PaperPositionMode	"auto"
+		PaperType		"usletter"
+		PaperUnits		"inches"
+		TiledPaperMargins	"[0.500000, 0.500000, 0.500000, 0.5000"
+"00]"
+		TiledPageScale		1
+		ShowPageBoundaries	off
+		ZoomFactor		"100"
+		Block {
+		  BlockType		  Inport
+		  Name			  "u1"
+		  Position		  [20, 101, 40, 119]
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "u2"
+		  Position		  [20, 136, 40, 154]
+		  Port			  "2"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "u3"
+		  Position		  [20, 171, 40, 189]
+		  Port			  "3"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "u4"
+		  Position		  [20, 206, 40, 224]
+		  Port			  "4"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Demux
+		  Name			  " Demux "
+		  Ports			  [1, 1]
+		  Position		  [270, 290, 320, 330]
+		  Outputs		  "1"
+		}
+		Block {
+		  BlockType		  "S-Function"
+		  Name			  " SFunction "
+		  Tag			  "Stateflow S-Function RC_control 1"
+		  Ports			  [4, 2]
+		  Position		  [180, 107, 230, 288]
+		  FunctionName		  "sf_sfun"
+		  PortCounts		  "[4 2]"
+		  Port {
+		    PortNumber		    2
+		    Name		    "y"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		  }
+		}
+		Block {
+		  BlockType		  Terminator
+		  Name			  " Terminator "
+		  Position		  [460, 301, 480, 319]
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "y"
+		  Position		  [460, 101, 480, 119]
+		  IconDisplay		  "Port number"
+		  BusOutputAsStruct	  off
+		}
+		Line {
+		  SrcBlock		  " SFunction "
+		  SrcPort		  1
+		  Points		  [0, 155]
+		  DstBlock		  " Demux "
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  " Demux "
+		  SrcPort		  1
+		  DstBlock		  " Terminator "
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "u1"
+		  SrcPort		  1
+		  Points		  [120, 0]
+		  DstBlock		  " SFunction "
+		  DstPort		  1
+		}
+		Line {
+		  Name			  "y"
+		  Labels		  [0, 0]
+		  SrcBlock		  " SFunction "
+		  SrcPort		  2
+		  DstBlock		  "y"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "u2"
+		  SrcPort		  1
+		  Points		  [120, 0]
+		  DstBlock		  " SFunction "
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "u3"
+		  SrcPort		  1
+		  Points		  [120, 0]
+		  DstBlock		  " SFunction "
+		  DstPort		  3
+		}
+		Line {
+		  SrcBlock		  "u4"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  4
+		}
+	      }
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "msg"
+	      Position		      [215, 68, 245, 82]
+	      BackgroundColor	      "yellow"
+	      IconDisplay	      "Port number"
+	      BusOutputAsStruct	      off
+	    }
+	    Line {
+	      SrcBlock		      "Constant"
+	      SrcPort		      1
+	      DstBlock		      "myMux"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Constant3"
+	      SrcPort		      1
+	      DstBlock		      "myMux"
+	      DstPort		      2
+	    }
+	    Line {
+	      Labels		      [2, 0]
+	      SrcBlock		      "CC"
+	      SrcPort		      1
+	      Points		      [10, 0; 0, 0]
+	      Branch {
+		Points			[0, 15]
+		DstBlock		"Extract Bits1"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, -15]
+		DstBlock		"Extract Bits"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "Extract Bits"
+	      SrcPort		      1
+	      DstBlock		      "myMux"
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "Extract Bits1"
+	      SrcPort		      1
+	      DstBlock		      "myMux"
+	      DstPort		      4
+	    }
+	    Line {
+	      SrcBlock		      "myMux"
+	      SrcPort		      1
+	      DstBlock		      "msg"
+	      DstPort		      1
+	    }
+	  }
 	}
 	Block {
 	  BlockType		  Reference
@@ -1120,17 +3645,19 @@ Model {
 	Block {
 	  BlockType		  Constant
 	  Name			  "Constant1"
-	  Position		  [545, 75, 575, 105]
+	  Position		  [380, 86, 470, 104]
+	  BackgroundColor	  "gray"
 	  ShowName		  off
-	  Value			  "0"
+	  Value			  "[0 0 0 0 64 0]"
 	  OutDataTypeMode	  "Inherit via back propagation"
 	}
 	Block {
 	  BlockType		  Constant
 	  Name			  "Constant2"
-	  Position		  [545, 115, 575, 145]
+	  Position		  [380, 121, 470, 139]
+	  BackgroundColor	  "gray"
 	  ShowName		  off
-	  Value			  "3"
+	  Value			  "[0 0 0 0 32 0]"
 	  OutDataTypeMode	  "Inherit via back propagation"
 	}
 	Block {
@@ -1146,7 +3673,7 @@ Model {
 	  BlockType		  Reference
 	  Name			  "Detect\nChange"
 	  Ports			  [1, 1]
-	  Position		  [555, 40, 615, 70]
+	  Position		  [440, 45, 495, 65]
 	  ShowName		  off
 	  SourceBlock		  "simulink/Logic and Bit\nOperations/Detect\n"
 "Change"
@@ -1165,7 +3692,7 @@ Model {
 	  BlockType		  SubSystem
 	  Name			  "Detect to/from zero"
 	  Ports			  [1, 2]
-	  Position		  [385, 109, 475, 171]
+	  Position		  [280, 109, 370, 171]
 	  MinAlgLoopOccurrences	  off
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
@@ -1190,6 +3717,7 @@ Model {
 	      Name		      "hightime"
 	      Position		      [25, 25, 55, 40]
 	      Orientation	      "down"
+	      BackgroundColor	      "darkGreen"
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
@@ -1319,6 +3847,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "now zero"
 	      Position		      [405, 83, 435, 97]
+	      BackgroundColor	      "yellow"
 	      IconDisplay	      "Port number"
 	      BusOutputAsStruct	      off
 	    }
@@ -1326,6 +3855,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "changed"
 	      Position		      [405, 138, 435, 152]
+	      BackgroundColor	      "yellow"
 	      Port		      "2"
 	      IconDisplay	      "Port number"
 	      BusOutputAsStruct	      off
@@ -1419,20 +3949,10 @@ Model {
 	  }
 	}
 	Block {
-	  BlockType		  Gain
-	  Name			  "Gain1"
-	  Position		  [225, 30, 255, 60]
-	  ShowName		  off
-	  Gain			  "1/5"
-	  ParameterDataTypeMode	  "Inherit via internal rule"
-	  OutDataTypeMode	  "Inherit via back propagation"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
 	  BlockType		  Logic
 	  Name			  "Logical\nOperator4"
 	  Ports			  [1, 1]
-	  Position		  [170, 70, 200, 90]
+	  Position		  [150, 70, 180, 90]
 	  ShowName		  off
 	  Operator		  "NOT"
 	  AllPortsSameDT	  off
@@ -1442,71 +3962,163 @@ Model {
 	  BlockType		  Logic
 	  Name			  "Logical\nOperator6"
 	  Ports			  [2, 1]
-	  Position		  [670, 127, 700, 163]
+	  Position		  [565, 127, 595, 163]
 	  ShowName		  off
 	  AllPortsSameDT	  off
 	  OutDataTypeMode	  "Specify via dialog"
 	}
 	Block {
+	  BlockType		  SubSystem
+	  Name			  "Map throttle into -1024..1023"
+	  Ports			  [1, 1]
+	  Position		  [205, 28, 320, 62]
+	  MinAlgLoopOccurrences	  off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  MaskHideContents	  off
+	  System {
+	    Name		    "Map throttle into -1024..1023"
+	    Location		    [94, 693, 504, 781]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "in"
+	      Position		      [25, 38, 55, 52]
+	      BackgroundColor	      "darkGreen"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Bias
+	      Name		      "Bias"
+	      Position		      [80, 30, 120, 60]
+	      ShowName		      off
+	      Bias		      "-7500"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Gain
+	      Name		      "Gain1"
+	      Position		      [145, 30, 175, 60]
+	      ShowName		      off
+	      Gain		      "1/5"
+	      ParameterDataTypeMode   "Inherit via internal rule"
+	      OutDataTypeMode	      "Inherit via back propagation"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Saturate
+	      Name		      "Saturation2"
+	      Position		      [195, 30, 215, 60]
+	      ShowName		      off
+	      UpperLimit	      "1023"
+	      LowerLimit	      "-1023"
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Weighted\nMoving Average"
+	      Ports		      [1, 1]
+	      Position		      [260, 27, 330, 63]
+	      ShowName		      off
+	      SourceBlock	      "simulink/Discrete/Weighted\nMoving Aver"
+"age"
+	      SourceType	      "Weighted Moving Average"
+	      mgainval		      "[.3 .4 .3]"
+	      vinit		      "0.0"
+	      samptime		      ".01"
+	      GainDataTypeScalingMode "Inherit via internal rule"
+	      GainDataType	      "uint(16)"
+	      MatRadixGroup	      "Best Precision: Matrix-wise"
+	      GainScaling	      "2^-10"
+	      OutputDataTypeScalingMode	"Inherit via back propagation"
+	      OutDataType	      "sfix(16)"
+	      OutScaling	      "2^-10"
+	      LockScale		      off
+	      RndMeth		      "Floor"
+	      DoSatur		      off
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "out"
+	      Position		      [355, 38, 385, 52]
+	      BackgroundColor	      "yellow"
+	      IconDisplay	      "Port number"
+	      BusOutputAsStruct	      off
+	    }
+	    Line {
+	      SrcBlock		      "Bias"
+	      SrcPort		      1
+	      DstBlock		      "Gain1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Gain1"
+	      SrcPort		      1
+	      DstBlock		      "Saturation2"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Saturation2"
+	      SrcPort		      1
+	      DstBlock		      "Weighted\nMoving Average"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "in"
+	      SrcPort		      1
+	      DstBlock		      "Bias"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Weighted\nMoving Average"
+	      SrcPort		      1
+	      DstBlock		      "out"
+	      DstPort		      1
+	    }
+	  }
+	}
+	Block {
 	  BlockType		  Product
 	  Name			  "Product"
 	  Ports			  [2, 1]
-	  Position		  [465, 37, 495, 68]
+	  Position		  [360, 37, 390, 68]
 	  CollapseMode		  "All dimensions"
 	  InputSameDT		  off
 	  OutDataTypeMode	  "Inherit via internal rule"
 	  SaturateOnIntegerOverflow off
 	}
 	Block {
-	  BlockType		  Saturate
-	  Name			  "Saturation2"
-	  Position		  [275, 30, 295, 60]
-	  ShowName		  off
-	  UpperLimit		  "1023"
-	  LowerLimit		  "-1023"
-	}
-	Block {
 	  BlockType		  Switch
 	  Name			  "Switch1"
-	  Position		  [605, 100, 635, 130]
+	  Position		  [500, 100, 530, 130]
 	  ShowName		  off
 	  Criteria		  "u2 ~= 0"
 	  InputSameDT		  off
 	  SaturateOnIntegerOverflow off
 	}
 	Block {
-	  BlockType		  Reference
-	  Name			  "Weighted\nMoving Average"
-	  Ports			  [1, 1]
-	  Position		  [370, 27, 440, 63]
-	  ShowName		  off
-	  SourceBlock		  "simulink/Discrete/Weighted\nMoving Average"
-	  SourceType		  "Weighted Moving Average"
-	  mgainval		  "[.3 .4 .3]"
-	  vinit			  "0.0"
-	  samptime		  ".01"
-	  GainDataTypeScalingMode "Inherit via internal rule"
-	  GainDataType		  "uint(16)"
-	  MatRadixGroup		  "Best Precision: Matrix-wise"
-	  GainScaling		  "2^-10"
-	  OutputDataTypeScalingMode "Inherit via back propagation"
-	  OutDataType		  "sfix(16)"
-	  OutScaling		  "2^-10"
-	  LockScale		  off
-	  RndMeth		  "Floor"
-	  DoSatur		  off
-	}
-	Block {
 	  BlockType		  Outport
 	  Name			  "CC"
-	  Position		  [720, 13, 750, 27]
+	  Position		  [615, 13, 645, 27]
+	  BackgroundColor	  "yellow"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
 	}
 	Block {
 	  BlockType		  Outport
 	  Name			  "CC_en"
-	  Position		  [720, 48, 750, 62]
+	  Position		  [615, 48, 645, 62]
+	  BackgroundColor	  "yellow"
 	  Port			  "2"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -1514,7 +4126,8 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "SR"
-	  Position		  [720, 88, 750, 102]
+	  Position		  [615, 93, 645, 107]
+	  BackgroundColor	  "yellow"
 	  Port			  "3"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -1522,7 +4135,8 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "SR_en"
-	  Position		  [720, 138, 750, 152]
+	  Position		  [615, 138, 645, 152]
+	  BackgroundColor	  "yellow"
 	  Port			  "4"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -1530,25 +4144,7 @@ Model {
 	Line {
 	  SrcBlock		  "Data Type Conversion1"
 	  SrcPort		  1
-	  DstBlock		  "Bias"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Bias"
-	  SrcPort		  1
-	  DstBlock		  "Gain1"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Gain1"
-	  SrcPort		  1
-	  DstBlock		  "Saturation2"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Saturation2"
-	  SrcPort		  1
-	  DstBlock		  "Weighted\nMoving Average"
+	  DstBlock		  "Map throttle into -1024..1023"
 	  DstPort		  1
 	}
 	Line {
@@ -1562,17 +4158,17 @@ Model {
 	  SrcPort		  1
 	  Points		  [5, 0]
 	  Branch {
-	    Points		    [0, -35]
-	    DstBlock		    "CC"
+	    DstBlock		    "Detect\nChange"
 	    DstPort		    1
 	  }
 	  Branch {
-	    DstBlock		    "Detect\nChange"
+	    Points		    [0, -35]
+	    DstBlock		    "Build CAN CC message"
 	    DstPort		    1
 	  }
 	}
 	Line {
-	  SrcBlock		  "Weighted\nMoving Average"
+	  SrcBlock		  "Map throttle into -1024..1023"
 	  SrcPort		  1
 	  DstBlock		  "Product"
 	  DstPort		  1
@@ -1580,35 +4176,35 @@ Model {
 	Line {
 	  SrcBlock		  "Logical\nOperator4"
 	  SrcPort		  1
-	  Points		  [240, 0; 0, -20]
+	  Points		  [155, 0; 0, -20]
 	  DstBlock		  "Product"
 	  DstPort		  2
 	}
 	Line {
 	  SrcBlock		  "Detect\nChange"
 	  SrcPort		  1
-	  Points		  [30, 0]
+	  Points		  [40, 0]
 	  Branch {
-	    Points		    [0, 80]
-	    DstBlock		    "Logical\nOperator6"
+	    DstBlock		    "CC_en"
 	    DstPort		    1
 	  }
 	  Branch {
-	    DstBlock		    "CC_en"
+	    Points		    [0, 80]
+	    DstBlock		    "Logical\nOperator6"
 	    DstPort		    1
 	  }
 	}
 	Line {
 	  SrcBlock		  "Constant1"
 	  SrcPort		  1
-	  Points		  [5, 0; 0, 15]
+	  Points		  [10, 0]
 	  DstBlock		  "Switch1"
 	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Constant2"
 	  SrcPort		  1
-	  Points		  [5, 0; 0, -5]
+	  Points		  [10, 0]
 	  DstBlock		  "Switch1"
 	  DstPort		  3
 	}
@@ -1648,7 +4244,7 @@ Model {
 	Line {
 	  SrcBlock		  "Switch1"
 	  SrcPort		  1
-	  Points		  [10, 0; 0, -20]
+	  Points		  [45, 0; 0, -15]
 	  DstBlock		  "SR"
 	  DstPort		  1
 	}
@@ -1658,78 +4254,42 @@ Model {
 	  DstBlock		  "SR_en"
 	  DstPort		  1
 	}
+	Line {
+	  SrcBlock		  "Build CAN CC message"
+	  SrcPort		  1
+	  DstBlock		  "CC"
+	  DstPort		  1
+	}
       }
     }
     Block {
       BlockType		      Reference
-      Name		      "RC Rudder Input "
-      Tag		      "dsPIC_dsPIC_CFunctionCall"
-      Ports		      [0, 1]
-      Position		      [15, 370, 130, 410]
-      List {
-	ListType		RTWdata
-	FctDeclaration		"extern uint16_T get_IC2_Hightime();"
-	FctCall			"%y1 = get_IC2_Hightime();"
-	fctName			"get_IC2_Hightime"
-	INPUT_SIZE		"1"
-	OUTPUT_SIZE		"1"
-	NBR_INPUT		"0"
-	NBR_OUTPUT		"1"
-      }
-      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
-      SourceType	      "C Function Call"
-      fctName		      "'get_IC2_Hightime'"
-      INPUT_SIZE	      "1"
-      INPUT1		      "--"
-      INPUT2		      "--"
-      INPUT3		      "--"
-      OUTPUT_SIZE	      "1"
-      OUTPUT1		      "uint16"
+      Name		      "Rudder"
+      Tag		      "dsPIC_PWM_IC"
+      Ports		      [0, 2]
+      Position		      [15, 376, 165, 434]
+      Priority		      "5"
+      SourceBlock	      "dsPICdrivers/Peripheral I//O/Input Capture"
+      SourceType	      "Input driver for Input Capture Peripheral"
+      IntPriority	      "7"
+      Channel		      "[ 2 ]"
+      Channel_UP_Down_Periode "[1]"
+      MaxChannel	      "[0.001]"
+      SafeMarge		      "[10]"
+      MaxName		      " ' IC2max ' "
+      Precision		      "[15.4252]"
+      Timer		      "[3]"
+      ChangeDetected	      "[2]"
+      ChangeDetectedPortRef   "3"
       SampleTime	      "-1"
-      InputType		      "[ ]"
-      OutputType	      "[ 4 ]"
-      FctDeclaration	      "extern uint16_T get_IC2_Hightime();"
-      FctCall		      "%y1 = get_IC2_Hightime();"
-      OrderingInOutPopup      "None"
-    }
-    Block {
-      BlockType		      Reference
-      Name		      "RC Throttle Input"
-      Tag		      "dsPIC_dsPIC_CFunctionCall"
-      Ports		      [0, 1]
-      Position		      [15, 461, 130, 499]
-      List {
-	ListType		RTWdata
-	FctDeclaration		"extern uint16_T get_IC1_Hightime();"
-	FctCall			"%y1 = get_IC1_Hightime();"
-	fctName			"get_IC1_Hightime"
-	INPUT_SIZE		"1"
-	OUTPUT_SIZE		"1"
-	NBR_INPUT		"0"
-	NBR_OUTPUT		"1"
-      }
-      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
-      SourceType	      "C Function Call"
-      fctName		      "'get_IC1_Hightime'"
-      INPUT_SIZE	      "1"
-      INPUT1		      "--"
-      INPUT2		      "--"
-      INPUT3		      "--"
-      OUTPUT_SIZE	      "1"
-      OUTPUT1		      "uint16"
-      SampleTime	      "-1"
-      InputType		      "[ ]"
-      OutputType	      "[ 4 ]"
-      FctDeclaration	      "extern uint16_T get_IC1_Hightime();"
-      FctCall		      "%y1 = get_IC1_Hightime();"
-      OrderingInOutPopup      "None"
+      Status		      "OK"
     }
     Block {
       BlockType		      Reference
       Name		      "Rudder\nPotentiometer"
       Tag		      "dsPIC_ADC"
       Ports		      [0, 1]
-      Position		      [15, 297, 130, 333]
+      Position		      [50, 297, 165, 333]
       Priority		      "5"
       List {
 	ListType		RTWdata
@@ -1767,7 +4327,7 @@ Model {
       System {
 	Name			"Rudder Control"
 	Location		[244, 513, 1182, 808]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1783,12 +4343,14 @@ Model {
 	  BlockType		  Inport
 	  Name			  "Port Hall \nInput"
 	  Position		  [25, 28, 55, 42]
+	  BackgroundColor	  "darkGreen"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "Starboard Hall\nInput"
 	  Position		  [25, 78, 55, 92]
+	  BackgroundColor	  "darkGreen"
 	  Port			  "2"
 	  IconDisplay		  "Port number"
 	}
@@ -1796,6 +4358,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "Rudder\nPosition"
 	  Position		  [25, 138, 55, 152]
+	  BackgroundColor	  "darkGreen"
 	  Port			  "3"
 	  IconDisplay		  "Port number"
 	}
@@ -1803,6 +4366,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "RC Rudder"
 	  Position		  [25, 193, 55, 207]
+	  BackgroundColor	  "darkGreen"
 	  Port			  "4"
 	  IconDisplay		  "Port number"
 	}
@@ -1919,6 +4483,7 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Constant"
 	  Position		  [780, 119, 810, 141]
+	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
 	}
@@ -2161,6 +4726,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "input"
 	      Position		      [25, 38, 55, 52]
+	      BackgroundColor	      "darkGreen"
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
@@ -2216,6 +4782,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "mapped"
 	      Position		      [300, 38, 330, 52]
+	      BackgroundColor	      "yellow"
 	      IconDisplay	      "Port number"
 	      BusOutputAsStruct	      off
 	    }
@@ -2265,6 +4832,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "Direction"
 	  Position		  [865, 88, 895, 102]
+	  BackgroundColor	  "yellow"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
 	}
@@ -2272,6 +4840,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "!Enable"
 	  Position		  [865, 123, 895, 137]
+	  BackgroundColor	  "yellow"
 	  Port			  "2"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -2280,6 +4849,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "OC Down"
 	  Position		  [865, 168, 895, 182]
+	  BackgroundColor	  "yellow"
 	  Port			  "3"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -2288,6 +4858,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "OC Period"
 	  Position		  [865, 208, 895, 222]
+	  BackgroundColor	  "yellow"
 	  Port			  "4"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -2508,13 +5079,13 @@ Model {
       Name		      "Rudder Motor"
       Tag		      "dsPIC_PWM_out"
       Ports		      [2]
-      Position		      [725, 346, 805, 399]
+      Position		      [745, 346, 825, 399]
       Priority		      "5"
       SourceBlock	      "dsPICdrivers/Peripheral I//O/Output Compare"
       SourceType	      "Output Capture Peripheral"
       IntPriority	      "3"
       CHANNEL		      "[2]"
-      Channel_UP_Down_Periode "[10]"
+      Channel_UP_Down_Periode "[5]"
       MaxChannel	      "[0.01]"
       MaxName		      " ' OC2max ' "
       Precision		      "[15.6096]"
@@ -2530,7 +5101,7 @@ Model {
       Name		      "Starboard Hall"
       Tag		      "dsPIC_Digital_Input"
       Ports		      [0, 1]
-      Position		      [15, 230, 130, 270]
+      Position		      [50, 230, 165, 270]
       SourceBlock	      "dsPICdrivers/Digital I//O/Digital Input"
       SourceType	      ""
       PORT		      "G"
@@ -2540,83 +5111,58 @@ Model {
     }
     Block {
       BlockType		      Reference
-      Name		      "UART Configuration"
-      Tag		      "dsPIC_config_UART"
-      Ports		      []
-      Position		      [385, 23, 485, 73]
-      BackgroundColor	      "lightBlue"
-      DropShadow	      on
-      Priority		      "2"
-      List {
-	ListType		RTWdata
-	RxBufferSize		"32"
-      }
-      SourceBlock	      "dsPICdrivers/Serial PORT/UART Configuration"
-      SourceType	      "Configure UART"
-      UART		      "2"
-      proposed_BAUD	      "38400"
-      ALT_TX_RX		      off
-      InterruptTxWhen	      "Do not use interrupt"
-      TXInterruptPri	      "7"
-      TxBufferSize	      "4"
-      TXEN		      off
-      InterruptRxWhen	      "Do not use interrupt"
-      RXInterruptPri	      "1"
-      RxBufferSize	      "32"
-      BAUD		      "38400"
-      UxBRG		      "64"
-      Info		      "UxBRG = 64   ||  Real Baud : 38462   ||  % erro"
-"r : 0.16026  ||  max 3.8462 Bytes / Step"
-      RealBaud		      "0"
-    }
-    Line {
-      SrcBlock		      "RC Rudder Input "
-      SrcPort		      1
-      Points		      [210, 0]
-      Branch {
-	Points			[0, 135]
-	DstBlock		"Propulsion Control"
-	DstPort			2
-      }
-      Branch {
-	Labels			[0, 0]
-	Points			[0, -5]
-	DstBlock		"Rudder Control"
-	DstPort			4
-      }
+      Name		      "Throttle"
+      Tag		      "dsPIC_PWM_IC"
+      Ports		      [0, 2]
+      Position		      [15, 466, 165, 524]
+      Priority		      "5"
+      SourceBlock	      "dsPICdrivers/Peripheral I//O/Input Capture"
+      SourceType	      "Input driver for Input Capture Peripheral"
+      IntPriority	      "7"
+      Channel		      "[ 1 ]"
+      Channel_UP_Down_Periode "[1]"
+      MaxChannel	      "[0.001]"
+      SafeMarge		      "[10]"
+      MaxName		      " ' IC1max ' "
+      Precision		      "[15.4252]"
+      Timer		      "[3]"
+      ChangeDetected	      "[2]"
+      ChangeDetectedPortRef   "3"
+      SampleTime	      "-1"
+      Status		      "OK"
     }
     Line {
       SrcBlock		      "Rudder Control"
       SrcPort		      3
-      Points		      [130, 0]
+      Points		      [150, 0]
       DstBlock		      "Rudder Motor"
       DstPort		      1
     }
     Line {
       SrcBlock		      "Propulsion Control"
       SrcPort		      3
-      Points		      [160, 0]
-      DstBlock		      "Drive Motor\nEnable"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Propulsion Control"
-      SrcPort		      4
-      Points		      [120, 0; 0, 30]
-      DstBlock		      "Drive Motor\nEnable"
-      DstPort		      2
+      Points		      [25, 0; 0, 45; 75, 0]
+      Branch {
+	Points			[0, -5]
+	DstBlock		"Drive Motor Enable Message"
+	DstPort			2
+      }
+      Branch {
+	DstBlock		"Message Length"
+	DstPort			1
+      }
     }
     Line {
       SrcBlock		      "Starboard Hall"
       SrcPort		      1
-      Points		      [270, 0; 0, 55]
+      Points		      [235, 0; 0, 55]
       DstBlock		      "Rudder Control"
       DstPort		      2
     }
     Line {
       SrcBlock		      "Port Hall"
       SrcPort		      1
-      Points		      [285, 0]
+      Points		      [250, 0]
       DstBlock		      "Rudder Control"
       DstPort		      1
     }
@@ -2624,7 +5170,7 @@ Model {
       Labels		      [0, 0]
       SrcBlock		      "Rudder\nPotentiometer"
       SrcPort		      1
-      Points		      [255, 0; 0, 30]
+      Points		      [220, 0; 0, 30]
       DstBlock		      "Rudder Control"
       DstPort		      3
     }
@@ -2643,28 +5189,91 @@ Model {
     Line {
       SrcBlock		      "Propulsion Control"
       SrcPort		      1
-      Points		      [120, 0; 0, -30]
-      DstBlock		      "Current Command\nto Drive Motor"
-      DstPort		      1
-    }
-    Line {
-      Labels		      [0, 0]
-      SrcBlock		      "RC Throttle Input"
-      SrcPort		      1
-      DstBlock		      "Propulsion Control"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Propulsion Control"
-      SrcPort		      2
-      Points		      [160, 0]
-      DstBlock		      "Current Command\nto Drive Motor"
-      DstPort		      2
+      Points		      [100, 0]
+      Branch {
+	DstBlock		"Message Length1"
+	DstPort			1
+      }
+      Branch {
+	DstBlock		"Drive Motor Enable Message1"
+	DstPort			2
+      }
     }
     Line {
       SrcBlock		      "Rudder Control"
       SrcPort		      2
       DstBlock		      "Digital Output Write1"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Message Length1"
+      SrcPort		      1
+      DstBlock		      "Drive Motor Enable Message1"
+      DstPort		      3
+    }
+    Line {
+      SrcBlock		      "Message Length"
+      SrcPort		      1
+      DstBlock		      "Drive Motor Enable Message"
+      DstPort		      3
+    }
+    Line {
+      SrcBlock		      "Propulsion Control"
+      SrcPort		      4
+      DstBlock		      "Drive Motor Enable Message"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Propulsion Control"
+      SrcPort		      2
+      Points		      [25, 0; 0, -40]
+      DstBlock		      "Drive Motor Enable Message1"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Rudder"
+      SrcPort		      2
+      DstBlock		      "Clear Rudder to Zero\nif Disconnect"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Throttle"
+      SrcPort		      2
+      DstBlock		      "Clear Throttle to Zero\nif Disconnect"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Clear Throttle to Zero\nif Disconnect"
+      SrcPort		      1
+      DstBlock		      "Propulsion Control"
+      DstPort		      1
+    }
+    Line {
+      Labels		      [0, 0]
+      SrcBlock		      "Throttle"
+      SrcPort		      1
+      DstBlock		      "Clear Throttle to Zero\nif Disconnect"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Clear Rudder to Zero\nif Disconnect"
+      SrcPort		      1
+      Points		      [100, 0]
+      Branch {
+	Points			[0, -20]
+	DstBlock		"Rudder Control"
+	DstPort			4
+      }
+      Branch {
+	Points			[0, 135]
+	DstBlock		"Propulsion Control"
+	DstPort			2
+      }
+    }
+    Line {
+      SrcBlock		      "Rudder"
+      SrcPort		      1
+      DstBlock		      "Clear Rudder to Zero\nif Disconnect"
       DstPort		      1
     }
   }
@@ -2673,41 +5282,42 @@ MatData {
   NumRecords		  1
   DataRecord {
     Tag			    DataTag0
-    Data		    "  %)30     .    : <   8    (     @         %    "
+    Data		    "  %)30     .    J <   8    (     @         %    "
 "\"     $    !     0         %  0 \"     $    0    =F5R<VEO;@!C;VYT96YT  X    "
 "X    !@    @    &          4    (     0    $    !          D    (    FIF9F9F9"
-"\\3\\.    V 8   8    (    !          %    \"     $   \"B!@   0         0    H"
-"@8  %1H:7,@<WES=&5M(&ES(&1E<VEG;F5D(&9O<B!U<V4@=VET:\"!T:&4@17AP;&]R97(@,38@8"
-"F]A<F0N($ET(')E<75I<F5S('1H92!F;VQL;W=I;F<@8V]N;F5C=&EO;G,Z#0I0;W)T($0X(\"T@*"
-"&EN<'5T*2!05TT@:6YP=70@9F]R('1H<F]T=&QE(&9R;VT@4D,@<F5C96EV97(@*#)M<R!H:6=H(#"
-"T@;6%X(&9O<G=A<F0L(#%M<R!H:6=H(#T@;6%X(')E=F5R<V4I#0I0;W)T($0Y(\"T@*&EN<'5T*2"
-"!05TT@:6YP=70@9F]R(')U9&1E<B!F<F]M(%)#(')E8V5I=F5R(\"@R;7,@:&EG:\" ](&AA<F0@<"
-"&]R=\"P@,6US(&AI9V@@/2!H87)D('-T97)N*0T*4&]R=\"!&,R M(\"AI;G!U=\"D@4&]R=\"!(8"
-"6QL($5F9F5C=\"!396YS;W(-\"E!O<G0@0C @+2 H:6YP=70I(%!O<VET:6]N('!O=\"!F;W(@=&A"
-"E(')U9&1E<@T*4&]R=\"!',R M(\"AI;G!U=\"D@4W1A<F)O87)D($AA;&P@169F96-T(%-E;G-O<"
-"@T*4&]R=\"!/0S(O4D0Q(\"T@*&]U='!U=\"D@4W1E<\"!O=71P=70@9F]R(')U9&1E<B!D<FEV97"
-"(@8F]A<F0-\"E!O<G0@1SD@+2 H;W5T<'5T*2!%;F%B;&4@;W5T<'5T(&9O<B!R=61D97(@9')I=F"
-"5R(&)O87)D+\"!W:7)E9\"!L;W<N#0I0;W)T($0U(\"T@*&]U='!U=\"D@1&ER96-T:6]N(&]U='!"
-"U=\"!F;W(@<G5D9&5R(&1R:79E<B!B;V%R9\" H4G5D9&5R(&ES(&-O;F9I9W5R960@<V\\@=&AA="
-"\"!A(&QO=R!S:6=N86P@='5R;G,@=&\\@<&]R=\"D-\"E-E<FEA;\"!C;VYN96-T:6]N(\"T@36%I"
-";B!D<FEV92!B;V%R9 T*4&]W97(@+2!C;VYN96-T960-\"@T*5&AI<R!M;V1E;\"!P<F]V:61E<R!"
-"R96UO=&4@8V]N=')O;\"!F;W(@=&AE(')O8F]A=\"!V:6$@<W1A;F1A<F0@4D,@:&%R9'=A<F4@<F"
-"5L>6EN9R!O;B!05TT@<VEG;F%L<RX-\"DET(&5X<&5C=',@82!R86YG92!O9B Q+C$R+3(N,3%6(&"
-"9O<B!T:&4@<G5D9&5R('!O<VET:6]N('!O=&5N=&EO;65T97(@=VET:\" R+C$Q5B!B96EN9R!H87"
-")D('1O('!O<G0N#0I4:&ES(&UE86YS('1H870@=&AE(')U9&1E<B!P;W1E;G1I;VUE=&5R('-H;W5"
-"L9\"!B92!P;W=E<F5D(&%T(#,N,U8N#0H-\"D$@9F%I;'-A9F4@:&%S(&)E96X@:6UP;&5M96YT96"
-"0L('1H;W5G:\"!R871H97(@8W)U9&5L>2P@=&\\@9&5T96-T(&$@;&]S<R!O9B!20R!C;VYN96-T:"
-"6]N(&%N9\"!T;R -\"G)E9'5C92!P<F]P96QL97(@<W!E960@=&\\@>F5R;R!A;F0@9&ES86)L92!"
-"R=61D97(@8V]N=')O;\"X@5&AI<R!W;W)K<R!B>2!U<VEN9R!A(#4P;7,@=&EM97(@=&AA=\"!I<P"
-"T*<V5T(&5V97)Y(&EN<'5T(&-A<'1U<F4@979E;G0N($EF(&ET(&5X<&ER97,@*'1H92 U+6-H86Y"
-"N96P@4%=-(&EN<'5T('=E)W)E('5S:6YG(&AA=F4@,C!M<R!P97)I;V1S*0T*=&AE;B!W92!A<W-U"
-";64@=&AE<F4@:7,@82!L;W-S(&EN(&-O;FYE8W1I;VXN(%)E8V]N;F5C=&EO;B!A=71O;6%T:6-A;"
-"&QY('-T87)T<R!T:&4@4%=-('-I9VYA;',@=7 @#0IA9V%I;B!A;F0@=&AE>2!C;VYT:6YU92!T;R"
-"!B92!R96%D(&)Y('1H92!D<U!)0RX@5&AE(&-O9&4@22!A;2!U<VEN9R!D;V5S;B=T('-E96T@=&"
-"\\@=V]R:R!F;W(@=&AE#0IF:7)S=\"!I;G!U=\"!C87!T=7)E(&%N9\"!))VT@;F]T(&-E<G1A:6X"
-"@=VAY(&%T('1H:7,@=&EM92X@07,@=&AE(&-L96%R:6YG(&5V96YT('=O<FMS(&9O<B!B;W1H(&EN"
-"<'5T#0IC87!T=7)E<RP@22!A;2!U<VEN9R!I;G!U=\"!C87!T=7)E('1W;R!T;R!D971E8W0@82!D"
-":7-C;VYN96-T+@        "
+"\\3\\.    & <   8    (    !          %    \"     $   #A!@   0         0    X0"
+"8  %1H:7,@<WES=&5M(&ES(&1E<VEG;F5D(&9O<B!U<V4@=VET:\"!T:&4@17AP;&]R97(@,38@8F"
+"]A<F0N($ET(')E<75I<F5S('1H92!F;VQL;W=I;F<@8V]N;F5C=&EO;G,Z#0I0;W)T($0X(\"T@*&"
+"EN<'5T*2!05TT@:6YP=70@9F]R('1H<F]T=&QE(&9R;VT@4D,@<F5C96EV97(@*#)M<R!H:6=H(#T"
+"@;6%X(&9O<G=A<F0L(#%M<R!H:6=H(#T@;6%X(')E=F5R<V4I#0I0;W)T($0Y(\"T@*&EN<'5T*2!"
+"05TT@:6YP=70@9F]R(')U9&1E<B!F<F]M(%)#(')E8V5I=F5R(\"@R;7,@:&EG:\" ](&AA<F0@<&"
+"]R=\"P@,6US(&AI9V@@/2!H87)D('-T97)N*0T*4&]R=\"!&,R M(\"AI;G!U=\"D@4&]R=\"!(86"
+"QL($5F9F5C=\"!396YS;W(-\"E!O<G0@0C @+2 H:6YP=70I(%!O<VET:6]N('!O=\"!F;W(@=&AE"
+"(')U9&1E<@T*4&]R=\"!',R M(\"AI;G!U=\"D@4W1A<F)O87)D($AA;&P@169F96-T(%-E;G-O<@"
+"T*4&]R=\"!/0S(O4D0Q(\"T@*&]U='!U=\"D@4W1E<\"!O=71P=70@9F]R(')U9&1E<B!D<FEV97("
+"@8F]A<F0-\"E!O<G0@1SD@+2 H;W5T<'5T*2!%;F%B;&4@;W5T<'5T(&9O<B!R=61D97(@9')I=F5"
+"R(&)O87)D+\"!W:7)E9\"!L;W<N#0I0;W)T($0U(\"T@*&]U='!U=\"D@1&ER96-T:6]N(&]U='!U"
+"=\"!F;W(@<G5D9&5R(&1R:79E<B!B;V%R9\" H4G5D9&5R(&ES(&-O;F9I9W5R960@<V\\@=&AA="
+"\"!A(&QO=R!S:6=N86P@='5R;G,@=&\\@<&]R=\"D-\"E!O<G0@1S O,2 M(\"AO=71P=70I(%18+"
+"U)8(&QI;F5S(&9O<B!T:&4@14-!3B!P97)I<&AE<F%L('1O('5S92!#04XQ(&]N('1H92!%0T%.+T"
+"Q)3B!024-T86EL(&)O87)D+@T*4&]W97(@+2!C;VYN96-T960-\"@T*5&AI<R!M;V1E;\"!P<F]V:"
+"61E<R!R96UO=&4@8V]N=')O;\"!F;W(@=&AE(')O8F]A=\"!V:6$@<W1A;F1A<F0@4D,@:&%R9'=A"
+"<F4@<F5L>6EN9R!O;B!05TT@<VEG;F%L<RX-\"DET(&5X<&5C=',@82!R86YG92!O9B Q+C$R+3(N"
+",3%6(&9O<B!T:&4@<G5D9&5R('!O<VET:6]N('!O=&5N=&EO;65T97(@=VET:\" R+C$Q5B!B96EN"
+"9R!H87)D('1O('!O<G0N#0I4:&ES(&UE86YS('1H870@=&AE(')U9&1E<B!P;W1E;G1I;VUE=&5R("
+"'-H;W5L9\"!B92!P;W=E<F5D(&%T(#,N,U8N#0H-\"D$@9F%I;'-A9F4@:&%S(&)E96X@:6UP;&5M"
+"96YT960L('1H;W5G:\"!R871H97(@8W)U9&5L>2P@=&\\@9&5T96-T(&$@;&]S<R!O9B!20R!C;VY"
+"N96-T:6]N(&%N9\"!T;R -\"G)E9'5C92!P<F]P96QL97(@<W!E960@=&\\@>F5R;R!A;F0@9&ES8"
+"6)L92!R=61D97(@8V]N=')O;\"X@5&AI<R!W;W)K<R!B>2!U<VEN9R!A(#4P;7,@=&EM97(@=&AA="
+"\"!I<PT*<V5T(&5V97)Y(&EN<'5T(&-A<'1U<F4@979E;G0N($EF(&ET(&5X<&ER97,@*'1H92 U+"
+"6-H86YN96P@4%=-(&EN<'5T('=E)W)E('5S:6YG(&AA=F4@,C!M<R!P97)I;V1S*0T*=&AE;B!W92"
+"!A<W-U;64@=&AE<F4@:7,@82!L;W-S(&EN(&-O;FYE8W1I;VXN(%)E8V]N;F5C=&EO;B!A=71O;6%"
+"T:6-A;&QY('-T87)T<R!T:&4@4%=-('-I9VYA;',@=7 @#0IA9V%I;B!A;F0@=&AE>2!C;VYT:6YU"
+"92!T;R!B92!R96%D(&)Y('1H92!D<U!)0RX@5&AE(&-O9&4@22!A;2!U<VEN9R!D;V5S;B=T('-E9"
+"6T@=&\\@=V]R:R!F;W(@=&AE#0IF:7)S=\"!I;G!U=\"!C87!T=7)E(&%N9\"!))VT@;F]T(&-E<G"
+"1A:6X@=VAY(&%T('1H:7,@=&EM92X@07,@=&AE(&-L96%R:6YG(&5V96YT('=O<FMS(&9O<B!B;W1"
+"H(&EN<'5T#0IC87!T=7)E<RP@22!A;2!U<VEN9R!I;G!U=\"!C87!T=7)E('1W;R!T;R!D971E8W0"
+"@82!D:7-C;VYN96-T+@         "
   }
 }
 
@@ -2724,25 +5334,702 @@ Stateflow {
 		name                 		"RC_control"
 		created              		"30-Jun-2009 11:53:15"
 		isLibrary            		0
-		firstTarget          		2
+		firstTarget          		34
 		sfVersion            		66014000
 	}
 
-	target {
-		id                        		2
-		name                      		"sfun"
-		description               		"Default Simulink S-Function Target."
-		machine                   		1
-		linkNode                  		[1 0 3]
+	chart {
+		id                                        		2
+		name                                      		"Propulsion Control/Build CAN CC message/myMux"
+		windowPosition                            		[401.813 209.45 200.25 189.75]
+		viewLimits                                		[0 156.75 0 153.75]
+		screen                                    		[1 1 1280 1024 1.333333333333333]
+		treeNode                                  		[0 3 0 0]
+		firstTransition                           		5
+		firstJunction                             		4
+		viewObj                                   		2
+		machine                                   		1
+		decomposition                             		CLUSTER_CHART
+		type                                      		EML_CHART
+		firstData                                 		6
+		chartFileNumber                           		1
+		disableImplicitCasting                    		1
+		eml {
+			name       		"myMux"
+			noDebugging		1
+		}
+	}
+
+	state {
+		id                           		3
+		labelString                  		"eML_blk_kernel()"
+		position                     		[18 64.5 118 66]
+		fontSize                     		12
+		chart                        		2
+		treeNode                     		[2 0 0 0]
+		superState                   		SUBCHART
+		subviewer                    		2
+		type                         		FUNC_STATE
+		decomposition                		CLUSTER_STATE
+		eml {
+			isEML                    		1
+			script                   		"function y = myMux(u1, u2, u3, u4)\n"
+						"y = [u1(1); u2(1); u3(1); u4(1);];"
+			editorLayout             		"100 M4x1[30 228 545 643]"
+			treatIntsAsFixpt         		0
+		}
+	}
+
+	junction {
+		id         		4
+		position   		[23.5747 49.5747 7]
+		chart      		2
+		linkNode   		[2 0 0]
+		subviewer  		2
+		type       		CONNECTIVE_JUNCTION
+	}
+
+	transition {
+		id             		5
+		labelString    		"{eML_blk_kernel();}"
+		labelPosition  		[32.125 19.875 102.544 14.964]
+		fontSize       		12
+		src {
+			intersection		[0 0 1 0 23.5747 14.625 0 0]
+		}
+		dst {
+			id          		4
+			intersection		[7 0 -1 -1 23.5747 42.5747 0 0]
+		}
+		midPoint       		[23.5747 24.9468]
+		chart          		2
+		linkNode       		[2 0 0]
+		dataLimits     		[23.575 23.575 14.625 34.575]
+		subviewer      		2
+		drawStyle      		SMART
+		executionOrder 		1
+	}
+
+	data {
+		id                            		6
+		name                          		"u1"
+		linkNode                      		[2 0 7]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+			}
+			complexity           		SF_COMPLEX_INHERITED
+		}
+		dataType                      		"inherited"
+		fixptType {
+			slope   		1
+			baseType		SF_INT16_TYPE
+		}
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		7
+		name                          		"y"
+		linkNode                      		[2 6 8]
+		scope                         		OUTPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_NO
+		}
+		dataType                      		"inherited"
+		fixptType {
+			slope   		1
+			baseType		SF_INT16_TYPE
+		}
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		8
+		name                          		"u2"
+		linkNode                      		[2 7 9]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_INHERITED
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		9
+		name                          		"u3"
+		linkNode                      		[2 8 10]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_INHERITED
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		10
+		name                          		"u4"
+		linkNode                      		[2 9 0]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_INHERITED
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	instance {
+		id     		11
+		name   		"Propulsion Control/Build CAN CC message/myMux"
+		machine		1
+		chart  		2
+	}
+
+	chart {
+		id                                        		12
+		name                                      		"Drive Motor Enable Message1/myMux"
+		windowPosition                            		[416.813 194.45 200.25 189.75]
+		viewLimits                                		[0 156.75 0 153.75]
+		screen                                    		[1 1 1280 1024 1.333333333333333]
+		treeNode                                  		[0 13 0 0]
+		firstTransition                           		15
+		firstJunction                             		14
+		viewObj                                   		12
+		machine                                   		1
+		decomposition                             		CLUSTER_CHART
+		type                                      		EML_CHART
+		firstData                                 		16
+		chartFileNumber                           		2
+		disableImplicitCasting                    		1
+		eml {
+			name       		"myMux"
+			noDebugging		1
+		}
+	}
+
+	state {
+		id                           		13
+		labelString                  		"eML_blk_kernel()"
+		position                     		[18 64.5 118 66]
+		fontSize                     		12
+		chart                        		12
+		treeNode                     		[12 0 0 0]
+		superState                   		SUBCHART
+		subviewer                    		12
+		type                         		FUNC_STATE
+		decomposition                		CLUSTER_STATE
+		eml {
+			isEML                    		1
+			script                   		"function y = myMux(u1, u2, u3, u4, u5)\n"
+						"u5_u16 = uint16(u5);\n"
+						"y = uint16([u1(1); u2(1); u3(1); u4(1); 0; 0; 0; 0;]);\n"
+						"\n"
+						"len = length(u5);\n"
+						"if len > 1\n"
+						"    y(5) = bitor(bitshift(u5_u16(1),8),u5_u16(2));\n"
+						"elseif len > 0\n"
+						"    y(5) = u5_u16(1);\n"
+						"end\n"
+						"if len > 3\n"
+						"    y(6) = bitor(bitshift(u5_u16(3),8),u5_u16(4));\n"
+						"elseif len > 2\n"
+						"    y(6) = u5_u16(3);\n"
+						"end\n"
+						"if len > 5\n"
+						"    y(7) = bitor(bitshift(u5_u16(5),8),u5_u16(6));\n"
+						"elseif len > 4\n"
+						"    y(7) = u5_u16(5);\n"
+						"end\n"
+						"if len > 7\n"
+						"    y(8) = bitor(bitshift(u5_u16(7),8),u5_u16(8));\n"
+						"elseif len > 6\n"
+						"    y(8) = u5_u16(7);\n"
+						"end"
+			editorLayout             		"100 M4x1[30 228 545 643]"
+			treatIntsAsFixpt         		0
+		}
+	}
+
+	junction {
+		id         		14
+		position   		[23.5747 49.5747 7]
+		chart      		12
+		linkNode   		[12 0 0]
+		subviewer  		12
+		type       		CONNECTIVE_JUNCTION
+	}
+
+	transition {
+		id             		15
+		labelString    		"{eML_blk_kernel();}"
+		labelPosition  		[32.125 19.875 102.544 14.964]
+		fontSize       		12
+		src {
+			intersection		[0 0 1 0 23.5747 14.625 0 0]
+		}
+		dst {
+			id          		14
+			intersection		[7 0 -1 -1 23.5747 42.5747 0 0]
+		}
+		midPoint       		[23.5747 24.9468]
+		chart          		12
+		linkNode       		[12 0 0]
+		dataLimits     		[23.575 23.575 14.625 34.575]
+		subviewer      		12
+		drawStyle      		SMART
+		executionOrder 		1
+	}
+
+	data {
+		id                            		16
+		name                          		"u1"
+		linkNode                      		[12 0 17]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+			}
+			complexity           		SF_COMPLEX_INHERITED
+		}
+		dataType                      		"inherited"
+		fixptType {
+			slope   		1
+			baseType		SF_INT16_TYPE
+		}
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		17
+		name                          		"y"
+		linkNode                      		[12 16 18]
+		scope                         		OUTPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_NO
+		}
+		dataType                      		"inherited"
+		fixptType {
+			slope   		1
+			baseType		SF_INT16_TYPE
+		}
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		18
+		name                          		"u2"
+		linkNode                      		[12 17 19]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_INHERITED
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		19
+		name                          		"u3"
+		linkNode                      		[12 18 20]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_INHERITED
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		20
+		name                          		"u4"
+		linkNode                      		[12 19 21]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_INHERITED
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		21
+		name                          		"u5"
+		linkNode                      		[12 20 0]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_INHERITED
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	instance {
+		id     		22
+		name   		"Drive Motor Enable Message1/myMux"
+		machine		1
+		chart  		12
+	}
+
+	chart {
+		id                                        		23
+		name                                      		"Drive Motor Enable Message/myMux"
+		windowPosition                            		[401.813 209.45 200.25 189.75]
+		viewLimits                                		[0 156.75 0 153.75]
+		screen                                    		[1 1 1280 1024 1.333333333333333]
+		treeNode                                  		[0 24 0 0]
+		firstTransition                           		26
+		firstJunction                             		25
+		viewObj                                   		23
+		machine                                   		1
+		decomposition                             		CLUSTER_CHART
+		type                                      		EML_CHART
+		firstData                                 		27
+		chartFileNumber                           		8
+		disableImplicitCasting                    		1
+		eml {
+			name       		"myMux"
+			noDebugging		1
+		}
+	}
+
+	state {
+		id                           		24
+		labelString                  		"eML_blk_kernel()"
+		position                     		[18 64.5 118 66]
+		fontSize                     		12
+		chart                        		23
+		treeNode                     		[23 0 0 0]
+		superState                   		SUBCHART
+		subviewer                    		23
+		type                         		FUNC_STATE
+		decomposition                		CLUSTER_STATE
+		eml {
+			isEML                    		1
+			script                   		"function y = myMux(u1, u2, u3, u4, u5)\n"
+						"u5_u16 = uint16(u5);\n"
+						"y = uint16([u1(1); u2(1); u3(1); u4(1); 0; 0; 0; 0;]);\n"
+						"\n"
+						"len = length(u5);\n"
+						"if len > 1\n"
+						"    y(5) = bitor(bitshift(u5_u16(1),8),u5_u16(2));\n"
+						"elseif len > 0\n"
+						"    y(5) = u5_u16(1);\n"
+						"end\n"
+						"if len > 3\n"
+						"    y(6) = bitor(bitshift(u5_u16(3),8),u5_u16(4));\n"
+						"elseif len > 2\n"
+						"    y(6) = u5_u16(3);\n"
+						"end\n"
+						"if len > 5\n"
+						"    y(7) = bitor(bitshift(u5_u16(5),8),u5_u16(6));\n"
+						"elseif len > 4\n"
+						"    y(7) = u5_u16(5);\n"
+						"end\n"
+						"if len > 7\n"
+						"    y(8) = bitor(bitshift(u5_u16(7),8),u5_u16(8));\n"
+						"elseif len > 6\n"
+						"    y(8) = u5_u16(7);\n"
+						"end"
+			editorLayout             		"100 M4x1[30 228 545 643]"
+			treatIntsAsFixpt         		0
+		}
+	}
+
+	junction {
+		id         		25
+		position   		[23.5747 49.5747 7]
+		chart      		23
+		linkNode   		[23 0 0]
+		subviewer  		23
+		type       		CONNECTIVE_JUNCTION
+	}
+
+	transition {
+		id             		26
+		labelString    		"{eML_blk_kernel();}"
+		labelPosition  		[32.125 19.875 102.544 14.964]
+		fontSize       		12
+		src {
+			intersection		[0 0 1 0 23.5747 14.625 0 0]
+		}
+		dst {
+			id          		25
+			intersection		[7 0 -1 -1 23.5747 42.5747 0 0]
+		}
+		midPoint       		[23.5747 24.9468]
+		chart          		23
+		linkNode       		[23 0 0]
+		dataLimits     		[23.575 23.575 14.625 34.575]
+		subviewer      		23
+		drawStyle      		SMART
+		executionOrder 		1
+	}
+
+	data {
+		id                            		27
+		name                          		"u1"
+		linkNode                      		[23 0 28]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+			}
+			complexity           		SF_COMPLEX_INHERITED
+		}
+		dataType                      		"inherited"
+		fixptType {
+			slope   		1
+			baseType		SF_INT16_TYPE
+		}
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		28
+		name                          		"y"
+		linkNode                      		[23 27 29]
+		scope                         		OUTPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_NO
+		}
+		dataType                      		"inherited"
+		fixptType {
+			slope   		1
+			baseType		SF_INT16_TYPE
+		}
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		29
+		name                          		"u2"
+		linkNode                      		[23 28 30]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_INHERITED
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		30
+		name                          		"u3"
+		linkNode                      		[23 29 31]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_INHERITED
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		31
+		name                          		"u4"
+		linkNode                      		[23 30 32]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_INHERITED
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	data {
+		id                            		32
+		name                          		"u5"
+		linkNode                      		[23 31 0]
+		scope                         		INPUT_DATA
+		machine                       		1
+		props {
+			array {
+				size      		"-1"
+			}
+			type {
+				method    		SF_INHERITED_TYPE
+				primitive 		SF_DOUBLE_TYPE
+				isSigned  		1
+				wordLength		"16"
+			}
+			complexity           		SF_COMPLEX_INHERITED
+			frame                		SF_FRAME_INHERITED
+		}
+		dataType                      		"inherited"
+		complexity                    		SF_COMPLEX_INHERITED
+	}
+
+	instance {
+		id     		33
+		name   		"Drive Motor Enable Message/myMux"
+		machine		1
+		chart  		23
 	}
 
 	target {
-		id                        		3
+		id                        		34
+		name                      		"sfun"
+		description               		"Default Simulink S-Function Target."
+		machine                   		1
+		linkNode                  		[1 0 35]
+	}
+
+	target {
+		id                        		35
 		name                      		"rtw"
 		codeFlags                 		" comments=1 statebitsets=1 databitsets=1 emitlogicalops=1 el"
 						"seifdetection=1 constantfolding=1 redundantloadelimination=0"
 						" preservenames=0 preservenameswithparent=0 exportcharts=0"
 		machine                   		1
-		linkNode                  		[1 2 0]
+		linkNode                  		[1 34 0]
 	}
 }
