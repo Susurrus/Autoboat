@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.353"
+    ComputedModelVersion    "1.358"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -44,8 +44,8 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Apr 28 17:21:15 2010"
-  ModelVersionFormat	  "1.%<AutoIncrement:353>"
+  LastModifiedDate	  "Thu Apr 29 14:29:10 2010"
+  ModelVersionFormat	  "1.%<AutoIncrement:358>"
   ConfigurationManager	  "None"
   SimulationMode	  "normal"
   LinearizationMsg	  "none"
@@ -772,7 +772,7 @@ Model {
   }
   System {
     Name		    "Boat_sim"
-    Location		    [233, 252, 882, 762]
+    Location		    [382, 355, 1209, 865]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -798,7 +798,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Autonomous Controller"
-	Location		[2, 82, 1270, 754]
+	Location		[2, 82, 1270, 737]
 	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -810,7 +810,7 @@ Model {
 	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
 	TiledPageScale		1
 	ShowPageBoundaries	off
-	ZoomFactor		"92"
+	ZoomFactor		"100"
 	Block {
 	  BlockType		  Inport
 	  Name			  "Current latitude"
@@ -837,10 +837,28 @@ Model {
 	Block {
 	  BlockType		  Constant
 	  Name			  "Constant1"
-	  Position		  [815, 545, 845, 575]
+	  Position		  [1120, 545, 1150, 575]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant10"
+	  Position		  [710, 550, 740, 580]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "[20 0 0]"
+	  OutDataTypeMode	  "Inherit via back propagation"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant11"
+	  Position		  [710, 500, 740, 530]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "0"
+	  OutDataTypeMode	  "Inherit via back propagation"
 	}
 	Block {
 	  BlockType		  Constant
@@ -896,6 +914,15 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Constant8"
 	  Position		  [1065, 350, 1095, 380]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "0"
+	  OutDataTypeMode	  "Inherit via back propagation"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant9"
+	  Position		  [710, 450, 740, 480]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -1385,16 +1412,6 @@ Model {
 	}
 	Block {
 	  BlockType		  Gain
-	  Name			  "Gain1"
-	  Position		  [735, 414, 780, 446]
-	  ShowName		  off
-	  Gain			  "1/20"
-	  ParameterDataTypeMode	  "Inherit via internal rule"
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Gain
 	  Name			  "Gain2"
 	  Position		  [735, 100, 765, 130]
 	  Orientation		  "up"
@@ -1481,6 +1498,26 @@ Model {
 	}
 	Block {
 	  BlockType		  Reference
+	  Name			  "PID - Throttle Coordinator"
+	  Ports			  [4, 1]
+	  Position		  [780, 392, 910, 588]
+	  SourceBlock		  "SLUGS_Library/Control Blocks/PID Controller"
+	  SourceType		  ""
+	  ShowPortLabels	  "FromPortIcon"
+	  SystemSampleTime	  "-1"
+	  FunctionWithSeparateData off
+	  RTWMemSecFuncInitTerm	  "Inherit from model"
+	  RTWMemSecFuncExecute	  "Inherit from model"
+	  RTWMemSecDataConstants  "Inherit from model"
+	  RTWMemSecDataInternal	  "Inherit from model"
+	  RTWMemSecDataParameters "Inherit from model"
+	  TSample		  "T_step"
+	  NDelay		  "1"
+	  upperLimit		  "1"
+	  lowerLimit		  "-1"
+	}
+	Block {
+	  BlockType		  Reference
 	  Name			  "PID - Turn Coordinator"
 	  Ports			  [4, 1]
 	  Position		  [1130, 242, 1260, 438]
@@ -1500,18 +1537,28 @@ Model {
 	  lowerLimit		  "-1"
 	}
 	Block {
+	  BlockType		  Saturate
+	  Name			  "Saturation"
+	  Position		  [715, 400, 745, 430]
+	  ShowName		  off
+	  UpperLimit		  "1"
+	  LowerLimit		  "0"
+	}
+	Block {
 	  BlockType		  Scope
 	  Name			  "Scope"
 	  Ports			  [1]
-	  Position		  [930, 374, 960, 406]
+	  Position		  [955, 419, 985, 451]
 	  Floating		  off
-	  Location		  [5, 34, 1289, 785]
+	  Location		  [1, 52, 1281, 993]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  List {
 	    ListType		    AxesTitles
 	    axes1		    "%<SignalLabel>"
 	  }
+	  YMin			  "21"
+	  YMax			  "21"
 	  SaveName		  "ScopeData3"
 	  DataFormat		  "StructureWithTime"
 	  SampleTime		  "0"
@@ -1530,9 +1577,29 @@ Model {
 	    ListType		    AxesTitles
 	    axes1		    "%<SignalLabel>"
 	  }
-	  YMin			  "-10"
-	  YMax			  "10"
+	  YMin			  "-3.075e-007"
+	  YMax			  "-2.65e-007"
 	  SaveName		  "ScopeData9"
+	  DataFormat		  "StructureWithTime"
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "Scope2"
+	  Ports			  [1]
+	  Position		  [1330, 229, 1360, 261]
+	  Floating		  off
+	  Location		  [5, 299, 1285, 1017]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  ZoomMode		  "xonly"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  YMin			  "-3.075e-007"
+	  YMax			  "-2.65e-007"
+	  SaveName		  "ScopeData1"
 	  DataFormat		  "StructureWithTime"
 	  SampleTime		  "0"
 	}
@@ -1557,13 +1624,6 @@ Model {
 	  SampleTime		  "0"
 	}
 	Block {
-	  BlockType		  Saturate
-	  Name			  "Throttle limiter"
-	  Position		  [810, 415, 840, 445]
-	  UpperLimit		  "1"
-	  LowerLimit		  "0"
-	}
-	Block {
 	  BlockType		  Outport
 	  Name			  "Rudder command"
 	  Position		  [1310, 333, 1340, 347]
@@ -1574,7 +1634,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Throttle command"
-	  Position		  [930, 423, 960, 437]
+	  Position		  [955, 483, 985, 497]
 	  BackgroundColor	  "yellow"
 	  Port			  "2"
 	  IconDisplay		  "Port number"
@@ -1583,7 +1643,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Tray angle command"
-	  Position		  [900, 553, 930, 567]
+	  Position		  [1205, 553, 1235, 567]
 	  BackgroundColor	  "yellow"
 	  Port			  "3"
 	  IconDisplay		  "Port number"
@@ -1600,20 +1660,6 @@ Model {
 	  SrcPort		  1
 	  DstBlock		  "Gain3"
 	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Throttle limiter"
-	  SrcPort		  1
-	  Points		  [20, 0]
-	  Branch {
-	    DstBlock		    "Throttle command"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, -40]
-	    DstBlock		    "Scope"
-	    DstPort		    1
-	  }
 	}
 	Line {
 	  SrcBlock		  "Constant1"
@@ -1645,13 +1691,9 @@ Model {
 	Line {
 	  SrcBlock		  "Convert to\nDistance"
 	  SrcPort		  1
-	  Points		  [40, 0]
+	  Points		  [10, 0]
 	  Branch {
-	    DstBlock		    "Gain1"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, -110]
+	    Points		    [30, 0; 0, -110]
 	    Branch {
 	      DstBlock		      "Distance to waypoint"
 	      DstPort		      1
@@ -1662,6 +1704,11 @@ Model {
 	      DstPort		      1
 	    }
 	  }
+	  Branch {
+	    Points		    [0, 230]
+	    DstBlock		    "Saturation"
+	    DstPort		    1
+	  }
 	}
 	Line {
 	  SrcBlock		  "Constant3"
@@ -1669,12 +1716,6 @@ Model {
 	  Points		  [20, 0; 0, -20]
 	  DstBlock		  "Mux"
 	  DstPort		  2
-	}
-	Line {
-	  SrcBlock		  "Gain1"
-	  SrcPort		  1
-	  DstBlock		  "Throttle limiter"
-	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Gain2"
@@ -1774,8 +1815,16 @@ Model {
 	Line {
 	  SrcBlock		  "PID - Turn Coordinator"
 	  SrcPort		  1
-	  DstBlock		  "Rudder command"
-	  DstPort		  1
+	  Points		  [10, 0]
+	  Branch {
+	    DstBlock		    "Rudder command"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, -95]
+	    DstBlock		    "Scope2"
+	    DstPort		    1
+	  }
 	}
 	Line {
 	  SrcBlock		  "Constant6"
@@ -1823,6 +1872,44 @@ Model {
 	  Points		  [55, 0]
 	  DstBlock		  "Embedded\nMATLAB Function"
 	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Saturation"
+	  SrcPort		  1
+	  DstBlock		  "PID - Throttle Coordinator"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "PID - Throttle Coordinator"
+	  SrcPort		  1
+	  Points		  [10, 0]
+	  Branch {
+	    DstBlock		    "Throttle command"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, -55]
+	    DstBlock		    "Scope"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  SrcBlock		  "Constant9"
+	  SrcPort		  1
+	  DstBlock		  "PID - Throttle Coordinator"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Constant10"
+	  SrcPort		  1
+	  DstBlock		  "PID - Throttle Coordinator"
+	  DstPort		  4
+	}
+	Line {
+	  SrcBlock		  "Constant11"
+	  SrcPort		  1
+	  DstBlock		  "PID - Throttle Coordinator"
+	  DstPort		  3
 	}
       }
     }
@@ -1973,7 +2060,7 @@ Model {
       System {
 	Name			"Plant"
 	Location		[58, 384, 1051, 872]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -4641,7 +4728,7 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "X"
-	      Position		      [105, 158, 135, 172]
+	      Position		      [140, 163, 170, 177]
 	      BackgroundColor	      "darkGreen"
 	      IconDisplay	      "Port number"
 	    }
@@ -4673,7 +4760,7 @@ Model {
 	    Block {
 	      BlockType		      Gain
 	      Name		      "Convert to\nacceleration"
-	      Position		      [160, 145, 220, 185]
+	      Position		      [200, 150, 260, 190]
 	      ShowName		      off
 	      Gain		      "1/mass"
 	      ParameterDataTypeMode   "Inherit via internal rule"
@@ -4933,7 +5020,7 @@ Model {
 	      BlockType		      Integrator
 	      Name		      "Convert to velocity"
 	      Ports		      [1, 1]
-	      Position		      [285, 150, 315, 180]
+	      Position		      [285, 155, 315, 185]
 	      ShowName		      off
 	      IgnoreLimit	      off
 	    }
@@ -5153,12 +5240,11 @@ Model {
 	      SrcPort		      1
 	      Points		      [0, 0]
 	      Branch {
-		Points			[10, 0]
 		DstBlock		"Product2"
 		DstPort			2
 	      }
 	      Branch {
-		Points			[0, 35]
+		Points			[0, 30]
 		Branch {
 		  DstBlock		  "Velocity"
 		  DstPort		  1
@@ -5354,27 +5440,6 @@ Model {
 	      DstPort		      2
 	    }
 	  }
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Rudder"
-	  Ports			  [1]
-	  Position		  [900, 139, 930, 171]
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [5, 52, 1285, 769]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  YMin			  "0.1"
-	  YMax			  "1.8"
-	  SaveName		  "ScopeData1"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
 	}
 	Block {
 	  BlockType		  Goto
@@ -5672,16 +5737,8 @@ Model {
 	Line {
 	  SrcBlock		  "Outputs"
 	  SrcPort		  3
-	  Points		  [5, 0]
-	  Branch {
-	    DstBlock		    "Wind Heading1"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, 40]
-	    DstBlock		    "Rudder"
-	    DstPort		    1
-	  }
+	  DstBlock		  "Wind Heading1"
+	  DstPort		  1
 	}
       }
     }
