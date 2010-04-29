@@ -11,6 +11,10 @@ battery_tray_angle = 0; % Battery tray angle
 initial_charge = 2851200;    % Initial boat charge, 60% of 6V battery rail (J)
 start_time = 1271205603;% 04/13/2010 @ 7:40pm (TODO: Change to MATLAB commands to capture current time)
 
+% Waypoint stuff
+waypoint_1_lat = 36.807;
+waypoint_1_long = -121.795;
+
 % Known constants
 
 rho_w = 1.03e3;         % Density of saltwater
