@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.53"
+    ComputedModelVersion    "1.57"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -42,10 +42,10 @@ Model {
   Creator		  "Administrator"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "bmairs"
+  LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Jul 13 11:03:34 2009"
-  ModelVersionFormat	  "1.%<AutoIncrement:53>"
+  LastModifiedDate	  "Mon May 10 16:06:52 2010"
+  ModelVersionFormat	  "1.%<AutoIncrement:57>"
   ConfigurationManager	  "None"
   SimulationMode	  "normal"
   LinearizationMsg	  "none"
@@ -322,7 +322,7 @@ Model {
 	  ConfigurationMode	  "Optimized"
 	  ProcessScript		  "dspic_make_rtw_hook"
 	  ConfigAtBuild		  off
-	  CustomSource		  "rs232_w_enable.c"
+	  CustomSource		  ""
 	  IncludeHyperlinkInReport off
 	  LaunchReport		  off
 	  TargetLang		  "C"
@@ -539,22 +539,22 @@ Model {
 	      CustomProperty {
 		DataType		"string"
 		Name			"LDPICTYPE"
-		Value			"-T C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\"
-"support\\dsPIC33F\\gld\\p33fJ256GP710.gld"
+		Value			" -T C:\\PROGRA~1\\MICROC~1\\MPLABC~1"
+"\\support\\dsPIC33F\\gld\\p33fJ256GP710.gld"
 	      }
 	      CustomProperty {
 		DataType		"string"
 		Name			"LDLIBPIC"
-		Value			"C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib"
-"\\libpic30-coff.a  C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\dsPIC33F\\libp33fJ2"
+		Value			" C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\li"
+"b\\libpic30-coff.a C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\dsPIC33F\\libp33fJ2"
 "56GP710-coff.a C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\libc-coff.a C:\\PROGRA~"
 "1\\MICROC~1\\MPLABC~1\\lib\\libm-coff.a"
 	      }
 	      CustomProperty {
 		DataType		"string"
 		Name			"PIC_INCLUDES"
-		Value			"-I C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\"
-"include"
+		Value			" -I C:\\PROGRA~1\\MICROC~1\\MPLABC~1"
+"\\include"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -613,6 +613,18 @@ Model {
       SaturateOnIntegerOverflow	on
     }
     Block {
+      BlockType		      Constant
+      Value		      "1"
+      VectorParams1D	      on
+      SamplingMode	      "Sample based"
+      OutDataTypeMode	      "Inherit from 'Constant value'"
+      OutDataType	      "sfix(16)"
+      ConRadixGroup	      "Use specified scaling"
+      OutScaling	      "2^0"
+      SampleTime	      "inf"
+      FramePeriod	      "inf"
+    }
+    Block {
       BlockType		      DataTypeConversion
       OutDataTypeMode	      "Inherit via back propagation"
       OutDataType	      "sfix(16)"
@@ -638,6 +650,9 @@ Model {
       RndMeth		      "Floor"
       SaturateOnIntegerOverflow	on
       SampleTime	      "-1"
+    }
+    Block {
+      BlockType		      Ground
     }
     Block {
       BlockType		      Inport
@@ -673,20 +688,20 @@ Model {
       InitialOutput	      "[]"
     }
     Block {
-      BlockType		      RelationalOperator
-      Operator		      ">="
-      InputSameDT	      on
-      LogicOutDataTypeMode    "Logical (see Configuration Parameters: Optimiza"
-"tion)"
-      LogicDataType	      "uint(8)"
-      ZeroCross		      on
-      SampleTime	      "-1"
-    }
-    Block {
       BlockType		      "S-Function"
       FunctionName	      "system"
       SFunctionModules	      "''"
       PortCounts	      "[]"
+    }
+    Block {
+      BlockType		      SignalSpecification
+      Dimensions	      "-1"
+      SampleTime	      "-1"
+      DataType		      "auto"
+      OutDataType	      "sfix(16)"
+      OutScaling	      "2^0"
+      SignalType	      "auto"
+      SamplingMode	      "auto"
     }
     Block {
       BlockType		      SubSystem
@@ -705,6 +720,32 @@ Model {
       SimViewingDevice	      off
       DataTypeOverride	      "UseLocalSettings"
       MinMaxOverflowLogging   "UseLocalSettings"
+    }
+    Block {
+      BlockType		      Sum
+      IconShape		      "rectangular"
+      Inputs		      "++"
+      CollapseMode	      "All dimensions"
+      CollapseDim	      "1"
+      InputSameDT	      on
+      OutDataTypeMode	      "Same as first input"
+      OutDataType	      "sfix(16)"
+      OutScaling	      "2^0"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      SampleTime	      "-1"
+    }
+    Block {
+      BlockType		      Switch
+      Criteria		      "u2 >= Threshold"
+      Threshold		      "0"
+      InputSameDT	      on
+      OutDataTypeMode	      "Inherit via internal rule"
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      ZeroCross		      on
+      SampleTime	      "-1"
     }
     Block {
       BlockType		      UnitDelay
@@ -734,7 +775,7 @@ Model {
   }
   System {
     Name		    "input_capture_test"
-    Location		    [98, 279, 1366, 951]
+    Location		    [53, 542, 1013, 899]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -767,21 +808,12 @@ Model {
       SourceType	      ""
     }
     Block {
-      BlockType		      DataTypeConversion
-      Name		      "Data Type Conversion"
-      Position		      [260, 143, 335, 177]
-      OutDataTypeMode	      "int16"
-      RndMeth		      "Floor"
-      SaturateOnIntegerOverflow	off
-    }
-    Block {
       BlockType		      Reference
-      Name		      "Detect\nChange"
-      Ports		      [1, 1]
-      Position		      [655, 205, 715, 235]
-      SourceBlock	      "simulink/Logic and Bit\nOperations/Detect\nChan"
-"ge"
-      SourceType	      "Detect Change"
+      Name		      "Counter\nLimited"
+      Ports		      [0, 1]
+      Position		      [125, 245, 155, 275]
+      SourceBlock	      "simulink/Sources/Counter\nLimited"
+      SourceType	      "Counter Limited"
       ShowPortLabels	      "FromPortIcon"
       SystemSampleTime	      "-1"
       FunctionWithSeparateData off
@@ -790,7 +822,40 @@ Model {
       RTWMemSecDataConstants  "Inherit from model"
       RTWMemSecDataInternal   "Inherit from model"
       RTWMemSecDataParameters "Inherit from model"
-      vinit		      "0"
+      uplimit		      "1"
+      tsamp		      "1"
+    }
+    Block {
+      BlockType		      DataTypeConversion
+      Name		      "Data Type Conversion"
+      Position		      [260, 143, 335, 177]
+      OutDataTypeMode	      "int16"
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	off
+    }
+    Block {
+      BlockType		      DataTypeConversion
+      Name		      "Data Type Conversion2"
+      Position		      [200, 251, 265, 269]
+      ShowName		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	off
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Digital Output Write2"
+      Tag		      "dsPIC_Digital_Output"
+      Ports		      [1]
+      Position		      [330, 242, 460, 278]
+      NamePlacement	      "alternate"
+      ShowName		      off
+      Priority		      "5"
+      SourceBlock	      "dsPICdrivers/Digital I//O/Digital Output Write"
+      SourceType	      ""
+      PORT		      "A"
+      Pin		      "[0]"
+      Simultaneous	      off
+      OrderingInOutPopup      "None"
     }
     Block {
       BlockType		      Reference
@@ -836,7 +901,7 @@ Model {
       MaxChannel	      "[0.002]"
       SafeMarge		      "[3]"
       MaxName		      " ' IC1max ' "
-      Precision		      "[13.3301]"
+      Precision		      "[13.2877]"
       Timer		      "[2]"
       ChangeDetected	      "[3]"
       ChangeDetectedPortRef   "3"
@@ -869,27 +934,36 @@ Model {
       tmr2345		      "[8  0  0  0  0  0  0  0]"
       tmr2345cfg	      "[-1 -1 -1 -1 -1 -1 -1 -1]"
       IOautoConf	      on
-      typePort		      "[ 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  "
-"0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0 "
-" 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  6  0  0  0  0  0  0  0  0  0  0"
-"  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  4  0  0  0  0  0  0  0  "
-"0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0 ]"
-      TRIS		      "[ 65535  65535  65535  65535  65535  65535  655"
+      typePort		      "[ 10   0   0   0   0   0   0   0   0   0   0   "
+"0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
+"   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0 "
+"  0   0   0   0   0   0   6   0   0   0   0   0   0   0   0   0   0   0   0  "
+" 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   4   5   0   0   "
+"0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
+"   0   0   0   0 ]"
+      TRIS		      "[ 65534  65535  65535  65535  65535  65535  655"
 "35 ]"
       ADPCFG		      "0"
       MasterBusyPort	      "None"
       MasterOverloadPort      "None"
       FOSC		      "Quartz (XT - HS)"
-      ClockSwitchMonitor      "Both disabled"
       TempProtection_33f      "TEMP_ON"
       FPBOR		      "<empty>"
       PWRT		      "disable"
       MCLR		      "<empty>"
       PowerSave		      off
-      OverrideFcy	      off
-      NewFcy		      "1e6"
-      PR2345		      "[65535  65535  65535  65535  65535  65535  6553"
-"5  65535]"
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Tx Output"
+      Tag		      "dsPIC_TX"
+      Ports		      [1]
+      Position		      [535, 144, 605, 176]
+      Priority		      "5"
+      SourceBlock	      "dsPICdrivers/Serial PORT/Tx Output"
+      SourceType	      "Serial Transmition"
+      UART		      "2"
+      OrderingInOutPopup      "None"
     }
     Block {
       BlockType		      Reference
@@ -912,7 +986,7 @@ Model {
       InterruptTxWhen	      "When Transmit Buffer is empty"
       TXInterruptPri	      "1"
       TxBufferSize	      "32"
-      TXEN		      off
+      TXEN		      on
       InterruptRxWhen	      "When Receive Buffer is full (contain 4 characte"
 "rs)"
       RXInterruptPri	      "2"
@@ -922,61 +996,6 @@ Model {
       Info		      "UxBRG = 64   ||  Real Baud : 38462   ||  % erro"
 "r : 0.16026  ||  max 3.8462 Bytes / Step"
       RealBaud		      "0"
-    }
-    Block {
-      BlockType		      Reference
-      Name		      "Weighted\nMoving Average"
-      Ports		      [1, 1]
-      Position		      [555, 202, 625, 238]
-      SourceBlock	      "simulink/Discrete/Weighted\nMoving Average"
-      SourceType	      "Weighted Moving Average"
-      mgainval		      "[.3 .4 .3]"
-      vinit		      "0.0"
-      samptime		      ".1"
-      GainDataTypeScalingMode "Inherit via internal rule"
-      GainDataType	      "uint(16)"
-      MatRadixGroup	      "Best Precision: Matrix-wise"
-      GainScaling	      "2^-10"
-      OutputDataTypeScalingMode	"Inherit via back propagation"
-      OutDataType	      "sfix(16)"
-      OutScaling	      "2^-10"
-      LockScale		      off
-      RndMeth		      "Floor"
-      DoSatur		      off
-    }
-    Block {
-      BlockType		      Reference
-      Name		      "cc_command"
-      Tag		      "dsPIC_dsPIC_CFunctionCall"
-      Ports		      [2]
-      Position		      [750, 145, 890, 200]
-      ShowName		      off
-      List {
-	ListType		RTWdata
-	FctDeclaration		"extern void send_short(int16_T u1, uint8_T u2"
-");"
-	FctCall			"send_short(%u1, %u2);"
-	fctName			"send_short"
-	INPUT_SIZE		"1"
-	OUTPUT_SIZE		"1"
-	NBR_INPUT		"2"
-	NBR_OUTPUT		"0"
-      }
-      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
-      SourceType	      "C Function Call"
-      fctName		      "'send_short'"
-      INPUT_SIZE	      "1"
-      INPUT1		      "int16"
-      INPUT2		      "uint8"
-      INPUT3		      "--"
-      OUTPUT_SIZE	      "1"
-      OUTPUT1		      "--"
-      SampleTime	      "-1"
-      InputType		      "[ 3 2 ]"
-      OutputType	      "[ ]"
-      FctDeclaration	      "extern void send_short(int16_T u1, uint8_T u2);"
-      FctCall		      "send_short(%u1, %u2);"
-      OrderingInOutPopup      "None"
     }
     Line {
       SrcBlock		      "Input Capture"
@@ -999,29 +1018,20 @@ Model {
     Line {
       SrcBlock		      "Gain"
       SrcPort		      1
-      Points		      [15, 0]
-      Branch {
-	DstBlock		"cc_command"
-	DstPort			1
-      }
-      Branch {
-	Points			[0, 60]
-	DstBlock		"Weighted\nMoving Average"
-	DstPort			1
-      }
-    }
-    Line {
-      SrcBlock		      "Weighted\nMoving Average"
-      SrcPort		      1
-      DstBlock		      "Detect\nChange"
+      DstBlock		      "Tx Output"
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Detect\nChange"
+      SrcBlock		      "Counter\nLimited"
       SrcPort		      1
-      Points		      [5, 0; 0, -35]
-      DstBlock		      "cc_command"
-      DstPort		      2
+      DstBlock		      "Data Type Conversion2"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Data Type Conversion2"
+      SrcPort		      1
+      DstBlock		      "Digital Output Write2"
+      DstPort		      1
     }
   }
 }
