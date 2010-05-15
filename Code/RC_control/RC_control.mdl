@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.523"
+    ComputedModelVersion    "1.551"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -44,8 +44,8 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sat May 01 13:34:10 2010"
-  ModelVersionFormat	  "1.%<AutoIncrement:523>"
+  LastModifiedDate	  "Fri May 14 17:03:19 2010"
+  ModelVersionFormat	  "1.%<AutoIncrement:551>"
   ConfigurationManager	  "None"
   SimulationMode	  "normal"
   LinearizationMsg	  "none"
@@ -322,7 +322,6 @@ Model {
 	  ConfigurationMode	  "Optimized"
 	  ProcessScript		  "dspic_make_rtw_hook"
 	  ConfigAtBuild		  off
-	  CustomInclude		  ""
 	  CustomSource		  "../../../../ecan/circBuffer.c\n../../../../"
 "ecan/ecanFunctions.c"
 	  CustomInitializer	  "#include \"InCap.h\"\n#include <p33fxxxx.h>"
@@ -789,13 +788,6 @@ Model {
       SampleTime	      "-1"
     }
     Block {
-      BlockType		      RateTransition
-      Integrity		      on
-      Deterministic	      on
-      X0		      "0"
-      OutPortSampleTime	      "-1"
-    }
-    Block {
       BlockType		      RelationalOperator
       Operator		      ">="
       InputSameDT	      on
@@ -846,6 +838,21 @@ Model {
       SimViewingDevice	      off
       DataTypeOverride	      "UseLocalSettings"
       MinMaxOverflowLogging   "UseLocalSettings"
+    }
+    Block {
+      BlockType		      Sum
+      IconShape		      "rectangular"
+      Inputs		      "++"
+      CollapseMode	      "All dimensions"
+      CollapseDim	      "1"
+      InputSameDT	      on
+      OutDataTypeMode	      "Same as first input"
+      OutDataType	      "sfix(16)"
+      OutScaling	      "2^0"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      SampleTime	      "-1"
     }
     Block {
       BlockType		      Switch
@@ -914,7 +921,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Clear Rudder to Zero\nif Disconnect"
-	Location		[451, 413, 991, 634]
+	Location		[451, 413, 1116, 634]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -971,6 +978,7 @@ Model {
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
+	  OutDataTypeMode	  "Inherit via back propagation"
 	}
 	Block {
 	  BlockType		  Constant
@@ -978,6 +986,7 @@ Model {
 	  Position		  [25, 66, 55, 84]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
+	  OutDataTypeMode	  "uint16"
 	}
 	Block {
 	  BlockType		  DiscreteIntegrator
@@ -998,6 +1007,7 @@ Model {
 	  Name			  "Switch"
 	  Position		  [285, 30, 315, 60]
 	  ShowName		  off
+	  Criteria		  "u2 ~= 0"
 	  InputSameDT		  off
 	  SaturateOnIntegerOverflow off
 	}
@@ -1068,7 +1078,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Clear Throttle to Zero\nif Disconnect"
-	Location		[547, 732, 1087, 953]
+	Location		[547, 732, 1197, 953]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -1125,6 +1135,7 @@ Model {
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
+	  OutDataTypeMode	  "Inherit via back propagation"
 	}
 	Block {
 	  BlockType		  Constant
@@ -1132,6 +1143,7 @@ Model {
 	  Position		  [25, 66, 55, 84]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
+	  OutDataTypeMode	  "uint16"
 	}
 	Block {
 	  BlockType		  DiscreteIntegrator
@@ -1152,6 +1164,7 @@ Model {
 	  Name			  "Switch"
 	  Position		  [285, 30, 315, 60]
 	  ShowName		  off
+	  Criteria		  "u2 ~= 0"
 	  InputSameDT		  off
 	  SaturateOnIntegerOverflow off
 	}
@@ -1359,163 +1372,163 @@ Model {
 "ameters(1) = bitor(parameters(1), bitshift(dma_tx_chan, 8));\n\n%% Generate p"
 "arameter 2\nparameters(2) = baud / 100;\n\n%% Generate parameter 3\nh = find_"
 "system(bdroot(gcb),'FollowLinks','on','LookUnderMasks','all','Tag','dsPIC_MAS"
-"TER');\nfcy = 0;\nif ~isempty(h)\n    OverrideFcy = strcmp(get_param(h{1},'Ov"
-"errideFcy'),'on');\n    if (OverrideFcy == 1)\n        fcy = str2num(get_para"
-"m(h{1},'NewFcy'));     %% overridded fcy\n    else\n        fcy = str2num(get"
-"_param(h{1},'fcy'));\n    end \nend\nparameters(3) = fcy / 1000;\n\n%% Genera"
-"te parameter 4\nparameters(4) = ps1 - 1;\nparameters(4) = bitor(parameters(4)"
-", bitshift(pd - 1, 3));\nparameters(4) = bitor(parameters(4), bitshift(ps2 - "
-"1, 6));\nparameters(4) = bitor(parameters(4), bitshift(sjw - 1, 9));\nif trip"
-"le_sample == 1\n    parameters(4) = bitset(parameters(4),12);\nend\n\n%% Gene"
-"rate parameter 5\nfor k = 1:length(filters)\n    parameters(5) = bitset(param"
-"eters(5),filters(k)+1);\nend;\n\n% Map filter mask values into proper values"
-"\nfilter_masks = [filter_0_mask; filter_1_mask; filter_2_mask; filter_3_mask;"
-" filter_4_mask; filter_5_mask; filter_6_mask; filter_7_mask; filter_8_mask; f"
-"ilter_9_mask; filter_10_mask; filter_11_mask; filter_12_mask; filter_13_mask;"
-" filter_14_mask; filter_15_mask;];\nfilter_masks = filter_masks - 2;\nfilter_"
-"masks(filter_masks == -1) = 3;\n\n%% Generate parameters 6 and 7\nfor k = 1:l"
-"ength(filters);\n    filter = filters(k) + 1;\n    if filter < 9\n        par"
-"ameters(6) = bitor(parameters(6), bitshift(filter_masks(filter),2*(filter-1))"
-");\n    else\n        parameters(7) = bitor(parameters(7), bitshift(filter_ma"
-"sks(filter),2*(filter-9)));\n    end\nend\n\n% Generate parameters 8 and 9\np"
-"arameters(8) = bitshift(bitand(mask_0,hex2dec('18000000')),-27); % EID17-16\n"
-"parameters(8) = bitor(parameters(8), bitshift(bitand(mask_0,hex2dec('7FF')), "
-"5)); % SID\nparameters(8) = bitor(parameters(8), bitshift(mask_0_mide - 1, 3)"
-"); % MIDE\nparameters(9) = bitshift(bitand(mask_0,hex2dec('7FFF800')),-11); %"
-" EID15-0\n\n%% Generate parameters 10 and 11\nparameters(10) = bitshift(bitan"
-"d(mask_1,hex2dec('18000000')),-27); % EID17-16\nparameters(10) = bitor(parame"
-"ters(10), bitshift(bitand(mask_1,hex2dec('7FF')), 5)); % SID\nparameters(10) "
-"= bitor(parameters(10), bitshift(mask_1_mide - 1, 3)); % MIDE\nparameters(11)"
-" = bitshift(bitand(mask_1,hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generate "
-"parameters 12 and 13\nparameters(12) = bitshift(bitand(mask_2,hex2dec('180000"
-"00')),-27); % EID17-16\nparameters(12) = bitor(parameters(12), bitshift(bitan"
-"d(mask_2,hex2dec('7FF')), 5)); % SID\nparameters(12) = bitor(parameters(12), "
-"bitshift(mask_2_mide - 1, 3)); % MIDE\nparameters(13) = bitshift(bitand(mask_"
-"2,hex2dec('7FFF800')),-11); % EID15-0\n\n% Generate parameters 14-17\nbuf_pri"
-"orities = [buf_0_tx_pri;buf_1_tx_pri;buf_2_tx_pri;buf_3_tx_pri;buf_4_tx_pri;b"
-"uf_5_tx_pri;buf_6_tx_pri;buf_7_tx_pri] - 1;\nbuf_rtes = [buf_0_rte;buf_1_rte;"
-"buf_2_rte;buf_3_rte;buf_4_rte;buf_5_rte;buf_6_rte;buf_7_rte] - 1;\n\n% Create"
-" a vector of chars to modify\nregs = uint16(zeros(8,1));\n\n% Go through all "
-"enabled transmission buffers setting appropriate bits\nfor b = 1:size(tx_bufs"
-",1)\n    \n    index = tx_bufs(b) + 1;\n    \n    % Set transmission bit\n   "
-" regs(index) = bitset(regs(index),8);\n\n    % Set priority bits\n    regs(in"
-"dex) = bitor(regs(index), buf_priorities(index));\n\n    % Set remote transmi"
-"t enable bits\n    if buf_rtes(index) == 1\n        regs(index) = bitset(regs"
-"(index),3);\n    end\nend\n\nfor b = 1:size(rx_bufs,1)\n    \n    index = rx_"
-"bufs(b) + 1;\n\n    % Set priority bits\n    regs(index) = bitor(regs(index),"
-" buf_priorities(index));\n\n    % Set remote transmit enable bits\n    if buf"
-"_rtes(index) == 1\n        regs(index) = bitset(regs(index),3);\n    end\nend"
-"\n\n% Map our matrix into registers\nparameters(14) = bitor(bitshift(regs(2),"
-"8), regs(1));\nparameters(15) = bitor(bitshift(regs(4),8), regs(3));\nparamet"
-"ers(16) = bitor(bitshift(regs(6),8), regs(5));\nparameters(17) = bitor(bitshi"
-"ft(regs(8),8), regs(7));\n\n% Map the filter buffer values to corresponding b"
-"it values\nfilter_buffers = [filter_0_buf; filter_1_buf; filter_2_buf; filter"
-"_3_buf; filter_4_buf; filter_5_buf; filter_6_buf; filter_7_buf; filter_8_buf;"
-" filter_9_buf; filter_10_buf; filter_11_buf; filter_12_buf; filter_13_buf; fi"
-"lter_14_buf; filter_15_buf;];\nfilter_buffers = filter_buffers - 1;\n\n%% Gen"
-"erate parameter 18\nif bitget(parameters(5),1) == 1\n    parameters(18) = fil"
-"ter_buffers(1);\nend\nif bitget(parameters(5),2) == 1\n    parameters(18) = b"
-"itor(parameters(18), bitshift(filter_buffers(2), 4));\nend\nif bitget(paramet"
-"ers(5),3) == 1\n    parameters(18) = bitor(parameters(18), bitshift(filter_bu"
-"ffers(3), 8));\nend\nif bitget(parameters(5),4) == 1\n    parameters(18) = bi"
-"tor(parameters(18), bitshift(filter_buffers(4), 12));\nend\n\n%% Generate par"
-"ameter 19\nif bitget(parameters(5),5) == 1\n    parameters(19) = filter_buffe"
-"rs(5);\nend\nif bitget(parameters(5),6) == 1\n    parameters(19) = bitor(para"
-"meters(19), bitshift(filter_buffers(6), 4));\nend\nif bitget(parameters(5),7)"
-" == 1\n    parameters(19) = bitor(parameters(19), bitshift(filter_buffers(7),"
-" 8));\nend\nif bitget(parameters(5),8) == 1\n    parameters(19) = bitor(param"
-"eters(19), bitshift(filter_buffers(8), 12));\nend\n\n%% Generate parameter 20"
-"\nif bitget(parameters(5),9) == 1\n    parameters(20) = filter_buffers(9);\ne"
-"nd\nif bitget(parameters(5),10) == 1\n    parameters(20) = bitor(parameters(2"
-"0), bitshift(filter_buffers(10), 4));\nend\nif bitget(parameters(5),11) == 1"
-"\n    parameters(20) = bitor(parameters(20), bitshift(filter_buffers(11), 8))"
-";\nend\nif bitget(parameters(5),12) == 1\n    parameters(20) = bitor(paramete"
-"rs(20), bitshift(filter_buffers(12), 12));\nend\n\n%% Generate parameter 21\n"
-"if bitget(parameters(5),13) == 1\n    parameters(21) = filter_buffers(13);\ne"
-"nd\nif bitget(parameters(5),14) == 1\n    parameters(21) = bitor(parameters(2"
-"1), bitshift(filter_buffers(14), 4));\nend\nif bitget(parameters(5),15) == 1"
-"\n    parameters(21) = bitor(parameters(21), bitshift(filter_buffers(15), 8))"
-";\nend\nif bitget(parameters(5),16) == 1\n    parameters(21) = bitor(paramete"
-"rs(21), bitshift(filter_buffers(16), 12));\nend\n\n% Generate parameters 22 a"
-"nd 23\nparameters(22) = bitshift(bitand(filter_0,hex2dec('18000000')),-27); %"
-" EID17-16\nparameters(22) = bitor(parameters(22), bitshift(bitand(filter_0,he"
-"x2dec('7FF')), 5)); % SID\nparameters(22) = bitor(parameters(22), bitshift(fi"
-"lter_0_exide - 1, 3)); % EXIDE\nparameters(23) = bitshift(bitand(uint32(filte"
-"r_0),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generate parameters 24 and 25"
-"\nparameters(24) = bitshift(bitand(filter_1,hex2dec('18000000')),-27); % EID1"
-"7-16\nparameters(24) = bitor(parameters(24), bitshift(bitand(filter_1,hex2dec"
-"('7FF')), 5)); % SID\nparameters(24) = bitor(parameters(24), bitshift(filter_"
-"1_exide - 1, 3)); % EXIDE\nparameters(25) = bitshift(bitand(uint32(filter_1),"
-"hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generate parameters 26 and 27\npara"
-"meters(26) = bitshift(bitand(filter_2,hex2dec('18000000')),-27); % EID17-16\n"
-"parameters(26) = bitor(parameters(26), bitshift(bitand(filter_2,hex2dec('7FF'"
-")), 5)); % SID\nparameters(26) = bitor(parameters(26), bitshift(filter_2_exid"
-"e - 1, 3)); % EXIDE\nparameters(27) = bitshift(bitand(uint32(filter_2),hex2de"
-"c('7FFF800')),-11); % EID15-0\n\n%% Generate parameters 28 and 29\nparameters"
-"(28) = bitshift(bitand(filter_3,hex2dec('18000000')),-27); % EID17-16\nparame"
-"ters(28) = bitor(parameters(28), bitshift(bitand(filter_3,hex2dec('7FF')), 5)"
-"); % SID\nparameters(28) = bitor(parameters(28), bitshift(filter_3_exide - 1,"
-" 3)); % EXIDE\nparameters(29) = bitshift(bitand(uint32(filter_3),hex2dec('7FF"
-"F800')),-11); % EID15-0\n\n%% Generate parameters 30 and 31\nparameters(30) ="
-" bitshift(bitand(filter_4,hex2dec('18000000')),-27); % EID17-16\nparameters(3"
-"0) = bitor(parameters(30), bitshift(bitand(filter_4,hex2dec('7FF')), 5)); % S"
-"ID\nparameters(30) = bitor(parameters(30), bitshift(filter_4_exide - 1, 3)); "
-"% EXIDE\nparameters(31) = bitshift(bitand(uint32(filter_4),hex2dec('7FFF800')"
-"),-11); % EID15-0\n\n%% Generate parameters 32 and 33\nparameters(32) = bitsh"
-"ift(bitand(filter_5,hex2dec('18000000')),-27); % EID17-16\nparameters(32) = b"
-"itor(parameters(32), bitshift(bitand(filter_5,hex2dec('7FF')), 5)); % SID\npa"
-"rameters(32) = bitor(parameters(32), bitshift(filter_5_exide - 1, 3)); % EXID"
-"E\nparameters(33) = bitshift(bitand(uint32(filter_5),hex2dec('7FFF800')),-11)"
-"; % EID15-0\n\n%% Generate parameters 34 and 35\nparameters(34) = bitshift(bi"
-"tand(filter_6,hex2dec('18000000')),-27); % EID17-16\nparameters(34) = bitor(p"
-"arameters(34), bitshift(bitand(filter_6,hex2dec('7FF')), 5)); % SID\nparamete"
-"rs(34) = bitor(parameters(34), bitshift(filter_6_exide - 1, 3)); % EXIDE\npar"
-"ameters(35) = bitshift(bitand(uint32(filter_6),hex2dec('7FFF800')),-11); % EI"
-"D15-0\n\n%% Generate parameters 36 and 37\nparameters(36) = bitshift(bitand(f"
-"ilter_7,hex2dec('18000000')),-27); % EID17-16\nparameters(36) = bitor(paramet"
-"ers(36), bitshift(bitand(filter_7,hex2dec('7FF')), 5)); % SID\nparameters(36)"
-" = bitor(parameters(36), bitshift(filter_7_exide - 1, 3)); % EXIDE\nparameter"
-"s(37) = bitshift(bitand(uint32(filter_7),hex2dec('7FFF800')),-11); % EID15-0"
-"\n\n%% Generate parameters 38 and 39\nparameters(38) = bitshift(bitand(filter"
-"_8,hex2dec('18000000')),-27); % EID17-16\nparameters(38) = bitor(parameters(3"
-"8), bitshift(bitand(filter_8,hex2dec('7FF')), 5)); % SID\nparameters(38) = bi"
-"tor(parameters(38), bitshift(filter_8_exide - 1, 3)); % EXIDE\nparameters(39)"
-" = bitshift(bitand(uint32(filter_8),hex2dec('7FFF800')),-11); % EID15-0\n\n%%"
-" Generate parameters 40 and 41\nparameters(40) = bitshift(bitand(filter_9,hex"
-"2dec('18000000')),-27); % EID17-16\nparameters(40) = bitor(parameters(40), bi"
-"tshift(bitand(filter_9,hex2dec('7FF')), 5)); % SID\nparameters(40) = bitor(pa"
-"rameters(40), bitshift(filter_9_exide - 1, 3)); % EXIDE\nparameters(41) = bit"
-"shift(bitand(uint32(filter_9),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Gener"
-"ate parameters 42 and 43\nparameters(42) = bitshift(bitand(filter_10,hex2dec("
-"'18000000')),-27); % EID17-16\nparameters(42) = bitor(parameters(42), bitshif"
-"t(bitand(filter_10,hex2dec('7FF')), 5)); % SID\nparameters(42) = bitor(parame"
-"ters(42), bitshift(filter_10_exide - 1, 3)); % EXIDE\nparameters(43) = bitshi"
-"ft(bitand(uint32(filter_10),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generat"
-"e parameters 44 and 45\nparameters(44) = bitshift(bitand(filter_11,hex2dec('1"
-"8000000')),-27); % EID17-16\nparameters(44) = bitor(parameters(44), bitshift("
-"bitand(filter_11,hex2dec('7FF')), 5)); % SID\nparameters(44) = bitor(paramete"
-"rs(44), bitshift(filter_11_exide - 1, 3)); % EXIDE\nparameters(45) = bitshift"
-"(bitand(uint32(filter_11),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generate "
-"parameters 46 and 47\nparameters(46) = bitshift(bitand(filter_12,hex2dec('180"
-"00000')),-27); % EID17-16\nparameters(46) = bitor(parameters(46), bitshift(bi"
-"tand(filter_12,hex2dec('7FF')), 5)); % SID\nparameters(46) = bitor(parameters"
-"(46), bitshift(filter_12_exide - 1, 3)); % EXIDE\nparameters(47) = bitshift(b"
-"itand(uint32(filter_12),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generate pa"
-"rameters 48 and 49\nparameters(48) = bitshift(bitand(filter_13,hex2dec('18000"
-"000')),-27); % EID17-16\nparameters(48) = bitor(parameters(48), bitshift(bita"
-"nd(filter_13,hex2dec('7FF')), 5)); % SID\nparameters(48) = bitor(parameters(4"
-"8), bitshift(filter_13_exide - 1, 3)); % EXIDE\nparameters(49) = bitshift(bit"
-"and(uint32(filter_13),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generate para"
-"meters 50 and 51\nparameters(50) = bitshift(bitand(filter_14,hex2dec('1800000"
-"0')),-27); % EID17-16\nparameters(50) = bitor(parameters(50), bitshift(bitand"
-"(filter_14,hex2dec('7FF')), 5)); % SID\nparameters(50) = bitor(parameters(50)"
-", bitshift(filter_14_exide - 1, 3)); % EXIDE\nparameters(51) = bitshift(bitan"
-"d(uint32(filter_14),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generate parame"
-"ters 52 and 53\nparameters(52) = bitshift(bitand(filter_15,hex2dec('18000000'"
-")),-27); % EID17-16\nparameters(52) = bitor(parameters(52), bitshift(bitand(f"
-"ilter_15,hex2dec('7FF')), 5)); % SID\nparameters(52) = bitor(parameters(52), "
-"bitshift(filter_15_exide - 1, 3)); % EXIDE\nparameters(53) = bitshift(bitand("
-"uint32(filter_15),hex2dec('7FFF800')),-11); % EID15-0"
+"TER');\nfcy = 0;\nif ~isempty(h)\n    %OverrideFcy = strcmp(get_param(h{1},'O"
+"verrideFcy'),'on');\n    %if (OverrideFcy == 1)\n    %    fcy = str2num(get_p"
+"aram(h{1},'NewFcy'));     %% overridded fcy\n    %else\n        fcy = str2num"
+"(get_param(h{1},'fcy'));\n    %end \nend\nparameters(3) = fcy / 1000;\n\n%% G"
+"enerate parameter 4\nparameters(4) = ps1 - 1;\nparameters(4) = bitor(paramete"
+"rs(4), bitshift(pd - 1, 3));\nparameters(4) = bitor(parameters(4), bitshift(p"
+"s2 - 1, 6));\nparameters(4) = bitor(parameters(4), bitshift(sjw - 1, 9));\nif"
+" triple_sample == 1\n    parameters(4) = bitset(parameters(4),12);\nend\n\n%%"
+" Generate parameter 5\nfor k = 1:length(filters)\n    parameters(5) = bitset("
+"parameters(5),filters(k)+1);\nend;\n\n% Map filter mask values into proper va"
+"lues\nfilter_masks = [filter_0_mask; filter_1_mask; filter_2_mask; filter_3_m"
+"ask; filter_4_mask; filter_5_mask; filter_6_mask; filter_7_mask; filter_8_mas"
+"k; filter_9_mask; filter_10_mask; filter_11_mask; filter_12_mask; filter_13_m"
+"ask; filter_14_mask; filter_15_mask;];\nfilter_masks = filter_masks - 2;\nfil"
+"ter_masks(filter_masks == -1) = 3;\n\n%% Generate parameters 6 and 7\nfor k ="
+" 1:length(filters);\n    filter = filters(k) + 1;\n    if filter < 9\n       "
+" parameters(6) = bitor(parameters(6), bitshift(filter_masks(filter),2*(filter"
+"-1)));\n    else\n        parameters(7) = bitor(parameters(7), bitshift(filte"
+"r_masks(filter),2*(filter-9)));\n    end\nend\n\n% Generate parameters 8 and "
+"9\nparameters(8) = bitshift(bitand(mask_0,hex2dec('18000000')),-27); % EID17-"
+"16\nparameters(8) = bitor(parameters(8), bitshift(bitand(mask_0,hex2dec('7FF'"
+")), 5)); % SID\nparameters(8) = bitor(parameters(8), bitshift(mask_0_mide - 1"
+", 3)); % MIDE\nparameters(9) = bitshift(bitand(mask_0,hex2dec('7FFF800')),-11"
+"); % EID15-0\n\n%% Generate parameters 10 and 11\nparameters(10) = bitshift(b"
+"itand(mask_1,hex2dec('18000000')),-27); % EID17-16\nparameters(10) = bitor(pa"
+"rameters(10), bitshift(bitand(mask_1,hex2dec('7FF')), 5)); % SID\nparameters("
+"10) = bitor(parameters(10), bitshift(mask_1_mide - 1, 3)); % MIDE\nparameters"
+"(11) = bitshift(bitand(mask_1,hex2dec('7FFF800')),-11); % EID15-0\n\n%% Gener"
+"ate parameters 12 and 13\nparameters(12) = bitshift(bitand(mask_2,hex2dec('18"
+"000000')),-27); % EID17-16\nparameters(12) = bitor(parameters(12), bitshift(b"
+"itand(mask_2,hex2dec('7FF')), 5)); % SID\nparameters(12) = bitor(parameters(1"
+"2), bitshift(mask_2_mide - 1, 3)); % MIDE\nparameters(13) = bitshift(bitand(m"
+"ask_2,hex2dec('7FFF800')),-11); % EID15-0\n\n% Generate parameters 14-17\nbuf"
+"_priorities = [buf_0_tx_pri;buf_1_tx_pri;buf_2_tx_pri;buf_3_tx_pri;buf_4_tx_p"
+"ri;buf_5_tx_pri;buf_6_tx_pri;buf_7_tx_pri] - 1;\nbuf_rtes = [buf_0_rte;buf_1_"
+"rte;buf_2_rte;buf_3_rte;buf_4_rte;buf_5_rte;buf_6_rte;buf_7_rte] - 1;\n\n% Cr"
+"eate a vector of chars to modify\nregs = uint16(zeros(8,1));\n\n% Go through "
+"all enabled transmission buffers setting appropriate bits\nfor b = 1:size(tx_"
+"bufs,1)\n    \n    index = tx_bufs(b) + 1;\n    \n    % Set transmission bit"
+"\n    regs(index) = bitset(regs(index),8);\n\n    % Set priority bits\n    re"
+"gs(index) = bitor(regs(index), buf_priorities(index));\n\n    % Set remote tr"
+"ansmit enable bits\n    if buf_rtes(index) == 1\n        regs(index) = bitset"
+"(regs(index),3);\n    end\nend\n\nfor b = 1:size(rx_bufs,1)\n    \n    index "
+"= rx_bufs(b) + 1;\n\n    % Set priority bits\n    regs(index) = bitor(regs(in"
+"dex), buf_priorities(index));\n\n    % Set remote transmit enable bits\n    i"
+"f buf_rtes(index) == 1\n        regs(index) = bitset(regs(index),3);\n    end"
+"\nend\n\n% Map our matrix into registers\nparameters(14) = bitor(bitshift(reg"
+"s(2),8), regs(1));\nparameters(15) = bitor(bitshift(regs(4),8), regs(3));\npa"
+"rameters(16) = bitor(bitshift(regs(6),8), regs(5));\nparameters(17) = bitor(b"
+"itshift(regs(8),8), regs(7));\n\n% Map the filter buffer values to correspond"
+"ing bit values\nfilter_buffers = [filter_0_buf; filter_1_buf; filter_2_buf; f"
+"ilter_3_buf; filter_4_buf; filter_5_buf; filter_6_buf; filter_7_buf; filter_8"
+"_buf; filter_9_buf; filter_10_buf; filter_11_buf; filter_12_buf; filter_13_bu"
+"f; filter_14_buf; filter_15_buf;];\nfilter_buffers = filter_buffers - 1;\n\n%"
+"% Generate parameter 18\nif bitget(parameters(5),1) == 1\n    parameters(18) "
+"= filter_buffers(1);\nend\nif bitget(parameters(5),2) == 1\n    parameters(18"
+") = bitor(parameters(18), bitshift(filter_buffers(2), 4));\nend\nif bitget(pa"
+"rameters(5),3) == 1\n    parameters(18) = bitor(parameters(18), bitshift(filt"
+"er_buffers(3), 8));\nend\nif bitget(parameters(5),4) == 1\n    parameters(18)"
+" = bitor(parameters(18), bitshift(filter_buffers(4), 12));\nend\n\n%% Generat"
+"e parameter 19\nif bitget(parameters(5),5) == 1\n    parameters(19) = filter_"
+"buffers(5);\nend\nif bitget(parameters(5),6) == 1\n    parameters(19) = bitor"
+"(parameters(19), bitshift(filter_buffers(6), 4));\nend\nif bitget(parameters("
+"5),7) == 1\n    parameters(19) = bitor(parameters(19), bitshift(filter_buffer"
+"s(7), 8));\nend\nif bitget(parameters(5),8) == 1\n    parameters(19) = bitor("
+"parameters(19), bitshift(filter_buffers(8), 12));\nend\n\n%% Generate paramet"
+"er 20\nif bitget(parameters(5),9) == 1\n    parameters(20) = filter_buffers(9"
+");\nend\nif bitget(parameters(5),10) == 1\n    parameters(20) = bitor(paramet"
+"ers(20), bitshift(filter_buffers(10), 4));\nend\nif bitget(parameters(5),11) "
+"== 1\n    parameters(20) = bitor(parameters(20), bitshift(filter_buffers(11),"
+" 8));\nend\nif bitget(parameters(5),12) == 1\n    parameters(20) = bitor(para"
+"meters(20), bitshift(filter_buffers(12), 12));\nend\n\n%% Generate parameter "
+"21\nif bitget(parameters(5),13) == 1\n    parameters(21) = filter_buffers(13)"
+";\nend\nif bitget(parameters(5),14) == 1\n    parameters(21) = bitor(paramete"
+"rs(21), bitshift(filter_buffers(14), 4));\nend\nif bitget(parameters(5),15) ="
+"= 1\n    parameters(21) = bitor(parameters(21), bitshift(filter_buffers(15), "
+"8));\nend\nif bitget(parameters(5),16) == 1\n    parameters(21) = bitor(param"
+"eters(21), bitshift(filter_buffers(16), 12));\nend\n\n% Generate parameters 2"
+"2 and 23\nparameters(22) = bitshift(bitand(filter_0,hex2dec('18000000')),-27)"
+"; % EID17-16\nparameters(22) = bitor(parameters(22), bitshift(bitand(filter_0"
+",hex2dec('7FF')), 5)); % SID\nparameters(22) = bitor(parameters(22), bitshift"
+"(filter_0_exide - 1, 3)); % EXIDE\nparameters(23) = bitshift(bitand(uint32(fi"
+"lter_0),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generate parameters 24 and "
+"25\nparameters(24) = bitshift(bitand(filter_1,hex2dec('18000000')),-27); % EI"
+"D17-16\nparameters(24) = bitor(parameters(24), bitshift(bitand(filter_1,hex2d"
+"ec('7FF')), 5)); % SID\nparameters(24) = bitor(parameters(24), bitshift(filte"
+"r_1_exide - 1, 3)); % EXIDE\nparameters(25) = bitshift(bitand(uint32(filter_1"
+"),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generate parameters 26 and 27\npa"
+"rameters(26) = bitshift(bitand(filter_2,hex2dec('18000000')),-27); % EID17-16"
+"\nparameters(26) = bitor(parameters(26), bitshift(bitand(filter_2,hex2dec('7F"
+"F')), 5)); % SID\nparameters(26) = bitor(parameters(26), bitshift(filter_2_ex"
+"ide - 1, 3)); % EXIDE\nparameters(27) = bitshift(bitand(uint32(filter_2),hex2"
+"dec('7FFF800')),-11); % EID15-0\n\n%% Generate parameters 28 and 29\nparamete"
+"rs(28) = bitshift(bitand(filter_3,hex2dec('18000000')),-27); % EID17-16\npara"
+"meters(28) = bitor(parameters(28), bitshift(bitand(filter_3,hex2dec('7FF')), "
+"5)); % SID\nparameters(28) = bitor(parameters(28), bitshift(filter_3_exide - "
+"1, 3)); % EXIDE\nparameters(29) = bitshift(bitand(uint32(filter_3),hex2dec('7"
+"FFF800')),-11); % EID15-0\n\n%% Generate parameters 30 and 31\nparameters(30)"
+" = bitshift(bitand(filter_4,hex2dec('18000000')),-27); % EID17-16\nparameters"
+"(30) = bitor(parameters(30), bitshift(bitand(filter_4,hex2dec('7FF')), 5)); %"
+" SID\nparameters(30) = bitor(parameters(30), bitshift(filter_4_exide - 1, 3))"
+"; % EXIDE\nparameters(31) = bitshift(bitand(uint32(filter_4),hex2dec('7FFF800"
+"')),-11); % EID15-0\n\n%% Generate parameters 32 and 33\nparameters(32) = bit"
+"shift(bitand(filter_5,hex2dec('18000000')),-27); % EID17-16\nparameters(32) ="
+" bitor(parameters(32), bitshift(bitand(filter_5,hex2dec('7FF')), 5)); % SID\n"
+"parameters(32) = bitor(parameters(32), bitshift(filter_5_exide - 1, 3)); % EX"
+"IDE\nparameters(33) = bitshift(bitand(uint32(filter_5),hex2dec('7FFF800')),-1"
+"1); % EID15-0\n\n%% Generate parameters 34 and 35\nparameters(34) = bitshift("
+"bitand(filter_6,hex2dec('18000000')),-27); % EID17-16\nparameters(34) = bitor"
+"(parameters(34), bitshift(bitand(filter_6,hex2dec('7FF')), 5)); % SID\nparame"
+"ters(34) = bitor(parameters(34), bitshift(filter_6_exide - 1, 3)); % EXIDE\np"
+"arameters(35) = bitshift(bitand(uint32(filter_6),hex2dec('7FFF800')),-11); % "
+"EID15-0\n\n%% Generate parameters 36 and 37\nparameters(36) = bitshift(bitand"
+"(filter_7,hex2dec('18000000')),-27); % EID17-16\nparameters(36) = bitor(param"
+"eters(36), bitshift(bitand(filter_7,hex2dec('7FF')), 5)); % SID\nparameters(3"
+"6) = bitor(parameters(36), bitshift(filter_7_exide - 1, 3)); % EXIDE\nparamet"
+"ers(37) = bitshift(bitand(uint32(filter_7),hex2dec('7FFF800')),-11); % EID15-"
+"0\n\n%% Generate parameters 38 and 39\nparameters(38) = bitshift(bitand(filte"
+"r_8,hex2dec('18000000')),-27); % EID17-16\nparameters(38) = bitor(parameters("
+"38), bitshift(bitand(filter_8,hex2dec('7FF')), 5)); % SID\nparameters(38) = b"
+"itor(parameters(38), bitshift(filter_8_exide - 1, 3)); % EXIDE\nparameters(39"
+") = bitshift(bitand(uint32(filter_8),hex2dec('7FFF800')),-11); % EID15-0\n\n%"
+"% Generate parameters 40 and 41\nparameters(40) = bitshift(bitand(filter_9,he"
+"x2dec('18000000')),-27); % EID17-16\nparameters(40) = bitor(parameters(40), b"
+"itshift(bitand(filter_9,hex2dec('7FF')), 5)); % SID\nparameters(40) = bitor(p"
+"arameters(40), bitshift(filter_9_exide - 1, 3)); % EXIDE\nparameters(41) = bi"
+"tshift(bitand(uint32(filter_9),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Gene"
+"rate parameters 42 and 43\nparameters(42) = bitshift(bitand(filter_10,hex2dec"
+"('18000000')),-27); % EID17-16\nparameters(42) = bitor(parameters(42), bitshi"
+"ft(bitand(filter_10,hex2dec('7FF')), 5)); % SID\nparameters(42) = bitor(param"
+"eters(42), bitshift(filter_10_exide - 1, 3)); % EXIDE\nparameters(43) = bitsh"
+"ift(bitand(uint32(filter_10),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Genera"
+"te parameters 44 and 45\nparameters(44) = bitshift(bitand(filter_11,hex2dec('"
+"18000000')),-27); % EID17-16\nparameters(44) = bitor(parameters(44), bitshift"
+"(bitand(filter_11,hex2dec('7FF')), 5)); % SID\nparameters(44) = bitor(paramet"
+"ers(44), bitshift(filter_11_exide - 1, 3)); % EXIDE\nparameters(45) = bitshif"
+"t(bitand(uint32(filter_11),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generate"
+" parameters 46 and 47\nparameters(46) = bitshift(bitand(filter_12,hex2dec('18"
+"000000')),-27); % EID17-16\nparameters(46) = bitor(parameters(46), bitshift(b"
+"itand(filter_12,hex2dec('7FF')), 5)); % SID\nparameters(46) = bitor(parameter"
+"s(46), bitshift(filter_12_exide - 1, 3)); % EXIDE\nparameters(47) = bitshift("
+"bitand(uint32(filter_12),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generate p"
+"arameters 48 and 49\nparameters(48) = bitshift(bitand(filter_13,hex2dec('1800"
+"0000')),-27); % EID17-16\nparameters(48) = bitor(parameters(48), bitshift(bit"
+"and(filter_13,hex2dec('7FF')), 5)); % SID\nparameters(48) = bitor(parameters("
+"48), bitshift(filter_13_exide - 1, 3)); % EXIDE\nparameters(49) = bitshift(bi"
+"tand(uint32(filter_13),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generate par"
+"ameters 50 and 51\nparameters(50) = bitshift(bitand(filter_14,hex2dec('180000"
+"00')),-27); % EID17-16\nparameters(50) = bitor(parameters(50), bitshift(bitan"
+"d(filter_14,hex2dec('7FF')), 5)); % SID\nparameters(50) = bitor(parameters(50"
+"), bitshift(filter_14_exide - 1, 3)); % EXIDE\nparameters(51) = bitshift(bita"
+"nd(uint32(filter_14),hex2dec('7FFF800')),-11); % EID15-0\n\n%% Generate param"
+"eters 52 and 53\nparameters(52) = bitshift(bitand(filter_15,hex2dec('18000000"
+"')),-27); % EID17-16\nparameters(52) = bitor(parameters(52), bitshift(bitand("
+"filter_15,hex2dec('7FF')), 5)); % SID\nparameters(52) = bitor(parameters(52),"
+" bitshift(filter_15_exide - 1, 3)); % EXIDE\nparameters(53) = bitshift(bitand"
+"(uint32(filter_15),hex2dec('7FFF800')),-11); % EID15-0"
       MaskDisplay	      "text(0.5,0.5,'Configure ECAN1','horizontalAlign"
 "ment','center','verticalAlignment','middle');\n"
       MaskIconFrame	      on
@@ -1609,6 +1622,32 @@ Model {
     }
     Block {
       BlockType		      Reference
+      Name		      "Counter\nLimited"
+      Ports		      [0, 1]
+      Position		      [540, 155, 570, 185]
+      SourceBlock	      "simulink/Sources/Counter\nLimited"
+      SourceType	      "Counter Limited"
+      ShowPortLabels	      "FromPortIcon"
+      SystemSampleTime	      "-1"
+      FunctionWithSeparateData off
+      RTWMemSecFuncInitTerm   "Inherit from model"
+      RTWMemSecFuncExecute    "Inherit from model"
+      RTWMemSecDataConstants  "Inherit from model"
+      RTWMemSecDataInternal   "Inherit from model"
+      RTWMemSecDataParameters "Inherit from model"
+      uplimit		      "1"
+      tsamp		      "1"
+    }
+    Block {
+      BlockType		      DataTypeConversion
+      Name		      "Data Type Conversion2"
+      Position		      [615, 161, 680, 179]
+      ShowName		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	off
+    }
+    Block {
+      BlockType		      Reference
       Name		      "Digital Output Write"
       Tag		      "dsPIC_Digital_Output"
       Ports		      [1]
@@ -1641,6 +1680,22 @@ Model {
     }
     Block {
       BlockType		      Reference
+      Name		      "Digital Output Write2"
+      Tag		      "dsPIC_Digital_Output"
+      Ports		      [1]
+      Position		      [745, 152, 875, 188]
+      NamePlacement	      "alternate"
+      ShowName		      off
+      Priority		      "5"
+      SourceBlock	      "dsPICdrivers/Digital I//O/Digital Output Write"
+      SourceType	      ""
+      PORT		      "A"
+      Pin		      "[0]"
+      Simultaneous	      off
+      OrderingInOutPopup      "None"
+    }
+    Block {
+      BlockType		      Reference
       Name		      "DocBlock"
       Ports		      []
       Position		      [402, 20, 522, 73]
@@ -1663,7 +1718,7 @@ Model {
       BlockType		      SubSystem
       Name		      "Drive Motor Speed Message"
       Ports		      [4]
-      Position		      [950, 459, 1110, 526]
+      Position		      [715, 443, 870, 502]
       ShowPortLabels	      "SignalName"
       MinAlgLoopOccurrences   off
       RTWSystemCode	      "Auto"
@@ -1723,12 +1778,12 @@ Model {
       MaskIconOpaque	      off
       MaskIconRotate	      "none"
       MaskIconUnits	      "autoscale"
-      MaskValueString	      "0|hex2dec('301')|on|off|off|[hex2dec('11') hex2"
+      MaskValueString	      "0|hex2dec('401')|on|off|off|[hex2dec('11') hex2"
 "dec('12') hex2dec('13') hex2dec('14')]|4|on|.01|on"
       MaskTabNameString	      ",,,,,,,,,"
       System {
 	Name			"Drive Motor Speed Message"
-	Location		[67, 370, 710, 768]
+	Location		[502, 447, 1145, 849]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -1764,7 +1819,7 @@ Model {
 	Block {
 	  BlockType		  Inport
 	  Name			  "trigger"
-	  Position		  [400, 132, 465, 148]
+	  Position		  [400, 107, 465, 123]
 	  Port			  "4"
 	  IconDisplay		  "Port number"
 	}
@@ -1772,7 +1827,7 @@ Model {
 	  BlockType		  SubSystem
 	  Name			  "C-function Call"
 	  Ports			  [1, 0, 1]
-	  Position		  [485, 159, 560, 201]
+	  Position		  [485, 134, 560, 176]
 	  MinAlgLoopOccurrences	  off
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
@@ -1809,14 +1864,14 @@ Model {
 	      Name		      "ECAN1 Transmit\n[ecanFunctions.c]"
 	      Tag		      "dsPIC_dsPIC_CFunctionCall"
 	      Ports		      [1]
-	      Position		      [145, 65, 270, 105]
+	      Position		      [80, 65, 205, 105]
 	      BackgroundColor	      "orange"
 	      List {
 		ListType		RTWdata
-		FctDeclaration		"extern void ecan1_transmit_matlab(uin"
-"t16_T* u1);"
-		FctCall			"ecan1_transmit_matlab(*%u1);"
-		fctName			"ecan1_transmit_matlab"
+		FctDeclaration		"extern void ecan1_buffered_transmit_m"
+"atlab(uint16_T* u1);"
+		FctCall			"ecan1_buffered_transmit_matlab(*%u1);"
+		fctName			"ecan1_buffered_transmit_matlab"
 		INPUT_SIZE		"8"
 		OUTPUT_SIZE		"1"
 		NBR_INPUT		"1"
@@ -1824,7 +1879,7 @@ Model {
 	      }
 	      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
 	      SourceType	      "C Function Call"
-	      fctName		      "'ecan1_transmit_matlab'"
+	      fctName		      "'ecan1_buffered_transmit_matlab'"
 	      INPUT_SIZE	      "8"
 	      INPUT1		      "uint16"
 	      INPUT2		      "--"
@@ -1834,25 +1889,13 @@ Model {
 	      SampleTime	      "c_func_sample_time"
 	      InputType		      "[ 4 ]"
 	      OutputType	      "[ ]"
-	      FctDeclaration	      "extern void ecan1_transmit_matlab(uint1"
-"6_T* u1);"
-	      FctCall		      "ecan1_transmit_matlab(*%u1);"
+	      FctDeclaration	      "extern void ecan1_buffered_transmit_mat"
+"lab(uint16_T* u1);"
+	      FctCall		      "ecan1_buffered_transmit_matlab(*%u1);"
 	      OrderingInOutPopup      "None"
-	    }
-	    Block {
-	      BlockType		      RateTransition
-	      Name		      "Rate Transition"
-	      Position		      [80, 64, 120, 106]
-	      ShowName		      off
 	    }
 	    Line {
 	      SrcBlock		      "parameters"
-	      SrcPort		      1
-	      DstBlock		      "Rate Transition"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Rate Transition"
 	      SrcPort		      1
 	      DstBlock		      "ECAN1 Transmit\n[ecanFunctions.c]"
 	      DstPort		      1
@@ -1937,11 +1980,6 @@ Model {
 	  MinAlgLoopOccurrences	  off
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
-	  Array {
-	    Type		    "Handle"
-	    Dimension		    0
-	    PropName		    "AvailSigsLoadSave"
-	  }
 	  MaskHideContents	  off
 	  MaskType		  "Stateflow"
 	  MaskDescription	  "Embedded MATLAB block"
@@ -2010,7 +2048,7 @@ Model {
 	    Block {
 	      BlockType		      "S-Function"
 	      Name		      " SFunction "
-	      Tag		      "Stateflow S-Function RC_control 2"
+	      Tag		      "Stateflow S-Function RC_control 8"
 	      Ports		      [5, 2]
 	      Position		      [180, 105, 230, 285]
 	      FunctionName	      "sf_sfun"
@@ -2035,37 +2073,16 @@ Model {
 	      BusOutputAsStruct	      off
 	    }
 	    Line {
-	      SrcBlock		      "u5"
-	      SrcPort		      1
-	      DstBlock		      " SFunction "
-	      DstPort		      5
-	    }
-	    Line {
-	      SrcBlock		      "u4"
-	      SrcPort		      1
-	      DstBlock		      " SFunction "
-	      DstPort		      4
-	    }
-	    Line {
-	      SrcBlock		      "u3"
-	      SrcPort		      1
-	      Points		      [120, 0]
-	      DstBlock		      " SFunction "
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "u2"
-	      SrcPort		      1
-	      Points		      [120, 0]
-	      DstBlock		      " SFunction "
-	      DstPort		      2
-	    }
-	    Line {
-	      Name		      "y"
-	      Labels		      [0, 0]
 	      SrcBlock		      " SFunction "
-	      SrcPort		      2
-	      DstBlock		      "y"
+	      SrcPort		      1
+	      Points		      [0, 155]
+	      DstBlock		      " Demux "
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      " Demux "
+	      SrcPort		      1
+	      DstBlock		      " Terminator "
 	      DstPort		      1
 	    }
 	    Line {
@@ -2076,17 +2093,38 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      " Demux "
-	      SrcPort		      1
-	      DstBlock		      " Terminator "
+	      Name		      "y"
+	      Labels		      [0, 0]
+	      SrcBlock		      " SFunction "
+	      SrcPort		      2
+	      DstBlock		      "y"
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      " SFunction "
+	      SrcBlock		      "u2"
 	      SrcPort		      1
-	      Points		      [0, 155]
-	      DstBlock		      " Demux "
-	      DstPort		      1
+	      Points		      [120, 0]
+	      DstBlock		      " SFunction "
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "u3"
+	      SrcPort		      1
+	      Points		      [120, 0]
+	      DstBlock		      " SFunction "
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "u4"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      4
+	    }
+	    Line {
+	      SrcBlock		      "u5"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      5
 	    }
 	  }
 	}
@@ -2189,28 +2227,9 @@ Model {
 	      BusOutputAsStruct	      off
 	    }
 	    Line {
-	      SrcBlock		      "Data Type Conversion1"
+	      SrcBlock		      "low-order"
 	      SrcPort		      1
-	      Points		      [140, 0; 0, 15]
-	      DstBlock		      "Bitwise\nOperator"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Data Type Conversion"
-	      SrcPort		      1
-	      DstBlock		      "Shift\nArithmetic"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Shift\nArithmetic"
-	      SrcPort		      1
-	      DstBlock		      "Bitwise\nOperator"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "high-order"
-	      SrcPort		      1
-	      DstBlock		      "Data Type Conversion1"
+	      DstBlock		      "Data Type Conversion"
 	      DstPort		      1
 	    }
 	    Line {
@@ -2220,9 +2239,28 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "low-order"
+	      SrcBlock		      "high-order"
 	      SrcPort		      1
-	      DstBlock		      "Data Type Conversion"
+	      DstBlock		      "Data Type Conversion1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Shift\nArithmetic"
+	      SrcPort		      1
+	      DstBlock		      "Bitwise\nOperator"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion"
+	      SrcPort		      1
+	      DstBlock		      "Shift\nArithmetic"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion1"
+	      SrcPort		      1
+	      Points		      [140, 0; 0, 15]
+	      DstBlock		      "Bitwise\nOperator"
 	      DstPort		      1
 	    }
 	  }
@@ -2326,21 +2364,16 @@ Model {
 	      BusOutputAsStruct	      off
 	    }
 	    Line {
-	      SrcBlock		      "low-order"
+	      SrcBlock		      "Data Type Conversion1"
 	      SrcPort		      1
-	      DstBlock		      "Data Type Conversion"
+	      Points		      [140, 0; 0, 15]
+	      DstBlock		      "Bitwise\nOperator"
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "Bitwise\nOperator"
+	      SrcBlock		      "Data Type Conversion"
 	      SrcPort		      1
-	      DstBlock		      "combined"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "high-order"
-	      SrcPort		      1
-	      DstBlock		      "Data Type Conversion1"
+	      DstBlock		      "Shift\nArithmetic"
 	      DstPort		      1
 	    }
 	    Line {
@@ -2350,86 +2383,36 @@ Model {
 	      DstPort		      2
 	    }
 	    Line {
-	      SrcBlock		      "Data Type Conversion"
+	      SrcBlock		      "high-order"
 	      SrcPort		      1
-	      DstBlock		      "Shift\nArithmetic"
+	      DstBlock		      "Data Type Conversion1"
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "Data Type Conversion1"
+	      SrcBlock		      "Bitwise\nOperator"
 	      SrcPort		      1
-	      Points		      [140, 0; 0, 15]
-	      DstBlock		      "Bitwise\nOperator"
+	      DstBlock		      "combined"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "low-order"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion"
 	      DstPort		      1
 	    }
 	  }
 	}
 	Line {
-	  SrcBlock		  "data"
+	  SrcBlock		  "trigger"
 	  SrcPort		  1
-	  Points		  [250, 0]
-	  DstBlock		  "myMux"
-	  DstPort		  5
+	  Points		  [50, 0]
+	  DstBlock		  "C-function Call"
+	  DstPort		  enable
 	}
 	Line {
-	  SrcBlock		  "Constant2"
+	  SrcBlock		  "myMux"
 	  SrcPort		  1
-	  DstBlock		  "uint8 combiner1"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Constant3"
-	  SrcPort		  1
-	  DstBlock		  "uint8 combiner1"
-	  DstPort		  2
-	}
-	Line {
-	  SrcBlock		  "uint8 combiner1"
-	  SrcPort		  1
-	  Points		  [55, 0]
-	  DstBlock		  "myMux"
-	  DstPort		  4
-	}
-	Line {
-	  SrcBlock		  "identifier"
-	  SrcPort		  1
-	  Points		  [85, 0]
-	  Branch {
-	    Points		    [0, 25]
-	    DstBlock		    "Extract Bits"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, -20]
-	    DstBlock		    "Extract Bits1"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  SrcBlock		  "Extract Bits1"
-	  SrcPort		  1
-	  Points		  [35, 0; 0, 35; 20, 0]
-	  DstBlock		  "myMux"
-	  DstPort		  2
-	}
-	Line {
-	  SrcBlock		  "Extract Bits"
-	  SrcPort		  1
-	  Points		  [25, 0; 0, 30]
-	  DstBlock		  "myMux"
-	  DstPort		  3
-	}
-	Line {
-	  SrcBlock		  "data_length"
-	  SrcPort		  1
-	  Points		  [95, 0; 0, -5]
-	  DstBlock		  "uint8 combiner2"
-	  DstPort		  2
-	}
-	Line {
-	  SrcBlock		  "Constant"
-	  SrcPort		  1
-	  DstBlock		  "uint8 combiner2"
+	  DstBlock		  "C-function Call"
 	  DstPort		  1
 	}
 	Line {
@@ -2440,18 +2423,72 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "myMux"
+	  SrcBlock		  "Constant"
 	  SrcPort		  1
-	  Points		  [0, 25]
-	  DstBlock		  "C-function Call"
+	  DstBlock		  "uint8 combiner2"
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "trigger"
+	  SrcBlock		  "data_length"
 	  SrcPort		  1
-	  Points		  [50, 0]
-	  DstBlock		  "C-function Call"
-	  DstPort		  enable
+	  Points		  [95, 0; 0, -5]
+	  DstBlock		  "uint8 combiner2"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Extract Bits"
+	  SrcPort		  1
+	  Points		  [25, 0; 0, 30]
+	  DstBlock		  "myMux"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Extract Bits1"
+	  SrcPort		  1
+	  Points		  [35, 0; 0, 35; 20, 0]
+	  DstBlock		  "myMux"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "identifier"
+	  SrcPort		  1
+	  Points		  [85, 0]
+	  Branch {
+	    Points		    [0, -20]
+	    DstBlock		    "Extract Bits1"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, 25]
+	    DstBlock		    "Extract Bits"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  SrcBlock		  "uint8 combiner1"
+	  SrcPort		  1
+	  Points		  [55, 0]
+	  DstBlock		  "myMux"
+	  DstPort		  4
+	}
+	Line {
+	  SrcBlock		  "Constant3"
+	  SrcPort		  1
+	  DstBlock		  "uint8 combiner1"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Constant2"
+	  SrcPort		  1
+	  DstBlock		  "uint8 combiner1"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "data"
+	  SrcPort		  1
+	  Points		  [250, 0]
+	  DstBlock		  "myMux"
+	  DstPort		  5
 	}
       }
     }
@@ -2481,14 +2518,14 @@ Model {
       tmr2345		      "[8  1  0  0  0  0  0  0]"
       tmr2345cfg	      "[-1 -1 -1 -1 -1 -1 -1 -1]"
       IOautoConf	      on
-      typePort		      "[ 0   0   0   0   0   0   0   0   0   0   0   0"
-"   0   0   0   0   8   0   0   0   0   0   0   0   0   0   0   0   0   0   0 "
-"  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   7  "
-" 0   0   0  10   0   0   6   6   0   0   0   0   0   0   0   0   0   0   0   "
-"0   0   0   0   0   0   0   0   0   0   0   0   0   0   9   0   0   0   0   0"
-"   0   0   0   0   0   0   0   0   0   0   9   0   0   0   0   0  10   0   0 "
-"  0   0   0   0 ]"
-      TRIS		      "[ 65535  65535  65535  65501  65535  65535  650"
+      typePort		      "[ 10   0   0   0   0   0   0   0   0   0   0   "
+"0   0   0   0   0   8   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
+"   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   7 "
+"  0   0   0  10   0   0   6   6   0   0   0   0   0   0   0   0   0   0   0  "
+" 0   0   0   0   0   0   0   0   0   0   0   0   0   0   9   0   0   0   0   "
+"0   0   0   0   0   0   0   0   0   0   0   9   0   0   0   0   0  10   0   0"
+"   0   0   0   0 ]"
+      TRIS		      "[ 65534  65535  65535  65501  65535  65535  650"
 "23 ]"
       ADPCFG		      "0"
       MasterBusyPort	      "None"
@@ -2511,14 +2548,14 @@ Model {
       BlockType		      SubSystem
       Name		      "Mux Everything"
       Ports		      [4, 4]
-      Position		      [720, 471, 785, 534]
+      Position		      [605, 456, 670, 519]
       MinAlgLoopOccurrences   off
       RTWSystemCode	      "Auto"
       FunctionWithSeparateData off
       MaskHideContents	      off
       System {
 	Name			"Mux Everything"
-	Location		[558, 494, 1142, 707]
+	Location		[569, 250, 1202, 519]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -2534,27 +2571,27 @@ Model {
 	Block {
 	  BlockType		  Inport
 	  Name			  "In1"
-	  Position		  [95, 90, 125, 104]
+	  Position		  [85, 88, 115, 102]
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "In2"
-	  Position		  [95, 125, 125, 139]
+	  Position		  [20, 123, 50, 137]
 	  Port			  "2"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "In3"
-	  Position		  [95, 145, 125, 159]
+	  Position		  [50, 143, 80, 157]
 	  Port			  "3"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "In4"
-	  Position		  [110, 160, 140, 175]
+	  Position		  [110, 170, 140, 185]
 	  Orientation		  "up"
 	  Port			  "4"
 	  IconDisplay		  "Port number"
@@ -2564,18 +2601,20 @@ Model {
 	  Name			  "0x300"
 	  Position		  [25, 26, 90, 44]
 	  Value			  "768"
+	  OutDataTypeMode	  "uint32"
 	}
 	Block {
 	  BlockType		  Constant
 	  Name			  "0x301"
 	  Position		  [25, 60, 90, 80]
 	  Value			  "769"
+	  OutDataTypeMode	  "uint32"
 	}
 	Block {
 	  BlockType		  Logic
 	  Name			  "Logical\nOperator"
 	  Ports			  [2, 1]
-	  Position		  [150, 87, 180, 118]
+	  Position		  [190, 87, 220, 118]
 	  ShowName		  off
 	  Operator		  "OR"
 	  AllPortsSameDT	  off
@@ -2585,7 +2624,7 @@ Model {
 	  BlockType		  Probe
 	  Name			  "Message Length1"
 	  Ports			  [1, 1]
-	  Position		  [410, 130, 465, 150]
+	  Position		  [370, 165, 425, 185]
 	  ShowName		  off
 	  ProbeSampleTime	  off
 	  ProbeComplexSignal	  off
@@ -2594,7 +2633,7 @@ Model {
 	Block {
 	  BlockType		  Switch
 	  Name			  "Switch"
-	  Position		  [150, 45, 180, 75]
+	  Position		  [190, 45, 220, 75]
 	  ShowName		  off
 	  Criteria		  "u2 ~= 0"
 	  InputSameDT		  off
@@ -2603,7 +2642,7 @@ Model {
 	Block {
 	  BlockType		  Switch
 	  Name			  "Switch1"
-	  Position		  [150, 125, 180, 155]
+	  Position		  [190, 125, 220, 155]
 	  ShowName		  off
 	  Criteria		  "u2 ~= 0"
 	  InputSameDT		  off
@@ -2611,35 +2650,39 @@ Model {
 	}
 	Block {
 	  BlockType		  Outport
-	  Name			  "Out1"
-	  Position		  [370, 135, 400, 149]
+	  Name			  "data"
+	  Position		  [455, 133, 485, 147]
 	  IconDisplay		  "Port number"
+	  BusOutputAsStruct	  off
 	}
 	Block {
 	  BlockType		  Outport
-	  Name			  "Out2"
-	  Position		  [205, 55, 235, 69]
+	  Name			  "iden"
+	  Position		  [245, 53, 275, 67]
 	  Port			  "2"
 	  IconDisplay		  "Port number"
+	  BusOutputAsStruct	  off
 	}
 	Block {
 	  BlockType		  Outport
-	  Name			  "Out3"
-	  Position		  [205, 100, 235, 114]
+	  Name			  "trig"
+	  Position		  [245, 98, 275, 112]
 	  Port			  "3"
 	  IconDisplay		  "Port number"
+	  BusOutputAsStruct	  off
 	}
 	Block {
 	  BlockType		  Outport
-	  Name			  "Out4"
-	  Position		  [490, 135, 520, 149]
+	  Name			  "size"
+	  Position		  [455, 168, 485, 182]
 	  Port			  "4"
 	  IconDisplay		  "Port number"
+	  BusOutputAsStruct	  off
 	}
 	Line {
 	  SrcBlock		  "In4"
 	  SrcPort		  1
-	  Points		  [0, -15]
+	  Points		  [0, -25]
 	  Branch {
 	    DstBlock		    "Switch1"
 	    DstPort		    2
@@ -2673,20 +2716,21 @@ Model {
 	Line {
 	  SrcBlock		  "Switch1"
 	  SrcPort		  1
-	  Points		  [165, 0]
+	  Points		  [115, 0]
 	  Branch {
+	    Points		    [0, 35]
 	    DstBlock		    "Message Length1"
 	    DstPort		    1
 	  }
 	  Branch {
-	    DstBlock		    "Out1"
+	    DstBlock		    "data"
 	    DstPort		    1
 	  }
 	}
 	Line {
 	  SrcBlock		  "Switch"
 	  SrcPort		  1
-	  DstBlock		  "Out2"
+	  DstBlock		  "iden"
 	  DstPort		  1
 	}
 	Line {
@@ -2698,7 +2742,7 @@ Model {
 	Line {
 	  SrcBlock		  "Logical\nOperator"
 	  SrcPort		  1
-	  DstBlock		  "Out3"
+	  DstBlock		  "trig"
 	  DstPort		  1
 	}
 	Line {
@@ -2710,7 +2754,7 @@ Model {
 	Line {
 	  SrcBlock		  "Message Length1"
 	  SrcPort		  1
-	  DstBlock		  "Out4"
+	  DstBlock		  "size"
 	  DstPort		  1
 	}
 	Line {
@@ -2737,15 +2781,15 @@ Model {
     Block {
       BlockType		      SubSystem
       Name		      "Propulsion Control"
-      Ports		      [2, 4]
-      Position		      [435, 472, 545, 558]
+      Ports		      [1, 4]
+      Position		      [435, 452, 545, 538]
       MinAlgLoopOccurrences   off
       RTWSystemCode	      "Auto"
       FunctionWithSeparateData off
       MaskHideContents	      off
       System {
 	Name			"Propulsion Control"
-	Location		[170, 610, 1137, 952]
+	Location		[2, 78, 1278, 974]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -2766,14 +2810,6 @@ Model {
 	  IconDisplay		  "Port number"
 	}
 	Block {
-	  BlockType		  Inport
-	  Name			  "RC Rudder"
-	  Position		  [25, 133, 55, 147]
-	  BackgroundColor	  "darkGreen"
-	  Port			  "2"
-	  IconDisplay		  "Port number"
-	}
-	Block {
 	  BlockType		  SubSystem
 	  Name			  "Build CAN CC message"
 	  Ports			  [1, 1]
@@ -2784,7 +2820,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Build CAN CC message"
-	    Location		    [465, 432, 1172, 610]
+	    Location		    [481, 300, 1254, 531]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -2810,6 +2846,7 @@ Model {
 	      Position		      [130, 20, 160, 40]
 	      BackgroundColor	      "gray"
 	      ShowName		      off
+	      OutDataTypeMode	      "int8"
 	    }
 	    Block {
 	      BlockType		      Constant
@@ -2818,6 +2855,7 @@ Model {
 	      BackgroundColor	      "gray"
 	      ShowName		      off
 	      Value		      "0"
+	      OutDataTypeMode	      "int8"
 	    }
 	    Block {
 	      BlockType		      Constant
@@ -2826,6 +2864,7 @@ Model {
 	      BackgroundColor	      "gray"
 	      ShowName		      off
 	      Value		      "0"
+	      OutDataTypeMode	      "int8"
 	    }
 	    Block {
 	      BlockType		      Constant
@@ -2834,6 +2873,17 @@ Model {
 	      BackgroundColor	      "gray"
 	      ShowName		      off
 	      Value		      "5"
+	      OutDataTypeMode	      "int8"
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion"
+	      Position		      [230, 93, 280, 117]
+	      ShowName		      off
+	      OutDataTypeMode	      "uint8"
+	      ConvertRealWorld	      "Stored Integer (SI)"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
 	    }
 	    Block {
 	      BlockType		      Reference
@@ -2855,7 +2905,7 @@ Model {
 	      bitsToExtract	      "Upper half"
 	      numBits		      "8"
 	      bitIdxRange	      "[0 7]"
-	      outScalingMode	      "Preserve fixed-point scaling"
+	      outScalingMode	      "Treat bit field as an integer"
 	    }
 	    Block {
 	      BlockType		      Reference
@@ -2877,23 +2927,18 @@ Model {
 	      bitsToExtract	      "Lower half"
 	      numBits		      "8"
 	      bitIdxRange	      "[0 7]"
-	      outScalingMode	      "Preserve fixed-point scaling"
+	      outScalingMode	      "Treat bit field as an integer"
 	    }
 	    Block {
 	      BlockType		      SubSystem
 	      Name		      "myMux"
 	      Ports		      [6, 1]
-	      Position		      [185, 29, 190, 176]
+	      Position		      [200, 29, 205, 176]
 	      BackgroundColor	      "black"
 	      ShowName		      off
 	      MinAlgLoopOccurrences   off
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
-	      Array {
-		Type			"Handle"
-		Dimension		0
-		PropName		"AvailSigsLoadSave"
-	      }
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
 	      MaskDescription	      "Embedded MATLAB block"
@@ -3059,7 +3104,7 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "msg"
-	      Position		      [215, 68, 245, 82]
+	      Position		      [310, 98, 340, 112]
 	      BackgroundColor	      "yellow"
 	      IconDisplay	      "Port number"
 	      BusOutputAsStruct	      off
@@ -3067,14 +3112,14 @@ Model {
 	    Line {
 	      SrcBlock		      "Constant"
 	      SrcPort		      1
-	      Points		      [5, 0]
+	      Points		      [20, 0]
 	      DstBlock		      "myMux"
 	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "Constant3"
 	      SrcPort		      1
-	      Points		      [5, 0]
+	      Points		      [20, 0]
 	      DstBlock		      "myMux"
 	      DstPort		      2
 	    }
@@ -3103,15 +3148,14 @@ Model {
 	    Line {
 	      SrcBlock		      "Extract Bits1"
 	      SrcPort		      1
-	      Points		      [5, 0]
+	      Points		      [20, 0]
 	      DstBlock		      "myMux"
 	      DstPort		      4
 	    }
 	    Line {
 	      SrcBlock		      "myMux"
 	      SrcPort		      1
-	      Points		      [0, -30]
-	      DstBlock		      "msg"
+	      DstBlock		      "Data Type Conversion"
 	      DstPort		      1
 	    }
 	    Line {
@@ -3126,13 +3170,19 @@ Model {
 	      DstBlock		      "myMux"
 	      DstPort		      6
 	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion"
+	      SrcPort		      1
+	      DstBlock		      "msg"
+	      DstPort		      1
+	    }
 	  }
 	}
 	Block {
 	  BlockType		  Reference
 	  Name			  "Compare\nTo Zero1"
 	  Ports			  [1, 1]
-	  Position		  [100, 65, 130, 95]
+	  Position		  [100, 80, 130, 110]
 	  ShowName		  off
 	  SourceBlock		  "simulink/Logic and Bit\nOperations/Compare"
 "\nTo Zero"
@@ -3156,7 +3206,7 @@ Model {
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "[0 0 0 0 64 0]"
-	  OutDataTypeMode	  "Inherit via back propagation"
+	  OutDataTypeMode	  "uint8"
 	}
 	Block {
 	  BlockType		  Constant
@@ -3165,7 +3215,7 @@ Model {
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "[0 0 0 0 32 0]"
-	  OutDataTypeMode	  "Inherit via back propagation"
+	  OutDataTypeMode	  "uint8"
 	}
 	Block {
 	  BlockType		  DataTypeConversion
@@ -3459,7 +3509,7 @@ Model {
 	  BlockType		  Logic
 	  Name			  "Logical\nOperator4"
 	  Ports			  [1, 1]
-	  Position		  [150, 70, 180, 90]
+	  Position		  [180, 85, 210, 105]
 	  ShowName		  off
 	  Operator		  "NOT"
 	  AllPortsSameDT	  off
@@ -3683,7 +3733,7 @@ Model {
 	Line {
 	  SrcBlock		  "Logical\nOperator4"
 	  SrcPort		  1
-	  Points		  [155, 0; 0, -20]
+	  Points		  [125, 0; 0, -35]
 	  DstBlock		  "Product"
 	  DstPort		  2
 	}
@@ -3720,13 +3770,20 @@ Model {
 	  SrcPort		  1
 	  Points		  [15, 0]
 	  Branch {
-	    Points		    [0, 35]
-	    DstBlock		    "Compare\nTo Zero1"
+	    DstBlock		    "Data Type Conversion1"
 	    DstPort		    1
 	  }
 	  Branch {
-	    DstBlock		    "Data Type Conversion1"
-	    DstPort		    1
+	    Points		    [0, 50]
+	    Branch {
+	      DstBlock		      "Compare\nTo Zero1"
+	      DstPort		      1
+	    }
+	    Branch {
+	      Points		      [0, 45]
+	      DstBlock		      "Detect to/from zero"
+	      DstPort		      1
+	    }
 	  }
 	}
 	Line {
@@ -3741,12 +3798,6 @@ Model {
 	  Points		  [0, -10]
 	  DstBlock		  "Switch1"
 	  DstPort		  2
-	}
-	Line {
-	  SrcBlock		  "RC Rudder"
-	  SrcPort		  1
-	  DstBlock		  "Detect to/from zero"
-	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Switch1"
@@ -3796,11 +3847,11 @@ Model {
       Name		      "Rudder\nPotentiometer"
       Tag		      "dsPIC_ADC"
       Ports		      [0, 1]
-      Position		      [50, 297, 165, 333]
+      Position		      [50, 302, 165, 338]
       Priority		      "5"
       List {
 	ListType		RTWdata
-	DMAChannel		"0"
+	DMAChannel		"7"
       }
       SourceBlock	      "dsPICdrivers/Peripheral I//O/ADC Input"
       SourceType	      "dsPIC : ADC10"
@@ -3816,7 +3867,7 @@ Model {
       ADCS		      "12"
       SAMC		      "1"
       Temperature	      "25"
-      DMAChannel	      "0"
+      DMAChannel	      "7"
       SampleTime	      ".01"
       Status		      "OK  |  Tsmp=1.625e-007 |  T/Channel=2.113e-006 "
 "|  Tall=2.113e-006"
@@ -4656,7 +4707,7 @@ Model {
       Labels		      [0, 0]
       SrcBlock		      "Rudder\nPotentiometer"
       SrcPort		      1
-      Points		      [220, 0; 0, 30]
+      Points		      [220, 0; 0, 25]
       DstBlock		      "Rudder Control"
       DstPort		      3
     }
@@ -4681,7 +4732,7 @@ Model {
     Line {
       SrcBlock		      "Mux Everything"
       SrcPort		      4
-      Points		      [145, 0]
+      Points		      [25, 0]
       DstBlock		      "Drive Motor Speed Message"
       DstPort		      3
     }
@@ -4694,50 +4745,41 @@ Model {
     Line {
       SrcBlock		      "Clear Rudder to Zero\nif Disconnect"
       SrcPort		      1
-      Points		      [100, 0]
-      Branch {
-	Points			[0, -20]
-	DstBlock		"Rudder Control"
-	DstPort			4
-      }
-      Branch {
-	Points			[0, 135]
-	DstBlock		"Propulsion Control"
-	DstPort			2
-      }
+      Points		      [100, 0; 0, -20]
+      DstBlock		      "Rudder Control"
+      DstPort		      4
     }
     Line {
       SrcBlock		      "Mux Everything"
       SrcPort		      3
-      Points		      [105, 0; 0, 5]
       DstBlock		      "Drive Motor Speed Message"
       DstPort		      4
     }
     Line {
       SrcBlock		      "Propulsion Control"
       SrcPort		      2
-      Points		      [35, 0; 0, -25]
+      Points		      [35, 0; 0, -20]
       DstBlock		      "Mux Everything"
       DstPort		      1
     }
     Line {
       SrcBlock		      "Mux Everything"
       SrcPort		      2
-      Points		      [60, 0; 0, -25]
+      Points		      [5, 0; 0, -30]
       DstBlock		      "Drive Motor Speed Message"
       DstPort		      1
     }
     Line {
       SrcBlock		      "Propulsion Control"
       SrcPort		      3
-      Points		      [100, 0; 0, -30]
+      Points		      [40, 0]
       DstBlock		      "Mux Everything"
       DstPort		      2
     }
     Line {
       SrcBlock		      "Propulsion Control"
       SrcPort		      1
-      Points		      [10, 0; 0, 25]
+      Points		      [10, 0; 0, 30]
       DstBlock		      "Mux Everything"
       DstPort		      3
     }
@@ -4773,7 +4815,6 @@ Model {
     Line {
       SrcBlock		      "Mux Everything"
       SrcPort		      1
-      Points		      [145, 0]
       DstBlock		      "Drive Motor Speed Message"
       DstPort		      2
     }
@@ -4781,9 +4822,21 @@ Model {
       Labels		      [0, 0]
       SrcBlock		      "Propulsion Control"
       SrcPort		      4
-      Points		      [155, 0]
+      Points		      [40, 0]
       DstBlock		      "Mux Everything"
       DstPort		      4
+    }
+    Line {
+      SrcBlock		      "Counter\nLimited"
+      SrcPort		      1
+      DstBlock		      "Data Type Conversion2"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Data Type Conversion2"
+      SrcPort		      1
+      DstBlock		      "Digital Output Write2"
+      DstPort		      1
     }
   }
 }
@@ -5091,7 +5144,7 @@ Stateflow {
 	chart {
 		id                                        		14
 		name                                      		"Drive Motor Speed Message/myMux"
-		windowPosition                            		[416.813 194.45 200.25 189.75]
+		windowPosition                            		[401.813 209.45 200.25 189.75]
 		viewLimits                                		[0 156.75 0 153.75]
 		screen                                    		[1 1 1280 1024 1.333333333333333]
 		treeNode                                  		[0 15 0 0]
@@ -5102,7 +5155,7 @@ Stateflow {
 		decomposition                             		CLUSTER_CHART
 		type                                      		EML_CHART
 		firstData                                 		18
-		chartFileNumber                           		2
+		chartFileNumber                           		8
 		disableImplicitCasting                    		1
 		eml {
 			name       		"myMux"
