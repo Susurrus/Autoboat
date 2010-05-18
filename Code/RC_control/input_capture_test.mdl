@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.57"
+    ComputedModelVersion    "1.82"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -44,8 +44,8 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon May 10 16:06:52 2010"
-  ModelVersionFormat	  "1.%<AutoIncrement:57>"
+  LastModifiedDate	  "Tue May 18 16:16:15 2010"
+  ModelVersionFormat	  "1.%<AutoIncrement:82>"
   ConfigurationManager	  "None"
   SimulationMode	  "normal"
   LinearizationMsg	  "none"
@@ -322,7 +322,6 @@ Model {
 	  ConfigurationMode	  "Optimized"
 	  ProcessScript		  "dspic_make_rtw_hook"
 	  ConfigAtBuild		  off
-	  CustomSource		  ""
 	  IncludeHyperlinkInReport off
 	  LaunchReport		  off
 	  TargetLang		  "C"
@@ -539,21 +538,21 @@ Model {
 	      CustomProperty {
 		DataType		"string"
 		Name			"LDPICTYPE"
-		Value			" -T C:\\PROGRA~1\\MICROC~1\\MPLABC~1"
+		Value			"  -T C:\\PROGRA~1\\MICROC~1\\MPLABC~1"
 "\\support\\dsPIC33F\\gld\\p33fJ256GP710.gld"
 	      }
 	      CustomProperty {
 		DataType		"string"
 		Name			"LDLIBPIC"
-		Value			" C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\li"
-"b\\libpic30-coff.a C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\dsPIC33F\\libp33fJ2"
-"56GP710-coff.a C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\libc-coff.a C:\\PROGRA~"
-"1\\MICROC~1\\MPLABC~1\\lib\\libm-coff.a"
+		Value			"  C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\l"
+"ib\\libpic30-coff.a C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\dsPIC33F\\libp33fJ"
+"256GP710-coff.a C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\libc-coff.a C:\\PROGRA"
+"~1\\MICROC~1\\MPLABC~1\\lib\\libm-coff.a"
 	      }
 	      CustomProperty {
 		DataType		"string"
 		Name			"PIC_INCLUDES"
-		Value			" -I C:\\PROGRA~1\\MICROC~1\\MPLABC~1"
+		Value			"  -I C:\\PROGRA~1\\MICROC~1\\MPLABC~1"
 "\\include"
 	      }
 	      CustomProperty {
@@ -608,11 +607,6 @@ Model {
   }
   BlockParameterDefaults {
     Block {
-      BlockType		      Bias
-      Bias		      "0"
-      SaturateOnIntegerOverflow	on
-    }
-    Block {
       BlockType		      Constant
       Value		      "1"
       VectorParams1D	      on
@@ -636,20 +630,28 @@ Model {
       SampleTime	      "-1"
     }
     Block {
-      BlockType		      Gain
-      Gain		      "1"
-      Multiplication	      "Element-wise(K.*u)"
-      ParameterDataTypeMode   "Same as input"
-      ParameterDataType	      "sfix(16)"
-      ParameterScalingMode    "Best Precision: Matrix-wise"
-      ParameterScaling	      "2^0"
-      OutDataTypeMode	      "Same as input"
+      BlockType		      DiscreteIntegrator
+      IntegratorMethod	      "Integration: Forward Euler"
+      gainval		      "1.0"
+      ExternalReset	      "none"
+      InitialConditionSource  "internal"
+      InitialCondition	      "0"
+      InitialConditionMode    "State and output"
+      SampleTime	      "1"
+      OutDataTypeMode	      "Inherit via internal rule"
       OutDataType	      "sfix(16)"
       OutScaling	      "2^0"
       LockScale		      off
       RndMeth		      "Floor"
-      SaturateOnIntegerOverflow	on
-      SampleTime	      "-1"
+      SaturateOnIntegerOverflow	off
+      LimitOutput	      off
+      UpperSaturationLimit    "inf"
+      LowerSaturationLimit    "-inf"
+      ShowSaturationPort      off
+      ShowStatePort	      off
+      IgnoreLimit	      off
+      StateMustResolveToSignalObject off
+      RTWStateStorageClass    "Auto"
     }
     Block {
       BlockType		      Ground
@@ -748,6 +750,9 @@ Model {
       SampleTime	      "-1"
     }
     Block {
+      BlockType		      Terminator
+    }
+    Block {
       BlockType		      UnitDelay
       X0		      "0"
       SampleTime	      "1"
@@ -775,7 +780,7 @@ Model {
   }
   System {
     Name		    "input_capture_test"
-    Location		    [53, 542, 1013, 899]
+    Location		    [11, 574, 971, 935]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -790,11 +795,188 @@ Model {
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
     Block {
-      BlockType		      Bias
-      Name		      "Bias"
-      Position		      [380, 145, 420, 175]
-      Bias		      "-7500"
-      SaturateOnIntegerOverflow	off
+      BlockType		      SubSystem
+      Name		      "Clear Rudder to Zero\nif Disconnect"
+      Ports		      [3, 2]
+      Position		      [410, 120, 450, 180]
+      MinAlgLoopOccurrences   off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      MaskHideContents	      off
+      System {
+	Name			"Clear Rudder to Zero\nif Disconnect"
+	Location		[395, 602, 1129, 897]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Inport
+	  Name			  "Reset"
+	  Position		  [25, 88, 55, 102]
+	  BackgroundColor	  "darkGreen"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "ch1"
+	  Position		  [210, 53, 240, 67]
+	  BackgroundColor	  "darkGreen"
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "ch2"
+	  Position		  [210, 143, 240, 157]
+	  BackgroundColor	  "darkGreen"
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant"
+	  Position		  [25, 31, 55, 49]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "0"
+	  OutDataTypeMode	  "Inherit via back propagation"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant1"
+	  Position		  [25, 66, 55, 84]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  OutDataTypeMode	  "uint16"
+	}
+	Block {
+	  BlockType		  DiscreteIntegrator
+	  Name			  "Discrete-Time\nIntegrator"
+	  Ports			  [2, 1]
+	  Position		  [100, 66, 145, 104]
+	  ShowName		  off
+	  IntegratorMethod	  "Accumulation: Forward Euler"
+	  ExternalReset		  "level"
+	  InitialConditionSource  "internal"
+	  SampleTime		  "-1"
+	  OutDataTypeMode	  "uint32"
+	  IgnoreLimit		  off
+	  ICPrevOutput		  "DiscIntNeverNeededParam"
+	  ICPrevScaledInput	  "DiscIntNeverNeededParam"
+	}
+	Block {
+	  BlockType		  Switch
+	  Name			  "Switch"
+	  Position		  [410, 35, 440, 65]
+	  ShowName		  off
+	  Criteria		  "u2 > Threshold"
+	  Threshold		  "40"
+	  InputSameDT		  off
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Switch
+	  Name			  "Switch1"
+	  Position		  [410, 125, 440, 155]
+	  ShowName		  off
+	  Criteria		  "u2 > Threshold"
+	  Threshold		  "40"
+	  InputSameDT		  off
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "o1"
+	  Position		  [490, 43, 520, 57]
+	  BackgroundColor	  "yellow"
+	  IconDisplay		  "Port number"
+	  BusOutputAsStruct	  off
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "o2"
+	  Position		  [490, 133, 520, 147]
+	  BackgroundColor	  "yellow"
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	  BusOutputAsStruct	  off
+	}
+	Line {
+	  SrcBlock		  "Constant1"
+	  SrcPort		  1
+	  DstBlock		  "Discrete-Time\nIntegrator"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Discrete-Time\nIntegrator"
+	  SrcPort		  1
+	  Points		  [15, 0]
+	  Branch {
+	    Points		    [0, -35]
+	    DstBlock		    "Switch"
+	    DstPort		    2
+	  }
+	  Branch {
+	    Points		    [0, 55]
+	    DstBlock		    "Switch1"
+	    DstPort		    2
+	  }
+	}
+	Line {
+	  Labels		  [0, 0]
+	  SrcBlock		  "Constant"
+	  SrcPort		  1
+	  Points		  [250, 0]
+	  Branch {
+	    DstBlock		    "Switch"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, 90]
+	    DstBlock		    "Switch1"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  SrcBlock		  "Reset"
+	  SrcPort		  1
+	  DstBlock		  "Discrete-Time\nIntegrator"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "ch1"
+	  SrcPort		  1
+	  DstBlock		  "Switch"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Switch"
+	  SrcPort		  1
+	  DstBlock		  "o1"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "ch2"
+	  SrcPort		  1
+	  DstBlock		  "Switch1"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Switch1"
+	  SrcPort		  1
+	  DstBlock		  "o2"
+	  DstPort		  1
+	}
+      }
     }
     Block {
       BlockType		      Reference
@@ -811,7 +993,7 @@ Model {
       BlockType		      Reference
       Name		      "Counter\nLimited"
       Ports		      [0, 1]
-      Position		      [125, 245, 155, 275]
+      Position		      [120, 285, 150, 315]
       SourceBlock	      "simulink/Sources/Counter\nLimited"
       SourceType	      "Counter Limited"
       ShowPortLabels	      "FromPortIcon"
@@ -827,16 +1009,8 @@ Model {
     }
     Block {
       BlockType		      DataTypeConversion
-      Name		      "Data Type Conversion"
-      Position		      [260, 143, 335, 177]
-      OutDataTypeMode	      "int16"
-      RndMeth		      "Floor"
-      SaturateOnIntegerOverflow	off
-    }
-    Block {
-      BlockType		      DataTypeConversion
       Name		      "Data Type Conversion2"
-      Position		      [200, 251, 265, 269]
+      Position		      [195, 291, 260, 309]
       ShowName		      off
       RndMeth		      "Floor"
       SaturateOnIntegerOverflow	off
@@ -846,7 +1020,7 @@ Model {
       Name		      "Digital Output Write2"
       Tag		      "dsPIC_Digital_Output"
       Ports		      [1]
-      Position		      [330, 242, 460, 278]
+      Position		      [325, 282, 455, 318]
       NamePlacement	      "alternate"
       ShowName		      off
       Priority		      "5"
@@ -878,34 +1052,25 @@ Model {
       DocumentType	      "Text"
     }
     Block {
-      BlockType		      Gain
-      Name		      "Gain"
-      Position		      [465, 145, 495, 175]
-      Gain		      "1/25"
-      ParameterDataTypeMode   "Inherit via internal rule"
-      OutDataTypeMode	      "Inherit via back propagation"
-      SaturateOnIntegerOverflow	off
-    }
-    Block {
       BlockType		      Reference
       Name		      "Input Capture"
       Tag		      "dsPIC_PWM_IC"
-      Ports		      [0, 2]
-      Position		      [50, 146, 200, 204]
+      Ports		      [0, 4]
+      Position		      [70, 132, 220, 193]
       Priority		      "5"
       SourceBlock	      "dsPICdrivers/Peripheral I//O/Input Capture"
       SourceType	      "Input driver for Input Capture Peripheral"
       IntPriority	      "7"
-      Channel		      "[1]"
-      Channel_UP_Down_Periode "[1]"
-      MaxChannel	      "[0.002]"
-      SafeMarge		      "[3]"
-      MaxName		      " ' IC1max ' "
-      Precision		      "[13.2877]"
-      Timer		      "[2]"
-      ChangeDetected	      "[3]"
+      Channel		      "[3 2]"
+      Channel_UP_Down_Periode "[1  1]"
+      MaxChannel	      "[0.002       0.002]"
+      SafeMarge		      "[10  10]"
+      MaxName		      " ' IC3max , IC2max ' "
+      Precision		      "[13.425       13.425]"
+      Timer		      "[2  2]"
+      ChangeDetected	      "[2  2]"
       ChangeDetectedPortRef   "3"
-      SampleTime	      "-1"
+      SampleTime	      ".01"
       Status		      "OK"
     }
     Block {
@@ -937,7 +1102,7 @@ Model {
       typePort		      "[ 10   0   0   0   0   0   0   0   0   0   0   "
 "0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
 "   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0 "
-"  0   0   0   0   0   0   6   0   0   0   0   0   0   0   0   0   0   0   0  "
+"  0   0   0   0   0   0   0   6   6   0   0   0   0   0   0   0   0   0   0  "
 " 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   4   5   0   0   "
 "0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
 "   0   0   0   0 ]"
@@ -947,23 +1112,36 @@ Model {
       MasterBusyPort	      "None"
       MasterOverloadPort      "None"
       FOSC		      "Quartz (XT - HS)"
+      ClockSwitchMonitor      "Both disabled"
       TempProtection_33f      "TEMP_ON"
       FPBOR		      "<empty>"
       PWRT		      "disable"
       MCLR		      "<empty>"
+      ICD		      "ICS_NONE"
+      JTAGEN		      "JTAGEN_OFF"
       PowerSave		      off
+      OverrideFcy	      off
+      NewFcy		      "1e6"
+      PR2345		      "[65535  65535  65535  65535  65535  65535  6553"
+"5  65535]"
     }
     Block {
       BlockType		      Reference
-      Name		      "Tx Output"
-      Tag		      "dsPIC_TX"
-      Ports		      [1]
-      Position		      [535, 144, 605, 176]
+      Name		      "TX Output Multiplexed\nfor Matlab / Labview"
+      Tag		      "dsPIC_TX_Multiplexed"
+      Ports		      [2]
+      Position		      [565, 129, 705, 171]
       Priority		      "5"
-      SourceBlock	      "dsPICdrivers/Serial PORT/Tx Output"
-      SourceType	      "Serial Transmition"
+      SourceBlock	      "dsPICdrivers/Serial PORT/TX Output Multiplexed"
+"\nfor Matlab // Labview"
+      SourceType	      "send structured data frame to Matlab / Labview"
       UART		      "2"
-      OrderingInOutPopup      "None"
+      CleverSpreadingChk      on
+      CleverSpreading	      "1"
+      CHANNEL		      "[0 1]"
+      CHANNELBLOCKED	      "[]"
+      CHANNELBLOCKED_BITEWISE "0"
+      Status		      "OK"
     }
     Block {
       BlockType		      Reference
@@ -997,29 +1175,25 @@ Model {
 "r : 0.16026  ||  max 3.8462 Bytes / Step"
       RealBaud		      "0"
     }
-    Line {
-      SrcBlock		      "Input Capture"
-      SrcPort		      1
-      DstBlock		      "Data Type Conversion"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Data Type Conversion"
-      SrcPort		      1
-      DstBlock		      "Bias"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Bias"
-      SrcPort		      1
-      DstBlock		      "Gain"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Gain"
-      SrcPort		      1
-      DstBlock		      "Tx Output"
-      DstPort		      1
+    Block {
+      BlockType		      Reference
+      Name		      "dbl-click to open\nGraphical interface"
+      Ports		      []
+      Position		      [675, 23, 775, 73]
+      BackgroundColor	      "cyan"
+      DropShadow	      on
+      SourceBlock	      "dsPICdrivers/Serial PORT/dbl-click to open\nGra"
+"phical interface"
+      SourceType	      ""
+      ShowPortLabels	      "FromPortIcon"
+      SystemSampleTime	      "-1"
+      FunctionWithSeparateData off
+      RTWMemSecFuncInitTerm   "Inherit from model"
+      RTWMemSecFuncExecute    "Inherit from model"
+      RTWMemSecDataConstants  "Inherit from model"
+      RTWMemSecDataInternal   "Inherit from model"
+      RTWMemSecDataParameters "Inherit from model"
+      Nothing		      "0"
     }
     Line {
       SrcBlock		      "Counter\nLimited"
@@ -1031,6 +1205,40 @@ Model {
       SrcBlock		      "Data Type Conversion2"
       SrcPort		      1
       DstBlock		      "Digital Output Write2"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Input Capture"
+      SrcPort		      4
+      Points		      [140, 0; 0, -55]
+      DstBlock		      "Clear Rudder to Zero\nif Disconnect"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Input Capture"
+      SrcPort		      3
+      DstBlock		      "Clear Rudder to Zero\nif Disconnect"
+      DstPort		      3
+    }
+    Line {
+      SrcBlock		      "Clear Rudder to Zero\nif Disconnect"
+      SrcPort		      2
+      Points		      [95, 0]
+      DstBlock		      "TX Output Multiplexed\nfor Matlab / Labview"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Input Capture"
+      SrcPort		      1
+      Points		      [165, 0; 0, 10]
+      DstBlock		      "Clear Rudder to Zero\nif Disconnect"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Clear Rudder to Zero\nif Disconnect"
+      SrcPort		      1
+      Points		      [90, 0; 0, 5]
+      DstBlock		      "TX Output Multiplexed\nfor Matlab / Labview"
       DstPort		      1
     }
   }
