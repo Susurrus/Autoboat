@@ -6,13 +6,13 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.358"
+    ComputedModelVersion    "1.378"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
   SavedCharacterEncoding  "windows-1252"
   SaveDefaultBlockParams  on
-  SampleTimeColors	  on
+  SampleTimeColors	  off
   LibraryLinkDisplay	  "none"
   WideLines		  off
   ShowLineDimensions	  on
@@ -44,8 +44,8 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Apr 29 14:29:10 2010"
-  ModelVersionFormat	  "1.%<AutoIncrement:358>"
+  LastModifiedDate	  "Fri May 21 16:15:12 2010"
+  ModelVersionFormat	  "1.%<AutoIncrement:378>"
   ConfigurationManager	  "None"
   SimulationMode	  "normal"
   LinearizationMsg	  "none"
@@ -489,6 +489,11 @@ Model {
   }
   BlockParameterDefaults {
     Block {
+      BlockType		      Bias
+      Bias		      "0"
+      SaturateOnIntegerOverflow	on
+    }
+    Block {
       BlockType		      Constant
       Value		      "1"
       VectorParams1D	      on
@@ -516,10 +521,6 @@ Model {
       Outputs		      "4"
       DisplayOption	      "none"
       BusSelectionMode	      off
-    }
-    Block {
-      BlockType		      DigitalClock
-      SampleTime	      "1"
     }
     Block {
       BlockType		      DiscreteIntegrator
@@ -661,13 +662,6 @@ Model {
       SampleTime	      "-1"
     }
     Block {
-      BlockType		      RateTransition
-      Integrity		      on
-      Deterministic	      on
-      X0		      "0"
-      OutPortSampleTime	      "-1"
-    }
-    Block {
       BlockType		      Saturate
       UpperLimit	      "0.5"
       LowerLimit	      "-0.5"
@@ -772,7 +766,7 @@ Model {
   }
   System {
     Name		    "Boat_sim"
-    Location		    [382, 355, 1209, 865]
+    Location		    [234, 420, 1061, 930]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -798,8 +792,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Autonomous Controller"
-	Location		[2, 82, 1270, 737]
-	Open			on
+	Location		[45, 135, 1257, 788]
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -829,15 +823,23 @@ Model {
 	Block {
 	  BlockType		  Inport
 	  Name			  "Current bearing"
-	  Position		  [580, 303, 610, 317]
+	  Position		  [525, 303, 555, 317]
 	  BackgroundColor	  "darkGreen"
 	  Port			  "3"
 	  IconDisplay		  "Port number"
 	}
 	Block {
+	  BlockType		  Bias
+	  Name			  "Bias"
+	  Position		  [620, 350, 650, 390]
+	  Orientation		  "down"
+	  Bias			  "-10"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
 	  BlockType		  Constant
 	  Name			  "Constant1"
-	  Position		  [1120, 545, 1150, 575]
+	  Position		  [240, 450, 270, 480]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -845,16 +847,16 @@ Model {
 	Block {
 	  BlockType		  Constant
 	  Name			  "Constant10"
-	  Position		  [710, 550, 740, 580]
+	  Position		  [655, 550, 685, 580]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
-	  Value			  "[20 0 0]"
+	  Value			  "[1 0 0]"
 	  OutDataTypeMode	  "Inherit via back propagation"
 	}
 	Block {
 	  BlockType		  Constant
 	  Name			  "Constant11"
-	  Position		  [710, 500, 740, 530]
+	  Position		  [655, 500, 685, 530]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -863,7 +865,7 @@ Model {
 	Block {
 	  BlockType		  Constant
 	  Name			  "Constant2"
-	  Position		  [45, 185, 125, 215]
+	  Position		  [50, 196, 130, 214]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "waypoint_1_lat"
@@ -871,7 +873,7 @@ Model {
 	Block {
 	  BlockType		  Constant
 	  Name			  "Constant3"
-	  Position		  [15, 224, 130, 266]
+	  Position		  [15, 230, 130, 250]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "waypoint_1_long"
@@ -879,7 +881,7 @@ Model {
 	Block {
 	  BlockType		  Constant
 	  Name			  "Constant4"
-	  Position		  [15, 274, 130, 316]
+	  Position		  [15, 276, 130, 294]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -887,7 +889,7 @@ Model {
 	Block {
 	  BlockType		  Constant
 	  Name			  "Constant5"
-	  Position		  [160, 160, 195, 190]
+	  Position		  [160, 162, 195, 178]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -895,7 +897,7 @@ Model {
 	Block {
 	  BlockType		  Constant
 	  Name			  "Constant6"
-	  Position		  [1065, 300, 1095, 330]
+	  Position		  [1010, 300, 1040, 330]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -904,7 +906,7 @@ Model {
 	Block {
 	  BlockType		  Constant
 	  Name			  "Constant7"
-	  Position		  [1065, 400, 1095, 430]
+	  Position		  [1010, 400, 1040, 430]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "[1 0 0]"
@@ -913,7 +915,7 @@ Model {
 	Block {
 	  BlockType		  Constant
 	  Name			  "Constant8"
-	  Position		  [1065, 350, 1095, 380]
+	  Position		  [1010, 350, 1040, 380]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -922,7 +924,7 @@ Model {
 	Block {
 	  BlockType		  Constant
 	  Name			  "Constant9"
-	  Position		  [710, 450, 740, 480]
+	  Position		  [655, 450, 685, 480]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -931,7 +933,7 @@ Model {
 	Block {
 	  BlockType		  Fcn
 	  Name			  "Convert to\nDistance"
-	  Position		  [615, 170, 675, 200]
+	  Position		  [510, 170, 570, 200]
 	  Expr			  "sqrt(u(1)^2 + u(2)^2)"
 	}
 	Block {
@@ -1057,7 +1059,7 @@ Model {
 	Block {
 	  BlockType		  Fcn
 	  Name			  "Convert to\nHeading"
-	  Position		  [615, 225, 675, 255]
+	  Position		  [560, 225, 620, 255]
 	  Expr			  "pi/2-atan2(u(2), u(1))"
 	}
 	Block {
@@ -1276,7 +1278,7 @@ Model {
 	  BlockType		  Display
 	  Name			  "Distance to waypoint"
 	  Ports			  [1]
-	  Position		  [770, 58, 915, 92]
+	  Position		  [715, 58, 860, 92]
 	  Format		  "long"
 	  Decimation		  "1"
 	  Lockdown		  off
@@ -1285,7 +1287,7 @@ Model {
 	  BlockType		  Display
 	  Name			  "ENU Coordinates"
 	  Ports			  [1]
-	  Position		  [550, 51, 700, 129]
+	  Position		  [495, 51, 645, 129]
 	  Format		  "long"
 	  Decimation		  "1"
 	  Lockdown		  off
@@ -1294,7 +1296,7 @@ Model {
 	  BlockType		  SubSystem
 	  Name			  "Embedded\nMATLAB Function"
 	  Ports			  [2, 1]
-	  Position		  [765, 206, 885, 284]
+	  Position		  [710, 206, 830, 284]
 	  ShowName		  off
 	  MinAlgLoopOccurrences	  off
 	  RTWSystemCode		  "Auto"
@@ -1413,7 +1415,7 @@ Model {
 	Block {
 	  BlockType		  Gain
 	  Name			  "Gain2"
-	  Position		  [735, 100, 765, 130]
+	  Position		  [680, 100, 710, 130]
 	  Orientation		  "up"
 	  ShowName		  off
 	  Gain			  "180/pi"
@@ -1424,7 +1426,7 @@ Model {
 	Block {
 	  BlockType		  Gain
 	  Name			  "Gain3"
-	  Position		  [650, 294, 690, 326]
+	  Position		  [595, 294, 635, 326]
 	  ShowName		  off
 	  Gain			  "pi/180"
 	  ParameterDataTypeMode	  "Inherit via internal rule"
@@ -1473,7 +1475,7 @@ Model {
 	  BlockType		  Display
 	  Name			  "Optimal Heading"
 	  Ports			  [1]
-	  Position		  [955, 63, 1100, 97]
+	  Position		  [900, 63, 1045, 97]
 	  Format		  "long"
 	  Decimation		  "1"
 	  Lockdown		  off
@@ -1482,7 +1484,7 @@ Model {
 	  BlockType		  Display
 	  Name			  "Optimal Heading1"
 	  Ports			  [1]
-	  Position		  [920, 158, 1065, 192]
+	  Position		  [865, 158, 1010, 192]
 	  Format		  "long"
 	  Decimation		  "1"
 	  Lockdown		  off
@@ -1491,7 +1493,7 @@ Model {
 	  BlockType		  Display
 	  Name			  "Optimal Heading2"
 	  Ports			  [1]
-	  Position		  [800, 118, 945, 152]
+	  Position		  [745, 118, 890, 152]
 	  Format		  "long"
 	  Decimation		  "1"
 	  Lockdown		  off
@@ -1500,7 +1502,7 @@ Model {
 	  BlockType		  Reference
 	  Name			  "PID - Throttle Coordinator"
 	  Ports			  [4, 1]
-	  Position		  [780, 392, 910, 588]
+	  Position		  [725, 392, 855, 588]
 	  SourceBlock		  "SLUGS_Library/Control Blocks/PID Controller"
 	  SourceType		  ""
 	  ShowPortLabels	  "FromPortIcon"
@@ -1520,7 +1522,7 @@ Model {
 	  BlockType		  Reference
 	  Name			  "PID - Turn Coordinator"
 	  Ports			  [4, 1]
-	  Position		  [1130, 242, 1260, 438]
+	  Position		  [1075, 242, 1205, 438]
 	  SourceBlock		  "SLUGS_Library/Control Blocks/PID Controller"
 	  SourceType		  ""
 	  ShowPortLabels	  "FromPortIcon"
@@ -1537,28 +1539,20 @@ Model {
 	  lowerLimit		  "-1"
 	}
 	Block {
-	  BlockType		  Saturate
-	  Name			  "Saturation"
-	  Position		  [715, 400, 745, 430]
-	  ShowName		  off
-	  UpperLimit		  "1"
-	  LowerLimit		  "0"
-	}
-	Block {
 	  BlockType		  Scope
 	  Name			  "Scope"
 	  Ports			  [1]
-	  Position		  [955, 419, 985, 451]
+	  Position		  [900, 419, 930, 451]
 	  Floating		  off
-	  Location		  [1, 52, 1281, 993]
+	  Location		  [5, 52, 1285, 993]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  List {
 	    ListType		    AxesTitles
 	    axes1		    "%<SignalLabel>"
 	  }
-	  YMin			  "21"
-	  YMax			  "21"
+	  YMin			  "19.95"
+	  YMax			  "22.05"
 	  SaveName		  "ScopeData3"
 	  DataFormat		  "StructureWithTime"
 	  SampleTime		  "0"
@@ -1567,9 +1561,9 @@ Model {
 	  BlockType		  Scope
 	  Name			  "Scope1"
 	  Ports			  [1]
-	  Position		  [1200, 164, 1230, 196]
+	  Position		  [1145, 164, 1175, 196]
 	  Floating		  off
-	  Location		  [5, 299, 1285, 1017]
+	  Location		  [-134, 295, 1146, 1013]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  ZoomMode		  "xonly"
@@ -1587,7 +1581,7 @@ Model {
 	  BlockType		  Scope
 	  Name			  "Scope2"
 	  Ports			  [1]
-	  Position		  [1330, 229, 1360, 261]
+	  Position		  [1275, 229, 1305, 261]
 	  Floating		  off
 	  Location		  [5, 299, 1285, 1017]
 	  Open			  off
@@ -1607,9 +1601,9 @@ Model {
 	  BlockType		  Scope
 	  Name			  "Scope3"
 	  Ports			  [1]
-	  Position		  [855, 14, 885, 46]
+	  Position		  [800, 14, 830, 46]
 	  Floating		  off
-	  Location		  [1, 51, 1281, 769]
+	  Location		  [5, 51, 1285, 769]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  ZoomMode		  "xonly"
@@ -1617,8 +1611,8 @@ Model {
 	    ListType		    AxesTitles
 	    axes1		    "%<SignalLabel>"
 	  }
-	  YMin			  "0"
-	  YMax			  "650"
+	  YMin			  "16.85"
+	  YMax			  "17.07"
 	  SaveName		  "ScopeData10"
 	  DataFormat		  "StructureWithTime"
 	  SampleTime		  "0"
@@ -1626,7 +1620,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Rudder command"
-	  Position		  [1310, 333, 1340, 347]
+	  Position		  [1255, 333, 1285, 347]
 	  BackgroundColor	  "yellow"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -1634,7 +1628,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Throttle command"
-	  Position		  [955, 483, 985, 497]
+	  Position		  [900, 483, 930, 497]
 	  BackgroundColor	  "yellow"
 	  Port			  "2"
 	  IconDisplay		  "Port number"
@@ -1643,7 +1637,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Tray angle command"
-	  Position		  [1205, 553, 1235, 567]
+	  Position		  [325, 458, 355, 472]
 	  BackgroundColor	  "yellow"
 	  Port			  "3"
 	  IconDisplay		  "Port number"
@@ -1691,7 +1685,7 @@ Model {
 	Line {
 	  SrcBlock		  "Convert to\nDistance"
 	  SrcPort		  1
-	  Points		  [10, 0]
+	  Points		  [60, 0]
 	  Branch {
 	    Points		    [30, 0; 0, -110]
 	    Branch {
@@ -1705,15 +1699,14 @@ Model {
 	    }
 	  }
 	  Branch {
-	    Points		    [0, 230]
-	    DstBlock		    "Saturation"
+	    DstBlock		    "Bias"
 	    DstPort		    1
 	  }
 	}
 	Line {
 	  SrcBlock		  "Constant3"
 	  SrcPort		  1
-	  Points		  [20, 0; 0, -20]
+	  Points		  [20, 0; 0, -15]
 	  DstBlock		  "Mux"
 	  DstPort		  2
 	}
@@ -1727,7 +1720,7 @@ Model {
 	Line {
 	  SrcBlock		  "Constant2"
 	  SrcPort		  1
-	  Points		  [35, 0]
+	  Points		  [30, 0]
 	  DstBlock		  "Mux"
 	  DstPort		  1
 	}
@@ -1753,7 +1746,7 @@ Model {
 	Line {
 	  SrcBlock		  "Convert to\nEast-North-Up"
 	  SrcPort		  1
-	  Points		  [75, 0]
+	  Points		  [20, 0]
 	  Branch {
 	    Points		    [0, 50]
 	    DstBlock		    "Convert to\nHeading"
@@ -1874,12 +1867,6 @@ Model {
 	  DstPort		  2
 	}
 	Line {
-	  SrcBlock		  "Saturation"
-	  SrcPort		  1
-	  DstBlock		  "PID - Throttle Coordinator"
-	  DstPort		  1
-	}
-	Line {
 	  SrcBlock		  "PID - Throttle Coordinator"
 	  SrcPort		  1
 	  Points		  [10, 0]
@@ -1910,6 +1897,13 @@ Model {
 	  SrcPort		  1
 	  DstBlock		  "PID - Throttle Coordinator"
 	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Bias"
+	  SrcPort		  1
+	  Points		  [0, 20]
+	  DstBlock		  "PID - Throttle Coordinator"
+	  DstPort		  1
 	}
       }
     }
@@ -2060,7 +2054,7 @@ Model {
       System {
 	Name			"Plant"
 	Location		[58, 384, 1051, 872]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -2359,16 +2353,16 @@ Model {
 	Block {
 	  BlockType		  SubSystem
 	  Name			  "Charge Plant"
-	  Ports			  [5, 1]
-	  Position		  [205, 263, 285, 347]
+	  Ports			  [6, 1]
+	  Position		  [205, 266, 285, 359]
 	  MinAlgLoopOccurrences	  off
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Charge Plant"
-	    Location		    [2, 82, 710, 394]
-	    Open		    off
+	    Location		    [2, 82, 882, 512]
+	    Open		    on
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -2383,7 +2377,7 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "Throttle"
-	      Position		      [25, 53, 55, 67]
+	      Position		      [25, 33, 55, 47]
 	      BackgroundColor	      "darkGreen"
 	      IconDisplay	      "Port number"
 	    }
@@ -2414,9 +2408,17 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "Latitude"
-	      Position		      [25, 268, 55, 282]
+	      Position		      [25, 278, 55, 292]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "5"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "Ballast"
+	      Position		      [25, 78, 55, 92]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "6"
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
@@ -2445,24 +2447,6 @@ Model {
 	      SaturateOnIntegerOverflow	off
 	    }
 	    Block {
-	      BlockType		      Display
-	      Name		      "Display"
-	      Ports		      [1]
-	      Position		      [460, 45, 550, 75]
-	      ShowName		      off
-	      Decimation	      "1"
-	      Lockdown		      off
-	    }
-	    Block {
-	      BlockType		      Display
-	      Name		      "Display1"
-	      Ports		      [1]
-	      Position		      [460, 195, 550, 225]
-	      ShowName		      off
-	      Decimation	      "1"
-	      Lockdown		      off
-	    }
-	    Block {
 	      BlockType		      Integrator
 	      Name		      "Integrator"
 	      Ports		      [1, 1]
@@ -2481,15 +2465,15 @@ Model {
 	    Block {
 	      BlockType		      SubSystem
 	      Name		      "Power Drain from \nOnboard Systems"
-	      Ports		      [1, 1]
-	      Position		      [210, 16, 385, 104]
+	      Ports		      [2, 1]
+	      Position		      [250, 18, 425, 107]
 	      MinAlgLoopOccurrences   off
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
 	      MaskHideContents	      off
 	      System {
 		Name			"Power Drain from \nOnboard Systems"
-		Location		[253, 292, 855, 458]
+		Location		[253, 292, 1085, 648]
 		Open			off
 		ModelBrowserVisibility	off
 		ModelBrowserWidth	200
@@ -2506,16 +2490,23 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "Throttle"
-		  Position		  [100, 58, 130, 72]
+		  Position		  [50, 53, 80, 67]
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "Ballast"
+		  Position		  [50, 108, 80, 122]
+		  Port			  "2"
 		  IconDisplay		  "Port number"
 		}
 		Block {
 		  BlockType		  Sum
 		  Name			  "Add"
-		  Ports			  [2, 1]
-		  Position		  [330, 61, 360, 94]
+		  Ports			  [3, 1]
+		  Position		  [330, 63, 360, 97]
 		  ShowName		  off
-		  Inputs		  "2"
+		  Inputs		  "3"
 		  CollapseMode		  "All dimensions"
 		  InputSameDT		  off
 		  OutDataTypeMode	  "Inherit via internal rule"
@@ -2523,32 +2514,134 @@ Model {
 		  SaturateOnIntegerOverflow off
 		}
 		Block {
+		  BlockType		  SubSystem
+		  Name			  "Ballast Motor"
+		  Ports			  [1, 1]
+		  Position		  [130, 98, 200, 132]
+		  MinAlgLoopOccurrences	  off
+		  RTWSystemCode		  "Auto"
+		  FunctionWithSeparateData off
+		  MaskHideContents	  off
+		  System {
+		    Name		    "Ballast Motor"
+		    Location		    [328, 294, 837, 516]
+		    Open		    off
+		    ModelBrowserVisibility  off
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    "[0.500000, 0.500000, 0.500000, 0."
+"500000]"
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "Ba"
+		    Position		    [25, 38, 55, 52]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Gain
+		    Name		    "Convert to\nacceleration1"
+		    Position		    [95, 27, 145, 63]
+		    ShowName		    off
+		    Gain		    "5*24"
+		    ParameterDataTypeMode   "Inherit via internal rule"
+		    OutDataTypeMode	    "Inherit via internal rule"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "Draw"
+		    Position		    [190, 38, 220, 52]
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "Convert to\nacceleration1"
+		    SrcPort		    1
+		    DstBlock		    "Draw"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Ba"
+		    SrcPort		    1
+		    DstBlock		    "Convert to\nacceleration1"
+		    DstPort		    1
+		    }
+		  }
+		}
+		Block {
 		  BlockType		  Constant
 		  Name			  "Constant1"
-		  Position		  [250, 73, 280, 97]
+		  Position		  [235, 153, 265, 177]
 		  BackgroundColor	  "gray"
 		  ShowName		  off
 		  Value			  "24"
 		}
 		Block {
-		  BlockType		  Gain
-		  Name			  "Convert to\nacceleration1"
-		  Position		  [155, 46, 185, 84]
-		  ShowName		  off
-		  Gain			  "15"
-		  ParameterDataTypeMode	  "Inherit via internal rule"
-		  OutDataTypeMode	  "Inherit via internal rule"
-		  SaturateOnIntegerOverflow off
-		}
-		Block {
-		  BlockType		  Gain
-		  Name			  "Convert to\nacceleration2"
-		  Position		  [210, 46, 240, 84]
-		  ShowName		  off
-		  Gain			  "24"
-		  ParameterDataTypeMode	  "Inherit via internal rule"
-		  OutDataTypeMode	  "Inherit via internal rule"
-		  SaturateOnIntegerOverflow off
+		  BlockType		  SubSystem
+		  Name			  "Drive Motor"
+		  Ports			  [1, 1]
+		  Position		  [130, 43, 200, 77]
+		  MinAlgLoopOccurrences	  off
+		  RTWSystemCode		  "Auto"
+		  FunctionWithSeparateData off
+		  MaskHideContents	  off
+		  System {
+		    Name		    "Drive Motor"
+		    Location		    [328, 294, 837, 516]
+		    Open		    off
+		    ModelBrowserVisibility  off
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    "[0.500000, 0.500000, 0.500000, 0."
+"500000]"
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "Th"
+		    Position		    [25, 40, 55, 54]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Gain
+		    Name		    "Convert to\nacceleration1"
+		    Position		    [95, 27, 145, 63]
+		    ShowName		    off
+		    Gain		    "15*24"
+		    ParameterDataTypeMode   "Inherit via internal rule"
+		    OutDataTypeMode	    "Inherit via internal rule"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "Draw"
+		    Position		    [190, 40, 220, 54]
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "Th"
+		    SrcPort		    1
+		    DstBlock		    "Convert to\nacceleration1"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Convert to\nacceleration1"
+		    SrcPort		    1
+		    DstBlock		    "Draw"
+		    DstPort		    1
+		    }
+		  }
 		}
 		Block {
 		  BlockType		  Outport
@@ -2560,7 +2653,7 @@ Model {
 		Line {
 		  SrcBlock		  "Throttle"
 		  SrcPort		  1
-		  DstBlock		  "Convert to\nacceleration1"
+		  DstBlock		  "Drive Motor"
 		  DstPort		  1
 		}
 		Line {
@@ -2570,23 +2663,38 @@ Model {
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Convert to\nacceleration1"
+		  SrcBlock		  "Drive Motor"
 		  SrcPort		  1
-		  DstBlock		  "Convert to\nacceleration2"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Convert to\nacceleration2"
-		  SrcPort		  1
-		  Points		  [40, 0; 0, 5]
+		  Points		  [80, 0; 0, 10]
 		  DstBlock		  "Add"
 		  DstPort		  1
 		}
 		Line {
 		  SrcBlock		  "Constant1"
 		  SrcPort		  1
+		  Points		  [25, 0; 0, -75]
+		  DstBlock		  "Add"
+		  DstPort		  3
+		}
+		Line {
+		  SrcBlock		  "Ballast"
+		  SrcPort		  1
+		  DstBlock		  "Ballast Motor"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Ballast Motor"
+		  SrcPort		  1
+		  Points		  [55, 0; 0, -35]
 		  DstBlock		  "Add"
 		  DstPort		  2
+		}
+		Annotation {
+		  Name			  "Decomposed power drain into subsyst"
+"ems. Currently there's\npropulsion, ballast, and misc. Both propulsion and ba"
+"llast rely\non the motor's running to convert that into a power drain."
+		  Position		  [384, 147]
+		  HorizontalAlignment	  "left"
 		}
 	      }
 	    }
@@ -2601,7 +2709,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Power Gain from Solar\nSubsystem"
-		Location		[100, 555, 959, 828]
+		Location		[100, 555, 747, 833]
 		Open			off
 		ModelBrowserVisibility	off
 		ModelBrowserWidth	200
@@ -3454,21 +3562,9 @@ Model {
 		    SaturateOnIntegerOverflow off
 		    }
 		    Block {
-		    BlockType		    Sum
-		    Name		    "Add2"
-		    Ports		    [2, 1]
-		    Position		    [235, 41, 265, 74]
-		    ShowName		    off
-		    CollapseMode	    "All dimensions"
-		    InputSameDT		    off
-		    OutDataTypeMode	    "Inherit via internal rule"
-		    OutScaling		    "2^-10"
-		    SaturateOnIntegerOverflow off
-		    }
-		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    Position		    [15, 89, 90, 111]
+		    Position		    [150, 64, 225, 86]
 		    BackgroundColor	    "gray"
 		    ShowName		    off
 		    Value		    "start_time"
@@ -3498,13 +3594,6 @@ Model {
 		    Value		    "719529"
 		    }
 		    Block {
-		    BlockType		    DigitalClock
-		    Name		    "Digital Clock"
-		    Position		    [15, 33, 80, 57]
-		    BackgroundColor	    "gray"
-		    ShowName		    off
-		    }
-		    Block {
 		    BlockType		    Mux
 		    Name		    "Mux"
 		    Ports		    [2, 1]
@@ -3527,11 +3616,6 @@ Model {
 		    SaturateOnIntegerOverflow off
 		    }
 		    Block {
-		    BlockType		    RateTransition
-		    Name		    "Rate Transition"
-		    Position		    [100, 24, 140, 66]
-		    }
-		    Block {
 		    BlockType		    MATLABFcn
 		    Name		    "datevec"
 		    Ports		    [1, 1]
@@ -3546,29 +3630,9 @@ Model {
 		    BusOutputAsStruct	    off
 		    }
 		    Line {
-		    SrcBlock		    "Digital Clock"
-		    SrcPort		    1
-		    DstBlock		    "Rate Transition"
-		    DstPort		    1
-		    }
-		    Line {
-		    SrcBlock		    "Constant"
-		    SrcPort		    1
-		    Points		    [125, 0]
-		    DstBlock		    "Add2"
-		    DstPort		    2
-		    }
-		    Line {
 		    SrcBlock		    "Add1"
 		    SrcPort		    1
 		    DstBlock		    "datevec"
-		    DstPort		    1
-		    }
-		    Line {
-		    SrcBlock		    "Add2"
-		    SrcPort		    1
-		    Points		    [30, 0]
-		    DstBlock		    "Product1"
 		    DstPort		    1
 		    }
 		    Line {
@@ -3612,10 +3676,9 @@ Model {
 		    DstPort		    1
 		    }
 		    Line {
-		    SrcBlock		    "Rate Transition"
+		    SrcBlock		    "Constant"
 		    SrcPort		    1
-		    Points		    [75, 0]
-		    DstBlock		    "Add2"
+		    DstBlock		    "Product1"
 		    DstPort		    1
 		    }
 		  }
@@ -4024,27 +4087,15 @@ Model {
 		  DstBlock		  "Product3"
 		  DstPort		  4
 		}
+		Annotation {
+		  Name			  "This subsystem calculated the power"
+" output from the solar panels based on\nthe orientation of the boat and sun. "
+"Multiplicands are: \n1370 - surface irradiant beam (W/m^2)\n3.1875 - solar pa"
+"nel surface area (m^2)\n21% - solar cell efficiency"
+		  Position		  [198, 227]
+		  HorizontalAlignment	  "left"
+		}
 	      }
-	    }
-	    Block {
-	      BlockType		      Scope
-	      Name		      "Scope"
-	      Ports		      [1]
-	      Position		      [580, 194, 610, 226]
-	      ShowName		      off
-	      Floating		      off
-	      Location		      [1, 52, 1281, 993]
-	      Open		      off
-	      NumInputPorts	      "1"
-	      List {
-		ListType		AxesTitles
-		axes1			"%<SignalLabel>"
-	      }
-	      YMin		      "45"
-	      YMax		      "160"
-	      SaveName		      "ScopeData2"
-	      DataFormat	      "StructureWithTime"
-	      SampleTime	      "0"
 	    }
 	    Block {
 	      BlockType		      Outport
@@ -4063,15 +4114,9 @@ Model {
 	    Line {
 	      SrcBlock		      "Power Drain from \nOnboard Systems"
 	      SrcPort		      1
-	      Points		      [55, 0]
-	      Branch {
-		DstBlock		"Add1"
-		DstPort			1
-	      }
-	      Branch {
-		DstBlock		"Display"
-		DstPort			1
-	      }
+	      Points		      [15, 0]
+	      DstBlock		      "Add1"
+	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "Roll"
@@ -4104,14 +4149,8 @@ Model {
 	      SrcBlock		      "Power Gain from Solar\nSubsystem"
 	      SrcPort		      1
 	      Points		      [15, 0]
-	      Branch {
-		DstBlock		"Add1"
-		DstPort			2
-	      }
-	      Branch {
-		DstBlock		"Display1"
-		DstPort			1
-	      }
+	      DstBlock		      "Add1"
+	      DstPort		      2
 	    }
 	    Line {
 	      SrcBlock		      "Add1"
@@ -4122,15 +4161,8 @@ Model {
 	    Line {
 	      SrcBlock		      "Integrator"
 	      SrcPort		      1
-	      Points		      [15, 0]
-	      Branch {
-		DstBlock		"Add2"
-		DstPort			2
-	      }
-	      Branch {
-		DstBlock		"Scope"
-		DstPort			1
-	      }
+	      DstBlock		      "Add2"
+	      DstPort		      2
 	    }
 	    Line {
 	      SrcBlock		      "Phase shift1"
@@ -4144,6 +4176,19 @@ Model {
 	      SrcPort		      1
 	      DstBlock		      "Charge (J)"
 	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Ballast"
+	      SrcPort		      1
+	      DstBlock		      "Power Drain from \nOnboard Systems"
+	      DstPort		      2
+	    }
+	    Annotation {
+	      Name		      "This subsystem calculates charge for th"
+"e boat by integrating a sum of the\npower drain and power gain for the boat. "
+"Initial charge can be specified\nfor the start of the simulation."
+	      Position		      [496, 223]
+	      HorizontalAlignment     "left"
 	    }
 	  }
 	}
@@ -4641,6 +4686,15 @@ Model {
 	  BlockType		  From
 	  Name			  "From19"
 	  Position		  [355, 103, 410, 127]
+	  BackgroundColor	  "cyan"
+	  ShowName		  off
+	  CloseFcn		  "tagdialog Close"
+	  GotoTag		  "Ballast"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "From2"
+	  Position		  [70, 340, 120, 360]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
@@ -5542,7 +5596,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Charge"
-	  Position		  [315, 298, 345, 312]
+	  Position		  [315, 308, 345, 322]
 	  BackgroundColor	  "yellow"
 	  Port			  "4"
 	  IconDisplay		  "Port number"
@@ -5739,6 +5793,12 @@ Model {
 	  SrcPort		  3
 	  DstBlock		  "Wind Heading1"
 	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "From2"
+	  SrcPort		  1
+	  DstBlock		  "Charge Plant"
+	  DstPort		  6
 	}
       }
     }
