@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.378"
+    ComputedModelVersion    "1.385"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -44,8 +44,8 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri May 21 16:15:12 2010"
-  ModelVersionFormat	  "1.%<AutoIncrement:378>"
+  LastModifiedDate	  "Mon May 24 12:58:52 2010"
+  ModelVersionFormat	  "1.%<AutoIncrement:385>"
   ConfigurationManager	  "None"
   SimulationMode	  "normal"
   LinearizationMsg	  "none"
@@ -662,6 +662,9 @@ Model {
       SampleTime	      "-1"
     }
     Block {
+      BlockType		      Reference
+    }
+    Block {
       BlockType		      Saturate
       UpperLimit	      "0.5"
       LowerLimit	      "-0.5"
@@ -793,7 +796,7 @@ Model {
       System {
 	Name			"Autonomous Controller"
 	Location		[45, 135, 1257, 788]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -839,7 +842,7 @@ Model {
 	Block {
 	  BlockType		  Constant
 	  Name			  "Constant1"
-	  Position		  [240, 450, 270, 480]
+	  Position		  [300, 295, 330, 325]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -945,11 +948,6 @@ Model {
 	  MinAlgLoopOccurrences	  off
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
-	  Array {
-	    Type		    "Handle"
-	    Dimension		    0
-	    PropName		    "AvailSigsLoadSave"
-	  }
 	  MaskHideContents	  off
 	  MaskType		  "Stateflow"
 	  MaskDescription	  "Embedded MATLAB block"
@@ -1070,11 +1068,6 @@ Model {
 	  MinAlgLoopOccurrences	  off
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
-	  Array {
-	    Type		    "Handle"
-	    Dimension		    0
-	    PropName		    "AvailSigsLoadSave"
-	  }
 	  MaskHideContents	  off
 	  MaskType		  "Stateflow"
 	  MaskDescription	  "Embedded MATLAB block"
@@ -1176,11 +1169,6 @@ Model {
 	  MinAlgLoopOccurrences	  off
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
-	  Array {
-	    Type		    "Handle"
-	    Dimension		    0
-	    PropName		    "AvailSigsLoadSave"
-	  }
 	  MaskHideContents	  off
 	  MaskType		  "Stateflow"
 	  MaskDescription	  "Embedded MATLAB block"
@@ -1301,11 +1289,6 @@ Model {
 	  MinAlgLoopOccurrences	  off
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
-	  Array {
-	    Type		    "Handle"
-	    Dimension		    0
-	    PropName		    "AvailSigsLoadSave"
-	  }
 	  MaskHideContents	  off
 	  MaskType		  "Stateflow"
 	  MaskDescription	  "Embedded MATLAB block"
@@ -1637,7 +1620,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Tray angle command"
-	  Position		  [325, 458, 355, 472]
+	  Position		  [385, 303, 415, 317]
 	  BackgroundColor	  "yellow"
 	  Port			  "3"
 	  IconDisplay		  "Port number"
@@ -1905,6 +1888,14 @@ Model {
 	  DstBlock		  "PID - Throttle Coordinator"
 	  DstPort		  1
 	}
+	Annotation {
+	  Name			  "This subsystem currently provides autonomou"
+"s control of the boat. It utilizes simple PID control\non the throttle and ru"
+"dder based on desired location and bearing. Calculations are performed\nto co"
+"mpute a straight-line path between current location and the programmed waypoo"
+"int. The\nboat then sets out to achieve this course."
+	  Position		  [251, 387]
+	}
       }
     }
     Block {
@@ -2054,7 +2045,7 @@ Model {
       System {
 	Name			"Plant"
 	Location		[58, 384, 1051, 872]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -2100,7 +2091,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Actuator\nDynamics"
-	    Location		    [148, 600, 814, 929]
+	    Location		    [148, 600, 1120, 929]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -2348,6 +2339,14 @@ Model {
 	      DstBlock		      "Data Type Conversion2"
 	      DstPort		      1
 	    }
+	    Annotation {
+	      Name		      "This subsystem adds 2nd-order dynamics "
+"to the actuator systems.\nThis includes the propeller, ballast, and rudder.\n"
+"\nNOTE: The parameters of each system is uncalibrated, these are\npurely here"
+" to provide a baseline estimate of dynamics."
+	      Position		      [426, 38]
+	      HorizontalAlignment     "left"
+	    }
 	  }
 	}
 	Block {
@@ -2362,7 +2361,7 @@ Model {
 	  System {
 	    Name		    "Charge Plant"
 	    Location		    [2, 82, 882, 512]
-	    Open		    on
+	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -2559,6 +2558,7 @@ Model {
 		    Name		    "Draw"
 		    Position		    [190, 38, 220, 52]
 		    IconDisplay		    "Port number"
+		    BusOutputAsStruct	    off
 		    }
 		    Line {
 		    SrcBlock		    "Convert to\nacceleration1"
@@ -2610,7 +2610,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "Th"
-		    Position		    [25, 40, 55, 54]
+		    Position		    [25, 38, 55, 52]
 		    IconDisplay		    "Port number"
 		    }
 		    Block {
@@ -2626,8 +2626,9 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Draw"
-		    Position		    [190, 40, 220, 54]
+		    Position		    [190, 38, 220, 52]
 		    IconDisplay		    "Port number"
+		    BusOutputAsStruct	    off
 		    }
 		    Line {
 		    SrcBlock		    "Th"
@@ -2876,11 +2877,6 @@ Model {
 		    MinAlgLoopOccurrences   off
 		    RTWSystemCode	    "Auto"
 		    FunctionWithSeparateData off
-		    Array {
-		    Type		    "Handle"
-		    Dimension		    0
-		    PropName		    "AvailSigsLoadSave"
-		    }
 		    MaskHideContents	    off
 		    MaskType		    "Stateflow"
 		    MaskDescription	    "Embedded MATLAB block"
@@ -3232,11 +3228,6 @@ Model {
 		    MinAlgLoopOccurrences   off
 		    RTWSystemCode	    "Auto"
 		    FunctionWithSeparateData off
-		    Array {
-		    Type		    "Handle"
-		    Dimension		    0
-		    PropName		    "AvailSigsLoadSave"
-		    }
 		    MaskHideContents	    off
 		    MaskType		    "Stateflow"
 		    MaskDescription	    "Embedded MATLAB block"
@@ -3516,13 +3507,13 @@ Model {
 		  SourceBlock		  "simulink/Math\nOperations/Dot Produ"
 "ct"
 		  SourceType		  "Dot Product"
-		  InputSameDT		  on
+		  InputSameDT		  "on"
 		  OutputDataTypeScalingMode "Inherit via internal rule"
 		  OutDataType		  "sfix(16)"
 		  OutScaling		  "2^-10"
-		  LockScale		  off
+		  LockScale		  "off"
 		  RndMeth		  "Floor"
-		  DoSatur		  off
+		  DoSatur		  "off"
 		}
 		Block {
 		  BlockType		  SubSystem
@@ -3713,11 +3704,6 @@ Model {
 		  MinAlgLoopOccurrences	  off
 		  RTWSystemCode		  "Auto"
 		  FunctionWithSeparateData off
-		  Array {
-		    Type		    "Handle"
-		    Dimension		    0
-		    PropName		    "AvailSigsLoadSave"
-		  }
 		  MaskHideContents	  off
 		  MaskType		  "Stateflow"
 		  MaskDescription	  "Embedded MATLAB block"
@@ -3851,11 +3837,6 @@ Model {
 		  MinAlgLoopOccurrences	  off
 		  RTWSystemCode		  "Auto"
 		  FunctionWithSeparateData off
-		  Array {
-		    Type		    "Handle"
-		    Dimension		    0
-		    PropName		    "AvailSigsLoadSave"
-		  }
 		  MaskHideContents	  off
 		  MaskType		  "Stateflow"
 		  MaskDescription	  "Embedded MATLAB block"
@@ -4203,7 +4184,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Forces & Moments"
-	    Location		    [137, 365, 1175, 904]
+	    Location		    [137, 365, 1139, 761]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -4340,7 +4321,7 @@ Model {
 	      BlockType		      Integrator
 	      Name		      "Heading Integrator"
 	      Ports		      [1, 1]
-	      Position		      [400, 180, 430, 210]
+	      Position		      [385, 180, 415, 210]
 	      NamePlacement	      "alternate"
 	      ShowName		      off
 	      IgnoreLimit	      off
@@ -4348,7 +4329,7 @@ Model {
 	    Block {
 	      BlockType		      Constant
 	      Name		      "Initial heading"
-	      Position		      [400, 220, 430, 250]
+	      Position		      [385, 220, 415, 250]
 	      BackgroundColor	      "gray"
 	      ShowName		      off
 	      Value		      "phi_0"
@@ -4356,7 +4337,7 @@ Model {
 	    Block {
 	      BlockType		      Constant
 	      Name		      "Phase shift2"
-	      Position		      [400, 260, 430, 290]
+	      Position		      [385, 260, 415, 290]
 	      BackgroundColor	      "gray"
 	      ShowName		      off
 	      Value		      "pi/2"
@@ -4389,7 +4370,7 @@ Model {
 	      BlockType		      Sum
 	      Name		      "Sum2"
 	      Ports		      [3, 1]
-	      Position		      [555, 190, 585, 220]
+	      Position		      [470, 190, 500, 220]
 	      NamePlacement	      "alternate"
 	      ShowName		      off
 	      Inputs		      "+++"
@@ -4442,7 +4423,7 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "heading"
-	      Position		      [605, 198, 635, 212]
+	      Position		      [530, 198, 560, 212]
 	      BackgroundColor	      "yellow"
 	      Port		      "3"
 	      IconDisplay	      "Port number"
@@ -4582,14 +4563,14 @@ Model {
 	    Line {
 	      SrcBlock		      "Initial heading"
 	      SrcPort		      1
-	      Points		      [75, 0; 0, -30]
+	      Points		      [10, 0; 0, -30]
 	      DstBlock		      "Sum2"
 	      DstPort		      2
 	    }
 	    Line {
 	      SrcBlock		      "Phase shift2"
 	      SrcPort		      1
-	      Points		      [105, 0]
+	      Points		      [25, 0; 0, -60]
 	      DstBlock		      "Sum2"
 	      DstPort		      3
 	    }
@@ -4598,6 +4579,16 @@ Model {
 	      SrcPort		      1
 	      DstBlock		      "heading"
 	      DstPort		      1
+	    }
+	    Annotation {
+	      Name		      "This subsystem computes the forward for"
+"ce, heading and roll of the boat that \nis to be expected based on the curren"
+"t state. The model for these calculations\nis based off of the calculations p"
+"erformed in the original WG1 boat model.\n\nThe eventual goal of this subsyst"
+"em to provide all 6 forces and moments for the\nboat, instead of only one + f"
+"inal orientation parameters."
+	      Position		      [601, 103]
+	      HorizontalAlignment     "left"
 	    }
 	  }
 	}
@@ -4766,7 +4757,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Outputs"
-	    Location		    [70, 207, 1233, 562]
+	    Location		    [70, 207, 1265, 727]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -4850,11 +4841,6 @@ Model {
 	      MinAlgLoopOccurrences   off
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
-	      Array {
-		Type			"Handle"
-		Dimension		0
-		PropName		"AvailSigsLoadSave"
-	      }
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
 	      MaskDescription	      "Embedded MATLAB block"
@@ -4971,11 +4957,6 @@ Model {
 	      MinAlgLoopOccurrences   off
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
-	      Array {
-		Type			"Handle"
-		Dimension		0
-		PropName		"AvailSigsLoadSave"
-	      }
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
 	      MaskDescription	      "Embedded MATLAB block"
@@ -5117,7 +5098,7 @@ Model {
 	    Block {
 	      BlockType		      Constant
 	      Name		      "Initial latitude"
-	      Position		      [735, 100, 765, 130]
+	      Position		      [710, 100, 740, 130]
 	      BackgroundColor	      "gray"
 	      Value		      "lat_0"
 	    }
@@ -5356,19 +5337,20 @@ Model {
 	      SrcPort		      1
 	      Points		      [15, 0]
 	      Branch {
-		Points			[0, -60]
-		DstBlock		"Trigonometric\nFunction2"
+		Points			[0, 60]
+		DstBlock		"Trigonometric\nFunction1"
 		DstPort			1
 	      }
 	      Branch {
-		Points			[0, 60]
-		DstBlock		"Trigonometric\nFunction1"
+		Points			[0, -60]
+		DstBlock		"Trigonometric\nFunction2"
 		DstPort			1
 	      }
 	    }
 	    Line {
 	      SrcBlock		      "Initial latitude"
 	      SrcPort		      1
+	      Points		      [25, 0]
 	      DstBlock		      "Sum1"
 	      DstPort		      1
 	    }
@@ -5492,6 +5474,16 @@ Model {
 	      SrcPort		      1
 	      DstBlock		      "Convert to ECEF"
 	      DstPort		      2
+	    }
+	    Annotation {
+	      Name		      "This subsystem converts the heading and"
+" forward forces into a current position\n defined by the latitude and longitu"
+"de. It does this bby using the current LLA \nas a reference for a flat plane."
+" The local displacement during the last timestep\nis mapped into ECEF coordin"
+"ates and then to LLA from there to provide the new\nlocation. Output is in de"
+"grees."
+	      Position		      [34, 363]
+	      HorizontalAlignment     "left"
 	    }
 	  }
 	}
