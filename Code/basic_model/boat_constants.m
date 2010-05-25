@@ -4,7 +4,7 @@
 
 lat_0 = 36.80611*pi/180;       % Initial latitude (radians)
 long_0 = -121.79639*pi/180;    % Initial longitude (radians)
-phi_0 = 0;              % Initial heading
+phi_0 = 0;              % Initial heading (eastward positive from north)
 v_0 = 0;                % Initial speed
 T_step = 0.01;          % Simulation timestep
 battery_tray_angle = 0; % Battery tray angle

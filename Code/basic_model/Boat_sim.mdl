@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.402"
+    ComputedModelVersion    "1.410"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -16,7 +16,7 @@ Model {
   LibraryLinkDisplay	  "none"
   WideLines		  off
   ShowLineDimensions	  on
-  ShowPortDataTypes	  off
+  ShowPortDataTypes	  on
   ShowLoopsOnError	  on
   IgnoreBidirectionalLines off
   ShowStorageClass	  off
@@ -44,8 +44,8 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue May 25 11:59:00 2010"
-  ModelVersionFormat	  "1.%<AutoIncrement:402>"
+  LastModifiedDate	  "Tue May 25 13:52:38 2010"
+  ModelVersionFormat	  "1.%<AutoIncrement:410>"
   ConfigurationManager	  "None"
   SimulationMode	  "normal"
   LinearizationMsg	  "none"
@@ -105,7 +105,7 @@ Model {
 	  $ObjectID		  2
 	  Version		  "1.2.0"
 	  StartTime		  "0.0"
-	  StopTime		  "25"
+	  StopTime		  "100"
 	  AbsTol		  "auto"
 	  FixedStep		  "T_step"
 	  InitialStep		  "auto"
@@ -793,7 +793,7 @@ Model {
       System {
 	Name			"Autonomous Controller"
 	Location		[45, 135, 1257, 788]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -848,7 +848,7 @@ Model {
 	  System {
 	    Name		    "Calculate Optimal\nRoll"
 	    Location		    [321, 644, 1151, 904]
-	    Open		    off
+	    Open		    on
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -1082,7 +1082,6 @@ Model {
 	      Ports		      [2, 1]
 	      Position		      [290, 27, 320, 58]
 	      ShowName		      off
-	      Inputs		      "+-"
 	      CollapseMode	      "All dimensions"
 	      InputSameDT	      off
 	      OutDataTypeMode	      "Inherit via internal rule"
@@ -1118,16 +1117,6 @@ Model {
 	      Position		      [290, 115, 320, 145]
 	      ShowName		      off
 	      Operator		      "cos"
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "Unary Minus"
-	      Ports		      [1, 1]
-	      Position		      [345, 80, 375, 110]
-	      ShowName		      off
-	      SourceBlock	      "simulink/Math\nOperations/Unary Minus"
-	      SourceType	      "Unary Minus"
-	      DoSatur		      off
 	    }
 	    Block {
 	      BlockType		      SubSystem
@@ -1401,8 +1390,9 @@ Model {
 	    Line {
 	      SrcBlock		      "Trigonometric\nFunction"
 	      SrcPort		      1
-	      DstBlock		      "Unary Minus"
-	      DstPort		      1
+	      Points		      [55, 0; 0, -10]
+	      DstBlock		      "Product"
+	      DstPort		      2
 	    }
 	    Line {
 	      SrcBlock		      "Trigonometric\nFunction1"
@@ -1430,13 +1420,6 @@ Model {
 	      SrcPort		      1
 	      DstBlock		      "Trigonometric\nFunction1"
 	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Unary Minus"
-	      SrcPort		      1
-	      Points		      [0, -10]
-	      DstBlock		      "Product"
-	      DstPort		      2
 	    }
 	    Line {
 	      SrcBlock		      "Solar Position"
@@ -1731,7 +1714,7 @@ Model {
 	Block {
 	  BlockType		  Fcn
 	  Name			  "Convert to\nHeading"
-	  Position		  [560, 225, 620, 255]
+	  Position		  [560, 230, 620, 260]
 	  Expr			  "pi/2-atan2(u(2), u(1))"
 	}
 	Block {
@@ -1968,7 +1951,7 @@ Model {
 	  BlockType		  SubSystem
 	  Name			  "Embedded\nMATLAB Function"
 	  Ports			  [2, 1]
-	  Position		  [710, 206, 830, 284]
+	  Position		  [710, 226, 830, 304]
 	  ShowName		  off
 	  MinAlgLoopOccurrences	  off
 	  RTWSystemCode		  "Auto"
@@ -2235,7 +2218,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [1145, 164, 1175, 196]
 	  Floating		  off
-	  Location		  [-134, 295, 1146, 1013]
+	  Location		  [5, 295, 1285, 1013]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  ZoomMode		  "xonly"
@@ -2243,8 +2226,8 @@ Model {
 	    ListType		    AxesTitles
 	    axes1		    "%<SignalLabel>"
 	  }
-	  YMin			  "-3.075e-007"
-	  YMax			  "-2.65e-007"
+	  YMin			  "6.45e-005"
+	  YMax			  "7.25e-005"
 	  SaveName		  "ScopeData9"
 	  DataFormat		  "StructureWithTime"
 	  SampleTime		  "0"
@@ -2339,9 +2322,13 @@ Model {
 	Line {
 	  SrcBlock		  "Convert to\nHeading"
 	  SrcPort		  1
-	  Points		  [0, -15; 70, 0]
+	  Points		  [70, 0]
 	  Branch {
-	    Points		    [0, -50]
+	    DstBlock		    "Embedded\nMATLAB Function"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, -85]
 	    Branch {
 	      DstBlock		      "Gain2"
 	      DstPort		      1
@@ -2351,10 +2338,6 @@ Model {
 	      DstBlock		      "Optimal Heading2"
 	      DstPort		      1
 	    }
-	  }
-	  Branch {
-	    DstBlock		    "Embedded\nMATLAB Function"
-	    DstPort		    1
 	  }
 	}
 	Line {
@@ -2423,7 +2406,7 @@ Model {
 	  SrcPort		  1
 	  Points		  [20, 0]
 	  Branch {
-	    Points		    [0, 50]
+	    Points		    [0, 55]
 	    DstBlock		    "Convert to\nHeading"
 	    DstPort		    1
 	  }
@@ -2526,12 +2509,12 @@ Model {
 	  SrcPort		  1
 	  Points		  [5, 0]
 	  Branch {
-	    Points		    [0, -70]
+	    Points		    [0, -90]
 	    DstBlock		    "Optimal Heading1"
 	    DstPort		    1
 	  }
 	  Branch {
-	    Points		    [0, 20; 215, 0]
+	    Points		    [0, 0; 215, 0]
 	    Branch {
 	      DstBlock		      "PID - Turn Coordinator"
 	      DstPort		      1
@@ -2609,7 +2592,8 @@ Model {
 "dder based on desired location and bearing. Calculations are performed\nto co"
 "mpute a straight-line path between current location and the programmed waypoo"
 "int. The\nboat then sets out to achieve this course."
-	  Position		  [246, 52]
+	  Position		  [25, 52]
+	  HorizontalAlignment	  "left"
 	}
       }
     }
@@ -2627,8 +2611,8 @@ Model {
 	axes1			"%<SignalLabel>"
       }
       TimeRange		      "25"
-      YMin		      "2.85113e+006"
-      YMax		      "2.85124e+006"
+      YMin		      "2.85155e+006"
+      YMax		      "2.8519e+006"
       SaveName		      "ScopeData3"
       DataFormat	      "StructureWithTime"
       LimitDataPoints	      off
@@ -2737,7 +2721,7 @@ Model {
       RTWMemSecDataConstants  "Inherit from model"
       RTWMemSecDataInternal   "Inherit from model"
       RTWMemSecDataParameters "Inherit from model"
-      sw		      "1"
+      sw		      "0"
       action		      "0"
       varsize		      off
     }
@@ -2761,7 +2745,7 @@ Model {
       System {
 	Name			"Plant"
 	Location		[58, 384, 1051, 872]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -4920,7 +4904,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Forces & Moments"
-	    Location		    [137, 365, 1139, 761]
+	    Location		    [180, 185, 1182, 581]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -5071,14 +5055,6 @@ Model {
 	      Value		      "phi_0"
 	    }
 	    Block {
-	      BlockType		      Constant
-	      Name		      "Phase shift2"
-	      Position		      [385, 260, 415, 290]
-	      BackgroundColor	      "gray"
-	      ShowName		      off
-	      Value		      "pi/2"
-	    }
-	    Block {
 	      BlockType		      Product
 	      Name		      "Product3"
 	      Ports		      [2, 1]
@@ -5105,14 +5081,12 @@ Model {
 	    Block {
 	      BlockType		      Sum
 	      Name		      "Sum2"
-	      Ports		      [3, 1]
-	      Position		      [470, 190, 500, 220]
-	      NamePlacement	      "alternate"
+	      Ports		      [2, 1]
+	      Position		      [470, 190, 490, 210]
 	      ShowName		      off
-	      Inputs		      "+++"
 	      CollapseMode	      "All dimensions"
 	      InputSameDT	      off
-	      OutDataTypeMode	      "Inherit via internal rule"
+	      OutDataTypeMode	      "double"
 	      SaturateOnIntegerOverflow	off
 	    }
 	    Block {
@@ -5159,7 +5133,7 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "heading"
-	      Position		      [530, 198, 560, 212]
+	      Position		      [535, 193, 565, 207]
 	      BackgroundColor	      "yellow"
 	      Port		      "3"
 	      IconDisplay	      "Port number"
@@ -5302,13 +5276,6 @@ Model {
 	      Points		      [10, 0; 0, -30]
 	      DstBlock		      "Sum2"
 	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Phase shift2"
-	      SrcPort		      1
-	      Points		      [25, 0; 0, -60]
-	      DstBlock		      "Sum2"
-	      DstPort		      3
 	    }
 	    Line {
 	      SrcBlock		      "Sum2"
@@ -6591,8 +6558,8 @@ Model {
 	ListType		AxesTitles
 	axes1			"%<SignalLabel>"
       }
-      YMin		      "0.1"
-      YMax		      "0.1"
+      YMin		      "5.81e-008"
+      YMax		      "5.895e-008"
       DataFormat	      "StructureWithTime"
       LimitDataPoints	      off
       SampleTime	      "0"
@@ -6611,8 +6578,8 @@ Model {
 	ListType		AxesTitles
 	axes1			"%<SignalLabel>"
       }
-      YMin		      "-0.513695"
-      YMax		      "-0.513695"
+      YMin		      "-31.4661"
+      YMax		      "-31.4661"
       SaveName		      "ScopeData4"
       DataFormat	      "StructureWithTime"
       LimitDataPoints	      off
