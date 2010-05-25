@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.410"
+    ComputedModelVersion    "1.412"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -44,8 +44,8 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue May 25 13:52:38 2010"
-  ModelVersionFormat	  "1.%<AutoIncrement:410>"
+  LastModifiedDate	  "Tue May 25 15:04:01 2010"
+  ModelVersionFormat	  "1.%<AutoIncrement:412>"
   ConfigurationManager	  "None"
   SimulationMode	  "normal"
   LinearizationMsg	  "none"
@@ -881,6 +881,14 @@ Model {
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
+	      BlockType		      Bias
+	      Name		      "Bias"
+	      Position		      [360, 80, 400, 110]
+	      ShowName		      off
+	      Bias		      "pi"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
 	      BlockType		      Constant
 	      Name		      "Constant1"
 	      Position		      [35, 158, 65, 182]
@@ -1061,7 +1069,7 @@ Model {
 	      BlockType		      Product
 	      Name		      "Product"
 	      Ports		      [2, 1]
-	      Position		      [410, 62, 440, 93]
+	      Position		      [550, 62, 580, 93]
 	      ShowName		      off
 	      CollapseMode	      "All dimensions"
 	      InputSameDT	      off
@@ -1092,21 +1100,21 @@ Model {
 	      BlockType		      Trigonometry
 	      Name		      "Trigonometric\nFunction"
 	      Ports		      [1, 1]
-	      Position		      [290, 80, 320, 110]
+	      Position		      [475, 80, 505, 110]
 	      ShowName		      off
 	    }
 	    Block {
 	      BlockType		      Trigonometry
 	      Name		      "Trigonometric\nFunction1"
 	      Ports		      [1, 1]
-	      Position		      [345, 30, 375, 60]
+	      Position		      [485, 30, 515, 60]
 	      ShowName		      off
 	    }
 	    Block {
 	      BlockType		      Trigonometry
 	      Name		      "Trigonometric\nFunction2"
 	      Ports		      [2, 1]
-	      Position		      [470, 92, 500, 123]
+	      Position		      [610, 92, 640, 123]
 	      ShowName		      off
 	      Operator		      "atan2"
 	    }
@@ -1114,9 +1122,19 @@ Model {
 	      BlockType		      Trigonometry
 	      Name		      "Trigonometric\nFunction3"
 	      Ports		      [1, 1]
-	      Position		      [290, 115, 320, 145]
+	      Position		      [475, 115, 505, 145]
 	      ShowName		      off
 	      Operator		      "cos"
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Unary Minus"
+	      Ports		      [1, 1]
+	      Position		      [290, 80, 320, 110]
+	      ShowName		      off
+	      SourceBlock	      "simulink/Math\nOperations/Unary Minus"
+	      SourceType	      "Unary Minus"
+	      DoSatur		      off
 	    }
 	    Block {
 	      BlockType		      SubSystem
@@ -1383,14 +1401,14 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "Roll"
-	      Position		      [525, 103, 555, 117]
+	      Position		      [665, 103, 695, 117]
 	      IconDisplay	      "Port number"
 	      BusOutputAsStruct	      off
 	    }
 	    Line {
 	      SrcBlock		      "Trigonometric\nFunction"
 	      SrcPort		      1
-	      Points		      [55, 0; 0, -10]
+	      Points		      [10, 0; 0, -10]
 	      DstBlock		      "Product"
 	      DstPort		      2
 	    }
@@ -1411,7 +1429,7 @@ Model {
 	    Line {
 	      SrcBlock		      "Trigonometric\nFunction3"
 	      SrcPort		      1
-	      Points		      [100, 0; 0, -15]
+	      Points		      [55, 0; 0, -15]
 	      DstBlock		      "Trigonometric\nFunction2"
 	      DstPort		      2
 	    }
@@ -1463,15 +1481,8 @@ Model {
 	      SrcBlock		      "Demux"
 	      SrcPort		      2
 	      Points		      [5, 0; 0, 10]
-	      Branch {
-		DstBlock		"Trigonometric\nFunction"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, 35]
-		DstBlock		"Trigonometric\nFunction3"
-		DstPort			1
-	      }
+	      DstBlock		      "Unary Minus"
+	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "bearing"
@@ -1495,6 +1506,26 @@ Model {
 	      SrcBlock		      "Trigonometric\nFunction2"
 	      SrcPort		      1
 	      DstBlock		      "Roll"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Bias"
+	      SrcPort		      1
+	      Points		      [40, 0]
+	      Branch {
+		DstBlock		"Trigonometric\nFunction"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, 35]
+		DstBlock		"Trigonometric\nFunction3"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "Unary Minus"
+	      SrcPort		      1
+	      DstBlock		      "Bias"
 	      DstPort		      1
 	    }
 	  }
@@ -1552,7 +1583,7 @@ Model {
 	Block {
 	  BlockType		  Constant
 	  Name			  "Constant6"
-	  Position		  [1010, 300, 1040, 330]
+	  Position		  [975, 300, 1005, 330]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -1561,7 +1592,7 @@ Model {
 	Block {
 	  BlockType		  Constant
 	  Name			  "Constant7"
-	  Position		  [1010, 400, 1040, 430]
+	  Position		  [975, 400, 1005, 430]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "[1 0 0]"
@@ -1570,7 +1601,7 @@ Model {
 	Block {
 	  BlockType		  Constant
 	  Name			  "Constant8"
-	  Position		  [1010, 350, 1040, 380]
+	  Position		  [975, 350, 1005, 380]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -2177,7 +2208,7 @@ Model {
 	  BlockType		  Reference
 	  Name			  "PID - Turn Coordinator"
 	  Ports			  [4, 1]
-	  Position		  [1075, 242, 1205, 438]
+	  Position		  [1040, 242, 1170, 438]
 	  SourceBlock		  "SLUGS_Library/Control Blocks/PID Controller"
 	  SourceType		  ""
 	  ShowPortLabels	  "FromPortIcon"
@@ -2216,7 +2247,7 @@ Model {
 	  BlockType		  Scope
 	  Name			  "Scope1"
 	  Ports			  [1]
-	  Position		  [1145, 164, 1175, 196]
+	  Position		  [1110, 164, 1140, 196]
 	  Floating		  off
 	  Location		  [5, 295, 1285, 1013]
 	  Open			  off
@@ -2236,7 +2267,7 @@ Model {
 	  BlockType		  Scope
 	  Name			  "Scope2"
 	  Ports			  [1]
-	  Position		  [1275, 229, 1305, 261]
+	  Position		  [1240, 229, 1270, 261]
 	  Floating		  off
 	  Location		  [5, 299, 1285, 1017]
 	  Open			  off
@@ -2275,7 +2306,7 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Rudder command"
-	  Position		  [1255, 333, 1285, 347]
+	  Position		  [1220, 333, 1250, 347]
 	  BackgroundColor	  "yellow"
 	  IconDisplay		  "Port number"
 	  BusOutputAsStruct	  off
@@ -2514,7 +2545,7 @@ Model {
 	    DstPort		    1
 	  }
 	  Branch {
-	    Points		    [0, 0; 215, 0]
+	    Points		    [180, 0]
 	    Branch {
 	      DstBlock		      "PID - Turn Coordinator"
 	      DstPort		      1
@@ -2745,7 +2776,7 @@ Model {
       System {
 	Name			"Plant"
 	Location		[58, 384, 1051, 872]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -6773,6 +6804,8 @@ Stateflow {
 		created              		"13-Apr-2010 16:50:36"
 		isLibrary            		0
 		firstTarget          		99
+		debug {
+		}
 		sfVersion            		66014000
 	}
 
