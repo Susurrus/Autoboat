@@ -14,3 +14,4 @@ location = [-121.992874 36.955379 0];
 
 % Should be more than 90 degrees zenith to be dark.
 sun = sun_position(time,location)
+assert(sun(2) > pi/2);

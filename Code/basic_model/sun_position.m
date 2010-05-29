@@ -93,6 +93,14 @@ function f = sun_position(time_vec, location_vec)
 
 % 1. Calculate the Julian Day, and Century. Julian Ephemeris day, century
 % and millenium are calculated using a mean delta_t of 33.184 seconds.
+
+% Process unix timestamps natively.
+if size(time_vec) == 1
+    now = zeros(7,1);
+    now(1:6) = datevec(time_vec/86400+719529);
+    time_vec = now;
+end
+
 time.year = time_vec(1);
 time.month = time_vec(2);
 time.day = time_vec(3);
