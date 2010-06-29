@@ -140,8 +140,8 @@ sun_rigth_ascension = sun_rigth_ascension_calculation(apparent_sun_longitude, tr
 sun_geocentric_declination = sun_geocentric_declination_calculation(apparent_sun_longitude, true_obliquity, sun_geocentric_position);
 
 % 11. Calculate the observer local hour angle (in degrees, westward from south).
-location.longitude = location_vec(1);
-location.latitude = location_vec(2);
+location.longitude = location_vec(1)*180/pi;
+location.latitude = location_vec(2)*180/pi;
 location.altitude = location_vec(3);
 observer_local_hour = observer_local_hour_calculation(apparent_stime_at_greenwich, location, sun_rigth_ascension);
 

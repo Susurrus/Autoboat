@@ -12,8 +12,8 @@ initial_charge = 2851200;    % Initial boat charge, 60% of 6V battery rail (J)
 start_time = 1271205603;% 04/13/2010 @ 7:40pm (TODO: Change to MATLAB commands to capture current time)
 
 % Waypoint stuff
-waypoint_1_lat = 36.807;
-waypoint_1_long = -121.795;
+waypoint_1_lat = 36.807*pi/180;
+waypoint_1_long = -121.795*pi/180;
 
 % Known constants
 

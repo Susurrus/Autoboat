@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.448"
+    ComputedModelVersion    "1.452"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bryantmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Jun 29 14:52:27 2010"
-  RTWModifiedTimeStamp	  199723945
-  ModelVersionFormat	  "1.%<AutoIncrement:448>"
+  LastModifiedDate	  "Tue Jun 29 15:15:50 2010"
+  RTWModifiedTimeStamp	  199725347
+  ModelVersionFormat	  "1.%<AutoIncrement:452>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -862,7 +862,7 @@ Model {
   }
   System {
     Name		    "Boat_sim"
-    Location		    [165, 104, 1115, 692]
+    Location		    [165, 104, 765, 596]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    212
@@ -882,7 +882,7 @@ Model {
       Name		      "Autonomous Controller"
       SID		      1
       Ports		      [3, 3]
-      Position		      [240, 297, 440, 403]
+      Position		      [190, 277, 390, 383]
       BlockMirror	      on
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
@@ -893,7 +893,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Autonomous Controller"
-	Location		[124, 50, 1188, 800]
+	Location		[128, 93, 1183, 729]
 	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	212
@@ -1845,57 +1845,6 @@ Model {
 	  }
 	}
 	Block {
-	  BlockType		  Gain
-	  Name			  "Gain3"
-	  SID			  36
-	  Position		  [170, 294, 210, 326]
-	  ShowName		  off
-	  Gain			  "pi/180"
-	  ParameterDataTypeMode	  "Inherit via internal rule"
-	  ParameterDataType	  "sfix(16)"
-	  ParameterScaling	  "2^0"
-	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  OutDataType		  "sfix(16)"
-	  OutScaling		  "2^0"
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Gain
-	  Name			  "Gain4"
-	  SID			  37
-	  Position		  [105, 114, 145, 146]
-	  ShowName		  off
-	  Gain			  "pi/180"
-	  ParameterDataTypeMode	  "Inherit via internal rule"
-	  ParameterDataType	  "sfix(16)"
-	  ParameterScaling	  "2^0"
-	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  OutDataType		  "sfix(16)"
-	  OutScaling		  "2^0"
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Gain
-	  Name			  "Gain6"
-	  SID			  38
-	  Position		  [105, 144, 145, 176]
-	  ShowName		  off
-	  Gain			  "pi/180"
-	  ParameterDataTypeMode	  "Inherit via internal rule"
-	  ParameterDataType	  "sfix(16)"
-	  ParameterScaling	  "2^0"
-	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  OutDataType		  "sfix(16)"
-	  OutScaling		  "2^0"
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
 	  BlockType		  Mux
 	  Name			  "Mux"
 	  SID			  39
@@ -2235,7 +2184,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Solar Position"
-	    Location		    [513, 616, 1091, 799]
+	    Location		    [547, 437, 1125, 620]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -2725,21 +2674,32 @@ Model {
 	  SrcPort		  1
 	  Points		  [20, 0]
 	  Branch {
-	    DstBlock		    "Gain6"
-	    DstPort		    1
-	  }
-	  Branch {
 	    Labels		    [0, 0]
 	    Points		    [0, 215]
 	    DstBlock		    "Solar Position"
+	    DstPort		    2
+	  }
+	  Branch {
+	    Points		    [65, 0; 0, -10; 55, 0]
+	    DstBlock		    "Mux1"
 	    DstPort		    2
 	  }
 	}
 	Line {
 	  SrcBlock		  "Current bearing"
 	  SrcPort		  1
-	  DstBlock		  "Gain3"
-	  DstPort		  1
+	  Points		  [155, 0]
+	  Branch {
+	    Points		    [500, 0]
+	    DstBlock		    "Embedded\nMATLAB Function"
+	    DstPort		    2
+	  }
+	  Branch {
+	    Labels		    [0, 0]
+	    Points		    [0, 40]
+	    DstBlock		    "Calculate Optimal\nRoll"
+	    DstPort		    1
+	  }
 	}
 	Line {
 	  SrcBlock		  "Convert to\nHeading"
@@ -2828,29 +2788,16 @@ Model {
 	  SrcPort		  1
 	  Points		  [15, 0]
 	  Branch {
-	    DstBlock		    "Gain4"
-	    DstPort		    1
-	  }
-	  Branch {
 	    Labels		    [0, 0]
 	    Points		    [0, 225]
 	    DstBlock		    "Solar Position"
 	    DstPort		    1
 	  }
-	}
-	Line {
-	  SrcBlock		  "Gain4"
-	  SrcPort		  1
-	  Points		  [0, 5]
-	  DstBlock		  "Mux1"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Gain6"
-	  SrcPort		  1
-	  Points		  [0, -10; 55, 0]
-	  DstBlock		  "Mux1"
-	  DstPort		  2
+	  Branch {
+	    Points		    [70, 0; 0, 5]
+	    DstBlock		    "Mux1"
+	    DstPort		    1
+	  }
 	}
 	Line {
 	  SrcBlock		  "PID - Throttle Coordinator"
@@ -2889,22 +2836,6 @@ Model {
 	  Points		  [140, 0; 0, 35]
 	  DstBlock		  "PID - Ballast Coordinator"
 	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Gain3"
-	  SrcPort		  1
-	  Points		  [20, 0]
-	  Branch {
-	    Points		    [500, 0]
-	    DstBlock		    "Embedded\nMATLAB Function"
-	    DstPort		    2
-	  }
-	  Branch {
-	    Labels		    [0, 0]
-	    Points		    [0, 40]
-	    DstBlock		    "Calculate Optimal\nRoll"
-	    DstPort		    1
-	  }
 	}
 	Line {
 	  SrcBlock		  "PID - Turn Coordinator"
@@ -3001,7 +2932,7 @@ Model {
       BlockType		      Constant
       Name		      "Constant"
       SID		      72
-      Position		      [140, 105, 170, 135]
+      Position		      [90, 85, 120, 115]
       ShowName		      off
       OutDataType	      "sfix(16)"
       OutScaling	      "2^0"
@@ -3010,7 +2941,7 @@ Model {
       BlockType		      Constant
       Name		      "Constant1"
       SID		      73
-      Position		      [140, 45, 170, 75]
+      Position		      [90, 25, 120, 55]
       ShowName		      off
       Value		      "0"
       OutDataType	      "sfix(16)"
@@ -3020,7 +2951,7 @@ Model {
       BlockType		      Constant
       Name		      "Constant2"
       SID		      74
-      Position		      [140, 165, 170, 195]
+      Position		      [90, 145, 120, 175]
       ShowName		      off
       Value		      "0"
       OutDataType	      "sfix(16)"
@@ -3031,7 +2962,7 @@ Model {
       Name		      "Manual Switch"
       SID		      75
       Ports		      [2, 1]
-      Position		      [205, 52, 235, 88]
+      Position		      [155, 32, 185, 68]
       ShowName		      off
       LibraryVersion	      "1.216"
       SourceBlock	      "simulink/Signal\nRouting/Manual Switch"
@@ -3044,7 +2975,7 @@ Model {
       RTWMemSecDataConstants  "Inherit from model"
       RTWMemSecDataInternal   "Inherit from model"
       RTWMemSecDataParameters "Inherit from model"
-      sw		      "0"
+      sw		      "1"
       action		      "0"
       varsize		      off
     }
@@ -3053,7 +2984,7 @@ Model {
       Name		      "Manual Switch1"
       SID		      76
       Ports		      [2, 1]
-      Position		      [205, 112, 235, 148]
+      Position		      [155, 92, 185, 128]
       ShowName		      off
       LibraryVersion	      "1.216"
       SourceBlock	      "simulink/Signal\nRouting/Manual Switch"
@@ -3066,7 +2997,7 @@ Model {
       RTWMemSecDataConstants  "Inherit from model"
       RTWMemSecDataInternal   "Inherit from model"
       RTWMemSecDataParameters "Inherit from model"
-      sw		      "0"
+      sw		      "1"
       action		      "0"
       varsize		      off
     }
@@ -3075,7 +3006,7 @@ Model {
       Name		      "Manual Switch2"
       SID		      77
       Ports		      [2, 1]
-      Position		      [205, 172, 235, 208]
+      Position		      [155, 152, 185, 188]
       ShowName		      off
       LibraryVersion	      "1.216"
       SourceBlock	      "simulink/Signal\nRouting/Manual Switch"
@@ -3088,7 +3019,7 @@ Model {
       RTWMemSecDataConstants  "Inherit from model"
       RTWMemSecDataInternal   "Inherit from model"
       RTWMemSecDataParameters "Inherit from model"
-      sw		      "0"
+      sw		      "1"
       action		      "0"
       varsize		      off
     }
@@ -3097,7 +3028,7 @@ Model {
       Name		      "Plant"
       SID		      78
       Ports		      [3, 6]
-      Position		      [250, 40, 420, 220]
+      Position		      [200, 20, 370, 200]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -3107,8 +3038,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Plant"
-	Location		[58, 384, 1051, 872]
-	Open			off
+	Location		[57, 256, 1050, 744]
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -6058,7 +5989,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From10"
 	  SID			  203
-	  Position		  [375, 260, 435, 280]
+	  Position		  [435, 260, 495, 280]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
@@ -6088,7 +6019,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From14"
 	  SID			  206
-	  Position		  [595, 259, 660, 281]
+	  Position		  [435, 394, 500, 416]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
@@ -6098,7 +6029,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From15"
 	  SID			  207
-	  Position		  [595, 305, 660, 325]
+	  Position		  [435, 440, 500, 460]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
@@ -6158,7 +6089,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From3"
 	  SID			  213
-	  Position		  [375, 350, 435, 370]
+	  Position		  [435, 350, 495, 370]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
@@ -6188,7 +6119,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From7"
 	  SID			  216
-	  Position		  [430, 304, 490, 326]
+	  Position		  [435, 304, 495, 326]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
@@ -6203,40 +6134,6 @@ Model {
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
 	  GotoTag		  "Rudder"
-	}
-	Block {
-	  BlockType		  Gain
-	  Name			  "Gain"
-	  SID			  218
-	  Position		  [455, 255, 485, 285]
-	  ShowName		  off
-	  Gain			  "180/pi"
-	  ParameterDataTypeMode	  "Inherit via internal rule"
-	  ParameterDataType	  "sfix(16)"
-	  ParameterScaling	  "2^0"
-	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  OutDataType		  "sfix(16)"
-	  OutScaling		  "2^0"
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Gain
-	  Name			  "Gain1"
-	  SID			  219
-	  Position		  [455, 345, 485, 375]
-	  ShowName		  off
-	  Gain			  "180/pi"
-	  ParameterDataTypeMode	  "Inherit via internal rule"
-	  ParameterDataType	  "sfix(16)"
-	  ParameterScaling	  "2^0"
-	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
-	  OutDataTypeMode	  "Inherit via internal rule"
-	  OutDataType		  "sfix(16)"
-	  OutScaling		  "2^0"
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
 	}
 	Block {
 	  BlockType		  SubSystem
@@ -6254,7 +6151,7 @@ Model {
 	  System {
 	    Name		    "Outputs"
 	    Location		    [70, 207, 1265, 727]
-	    Open		    off
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -6317,40 +6214,6 @@ Model {
 	      Position		      [200, 150, 260, 190]
 	      ShowName		      off
 	      Gain		      "1/mass"
-	      ParameterDataTypeMode   "Inherit via internal rule"
-	      ParameterDataType	      "sfix(16)"
-	      ParameterScaling	      "2^0"
-	      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
-	      OutDataTypeMode	      "Inherit via internal rule"
-	      OutDataType	      "sfix(16)"
-	      OutScaling	      "2^0"
-	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
-	      SaturateOnIntegerOverflow	off
-	    }
-	    Block {
-	      BlockType		      Gain
-	      Name		      "Convert to\nacceleration1"
-	      SID		      226
-	      Position		      [890, 140, 950, 180]
-	      ShowName		      off
-	      Gain		      "180/pi"
-	      ParameterDataTypeMode   "Inherit via internal rule"
-	      ParameterDataType	      "sfix(16)"
-	      ParameterScaling	      "2^0"
-	      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
-	      OutDataTypeMode	      "Inherit via internal rule"
-	      OutDataType	      "sfix(16)"
-	      OutScaling	      "2^0"
-	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
-	      SaturateOnIntegerOverflow	off
-	    }
-	    Block {
-	      BlockType		      Gain
-	      Name		      "Convert to\nacceleration3"
-	      SID		      227
-	      Position		      [860, 235, 920, 275]
-	      ShowName		      off
-	      Gain		      "180/pi"
 	      ParameterDataTypeMode   "Inherit via internal rule"
 	      ParameterDataType	      "sfix(16)"
 	      ParameterScaling	      "2^0"
@@ -6895,7 +6758,7 @@ Model {
 		DstPort			1
 	      }
 	      Branch {
-		DstBlock		"Convert to\nacceleration1"
+		DstBlock		"latitude"
 		DstPort			1
 	      }
 	    }
@@ -6915,7 +6778,7 @@ Model {
 		DstPort			2
 	      }
 	      Branch {
-		DstBlock		"Convert to\nacceleration3"
+		DstBlock		"longitude"
 		DstPort			1
 	      }
 	    }
@@ -7028,18 +6891,6 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "Convert to\nacceleration1"
-	      SrcPort		      1
-	      DstBlock		      "latitude"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Convert to\nacceleration3"
-	      SrcPort		      1
-	      DstBlock		      "longitude"
-	      DstPort		      1
-	    }
-	    Line {
 	      SrcBlock		      "Mux"
 	      SrcPort		      1
 	      DstBlock		      "Convert to ECEF"
@@ -7139,7 +6990,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "Heading"
 	  SID			  257
-	  Position		  [515, 263, 545, 277]
+	  Position		  [550, 263, 580, 277]
 	  BackgroundColor	  "yellow"
 	  IconDisplay		  "Port number"
 	  OutDataType		  "sfix(16)"
@@ -7149,7 +7000,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "Rudder Angle"
 	  SID			  258
-	  Position		  [515, 308, 545, 322]
+	  Position		  [550, 308, 580, 322]
 	  BackgroundColor	  "yellow"
 	  Port			  "2"
 	  IconDisplay		  "Port number"
@@ -7160,7 +7011,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "Roll"
 	  SID			  259
-	  Position		  [515, 353, 545, 367]
+	  Position		  [550, 353, 580, 367]
 	  BackgroundColor	  "yellow"
 	  Port			  "3"
 	  IconDisplay		  "Port number"
@@ -7171,7 +7022,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "Charge"
 	  SID			  260
-	  Position		  [330, 308, 360, 322]
+	  Position		  [355, 308, 385, 322]
 	  BackgroundColor	  "yellow"
 	  Port			  "4"
 	  IconDisplay		  "Port number"
@@ -7182,7 +7033,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "Latitude"
 	  SID			  261
-	  Position		  [685, 263, 715, 277]
+	  Position		  [550, 398, 580, 412]
 	  BackgroundColor	  "yellow"
 	  Port			  "5"
 	  IconDisplay		  "Port number"
@@ -7193,7 +7044,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "Longitude"
 	  SID			  262
-	  Position		  [685, 308, 715, 322]
+	  Position		  [550, 443, 580, 457]
 	  BackgroundColor	  "yellow"
 	  Port			  "6"
 	  IconDisplay		  "Port number"
@@ -7251,7 +7102,7 @@ Model {
 	Line {
 	  SrcBlock		  "From3"
 	  SrcPort		  1
-	  DstBlock		  "Gain1"
+	  DstBlock		  "Roll"
 	  DstPort		  1
 	}
 	Line {
@@ -7293,7 +7144,7 @@ Model {
 	Line {
 	  SrcBlock		  "From10"
 	  SrcPort		  1
-	  DstBlock		  "Gain"
+	  DstBlock		  "Heading"
 	  DstPort		  1
 	}
 	Line {
@@ -7363,12 +7214,6 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Gain"
-	  SrcPort		  1
-	  DstBlock		  "Heading"
-	  DstPort		  1
-	}
-	Line {
 	  SrcBlock		  "Outputs"
 	  SrcPort		  3
 	  DstBlock		  "Wind Heading1"
@@ -7380,12 +7225,6 @@ Model {
 	  DstBlock		  "Charge Plant"
 	  DstPort		  6
 	}
-	Line {
-	  SrcBlock		  "Gain1"
-	  SrcPort		  1
-	  DstBlock		  "Roll"
-	  DstPort		  1
-	}
       }
     }
     Block {
@@ -7393,7 +7232,7 @@ Model {
       Name		      "To Workspace"
       SID		      263
       Ports		      [1]
-      Position		      [525, 70, 585, 100]
+      Position		      [475, 50, 535, 80]
       ShowName		      off
       VariableName	      "rudder"
       MaxDataPoints	      "inf"
@@ -7405,7 +7244,7 @@ Model {
       Name		      "To Workspace1"
       SID		      264
       Ports		      [1]
-      Position		      [525, 40, 585, 70]
+      Position		      [475, 20, 535, 50]
       ShowName		      off
       VariableName	      "heading"
       MaxDataPoints	      "inf"
@@ -7417,7 +7256,7 @@ Model {
       Name		      "To Workspace2"
       SID		      265
       Ports		      [1]
-      Position		      [525, 100, 585, 130]
+      Position		      [475, 80, 535, 110]
       ShowName		      off
       VariableName	      "roll"
       MaxDataPoints	      "inf"
@@ -7429,7 +7268,7 @@ Model {
       Name		      "To Workspace3"
       SID		      266
       Ports		      [1]
-      Position		      [525, 130, 585, 160]
+      Position		      [475, 110, 535, 140]
       ShowName		      off
       VariableName	      "charge"
       MaxDataPoints	      "inf"
@@ -7441,31 +7280,31 @@ Model {
       Name		      "To Workspace4"
       SID		      267
       Ports		      [1]
-      Position		      [525, 160, 585, 190]
+      Position		      [475, 140, 535, 170]
       ShowName		      off
       VariableName	      "lat"
       MaxDataPoints	      "inf"
       SampleTime	      "-1"
-      SaveFormat	      "Structure"
+      SaveFormat	      "Array"
     }
     Block {
       BlockType		      ToWorkspace
       Name		      "To Workspace5"
       SID		      268
       Ports		      [1]
-      Position		      [525, 190, 585, 220]
+      Position		      [475, 170, 535, 200]
       ShowName		      off
       VariableName	      "long"
       MaxDataPoints	      "inf"
       SampleTime	      "-1"
-      SaveFormat	      "Structure"
+      SaveFormat	      "Array"
     }
     Block {
       BlockType		      ToWorkspace
       Name		      "To Workspace6"
       SID		      269
       Ports		      [1]
-      Position		      [85, 370, 145, 400]
+      Position		      [35, 350, 95, 380]
       BlockMirror	      on
       ShowName		      off
       VariableName	      "ballast_command"
@@ -7478,7 +7317,7 @@ Model {
       Name		      "To Workspace7"
       SID		      270
       Ports		      [1]
-      Position		      [85, 335, 145, 365]
+      Position		      [35, 315, 95, 345]
       BlockMirror	      on
       ShowName		      off
       VariableName	      "throttle_command"
@@ -7491,7 +7330,7 @@ Model {
       Name		      "To Workspace8"
       SID		      271
       Ports		      [1]
-      Position		      [85, 300, 145, 330]
+      Position		      [35, 280, 95, 310]
       BlockMirror	      on
       ShowName		      off
       VariableName	      "rudder_command"
@@ -7641,7 +7480,7 @@ Model {
     Annotation {
       Name		      "This is the root model for the boat simulator and autonomous controller. All\nunits exposed here ar"
       "e in human-readable form. This most-notably involves\ndegrees instead of radians."
-      Position		      [537, 276]
+      Position		      [107, 436]
       HorizontalAlignment     "left"
     }
   }
@@ -8766,7 +8605,7 @@ Stateflow {
       "ers \n  f = 1/298.257223563; % reciprocal flattening \n  e2 = 2*f -f^2; % eccentricity squared \n \n  chi = sqrt"
       "(1-e2*(sin(lat)).^2); \n  X = (a./chi+h).*cos(lat).*cos(long); \n  Y = (a./chi+h).*cos(lat).*sin(long); \n  Z = "
       "(a*(1-e2)./chi+h).*sin(lat);\n  \n  XYZ = [X;Y;Z];\n"
-      editorLayout	      "100 M4x1[146 214 671 364]"
+      editorLayout	      "100 M4x1[261 252 671 364]"
       fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
       "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
       fimathForFiConstructors FimathMatlabFactoryDefault
