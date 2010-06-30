@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.467"
+    ComputedModelVersion    "1.507"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bryantmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Jun 29 16:50:26 2010"
-  RTWModifiedTimeStamp	  199731023
-  ModelVersionFormat	  "1.%<AutoIncrement:467>"
+  LastModifiedDate	  "Tue Jun 29 21:51:30 2010"
+  RTWModifiedTimeStamp	  199749090
+  ModelVersionFormat	  "1.%<AutoIncrement:507>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -876,7 +876,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    276
+    SIDHighWatermark	    278
     Block {
       BlockType		      SubSystem
       Name		      "Autonomous Controller"
@@ -894,7 +894,7 @@ Model {
       System {
 	Name			"Autonomous Controller"
 	Location		[128, 93, 1183, 729]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	212
 	ScreenColor		"white"
@@ -908,7 +908,7 @@ Model {
 	ZoomFactor		"100"
 	Block {
 	  BlockType		  Inport
-	  Name			  "Current latitude"
+	  Name			  "East"
 	  SID			  2
 	  Position		  [30, 123, 60, 137]
 	  BackgroundColor	  "darkGreen"
@@ -918,7 +918,7 @@ Model {
 	}
 	Block {
 	  BlockType		  Inport
-	  Name			  "Current longitude"
+	  Name			  "North"
 	  SID			  3
 	  Position		  [30, 153, 60, 167]
 	  BackgroundColor	  "darkGreen"
@@ -929,9 +929,9 @@ Model {
 	}
 	Block {
 	  BlockType		  Inport
-	  Name			  "Current bearing"
+	  Name			  "Heading"
 	  SID			  4
-	  Position		  [45, 303, 75, 317]
+	  Position		  [30, 303, 60, 317]
 	  BackgroundColor	  "darkGreen"
 	  Port			  "3"
 	  IconDisplay		  "Port number"
@@ -948,6 +948,190 @@ Model {
 	  ShowName		  off
 	  Bias			  "-10"
 	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "Calc Circle\nDistance & Heading"
+	  SID			  34
+	  Ports			  [4, 2]
+	  Position		  [345, 119, 430, 176]
+	  PermitHierarchicalResolution "ExplicitOnly"
+	  TreatAsAtomicUnit	  on
+	  MinAlgLoopOccurrences	  off
+	  PropExecContextOutsideSubsystem off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  Opaque		  off
+	  Array {
+	    Type		    "Handle"
+	    Dimension		    0
+	    PropName		    "AvailSigsLoadSave"
+	  }
+	  RequestExecContextInheritance	off
+	  MaskHideContents	  off
+	  MaskType		  "Stateflow"
+	  MaskDescription	  "Embedded MATLAB block"
+	  MaskDisplay		  "disp('ll2dh');"
+	  MaskSelfModifiable	  on
+	  MaskIconFrame		  on
+	  MaskIconOpaque	  off
+	  MaskIconRotate	  "none"
+	  MaskPortRotate	  "default"
+	  MaskIconUnits		  "autoscale"
+	  System {
+	    Name		    "Calc Circle\nDistance & Heading"
+	    Location		    [257, 457, 812, 717]
+	    Open		    off
+	    ModelBrowserVisibility  on
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    SIDHighWatermark	    15
+	    Block {
+	      BlockType		      Inport
+	      Name		      "north1"
+	      SID		      1
+	      Position		      [20, 101, 40, 119]
+	      IconDisplay	      "Port number"
+	      OutDataType	      "sfix(16)"
+	      OutScaling	      "2^0"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "east1"
+	      SID		      10
+	      Position		      [20, 136, 40, 154]
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "north2"
+	      SID		      11
+	      Position		      [20, 171, 40, 189]
+	      Port		      "3"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "east2"
+	      SID		      12
+	      Position		      [20, 206, 40, 224]
+	      Port		      "4"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Demux
+	      Name		      " Demux "
+	      SID		      7
+	      Ports		      [1, 1]
+	      Position		      [270, 220, 320, 260]
+	      Outputs		      "1"
+	    }
+	    Block {
+	      BlockType		      "S-Function"
+	      Name		      " SFunction "
+	      SID		      6
+	      Tag		      "Stateflow S-Function Boat_sim 9"
+	      Ports		      [4, 3]
+	      Position		      [180, 100, 230, 220]
+	      FunctionName	      "sf_sfun"
+	      PortCounts	      "[4 3]"
+	      EnableBusSupport	      on
+	      Port {
+		PortNumber		2
+		Name			"distance"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	      Port {
+		PortNumber		3
+		Name			"heading"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	    }
+	    Block {
+	      BlockType		      Terminator
+	      Name		      " Terminator "
+	      SID		      9
+	      Position		      [460, 231, 480, 249]
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "distance"
+	      SID		      13
+	      Position		      [460, 101, 480, 119]
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "heading"
+	      SID		      15
+	      Position		      [460, 136, 480, 154]
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Line {
+	      SrcBlock		      " SFunction "
+	      SrcPort		      1
+	      DstBlock		      " Demux "
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "north1"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "east1"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "north2"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "east2"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      4
+	    }
+	    Line {
+	      Name		      "distance"
+	      Labels		      [0, 0]
+	      SrcBlock		      " SFunction "
+	      SrcPort		      2
+	      DstBlock		      "distance"
+	      DstPort		      1
+	    }
+	    Line {
+	      Name		      "heading"
+	      Labels		      [0, 0]
+	      SrcBlock		      " SFunction "
+	      SrcPort		      3
+	      DstBlock		      "heading"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      " Demux "
+	      SrcPort		      1
+	      DstBlock		      " Terminator "
+	      DstPort		      1
+	    }
+	  }
 	}
 	Block {
 	  BlockType		  SubSystem
@@ -1216,10 +1400,10 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Constant2"
 	  SID			  22
-	  Position		  [50, 196, 130, 214]
+	  Position		  [115, 160, 225, 180]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
-	  Value			  "waypoint_1_lat"
+	  Value			  "waypoint_1_north"
 	  OutDataType		  "sfix(16)"
 	  OutScaling		  "2^0"
 	}
@@ -1227,32 +1411,10 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Constant3"
 	  SID			  23
-	  Position		  [15, 230, 130, 250]
+	  Position		  [110, 195, 225, 215]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
-	  Value			  "waypoint_1_long"
-	  OutDataType		  "sfix(16)"
-	  OutScaling		  "2^0"
-	}
-	Block {
-	  BlockType		  Constant
-	  Name			  "Constant4"
-	  SID			  24
-	  Position		  [15, 266, 130, 284]
-	  BackgroundColor	  "gray"
-	  ShowName		  off
-	  Value			  "0"
-	  OutDataType		  "sfix(16)"
-	  OutScaling		  "2^0"
-	}
-	Block {
-	  BlockType		  Constant
-	  Name			  "Constant5"
-	  SID			  25
-	  Position		  [160, 162, 195, 178]
-	  BackgroundColor	  "gray"
-	  ShowName		  off
-	  Value			  "0"
+	  Value			  "waypoint_1_east"
 	  OutDataType		  "sfix(16)"
 	  OutScaling		  "2^0"
 	}
@@ -1264,10 +1426,10 @@ Model {
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
-	  OutDataTypeMode	  "Inherit via back propagation"
+	  OutDataTypeMode	  "single"
 	  OutDataType		  "sfix(16)"
 	  OutScaling		  "2^0"
-	  OutDataTypeStr	  "Inherit: Inherit via back propagation"
+	  OutDataTypeStr	  "single"
 	}
 	Block {
 	  BlockType		  Constant
@@ -1277,10 +1439,10 @@ Model {
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "[1 0 0]"
-	  OutDataTypeMode	  "Inherit via back propagation"
+	  OutDataTypeMode	  "single"
 	  OutDataType		  "sfix(16)"
 	  OutScaling		  "2^0"
-	  OutDataTypeStr	  "Inherit: Inherit via back propagation"
+	  OutDataTypeStr	  "single"
 	}
 	Block {
 	  BlockType		  Constant
@@ -1290,10 +1452,10 @@ Model {
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
-	  OutDataTypeMode	  "Inherit via back propagation"
+	  OutDataTypeMode	  "single"
 	  OutDataType		  "sfix(16)"
 	  OutScaling		  "2^0"
-	  OutDataTypeStr	  "Inherit: Inherit via back propagation"
+	  OutDataTypeStr	  "single"
 	}
 	Block {
 	  BlockType		  Constant
@@ -1309,408 +1471,11 @@ Model {
 	  OutDataTypeStr	  "Inherit: Inherit via back propagation"
 	}
 	Block {
-	  BlockType		  Fcn
-	  Name			  "Convert to\nDistance"
-	  SID			  30
-	  Position		  [515, 135, 575, 165]
-	  Expr			  "sqrt(u(1)^2 + u(2)^2)"
-	}
-	Block {
-	  BlockType		  SubSystem
-	  Name			  "Convert to\nEast-North-Up"
-	  SID			  31
-	  Ports			  [2, 1]
-	  Position		  [355, 128, 455, 257]
-	  NamePlacement		  "alternate"
-	  PermitHierarchicalResolution "ExplicitOnly"
-	  TreatAsAtomicUnit	  on
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  Array {
-	    Type		    "Handle"
-	    Dimension		    0
-	    PropName		    "AvailSigsLoadSave"
-	  }
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  MaskType		  "Stateflow"
-	  MaskDescription	  "Embedded MATLAB block"
-	  MaskDisplay		  "disp('xyz2enu');"
-	  MaskSelfModifiable	  on
-	  MaskIconFrame		  on
-	  MaskIconOpaque	  off
-	  MaskIconRotate	  "none"
-	  MaskPortRotate	  "default"
-	  MaskIconUnits		  "autoscale"
-	  System {
-	    Name		    "Convert to\nEast-North-Up"
-	    Location		    [257, 457, 812, 717]
-	    Open		    off
-	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "usletter"
-	    PaperUnits		    "inches"
-	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "100"
-	    SIDHighWatermark	    10
-	    Block {
-	      BlockType		      Inport
-	      Name		      "XYZr"
-	      SID		      1
-	      Position		      [20, 101, 40, 119]
-	      IconDisplay	      "Port number"
-	      OutDataType	      "sfix(16)"
-	      OutScaling	      "2^0"
-	    }
-	    Block {
-	      BlockType		      Inport
-	      Name		      "XYZ"
-	      SID		      2
-	      Position		      [20, 136, 40, 154]
-	      Port		      "2"
-	      IconDisplay	      "Port number"
-	      OutDataType	      "sfix(16)"
-	      OutScaling	      "2^0"
-	    }
-	    Block {
-	      BlockType		      Demux
-	      Name		      " Demux "
-	      SID		      8
-	      Ports		      [1, 1]
-	      Position		      [270, 160, 320, 200]
-	      Outputs		      "1"
-	    }
-	    Block {
-	      BlockType		      "S-Function"
-	      Name		      " SFunction "
-	      SID		      7
-	      Tag		      "Stateflow S-Function Boat_sim 7"
-	      Ports		      [2, 2]
-	      Position		      [180, 100, 230, 160]
-	      FunctionName	      "sf_sfun"
-	      PortCounts	      "[2 2]"
-	      EnableBusSupport	      on
-	      Port {
-		PortNumber		2
-		Name			"enu"
-		RTWStorageClass		"Auto"
-		DataLoggingNameMode	"SignalName"
-	      }
-	    }
-	    Block {
-	      BlockType		      Terminator
-	      Name		      " Terminator "
-	      SID		      10
-	      Position		      [460, 171, 480, 189]
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "enu"
-	      SID		      6
-	      Position		      [460, 101, 480, 119]
-	      IconDisplay	      "Port number"
-	      OutDataType	      "sfix(16)"
-	      OutScaling	      "2^0"
-	    }
-	    Line {
-	      SrcBlock		      " SFunction "
-	      SrcPort		      1
-	      DstBlock		      " Demux "
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "XYZr"
-	      SrcPort		      1
-	      DstBlock		      " SFunction "
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "XYZ"
-	      SrcPort		      1
-	      DstBlock		      " SFunction "
-	      DstPort		      2
-	    }
-	    Line {
-	      Name		      "enu"
-	      Labels		      [0, 0]
-	      SrcBlock		      " SFunction "
-	      SrcPort		      2
-	      DstBlock		      "enu"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      " Demux "
-	      SrcPort		      1
-	      DstBlock		      " Terminator "
-	      DstPort		      1
-	    }
-	  }
-	}
-	Block {
-	  BlockType		  Fcn
-	  Name			  "Convert to\nHeading"
-	  SID			  32
-	  Position		  [515, 205, 575, 235]
-	  Expr			  "pi/2-atan2(u(2), u(1))"
-	}
-	Block {
-	  BlockType		  SubSystem
-	  Name			  "Convert to ECEF"
-	  SID			  33
-	  Ports			  [1, 1]
-	  Position		  [215, 199, 300, 251]
-	  PermitHierarchicalResolution "ExplicitOnly"
-	  TreatAsAtomicUnit	  on
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  Array {
-	    Type		    "Handle"
-	    Dimension		    0
-	    PropName		    "AvailSigsLoadSave"
-	  }
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  MaskType		  "Stateflow"
-	  MaskDescription	  "Embedded MATLAB block"
-	  MaskDisplay		  "disp('llh2xyz');"
-	  MaskSelfModifiable	  on
-	  MaskIconFrame		  on
-	  MaskIconOpaque	  off
-	  MaskIconRotate	  "none"
-	  MaskPortRotate	  "default"
-	  MaskIconUnits		  "autoscale"
-	  System {
-	    Name		    "Convert to ECEF"
-	    Location		    [257, 457, 812, 717]
-	    Open		    off
-	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "usletter"
-	    PaperUnits		    "inches"
-	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "100"
-	    SIDHighWatermark	    9
-	    Block {
-	      BlockType		      Inport
-	      Name		      "lla"
-	      SID		      1
-	      Position		      [20, 101, 40, 119]
-	      IconDisplay	      "Port number"
-	      OutDataType	      "sfix(16)"
-	      OutScaling	      "2^0"
-	    }
-	    Block {
-	      BlockType		      Demux
-	      Name		      " Demux "
-	      SID		      7
-	      Ports		      [1, 1]
-	      Position		      [270, 160, 320, 200]
-	      Outputs		      "1"
-	    }
-	    Block {
-	      BlockType		      "S-Function"
-	      Name		      " SFunction "
-	      SID		      6
-	      Tag		      "Stateflow S-Function Boat_sim 8"
-	      Ports		      [1, 2]
-	      Position		      [180, 100, 230, 160]
-	      FunctionName	      "sf_sfun"
-	      PortCounts	      "[1 2]"
-	      EnableBusSupport	      on
-	      Port {
-		PortNumber		2
-		Name			"XYZ"
-		RTWStorageClass		"Auto"
-		DataLoggingNameMode	"SignalName"
-	      }
-	    }
-	    Block {
-	      BlockType		      Terminator
-	      Name		      " Terminator "
-	      SID		      9
-	      Position		      [460, 171, 480, 189]
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "XYZ"
-	      SID		      5
-	      Position		      [460, 101, 480, 119]
-	      IconDisplay	      "Port number"
-	      OutDataType	      "sfix(16)"
-	      OutScaling	      "2^0"
-	    }
-	    Line {
-	      SrcBlock		      " SFunction "
-	      SrcPort		      1
-	      DstBlock		      " Demux "
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "lla"
-	      SrcPort		      1
-	      DstBlock		      " SFunction "
-	      DstPort		      1
-	    }
-	    Line {
-	      Name		      "XYZ"
-	      Labels		      [0, 0]
-	      SrcBlock		      " SFunction "
-	      SrcPort		      2
-	      DstBlock		      "XYZ"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      " Demux "
-	      SrcPort		      1
-	      DstBlock		      " Terminator "
-	      DstPort		      1
-	    }
-	  }
-	}
-	Block {
-	  BlockType		  SubSystem
-	  Name			  "Convert to ECEF1"
-	  SID			  34
-	  Ports			  [1, 1]
-	  Position		  [245, 119, 330, 171]
-	  PermitHierarchicalResolution "ExplicitOnly"
-	  TreatAsAtomicUnit	  on
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  Array {
-	    Type		    "Handle"
-	    Dimension		    0
-	    PropName		    "AvailSigsLoadSave"
-	  }
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  MaskType		  "Stateflow"
-	  MaskDescription	  "Embedded MATLAB block"
-	  MaskDisplay		  "disp('llh2xyz');"
-	  MaskSelfModifiable	  on
-	  MaskIconFrame		  on
-	  MaskIconOpaque	  off
-	  MaskIconRotate	  "none"
-	  MaskPortRotate	  "default"
-	  MaskIconUnits		  "autoscale"
-	  System {
-	    Name		    "Convert to ECEF1"
-	    Location		    [257, 457, 812, 717]
-	    Open		    off
-	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "usletter"
-	    PaperUnits		    "inches"
-	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "100"
-	    SIDHighWatermark	    9
-	    Block {
-	      BlockType		      Inport
-	      Name		      "lla"
-	      SID		      1
-	      Position		      [20, 101, 40, 119]
-	      IconDisplay	      "Port number"
-	      OutDataType	      "sfix(16)"
-	      OutScaling	      "2^0"
-	    }
-	    Block {
-	      BlockType		      Demux
-	      Name		      " Demux "
-	      SID		      7
-	      Ports		      [1, 1]
-	      Position		      [270, 160, 320, 200]
-	      Outputs		      "1"
-	    }
-	    Block {
-	      BlockType		      "S-Function"
-	      Name		      " SFunction "
-	      SID		      6
-	      Tag		      "Stateflow S-Function Boat_sim 9"
-	      Ports		      [1, 2]
-	      Position		      [180, 100, 230, 160]
-	      FunctionName	      "sf_sfun"
-	      PortCounts	      "[1 2]"
-	      EnableBusSupport	      on
-	      Port {
-		PortNumber		2
-		Name			"XYZ"
-		RTWStorageClass		"Auto"
-		DataLoggingNameMode	"SignalName"
-	      }
-	    }
-	    Block {
-	      BlockType		      Terminator
-	      Name		      " Terminator "
-	      SID		      9
-	      Position		      [460, 171, 480, 189]
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "XYZ"
-	      SID		      5
-	      Position		      [460, 101, 480, 119]
-	      IconDisplay	      "Port number"
-	      OutDataType	      "sfix(16)"
-	      OutScaling	      "2^0"
-	    }
-	    Line {
-	      SrcBlock		      " SFunction "
-	      SrcPort		      1
-	      DstBlock		      " Demux "
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "lla"
-	      SrcPort		      1
-	      DstBlock		      " SFunction "
-	      DstPort		      1
-	    }
-	    Line {
-	      Name		      "XYZ"
-	      Labels		      [0, 0]
-	      SrcBlock		      " SFunction "
-	      SrcPort		      2
-	      DstBlock		      "XYZ"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      " Demux "
-	      SrcPort		      1
-	      DstBlock		      " Terminator "
-	      DstPort		      1
-	    }
-	  }
-	}
-	Block {
 	  BlockType		  SubSystem
 	  Name			  "Embedded\nMATLAB Function"
 	  SID			  35
 	  Ports			  [2, 1]
-	  Position		  [750, 286, 870, 364]
+	  Position		  [745, 286, 865, 364]
 	  ShowName		  off
 	  PermitHierarchicalResolution "ExplicitOnly"
 	  TreatAsAtomicUnit	  on
@@ -1750,7 +1515,7 @@ Model {
 	    TiledPageScale	    1
 	    ShowPageBoundaries	    off
 	    ZoomFactor		    "100"
-	    SIDHighWatermark	    10
+	    SIDHighWatermark	    11
 	    Block {
 	      BlockType		      Inport
 	      Name		      "a"
@@ -1804,11 +1569,9 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "y"
-	      SID		      6
+	      SID		      11
 	      Position		      [460, 101, 480, 119]
 	      IconDisplay	      "Port number"
-	      OutDataType	      "sfix(16)"
-	      OutScaling	      "2^0"
 	    }
 	    Line {
 	      SrcBlock		      " SFunction "
@@ -1843,26 +1606,6 @@ Model {
 	      DstPort		      1
 	    }
 	  }
-	}
-	Block {
-	  BlockType		  Mux
-	  Name			  "Mux"
-	  SID			  39
-	  Ports			  [3, 1]
-	  Position		  [180, 206, 185, 244]
-	  ShowName		  off
-	  Inputs		  "3"
-	  DisplayOption		  "bar"
-	}
-	Block {
-	  BlockType		  Mux
-	  Name			  "Mux1"
-	  SID			  40
-	  Ports			  [3, 1]
-	  Position		  [220, 126, 225, 164]
-	  ShowName		  off
-	  Inputs		  "3"
-	  DisplayOption		  "bar"
 	}
 	Block {
 	  BlockType		  SubSystem
@@ -2670,27 +2413,26 @@ Model {
 	  OutScaling		  "2^0"
 	}
 	Line {
-	  SrcBlock		  "Current longitude"
+	  SrcBlock		  "North"
 	  SrcPort		  1
 	  Points		  [20, 0]
 	  Branch {
-	    Labels		    [0, 0]
 	    Points		    [0, 215]
 	    DstBlock		    "Solar Position"
 	    DstPort		    2
 	  }
 	  Branch {
-	    Points		    [65, 0; 0, -10; 55, 0]
-	    DstBlock		    "Mux1"
-	    DstPort		    2
+	    Points		    [0, -35]
+	    DstBlock		    "Calc Circle\nDistance & Heading"
+	    DstPort		    1
 	  }
 	}
 	Line {
-	  SrcBlock		  "Current bearing"
+	  SrcBlock		  "Heading"
 	  SrcPort		  1
-	  Points		  [155, 0]
+	  Points		  [170, 0]
 	  Branch {
-	    Points		    [500, 0]
+	    Points		    [470, 0; 0, 35]
 	    DstBlock		    "Embedded\nMATLAB Function"
 	    DstPort		    2
 	  }
@@ -2702,101 +2444,18 @@ Model {
 	  }
 	}
 	Line {
-	  SrcBlock		  "Convert to\nHeading"
+	  SrcBlock		  "East"
 	  SrcPort		  1
-	  Points		  [155, 0]
-	  DstBlock		  "Embedded\nMATLAB Function"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Convert to\nDistance"
-	  SrcPort		  1
-	  Points		  [135, 0; 0, -120]
-	  DstBlock		  "Bias"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Constant3"
-	  SrcPort		  1
-	  Points		  [20, 0; 0, -15]
-	  DstBlock		  "Mux"
-	  DstPort		  2
-	}
-	Line {
-	  SrcBlock		  "Constant2"
-	  SrcPort		  1
-	  Points		  [30, 0]
-	  DstBlock		  "Mux"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Constant4"
-	  SrcPort		  1
-	  Points		  [30, 0]
-	  DstBlock		  "Mux"
-	  DstPort		  3
-	}
-	Line {
-	  SrcBlock		  "Mux"
-	  SrcPort		  1
-	  DstBlock		  "Convert to ECEF"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Mux1"
-	  SrcPort		  1
-	  DstBlock		  "Convert to ECEF1"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Convert to\nEast-North-Up"
-	  SrcPort		  1
-	  Points		  [20, 0]
+	  Points		  [15, 0; 0, 15]
 	  Branch {
-	    Points		    [0, 25]
-	    DstBlock		    "Convert to\nHeading"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, -45]
-	    DstBlock		    "Convert to\nDistance"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  SrcBlock		  "Constant5"
-	  SrcPort		  1
-	  Points		  [5, 0]
-	  DstBlock		  "Mux1"
-	  DstPort		  3
-	}
-	Line {
-	  SrcBlock		  "Convert to ECEF"
-	  SrcPort		  1
-	  DstBlock		  "Convert to\nEast-North-Up"
-	  DstPort		  2
-	}
-	Line {
-	  SrcBlock		  "Convert to ECEF1"
-	  SrcPort		  1
-	  Points		  [5, 0]
-	  DstBlock		  "Convert to\nEast-North-Up"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Current latitude"
-	  SrcPort		  1
-	  Points		  [15, 0]
-	  Branch {
-	    Labels		    [0, 0]
-	    Points		    [0, 225]
+	    Points		    [0, 210]
 	    DstBlock		    "Solar Position"
 	    DstPort		    1
 	  }
 	  Branch {
-	    Points		    [70, 0; 0, 5]
-	    DstBlock		    "Mux1"
-	    DstPort		    1
+	    Points		    [250, 0]
+	    DstBlock		    "Calc Circle\nDistance & Heading"
+	    DstPort		    2
 	  }
 	}
 	Line {
@@ -2915,6 +2574,34 @@ Model {
 	  SrcPort		  1
 	  DstBlock		  "Tray angle command"
 	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Constant3"
+	  SrcPort		  1
+	  Points		  [50, 0; 0, -35]
+	  DstBlock		  "Calc Circle\nDistance & Heading"
+	  DstPort		  4
+	}
+	Line {
+	  SrcBlock		  "Calc Circle\nDistance & Heading"
+	  SrcPort		  1
+	  Points		  [350, 0; 0, -105]
+	  DstBlock		  "Bias"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Calc Circle\nDistance & Heading"
+	  SrcPort		  2
+	  Points		  [295, 0]
+	  DstBlock		  "Embedded\nMATLAB Function"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Constant2"
+	  SrcPort		  1
+	  Points		  [40, 0; 0, -15]
+	  DstBlock		  "Calc Circle\nDistance & Heading"
+	  DstPort		  3
 	}
 	Annotation {
 	  Name			  "This subsystem currently provides autonomous control of the boat. It utilizes simple PID control\non the "
@@ -3038,7 +2725,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Plant"
-	Location		[177, 102, 1170, 590]
+	Location		[196, 178, 1189, 666]
 	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -6023,7 +5710,7 @@ Model {
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
-	  GotoTag		  "Lat"
+	  GotoTag		  "East"
 	}
 	Block {
 	  BlockType		  From
@@ -6033,7 +5720,7 @@ Model {
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
-	  GotoTag		  "Lon"
+	  GotoTag		  "North"
 	}
 	Block {
 	  BlockType		  From
@@ -6043,7 +5730,7 @@ Model {
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
-	  GotoTag		  "Lat"
+	  GotoTag		  "North"
 	}
 	Block {
 	  BlockType		  From
@@ -6053,7 +5740,7 @@ Model {
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  CloseFcn		  "tagdialog Close"
-	  GotoTag		  "Lon"
+	  GotoTag		  "East"
 	}
 	Block {
 	  BlockType		  From
@@ -6151,7 +5838,7 @@ Model {
 	  System {
 	    Name		    "Outputs"
 	    Location		    [47, 194, 1119, 667]
-	    Open		    on
+	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -6177,7 +5864,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "heading"
 	      SID		      274
-	      Position		      [180, 158, 210, 172]
+	      Position		      [275, 218, 305, 232]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "2"
 	      IconDisplay	      "Port number"
@@ -6188,8 +5875,8 @@ Model {
 	      BlockType		      SubSystem
 	      Name		      "Calculate new position"
 	      SID		      272
-	      Ports		      [4, 2]
-	      Position		      [315, 91, 405, 154]
+	      Ports		      [2, 2]
+	      Position		      [380, 178, 470, 242]
 	      LibraryVersion	      "1.31"
 	      PermitHierarchicalResolution "ExplicitOnly"
 	      TreatAsAtomicUnit	      on
@@ -6229,39 +5916,21 @@ Model {
 		TiledPageScale		1
 		ShowPageBoundaries	off
 		ZoomFactor		"100"
-		SIDHighWatermark	21
+		SIDHighWatermark	23
 		SIDPrevWatermark	13
-		Block {
-		  BlockType		  Inport
-		  Name			  "lat1"
-		  SID			  1
-		  Position		  [20, 101, 40, 119]
-		  IconDisplay		  "Port number"
-		  OutDataType		  "sfix(16)"
-		  OutScaling		  "2^0"
-		}
-		Block {
-		  BlockType		  Inport
-		  Name			  "lon1"
-		  SID			  18
-		  Position		  [20, 136, 40, 154]
-		  Port			  "2"
-		  IconDisplay		  "Port number"
-		}
 		Block {
 		  BlockType		  Inport
 		  Name			  "distance"
 		  SID			  19
-		  Position		  [20, 171, 40, 189]
-		  Port			  "3"
+		  Position		  [20, 101, 40, 119]
 		  IconDisplay		  "Port number"
 		}
 		Block {
 		  BlockType		  Inport
 		  Name			  "bearing"
-		  SID			  20
-		  Position		  [20, 206, 40, 224]
-		  Port			  "4"
+		  SID			  23
+		  Position		  [20, 136, 40, 154]
+		  Port			  "2"
 		  IconDisplay		  "Port number"
 		}
 		Block {
@@ -6269,7 +5938,7 @@ Model {
 		  Name			  " Demux "
 		  SID			  15
 		  Ports			  [1, 1]
-		  Position		  [270, 205, 320, 245]
+		  Position		  [270, 210, 320, 250]
 		  Outputs		  "1"
 		}
 		Block {
@@ -6277,20 +5946,20 @@ Model {
 		  Name			  " SFunction "
 		  SID			  14
 		  Tag			  "Stateflow S-Function Boat_sim 4"
-		  Ports			  [4, 3]
-		  Position		  [180, 102, 230, 203]
+		  Ports			  [2, 3]
+		  Position		  [180, 108, 230, 212]
 		  FunctionName		  "sf_sfun"
-		  PortCounts		  "[4 3]"
+		  PortCounts		  "[2 3]"
 		  EnableBusSupport	  on
 		  Port {
 		    PortNumber		    2
-		    Name		    "lat"
+		    Name		    "north"
 		    RTWStorageClass	    "Auto"
 		    DataLoggingNameMode	    "SignalName"
 		  }
 		  Port {
 		    PortNumber		    3
-		    Name		    "lon"
+		    Name		    "east"
 		    RTWStorageClass	    "Auto"
 		    DataLoggingNameMode	    "SignalName"
 		  }
@@ -6299,11 +5968,11 @@ Model {
 		  BlockType		  Terminator
 		  Name			  " Terminator "
 		  SID			  17
-		  Position		  [460, 216, 480, 234]
+		  Position		  [460, 221, 480, 239]
 		}
 		Block {
 		  BlockType		  Outport
-		  Name			  "lat"
+		  Name			  "north"
 		  SID			  5
 		  Position		  [460, 101, 480, 119]
 		  IconDisplay		  "Port number"
@@ -6312,7 +5981,7 @@ Model {
 		}
 		Block {
 		  BlockType		  Outport
-		  Name			  "lon"
+		  Name			  "east"
 		  SID			  21
 		  Position		  [460, 136, 480, 154]
 		  Port			  "2"
@@ -6325,43 +5994,31 @@ Model {
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "lat1"
-		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "lon1"
-		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  2
-		}
-		Line {
 		  SrcBlock		  "distance"
 		  SrcPort		  1
 		  DstBlock		  " SFunction "
-		  DstPort		  3
+		  DstPort		  1
 		}
 		Line {
 		  SrcBlock		  "bearing"
 		  SrcPort		  1
 		  DstBlock		  " SFunction "
-		  DstPort		  4
+		  DstPort		  2
 		}
 		Line {
-		  Name			  "lat"
+		  Name			  "north"
 		  Labels		  [0, 0]
 		  SrcBlock		  " SFunction "
 		  SrcPort		  2
-		  DstBlock		  "lat"
+		  DstBlock		  "north"
 		  DstPort		  1
 		}
 		Line {
-		  Name			  "lon"
+		  Name			  "east"
 		  Labels		  [0, 0]
 		  SrcBlock		  " SFunction "
 		  SrcPort		  3
-		  DstBlock		  "lon"
+		  DstBlock		  "east"
 		  DstPort		  1
 		}
 		Line {
@@ -6398,26 +6055,6 @@ Model {
 	      ShowName		      off
 	    }
 	    Block {
-	      BlockType		      Constant
-	      Name		      "Initial latitude"
-	      SID		      233
-	      Position		      [165, 50, 195, 80]
-	      BackgroundColor	      "gray"
-	      Value		      "lat_0"
-	      OutDataType	      "sfix(16)"
-	      OutScaling	      "2^0"
-	    }
-	    Block {
-	      BlockType		      Constant
-	      Name		      "Initial longitude1"
-	      SID		      273
-	      Position		      [150, 100, 215, 130]
-	      BackgroundColor	      "gray"
-	      Value		      "long_0"
-	      OutDataType	      "sfix(16)"
-	      OutScaling	      "2^0"
-	    }
-	    Block {
 	      BlockType		      Integrator
 	      Name		      "North Integrator"
 	      SID		      237
@@ -6427,9 +6064,9 @@ Model {
 	    }
 	    Block {
 	      BlockType		      Outport
-	      Name		      "latitude"
+	      Name		      "east"
 	      SID		      275
-	      Position		      [445, 103, 475, 117]
+	      Position		      [520, 218, 550, 232]
 	      BackgroundColor	      "yellow"
 	      IconDisplay	      "Port number"
 	      OutDataType	      "sfix(16)"
@@ -6437,9 +6074,9 @@ Model {
 	    }
 	    Block {
 	      BlockType		      Outport
-	      Name		      "longitude"
+	      Name		      "north"
 	      SID		      276
-	      Position		      [445, 133, 475, 147]
+	      Position		      [520, 188, 550, 202]
 	      BackgroundColor	      "yellow"
 	      Port		      "2"
 	      IconDisplay	      "Port number"
@@ -6487,40 +6124,25 @@ Model {
 	    Line {
 	      SrcBlock		      "North Integrator"
 	      SrcPort		      1
-	      Points		      [0, -10; 5, 0]
-	      DstBlock		      "Calculate new position"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "Initial longitude1"
-	      SrcPort		      1
-	      DstBlock		      "Calculate new position"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Initial latitude"
-	      SrcPort		      1
-	      Points		      [50, 0; 0, 35]
 	      DstBlock		      "Calculate new position"
 	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "heading"
 	      SrcPort		      1
-	      Points		      [40, 0; 0, -20]
 	      DstBlock		      "Calculate new position"
-	      DstPort		      4
+	      DstPort		      2
 	    }
 	    Line {
 	      SrcBlock		      "Calculate new position"
 	      SrcPort		      1
-	      DstBlock		      "latitude"
+	      DstBlock		      "north"
 	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "Calculate new position"
 	      SrcPort		      2
-	      DstBlock		      "longitude"
+	      DstBlock		      "east"
 	      DstPort		      1
 	    }
 	    Annotation {
@@ -6580,7 +6202,7 @@ Model {
 	  Position		  [880, 64, 940, 86]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
-	  GotoTag		  "Lon"
+	  GotoTag		  "North"
 	  TagVisibility		  "local"
 	}
 	Block {
@@ -6590,7 +6212,7 @@ Model {
 	  Position		  [880, 24, 940, 46]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
-	  GotoTag		  "Lat"
+	  GotoTag		  "East"
 	  TagVisibility		  "local"
 	}
 	Block {
@@ -6658,7 +6280,7 @@ Model {
 	}
 	Block {
 	  BlockType		  Outport
-	  Name			  "Latitude"
+	  Name			  "East"
 	  SID			  261
 	  Position		  [550, 398, 580, 412]
 	  BackgroundColor	  "yellow"
@@ -6669,7 +6291,7 @@ Model {
 	}
 	Block {
 	  BlockType		  Outport
-	  Name			  "Longitude"
+	  Name			  "North"
 	  SID			  262
 	  Position		  [550, 443, 580, 457]
 	  BackgroundColor	  "yellow"
@@ -6777,13 +6399,13 @@ Model {
 	Line {
 	  SrcBlock		  "From15"
 	  SrcPort		  1
-	  DstBlock		  "Longitude"
+	  DstBlock		  "North"
 	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "From14"
 	  SrcPort		  1
-	  DstBlock		  "Latitude"
+	  DstBlock		  "East"
 	  DstPort		  1
 	}
 	Line {
@@ -6909,7 +6531,7 @@ Model {
       Ports		      [1]
       Position		      [475, 140, 535, 170]
       ShowName		      off
-      VariableName	      "lat"
+      VariableName	      "east"
       MaxDataPoints	      "inf"
       SampleTime	      "-1"
       SaveFormat	      "Array"
@@ -6921,7 +6543,7 @@ Model {
       Ports		      [1]
       Position		      [475, 170, 535, 200]
       ShowName		      off
-      VariableName	      "long"
+      VariableName	      "north"
       MaxDataPoints	      "inf"
       SampleTime	      "-1"
       SaveFormat	      "Array"
@@ -7125,7 +6747,7 @@ Stateflow {
     name		    "Boat_sim"
     created		    "13-Apr-2010 16:50:36"
     isLibrary		    0
-    firstTarget		    95
+    firstTarget		    82
     sfVersion		    75014000
   }
   chart {
@@ -7609,9 +7231,6 @@ Stateflow {
     firstJunction	    30
     viewObj		    28
     machine		    1
-    toolbarMode		    LIBRARY_TOOLBAR
-    subviewS {
-    }
     ssIdHighWaterMark	    9
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
@@ -7636,12 +7255,10 @@ Stateflow {
     decomposition	    CLUSTER_STATE
     eml {
       isEML		      1
-      script		      "function [lat, lon] = fcn(lat1, lon1, distance, bearing)\n% From: http://williams.best.vwh.net/av"
-      "form.htm#LL\n\n% The code relies on distance in radians, so we first convert distance in\n% meters to distance i"
-      "n nautical miles and then into radians\ndist_radians = (pi/(180*60))*(distance/1852);\n\nlat = asin(sin(lat1)*co"
-      "s(dist_radians)+cos(lat1)*sin(dist_radians)*cos(bearing));\nif cos(lat) == 0\n    lon = lon1;        % endpoint "
-      "a pole\nelse\n    lon = mod(lon1-asin(sin(bearing)*sin(dist_radians)/cos(lat))+pi,2*pi)-pi;\nend\n\n"
-      editorLayout	      "100 M4x1[435 407 757 299]"
+      script		      "function [north, east] = fcn(distance, bearing)\n\nnorth = distance*cos(bearing);\n\neast = dista"
+      "nce*sin(bearing);\n"
+      editorLayout	      "100 M4x1[287 271 796 336]"
+      breakpoints	      "100 M[6]"
     }
   }
   junction {
@@ -7676,33 +7293,14 @@ Stateflow {
   }
   data {
     id			    32
-    ssIdNumber		    4
-    name		    "lat1"
-    linkNode		    [28 0 33]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    33
     ssIdNumber		    5
-    name		    "lat"
-    linkNode		    [28 32 34]
+    name		    "north"
+    linkNode		    [28 0 33]
     scope		    OUTPUT_DATA
     machine		    1
     props {
       array {
-	size			"-1"
+	size			"1"
       }
       type {
 	method			SF_INHERITED_TYPE
@@ -7714,9 +7312,31 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
+    id			    33
+    ssIdNumber		    7
+    name		    "distance"
+    linkNode		    [28 32 34]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
     id			    34
-    ssIdNumber		    6
-    name		    "lon1"
+    ssIdNumber		    8
+    name		    "bearing"
     linkNode		    [28 33 35]
     scope		    INPUT_DATA
     machine		    1
@@ -7731,64 +7351,20 @@ Stateflow {
 	wordLength		"16"
       }
       complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
+      frame		      SF_FRAME_NO
     }
     dataType		    "Inherit: Same as Simulink"
   }
   data {
     id			    35
-    ssIdNumber		    7
-    name		    "distance"
-    linkNode		    [28 34 36]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    36
-    ssIdNumber		    8
-    name		    "bearing"
-    linkNode		    [28 35 37]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    37
     ssIdNumber		    9
-    name		    "lon"
-    linkNode		    [28 36 0]
+    name		    "east"
+    linkNode		    [28 34 0]
     scope		    OUTPUT_DATA
     machine		    1
     props {
       array {
-	size			"-1"
+	size			"1"
       }
       type {
 	method			SF_INHERITED_TYPE
@@ -7802,26 +7378,26 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   instance {
-    id			    38
+    id			    36
     name		    "Plant/Outputs/Calculate new position"
     machine		    1
     chart		    28
   }
   chart {
-    id			    39
+    id			    37
     name		    "Plant/Charge Plant/Power Gain from Solar\nSubsystem/Calculate Sun Normal/myMux"
     windowPosition	    [431.813 179.45 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1280 1024 1.333333333333333]
-    treeNode		    [0 40 0 0]
-    firstTransition	    42
-    firstJunction	    41
-    viewObj		    39
+    treeNode		    [0 38 0 0]
+    firstTransition	    40
+    firstJunction	    39
+    viewObj		    37
     machine		    1
     ssIdHighWaterMark	    7
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
-    firstData		    43
+    firstData		    41
     chartFileNumber	    5
     disableImplicitCasting  1
     eml {
@@ -7831,14 +7407,14 @@ Stateflow {
     supportVariableSizing   0
   }
   state {
-    id			    40
+    id			    38
     labelString		    "eML_blk_kernel()"
     position		    [18 64.5 118 66]
     fontSize		    12
-    chart		    39
-    treeNode		    [39 0 0 0]
+    chart		    37
+    treeNode		    [37 0 0 0]
     superState		    SUBCHART
-    subviewer		    39
+    subviewer		    37
     ssIdNumber		    1
     type		    FUNC_STATE
     decomposition	    CLUSTER_STATE
@@ -7853,16 +7429,16 @@ Stateflow {
     }
   }
   junction {
-    id			    41
+    id			    39
     position		    [23.5747 49.5747 7]
-    chart		    39
-    linkNode		    [39 0 0]
-    subviewer		    39
+    chart		    37
+    linkNode		    [37 0 0]
+    subviewer		    37
     ssIdNumber		    3
     type		    CONNECTIVE_JUNCTION
   }
   transition {
-    id			    42
+    id			    40
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -7870,23 +7446,23 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      41
+      id		      39
       intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
-    chart		    39
-    linkNode		    [39 0 0]
+    chart		    37
+    linkNode		    [37 0 0]
     dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    39
+    subviewer		    37
     drawStyle		    SMART
     executionOrder	    1
     ssIdNumber		    2
   }
   data {
-    id			    43
+    id			    41
     ssIdNumber		    4
     name		    "u1"
-    linkNode		    [39 0 44]
+    linkNode		    [37 0 42]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7902,10 +7478,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    44
+    id			    42
     ssIdNumber		    5
     name		    "y"
-    linkNode		    [39 43 45]
+    linkNode		    [37 41 43]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -7922,10 +7498,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    45
+    id			    43
     ssIdNumber		    6
     name		    "u2"
-    linkNode		    [39 44 46]
+    linkNode		    [37 42 44]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7944,10 +7520,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    46
+    id			    44
     ssIdNumber		    7
     name		    "u3"
-    linkNode		    [39 45 0]
+    linkNode		    [37 43 0]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7966,54 +7542,50 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   instance {
-    id			    47
+    id			    45
     name		    "Plant/Charge Plant/Power Gain from Solar\nSubsystem/Calculate Sun Normal/myMux"
     machine		    1
-    chart		    39
+    chart		    37
   }
   chart {
-    id			    48
-    name		    "Autonomous Controller/Convert to\nEast-North-Up"
+    id			    46
+    name		    "Autonomous Controller/Calc Circle\nDistance & Heading"
     windowPosition	    [326.813 161.93 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1280 1024 1.333333333333333]
-    treeNode		    [0 49 0 0]
-    firstTransition	    51
-    firstJunction	    50
-    viewObj		    48
+    treeNode		    [0 47 0 0]
+    firstTransition	    49
+    firstJunction	    48
+    viewObj		    46
     machine		    1
-    ssIdHighWaterMark	    6
+    ssIdHighWaterMark	    9
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
-    firstData		    52
-    chartFileNumber	    7
+    firstData		    50
+    chartFileNumber	    9
     disableImplicitCasting  1
     eml {
-      name		      "xyz2enu"
+      name		      "ll2dh"
     }
     supportVariableSizing   0
   }
   state {
-    id			    49
+    id			    47
     labelString		    "eML_blk_kernel()"
     position		    [18 64.5 118 66]
     fontSize		    12
-    chart		    48
-    treeNode		    [48 0 0 0]
+    chart		    46
+    treeNode		    [46 0 0 0]
     superState		    SUBCHART
-    subviewer		    48
+    subviewer		    46
     ssIdNumber		    1
     type		    FUNC_STATE
     decomposition	    CLUSTER_STATE
     eml {
       isEML		      1
-      script		      "function enu  = xyz2enu(XYZr, XYZ) \n  % convert ECEF coordinates to local east, north, up \n  % "
-      "[X,Y,Z]_r is the reference frame. This will define XYZ as a point\n  % within the [X,Y,Z]_r tangent plane\n  \n "
-      " Xr = XYZr(1);\n  Yr = XYZr(2);\n  Zr = XYZr(3);\n  X = XYZ(1);\n  Y = XYZ(2);\n  Z = XYZ(3);\n  \n  phiP = atan"
-      "2(Zr,sqrt(Xr^2 + Yr^2)); \n  lambda = atan2(Yr,Xr); \n \n  e = -sin(lambda).*(X-Xr) + cos(lambda).*(Y-Yr); \n  n"
-      " = -sin(phiP).*cos(lambda).*(X-Xr) - sin(phiP).*sin(lambda).*(Y-Yr) + cos(phiP).*(Z-Zr); \n  u = cos(phiP).*cos("
-      "lambda).*(X-Xr) + cos(phiP).*sin(lambda).*(Y-Yr) + sin(phiP).*(Z-Zr);\n  \n  enu = [e;n;u];"
-      editorLayout	      "100 M4x1[422 154 671 364]"
+      script		      "function [distance, heading] = ll2dh(north1, east1, north2, east2) \n\n\ndistance = sqrt((north2-"
+      "north1)^2+(east2-east1)^2);\n\nheading = atan2(east2-east1, north2-north1);"
+      editorLayout	      "100 M4x1[287 271 796 336]"
       fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
       "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
       fimathForFiConstructors FimathMatlabFactoryDefault
@@ -8021,16 +7593,16 @@ Stateflow {
     }
   }
   junction {
-    id			    50
+    id			    48
     position		    [23.5747 49.5747 7]
-    chart		    48
-    linkNode		    [48 0 0]
-    subviewer		    48
+    chart		    46
+    linkNode		    [46 0 0]
+    subviewer		    46
     ssIdNumber		    3
     type		    CONNECTIVE_JUNCTION
   }
   transition {
-    id			    51
+    id			    49
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -8038,28 +7610,50 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      50
+      id		      48
       intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
-    chart		    48
-    linkNode		    [48 0 0]
+    chart		    46
+    linkNode		    [46 0 0]
     dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    48
+    subviewer		    46
     drawStyle		    SMART
     executionOrder	    1
     ssIdNumber		    2
   }
   data {
-    id			    52
+    id			    50
+    ssIdNumber		    9
+    name		    "distance"
+    linkNode		    [46 0 51]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    51
     ssIdNumber		    4
-    name		    "XYZr"
-    linkNode		    [48 0 53]
+    name		    "north1"
+    linkNode		    [46 50 52]
     scope		    INPUT_DATA
     machine		    1
     props {
       array {
-	size			"3"
+	size			"-1"
       }
       type {
 	method			SF_INHERITED_TYPE
@@ -8070,15 +7664,35 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    53
+    id			    52
     ssIdNumber		    5
-    name		    "XYZ"
-    linkNode		    [48 52 54]
+    name		    "heading"
+    linkNode		    [46 51 53]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    53
+    ssIdNumber		    6
+    name		    "east1"
+    linkNode		    [46 52 54]
     scope		    INPUT_DATA
     machine		    1
     props {
       array {
-	size			"3"
+	size			"-1"
       }
       type {
 	method			SF_INHERITED_TYPE
@@ -8093,10 +7707,10 @@ Stateflow {
   }
   data {
     id			    54
-    ssIdNumber		    6
-    name		    "enu"
-    linkNode		    [48 53 0]
-    scope		    OUTPUT_DATA
+    ssIdNumber		    7
+    name		    "north2"
+    linkNode		    [46 53 55]
+    scope		    INPUT_DATA
     machine		    1
     props {
       array {
@@ -8109,385 +7723,15 @@ Stateflow {
 	wordLength		"16"
       }
       complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
+      frame		      SF_FRAME_INHERITED
     }
     dataType		    "Inherit: Same as Simulink"
   }
-  instance {
+  data {
     id			    55
-    name		    "Autonomous Controller/Convert to\nEast-North-Up"
-    machine		    1
-    chart		    48
-  }
-  chart {
-    id			    56
-    name		    "Autonomous Controller/Convert to ECEF"
-    windowPosition	    [311.813 181.13 200.25 189.75]
-    viewLimits		    [0 156.75 0 153.75]
-    screen		    [1 1 1280 1024 1.333333333333333]
-    treeNode		    [0 57 0 0]
-    firstTransition	    59
-    firstJunction	    58
-    viewObj		    56
-    machine		    1
-    ssIdHighWaterMark	    5
-    decomposition	    CLUSTER_CHART
-    type		    EML_CHART
-    firstData		    60
-    chartFileNumber	    8
-    disableImplicitCasting  1
-    eml {
-      name		      "llh2xyz"
-    }
-    supportVariableSizing   0
-  }
-  state {
-    id			    57
-    labelString		    "eML_blk_kernel()"
-    position		    [18 64.5 118 66]
-    fontSize		    12
-    chart		    56
-    treeNode		    [56 0 0 0]
-    superState		    SUBCHART
-    subviewer		    56
-    ssIdNumber		    1
-    type		    FUNC_STATE
-    decomposition	    CLUSTER_STATE
-    eml {
-      isEML		      1
-      script		      "function XYZ = llh2xyz(lla) \n  % Convert lat, long, height in WGS84 to ECEF X,Y,Z\n  % lat and l"
-      "ong given in decimal degrees.\n  % altitude should be given in meters\n  % Based off of code from the Geodetic c"
-      "oordinates page of Wikipedia\n  \n  lat = lla(1);\n  long = lla(2);\n  h = lla(3);\n  \n  lat = lat/180*pi; %con"
-      "verting to radians\n  long = long/180*pi; %converting to radians\n  a = 6378137.0; % earth semimajor axis in met"
-      "ers \n  f = 1/298.257223563; % reciprocal flattening \n  e2 = 2*f -f^2; % eccentricity squared \n \n  chi = sqrt"
-      "(1-e2*(sin(lat)).^2); \n  X = (a./chi+h).*cos(lat).*cos(long); \n  Y = (a./chi+h).*cos(lat).*sin(long); \n  Z = "
-      "(a*(1-e2)./chi+h).*sin(lat);\n  \n  XYZ = [X;Y;Z];\n"
-      editorLayout	      "100 M4x1[261 252 671 364]"
-      fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
-      "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
-      fimathForFiConstructors FimathMatlabFactoryDefault
-      emlDefaultFimath	      FimathUserSpecified
-    }
-  }
-  junction {
-    id			    58
-    position		    [23.5747 49.5747 7]
-    chart		    56
-    linkNode		    [56 0 0]
-    subviewer		    56
-    ssIdNumber		    3
-    type		    CONNECTIVE_JUNCTION
-  }
-  transition {
-    id			    59
-    labelString		    "{eML_blk_kernel();}"
-    labelPosition	    [32.125 19.875 102.544 14.964]
-    fontSize		    12
-    src {
-      intersection	      [0 0 1 0 23.5747 14.625 0 0]
-    }
-    dst {
-      id		      58
-      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
-    }
-    midPoint		    [23.5747 24.9468]
-    chart		    56
-    linkNode		    [56 0 0]
-    dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    56
-    drawStyle		    SMART
-    executionOrder	    1
-    ssIdNumber		    2
-  }
-  data {
-    id			    60
-    ssIdNumber		    4
-    name		    "lla"
-    linkNode		    [56 0 61]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    61
-    ssIdNumber		    5
-    name		    "XYZ"
-    linkNode		    [56 60 0]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  instance {
-    id			    62
-    name		    "Autonomous Controller/Convert to ECEF"
-    machine		    1
-    chart		    56
-  }
-  chart {
-    id			    63
-    name		    "Autonomous Controller/Convert to ECEF1"
-    windowPosition	    [326.813 161.93 200.25 189.75]
-    viewLimits		    [0 156.75 0 153.75]
-    screen		    [1 1 1280 1024 1.333333333333333]
-    treeNode		    [0 64 0 0]
-    firstTransition	    66
-    firstJunction	    65
-    viewObj		    63
-    machine		    1
-    ssIdHighWaterMark	    5
-    decomposition	    CLUSTER_CHART
-    type		    EML_CHART
-    firstData		    67
-    chartFileNumber	    9
-    disableImplicitCasting  1
-    eml {
-      name		      "llh2xyz"
-    }
-    supportVariableSizing   0
-  }
-  state {
-    id			    64
-    labelString		    "eML_blk_kernel()"
-    position		    [18 64.5 118 66]
-    fontSize		    12
-    chart		    63
-    treeNode		    [63 0 0 0]
-    superState		    SUBCHART
-    subviewer		    63
-    ssIdNumber		    1
-    type		    FUNC_STATE
-    decomposition	    CLUSTER_STATE
-    eml {
-      isEML		      1
-      script		      "function XYZ = llh2xyz(lla) \n  % Convert lat, long, height in WGS84 to ECEF X,Y,Z\n  % lat and l"
-      "ong given in radians.\n  % altitude should be given in meters\n  % Based off of code from the Geodetic coordinat"
-      "es page of Wikipedia\n  \n  lat = lla(1);\n  long = lla(2);\n  h = lla(3);\n  \n  a = 6378137.0; % earth semimaj"
-      "or axis in meters \n  f = 1/298.257223563; % reciprocal flattening \n  e2 = 2*f -f^2; % eccentricity squared \n "
-      "\n  chi = sqrt(1-e2*(sin(lat)).^2); \n  X = (a./chi+h).*cos(lat).*cos(long); \n  Y = (a./chi+h).*cos(lat).*sin(l"
-      "ong); \n  Z = (a*(1-e2)./chi+h).*sin(lat);\n  \n  XYZ = [X;Y;Z];\n"
-      editorLayout	      "100 M4x1[146 214 671 364]"
-      fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
-      "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
-      fimathForFiConstructors FimathMatlabFactoryDefault
-      emlDefaultFimath	      FimathUserSpecified
-    }
-  }
-  junction {
-    id			    65
-    position		    [23.5747 49.5747 7]
-    chart		    63
-    linkNode		    [63 0 0]
-    subviewer		    63
-    ssIdNumber		    3
-    type		    CONNECTIVE_JUNCTION
-  }
-  transition {
-    id			    66
-    labelString		    "{eML_blk_kernel();}"
-    labelPosition	    [32.125 19.875 102.544 14.964]
-    fontSize		    12
-    src {
-      intersection	      [0 0 1 0 23.5747 14.625 0 0]
-    }
-    dst {
-      id		      65
-      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
-    }
-    midPoint		    [23.5747 24.9468]
-    chart		    63
-    linkNode		    [63 0 0]
-    dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    63
-    drawStyle		    SMART
-    executionOrder	    1
-    ssIdNumber		    2
-  }
-  data {
-    id			    67
-    ssIdNumber		    4
-    name		    "lla"
-    linkNode		    [63 0 68]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"3"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    68
-    ssIdNumber		    5
-    name		    "XYZ"
-    linkNode		    [63 67 0]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  instance {
-    id			    69
-    name		    "Autonomous Controller/Convert to ECEF1"
-    machine		    1
-    chart		    63
-  }
-  chart {
-    id			    70
-    name		    "Autonomous Controller/Embedded\nMATLAB Function"
-    windowPosition	    [281.813 329.45 200.25 189.75]
-    viewLimits		    [0 156.75 0 153.75]
-    screen		    [1 1 1280 1024 1.333333333333333]
-    treeNode		    [0 71 0 0]
-    firstTransition	    73
-    firstJunction	    72
-    viewObj		    70
-    machine		    1
-    ssIdHighWaterMark	    6
-    decomposition	    CLUSTER_CHART
-    type		    EML_CHART
-    firstData		    74
-    chartFileNumber	    10
-    disableImplicitCasting  1
-    eml {
-      name		      "shortest_arclength"
-    }
-    supportVariableSizing   0
-  }
-  state {
-    id			    71
-    labelString		    "eML_blk_kernel()"
-    position		    [18 64.5 118 66]
-    fontSize		    12
-    chart		    70
-    treeNode		    [70 0 0 0]
-    superState		    SUBCHART
-    subviewer		    70
-    ssIdNumber		    1
-    type		    FUNC_STATE
-    decomposition	    CLUSTER_STATE
-    eml {
-      isEML		      1
-      script		      "function y = shortest_arclength(a,b)\n% Calculates the shortest arclength distance between two po"
-      "ints.\n% Magnitude of the output corresponds to the shortest arclength.\n% Sign of the output correspondes to th"
-      "e direction (-1 is clockwise)\n\nc = a - b;\nif c > pi\n    y = 2*pi - c;\nelse\n    y = c;\nend"
-      editorLayout	      "100 M4x1[104 551 671 364]"
-      fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
-      "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
-      fimathForFiConstructors FimathMatlabFactoryDefault
-      emlDefaultFimath	      FimathUserSpecified
-    }
-  }
-  junction {
-    id			    72
-    position		    [23.5747 49.5747 7]
-    chart		    70
-    linkNode		    [70 0 0]
-    subviewer		    70
-    ssIdNumber		    3
-    type		    CONNECTIVE_JUNCTION
-  }
-  transition {
-    id			    73
-    labelString		    "{eML_blk_kernel();}"
-    labelPosition	    [32.125 19.875 102.544 14.964]
-    fontSize		    12
-    src {
-      intersection	      [0 0 1 0 23.5747 14.625 0 0]
-    }
-    dst {
-      id		      72
-      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
-    }
-    midPoint		    [23.5747 24.9468]
-    chart		    70
-    linkNode		    [70 0 0]
-    dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    70
-    drawStyle		    SMART
-    executionOrder	    1
-    ssIdNumber		    2
-  }
-  data {
-    id			    74
-    ssIdNumber		    4
-    name		    "a"
-    linkNode		    [70 0 75]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    75
-    ssIdNumber		    5
-    name		    "y"
-    linkNode		    [70 74 76]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    76
-    ssIdNumber		    6
-    name		    "b"
-    linkNode		    [70 75 0]
+    ssIdNumber		    8
+    name		    "east2"
+    linkNode		    [46 54 0]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -8506,26 +7750,168 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   instance {
-    id			    77
-    name		    "Autonomous Controller/Embedded\nMATLAB Function"
+    id			    56
+    name		    "Autonomous Controller/Calc Circle\nDistance & Heading"
     machine		    1
-    chart		    70
+    chart		    46
   }
   chart {
-    id			    78
+    id			    57
+    name		    "Autonomous Controller/Embedded\nMATLAB Function"
+    windowPosition	    [281.813 329.45 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1280 1024 1.333333333333333]
+    treeNode		    [0 58 0 0]
+    firstTransition	    60
+    firstJunction	    59
+    viewObj		    57
+    machine		    1
+    ssIdHighWaterMark	    6
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    61
+    chartFileNumber	    10
+    disableImplicitCasting  1
+    eml {
+      name		      "shortest_arclength"
+    }
+    supportVariableSizing   0
+  }
+  state {
+    id			    58
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    57
+    treeNode		    [57 0 0 0]
+    superState		    SUBCHART
+    subviewer		    57
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function y = shortest_arclength(a,b)\n% Calculates the shortest arclength distance between two po"
+      "ints.\n% Magnitude of the output corresponds to the shortest arclength.\n% Sign of the output correspondes to th"
+      "e direction (-1 is clockwise)\n\nc = a - b;\nif c > pi\n    y = single(2*pi - c);\nelse\n    y = single(c);\nend"
+      editorLayout	      "100 M4x1[287 271 796 336]"
+      fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
+      "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
+      fimathForFiConstructors FimathMatlabFactoryDefault
+      emlDefaultFimath	      FimathUserSpecified
+    }
+  }
+  junction {
+    id			    59
+    position		    [23.5747 49.5747 7]
+    chart		    57
+    linkNode		    [57 0 0]
+    subviewer		    57
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    60
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      59
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    57
+    linkNode		    [57 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    57
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    61
+    ssIdNumber		    4
+    name		    "a"
+    linkNode		    [57 0 62]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    62
+    ssIdNumber		    5
+    name		    "y"
+    linkNode		    [57 61 63]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    63
+    ssIdNumber		    6
+    name		    "b"
+    linkNode		    [57 62 0]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  instance {
+    id			    64
+    name		    "Autonomous Controller/Embedded\nMATLAB Function"
+    machine		    1
+    chart		    57
+  }
+  chart {
+    id			    65
     name		    "Autonomous Controller/Solar Position/myMux"
     windowPosition	    [461.813 149.45 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1280 1024 1.333333333333333]
-    treeNode		    [0 79 0 0]
-    firstTransition	    81
-    firstJunction	    80
-    viewObj		    78
+    treeNode		    [0 66 0 0]
+    firstTransition	    68
+    firstJunction	    67
+    viewObj		    65
     machine		    1
     ssIdHighWaterMark	    7
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
-    firstData		    82
+    firstData		    69
     chartFileNumber	    11
     disableImplicitCasting  1
     eml {
@@ -8535,14 +7921,14 @@ Stateflow {
     supportVariableSizing   0
   }
   state {
-    id			    79
+    id			    66
     labelString		    "eML_blk_kernel()"
     position		    [18 64.5 118 66]
     fontSize		    12
-    chart		    78
-    treeNode		    [78 0 0 0]
+    chart		    65
+    treeNode		    [65 0 0 0]
     superState		    SUBCHART
-    subviewer		    78
+    subviewer		    65
     ssIdNumber		    1
     type		    FUNC_STATE
     decomposition	    CLUSTER_STATE
@@ -8557,16 +7943,16 @@ Stateflow {
     }
   }
   junction {
-    id			    80
+    id			    67
     position		    [23.5747 49.5747 7]
-    chart		    78
-    linkNode		    [78 0 0]
-    subviewer		    78
+    chart		    65
+    linkNode		    [65 0 0]
+    subviewer		    65
     ssIdNumber		    3
     type		    CONNECTIVE_JUNCTION
   }
   transition {
-    id			    81
+    id			    68
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -8574,23 +7960,23 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      80
+      id		      67
       intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
-    chart		    78
-    linkNode		    [78 0 0]
+    chart		    65
+    linkNode		    [65 0 0]
     dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    78
+    subviewer		    65
     drawStyle		    SMART
     executionOrder	    1
     ssIdNumber		    2
   }
   data {
-    id			    82
+    id			    69
     ssIdNumber		    4
     name		    "u1"
-    linkNode		    [78 0 83]
+    linkNode		    [65 0 70]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -8606,10 +7992,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    83
+    id			    70
     ssIdNumber		    5
     name		    "y"
-    linkNode		    [78 82 84]
+    linkNode		    [65 69 71]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -8626,10 +8012,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    84
+    id			    71
     ssIdNumber		    6
     name		    "u2"
-    linkNode		    [78 83 85]
+    linkNode		    [65 70 72]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -8648,10 +8034,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    85
+    id			    72
     ssIdNumber		    7
     name		    "u3"
-    linkNode		    [78 84 0]
+    linkNode		    [65 71 0]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -8670,26 +8056,26 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   instance {
-    id			    86
+    id			    73
     name		    "Autonomous Controller/Solar Position/myMux"
     machine		    1
-    chart		    78
+    chart		    65
   }
   chart {
-    id			    87
+    id			    74
     name		    "Autonomous Controller/Solar Position/myMux1"
     windowPosition	    [476.813 134.45 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1280 1024 1.333333333333333]
-    treeNode		    [0 88 0 0]
-    firstTransition	    90
-    firstJunction	    89
-    viewObj		    87
+    treeNode		    [0 75 0 0]
+    firstTransition	    77
+    firstJunction	    76
+    viewObj		    74
     machine		    1
     ssIdHighWaterMark	    6
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
-    firstData		    91
+    firstData		    78
     chartFileNumber	    12
     disableImplicitCasting  1
     eml {
@@ -8699,14 +8085,14 @@ Stateflow {
     supportVariableSizing   0
   }
   state {
-    id			    88
+    id			    75
     labelString		    "eML_blk_kernel()"
     position		    [18 64.5 118 66]
     fontSize		    12
-    chart		    87
-    treeNode		    [87 0 0 0]
+    chart		    74
+    treeNode		    [74 0 0 0]
     superState		    SUBCHART
-    subviewer		    87
+    subviewer		    74
     ssIdNumber		    1
     type		    FUNC_STATE
     decomposition	    CLUSTER_STATE
@@ -8721,16 +8107,16 @@ Stateflow {
     }
   }
   junction {
-    id			    89
+    id			    76
     position		    [23.5747 49.5747 7]
-    chart		    87
-    linkNode		    [87 0 0]
-    subviewer		    87
+    chart		    74
+    linkNode		    [74 0 0]
+    subviewer		    74
     ssIdNumber		    3
     type		    CONNECTIVE_JUNCTION
   }
   transition {
-    id			    90
+    id			    77
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -8738,23 +8124,23 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      89
+      id		      76
       intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
-    chart		    87
-    linkNode		    [87 0 0]
+    chart		    74
+    linkNode		    [74 0 0]
     dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    87
+    subviewer		    74
     drawStyle		    SMART
     executionOrder	    1
     ssIdNumber		    2
   }
   data {
-    id			    91
+    id			    78
     ssIdNumber		    4
     name		    "u1"
-    linkNode		    [87 0 92]
+    linkNode		    [74 0 79]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -8770,10 +8156,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    92
+    id			    79
     ssIdNumber		    5
     name		    "y"
-    linkNode		    [87 91 93]
+    linkNode		    [74 78 80]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -8790,10 +8176,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    93
+    id			    80
     ssIdNumber		    6
     name		    "u2"
-    linkNode		    [87 92 0]
+    linkNode		    [74 79 0]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -8812,13 +8198,13 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   instance {
-    id			    94
+    id			    81
     name		    "Autonomous Controller/Solar Position/myMux1"
     machine		    1
-    chart		    87
+    chart		    74
   }
   target {
-    id			    95
+    id			    82
     name		    "sfun"
     codeFlags		    ""
     machine		    1
