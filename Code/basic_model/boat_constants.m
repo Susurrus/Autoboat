@@ -43,3 +43,12 @@ throttle_dot_max = 1;   % Maximum rate of change of throttle (%/s)
 proportional_band = .5;      % Proportional band of the rudder response (radians)
 roll_period = 3;        % Periodicity of roll. (s)
 power_coefficients = [5.6667 9.6667 0]; % Power coefficients for use in the motor current draw calculations
+
+% L2+ constants
+TStar = single(4.5);
+IPStar = 0;
+InitialPoint = 0;
+Turn2Track = 0;
+MaxDwnPthStar = 1;
+tanIntercept = tan( 45*pi/180 );
+ISA_g     = 9.815;          % Gravity               (m/s/s)
