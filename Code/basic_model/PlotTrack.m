@@ -10,20 +10,18 @@ plot(waypoint_1_east, waypoint_1_north, 'r^');
 
 % Add the boat path
 title('Boat position');
-plot(east, north);
+plot(position(:,2),position(:,1));
 grid on;
 %% Add additional decorations
 
+decoration_steps = 1:50:length(position);
+
 % Display the L2 vectors
-for i=1:20:length(north)
-    plot (east(i), north(i), 'bo');
-    plot ([east(i) east(i)+L2(i,2)], [north(i) north(i)+L2(i,1)], 'm-');
-end
+plot (position(decoration_steps,2), position(decoration_steps, 1), 'bo');
+quiver(position(decoration_steps,2),position(decoration_steps,1),L2(decoration_steps,2),L2(decoration_steps,1), 0, 'm-');
 
-for i=1:20:length(velocity)
-    plot ([east(i) east(i)+velocity(i,2)], [north(i) north(i)+velocity(i,1)], 'g-');
-end
-
+% Plot velocity vector
+quiver(position(decoration_steps,2),position(decoration_steps,1),sin(heading(decoration_steps)), cos(heading(decoration_steps)), 0);
 
 %% Plot the vehicle commands
 figure(2);clf;
