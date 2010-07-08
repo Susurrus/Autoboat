@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.550"
+    ComputedModelVersion    "1.589"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Jul 08 12:53:29 2010"
-  RTWModifiedTimeStamp	  200494397
-  ModelVersionFormat	  "1.%<AutoIncrement:550>"
+  LastModifiedDate	  "Thu Jul 08 13:58:11 2010"
+  RTWModifiedTimeStamp	  200498290
+  ModelVersionFormat	  "1.%<AutoIncrement:589>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -554,7 +554,7 @@ Model {
       }
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=0 "
-      CurrentDlgPage	      "Solver"
+      CurrentDlgPage	      "Simulation Target"
       ConfigPrmDlgPosition    " [ 200, 74, 1080, 704 ] "
     }
     PropName		    "ConfigurationSets"
@@ -692,9 +692,6 @@ Model {
     Block {
       BlockType		      Goto
       IconDisplay	      "Tag"
-    }
-    Block {
-      BlockType		      Ground
     }
     Block {
       BlockType		      Inport
@@ -895,7 +892,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    319
+    SIDHighWatermark	    321
     Block {
       BlockType		      SubSystem
       Name		      "Autonomous Controller"
@@ -1259,6 +1256,11 @@ Model {
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
 	  Opaque		  off
+	  Array {
+	    Type		    "Handle"
+	    Dimension		    0
+	    PropName		    "AvailSigsLoadSave"
+	  }
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
 	  MaskType		  "Stateflow"
@@ -1383,7 +1385,7 @@ Model {
 	  BlockType		  SubSystem
 	  Name			  "L2 Plus ref WP1"
 	  SID			  292
-	  Ports			  [4, 2]
+	  Ports			  [4, 3]
 	  Position		  [510, 68, 660, 297]
 	  PermitHierarchicalResolution "ExplicitOnly"
 	  TreatAsAtomicUnit	  on
@@ -1392,6 +1394,11 @@ Model {
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
 	  Opaque		  off
+	  Array {
+	    Type		    "Handle"
+	    Dimension		    0
+	    PropName		    "AvailSigsLoadSave"
+	  }
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
 	  MaskType		  "Stateflow"
@@ -1418,7 +1425,7 @@ Model {
 	    TiledPageScale	    1
 	    ShowPageBoundaries	    off
 	    ZoomFactor		    "100"
-	    SIDHighWatermark	    14
+	    SIDHighWatermark	    15
 	    SIDPrevWatermark	    14
 	    Block {
 	      BlockType		      Inport
@@ -1472,20 +1479,26 @@ Model {
 	      Name		      " SFunction "
 	      SID		      11
 	      Tag		      "Stateflow S-Function Boat_sim 7"
-	      Ports		      [4, 3]
+	      Ports		      [4, 4]
 	      Position		      [180, 100, 230, 220]
 	      FunctionName	      "sf_sfun"
-	      Parameters	      "IPStar,ISA_g,InitialPoint,MaxDwnPthStar,SwitchDistance,TStar,Turn2Track,tanIntercept"
-	      PortCounts	      "[4 3]"
+	      Parameters	      "IPStar,ISA_g,InitialPoint,MaxDwnPthStar,TStar,Turn2Track,switchDistance,tanIntercept"
+	      PortCounts	      "[4 4]"
 	      EnableBusSupport	      on
 	      Port {
 		PortNumber		2
-		Name			"as_c"
+		Name			"triggerSwitch"
 		RTWStorageClass		"Auto"
 		DataLoggingNameMode	"SignalName"
 	      }
 	      Port {
 		PortNumber		3
+		Name			"as_c"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	      Port {
+		PortNumber		4
 		Name			"L2Vec"
 		RTWStorageClass		"Auto"
 		DataLoggingNameMode	"SignalName"
@@ -1499,9 +1512,17 @@ Model {
 	    }
 	    Block {
 	      BlockType		      Outport
+	      Name		      "triggerSwitch"
+	      SID		      15
+	      Position		      [460, 101, 480, 119]
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Outport
 	      Name		      "as_c"
 	      SID		      9
-	      Position		      [460, 101, 480, 119]
+	      Position		      [460, 136, 480, 154]
+	      Port		      "2"
 	      IconDisplay	      "Port number"
 	      OutDataType	      "sfix(16)"
 	      OutScaling	      "2^0"
@@ -1510,8 +1531,8 @@ Model {
 	      BlockType		      Outport
 	      Name		      "L2Vec"
 	      SID		      10
-	      Position		      [460, 136, 480, 154]
-	      Port		      "2"
+	      Position		      [460, 171, 480, 189]
+	      Port		      "3"
 	      IconDisplay	      "Port number"
 	      OutDataType	      "sfix(16)"
 	      OutScaling	      "2^0"
@@ -1525,7 +1546,6 @@ Model {
 	    Line {
 	      SrcBlock		      "WP0"
 	      SrcPort		      1
-	      Points		      [120, 0]
 	      DstBlock		      " SFunction "
 	      DstPort		      1
 	    }
@@ -1548,10 +1568,18 @@ Model {
 	      DstPort		      4
 	    }
 	    Line {
-	      Name		      "as_c"
+	      Name		      "triggerSwitch"
 	      Labels		      [0, 0]
 	      SrcBlock		      " SFunction "
 	      SrcPort		      2
+	      DstBlock		      "triggerSwitch"
+	      DstPort		      1
+	    }
+	    Line {
+	      Name		      "as_c"
+	      Labels		      [0, 0]
+	      SrcBlock		      " SFunction "
+	      SrcPort		      3
 	      DstBlock		      "as_c"
 	      DstPort		      1
 	    }
@@ -1559,7 +1587,7 @@ Model {
 	      Name		      "L2Vec"
 	      Labels		      [0, 0]
 	      SrcBlock		      " SFunction "
-	      SrcPort		      3
+	      SrcPort		      4
 	      DstBlock		      "L2Vec"
 	      DstPort		      1
 	    }
@@ -1936,6 +1964,11 @@ Model {
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
 	      Opaque		      off
+	      Array {
+		Type			"Handle"
+		Dimension		0
+		PropName		"AvailSigsLoadSave"
+	      }
 	      RequestExecContextInheritance off
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
@@ -2127,9 +2160,33 @@ Model {
 	  Name			  "To Workspace1"
 	  SID			  300
 	  Ports			  [1]
-	  Position		  [760, 225, 820, 255]
+	  Position		  [745, 245, 805, 275]
 	  ShowName		  off
 	  VariableName		  "L2"
+	  MaxDataPoints		  "inf"
+	  SampleTime		  "-1"
+	  SaveFormat		  "Array"
+	}
+	Block {
+	  BlockType		  ToWorkspace
+	  Name			  "To Workspace2"
+	  SID			  320
+	  Ports			  [1]
+	  Position		  [545, 30, 605, 60]
+	  ShowName		  off
+	  VariableName		  "waypoint_0"
+	  MaxDataPoints		  "inf"
+	  SampleTime		  "-1"
+	  SaveFormat		  "Array"
+	}
+	Block {
+	  BlockType		  ToWorkspace
+	  Name			  "To Workspace3"
+	  SID			  321
+	  Ports			  [1]
+	  Position		  [645, 20, 705, 50]
+	  ShowName		  off
+	  VariableName		  "waypoint_1"
 	  MaxDataPoints		  "inf"
 	  SampleTime		  "-1"
 	  SaveFormat		  "Array"
@@ -2138,16 +2195,21 @@ Model {
 	  BlockType		  SubSystem
 	  Name			  "Waypoint\nController"
 	  SID			  319
-	  Ports			  [0, 2]
+	  Ports			  [1, 2]
 	  Position		  [275, 82, 395, 153]
 	  LibraryVersion	  "1.31"
 	  PermitHierarchicalResolution "ExplicitOnly"
 	  TreatAsAtomicUnit	  on
-	  MinAlgLoopOccurrences	  off
+	  MinAlgLoopOccurrences	  on
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
 	  Opaque		  off
+	  Array {
+	    Type		    "Handle"
+	    Dimension		    0
+	    PropName		    "AvailSigsLoadSave"
+	  }
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
 	  MaskType		  "Stateflow"
@@ -2174,8 +2236,15 @@ Model {
 	    TiledPageScale	    1
 	    ShowPageBoundaries	    off
 	    ZoomFactor		    "100"
-	    SIDHighWatermark	    21
+	    SIDHighWatermark	    22
 	    SIDPrevWatermark	    13
+	    Block {
+	      BlockType		      Inport
+	      Name		      "switchTrigger"
+	      SID		      22
+	      Position		      [20, 101, 40, 119]
+	      IconDisplay	      "Port number"
+	    }
 	    Block {
 	      BlockType		      Demux
 	      Name		      " Demux "
@@ -2183,12 +2252,6 @@ Model {
 	      Ports		      [1, 1]
 	      Position		      [270, 180, 320, 220]
 	      Outputs		      "1"
-	    }
-	    Block {
-	      BlockType		      Ground
-	      Name		      " Ground "
-	      SID		      21
-	      Position		      [20, 131, 40, 149]
 	    }
 	    Block {
 	      BlockType		      "S-Function"
@@ -2200,7 +2263,7 @@ Model {
 	      FunctionName	      "sf_sfun"
 	      Parameters	      "waypoints"
 	      PortCounts	      "[1 3]"
-	      EnableBusSupport	      off
+	      EnableBusSupport	      on
 	      Port {
 		PortNumber		2
 		Name			"waypoint_0"
@@ -2244,6 +2307,12 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
+	      SrcBlock		      "switchTrigger"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      1
+	    }
+	    Line {
 	      Name		      "waypoint_0"
 	      Labels		      [0, 0]
 	      SrcBlock		      " SFunction "
@@ -2263,12 +2332,6 @@ Model {
 	      SrcBlock		      " Demux "
 	      SrcPort		      1
 	      DstBlock		      " Terminator "
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      " Ground "
-	      SrcPort		      1
-	      DstBlock		      " SFunction "
 	      DstPort		      1
 	    }
 	  }
@@ -2416,7 +2479,7 @@ Model {
 	}
 	Line {
 	  SrcBlock		  "L2 Plus ref WP1"
-	  SrcPort		  1
+	  SrcPort		  2
 	  Points		  [65, 0]
 	  DstBlock		  "Embedded\nMATLAB Function1"
 	  DstPort		  1
@@ -2444,22 +2507,44 @@ Model {
 	}
 	Line {
 	  SrcBlock		  "L2 Plus ref WP1"
-	  SrcPort		  2
-	  Points		  [0, -5]
+	  SrcPort		  3
 	  DstBlock		  "To Workspace1"
 	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Waypoint\nController"
 	  SrcPort		  2
-	  Points		  [45, 0; 0, 20]
-	  DstBlock		  "L2 Plus ref WP1"
-	  DstPort		  2
+	  Points		  [45, 0]
+	  Branch {
+	    Points		    [0, 20]
+	    DstBlock		    "L2 Plus ref WP1"
+	    DstPort		    2
+	  }
+	  Branch {
+	    Points		    [0, -100]
+	    DstBlock		    "To Workspace3"
+	    DstPort		    1
+	  }
 	}
 	Line {
 	  SrcBlock		  "Waypoint\nController"
 	  SrcPort		  1
-	  DstBlock		  "L2 Plus ref WP1"
+	  Points		  [75, 0]
+	  Branch {
+	    DstBlock		    "L2 Plus ref WP1"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, -55]
+	    DstBlock		    "To Workspace2"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  SrcBlock		  "L2 Plus ref WP1"
+	  SrcPort		  1
+	  Points		  [0, -45; -195, 0; 0, 120; -210, 0]
+	  DstBlock		  "Waypoint\nController"
 	  DstPort		  1
 	}
 	Annotation {
@@ -2770,7 +2855,7 @@ Model {
 	      SourceType	      "Second Order Linear Actuator"
 	      ShowPortLabels	      "FromPortIcon"
 	      SystemSampleTime	      "-1"
-	      FunctionWithSeparateData "off"
+	      FunctionWithSeparateData off
 	      RTWMemSecFuncInitTerm   "Inherit from model"
 	      RTWMemSecFuncExecute    "Inherit from model"
 	      RTWMemSecDataConstants  "Inherit from model"
@@ -2792,7 +2877,7 @@ Model {
 	      SourceType	      "Second Order Linear Actuator"
 	      ShowPortLabels	      "FromPortIcon"
 	      SystemSampleTime	      "-1"
-	      FunctionWithSeparateData "off"
+	      FunctionWithSeparateData off
 	      RTWMemSecFuncInitTerm   "Inherit from model"
 	      RTWMemSecFuncExecute    "Inherit from model"
 	      RTWMemSecDataConstants  "Inherit from model"
@@ -2814,7 +2899,7 @@ Model {
 	      SourceType	      "Second Order Linear Actuator"
 	      ShowPortLabels	      "FromPortIcon"
 	      SystemSampleTime	      "-1"
-	      FunctionWithSeparateData "off"
+	      FunctionWithSeparateData off
 	      RTWMemSecFuncInitTerm   "Inherit from model"
 	      RTWMemSecFuncExecute    "Inherit from model"
 	      RTWMemSecDataConstants  "Inherit from model"
@@ -3592,6 +3677,11 @@ Model {
 		    RTWSystemCode	    "Auto"
 		    FunctionWithSeparateData off
 		    Opaque		    off
+		    Array {
+		    Type		    "Handle"
+		    Dimension		    0
+		    PropName		    "AvailSigsLoadSave"
+		    }
 		    RequestExecContextInheritance off
 		    MaskHideContents	    off
 		    MaskType		    "Stateflow"
@@ -3996,6 +4086,11 @@ Model {
 		    RTWSystemCode	    "Auto"
 		    FunctionWithSeparateData off
 		    Opaque		    off
+		    Array {
+		    Type		    "Handle"
+		    Dimension		    0
+		    PropName		    "AvailSigsLoadSave"
+		    }
 		    RequestExecContextInheritance off
 		    MaskHideContents	    off
 		    MaskType		    "Stateflow"
@@ -4527,6 +4622,11 @@ Model {
 		  RTWSystemCode		  "Auto"
 		  FunctionWithSeparateData off
 		  Opaque		  off
+		  Array {
+		    Type		    "Handle"
+		    Dimension		    0
+		    PropName		    "AvailSigsLoadSave"
+		  }
 		  RequestExecContextInheritance	off
 		  MaskHideContents	  off
 		  MaskType		  "Stateflow"
@@ -4678,6 +4778,11 @@ Model {
 		  RTWSystemCode		  "Auto"
 		  FunctionWithSeparateData off
 		  Opaque		  off
+		  Array {
+		    Type		    "Handle"
+		    Dimension		    0
+		    PropName		    "AvailSigsLoadSave"
+		  }
 		  RequestExecContextInheritance	off
 		  MaskHideContents	  off
 		  MaskType		  "Stateflow"
@@ -5856,6 +5961,11 @@ Model {
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
 	      Opaque		      off
+	      Array {
+		Type			"Handle"
+		Dimension		0
+		PropName		"AvailSigsLoadSave"
+	      }
 	      RequestExecContextInheritance off
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
@@ -6718,7 +6828,7 @@ Stateflow {
     name		    "Boat_sim"
     created		    "13-Apr-2010 16:50:36"
     isLibrary		    0
-    firstTarget		    90
+    firstTarget		    92
     sfVersion		    75014000
   }
   chart {
@@ -7205,7 +7315,7 @@ Stateflow {
     toolbarMode		    LIBRARY_TOOLBAR
     subviewS {
     }
-    ssIdHighWaterMark	    7
+    ssIdHighWaterMark	    8
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
     firstData		    32
@@ -7229,9 +7339,12 @@ Stateflow {
     decomposition	    CLUSTER_STATE
     eml {
       isEML		      1
-      script		      "function [waypoint_0, waypoint_1] = fcn(waypoints)\n%#eml\n\nwaypoint_0 = waypoints(1,:);\nwaypoi"
-      "nt_1 = waypoints(2,:);"
-      editorLayout	      "100 M4x1[81 232 1080 733]"
+      script		      "function [waypoint_0, waypoint_1] = fcn(waypoints, switchTrigger)\n%#eml\n\npersistent index;\n\n"
+      "% Make sure we have at least two waypoints to output\nassert(size(waypoints,1) >= 2);\n\n% Inititalize to the fi"
+      "rst waypoint\nif isempty(index)\n    index = 2;\nend\n \n% Increment our waypoint index if we're told to.\n% NOT"
+      "E: This implements the HALT mode currently.\nif switchTrigger && size(waypoints,1) >= index + 1\n    index = ind"
+      "ex + 1;\nend\n\nwaypoint_0 = waypoints(index-1,:)';\nwaypoint_1 = waypoints(index,:)';"
+      editorLayout	      "100 M4x1[51 239 1080 733]"
     }
   }
   junction {
@@ -7273,7 +7386,7 @@ Stateflow {
     machine		    1
     props {
       array {
-	size			"-1"
+	size			"3"
       }
       type {
 	method			SF_INHERITED_TYPE
@@ -7293,7 +7406,7 @@ Stateflow {
     machine		    1
     props {
       array {
-	size			"-1"
+	size			"3"
       }
       type {
 	method			SF_INHERITED_TYPE
@@ -7310,7 +7423,7 @@ Stateflow {
     id			    34
     ssIdNumber		    7
     name		    "waypoints"
-    linkNode		    [28 33 0]
+    linkNode		    [28 33 35]
     scope		    PARAMETER_DATA
     machine		    1
     props {
@@ -7328,27 +7441,49 @@ Stateflow {
     }
     dataType		    "Inherit: Same as Simulink"
   }
-  instance {
+  data {
     id			    35
+    ssIdNumber		    8
+    name		    "switchTrigger"
+    linkNode		    [28 34 0]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  instance {
+    id			    36
     name		    "Autonomous Controller/Waypoint\nController"
     machine		    1
     chart		    28
   }
   chart {
-    id			    36
+    id			    37
     name		    "Plant/Charge Plant/Power Gain from Solar\nSubsystem/Calculate Sun Normal/myMux"
     windowPosition	    [431.813 179.45 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1280 1024 1.333333333333333]
-    treeNode		    [0 37 0 0]
-    firstTransition	    39
-    firstJunction	    38
-    viewObj		    36
+    treeNode		    [0 38 0 0]
+    firstTransition	    40
+    firstJunction	    39
+    viewObj		    37
     machine		    1
     ssIdHighWaterMark	    7
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
-    firstData		    40
+    firstData		    41
     chartFileNumber	    5
     disableImplicitCasting  1
     eml {
@@ -7358,14 +7493,14 @@ Stateflow {
     supportVariableSizing   0
   }
   state {
-    id			    37
+    id			    38
     labelString		    "eML_blk_kernel()"
     position		    [18 64.5 118 66]
     fontSize		    12
-    chart		    36
-    treeNode		    [36 0 0 0]
+    chart		    37
+    treeNode		    [37 0 0 0]
     superState		    SUBCHART
-    subviewer		    36
+    subviewer		    37
     ssIdNumber		    1
     type		    FUNC_STATE
     decomposition	    CLUSTER_STATE
@@ -7380,16 +7515,16 @@ Stateflow {
     }
   }
   junction {
-    id			    38
+    id			    39
     position		    [23.5747 49.5747 7]
-    chart		    36
-    linkNode		    [36 0 0]
-    subviewer		    36
+    chart		    37
+    linkNode		    [37 0 0]
+    subviewer		    37
     ssIdNumber		    3
     type		    CONNECTIVE_JUNCTION
   }
   transition {
-    id			    39
+    id			    40
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -7397,23 +7532,23 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      38
+      id		      39
       intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
-    chart		    36
-    linkNode		    [36 0 0]
+    chart		    37
+    linkNode		    [37 0 0]
     dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    36
+    subviewer		    37
     drawStyle		    SMART
     executionOrder	    1
     ssIdNumber		    2
   }
   data {
-    id			    40
+    id			    41
     ssIdNumber		    4
     name		    "u1"
-    linkNode		    [36 0 41]
+    linkNode		    [37 0 42]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7429,10 +7564,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    41
+    id			    42
     ssIdNumber		    5
     name		    "y"
-    linkNode		    [36 40 42]
+    linkNode		    [37 41 43]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -7449,10 +7584,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    42
+    id			    43
     ssIdNumber		    6
     name		    "u2"
-    linkNode		    [36 41 43]
+    linkNode		    [37 42 44]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7471,10 +7606,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    43
+    id			    44
     ssIdNumber		    7
     name		    "u3"
-    linkNode		    [36 42 0]
+    linkNode		    [37 43 0]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7493,26 +7628,26 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   instance {
-    id			    44
+    id			    45
     name		    "Plant/Charge Plant/Power Gain from Solar\nSubsystem/Calculate Sun Normal/myMux"
     machine		    1
-    chart		    36
+    chart		    37
   }
   chart {
-    id			    45
+    id			    46
     name		    "Plant/Outputs/myMux1"
     windowPosition	    [476.813 134.45 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1280 778 1.25]
-    treeNode		    [0 46 0 0]
-    firstTransition	    48
-    firstJunction	    47
-    viewObj		    45
+    treeNode		    [0 47 0 0]
+    firstTransition	    49
+    firstJunction	    48
+    viewObj		    46
     machine		    1
     ssIdHighWaterMark	    7
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
-    firstData		    49
+    firstData		    50
     chartFileNumber	    6
     disableImplicitCasting  1
     eml {
@@ -7522,14 +7657,14 @@ Stateflow {
     supportVariableSizing   0
   }
   state {
-    id			    46
+    id			    47
     labelString		    "eML_blk_kernel()"
     position		    [18 64.5 118 66]
     fontSize		    12
-    chart		    45
-    treeNode		    [45 0 0 0]
+    chart		    46
+    treeNode		    [46 0 0 0]
     superState		    SUBCHART
-    subviewer		    45
+    subviewer		    46
     ssIdNumber		    1
     type		    FUNC_STATE
     decomposition	    CLUSTER_STATE
@@ -7544,16 +7679,16 @@ Stateflow {
     }
   }
   junction {
-    id			    47
+    id			    48
     position		    [23.5747 49.5747 7]
-    chart		    45
-    linkNode		    [45 0 0]
-    subviewer		    45
+    chart		    46
+    linkNode		    [46 0 0]
+    subviewer		    46
     ssIdNumber		    3
     type		    CONNECTIVE_JUNCTION
   }
   transition {
-    id			    48
+    id			    49
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -7561,23 +7696,23 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      47
+      id		      48
       intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
-    chart		    45
-    linkNode		    [45 0 0]
+    chart		    46
+    linkNode		    [46 0 0]
     dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    45
+    subviewer		    46
     drawStyle		    SMART
     executionOrder	    1
     ssIdNumber		    2
   }
   data {
-    id			    49
+    id			    50
     ssIdNumber		    4
     name		    "u1"
-    linkNode		    [45 0 50]
+    linkNode		    [46 0 51]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7593,10 +7728,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    50
+    id			    51
     ssIdNumber		    5
     name		    "y"
-    linkNode		    [45 49 51]
+    linkNode		    [46 50 52]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -7613,10 +7748,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    51
+    id			    52
     ssIdNumber		    6
     name		    "u2"
-    linkNode		    [45 50 52]
+    linkNode		    [46 51 53]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7635,10 +7770,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    52
+    id			    53
     ssIdNumber		    7
     name		    "u3"
-    linkNode		    [45 51 0]
+    linkNode		    [46 52 0]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7657,26 +7792,26 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   instance {
-    id			    53
+    id			    54
     name		    "Plant/Outputs/myMux1"
     machine		    1
-    chart		    45
+    chart		    46
   }
   chart {
-    id			    54
+    id			    55
     name		    "Autonomous Controller/L2 Plus ref WP1"
     windowPosition	    [323.241 289.378 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1280 778 1.25]
-    treeNode		    [0 55 0 0]
-    firstTransition	    57
-    firstJunction	    56
-    viewObj		    54
+    treeNode		    [0 56 0 0]
+    firstTransition	    58
+    firstJunction	    57
+    viewObj		    55
     machine		    1
-    ssIdHighWaterMark	    17
+    ssIdHighWaterMark	    18
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
-    firstData		    58
+    firstData		    59
     chartFileNumber	    7
     disableImplicitCasting  1
     eml {
@@ -7685,76 +7820,76 @@ Stateflow {
     supportVariableSizing   0
   }
   state {
-    id			    55
+    id			    56
     labelString		    "eML_blk_kernel()"
     position		    [18 64.5 118 66]
     fontSize		    12
-    chart		    54
-    treeNode		    [54 0 0 0]
+    chart		    55
+    treeNode		    [55 0 0 0]
     superState		    SUBCHART
-    subviewer		    54
+    subviewer		    55
     ssIdNumber		    1
     type		    FUNC_STATE
     decomposition	    CLUSTER_STATE
     eml {
       isEML		      1
-      script		      "function [as_c, L2Vec] = L2PlusWP1(WP0, WP1, Puav, Vxyz, switchDistance, ...\n    ISA_g, tanInter"
-      "cept, MaxDwnPthStar,Turn2Track,...\n    InitialPoint, IPStar, TStar)\n%==============================\n%     com"
-      "putes bank angle command for following a straight line\n%     by creating an aim point that may be more than L2 "
-      "away \n%     from the UAV. The aim point is (usually) farther along the path \n%     toward WP1 than the UAV, an"
-      "d the intercept\n%     angle is less than or equal to a specified value. This limits the intercept\n%     angle "
-      "even when the UAV is within L2 of the path.\n%     See L2PlusWP1.m for details\n    \n%         INPUTS   \n%    "
-      "         T1      unit vector WP0-->WP1\n%             N1      normal to T1\n%             WP0     position of \""
-      "from\" waypoint. only needed to set an InitialPoint\n%             WP1     position of WP1, active waypoint\n%  "
-      "           Puav    position of UAV\n%             Vxyz    Inertial velocity\n%             switchDistance distan"
-      "ce from WP1 to switch to WP2\n\n%         PARAMETERS\n%             ISA_g   gravity\n%             tanIntercept "
-      " tangent of intercept angle\n%             MaxDwnPthStar L2 multiplier to determmine downpath aimpoint\n%       "
-      "      Turn2Track    true to turn toward T1 instead of L2\n%             InitialPoint  true if no line tracking a"
-      "t first--fly direct to some initial point\n%             IPStar        L2 multiplier to determing distance of IP"
-      " from first WP0\n%             Tstar         was called L2Base, time constant of response\n%             \n%    "
-      "     OUTPUTS\n%             phi_c   commanded bank angle (positive is a starboard turn)\n%             L2Vec   L"
-      "2 vector toward aim point\n%             as_c    commanded lateral acceleration\n%             Groundspeed \n%  "
-      "           IP1     position of IP for plotting purposes. IP1(3) = -999 if no IP exists\n\n    persistent IPActiv"
-      "e;  %true if flying toward IP\n    persistent IP; % location of initial point\n%     if (~SwitchMode)\n%        "
-      " phi_c = single(0);\n%         L2Vec = single(zeros(3,1));\n%         as_c = single(0);\n%         Groundspeed ="
-      " sqrt(Vxyz(1)*Vxyz(1) + Vxyz(2)*Vxyz(2));\n%         IPActive = IPActive;\n%     end\n%     \n    Pwp1 = single("
-      "zeros(3,1));\n    Pe_y = single(0);\n    Dist2WP1 = single(0);\n    MinDownPath = single(0);\n    Dist2WPSwitch "
-      "= single(0);\n    L2DownPath = single(0);\n    L2ToT = single(zeros(3,1));\n    L2Vec = single(zeros(3,1));\n   "
-      " IP1 = single([0; 0;-999]); %signal for no IP\n    \n    Pne = [Puav(1); Puav(2); 0]; %horizontal position\n    "
-      "Vne = [Vxyz(1); Vxyz(2); 0]; % horizontal velocity\n    Groundspeed = norm(Vne);\n    L2 = single(TStar*Groundsp"
-      "eed);\n    WP0ne = single(zeros(3,1));\n    \n% Calculate N1 and T1\n% assert(norm(WP1 - WP0) ~= 0);\nT1 = WP1-W"
-      "P0;\nT1 = T1/norm(T1);\nN1 = [-T1(2); T1(1); 0];\n    \n%     initialize IP\n    if (isempty(IPActive))\n       "
-      " if (InitialPoint)\n%             IP is set relative to the first \"from\" waypoint\n            IPActive = -1;\n"
-      "            IP = [WP0(1); WP0(2); 0] - L2*IPStar*T1;\n            \n            if (norm(IP-Pne) < .001)\n      "
-      "          IPActive = 0;\n                IP = single([0; 0; -999]);\n            end\n        else\n            "
-      "IPActive = 0;\n            IP = single([0; 0;-999]); %signal for no IP\n        end\n    end\n    IP1 = IP;\n   "
-      " \n    if (IPActive)\n%         no line tracking, direct to IP\n        L2Vec = L2*(IP - Pne)/norm(IP - Pne);\n%"
-      "         check to see if at the IP to terminate this mode\n        if norm(IP - Pne) < .1*L2\n            IPActi"
-      "ve = 0;\n        end\n    else\n         if (Pne(1) < 2)\n             IP1 = IP1;\n         end\n%         IP no"
-      "t active, track WP lines\n        WPOne = [WP1(1); WP1(2); 0];\n        Pwp1 = Pne - [WP1(1); WP1(2); 0]; % posi"
-      "tion of UAV relative to WP1\n        Pe_y = single(Pwp1'*N1); % cross track error\n        Dist2WP1 = -single(Pw"
-      "p1'*T1); % distance to WP1\n\n%         minimum down path distance for Aim Point intersection on T\n%         is"
-      " determined by the intercept angle but limited \n%         in case of very distant intecepts to MaxDwnPthStar*L2"
-      "\n        MinDownPath = single ( min( abs(Pe_y)/tanIntercept, MaxDwnPthStar*L2)); \n        Dist2WPSwitch = Dist"
-      "2WP1 - switchDistance;\n        if ( abs(Pe_y) > L2 || Dist2WPSwitch < 0)\n    %             Make sure aimpoint "
-      "is no closer to waypoint than calculated switch point.\n            L2DownPath = min(MinDownPath, Dist2WPSwitch)"
-      ";\n        else\n    %             within L2 of T and Dist2WPSwitch >= 0, but limit angle of L2 wrt T\n         "
-      "   L2DownPath = (max(MinDownPath, (sqrt( L2^2 - Pe_y^2 ))));\n        end\n         % vector from Pwp1 to aim po"
-      "int on T1\n         L2ToT = single(( Dist2WP1 - L2DownPath )*(-T1) - Pwp1);\n         if (norm(L2ToT) < .001)\n "
-      "            L2Vec = L2*T1;\n         else\n            L2Vec = single(L2*( L2ToT/norm(L2ToT) )); % limit size to"
-      " L2\n         end\n    %         L2Vec = L2ToT;\n%         dummy statements\n    end\n    Zprod = single(Vxyz(1)"
-      "*L2Vec(2) - Vxyz(2)*L2Vec(1)); %Z component of cross product\n    sinEta = single(Zprod/(Groundspeed*L2));\n\n  "
-      "  as_c = single(2*Groundspeed^2/(L2)*sinEta);\n%         bank angle limits outside of this block\n    phi_c = si"
-      "ngle(atan(as_c/ISA_g));\n\n%         now override bank angle if heading in the wrong direction\n    if ( Turn2Tr"
-      "ack && Dist2WPSwitch > 0 && ~IPActive ) \n%             turn to track not L2, gives min displacement from track\n"
-      "        if ( T1'*Vxyz < 0 )\n            if ( Pe_y > 0 )\n                phi_c = single(+pi/2);\n              "
-      "  as_c = single(99);\n            else\n                phi_c = single(-pi/2);\n                as_c = single(-9"
-      "9);\n            end\n        end\n     else\n%           turn toward L2, give min displacement toward WP0\n    "
-      "    if ( L2Vec'*Vxyz < 0 )\n            if ( sinEta < 0 )\n                phi_c = single(-pi/2); \n            "
-      "    as_c = single(-99);\n            else\n                phi_c = single(+pi/2);\n                as_c = single"
-      "(99);\n            end\n        end\n    end\nend"
-      editorLayout	      "100 M4x1[4 1 1288 1002]"
-      breakpoints	      "100 M[65]"
+      script		      "function [triggerSwitch, as_c, L2Vec] = L2PlusWP1(WP0, WP1, Puav, Vxyz, switchDistance, ...\n    "
+      "ISA_g, tanIntercept, MaxDwnPthStar,Turn2Track,...\n    InitialPoint, IPStar, TStar)\n%=========================="
+      "====\n%     computes bank angle command for following a straight line\n%     by creating an aim point that may b"
+      "e more than L2 away \n%     from the UAV. The aim point is (usually) farther along the path \n%     toward WP1 t"
+      "han the UAV, and the intercept\n%     angle is less than or equal to a specified value. This limits the intercep"
+      "t\n%     angle even when the UAV is within L2 of the path.\n%     See L2PlusWP1.m for details\n    \n%         I"
+      "NPUTS   \n%             T1      unit vector WP0-->WP1\n%             N1      normal to T1\n%             WP0    "
+      " position of \"from\" waypoint. only needed to set an InitialPoint\n%             WP1     position of WP1, activ"
+      "e waypoint\n%             Puav    position of UAV\n%             Vxyz    Inertial velocity\n%             switch"
+      "Distance distance from WP1 to switch to WP2\n\n%         PARAMETERS\n%             ISA_g   gravity\n%           "
+      "  tanIntercept  tangent of intercept angle\n%             MaxDwnPthStar L2 multiplier to determmine downpath aim"
+      "point\n%             Turn2Track    true to turn toward T1 instead of L2\n%             InitialPoint  true if no "
+      "line tracking at first--fly direct to some initial point\n%             IPStar        L2 multiplier to determing"
+      " distance of IP from first WP0\n%             Tstar         was called L2Base, time constant of response\n%     "
+      "        \n%         OUTPUTS\n%             phi_c   commanded bank angle (positive is a starboard turn)\n%       "
+      "      L2Vec   L2 vector toward aim point\n%             as_c    commanded lateral acceleration\n%             Gr"
+      "oundspeed \n%             IP1     position of IP for plotting purposes. IP1(3) = -999 if no IP exists\n\n    per"
+      "sistent IPActive;  %true if flying toward IP\n    persistent IP; % location of initial point\n%     if (~SwitchM"
+      "ode)\n%         phi_c = single(0);\n%         L2Vec = single(zeros(3,1));\n%         as_c = single(0);\n%       "
+      "  Groundspeed = sqrt(Vxyz(1)*Vxyz(1) + Vxyz(2)*Vxyz(2));\n%         IPActive = IPActive;\n%     end\n%     \n   "
+      " triggerSwitch = single(0);\n    Pwp1 = single(zeros(3,1));\n    Pe_y = single(0);\n    Dist2WP1 = single(0);\n "
+      "   MinDownPath = single(0);\n    Dist2WPSwitch = single(0);\n    L2DownPath = single(0);\n    L2ToT = single(zer"
+      "os(3,1));\n    L2Vec = single(zeros(3,1));\n    IP1 = single([0; 0;-999]); %signal for no IP\n    \n    Pne = [P"
+      "uav(1); Puav(2); 0]; %horizontal position\n    Vne = [Vxyz(1); Vxyz(2); 0]; % horizontal velocity\n    Groundspe"
+      "ed = norm(Vne);\n    L2 = single(TStar*Groundspeed);\n    WP0ne = single(zeros(3,1));\n    \n% Calculate N1 and "
+      "T1\nassert(norm(WP1 - WP0) ~= 0);\nT1 = WP1-WP0;\nT1 = T1/norm(T1);\nN1 = [-T1(2); T1(1); 0];\n    \n%     initi"
+      "alize IP\n    if (isempty(IPActive))\n        if (InitialPoint)\n%             IP is set relative to the first \""
+      "from\" waypoint\n            IPActive = -1;\n            IP = [WP0(1); WP0(2); 0] - L2*IPStar*T1;\n            \n"
+      "            if (norm(IP-Pne) < .001)\n                IPActive = 0;\n                IP = single([0; 0; -999]);\n"
+      "            end\n        else\n            IPActive = 0;\n            IP = single([0; 0;-999]); %signal for no I"
+      "P\n        end\n    end\n    IP1 = IP;\n    \n    \n    if (IPActive)\n%         no line tracking, direct to IP\n"
+      "        L2Vec = L2*(IP - Pne)/norm(IP - Pne);\n%         check to see if at the IP to terminate this mode\n     "
+      "   if norm(IP - Pne) < .1*L2\n            IPActive = 0;\n        end\n    else\n         if (Pne(1) < 2)\n      "
+      "       IP1 = IP1;\n         end\n%         IP not active, track WP lines\n        WPOne = [WP1(1); WP1(2); 0];\n"
+      "        Pwp1 = Pne - [WP1(1); WP1(2); 0]; % position of UAV relative to WP1\n        Pe_y = single(Pwp1'*N1); % "
+      "cross track error\n        Dist2WP1 = -single(Pwp1'*T1); % distance to WP1\n\n%         minimum down path distan"
+      "ce for Aim Point intersection on T\n%         is determined by the intercept angle but limited \n%         in ca"
+      "se of very distant intecepts to MaxDwnPthStar*L2\n        MinDownPath = single ( min( abs(Pe_y)/tanIntercept, Ma"
+      "xDwnPthStar*L2)); \n        Dist2WPSwitch = Dist2WP1 - switchDistance;\n        if ( abs(Pe_y) > L2 || Dist2WPSw"
+      "itch < 0)\n    %             Make sure aimpoint is no closer to waypoint than calculated switch point.\n        "
+      "    L2DownPath = min(MinDownPath, Dist2WPSwitch);\n            triggerSwitch = single(1);\n        else\n    %  "
+      "           within L2 of T and Dist2WPSwitch >= 0, but limit angle of L2 wrt T\n            L2DownPath = (max(Min"
+      "DownPath, (sqrt( L2^2 - Pe_y^2 ))));\n        end\n         % vector from Pwp1 to aim point on T1\n         L2To"
+      "T = single(( Dist2WP1 - L2DownPath )*(-T1) - Pwp1);\n         if (norm(L2ToT) < .001)\n             L2Vec = L2*T"
+      "1;\n         else\n            L2Vec = single(L2*( L2ToT/norm(L2ToT) )); % limit size to L2\n         end\n    %"
+      "         L2Vec = L2ToT;\n%         dummy statements\n    end\n    Zprod = single(Vxyz(1)*L2Vec(2) - Vxyz(2)*L2Ve"
+      "c(1)); %Z component of cross product\n    sinEta = single(Zprod/(Groundspeed*L2));\n\n    as_c = single(2*Ground"
+      "speed^2/(L2)*sinEta);\n%         bank angle limits outside of this block\n    phi_c = single(atan(as_c/ISA_g));\n"
+      "\n%         now override bank angle if heading in the wrong direction\n    if ( Turn2Track && Dist2WPSwitch > 0 "
+      "&& ~IPActive ) \n%             turn to track not L2, gives min displacement from track\n        if ( T1'*Vxyz < "
+      "0 )\n            if ( Pe_y > 0 )\n                phi_c = single(+pi/2);\n                as_c = single(99);\n  "
+      "          else\n                phi_c = single(-pi/2);\n                as_c = single(-99);\n            end\n  "
+      "      end\n     else\n%           turn toward L2, give min displacement toward WP0\n        if ( L2Vec'*Vxyz < 0"
+      " )\n            if ( sinEta < 0 )\n                phi_c = single(-pi/2); \n                as_c = single(-99);\n"
+      "            else\n                phi_c = single(+pi/2);\n                as_c = single(99);\n            end\n "
+      "       end\n    end\nend"
+      editorLayout	      "100 M4x1[81 232 1080 733]"
       fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
       "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
       fimathForFiConstructors FimathMatlabFactoryDefault
@@ -7762,16 +7897,16 @@ Stateflow {
     }
   }
   junction {
-    id			    56
+    id			    57
     position		    [23.5747 49.5747 7]
-    chart		    54
-    linkNode		    [54 0 0]
-    subviewer		    54
+    chart		    55
+    linkNode		    [55 0 0]
+    subviewer		    55
     ssIdNumber		    3
     type		    CONNECTIVE_JUNCTION
   }
   transition {
-    id			    57
+    id			    58
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -7779,49 +7914,28 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      56
+      id		      57
       intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
-    chart		    54
-    linkNode		    [54 0 0]
+    chart		    55
+    linkNode		    [55 0 0]
     dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    54
+    subviewer		    55
     drawStyle		    SMART
     executionOrder	    1
     ssIdNumber		    2
   }
   data {
-    id			    58
-    ssIdNumber		    4
-    name		    "WP0"
-    linkNode		    [54 0 59]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"3"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
     id			    59
-    ssIdNumber		    5
-    name		    "WP1"
-    linkNode		    [54 58 60]
-    scope		    INPUT_DATA
+    ssIdNumber		    18
+    name		    "triggerSwitch"
+    linkNode		    [55 0 60]
+    scope		    OUTPUT_DATA
     machine		    1
     props {
       array {
-	size			"3"
+	size			"-1"
       }
       type {
 	method			SF_INHERITED_TYPE
@@ -7829,38 +7943,42 @@ Stateflow {
 	isSigned		1
 	wordLength		"16"
       }
-      frame		      SF_FRAME_INHERITED
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
     }
     dataType		    "Inherit: Same as Simulink"
   }
   data {
     id			    60
-    ssIdNumber		    6
-    name		    "Puav"
-    linkNode		    [54 59 61]
+    ssIdNumber		    4
+    name		    "WP0"
+    linkNode		    [55 59 61]
     scope		    INPUT_DATA
     machine		    1
     props {
       array {
-	size			"3"
+	size			"-1"
       }
       type {
 	method			SF_INHERITED_TYPE
 	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
       }
+      frame		      SF_FRAME_INHERITED
     }
     dataType		    "Inherit: Same as Simulink"
   }
   data {
     id			    61
-    ssIdNumber		    7
-    name		    "Vxyz"
-    linkNode		    [54 60 62]
+    ssIdNumber		    5
+    name		    "WP1"
+    linkNode		    [55 60 62]
     scope		    INPUT_DATA
     machine		    1
     props {
       array {
-	size			"3"
+	size			"-1"
       }
       type {
 	method			SF_INHERITED_TYPE
@@ -7874,11 +7992,50 @@ Stateflow {
   }
   data {
     id			    62
+    ssIdNumber		    6
+    name		    "Puav"
+    linkNode		    [55 61 63]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"3"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    63
+    ssIdNumber		    7
+    name		    "Vxyz"
+    linkNode		    [55 62 64]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"3"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    64
     ssIdNumber		    8
     name		    "switchDistance"
-    linkNode		    [54 61 63]
+    linkNode		    [55 63 65]
     scope		    PARAMETER_DATA
-    paramIndexForInitFromWorkspace 4
+    paramIndexForInitFromWorkspace 6
     machine		    1
     props {
       array {
@@ -7895,10 +8052,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    63
+    id			    65
     ssIdNumber		    9
     name		    "ISA_g"
-    linkNode		    [54 62 64]
+    linkNode		    [55 64 66]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 1
@@ -7918,10 +8075,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    64
+    id			    66
     ssIdNumber		    10
     name		    "tanIntercept"
-    linkNode		    [54 63 65]
+    linkNode		    [55 65 67]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 7
@@ -7941,10 +8098,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    65
+    id			    67
     ssIdNumber		    11
     name		    "MaxDwnPthStar"
-    linkNode		    [54 64 66]
+    linkNode		    [55 66 68]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 3
@@ -7964,78 +8121,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    66
+    id			    68
     ssIdNumber		    12
     name		    "Turn2Track"
-    linkNode		    [54 65 67]
-    scope		    PARAMETER_DATA
-    initFromWorkspace	    1
-    paramIndexForInitFromWorkspace 6
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    67
-    ssIdNumber		    13
-    name		    "InitialPoint"
-    linkNode		    [54 66 68]
-    scope		    PARAMETER_DATA
-    initFromWorkspace	    1
-    paramIndexForInitFromWorkspace 2
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    68
-    ssIdNumber		    14
-    name		    "IPStar"
-    linkNode		    [54 67 69]
-    scope		    PARAMETER_DATA
-    initFromWorkspace	    1
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    69
-    ssIdNumber		    15
-    name		    "TStar"
-    linkNode		    [54 68 70]
+    linkNode		    [55 67 69]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 5
@@ -8055,30 +8144,13 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    70
-    ssIdNumber		    16
-    name		    "as_c"
-    linkNode		    [54 69 71]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    71
-    ssIdNumber		    17
-    name		    "L2Vec"
-    linkNode		    [54 70 0]
-    scope		    OUTPUT_DATA
+    id			    69
+    ssIdNumber		    13
+    name		    "InitialPoint"
+    linkNode		    [55 68 70]
+    scope		    PARAMETER_DATA
+    initFromWorkspace	    1
+    paramIndexForInitFromWorkspace 2
     machine		    1
     props {
       array {
@@ -8090,136 +8162,15 @@ Stateflow {
 	isSigned		1
 	wordLength		"16"
       }
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  instance {
-    id			    72
-    name		    "Autonomous Controller/L2 Plus ref WP1"
-    machine		    1
-    chart		    54
-  }
-  chart {
-    id			    73
-    name		    "Autonomous Controller/Embedded\nMATLAB Function1"
-    windowPosition	    [326.813 284.45 200.25 189.75]
-    viewLimits		    [0 156.75 0 153.75]
-    screen		    [1 1 1280 778 1.25]
-    treeNode		    [0 74 0 0]
-    firstTransition	    76
-    firstJunction	    75
-    viewObj		    73
-    machine		    1
-    ssIdHighWaterMark	    7
-    decomposition	    CLUSTER_CHART
-    type		    EML_CHART
-    firstData		    77
-    chartFileNumber	    8
-    disableImplicitCasting  1
-    eml {
-      name		      "fcn"
-    }
-    supportVariableSizing   0
-  }
-  state {
-    id			    74
-    labelString		    "eML_blk_kernel()"
-    position		    [18 64.5 118 66]
-    fontSize		    12
-    chart		    73
-    treeNode		    [73 0 0 0]
-    superState		    SUBCHART
-    subviewer		    73
-    ssIdNumber		    1
-    type		    FUNC_STATE
-    decomposition	    CLUSTER_STATE
-    eml {
-      isEML		      1
-      script		      "function rudder = fcn(lat_accel, wheelbase, velocity)\n%#eml\n% the -99/99 lat_accel checks for m"
-      "aximum possible accel. This should correspond to maximum rudder deflection.\n% TODO: Verify the direction of the"
-      " rudder under these conditions\n\nrudder = single(0);\n\nif (norm(velocity) == 0 || lat_accel == 0)\n    rudder "
-      "= single(0);\nelseif (lat_accel == 99) \n    rudder = single(-pi/2);\nelseif (lat_accel == -99) \n    rudder = s"
-      "ingle(+pi/2);\nelse\n    rudder = atan(lat_accel*wheelbase/norm(velocity)^2);\nend"
-      editorLayout	      "100 M4x1[4 22 1276 778]"
-      fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
-      "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
-      fimathForFiConstructors FimathMatlabFactoryDefault
-      emlDefaultFimath	      FimathUserSpecified
-    }
-  }
-  junction {
-    id			    75
-    position		    [23.5747 49.5747 7]
-    chart		    73
-    linkNode		    [73 0 0]
-    subviewer		    73
-    ssIdNumber		    3
-    type		    CONNECTIVE_JUNCTION
-  }
-  transition {
-    id			    76
-    labelString		    "{eML_blk_kernel();}"
-    labelPosition	    [32.125 19.875 102.544 14.964]
-    fontSize		    12
-    src {
-      intersection	      [0 0 1 0 23.5747 14.625 0 0]
-    }
-    dst {
-      id		      75
-      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
-    }
-    midPoint		    [23.5747 24.9468]
-    chart		    73
-    linkNode		    [73 0 0]
-    dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    73
-    drawStyle		    SMART
-    executionOrder	    1
-    ssIdNumber		    2
-  }
-  data {
-    id			    77
-    ssIdNumber		    4
-    name		    "lat_accel"
-    linkNode		    [73 0 78]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
+      frame		      SF_FRAME_INHERITED
     }
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    78
-    ssIdNumber		    5
-    name		    "rudder"
-    linkNode		    [73 77 79]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_SINGLE_TYPE
-      }
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    79
-    ssIdNumber		    6
-    name		    "wheelbase"
-    linkNode		    [73 78 80]
+    id			    70
+    ssIdNumber		    14
+    name		    "IPStar"
+    linkNode		    [55 69 71]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     machine		    1
@@ -8238,10 +8189,216 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
+    id			    71
+    ssIdNumber		    15
+    name		    "TStar"
+    linkNode		    [55 70 72]
+    scope		    PARAMETER_DATA
+    initFromWorkspace	    1
+    paramIndexForInitFromWorkspace 4
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    72
+    ssIdNumber		    16
+    name		    "as_c"
+    linkNode		    [55 71 73]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    73
+    ssIdNumber		    17
+    name		    "L2Vec"
+    linkNode		    [55 72 0]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  instance {
+    id			    74
+    name		    "Autonomous Controller/L2 Plus ref WP1"
+    machine		    1
+    chart		    55
+  }
+  chart {
+    id			    75
+    name		    "Autonomous Controller/Embedded\nMATLAB Function1"
+    windowPosition	    [326.813 284.45 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1280 778 1.25]
+    treeNode		    [0 76 0 0]
+    firstTransition	    78
+    firstJunction	    77
+    viewObj		    75
+    machine		    1
+    ssIdHighWaterMark	    7
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    79
+    chartFileNumber	    8
+    disableImplicitCasting  1
+    eml {
+      name		      "fcn"
+    }
+    supportVariableSizing   0
+  }
+  state {
+    id			    76
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    75
+    treeNode		    [75 0 0 0]
+    superState		    SUBCHART
+    subviewer		    75
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function rudder = fcn(lat_accel, wheelbase, velocity)\n%#eml\n% the -99/99 lat_accel checks for m"
+      "aximum possible accel. This should correspond to maximum rudder deflection.\n% TODO: Verify the direction of the"
+      " rudder under these conditions\n\nrudder = single(0);\n\nif (norm(velocity) == 0 || lat_accel == 0)\n    rudder "
+      "= single(0);\nelseif (lat_accel == 99) \n    rudder = single(-pi/2);\nelseif (lat_accel == -99) \n    rudder = s"
+      "ingle(+pi/2);\nelse\n    rudder = atan(lat_accel*wheelbase/norm(velocity)^2);\nend"
+      editorLayout	      "100 M4x1[4 22 1276 778]"
+      fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
+      "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
+      fimathForFiConstructors FimathMatlabFactoryDefault
+      emlDefaultFimath	      FimathUserSpecified
+    }
+  }
+  junction {
+    id			    77
+    position		    [23.5747 49.5747 7]
+    chart		    75
+    linkNode		    [75 0 0]
+    subviewer		    75
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    78
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      77
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    75
+    linkNode		    [75 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    75
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    79
+    ssIdNumber		    4
+    name		    "lat_accel"
+    linkNode		    [75 0 80]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
     id			    80
+    ssIdNumber		    5
+    name		    "rudder"
+    linkNode		    [75 79 81]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_SINGLE_TYPE
+      }
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    81
+    ssIdNumber		    6
+    name		    "wheelbase"
+    linkNode		    [75 80 82]
+    scope		    PARAMETER_DATA
+    initFromWorkspace	    1
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    82
     ssIdNumber		    7
     name		    "velocity"
-    linkNode		    [73 79 0]
+    linkNode		    [75 81 0]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -8259,26 +8416,26 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   instance {
-    id			    81
+    id			    83
     name		    "Autonomous Controller/Embedded\nMATLAB Function1"
     machine		    1
-    chart		    73
+    chart		    75
   }
   chart {
-    id			    82
+    id			    84
     name		    "Autonomous Controller/Solar Position/myMux1"
     windowPosition	    [476.813 134.45 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1280 1024 1.333333333333333]
-    treeNode		    [0 83 0 0]
-    firstTransition	    85
-    firstJunction	    84
-    viewObj		    82
+    treeNode		    [0 85 0 0]
+    firstTransition	    87
+    firstJunction	    86
+    viewObj		    84
     machine		    1
     ssIdHighWaterMark	    6
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
-    firstData		    86
+    firstData		    88
     chartFileNumber	    12
     disableImplicitCasting  1
     eml {
@@ -8288,14 +8445,14 @@ Stateflow {
     supportVariableSizing   0
   }
   state {
-    id			    83
+    id			    85
     labelString		    "eML_blk_kernel()"
     position		    [18 64.5 118 66]
     fontSize		    12
-    chart		    82
-    treeNode		    [82 0 0 0]
+    chart		    84
+    treeNode		    [84 0 0 0]
     superState		    SUBCHART
-    subviewer		    82
+    subviewer		    84
     ssIdNumber		    1
     type		    FUNC_STATE
     decomposition	    CLUSTER_STATE
@@ -8310,16 +8467,16 @@ Stateflow {
     }
   }
   junction {
-    id			    84
+    id			    86
     position		    [23.5747 49.5747 7]
-    chart		    82
-    linkNode		    [82 0 0]
-    subviewer		    82
+    chart		    84
+    linkNode		    [84 0 0]
+    subviewer		    84
     ssIdNumber		    3
     type		    CONNECTIVE_JUNCTION
   }
   transition {
-    id			    85
+    id			    87
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -8327,23 +8484,23 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      84
+      id		      86
       intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
-    chart		    82
-    linkNode		    [82 0 0]
+    chart		    84
+    linkNode		    [84 0 0]
     dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    82
+    subviewer		    84
     drawStyle		    SMART
     executionOrder	    1
     ssIdNumber		    2
   }
   data {
-    id			    86
+    id			    88
     ssIdNumber		    4
     name		    "u1"
-    linkNode		    [82 0 87]
+    linkNode		    [84 0 89]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -8359,10 +8516,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    87
+    id			    89
     ssIdNumber		    5
     name		    "y"
-    linkNode		    [82 86 88]
+    linkNode		    [84 88 90]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -8379,10 +8536,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    88
+    id			    90
     ssIdNumber		    6
     name		    "u2"
-    linkNode		    [82 87 0]
+    linkNode		    [84 89 0]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -8401,22 +8558,22 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   instance {
-    id			    89
+    id			    91
     name		    "Autonomous Controller/Solar Position/myMux1"
     machine		    1
-    chart		    82
+    chart		    84
   }
   target {
-    id			    90
+    id			    92
     name		    "sfun"
     codeFlags		    ""
     machine		    1
-    linkNode		    [1 0 91]
+    linkNode		    [1 0 93]
   }
   target {
-    id			    91
+    id			    93
     name		    "rtw"
     machine		    1
-    linkNode		    [1 90 0]
+    linkNode		    [1 92 0]
   }
 }
