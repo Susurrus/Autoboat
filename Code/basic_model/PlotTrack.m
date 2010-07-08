@@ -5,8 +5,9 @@ hold on;
 axis equal;
 
 % Plot waypoints (red is initial waypoint blue are following
-plot(0, 0, 'r^');
-plot(waypoint_1_east, waypoint_1_north, 'r^');
+for wp=1:size(waypoints,1)
+    plot(waypoints(wp,2), waypoints(wp,1), 'r^');
+end
 
 % Add the boat path
 title('Boat position');

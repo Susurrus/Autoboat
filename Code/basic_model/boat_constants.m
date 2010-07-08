@@ -12,10 +12,10 @@ initial_charge = 2851200;    % Initial boat charge, 60% of 6V battery rail (J)
 start_time = 1271205603;% 04/13/2010 @ 7:40pm (TODO: Change to MATLAB commands to capture current time)
 
 % Waypoint stuff
-waypoint_1_north = 450;
-waypoint_1_east = 100;
-waypoint_1_lat = 36.807*pi/180;
-waypoint_1_long = -121.795*pi/180;
+waypoints = [0 0 0;
+             450 100 0;
+             600 600 0;
+            ];
 
 % Known constants
 
@@ -52,3 +52,4 @@ Turn2Track = 0;
 MaxDwnPthStar = 1;
 tanIntercept = tan( 45*pi/180 );
 ISA_g     = 9.815;          % Gravity               (m/s/s)
+switchDistance = 4; % Meters before reaching a waypoint that you will then switch over to the next waypoint
