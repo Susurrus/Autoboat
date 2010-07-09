@@ -6,7 +6,8 @@ axis equal;
 
 % Plot waypoints (red is initial waypoint blue are following
 for wp=1:size(waypoints,1)
-    plot(waypoints(wp,2), waypoints(wp,1), 'r^');
+    plot(waypoints(wp,2), waypoints(wp,1), 'r^', 'MarkerSize', 10);
+    text(waypoints(wp,2)+10, waypoints(wp,1)-10, int2str(wp));
 end
 
 % Add the boat path
@@ -15,10 +16,9 @@ plot(position(:,2),position(:,1));
 grid on;
 %% Add additional decorations
 
-decoration_steps = 1:50:length(position);
+decoration_steps = 1:1000:length(position);
 
 % Display the L2 vectors
-plot (position(decoration_steps,2), position(decoration_steps, 1), 'bo');
 quiver(position(decoration_steps,2),position(decoration_steps,1),L2(decoration_steps,2),L2(decoration_steps,1), 0, 'm-');
 
 % Plot velocity vector

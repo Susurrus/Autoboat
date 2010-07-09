@@ -15,6 +15,7 @@ start_time = 1271205603;% 04/13/2010 @ 7:40pm (TODO: Change to MATLAB commands t
 waypoints = [0 0 0;
              450 100 0;
              600 600 0;
+             150 300 0;
             ];
 
 % Known constants
