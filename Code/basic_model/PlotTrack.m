@@ -23,7 +23,7 @@ quiver(position(decoration_steps,2),position(decoration_steps,1),L2(decoration_s
 
 % Plot velocity vector
 quiver(position(decoration_steps,2),position(decoration_steps,1),sin(heading(decoration_steps)), cos(heading(decoration_steps)), 0);
-
+hold off;
 %% Plot the vehicle commands
 figure(2);clf;
 subplot(3,1,1);

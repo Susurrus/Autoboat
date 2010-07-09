@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.597"
+    ComputedModelVersion    "1.605"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bryantmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Jul  8 21:22:09 2010"
-  RTWModifiedTimeStamp	  200509423
-  ModelVersionFormat	  "1.%<AutoIncrement:597>"
+  LastModifiedDate	  "Fri Jul  9 11:59:29 2010"
+  RTWModifiedTimeStamp	  200577569
+  ModelVersionFormat	  "1.%<AutoIncrement:605>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -873,7 +873,7 @@ Model {
   }
   System {
     Name		    "Boat_sim"
-    Location		    [308, 170, 909, 677]
+    Location		    [309, 215, 910, 722]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    212
@@ -904,8 +904,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Autonomous Controller"
-	Location		[0, 50, 943, 690]
-	Open			off
+	Location		[1, 95, 944, 735]
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	212
 	ScreenColor		"white"
@@ -5012,25 +5012,25 @@ Stateflow {
       "cross track error\n        Dist2WP1 = -single(Pwp1'*T1); % distance to WP1\n\n%         minimum down path distan"
       "ce for Aim Point intersection on T\n%         is determined by the intercept angle but limited \n%         in ca"
       "se of very distant intecepts to MaxDwnPthStar*L2\n        MinDownPath = single ( min( abs(Pe_y)/tanIntercept, Ma"
-      "xDwnPthStar*L2)); \n        Dist2WPSwitch = Dist2WP1 - switchDistance;\n        if ( abs(Pe_y) > L2 || Dist2WPSw"
-      "itch < 0)\n    %             Make sure aimpoint is no closer to waypoint than calculated switch point.\n        "
-      "    L2DownPath = min(MinDownPath, Dist2WPSwitch);\n            triggerSwitch = single(1);\n        else\n    %  "
-      "           within L2 of T and Dist2WPSwitch >= 0, but limit angle of L2 wrt T\n            L2DownPath = (max(Min"
-      "DownPath, (sqrt( L2^2 - Pe_y^2 ))));\n        end\n         % vector from Pwp1 to aim point on T1\n         L2To"
-      "T = single(( Dist2WP1 - L2DownPath )*(-T1) - Pwp1);\n         if (norm(L2ToT) < .001)\n             L2Vec = L2*T"
-      "1;\n         else\n            L2Vec = single(L2*( L2ToT/norm(L2ToT) )); % limit size to L2\n         end\n    %"
-      "         L2Vec = L2ToT;\n%         dummy statements\n    end\n    Zprod = single(Vxyz(1)*L2Vec(2) - Vxyz(2)*L2Ve"
-      "c(1)); %Z component of cross product\n    sinEta = single(Zprod/(Groundspeed*L2));\n\n    as_c = single(2*Ground"
-      "speed^2/(L2)*sinEta);\n%         bank angle limits outside of this block\n    phi_c = single(atan(as_c/ISA_g));\n"
-      "\n%         now override bank angle if heading in the wrong direction\n    if ( Turn2Track && Dist2WPSwitch > 0 "
-      "&& ~IPActive ) \n%             turn to track not L2, gives min displacement from track\n        if ( T1'*Vxyz < "
-      "0 )\n            if ( Pe_y > 0 )\n                phi_c = single(+pi/2);\n                as_c = single(99);\n  "
-      "          else\n                phi_c = single(-pi/2);\n                as_c = single(-99);\n            end\n  "
-      "      end\n     else\n%           turn toward L2, give min displacement toward WP0\n        if ( L2Vec'*Vxyz < 0"
-      " )\n            if ( sinEta < 0 )\n                phi_c = single(-pi/2); \n                as_c = single(-99);\n"
-      "            else\n                phi_c = single(+pi/2);\n                as_c = single(99);\n            end\n "
-      "       end\n    end\nend"
-      editorLayout	      "100 M4x1[81 67 1080 733]"
+      "xDwnPthStar*L2)); \n        Dist2WPSwitch = Dist2WP1 - switchDistance;\n        if ( abs(Pe_y) > L2 )\n    %    "
+      "         Make sure aimpoint is no closer to waypoint than calculated switch point.\n            L2DownPath = Min"
+      "DownPath;\n        else\n    %             within L2 of T and Dist2WPSwitch >= 0, but limit angle of L2 wrt T\n "
+      "           L2DownPath = (max(MinDownPath, (sqrt( L2^2 - Pe_y^2 ))));\n        end\n        \n        if ( Dist2W"
+      "PSwitch < 0 )\n            triggerSwitch = single(1);\n        end\n        \n         % vector from Pwp1 to aim"
+      " point on T1\n         L2ToT = single(( Dist2WP1 - L2DownPath )*(-T1) - Pwp1);\n         if (norm(L2ToT) < .001)"
+      "\n             L2Vec = L2*T1;\n         else\n            L2Vec = single(L2*( L2ToT/norm(L2ToT) )); % limit size"
+      " to L2\n         end\n    %         L2Vec = L2ToT;\n%         dummy statements\n    end\n    Zprod = single(Vxyz"
+      "(1)*L2Vec(2) - Vxyz(2)*L2Vec(1)); %Z component of cross product\n    sinEta = single(Zprod/(Groundspeed*L2));\n\n"
+      "    as_c = single(2*Groundspeed^2/(L2)*sinEta);\n%         bank angle limits outside of this block\n    phi_c = "
+      "single(atan(as_c/ISA_g));\n\n%         now override bank angle if heading in the wrong direction\n    if ( Turn2"
+      "Track && Dist2WPSwitch > 0 && ~IPActive ) \n%             turn to track not L2, gives min displacement from trac"
+      "k\n        if ( T1'*Vxyz < 0 )\n            if ( Pe_y > 0 )\n                phi_c = single(+pi/2);\n           "
+      "     as_c = single(99);\n            else\n                phi_c = single(-pi/2);\n                as_c = single"
+      "(-99);\n            end\n        end\n     else\n%           turn toward L2, give min displacement toward WP0\n "
+      "       if ( L2Vec'*Vxyz < 0 )\n            if ( sinEta < 0 )\n                phi_c = single(-pi/2); \n         "
+      "       as_c = single(-99);\n            else\n                phi_c = single(+pi/2);\n                as_c = sin"
+      "gle(99);\n            end\n        end\n    end\nend"
+      editorLayout	      "100 M4x1[4 22 1276 778]"
       fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
       "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
       fimathForFiConstructors FimathMatlabFactoryDefault
@@ -5435,10 +5435,10 @@ Stateflow {
     eml {
       isEML		      1
       script		      "function rudder = fcn(lat_accel, wheelbase, velocity)\n%#eml\n% the -99/99 lat_accel checks for m"
-      "aximum possible accel. This should correspond to maximum rudder deflection.\n% TODO: Verify the direction of the"
-      " rudder under these conditions\n\nrudder = single(0);\n\nif (norm(velocity) == 0 || lat_accel == 0)\n    rudder "
-      "= single(0);\nelseif (lat_accel == 99) \n    rudder = single(-pi/2);\nelseif (lat_accel == -99) \n    rudder = s"
-      "ingle(+pi/2);\nelse\n    rudder = atan(lat_accel*wheelbase/norm(velocity)^2);\nend"
+      "aximum possible accel. This should correspond to maximum rudder deflection.\n\nrudder = single(0);\n\nif (norm(v"
+      "elocity) == 0 || lat_accel == 0)\n    rudder = single(0);\nelseif (lat_accel == 99) \n    rudder = single(pi/2);"
+      "\nelseif (lat_accel == -99) \n    rudder = single(-pi/2);\nelse\n    rudder = atan(lat_accel*wheelbase/norm(velo"
+      "city)^2);\nend"
       editorLayout	      "100 M4x1[4 22 1276 778]"
       fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
       "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
