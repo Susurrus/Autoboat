@@ -2,8 +2,7 @@
 
 % Initial conditions
 
-lat_0 = 36.80611*pi/180;       % Initial latitude (radians)
-long_0 = -121.79639*pi/180;    % Initial longitude (radians)
+initial_LL = [36.80611 -121.79639];    % Initial latitude/longitude/altitude (radians)
 phi_0 = 0;              % Initial heading (eastward positive from north)
 v_0 = 0;                % Initial speed
 T_step = 0.01;          % Simulation timestep
