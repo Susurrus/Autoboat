@@ -10,8 +10,8 @@
 % Government zenith/azimuth data can be found here:
 time = '27-May-2009 4:00:00'; % UTC (8pm local)
 
-location = [-121.992874 36.955379 0];
+location = pi/180*[-121.992874 36.955379 0];
 
 % Should be more than 90 degrees zenith to be dark.
-sun = sun_position(time,location)
+sun = 180/pi*sun_position(time,location)
 assert(sun(2) > pi/2);
