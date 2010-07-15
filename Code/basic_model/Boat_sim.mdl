@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.690"
+    ComputedModelVersion    "1.695"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Jul 14 15:19:39 2010"
-  RTWModifiedTimeStamp	  201021577
-  ModelVersionFormat	  "1.%<AutoIncrement:690>"
+  LastModifiedDate	  "Thu Jul 15 13:15:55 2010"
+  RTWModifiedTimeStamp	  201100553
+  ModelVersionFormat	  "1.%<AutoIncrement:695>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -891,7 +891,7 @@ Model {
   }
   System {
     Name		    "Boat_sim"
-    Location		    [232, 267, 844, 782]
+    Location		    [214, 78, 826, 593]
     Open		    off
     ModelBrowserVisibility  on
     ModelBrowserWidth	    212
@@ -1180,14 +1180,14 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Constant2"
 	  SID			  323
-	  Position		  [210, 125, 240, 155]
+	  Position		  [210, 120, 240, 150]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "2"
-	  OutDataTypeMode	  "Inherit via back propagation"
+	  OutDataTypeMode	  "uint8"
 	  OutDataType		  "sfix(16)"
 	  OutScaling		  "2^0"
-	  OutDataTypeStr	  "Inherit: Inherit via back propagation"
+	  OutDataTypeStr	  "uint8"
 	}
 	Block {
 	  BlockType		  Constant
@@ -2007,30 +2007,6 @@ Model {
 	  SaveFormat		  "Array"
 	}
 	Block {
-	  BlockType		  ToWorkspace
-	  Name			  "To Workspace2"
-	  SID			  365
-	  Ports			  [1]
-	  Position		  [590, 440, 650, 470]
-	  ShowName		  off
-	  VariableName		  "azimuth"
-	  MaxDataPoints		  "inf"
-	  SampleTime		  "-1"
-	  SaveFormat		  "Array"
-	}
-	Block {
-	  BlockType		  ToWorkspace
-	  Name			  "To Workspace3"
-	  SID			  366
-	  Ports			  [1]
-	  Position		  [590, 485, 650, 515]
-	  ShowName		  off
-	  VariableName		  "zenith"
-	  MaxDataPoints		  "inf"
-	  SampleTime		  "-1"
-	  SaveFormat		  "Array"
-	}
-	Block {
 	  BlockType		  SubSystem
 	  Name			  "Waypoint\nController"
 	  SID			  319
@@ -2251,30 +2227,15 @@ Model {
 	Line {
 	  SrcBlock		  "Solar Position"
 	  SrcPort		  1
-	  Points		  [20, 0; 0, 10; 20, 0]
-	  Branch {
-	    DstBlock		    "Calculate Optimal\nRoll"
-	    DstPort		    2
-	  }
-	  Branch {
-	    Points		    [0, 85]
-	    DstBlock		    "To Workspace2"
-	    DstPort		    1
-	  }
+	  Points		  [20, 0; 0, 10]
+	  DstBlock		  "Calculate Optimal\nRoll"
+	  DstPort		  2
 	}
 	Line {
 	  SrcBlock		  "Solar Position"
 	  SrcPort		  2
-	  Points		  [20, 0]
-	  Branch {
-	    DstBlock		    "Calculate Optimal\nRoll"
-	    DstPort		    3
-	  }
-	  Branch {
-	    Points		    [0, 110]
-	    DstBlock		    "To Workspace3"
-	    DstPort		    1
-	  }
+	  DstBlock		  "Calculate Optimal\nRoll"
+	  DstPort		  3
 	}
 	Line {
 	  SrcBlock		  "GPS"
@@ -2339,7 +2300,6 @@ Model {
 	Line {
 	  SrcBlock		  "Constant2"
 	  SrcPort		  1
-	  Points		  [0, -5]
 	  DstBlock		  "Waypoint\nController"
 	  DstPort		  2
 	}
@@ -7547,8 +7507,6 @@ Stateflow {
     created		    "13-Apr-2010 16:50:36"
     isLibrary		    0
     firstTarget		    116
-    debug {
-    }
     sfVersion		    75014000
   }
   chart {
@@ -8052,7 +8010,7 @@ Stateflow {
       "       index_0 = index_1;\n                    index_1 = index_1 + 1;\n                    direction = 1;\n     "
       "           end\n            end\n    end\nend\n\nwaypoint_0 = waypoints(index_0,:)';\nwaypoint_1 = waypoints(ind"
       "ex_1,:)';"
-      editorLayout	      "100 M4x1[134 24 1080 733]"
+      editorLayout	      "100 M4x1[107 228 1080 733]"
     }
   }
   junction {
@@ -8583,13 +8541,13 @@ Stateflow {
       "sistent IPActive;  %true if flying toward IP\n    persistent IP; % location of initial point\n%     if (~SwitchM"
       "ode)\n%         phi_c = single(0);\n%         L2Vec = single(zeros(3,1));\n%         as_c = single(0);\n%       "
       "  Groundspeed = sqrt(Vxyz(1)*Vxyz(1) + Vxyz(2)*Vxyz(2));\n%         IPActive = IPActive;\n%     end\n%     \n   "
-      " triggerSwitch = single(0);\n    Pwp1 = single(zeros(3,1));\n    Pe_y = single(0);\n    Dist2WP1 = single(0);\n "
-      "   MinDownPath = single(0);\n    Dist2WPSwitch = single(0);\n    L2DownPath = single(0);\n    L2ToT = single(zer"
-      "os(3,1));\n    L2Vec = single(zeros(3,1));\n    IP1 = single([0; 0;-999]); %signal for no IP\n    \n    Pne = [P"
-      "uav(1); Puav(2); 0]; %horizontal position\n    Vne = [Vxyz(1); Vxyz(2); 0]; % horizontal velocity\n    Groundspe"
-      "ed = norm(Vne);\n    L2 = single(TStar*Groundspeed);\n    WP0ne = single(zeros(3,1));\n    \n% Calculate N1 and "
-      "T1\nassert(norm(WP1 - WP0) ~= 0);\nT1 = WP1-WP0;\nT1 = T1/norm(T1);\nN1 = [-T1(2); T1(1); 0];\n    \n%     initi"
-      "alize IP\n    if (isempty(IPActive))\n        if (InitialPoint)\n%             IP is set relative to the first \""
+      " triggerSwitch = uint8(0);\n    Pwp1 = single(zeros(3,1));\n    Pe_y = single(0);\n    Dist2WP1 = single(0);\n  "
+      "  MinDownPath = single(0);\n    Dist2WPSwitch = single(0);\n    L2DownPath = single(0);\n    L2ToT = single(zero"
+      "s(3,1));\n    L2Vec = single(zeros(3,1));\n    IP1 = single([0; 0;-999]); %signal for no IP\n    \n    Pne = [Pu"
+      "av(1); Puav(2); 0]; %horizontal position\n    Vne = [Vxyz(1); Vxyz(2); 0]; % horizontal velocity\n    Groundspee"
+      "d = norm(Vne);\n    L2 = single(TStar*Groundspeed);\n    WP0ne = single(zeros(3,1));\n    \n% Calculate N1 and T"
+      "1\nassert(norm(WP1 - WP0) ~= 0);\nT1 = WP1-WP0;\nT1 = T1/norm(T1);\nN1 = [-T1(2); T1(1); 0];\n    \n%     initia"
+      "lize IP\n    if (isempty(IPActive))\n        if (InitialPoint)\n%             IP is set relative to the first \""
       "from\" waypoint\n            IPActive = -1;\n            IP = [WP0(1); WP0(2); 0] - L2*IPStar*T1;\n            \n"
       "            if (norm(IP-Pne) < .001)\n                IPActive = 0;\n                IP = single([0; 0; -999]);\n"
       "            end\n        else\n            IPActive = 0;\n            IP = single([0; 0;-999]); %signal for no I"
@@ -8605,21 +8563,21 @@ Stateflow {
       "         Make sure aimpoint is no closer to waypoint than calculated switch point.\n            L2DownPath = Min"
       "DownPath;\n        else\n    %             within L2 of T and Dist2WPSwitch >= 0, but limit angle of L2 wrt T\n "
       "           L2DownPath = (max(MinDownPath, (sqrt( L2^2 - Pe_y^2 ))));\n        end\n        \n        if ( Dist2W"
-      "PSwitch < 0 )\n            triggerSwitch = single(1);\n        end\n        \n         % vector from Pwp1 to aim"
-      " point on T1\n         L2ToT = single(( Dist2WP1 - L2DownPath )*(-T1) - Pwp1);\n         if (norm(L2ToT) < .001)"
-      "\n             L2Vec = L2*T1;\n         else\n            L2Vec = single(L2*( L2ToT/norm(L2ToT) )); % limit size"
-      " to L2\n         end\n    %         L2Vec = L2ToT;\n%         dummy statements\n    end\n    Zprod = single(Vxyz"
-      "(1)*L2Vec(2) - Vxyz(2)*L2Vec(1)); %Z component of cross product\n    sinEta = single(Zprod/(Groundspeed*L2));\n\n"
-      "    as_c = single(2*Groundspeed^2/(L2)*sinEta);\n%         bank angle limits outside of this block\n    phi_c = "
-      "single(atan(as_c/ISA_g));\n\n%         now override bank angle if heading in the wrong direction\n    if ( Turn2"
-      "Track && Dist2WPSwitch > 0 && ~IPActive ) \n%             turn to track not L2, gives min displacement from trac"
-      "k\n        if ( T1'*Vxyz < 0 )\n            if ( Pe_y > 0 )\n                phi_c = single(+pi/2);\n           "
-      "     as_c = single(99);\n            else\n                phi_c = single(-pi/2);\n                as_c = single"
-      "(-99);\n            end\n        end\n     else\n%           turn toward L2, give min displacement toward WP0\n "
-      "       if ( L2Vec'*Vxyz < 0 )\n            if ( sinEta < 0 )\n                phi_c = single(-pi/2); \n         "
-      "       as_c = single(-99);\n            else\n                phi_c = single(+pi/2);\n                as_c = sin"
-      "gle(99);\n            end\n        end\n    end\nend"
-      editorLayout	      "100 M4x1[81 67 1080 733]"
+      "PSwitch < 0 )\n            triggerSwitch = uint8(1);\n        end\n        \n         % vector from Pwp1 to aim "
+      "point on T1\n         L2ToT = single(( Dist2WP1 - L2DownPath )*(-T1) - Pwp1);\n         if (norm(L2ToT) < .001)\n"
+      "             L2Vec = L2*T1;\n         else\n            L2Vec = single(L2*( L2ToT/norm(L2ToT) )); % limit size t"
+      "o L2\n         end\n    %         L2Vec = L2ToT;\n%         dummy statements\n    end\n    Zprod = single(Vxyz(1"
+      ")*L2Vec(2) - Vxyz(2)*L2Vec(1)); %Z component of cross product\n    sinEta = single(Zprod/(Groundspeed*L2));\n\n "
+      "   as_c = single(2*Groundspeed^2/(L2)*sinEta);\n%         bank angle limits outside of this block\n    phi_c = s"
+      "ingle(atan(as_c/ISA_g));\n\n%         now override bank angle if heading in the wrong direction\n    if ( Turn2T"
+      "rack && Dist2WPSwitch > 0 && ~IPActive ) \n%             turn to track not L2, gives min displacement from track"
+      "\n        if ( T1'*Vxyz < 0 )\n            if ( Pe_y > 0 )\n                phi_c = single(+pi/2);\n            "
+      "    as_c = single(99);\n            else\n                phi_c = single(-pi/2);\n                as_c = single("
+      "-99);\n            end\n        end\n     else\n%           turn toward L2, give min displacement toward WP0\n  "
+      "      if ( L2Vec'*Vxyz < 0 )\n            if ( sinEta < 0 )\n                phi_c = single(-pi/2); \n          "
+      "      as_c = single(-99);\n            else\n                phi_c = single(+pi/2);\n                as_c = sing"
+      "le(99);\n            end\n        end\n    end\nend"
+      editorLayout	      "100 M4x1[102 210 1080 733]"
       fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
       "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
       fimathForFiConstructors FimathMatlabFactoryDefault
@@ -8668,15 +8626,14 @@ Stateflow {
 	size			"-1"
       }
       type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_BOOLEAN_TYPE
+	primitive		SF_UINT8_TYPE
 	isSigned		1
 	wordLength		"16"
       }
       complexity	      SF_COMPLEX_INHERITED
       frame		      SF_FRAME_NO
     }
-    dataType		    "Inherit: Same as Simulink"
+    dataType		    "uint8"
   }
   data {
     id			    60
