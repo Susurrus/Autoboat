@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.695"
+    ComputedModelVersion    "1.698"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Jul 15 13:15:55 2010"
-  RTWModifiedTimeStamp	  201100553
-  ModelVersionFormat	  "1.%<AutoIncrement:695>"
+  LastModifiedDate	  "Mon Jul 19 12:01:36 2010"
+  RTWModifiedTimeStamp	  201441693
+  ModelVersionFormat	  "1.%<AutoIncrement:698>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -891,8 +891,8 @@ Model {
   }
   System {
     Name		    "Boat_sim"
-    Location		    [214, 78, 826, 593]
-    Open		    off
+    Location		    [408, 229, 1020, 744]
+    Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    212
     ScreenColor		    "white"
@@ -905,7 +905,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    481
+    SIDHighWatermark	    483
     Block {
       BlockType		      SubSystem
       Name		      "Autonomous Controller"
@@ -922,8 +922,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Autonomous Controller"
-	Location		[69, 118, 1012, 758]
-	Open			on
+	Location		[233, 229, 1176, 869]
+	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	212
 	ScreenColor		"white"
@@ -1215,11 +1215,6 @@ Model {
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
 	  Opaque		  off
-	  Array {
-	    Type		    "Handle"
-	    Dimension		    0
-	    PropName		    "AvailSigsLoadSave"
-	  }
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
 	  MaskType		  "Stateflow"
@@ -1341,6 +1336,22 @@ Model {
 	  }
 	}
 	Block {
+	  BlockType		  Gain
+	  Name			  "Gain"
+	  SID			  482
+	  Position		  [210, 480, 240, 510]
+	  Gain			  "1023"
+	  ParameterDataTypeMode	  "Inherit via internal rule"
+	  ParameterDataType	  "fixdt(1, 16)"
+	  ParameterScaling	  "2^0"
+	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
 	  BlockType		  SubSystem
 	  Name			  "L2 Plus ref WP1"
 	  SID			  292
@@ -1353,11 +1364,6 @@ Model {
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
 	  Opaque		  off
-	  Array {
-	    Type		    "Handle"
-	    Dimension		    0
-	    PropName		    "AvailSigsLoadSave"
-	  }
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
 	  MaskType		  "Stateflow"
@@ -1579,11 +1585,6 @@ Model {
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
 	  Opaque		  off
-	  Array {
-	    Type		    "Handle"
-	    Dimension		    0
-	    PropName		    "AvailSigsLoadSave"
-	  }
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
 	  MaskType		  "Stateflow"
@@ -1803,11 +1804,6 @@ Model {
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
 	      Opaque		      off
-	      Array {
-		Type			"Handle"
-		Dimension		0
-		PropName		"AvailSigsLoadSave"
-	      }
 	      RequestExecContextInheritance off
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
@@ -2020,11 +2016,6 @@ Model {
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
 	  Opaque		  off
-	  Array {
-	    Type		    "Handle"
-	    Dimension		    0
-	    PropName		    "AvailSigsLoadSave"
-	  }
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
 	  MaskType		  "Stateflow"
@@ -2181,7 +2172,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "Throttle command"
 	  SID			  70
-	  Position		  [210, 488, 240, 502]
+	  Position		  [300, 488, 330, 502]
 	  BackgroundColor	  "yellow"
 	  Port			  "2"
 	  IconDisplay		  "Port number"
@@ -2268,7 +2259,7 @@ Model {
 	Line {
 	  SrcBlock		  "Constant5"
 	  SrcPort		  1
-	  DstBlock		  "Throttle command"
+	  DstBlock		  "Gain"
 	  DstPort		  1
 	}
 	Line {
@@ -2326,6 +2317,12 @@ Model {
 	  SrcBlock		  "Memory"
 	  SrcPort		  1
 	  DstBlock		  "Waypoint\nController"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Gain"
+	  SrcPort		  1
+	  DstBlock		  "Throttle command"
 	  DstPort		  1
 	}
 	Annotation {
@@ -2448,7 +2445,7 @@ Model {
       System {
 	Name			"Plant"
 	Location		[282, 82, 1142, 751]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -2507,8 +2504,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Actuator\nDynamics"
-	    Location		    [126, 374, 1098, 703]
-	    Open		    off
+	    Location		    [234, 454, 1206, 783]
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -2582,7 +2579,7 @@ Model {
 	      BlockType		      DataTypeConversion
 	      Name		      "Data Type Conversion4"
 	      SID		      88
-	      Position		      [155, 33, 200, 47]
+	      Position		      [195, 33, 240, 47]
 	      ShowName		      off
 	      OutDataTypeMode	      "double"
 	      OutDataType	      "sfix(16)"
@@ -2592,11 +2589,27 @@ Model {
 	      SaturateOnIntegerOverflow	off
 	    }
 	    Block {
+	      BlockType		      Gain
+	      Name		      "Gain"
+	      SID		      483
+	      Position		      [85, 25, 115, 55]
+	      Gain		      "1/1023"
+	      ParameterDataTypeMode   "Inherit via internal rule"
+	      ParameterDataType	      "fixdt(1, 16)"
+	      ParameterScaling	      "2^0"
+	      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
+	      OutDataTypeMode	      "Inherit via internal rule"
+	      OutDataType	      "fixdt(1, 16)"
+	      OutScaling	      "2^0"
+	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
 	      BlockType		      Saturate
 	      Name		      "Saturation"
 	      SID		      89
 	      Ports		      [1, 1]
-	      Position		      [85, 25, 115, 55]
+	      Position		      [140, 25, 170, 55]
 	      ShowName		      off
 	      UpperLimit	      "1"
 	      LowerLimit	      "-1"
@@ -2626,7 +2639,7 @@ Model {
 	      Name		      "Second Order Linear Actuator1"
 	      SID		      92
 	      Ports		      [1, 1]
-	      Position		      [225, 19, 325, 61]
+	      Position		      [265, 19, 365, 61]
 	      ShowName		      off
 	      LibraryVersion	      "1.34"
 	      SourceBlock	      "aerolibactuator/Second Order Linear Actuator"
@@ -2691,7 +2704,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "t_d"
 	      SID		      95
-	      Position		      [350, 33, 380, 47]
+	      Position		      [390, 33, 420, 47]
 	      BackgroundColor	      "yellow"
 	      IconDisplay	      "Port number"
 	      OutDataType	      "sfix(16)"
@@ -2722,7 +2735,7 @@ Model {
 	    Line {
 	      SrcBlock		      "t"
 	      SrcPort		      1
-	      DstBlock		      "Saturation"
+	      DstBlock		      "Gain"
 	      DstPort		      1
 	    }
 	    Line {
@@ -2789,6 +2802,12 @@ Model {
 	      SrcBlock		      "Saturation2"
 	      SrcPort		      1
 	      DstBlock		      "Data Type Conversion2"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Gain"
+	      SrcPort		      1
+	      DstBlock		      "Saturation"
 	      DstPort		      1
 	    }
 	    Annotation {
@@ -2970,11 +2989,6 @@ Model {
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
 	      Opaque		      off
-	      Array {
-		Type			"Handle"
-		Dimension		0
-		PropName		"AvailSigsLoadSave"
-	      }
 	      RequestExecContextInheritance off
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
@@ -3624,11 +3638,6 @@ Model {
 		    RTWSystemCode	    "Auto"
 		    FunctionWithSeparateData off
 		    Opaque		    off
-		    Array {
-		    Type		    "Handle"
-		    Dimension		    0
-		    PropName		    "AvailSigsLoadSave"
-		    }
 		    RequestExecContextInheritance off
 		    MaskHideContents	    off
 		    MaskType		    "Stateflow"
@@ -4041,11 +4050,6 @@ Model {
 		    RTWSystemCode	    "Auto"
 		    FunctionWithSeparateData off
 		    Opaque		    off
-		    Array {
-		    Type		    "Handle"
-		    Dimension		    0
-		    PropName		    "AvailSigsLoadSave"
-		    }
 		    RequestExecContextInheritance off
 		    MaskHideContents	    off
 		    MaskType		    "Stateflow"
@@ -4400,11 +4404,6 @@ Model {
 		  RTWSystemCode		  "Auto"
 		  FunctionWithSeparateData off
 		  Opaque		  off
-		  Array {
-		    Type		    "Handle"
-		    Dimension		    0
-		    PropName		    "AvailSigsLoadSave"
-		  }
 		  RequestExecContextInheritance	off
 		  MaskHideContents	  off
 		  MaskType		  "Stateflow"
@@ -4556,11 +4555,6 @@ Model {
 		  RTWSystemCode		  "Auto"
 		  FunctionWithSeparateData off
 		  Opaque		  off
-		  Array {
-		    Type		    "Handle"
-		    Dimension		    0
-		    PropName		    "AvailSigsLoadSave"
-		  }
 		  RequestExecContextInheritance	off
 		  MaskHideContents	  off
 		  MaskType		  "Stateflow"
@@ -5706,7 +5700,7 @@ Model {
 	      SourceType	      "Angle Conversion"
 	      ShowPortLabels	      "FromPortIcon"
 	      SystemSampleTime	      "-1"
-	      FunctionWithSeparateData off
+	      FunctionWithSeparateData "off"
 	      RTWMemSecFuncInitTerm   "Inherit from model"
 	      RTWMemSecFuncExecute    "Inherit from model"
 	      RTWMemSecDataConstants  "Inherit from model"
@@ -5773,11 +5767,6 @@ Model {
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
 	      Opaque		      off
-	      Array {
-		Type			"Handle"
-		Dimension		0
-		PropName		"AvailSigsLoadSave"
-	      }
 	      RequestExecContextInheritance off
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
@@ -5916,7 +5905,7 @@ Model {
 	      SourceType	      "Flat Earth to LLA"
 	      ShowPortLabels	      "FromPortIcon"
 	      SystemSampleTime	      "-1"
-	      FunctionWithSeparateData off
+	      FunctionWithSeparateData "off"
 	      RTWMemSecFuncInitTerm   "Inherit from model"
 	      RTWMemSecFuncExecute    "Inherit from model"
 	      RTWMemSecDataConstants  "Inherit from model"
@@ -6476,11 +6465,6 @@ Model {
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
 	      Opaque		      off
-	      Array {
-		Type			"Handle"
-		Dimension		0
-		PropName		"AvailSigsLoadSave"
-	      }
 	      RequestExecContextInheritance off
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
@@ -7487,7 +7471,7 @@ Model {
     }
     Annotation {
       Name		      "This is the root model for the boat simulator and autonomous controller. All\nunits exposed here ar"
-      "e in human-readable form. This most-notably involves\ndegrees instead of radians."
+      "e metric/radians."
       Position		      [107, 436]
       HorizontalAlignment     "left"
     }
