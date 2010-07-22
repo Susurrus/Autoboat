@@ -5,10 +5,8 @@ hold on;
 axis equal;
 
 % Plot waypoints (red is initial waypoint blue are following
-for wp=1:size(waypoints,1)
-    plot(waypoints(wp,2), waypoints(wp,1), 'r^', 'MarkerSize', 10);
-    text(waypoints(wp,2)+10, waypoints(wp,1)-10, int2str(wp));
-end
+plot(waypoints(:,2)', waypoints(:,1)', 'r^', 'MarkerSize', 10);
+text(waypoints(:,2)'+10, waypoints(:,1)'-10, cellstr({int2str((1:size(waypoints,1))')}));
 
 % Add the boat path
 title('Boat position');
@@ -22,7 +20,10 @@ decoration_steps = 1:1000:length(position);
 quiver(position(decoration_steps,2),position(decoration_steps,1),L2(decoration_steps,2),L2(decoration_steps,1), 0, 'm-');
 
 % Plot velocity vector
-quiver(position(decoration_steps,2),position(decoration_steps,1),sin(heading(decoration_steps)), cos(heading(decoration_steps)), 0);
+quiver(position(decoration_steps,2),position(decoration_steps,1),velocity(decoration_steps,2), velocity(decoration_steps,1), 0);
+
+legend('Waypoints', 'Boat track', 'L2 vectors', 'Velocity vectors');
+
 hold off;
 %% Plot the vehicle commands
 figure(2);clf;
