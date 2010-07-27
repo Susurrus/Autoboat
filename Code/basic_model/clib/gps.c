@@ -40,9 +40,14 @@ THE SOFTWARE.
 // ==============================================================
 
 #include "gps.h"
+#include "circBuffer.h"
+
+#include <p33fxxxx.h>
+#include <uart.h>
 
 struct CircBuffer com1Buffer;
 CBRef uartBuffer;
+tGpsData gpsControlData;
 
 // UART and Buffer initialization
 void uartInit (void){

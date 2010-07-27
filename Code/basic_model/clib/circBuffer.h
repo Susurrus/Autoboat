@@ -42,7 +42,7 @@ THE SOFTWARE.
        extern "C"{
 #endif
 
-BSIZE = 20;
+#define BSIZE 20
 		   
 typedef struct CircBuffer{
 	unsigned char buffer[BSIZE];

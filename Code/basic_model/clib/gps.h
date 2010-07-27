@@ -78,7 +78,38 @@ typedef struct tGpsData{
 	unsigned char			newValue;
 }tGpsData;
 
+// Standard characters used in the parsing of messages
+// ===================================================
+#define DOLLAR			36
+#define STAR			42
+#define CR				13
+#define LF				10
+#define AT				64
+
 #define TOKEN_SIZE	15
+
+#define KTS2MPS 		0.514444444
+
+// GPS Checksum Messages
+// =====================
+#define GGACS			86
+#define RMCCS			75
+
+// GPS Header IDs
+// ==============
+#define GGAID			1
+#define RMCID			2
+#define UNKID			254
+
+// GPS Circular Buffers
+// ====================
+#define MSIZE			150
+#define CSIZE			26 //[newBytes payload remaingBytes]  (comms buffer out of readGPS)
+
+#define GPSBAUDF		19200
+#define GPSBAUDI		4800
+#define UCSCAP_UBRGF 	129
+#define UCSCAP_UBRGI 	520
   	
 void uartInit (void);
 void gpsSentenceConfig (void);
