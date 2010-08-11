@@ -29,8 +29,7 @@ THE SOFTWARE.
 #ifdef __cplusplus
        extern "C"{
 #endif
-       	
-#include "circBuffer.h"
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -75,56 +74,62 @@ typedef struct tGpsData{
 	tUnsignedShortToChar	hdop;	
 	unsigned char			fix;
 	unsigned char 			sats;	
-	unsigned char			newValue;
+	unsigned char			newData; // Flag for whether this struct stores new data
 }tGpsData;
 
-// Standard characters used in the parsing of messages
-// ===================================================
-#define DOLLAR			36
-#define STAR			42
-#define CR				13
-#define LF				10
-#define AT				64
-
-#define TOKEN_SIZE	15
-
 #define KTS2MPS 		0.514444444
-
-// GPS Checksum Messages
-// =====================
-#define GGACS			86
-#define RMCCS			75
-
-// GPS Header IDs
-// ==============
-#define GGAID			1
-#define RMCID			2
-#define UNKID			254
 
 // GPS Circular Buffers
 // ====================
 #define MSIZE			150
-#define CSIZE			26 //[newBytes payload remaingBytes]  (comms buffer out of readGPS)
+#define CSIZE			26 //[newBytes payload remainingBytes]  (comms buffer out of readGPS)
 
-#define GPSBAUDF		19200
-#define GPSBAUDI		4800
-#define UCSCAP_UBRGF 	129
-#define UCSCAP_UBRGI 	520
-  	
-void uartInit (void);
-void gpsSentenceConfig (void);
-void gpsFreqConfig (void);
+/**
+ * Converts a hexadecimal digit into its ascii equivalent.
+ */
+char hex2char(char halfhex);
 
-unsigned char hex2char (unsigned char halfhex);
-// void gpsRead (unsigned char* gpsChunk);
-void gpsInit (void);
-unsigned char gpsSeparate (unsigned char* outStream);
-void gpsParse (void);
-void getGpsMainData (float* data);
-float degMinToDeg (unsigned char degrees, float minutes);
-char gpSmbl (char symbl);
-void parseRMC (unsigned char* stream);
-void parseGGA (unsigned char* stream);
+/**
+ * Converts degree-minutes to degrees.
+ */
+float degMinToDeg(unsigned char degrees, float minutes);
+
+/**
+ * Compiles GPS sentences one-byte at a time. Because of this
+ * it is stateful. Once complete sentences are built, attempts
+ * to parse and store in a tGpsData struct
+ */
+void buildAndCheckSentence(unsigned char characterIn);
+
+/**
+ * Computes the checksum for a given GPS sentence.
+ */
+unsigned char getChecksum(char* sentence, unsigned char size);
+
+/**
+ * This is a Matlab helper function that returns the most recent 
+ * GPS data in a large array that Matlab can handle.
+ * @param data A pointer to a float array for storing the GPS data that was requested.
+ */
+void getGpsMainData(float* data);
+
+/**
+ * A simple tokenizer. Similar to strtok(), but supports
+ * multiple tokens in a row.
+ */
+unsigned char myTokenizer(char* stringToTokenize, char token, char * returnToken);
+
+/**
+ * Parses NMEA0183 RMC sentences. Results are stored in the
+ * globally-declared gpsControlData struct.
+ */
+void parseRMC(char* stream);
+
+/**
+ * Parses NMEA0183 GGA sentences. Results are stored in the
+ * globally-declared gpsControlData struct.
+ */
+void parseGGA(char* stream);
 
 #ifdef __cplusplus
        }
