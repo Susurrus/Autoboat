@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.813"
+    ComputedModelVersion    "1.825"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Jul 27 12:39:05 2010"
-  RTWModifiedTimeStamp	  202135143
-  ModelVersionFormat	  "1.%<AutoIncrement:813>"
+  LastModifiedDate	  "Wed Aug 11 10:35:51 2010"
+  RTWModifiedTimeStamp	  203423750
+  ModelVersionFormat	  "1.%<AutoIncrement:825>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -980,7 +980,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    612
+    SIDHighWatermark	    622
     Block {
       BlockType		      SubSystem
       Name		      "Autonomous Controller"
@@ -997,8 +997,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Autonomous Controller"
-	Location		[197, 141, 1265, 891]
-	Open			on
+	Location		[216, 124, 1284, 874]
+	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1751,7 +1751,7 @@ Model {
 	  System {
 	    Name		    "Rudder\nCommand"
 	    Location		    [216, 124, 1284, 874]
-	    Open		    on
+	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -1774,7 +1774,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "Sensors"
 	      SID		      510
-	      Position		      [430, 343, 460, 357]
+	      Position		      [315, 343, 345, 357]
 	      Port		      "2"
 	      IconDisplay	      "Port number"
 	    }
@@ -1817,7 +1817,7 @@ Model {
 	      Name		      "Bus\nSelector"
 	      SID		      558
 	      Ports		      [1, 1]
-	      Position		      [500, 331, 505, 369]
+	      Position		      [385, 331, 390, 369]
 	      ShowName		      off
 	      OutputSignals	      "position"
 	      Port {
@@ -2288,6 +2288,94 @@ Model {
 	      }
 	    }
 	    Block {
+	      BlockType		      SubSystem
+	      Name		      "Map from 313..620\nto 1..-1"
+	      SID		      620
+	      Ports		      [1, 1]
+	      Position		      [455, 336, 520, 364]
+	      MinAlgLoopOccurrences   off
+	      PropExecContextOutsideSubsystem off
+	      RTWSystemCode	      "Auto"
+	      FunctionWithSeparateData off
+	      Opaque		      off
+	      RequestExecContextInheritance off
+	      MaskHideContents	      off
+	      System {
+		Name			"Map from 313..620\nto 1..-1"
+		Location		[576, 415, 831, 516]
+		Open			off
+		ModelBrowserVisibility	on
+		ModelBrowserWidth	200
+		ScreenColor		"white"
+		PaperOrientation	"landscape"
+		PaperPositionMode	"auto"
+		PaperType		"usletter"
+		PaperUnits		"inches"
+		TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+		TiledPageScale		1
+		ShowPageBoundaries	off
+		ZoomFactor		"100"
+		Block {
+		  BlockType		  Inport
+		  Name			  "In1"
+		  SID			  621
+		  Position		  [25, 33, 55, 47]
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Bias
+		  Name			  "Bias"
+		  SID			  619
+		  Position		  [80, 25, 120, 55]
+		  ShowName		  off
+		  Bias			  "-466.5"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Gain
+		  Name			  "Gain"
+		  SID			  618
+		  Position		  [145, 25, 175, 55]
+		  ShowName		  off
+		  Gain			  "-1/153.5"
+		  ParameterDataTypeMode	  "Inherit via internal rule"
+		  ParameterDataType	  "fixdt(1, 16)"
+		  ParameterScaling	  "2^0"
+		  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
+		  OutDataTypeMode	  "Inherit via internal rule"
+		  OutDataType		  "fixdt(1, 16)"
+		  OutScaling		  "2^0"
+		  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "Out1"
+		  SID			  622
+		  Position		  [200, 33, 230, 47]
+		  IconDisplay		  "Port number"
+		}
+		Line {
+		  SrcBlock		  "Bias"
+		  SrcPort		  1
+		  DstBlock		  "Gain"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "In1"
+		  SrcPort		  1
+		  DstBlock		  "Bias"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Gain"
+		  SrcPort		  1
+		  DstBlock		  "Out1"
+		  DstPort		  1
+		}
+	      }
+	    }
+	    Block {
 	      BlockType		      Memory
 	      Name		      "Memory"
 	      SID		      481
@@ -2672,14 +2760,20 @@ Model {
 	      Labels		      [0, 0]
 	      SrcBlock		      "Bus\nSelector"
 	      SrcPort		      1
-	      DstBlock		      "Add"
-	      DstPort		      2
+	      DstBlock		      "Map from 313..620\nto 1..-1"
+	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "Discrete-Time\nIntegrator"
 	      SrcPort		      1
 	      DstBlock		      "L2 Plus ref WP1"
 	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "Map from 313..620\nto 1..-1"
+	      SrcPort		      1
+	      DstBlock		      "Add"
+	      DstPort		      2
 	    }
 	  }
 	}
@@ -3265,7 +3359,7 @@ Model {
       System {
 	Name			"Plant"
 	Location		[100, 50, 1176, 800]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -6894,8 +6988,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Generate sensor data\nfrom actuator position"
-	    Location		    [202, 82, 1270, 978]
-	    Open		    off
+	    Location		    [216, 124, 1284, 874]
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -6936,17 +7030,11 @@ Model {
 	      BlockType		      Inport
 	      Name		      "rudder"
 	      SID		      488
-	      Position		      [110, 273, 140, 287]
+	      Position		      [130, 313, 160, 327]
 	      Port		      "3"
 	      IconDisplay	      "Port number"
 	      OutDataType	      "fixdt(1, 16)"
 	      OutScaling	      "2^0"
-	      Port {
-		PortNumber		1
-		Name			"position"
-		RTWStorageClass		"Auto"
-		DataLoggingNameMode	"SignalName"
-	      }
 	    }
 	    Block {
 	      BlockType		      BusCreator
@@ -6963,7 +7051,7 @@ Model {
 	      Name		      "Bus\nCreator1"
 	      SID		      535
 	      Ports		      [3, 1]
-	      Position		      [320, 271, 325, 319]
+	      Position		      [340, 296, 345, 424]
 	      ShowName		      off
 	      Inputs		      "3"
 	      DisplayOption	      "bar"
@@ -7004,7 +7092,7 @@ Model {
 	      BlockType		      Constant
 	      Name		      "Constant2"
 	      SID		      536
-	      Position		      [175, 288, 205, 302]
+	      Position		      [130, 353, 160, 367]
 	      ShowName		      off
 	      Value		      "0"
 	      OutDataType	      "fixdt(1, 16)"
@@ -7020,7 +7108,7 @@ Model {
 	      BlockType		      Constant
 	      Name		      "Constant3"
 	      SID		      537
-	      Position		      [175, 313, 205, 327]
+	      Position		      [130, 393, 160, 407]
 	      ShowName		      off
 	      Value		      "0"
 	      OutDataType	      "fixdt(1, 16)"
@@ -7030,6 +7118,100 @@ Model {
 		Name			"limit starboard"
 		RTWStorageClass		"Auto"
 		DataLoggingNameMode	"SignalName"
+	      }
+	    }
+	    Block {
+	      BlockType		      SubSystem
+	      Name		      "Map from -1..1 to 620..313"
+	      SID		      615
+	      Ports		      [1, 1]
+	      Position		      [210, 311, 285, 329]
+	      MinAlgLoopOccurrences   off
+	      PropExecContextOutsideSubsystem off
+	      RTWSystemCode	      "Auto"
+	      FunctionWithSeparateData off
+	      Opaque		      off
+	      RequestExecContextInheritance off
+	      MaskHideContents	      off
+	      Port {
+		PortNumber		1
+		Name			"position"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	      System {
+		Name			"Map from -1..1 to 620..313"
+		Location		[864, 422, 1177, 702]
+		Open			off
+		ModelBrowserVisibility	on
+		ModelBrowserWidth	200
+		ScreenColor		"white"
+		PaperOrientation	"landscape"
+		PaperPositionMode	"auto"
+		PaperType		"usletter"
+		PaperUnits		"inches"
+		TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+		TiledPageScale		1
+		ShowPageBoundaries	off
+		ZoomFactor		"100"
+		Block {
+		  BlockType		  Inport
+		  Name			  "In1"
+		  SID			  617
+		  Position		  [25, 33, 55, 47]
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Bias
+		  Name			  "Bias"
+		  SID			  614
+		  Position		  [160, 30, 210, 50]
+		  ShowName		  off
+		  Bias			  "466.5"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Gain
+		  Name			  "Gain"
+		  SID			  613
+		  Position		  [80, 24, 135, 56]
+		  ShowName		  off
+		  Gain			  "-153.5"
+		  ParameterDataTypeMode	  "Inherit via internal rule"
+		  ParameterDataType	  "fixdt(1, 16)"
+		  ParameterScaling	  "2^0"
+		  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
+		  OutDataTypeMode	  "Inherit via internal rule"
+		  OutDataType		  "fixdt(1, 16)"
+		  OutScaling		  "2^0"
+		  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "Out1"
+		  SID			  616
+		  Position		  [235, 33, 265, 47]
+		  IconDisplay		  "Port number"
+		}
+		Line {
+		  SrcBlock		  "Gain"
+		  SrcPort		  1
+		  DstBlock		  "Bias"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Bias"
+		  SrcPort		  1
+		  DstBlock		  "Out1"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "In1"
+		  SrcPort		  1
+		  DstBlock		  "Gain"
+		  DstPort		  1
+		}
 	      }
 	    }
 	    Block {
@@ -7055,7 +7237,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "Rudder sensors"
 	      SID		      491
-	      Position		      [365, 288, 395, 302]
+	      Position		      [385, 353, 415, 367]
 	      Port		      "3"
 	      IconDisplay	      "Port number"
 	      OutDataType	      "fixdt(1, 16)"
@@ -7106,10 +7288,9 @@ Model {
 	    }
 	    Line {
 	      Name		      "limit starboard"
-	      Labels		      [3, 0]
+	      Labels		      [1, 0]
 	      SrcBlock		      "Constant3"
 	      SrcPort		      1
-	      Points		      [70, 0; 0, -10]
 	      DstBlock		      "Bus\nCreator1"
 	      DstPort		      3
 	    }
@@ -7122,12 +7303,26 @@ Model {
 	      DstPort		      2
 	    }
 	    Line {
+	      SrcBlock		      "rudder"
+	      SrcPort		      1
+	      DstBlock		      "Map from -1..1 to 620..313"
+	      DstPort		      1
+	    }
+	    Line {
 	      Name		      "position"
 	      Labels		      [0, 0]
-	      SrcBlock		      "rudder"
+	      SrcBlock		      "Map from -1..1 to 620..313"
 	      SrcPort		      1
 	      DstBlock		      "Bus\nCreator1"
 	      DstPort		      1
+	    }
+	    Annotation {
+	      Name		      "Rudder sensor data is generated here. Given the ADC configuration onboard the dsPIC\nas well as th"
+	      "e range of voltage values for the rudder pot. the output range should be \n<=313 for starboard, >=620 for port,"
+	      " and 274<=center<=505. It's mapped from the -1..1\nrange that is used in calculations. The rudder follow the st"
+	      "andard right-hand-rule\nconvention and as such +1 corresponds to starboard and -1 corresponds to port."
+	      Position		      [41, 467]
+	      HorizontalAlignment     "left"
 	    }
 	  }
 	}
