@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.833"
+    ComputedModelVersion    "1.840"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Aug 11 11:56:49 2010"
-  RTWModifiedTimeStamp	  203428608
-  ModelVersionFormat	  "1.%<AutoIncrement:833>"
+  LastModifiedDate	  "Thu Aug 12 16:51:26 2010"
+  RTWModifiedTimeStamp	  203532664
+  ModelVersionFormat	  "1.%<AutoIncrement:840>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -967,7 +967,7 @@ Model {
   System {
     Name		    "Boat_sim"
     Location		    [216, 124, 1284, 874]
-    Open		    off
+    Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -980,7 +980,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    626
+    SIDHighWatermark	    628
     Block {
       BlockType		      SubSystem
       Name		      "Autonomous Controller"
@@ -998,7 +998,7 @@ Model {
       System {
 	Name			"Autonomous Controller"
 	Location		[216, 124, 1284, 874]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1372,7 +1372,7 @@ Model {
 	      SourceType	      "Compare To Constant"
 	      ShowPortLabels	      "FromPortIcon"
 	      SystemSampleTime	      "-1"
-	      FunctionWithSeparateData "off"
+	      FunctionWithSeparateData off
 	      RTWMemSecFuncInitTerm   "Inherit from model"
 	      RTWMemSecFuncExecute    "Inherit from model"
 	      RTWMemSecDataConstants  "Inherit from model"
@@ -1381,7 +1381,7 @@ Model {
 	      relop		      ">"
 	      const		      "0.02"
 	      LogicOutDataTypeMode    "uint8"
-	      ZeroCross		      "on"
+	      ZeroCross		      on
 	      Port {
 		PortNumber		1
 		Name			"enable"
@@ -1730,10 +1730,10 @@ Model {
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "1023"
-	  OutDataTypeMode	  "Inherit via back propagation"
+	  OutDataTypeMode	  "int16"
 	  OutDataType		  "sfix(16)"
 	  OutScaling		  "2^0"
-	  OutDataTypeStr	  "Inherit: Inherit via back propagation"
+	  OutDataTypeStr	  "int16"
 	}
 	Block {
 	  BlockType		  SubSystem
@@ -1839,7 +1839,7 @@ Model {
 	      SourceType	      "Compare To Constant"
 	      ShowPortLabels	      "FromPortIcon"
 	      SystemSampleTime	      "-1"
-	      FunctionWithSeparateData "off"
+	      FunctionWithSeparateData off
 	      RTWMemSecFuncInitTerm   "Inherit from model"
 	      RTWMemSecFuncExecute    "Inherit from model"
 	      RTWMemSecDataConstants  "Inherit from model"
@@ -1848,7 +1848,7 @@ Model {
 	      relop		      ">"
 	      const		      "0.02"
 	      LogicOutDataTypeMode    "uint8"
-	      ZeroCross		      "on"
+	      ZeroCross		      on
 	    }
 	    Block {
 	      BlockType		      Constant
@@ -1890,13 +1890,32 @@ Model {
 	      BackgroundColor	      "gray"
 	      ShowName		      off
 	      Value		      "0"
-	      OutDataTypeMode	      "single"
+	      OutDataTypeMode	      "boolean"
 	      OutDataType	      "sfix(16)"
 	      OutScaling	      "2^0"
-	      OutDataTypeStr	      "single"
+	      OutDataTypeStr	      "boolean"
 	      Port {
 		PortNumber		1
 		Name			"enable"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion"
+	      SID		      627
+	      Position		      [765, 371, 820, 389]
+	      ShowName		      off
+	      OutDataTypeMode	      "boolean"
+	      OutDataType	      "fixdt(1, 16)"
+	      OutScaling	      "2^0"
+	      OutDataTypeStr	      "boolean"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	      Port {
+		PortNumber		1
+		Name			"direction"
 		RTWStorageClass		"Auto"
 		DataLoggingNameMode	"SignalName"
 	      }
@@ -2414,12 +2433,6 @@ Model {
 	      LowerLimit	      "0"
 	      OutDataTypeMode	      "Inherit via back propagation"
 	      OutDataTypeStr	      "Inherit: Inherit via back propagation"
-	      Port {
-		PortNumber		1
-		Name			"direction"
-		RTWStorageClass		"Auto"
-		DataLoggingNameMode	"SignalName"
-	      }
 	    }
 	    Block {
 	      BlockType		      Signum
@@ -2729,13 +2742,11 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
-	      Name		      "direction"
-	      Labels		      [0, 0]
 	      SrcBlock		      "Saturation1"
 	      SrcPort		      1
-	      Points		      [135, 0]
-	      DstBlock		      "Bus\nCreator"
-	      DstPort		      2
+	      Points		      [0, -15]
+	      DstBlock		      "Data Type Conversion"
+	      DstPort		      1
 	    }
 	    Line {
 	      Name		      "up"
@@ -2795,6 +2806,14 @@ Model {
 	      SrcPort		      1
 	      DstBlock		      "Map from 313..620\nto 1..-1"
 	      DstPort		      1
+	    }
+	    Line {
+	      Name		      "direction"
+	      Labels		      [0, 0]
+	      SrcBlock		      "Data Type Conversion"
+	      SrcPort		      1
+	      DstBlock		      "Bus\nCreator"
+	      DstPort		      2
 	    }
 	  }
 	}
@@ -2882,10 +2901,10 @@ Model {
 	      Position		      [350, 72, 380, 103]
 	      ShowName		      off
 	      InputSameDT	      off
-	      OutDataTypeMode	      "Inherit via internal rule"
+	      OutDataTypeMode	      "single"
 	      OutDataType	      "fixdt(1, 16)"
 	      OutScaling	      "2^0"
-	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+	      OutDataTypeStr	      "single"
 	      SaturateOnIntegerOverflow	off
 	    }
 	    Block {
@@ -2896,10 +2915,10 @@ Model {
 	      Position		      [350, 42, 380, 73]
 	      ShowName		      off
 	      InputSameDT	      off
-	      OutDataTypeMode	      "Inherit via internal rule"
+	      OutDataTypeMode	      "single"
 	      OutDataType	      "fixdt(1, 16)"
 	      OutScaling	      "2^0"
-	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+	      OutDataTypeStr	      "single"
 	      SaturateOnIntegerOverflow	off
 	    }
 	    Block {
@@ -3377,6 +3396,22 @@ Model {
       Port {
 	PortNumber		1
 	Name			"<position>"
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
+    }
+    Block {
+      BlockType		      BusSelector
+      Name		      "Bus\nSelector1"
+      SID		      628
+      Ports		      [1, 1]
+      Position		      [130, 277, 135, 323]
+      BlockMirror	      on
+      ShowName		      off
+      OutputSignals	      "up"
+      Port {
+	PortNumber		1
+	Name			"<up>"
 	RTWStorageClass		"Auto"
 	DataLoggingNameMode	"SignalName"
       }
@@ -3950,7 +3985,7 @@ Model {
 	      SourceType	      "Second Order Linear Actuator"
 	      ShowPortLabels	      "FromPortIcon"
 	      SystemSampleTime	      "-1"
-	      FunctionWithSeparateData "off"
+	      FunctionWithSeparateData off
 	      RTWMemSecFuncInitTerm   "Inherit from model"
 	      RTWMemSecFuncExecute    "Inherit from model"
 	      RTWMemSecDataConstants  "Inherit from model"
@@ -3972,7 +4007,7 @@ Model {
 	      SourceType	      "Second Order Linear Actuator"
 	      ShowPortLabels	      "FromPortIcon"
 	      SystemSampleTime	      "-1"
-	      FunctionWithSeparateData "off"
+	      FunctionWithSeparateData off
 	      RTWMemSecFuncInitTerm   "Inherit from model"
 	      RTWMemSecFuncExecute    "Inherit from model"
 	      RTWMemSecDataConstants  "Inherit from model"
@@ -3994,7 +4029,7 @@ Model {
 	      SourceType	      "Second Order Linear Actuator"
 	      ShowPortLabels	      "FromPortIcon"
 	      SystemSampleTime	      "-1"
-	      FunctionWithSeparateData "off"
+	      FunctionWithSeparateData off
 	      RTWMemSecFuncInitTerm   "Inherit from model"
 	      RTWMemSecFuncExecute    "Inherit from model"
 	      RTWMemSecDataConstants  "Inherit from model"
@@ -7184,7 +7219,7 @@ Model {
 	      System {
 		Name			"Map from -1..1 to 620..313"
 		Location		[698, 445, 1104, 725]
-		Open			on
+		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
 		ScreenColor		"white"
@@ -7447,7 +7482,7 @@ Model {
 	      SourceType	      "Angle Conversion"
 	      ShowPortLabels	      "FromPortIcon"
 	      SystemSampleTime	      "-1"
-	      FunctionWithSeparateData "off"
+	      FunctionWithSeparateData off
 	      RTWMemSecFuncInitTerm   "Inherit from model"
 	      RTWMemSecFuncExecute    "Inherit from model"
 	      RTWMemSecDataConstants  "Inherit from model"
@@ -7652,7 +7687,7 @@ Model {
 	      SourceType	      "Flat Earth to LLA"
 	      ShowPortLabels	      "FromPortIcon"
 	      SystemSampleTime	      "-1"
-	      FunctionWithSeparateData "off"
+	      FunctionWithSeparateData off
 	      RTWMemSecFuncInitTerm   "Inherit from model"
 	      RTWMemSecFuncExecute    "Inherit from model"
 	      RTWMemSecDataConstants  "Inherit from model"
@@ -9106,13 +9141,12 @@ Model {
       SrcPort		      1
       Points		      [-40, 0]
       Branch {
-	DstBlock		"To Workspace8"
+	Points			[0, -240]
+	DstBlock		"Plant"
 	DstPort			1
       }
       Branch {
-	Labels			[1, 0]
-	Points			[0, -240]
-	DstBlock		"Plant"
+	DstBlock		"Bus\nSelector1"
 	DstPort			1
       }
     }
@@ -9198,6 +9232,14 @@ Model {
       SrcBlock		      "Bus\nSelector"
       SrcPort		      1
       DstBlock		      "To Workspace10"
+      DstPort		      1
+    }
+    Line {
+      Name		      "<up>"
+      Labels		      [0, 0]
+      SrcBlock		      "Bus\nSelector1"
+      SrcPort		      1
+      DstBlock		      "To Workspace8"
       DstPort		      1
     }
     Annotation {
