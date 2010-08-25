@@ -47,30 +47,34 @@ typedef struct tSensorData {
 	short speed;
 	float lat;
 	float lon;
-	float height;
+	float altitude;
 	float cog;
 	float sog;
-	float ddmmyy;
-	float hhmmss;
+	unsigned char day;
+	unsigned char month;
+	unsigned char year;
+	unsigned char second;
+	unsigned char minute;
+	unsigned char hour;
 	float r_Position;
-	float r_SBLimit;
-	float r_PortLimit;
+	unsigned char r_SBLimit;
+	unsigned char r_PortLimit;
 	float b_Position;
-	float b_SBLimit;
-	float b_PortLimit;
+	unsigned char b_SBLimit;
+	unsigned char b_PortLimit;
 } tSensorData;
 
 typedef struct tActuatorData {
-	char r_direction;
-	char r_enable;
+	unsigned char r_direction;
+	unsigned char r_enable;
 	unsigned short r_up;
 	unsigned short r_period;
-	char b_enable;
-	char b_direction;
+	unsigned char b_enable;
+	unsigned char b_direction;
 	unsigned int t_identifier;
 	unsigned char data[6];
 	unsigned char size;
-	char trigger;
+	unsigned char trigger;
 } tActuatorData;
 
 typedef struct tStateData {
@@ -85,7 +89,13 @@ typedef struct tStateData {
 } tStateData;
 
 typedef struct tCommandData {
-	char hi; //TODO: Populate with real variables
+	unsigned char stop;
+	unsigned char go;
+	unsigned char returnToBase;
+	unsigned char setWaypointMode;
+	unsigned short setWaypoints[16]; // Store room for 8 north/east pairs of waypoints
+	unsigned char setWaypointCount;
+	unsigned char enableManualControl;
 } tCommandData;
 
 /**
