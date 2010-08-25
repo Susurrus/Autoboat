@@ -1,7 +1,7 @@
 /*
 The MIT License
 
-Copyright (c) 2009 UCSC Autonomous Systems Lab
+Copyright (c) 2010 UCSC Autonomous Systems Lab
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -43,10 +43,6 @@ THE SOFTWARE.
 // ==============================================================
 
 #include "gps.h"
-#include "cBuffer.h"
-
-#include <p33fxxxx.h>
-#include <uart.h>
 
 tGpsData gpsControlData;
 char sentence[127];
