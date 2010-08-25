@@ -25,18 +25,21 @@ THE SOFTWARE.
 
 // ==============================================================
 // gps.c
-// This is code implements a fully interrupt driven UART reader to
-// be used in the UCSC Autopilot project. It makes use of the 
-// circular buffer data structure cBuffer.c. It has been 
-// written to be implemented in Simulink. It configures UART 1
-// at a predefined baud rate, then initializes a circular buffer,
-// configures the interrupt and starts the service. 
-// The main function gpsRead returns an array where byte 0 indicates
-// how many new bytes were read, and byte m indicates how many remain
-// in the buffer.
+// This is code implements a NMEA0138 parse for use in the autoboat
+// project. It makes use of the circular buffer data structure cBuffer.c.
+// It has been 
+// written to be implemented in Simulink through the use of C-Function
+// Call blocks. buildAndCheckSentence will append bytes from a data stream
+// onto an internally managed buffer. Once a complete sentence has been
+// constructed & verified by its checksum, it's passed off to the parser.
+// This code is utilized in Simulink by using a UART or datastream block
+// and feeding its output into a C-Function block calling buildAndCheckSentence.
+// The required C files for compilation are: cBuffer.c, sbrk.c, gps.c.
 // 
 // Code by: Mariano I. Lizarraga
 // First Revision: Aug 21 2008 @ 21:15
+// Modified by: Bryant W. Mairs
+// First Revision Aug 25 2010
 // ==============================================================
 
 #include "gps.h"
