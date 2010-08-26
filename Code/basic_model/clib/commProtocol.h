@@ -47,7 +47,7 @@ typedef struct tSensorData {
 	short speed;
 	float lat;
 	float lon;
-	float altitude;
+	float alt;
 	float cog;
 	float sog;
 	unsigned char day;
@@ -65,8 +65,8 @@ typedef struct tSensorData {
 } tSensorData;
 
 typedef struct tActuatorData {
-	unsigned char r_direction;
 	unsigned char r_enable;
+	unsigned char r_direction;
 	unsigned short r_up;
 	unsigned short r_period;
 	unsigned char b_enable;

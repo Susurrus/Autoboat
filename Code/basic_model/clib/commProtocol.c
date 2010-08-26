@@ -159,15 +159,67 @@ unsigned char calculateChecksum(char* sentence, unsigned char size) {
 }
 
 void getSensorData(float* data) {
+	data[0] = (float)sensorDataMessage.speed;
+	data[1] = sensorDataMessage.lat;
+	data[2] = sensorDataMessage.lon;
+	data[3] = sensorDataMessage.alt;
+	data[4] = sensorDataMessage.cog;
+	data[5] = sensorDataMessage.sog;
+	data[6] = (float)(sensorDataMessage.day | sensorDataMessage.month << 8);
+	data[7] = (float)(sensorDataMessage.year | sensorDataMessage.second << 8);
+	data[8] = (float)(sensorDataMessage.minute | sensorDataMessage.hour<< 8);
+	data[9] = sensorDataMessage.r_Position;
+	data[10] = (float)(sensorDataMessage.r_SBLimit | sensorDataMessage.r_PortLimit << 8);
+	data[11] = sensorDataMessage.b_Position;
+	data[12] = (float)(sensorDataMessage.b_SBLimit | sensorDataMessage.b_PortLimit << 8);
 }
 
 void getActuatorData(float* data) {
+	data[0] = (float)(actuatorDataMessase.r_enable | actuatorDataMessase.r_direction << 8);
+	data[1] = (float)actuatorDataMessase.r_up;
+	data[2] = (float)actuatorDataMessase.r_period;
+	data[3] = (float)(actuatorDataMessase.b_enable | b_direction << 8);
+	data[4] = (float)actuatorDataMessase.t_identifier;
+	data[5] = (float)(actuatorDataMessase.data[0] | actuatorDataMessase.data[1] << 8);
+	data[6] = (float)(actuatorDataMessase.data[1] | actuatorDataMessase.data[2] << 8);
+	data[7] = (float)(actuatorDataMessase.data[3] | actuatorDataMessase.data[4] << 8);
+	data[8] = (float)(actuatorDataMessase.size | actuatorDataMessase.trigger << 8);
 }
 
 void getStateData(float* data) {
+	data[0] = stateDataMessage.L2_Vector[0];
+	data[1] = stateDataMessage.L2_Vector[1];
+	data[2] = stateDataMessage.L2_Vector[2];
+	data[3] = stateDataMessage.desiredRudder;
+	data[4] = stateDataMessage.velocity[0];
+	data[5] = stateDataMessage.velocity[2];
+	data[6] = stateDataMessage.velocity[3];
+	data[7] = stateDataMessage.solar_azimuth;
+	data[8] = stateDataMessage.solar_zenith;
+	data[9] = (float)(stateDataMessage.currentWaypointIndex | stateDataMessage.waypointMode << 8);
+	data[10] = (float)stateDataMessage.waypointCount;
 }
 
 void getCommandData(float* data) {
+	data[0] = (float)(commandDataMessage.stop | commandDataMessage.go << 8);
+	data[1] = (float)(commandDataMessage.returnToBase | commandDataMessage.setWaypointMode << 8);
+	data[2] = (float)commandDataMessage.setWaypoints[0];
+	data[3] = (float)commandDataMessage.setWaypoints[1];
+	data[4] = (float)commandDataMessage.setWaypoints[2];
+	data[5] = (float)commandDataMessage.setWaypoints[3];
+	data[6] = (float)commandDataMessage.setWaypoints[4];
+	data[7] = (float)commandDataMessage.setWaypoints[5];
+	data[8] = (float)commandDataMessage.setWaypoints[6];
+	data[9] = (float)commandDataMessage.setWaypoints[7];
+	data[10] = (float)commandDataMessage.setWaypoints[8];
+	data[11] = (float)commandDataMessage.setWaypoints[9];
+	data[12] = (float)commandDataMessage.setWaypoints[10];
+	data[13] = (float)commandDataMessage.setWaypoints[11];
+	data[14] = (float)commandDataMessage.setWaypoints[12];
+	data[15] = (float)commandDataMessage.setWaypoints[13];
+	data[16] = (float)commandDataMessage.setWaypoints[14];
+	data[17] = (float)commandDataMessage.setWaypoints[15];
+	data[18] = (float)(commandDataMessage.setWaypointCount | commandDataMessage.enableManualControl << 8);
 }
 
 
