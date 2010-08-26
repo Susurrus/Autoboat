@@ -150,8 +150,6 @@ void getGpsMainData(float* data) {
 	data[0] = gpsControlData.lat.flData;
 	data[1] = gpsControlData.lon.flData;
 	data[2] = gpsControlData.height.flData;
-	data[3] = (float)gpsControlData.cog.usData;
-	data[4] = (float)gpsControlData.sog.usData/100.0;
 	
 	// Add date info
 	tFloatToChar tmp;
@@ -159,14 +157,17 @@ void getGpsMainData(float* data) {
 	tmp.chData[1] = gpsControlData.month;
 	tmp.chData[2] = gpsControlData.year;
 	tmp.chData[3] = 0;
-	data[5] = tmp.flData;
+	data[3] = tmp.flData;
 	
 	// Add time info
-	tmp.chData[0] = gpsControlData.hour;
+	tmp.chData[0] = gpsControlData.sec;
 	tmp.chData[1] = gpsControlData.min;
-	tmp.chData[2] = gpsControlData.sec;
+	tmp.chData[2] = gpsControlData.hour;
 	tmp.chData[3] = 0;
-	data[6] = tmp.flData;
+	data[4] = tmp.flData;
+	
+	data[5] = (float)gpsControlData.cog.usData;
+	data[6] = (float)gpsControlData.sog.usData/100.0;
 	
 	// Mark this data as old now
 	gpsControlData.newData = 0;
