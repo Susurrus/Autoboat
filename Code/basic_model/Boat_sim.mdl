@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.981"
+    ComputedModelVersion    "1.987"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,14 +26,14 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Aug 26 15:50:15 2010"
-  RTWModifiedTimeStamp	  204738589
-  ModelVersionFormat	  "1.%<AutoIncrement:981>"
+  LastModifiedDate	  "Sat Aug 28 12:15:35 2010"
+  RTWModifiedTimeStamp	  204898524
+  ModelVersionFormat	  "1.%<AutoIncrement:987>"
   ConfigurationManager	  "None"
-  SampleTimeColors	  off
+  SampleTimeColors	  on
   SampleTimeAnnotations	  off
   LibraryLinkDisplay	  "none"
-  WideLines		  off
+  WideLines		  on
   ShowLineDimensions	  on
   ShowPortDataTypes	  on
   ShowLoopsOnError	  on
@@ -959,8 +959,8 @@ Model {
   }
   System {
     Name		    "Boat_sim"
-    Location		    [214, 82, 1282, 832]
-    Open		    off
+    Location		    [216, 124, 1284, 874]
+    Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -973,7 +973,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    819
+    SIDHighWatermark	    831
     Block {
       BlockType		      SubSystem
       Name		      "Autonomous Controller"
@@ -990,8 +990,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Autonomous Controller"
-	Location		[202, 148, 1270, 898]
-	Open			off
+	Location		[216, 124, 1284, 874]
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1426,6 +1426,115 @@ Model {
 	      RTWMemSecDataParameters "Inherit from model"
 	    }
 	    Block {
+	      BlockType		      SubSystem
+	      Name		      "Map from 313..620\nto 1..-1"
+	      SID		      820
+	      Ports		      [1, 1]
+	      Position		      [310, 126, 375, 154]
+	      MinAlgLoopOccurrences   off
+	      PropExecContextOutsideSubsystem off
+	      RTWSystemCode	      "Auto"
+	      FunctionWithSeparateData off
+	      Opaque		      off
+	      RequestExecContextInheritance off
+	      MaskHideContents	      off
+	      System {
+		Name			"Map from 313..620\nto 1..-1"
+		Location		[443, 630, 978, 813]
+		Open			off
+		ModelBrowserVisibility	on
+		ModelBrowserWidth	200
+		ScreenColor		"white"
+		PaperOrientation	"landscape"
+		PaperPositionMode	"auto"
+		PaperType		"usletter"
+		PaperUnits		"inches"
+		TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+		TiledPageScale		1
+		ShowPageBoundaries	off
+		ZoomFactor		"100"
+		Block {
+		  BlockType		  Inport
+		  Name			  "In1"
+		  SID			  821
+		  Position		  [15, 33, 45, 47]
+		  BackgroundColor	  "darkGreen"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Bias
+		  Name			  "Bias"
+		  SID			  822
+		  Position		  [165, 25, 205, 55]
+		  ShowName		  off
+		  Bias			  "-466.5"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  DataTypeConversion
+		  Name			  "Data Type Conversion"
+		  SID			  823
+		  Position		  [70, 31, 115, 49]
+		  ShowName		  off
+		  OutDataTypeMode	  "single"
+		  OutDataType		  "fixdt(1, 16)"
+		  OutScaling		  "2^0"
+		  OutDataTypeStr	  "single"
+		  RndMeth		  "Floor"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Gain
+		  Name			  "Gain"
+		  SID			  824
+		  Position		  [230, 25, 260, 55]
+		  ShowName		  off
+		  Gain			  "-1/153.5"
+		  ParameterDataTypeMode	  "Inherit via internal rule"
+		  ParameterDataType	  "fixdt(1, 16)"
+		  ParameterScaling	  "2^0"
+		  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
+		  OutDataTypeMode	  "Inherit via internal rule"
+		  OutDataType		  "fixdt(1, 16)"
+		  OutScaling		  "2^0"
+		  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "Out1"
+		  SID			  825
+		  Position		  [285, 33, 315, 47]
+		  BackgroundColor	  "yellow"
+		  IconDisplay		  "Port number"
+		}
+		Line {
+		  SrcBlock		  "Bias"
+		  SrcPort		  1
+		  DstBlock		  "Gain"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "In1"
+		  SrcPort		  1
+		  DstBlock		  "Data Type Conversion"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Gain"
+		  SrcPort		  1
+		  DstBlock		  "Out1"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Data Type Conversion"
+		  SrcPort		  1
+		  DstBlock		  "Bias"
+		  DstPort		  1
+		}
+	      }
+	    }
+	    Block {
 	      BlockType		      Saturate
 	      Name		      "Saturation"
 	      SID		      57
@@ -1510,8 +1619,8 @@ Model {
 	      Labels		      [0, 0; 0, 0]
 	      SrcBlock		      "Bus\nSelector"
 	      SrcPort		      1
-	      DstBlock		      "Add"
-	      DstPort		      2
+	      DstBlock		      "Map from 313..620\nto 1..-1"
+	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "Saturation"
@@ -1595,11 +1704,23 @@ Model {
 	      DstBlock		      "Calculate Optimal\nRoll"
 	      DstPort		      3
 	    }
+	    Line {
+	      SrcBlock		      "Map from 313..620\nto 1..-1"
+	      SrcPort		      1
+	      DstBlock		      "Add"
+	      DstPort		      2
+	    }
 	    Annotation {
 	      Name		      "Ballast command is calculated based on the sun position vector\nand boat normal. Output is a -1..1"
 	      " vector (-1 = starboard) that's\n mapped into the appropriate real-world signals:\ndirection = 1 - port, 0 - st"
 	      "arboard\nenabled = 1 - enabled, 0 - disabled"
 	      Position		      [48, 290]
+	      HorizontalAlignment     "left"
+	    }
+	    Annotation {
+	      Name		      "NOTE: The current ballast sensor position range is\nunknown! This should be checked before employe"
+	      "d\nonboard."
+	      Position		      [229, 206]
 	      HorizontalAlignment     "left"
 	    }
 	  }
@@ -3666,7 +3787,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Plant"
-	Location		[216, 124, 1284, 857]
+	Location		[289, 134, 1263, 867]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -4869,7 +4990,7 @@ Model {
 	      System {
 		Name			"Power Gain from Solar\nSubsystem"
 		Location		[214, 82, 1270, 978]
-		Open			on
+		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	212
 		ScreenColor		"white"
@@ -6928,10 +7049,10 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Generate sensor data\nfrom actuator position"
-	    Location		    [216, 124, 1284, 874]
+	    Location		    [289, 134, 1263, 884]
 	    Open		    off
 	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
+	    ModelBrowserWidth	    294
 	    ScreenColor		    "white"
 	    PaperOrientation	    "landscape"
 	    PaperPositionMode	    "auto"
@@ -6961,12 +7082,6 @@ Model {
 	      IconDisplay	      "Port number"
 	      OutDataType	      "fixdt(1, 16)"
 	      OutScaling	      "2^0"
-	      Port {
-		PortNumber		1
-		Name			"position"
-		RTWStorageClass		"Auto"
-		DataLoggingNameMode	"SignalName"
-	      }
 	    }
 	    Block {
 	      BlockType		      Inport
@@ -6984,7 +7099,7 @@ Model {
 	      Name		      "Bus\nCreator"
 	      SID		      528
 	      Ports		      [3, 1]
-	      Position		      [320, 156, 325, 204]
+	      Position		      [340, 144, 345, 266]
 	      ShowName		      off
 	      Inputs		      "3"
 	      DisplayOption	      "bar"
@@ -7003,12 +7118,14 @@ Model {
 	      BlockType		      Constant
 	      Name		      "Constant"
 	      SID		      529
-	      Position		      [175, 173, 205, 187]
+	      Position		      [110, 198, 140, 212]
 	      BackgroundColor	      "gray"
 	      ShowName		      off
 	      Value		      "0"
+	      OutDataTypeMode	      "boolean"
 	      OutDataType	      "fixdt(1, 16)"
 	      OutScaling	      "2^0"
+	      OutDataTypeStr	      "boolean"
 	      Port {
 		PortNumber		1
 		Name			"limit port"
@@ -7020,12 +7137,14 @@ Model {
 	      BlockType		      Constant
 	      Name		      "Constant1"
 	      SID		      530
-	      Position		      [175, 198, 205, 212]
+	      Position		      [110, 238, 140, 252]
 	      BackgroundColor	      "gray"
 	      ShowName		      off
 	      Value		      "0"
+	      OutDataTypeMode	      "boolean"
 	      OutDataType	      "fixdt(1, 16)"
 	      OutScaling	      "2^0"
+	      OutDataTypeStr	      "boolean"
 	      Port {
 		PortNumber		1
 		Name			"limit starboard"
@@ -7185,6 +7304,119 @@ Model {
 	      }
 	    }
 	    Block {
+	      BlockType		      SubSystem
+	      Name		      "Map from -1..1 to 620..313 - 1"
+	      SID		      826
+	      Ports		      [1, 1]
+	      Position		      [210, 156, 285, 174]
+	      MinAlgLoopOccurrences   off
+	      PropExecContextOutsideSubsystem off
+	      RTWSystemCode	      "Auto"
+	      FunctionWithSeparateData off
+	      Opaque		      off
+	      RequestExecContextInheritance off
+	      MaskHideContents	      off
+	      Port {
+		PortNumber		1
+		Name			"position"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	      System {
+		Name			"Map from -1..1 to 620..313 - 1"
+		Location		[698, 445, 1104, 725]
+		Open			off
+		ModelBrowserVisibility	on
+		ModelBrowserWidth	200
+		ScreenColor		"white"
+		PaperOrientation	"landscape"
+		PaperPositionMode	"auto"
+		PaperType		"usletter"
+		PaperUnits		"inches"
+		TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+		TiledPageScale		1
+		ShowPageBoundaries	off
+		ZoomFactor		"100"
+		Block {
+		  BlockType		  Inport
+		  Name			  "In1"
+		  SID			  827
+		  Position		  [25, 33, 55, 47]
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Bias
+		  Name			  "Bias"
+		  SID			  828
+		  Position		  [160, 30, 210, 50]
+		  ShowName		  off
+		  Bias			  "466.5"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  DataTypeConversion
+		  Name			  "Data Type Conversion"
+		  SID			  829
+		  Position		  [230, 32, 290, 48]
+		  ShowName		  off
+		  OutDataTypeMode	  "uint16"
+		  OutDataType		  "fixdt(1, 16)"
+		  OutScaling		  "2^0"
+		  OutDataTypeStr	  "uint16"
+		  RndMeth		  "Floor"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Gain
+		  Name			  "Gain"
+		  SID			  830
+		  Position		  [80, 24, 135, 56]
+		  ShowName		  off
+		  Gain			  "-153.5"
+		  ParameterDataTypeMode	  "Inherit via internal rule"
+		  ParameterDataType	  "fixdt(1, 16)"
+		  ParameterScaling	  "2^0"
+		  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
+		  OutDataTypeMode	  "Inherit via internal rule"
+		  OutDataType		  "fixdt(1, 16)"
+		  OutScaling		  "2^0"
+		  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "Out1"
+		  SID			  831
+		  Position		  [325, 33, 355, 47]
+		  IconDisplay		  "Port number"
+		}
+		Line {
+		  SrcBlock		  "Data Type Conversion"
+		  SrcPort		  1
+		  DstBlock		  "Out1"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "In1"
+		  SrcPort		  1
+		  DstBlock		  "Gain"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Bias"
+		  SrcPort		  1
+		  DstBlock		  "Data Type Conversion"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Gain"
+		  SrcPort		  1
+		  DstBlock		  "Bias"
+		  DstPort		  1
+		}
+	      }
+	    }
+	    Block {
 	      BlockType		      Outport
 	      Name		      "Throttle sensors"
 	      SID		      486
@@ -7198,7 +7430,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "Ballast sensors"
 	      SID		      490
-	      Position		      [385, 173, 415, 187]
+	      Position		      [385, 198, 415, 212]
 	      BackgroundColor	      "yellow"
 	      Port		      "2"
 	      IconDisplay	      "Port number"
@@ -7230,10 +7462,9 @@ Model {
 	    }
 	    Line {
 	      Name		      "limit starboard"
-	      Labels		      [3, 0]
+	      Labels		      [0, 0]
 	      SrcBlock		      "Constant1"
 	      SrcPort		      1
-	      Points		      [70, 0; 0, -10]
 	      DstBlock		      "Bus\nCreator"
 	      DstPort		      3
 	    }
@@ -7246,11 +7477,9 @@ Model {
 	      DstPort		      2
 	    }
 	    Line {
-	      Name		      "position"
-	      Labels		      [0, 0]
 	      SrcBlock		      "ballast"
 	      SrcPort		      1
-	      DstBlock		      "Bus\nCreator"
+	      DstBlock		      "Map from -1..1 to 620..313 - 1"
 	      DstPort		      1
 	    }
 	    Line {
@@ -7261,7 +7490,7 @@ Model {
 	    }
 	    Line {
 	      Name		      "limit starboard"
-	      Labels		      [1, 0]
+	      Labels		      [0, 0]
 	      SrcBlock		      "Constant3"
 	      SrcPort		      1
 	      DstBlock		      "Bus\nCreator1"
@@ -7287,6 +7516,14 @@ Model {
 	      SrcBlock		      "Map from -1..1 to 620..313"
 	      SrcPort		      1
 	      DstBlock		      "Bus\nCreator1"
+	      DstPort		      1
+	    }
+	    Line {
+	      Name		      "position"
+	      Labels		      [0, 0]
+	      SrcBlock		      "Map from -1..1 to 620..313 - 1"
+	      SrcPort		      1
+	      DstBlock		      "Bus\nCreator"
 	      DstPort		      1
 	    }
 	    Annotation {

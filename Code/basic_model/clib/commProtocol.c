@@ -163,27 +163,27 @@ void getSensorData(float* data) {
 	data[1] = sensorDataMessage.lat;
 	data[2] = sensorDataMessage.lon;
 	data[3] = sensorDataMessage.alt;
-	data[4] = sensorDataMessage.cog;
-	data[5] = sensorDataMessage.sog;
-	data[6] = (float)(sensorDataMessage.day | sensorDataMessage.month << 8);
-	data[7] = (float)(sensorDataMessage.year | sensorDataMessage.second << 8);
-	data[8] = (float)(sensorDataMessage.minute | sensorDataMessage.hour<< 8);
+	data[4] = (float)(sensorDataMessage.month | sensorDataMessage.year << 16);
+	data[5] = (float)(sensorDataMessage.hour | sensorDataMessage.day << 16);
+	data[6] = (float)(sensorDataMessage.second | sensorDataMessage.minute<< 16);
+	data[7] = sensorDataMessage.cog;
+	data[8] = sensorDataMessage.sog;
 	data[9] = sensorDataMessage.r_Position;
-	data[10] = (float)(sensorDataMessage.r_SBLimit | sensorDataMessage.r_PortLimit << 8);
+	data[10] = (float)(sensorDataMessage.r_PortLimit | sensorDataMessage.r_SBLimit << 16);
 	data[11] = sensorDataMessage.b_Position;
-	data[12] = (float)(sensorDataMessage.b_SBLimit | sensorDataMessage.b_PortLimit << 8);
+	data[12] = (float)(sensorDataMessage.b_PortLimit | sensorDataMessage.b_SBLimit << 16);
 }
 
 void getActuatorData(float* data) {
-	data[0] = (float)(actuatorDataMessase.r_enable | actuatorDataMessase.r_direction << 8);
+	data[0] = (float)(actuatorDataMessase.r_enable | actuatorDataMessase.r_direction << 16);
 	data[1] = (float)actuatorDataMessase.r_up;
 	data[2] = (float)actuatorDataMessase.r_period;
-	data[3] = (float)(actuatorDataMessase.b_enable | actuatorDataMessase.b_direction << 8);
+	data[3] = (float)(actuatorDataMessase.b_enable | actuatorDataMessase.b_direction << 16);
 	data[4] = (float)actuatorDataMessase.t_identifier;
-	data[5] = (float)(actuatorDataMessase.data[0] | actuatorDataMessase.data[1] << 8);
-	data[6] = (float)(actuatorDataMessase.data[1] | actuatorDataMessase.data[2] << 8);
-	data[7] = (float)(actuatorDataMessase.data[3] | actuatorDataMessase.data[4] << 8);
-	data[8] = (float)(actuatorDataMessase.size | actuatorDataMessase.trigger << 8);
+	data[5] = (float)(actuatorDataMessase.data[0] | actuatorDataMessase.data[1] << 16);
+	data[6] = (float)(actuatorDataMessase.data[1] | actuatorDataMessase.data[2] << 16);
+	data[7] = (float)(actuatorDataMessase.data[3] | actuatorDataMessase.data[4] << 16);
+	data[8] = (float)(actuatorDataMessase.size | actuatorDataMessase.trigger << 16);
 }
 
 void getStateData(float* data) {
@@ -196,13 +196,13 @@ void getStateData(float* data) {
 	data[6] = stateDataMessage.velocity[3];
 	data[7] = stateDataMessage.solar_azimuth;
 	data[8] = stateDataMessage.solar_zenith;
-	data[9] = (float)(stateDataMessage.currentWaypointIndex | stateDataMessage.waypointMode << 8);
+	data[9] = (float)(stateDataMessage.currentWaypointIndex | stateDataMessage.waypointMode << 16);
 	data[10] = (float)stateDataMessage.waypointCount;
 }
 
 void getCommandData(float* data) {
-	data[0] = (float)(commandDataMessage.stop | commandDataMessage.go << 8);
-	data[1] = (float)(commandDataMessage.returnToBase | commandDataMessage.setWaypointMode << 8);
+	data[0] = (float)(commandDataMessage.stop | commandDataMessage.go << 16);
+	data[1] = (float)(commandDataMessage.returnToBase | commandDataMessage.setWaypointMode << 16);
 	data[2] = (float)commandDataMessage.setWaypoints[0];
 	data[3] = (float)commandDataMessage.setWaypoints[1];
 	data[4] = (float)commandDataMessage.setWaypoints[2];
@@ -219,7 +219,7 @@ void getCommandData(float* data) {
 	data[15] = (float)commandDataMessage.setWaypoints[13];
 	data[16] = (float)commandDataMessage.setWaypoints[14];
 	data[17] = (float)commandDataMessage.setWaypoints[15];
-	data[18] = (float)(commandDataMessage.setWaypointCount | commandDataMessage.enableManualControl << 8);
+	data[18] = (float)(commandDataMessage.setWaypointCount | commandDataMessage.enableManualControl << 16);
 }
 
 

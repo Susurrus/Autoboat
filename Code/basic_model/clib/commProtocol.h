@@ -48,14 +48,14 @@ typedef struct tSensorData {
 	float lat;
 	float lon;
 	float alt;
-	float cog;
-	float sog;
 	unsigned char day;
 	unsigned char month;
 	unsigned char year;
 	unsigned char second;
 	unsigned char minute;
 	unsigned char hour;
+	float cog;
+	float sog;
 	float r_Position;
 	unsigned char r_SBLimit;
 	unsigned char r_PortLimit;
