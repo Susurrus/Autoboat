@@ -178,7 +178,7 @@ void getActuatorData(float* data) {
 	data[0] = (float)(actuatorDataMessase.r_enable | actuatorDataMessase.r_direction << 8);
 	data[1] = (float)actuatorDataMessase.r_up;
 	data[2] = (float)actuatorDataMessase.r_period;
-	data[3] = (float)(actuatorDataMessase.b_enable | b_direction << 8);
+	data[3] = (float)(actuatorDataMessase.b_enable | actuatorDataMessase.b_direction << 8);
 	data[4] = (float)actuatorDataMessase.t_identifier;
 	data[5] = (float)(actuatorDataMessase.data[0] | actuatorDataMessase.data[1] << 8);
 	data[6] = (float)(actuatorDataMessase.data[1] | actuatorDataMessase.data[2] << 8);
