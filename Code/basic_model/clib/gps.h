@@ -58,7 +58,7 @@ typedef union{
 	float   		flData;
 	unsigned short	shData[2];
 } tFloatToChar; 
-		   
+
 typedef struct tGpsData{
 	unsigned char	 		year;
 	unsigned char			month;

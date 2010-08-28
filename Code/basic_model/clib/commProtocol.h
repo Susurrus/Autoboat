@@ -71,7 +71,7 @@ typedef struct tActuatorData {
 	unsigned short r_period;
 	unsigned char b_enable;
 	unsigned char b_direction;
-	unsigned int t_identifier;
+	unsigned long t_identifier;
 	unsigned char data[6];
 	unsigned char size;
 	unsigned char trigger;
@@ -113,10 +113,10 @@ unsigned char calculateChecksum(char* sentence, unsigned char size);
 
 void getSensorData(float* data);
 
-void getActuatorData(float* data);
+void getActuatorData(unsigned long* data);
 
 void getStateData(float* data);
 
-void getCommandData(float* data);
+void getCommandData(unsigned long* data);
 
 

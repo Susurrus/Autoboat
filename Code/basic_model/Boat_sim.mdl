@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.987"
+    ComputedModelVersion    "1.999"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sat Aug 28 12:15:35 2010"
-  RTWModifiedTimeStamp	  204898524
-  ModelVersionFormat	  "1.%<AutoIncrement:987>"
+  LastModifiedDate	  "Sat Aug 28 15:36:17 2010"
+  RTWModifiedTimeStamp	  204910576
+  ModelVersionFormat	  "1.%<AutoIncrement:999>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -609,6 +609,12 @@ Model {
       SaturateOnIntegerOverflow	on
     }
     Block {
+      BlockType		      ActionPort
+      InitializeStates	      "held"
+      PropagateVarSize	      "Only when execution is resumed"
+      ActionType	      "unset"
+    }
+    Block {
       BlockType		      Bias
       Bias		      "0"
       SaturateOnIntegerOverflow	on
@@ -641,6 +647,35 @@ Model {
       SampleTime	      "inf"
       FramePeriod	      "inf"
       PreserveConstantTs      off
+    }
+    Block {
+      BlockType		      DataStoreMemory
+      ReadBeforeWriteMsg      "none"
+      WriteAfterWriteMsg      "none"
+      WriteAfterReadMsg	      "none"
+      InitialValue	      "0"
+      StateMustResolveToSignalObject off
+      ShowAdditionalParam     off
+      OutMin		      "[]"
+      OutMax		      "[]"
+      DataType		      "auto"
+      OutDataType	      "fixdt(1,16,0)"
+      OutScaling	      "[]"
+      OutDataTypeStr	      "Inherit: auto"
+      LockScale		      off
+      SignalType	      "auto"
+      DataLogging	      off
+      DataLoggingLimitDataPoints off
+      DataLoggingMaxPoints    "5000"
+      DataLoggingDecimateData off
+      DataLoggingDecimation   "2"
+      DataLoggingNameMode     "SignalName"
+    }
+    Block {
+      BlockType		      DataStoreRead
+    }
+    Block {
+      BlockType		      DataStoreWrite
     }
     Block {
       BlockType		      DataTypeConversion
@@ -754,6 +789,14 @@ Model {
       IconDisplay	      "Tag"
     }
     Block {
+      BlockType		      If
+      NumInputs		      "1"
+      IfExpression	      "u1 > 0"
+      ShowElse		      on
+      ZeroCross		      on
+      SampleTime	      "-1"
+    }
+    Block {
       BlockType		      Inport
       Port		      "1"
       UseBusObject	      off
@@ -819,6 +862,24 @@ Model {
       RTWStateStorageClass    "Auto"
     }
     Block {
+      BlockType		      MultiPortSwitch
+      DataPortOrder	      "One-based contiguous"
+      Inputs		      "3"
+      DataPortIndices	      "{1,2,3}"
+      InputSameDT	      on
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeMode	      "Inherit via internal rule"
+      OutDataType	      "fixdt(1,16,0)"
+      OutScaling	      "[]"
+      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      SampleTime	      "-1"
+      AllowDiffInputSizes     off
+    }
+    Block {
       BlockType		      Mux
       Inputs		      "4"
       DisplayOption	      "none"
@@ -847,6 +908,19 @@ Model {
       SourceOfInitialOutputValue "Dialog"
       OutputWhenDisabled      "held"
       InitialOutput	      "[]"
+    }
+    Block {
+      BlockType		      Probe
+      ProbeWidth	      on
+      ProbeSampleTime	      on
+      ProbeComplexSignal      on
+      ProbeSignalDimensions   off
+      ProbeFramedSignal	      off
+      ProbeWidthDataType      "double"
+      ProbeSampleTimeDataType "double"
+      ProbeComplexityDataType "double"
+      ProbeDimensionsDataType "double"
+      ProbeFrameDataType      "double"
     }
     Block {
       BlockType		      Product
@@ -895,6 +969,13 @@ Model {
       RndMeth		      "Floor"
     }
     Block {
+      BlockType		      Selector
+      NumberOfDimensions      "1"
+      IndexMode		      "One-based"
+      InputPortWidth	      "-1"
+      SampleTime	      "-1"
+    }
+    Block {
       BlockType		      Signum
       ZeroCross		      on
       SampleTime	      "-1"
@@ -938,6 +1019,24 @@ Model {
       SampleTime	      "-1"
     }
     Block {
+      BlockType		      Switch
+      Criteria		      "u2 >= Threshold"
+      Threshold		      "0"
+      InputSameDT	      on
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeMode	      "Inherit via internal rule"
+      OutDataType	      "fixdt(1,16,0)"
+      OutScaling	      "[]"
+      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      ZeroCross		      on
+      SampleTime	      "-1"
+      AllowDiffInputSizes     off
+    }
+    Block {
       BlockType		      Terminator
     }
     Block {
@@ -973,14 +1072,15 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    831
+    SIDHighWatermark	    1034
     Block {
       BlockType		      SubSystem
       Name		      "Autonomous Controller"
-      SID		      1
+      SID		      832
       Ports		      [4, 3]
       Position		      [195, 277, 395, 388]
       BlockMirror	      on
+      NamePlacement	      "alternate"
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -990,8 +1090,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Autonomous Controller"
-	Location		[216, 124, 1284, 874]
-	Open			on
+	Location		[202, 82, 1270, 978]
+	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1006,8 +1106,8 @@ Model {
 	Block {
 	  BlockType		  Inport
 	  Name			  "GPS"
-	  SID			  361
-	  Position		  [30, 353, 60, 367]
+	  SID			  833
+	  Position		  [35, 478, 65, 492]
 	  BackgroundColor	  "darkGreen"
 	  IconDisplay		  "Port number"
 	  OutDataType		  "sfix(16)"
@@ -1016,8 +1116,8 @@ Model {
 	Block {
 	  BlockType		  Inport
 	  Name			  "sensors_t"
-	  SID			  498
-	  Position		  [340, 168, 370, 182]
+	  SID			  834
+	  Position		  [75, 168, 105, 182]
 	  BackgroundColor	  "darkGreen"
 	  Port			  "2"
 	  IconDisplay		  "Port number"
@@ -1027,8 +1127,8 @@ Model {
 	Block {
 	  BlockType		  Inport
 	  Name			  "sensors_r"
-	  SID			  499
-	  Position		  [30, 293, 60, 307]
+	  SID			  835
+	  Position		  [35, 418, 65, 432]
 	  BackgroundColor	  "darkGreen"
 	  Port			  "3"
 	  IconDisplay		  "Port number"
@@ -1038,8 +1138,8 @@ Model {
 	Block {
 	  BlockType		  Inport
 	  Name			  "sensors_b"
-	  SID			  500
-	  Position		  [30, 388, 60, 402]
+	  SID			  836
+	  Position		  [35, 513, 65, 527]
 	  BackgroundColor	  "darkGreen"
 	  Port			  "4"
 	  IconDisplay		  "Port number"
@@ -1049,9 +1149,9 @@ Model {
 	Block {
 	  BlockType		  SubSystem
 	  Name			  "Ballast\nCommand"
-	  SID			  501
+	  SID			  837
 	  Ports			  [4, 1]
-	  Position		  [345, 343, 440, 402]
+	  Position		  [350, 468, 445, 527]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -1077,7 +1177,7 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "heading"
-	      SID		      583
+	      SID		      838
 	      Position		      [20, 18, 50, 32]
 	      BackgroundColor	      "darkGreen"
 	      IconDisplay	      "Port number"
@@ -1085,7 +1185,7 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "pos"
-	      SID		      582
+	      SID		      839
 	      Position		      [20, 93, 50, 107]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "2"
@@ -1094,7 +1194,7 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "time"
-	      SID		      504
+	      SID		      840
 	      Position		      [20, 58, 50, 72]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "3"
@@ -1103,7 +1203,7 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "ballast\nsensors"
-	      SID		      505
+	      SID		      841
 	      Position		      [20, 133, 50, 147]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "4"
@@ -1112,7 +1212,7 @@ Model {
 	    Block {
 	      BlockType		      Abs
 	      Name		      "Abs"
-	      SID		      514
+	      SID		      842
 	      Position		      [585, 120, 615, 150]
 	      ShowName		      off
 	      OutDataType	      "fixdt(1, 16)"
@@ -1122,7 +1222,7 @@ Model {
 	    Block {
 	      BlockType		      Sum
 	      Name		      "Add"
-	      SID		      513
+	      SID		      843
 	      Ports		      [2, 1]
 	      Position		      [510, 117, 540, 148]
 	      ShowName		      off
@@ -1137,7 +1237,7 @@ Model {
 	    Block {
 	      BlockType		      BusCreator
 	      Name		      "Bus\nCreator"
-	      SID		      511
+	      SID		      844
 	      Ports		      [2, 1]
 	      Position		      [740, 126, 745, 164]
 	      ShowName		      off
@@ -1147,7 +1247,7 @@ Model {
 	    Block {
 	      BlockType		      BusSelector
 	      Name		      "Bus\nSelector"
-	      SID		      512
+	      SID		      845
 	      Ports		      [1, 1]
 	      Position		      [120, 127, 125, 153]
 	      ShowName		      off
@@ -1162,7 +1262,7 @@ Model {
 	    Block {
 	      BlockType		      SubSystem
 	      Name		      "Calculate Optimal\nRoll"
-	      SID		      6
+	      SID		      846
 	      Ports		      [3, 1]
 	      Position		      [355, 40, 425, 100]
 	      MinAlgLoopOccurrences   off
@@ -1190,7 +1290,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "bearing"
-		  SID			  7
+		  SID			  847
 		  Position		  [25, 18, 55, 32]
 		  BackgroundColor	  "darkGreen"
 		  IconDisplay		  "Port number"
@@ -1200,7 +1300,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "azimuth"
-		  SID			  8
+		  SID			  848
 		  Position		  [25, 68, 55, 82]
 		  BackgroundColor	  "darkGreen"
 		  Port			  "2"
@@ -1218,7 +1318,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "zenith"
-		  SID			  730
+		  SID			  849
 		  Position		  [25, 113, 55, 127]
 		  BackgroundColor	  "darkGreen"
 		  Port			  "3"
@@ -1236,7 +1336,7 @@ Model {
 		Block {
 		  BlockType		  Product
 		  Name			  "Product"
-		  SID			  10
+		  SID			  850
 		  Ports			  [2, 1]
 		  Position		  [315, 52, 345, 83]
 		  ShowName		  off
@@ -1250,7 +1350,7 @@ Model {
 		Block {
 		  BlockType		  Sum
 		  Name			  "Subtract"
-		  SID			  11
+		  SID			  851
 		  Ports			  [2, 1]
 		  Position		  [165, 17, 195, 48]
 		  ShowName		  off
@@ -1265,7 +1365,7 @@ Model {
 		Block {
 		  BlockType		  Trigonometry
 		  Name			  "Trigonometric\nFunction"
-		  SID			  12
+		  SID			  852
 		  Ports			  [1, 1]
 		  Position		  [250, 70, 280, 100]
 		  ShowName		  off
@@ -1273,7 +1373,7 @@ Model {
 		Block {
 		  BlockType		  Trigonometry
 		  Name			  "Trigonometric\nFunction1"
-		  SID			  13
+		  SID			  853
 		  Ports			  [1, 1]
 		  Position		  [250, 20, 280, 50]
 		  ShowName		  off
@@ -1281,7 +1381,7 @@ Model {
 		Block {
 		  BlockType		  Trigonometry
 		  Name			  "Trigonometric\nFunction2"
-		  SID			  14
+		  SID			  854
 		  Ports			  [2, 1]
 		  Position		  [375, 82, 405, 113]
 		  ShowName		  off
@@ -1290,7 +1390,7 @@ Model {
 		Block {
 		  BlockType		  Trigonometry
 		  Name			  "Trigonometric\nFunction3"
-		  SID			  15
+		  SID			  855
 		  Ports			  [1, 1]
 		  Position		  [250, 105, 280, 135]
 		  ShowName		  off
@@ -1299,7 +1399,7 @@ Model {
 		Block {
 		  BlockType		  Outport
 		  Name			  "Roll"
-		  SID			  16
+		  SID			  856
 		  Position		  [430, 93, 460, 107]
 		  BackgroundColor	  "yellow"
 		  IconDisplay		  "Port number"
@@ -1307,24 +1407,44 @@ Model {
 		  OutScaling		  "2^0"
 		}
 		Line {
-		  SrcBlock		  "Trigonometric\nFunction"
+		  Labels		  [2, 0]
+		  SrcBlock		  "azimuth"
 		  SrcPort		  1
-		  Points		  [10, 0; 0, -10]
-		  DstBlock		  "Product"
+		  Points		  [60, 0; 0, -10; 30, 0]
+		  DstBlock		  "Subtract"
 		  DstPort		  2
 		}
 		Line {
-		  SrcBlock		  "Trigonometric\nFunction1"
+		  SrcBlock		  "Trigonometric\nFunction2"
 		  SrcPort		  1
-		  Points		  [10, 0; 0, 25]
-		  DstBlock		  "Product"
+		  DstBlock		  "Roll"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Product"
+		  Labels		  [0, 0]
+		  SrcBlock		  "zenith"
 		  SrcPort		  1
-		  Points		  [0, 20]
-		  DstBlock		  "Trigonometric\nFunction2"
+		  Points		  [60, 0; 0, -35; 100, 0]
+		  Branch {
+		    Points		    [0, 35]
+		    DstBlock		    "Trigonometric\nFunction3"
+		    DstPort		    1
+		  }
+		  Branch {
+		    DstBlock		    "Trigonometric\nFunction"
+		    DstPort		    1
+		  }
+		}
+		Line {
+		  SrcBlock		  "bearing"
+		  SrcPort		  1
+		  DstBlock		  "Subtract"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Subtract"
+		  SrcPort		  1
+		  DstBlock		  "Trigonometric\nFunction1"
 		  DstPort		  1
 		}
 		Line {
@@ -1335,44 +1455,24 @@ Model {
 		  DstPort		  2
 		}
 		Line {
-		  SrcBlock		  "Subtract"
+		  SrcBlock		  "Product"
 		  SrcPort		  1
-		  DstBlock		  "Trigonometric\nFunction1"
+		  Points		  [0, 20]
+		  DstBlock		  "Trigonometric\nFunction2"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "bearing"
+		  SrcBlock		  "Trigonometric\nFunction1"
 		  SrcPort		  1
-		  DstBlock		  "Subtract"
+		  Points		  [10, 0; 0, 25]
+		  DstBlock		  "Product"
 		  DstPort		  1
 		}
 		Line {
-		  Labels		  [0, 0]
-		  SrcBlock		  "zenith"
+		  SrcBlock		  "Trigonometric\nFunction"
 		  SrcPort		  1
-		  Points		  [60, 0; 0, -35; 100, 0]
-		  Branch {
-		    DstBlock		    "Trigonometric\nFunction"
-		    DstPort		    1
-		  }
-		  Branch {
-		    Points		    [0, 35]
-		    DstBlock		    "Trigonometric\nFunction3"
-		    DstPort		    1
-		  }
-		}
-		Line {
-		  SrcBlock		  "Trigonometric\nFunction2"
-		  SrcPort		  1
-		  DstBlock		  "Roll"
-		  DstPort		  1
-		}
-		Line {
-		  Labels		  [2, 0]
-		  SrcBlock		  "azimuth"
-		  SrcPort		  1
-		  Points		  [60, 0; 0, -10; 30, 0]
-		  DstBlock		  "Subtract"
+		  Points		  [10, 0; 0, -10]
+		  DstBlock		  "Product"
 		  DstPort		  2
 		}
 	      }
@@ -1380,7 +1480,7 @@ Model {
 	    Block {
 	      BlockType		      Reference
 	      Name		      "Compare\nTo Constant"
-	      SID		      517
+	      SID		      857
 	      Ports		      [1, 1]
 	      Position		      [645, 126, 695, 144]
 	      ShowName		      off
@@ -1409,7 +1509,7 @@ Model {
 	    Block {
 	      BlockType		      Reference
 	      Name		      "Embedded\nMATLAB Function"
-	      SID		      729
+	      SID		      858
 	      Ports		      [2, 2]
 	      Position		      [170, 53, 280, 117]
 	      ForegroundColor	      "blue"
@@ -1424,11 +1524,16 @@ Model {
 	      RTWMemSecDataConstants  "Inherit from model"
 	      RTWMemSecDataInternal   "Inherit from model"
 	      RTWMemSecDataParameters "Inherit from model"
+	      Array {
+		Type			"Handle"
+		Dimension		0
+		PropName		"AvailSigsLoadSave"
+	      }
 	    }
 	    Block {
 	      BlockType		      SubSystem
 	      Name		      "Map from 313..620\nto 1..-1"
-	      SID		      820
+	      SID		      859
 	      Ports		      [1, 1]
 	      Position		      [310, 126, 375, 154]
 	      MinAlgLoopOccurrences   off
@@ -1456,7 +1561,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "In1"
-		  SID			  821
+		  SID			  860
 		  Position		  [15, 33, 45, 47]
 		  BackgroundColor	  "darkGreen"
 		  IconDisplay		  "Port number"
@@ -1464,7 +1569,7 @@ Model {
 		Block {
 		  BlockType		  Bias
 		  Name			  "Bias"
-		  SID			  822
+		  SID			  861
 		  Position		  [165, 25, 205, 55]
 		  ShowName		  off
 		  Bias			  "-466.5"
@@ -1473,7 +1578,7 @@ Model {
 		Block {
 		  BlockType		  DataTypeConversion
 		  Name			  "Data Type Conversion"
-		  SID			  823
+		  SID			  862
 		  Position		  [70, 31, 115, 49]
 		  ShowName		  off
 		  OutDataTypeMode	  "single"
@@ -1486,7 +1591,7 @@ Model {
 		Block {
 		  BlockType		  Gain
 		  Name			  "Gain"
-		  SID			  824
+		  SID			  863
 		  Position		  [230, 25, 260, 55]
 		  ShowName		  off
 		  Gain			  "-1/153.5"
@@ -1503,21 +1608,15 @@ Model {
 		Block {
 		  BlockType		  Outport
 		  Name			  "Out1"
-		  SID			  825
+		  SID			  864
 		  Position		  [285, 33, 315, 47]
 		  BackgroundColor	  "yellow"
 		  IconDisplay		  "Port number"
 		}
 		Line {
-		  SrcBlock		  "Bias"
+		  SrcBlock		  "Data Type Conversion"
 		  SrcPort		  1
-		  DstBlock		  "Gain"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "In1"
-		  SrcPort		  1
-		  DstBlock		  "Data Type Conversion"
+		  DstBlock		  "Bias"
 		  DstPort		  1
 		}
 		Line {
@@ -1527,9 +1626,15 @@ Model {
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Data Type Conversion"
+		  SrcBlock		  "In1"
 		  SrcPort		  1
-		  DstBlock		  "Bias"
+		  DstBlock		  "Data Type Conversion"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Bias"
+		  SrcPort		  1
+		  DstBlock		  "Gain"
 		  DstPort		  1
 		}
 	      }
@@ -1537,7 +1642,7 @@ Model {
 	    Block {
 	      BlockType		      Saturate
 	      Name		      "Saturation"
-	      SID		      57
+	      SID		      865
 	      Ports		      [1, 1]
 	      Position		      [445, 55, 475, 85]
 	      ShowName		      off
@@ -1547,7 +1652,7 @@ Model {
 	    Block {
 	      BlockType		      Saturate
 	      Name		      "Saturation1"
-	      SID		      519
+	      SID		      866
 	      Ports		      [1, 1]
 	      Position		      [635, 170, 665, 200]
 	      ShowName		      off
@@ -1565,14 +1670,14 @@ Model {
 	    Block {
 	      BlockType		      Signum
 	      Name		      "Sign"
-	      SID		      515
+	      SID		      867
 	      Position		      [585, 170, 615, 200]
 	      ShowName		      off
 	    }
 	    Block {
 	      BlockType		      ToWorkspace
 	      Name		      "To Workspace"
-	      SID		      533
+	      SID		      868
 	      Ports		      [1]
 	      Position		      [510, 55, 570, 85]
 	      ShowName		      off
@@ -1584,90 +1689,42 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "c_ballast"
-	      SID		      503
+	      SID		      869
 	      Position		      [775, 138, 805, 152]
 	      BackgroundColor	      "yellow"
 	      IconDisplay	      "Port number"
 	    }
 	    Line {
-	      SrcBlock		      "Calculate Optimal\nRoll"
+	      SrcBlock		      "Map from 313..620\nto 1..-1"
 	      SrcPort		      1
-	      DstBlock		      "Saturation"
+	      DstBlock		      "Add"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Embedded\nMATLAB Function"
+	      SrcPort		      2
+	      Points		      [25, 0; 0, -10]
+	      DstBlock		      "Calculate Optimal\nRoll"
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "Embedded\nMATLAB Function"
+	      SrcPort		      1
+	      DstBlock		      "Calculate Optimal\nRoll"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "heading"
+	      SrcPort		      1
+	      Points		      [285, 0]
+	      DstBlock		      "Calculate Optimal\nRoll"
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "time"
+	      SrcBlock		      "pos"
 	      SrcPort		      1
-	      Points		      [100, 0]
 	      DstBlock		      "Embedded\nMATLAB Function"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Bus\nCreator"
-	      SrcPort		      1
-	      DstBlock		      "c_ballast"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "ballast\nsensors"
-	      SrcPort		      1
-	      DstBlock		      "Bus\nSelector"
-	      DstPort		      1
-	    }
-	    Line {
-	      Name		      "<position>"
-	      Labels		      [0, 0; 0, 0]
-	      SrcBlock		      "Bus\nSelector"
-	      SrcPort		      1
-	      DstBlock		      "Map from 313..620\nto 1..-1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Saturation"
-	      SrcPort		      1
-	      Points		      [15, 0]
-	      Branch {
-		DstBlock		"Add"
-		DstPort			1
-	      }
-	      Branch {
-		DstBlock		"To Workspace"
-		DstPort			1
-	      }
-	    }
-	    Line {
-	      SrcBlock		      "Add"
-	      SrcPort		      1
-	      Points		      [10, 0]
-	      Branch {
-		DstBlock		"Abs"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, 50]
-		DstBlock		"Sign"
-		DstPort			1
-	      }
-	    }
-	    Line {
-	      SrcBlock		      "Sign"
-	      SrcPort		      1
-	      DstBlock		      "Saturation1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Abs"
-	      SrcPort		      1
-	      DstBlock		      "Compare\nTo Constant"
-	      DstPort		      1
-	    }
-	    Line {
-	      Name		      "enable"
-	      Labels		      [0, 0]
-	      SrcBlock		      "Compare\nTo Constant"
-	      SrcPort		      1
-	      DstBlock		      "Bus\nCreator"
-	      DstPort		      1
+	      DstPort		      2
 	    }
 	    Line {
 	      Name		      "direction"
@@ -1679,36 +1736,90 @@ Model {
 	      DstPort		      2
 	    }
 	    Line {
-	      SrcBlock		      "pos"
+	      Name		      "enable"
+	      Labels		      [0, 0]
+	      SrcBlock		      "Compare\nTo Constant"
 	      SrcPort		      1
-	      DstBlock		      "Embedded\nMATLAB Function"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "heading"
-	      SrcPort		      1
-	      Points		      [285, 0]
-	      DstBlock		      "Calculate Optimal\nRoll"
+	      DstBlock		      "Bus\nCreator"
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "Embedded\nMATLAB Function"
+	      SrcBlock		      "Abs"
 	      SrcPort		      1
-	      DstBlock		      "Calculate Optimal\nRoll"
-	      DstPort		      2
+	      DstBlock		      "Compare\nTo Constant"
+	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "Embedded\nMATLAB Function"
-	      SrcPort		      2
-	      Points		      [25, 0; 0, -10]
-	      DstBlock		      "Calculate Optimal\nRoll"
-	      DstPort		      3
+	      SrcBlock		      "Sign"
+	      SrcPort		      1
+	      DstBlock		      "Saturation1"
+	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "Map from 313..620\nto 1..-1"
+	      SrcBlock		      "Add"
 	      SrcPort		      1
-	      DstBlock		      "Add"
-	      DstPort		      2
+	      Points		      [10, 0]
+	      Branch {
+		Points			[0, 50]
+		DstBlock		"Sign"
+		DstPort			1
+	      }
+	      Branch {
+		DstBlock		"Abs"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "Saturation"
+	      SrcPort		      1
+	      Points		      [15, 0]
+	      Branch {
+		DstBlock		"To Workspace"
+		DstPort			1
+	      }
+	      Branch {
+		DstBlock		"Add"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      Name		      "<position>"
+	      Labels		      [0, 0; 0, 0]
+	      SrcBlock		      "Bus\nSelector"
+	      SrcPort		      1
+	      DstBlock		      "Map from 313..620\nto 1..-1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "ballast\nsensors"
+	      SrcPort		      1
+	      DstBlock		      "Bus\nSelector"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Bus\nCreator"
+	      SrcPort		      1
+	      DstBlock		      "c_ballast"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "time"
+	      SrcPort		      1
+	      Points		      [100, 0]
+	      DstBlock		      "Embedded\nMATLAB Function"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Calculate Optimal\nRoll"
+	      SrcPort		      1
+	      DstBlock		      "Saturation"
+	      DstPort		      1
+	    }
+	    Annotation {
+	      Name		      "NOTE: The current ballast sensor position range is\nunknown! This should be checked before employe"
+	      "d\nonboard."
+	      Position		      [229, 206]
+	      HorizontalAlignment     "left"
 	    }
 	    Annotation {
 	      Name		      "Ballast command is calculated based on the sun position vector\nand boat normal. Output is a -1..1"
@@ -1717,19 +1828,13 @@ Model {
 	      Position		      [48, 290]
 	      HorizontalAlignment     "left"
 	    }
-	    Annotation {
-	      Name		      "NOTE: The current ballast sensor position range is\nunknown! This should be checked before employe"
-	      "d\nonboard."
-	      Position		      [229, 206]
-	      HorizontalAlignment     "left"
-	    }
 	  }
 	}
 	Block {
 	  BlockType		  Constant
 	  Name			  "Constant5"
-	  SID			  296
-	  Position		  [340, 125, 370, 155]
+	  SID			  870
+	  Position		  [75, 195, 105, 225]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "1023"
@@ -1741,9 +1846,9 @@ Model {
 	Block {
 	  BlockType		  SubSystem
 	  Name			  "Rudder\nCommand"
-	  SID			  506
+	  SID			  871
 	  Ports			  [2, 1]
-	  Position		  [335, 218, 450, 282]
+	  Position		  [340, 343, 455, 407]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -1753,7 +1858,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Rudder\nCommand"
-	    Location		    [216, 124, 1284, 874]
+	    Location		    [202, 82, 1270, 978]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -1769,7 +1874,7 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "Velocity"
-	      SID		      508
+	      SID		      872
 	      Position		      [30, 238, 60, 252]
 	      BackgroundColor	      "darkGreen"
 	      IconDisplay	      "Port number"
@@ -1777,7 +1882,7 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "Sensors"
-	      SID		      510
+	      SID		      873
 	      Position		      [315, 343, 345, 357]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "2"
@@ -1786,8 +1891,8 @@ Model {
 	    Block {
 	      BlockType		      Abs
 	      Name		      "Abs"
-	      SID		      538
-	      Position		      [650, 330, 680, 360]
+	      SID		      874
+	      Position		      [650, 370, 680, 400]
 	      ShowName		      off
 	      OutDataType	      "fixdt(1, 16)"
 	      OutScaling	      "2^0"
@@ -1796,7 +1901,7 @@ Model {
 	    Block {
 	      BlockType		      Sum
 	      Name		      "Add"
-	      SID		      539
+	      SID		      875
 	      Ports		      [2, 1]
 	      Position		      [575, 327, 605, 358]
 	      ShowName		      off
@@ -1811,16 +1916,16 @@ Model {
 	    Block {
 	      BlockType		      BusCreator
 	      Name		      "Bus\nCreator"
-	      SID		      540
+	      SID		      876
 	      Ports		      [4, 1]
-	      Position		      [885, 352, 890, 428]
+	      Position		      [955, 284, 960, 446]
 	      ShowName		      off
 	      DisplayOption	      "bar"
 	    }
 	    Block {
 	      BlockType		      BusSelector
 	      Name		      "Bus\nSelector"
-	      SID		      625
+	      SID		      877
 	      Ports		      [1, 1]
 	      Position		      [385, 331, 390, 369]
 	      ShowName		      off
@@ -1835,9 +1940,9 @@ Model {
 	    Block {
 	      BlockType		      Reference
 	      Name		      "Compare\nTo Constant"
-	      SID		      541
+	      SID		      878
 	      Ports		      [1, 1]
-	      Position		      [710, 336, 760, 354]
+	      Position		      [710, 376, 760, 394]
 	      ShowName		      off
 	      LibraryVersion	      "1.216"
 	      SourceBlock	      "simulink/Logic and Bit\nOperations/Compare\nTo Constant"
@@ -1858,8 +1963,8 @@ Model {
 	    Block {
 	      BlockType		      Constant
 	      Name		      "Constant1"
-	      SID		      546
-	      Position		      [650, 425, 680, 455]
+	      SID		      879
+	      Position		      [650, 410, 680, 440]
 	      BackgroundColor	      "gray"
 	      ShowName		      off
 	      Value		      ".003"
@@ -1867,17 +1972,11 @@ Model {
 	      OutDataType	      "sfix(16)"
 	      OutScaling	      "2^0"
 	      OutDataTypeStr	      "single"
-	      Port {
-		PortNumber		1
-		Name			"period"
-		RTWStorageClass		"Auto"
-		DataLoggingNameMode	"SignalName"
-	      }
 	    }
 	    Block {
 	      BlockType		      Constant
 	      Name		      "Constant2"
-	      SID		      323
+	      SID		      880
 	      Position		      [20, 75, 50, 105]
 	      BackgroundColor	      "gray"
 	      ShowName		      off
@@ -1890,8 +1989,8 @@ Model {
 	    Block {
 	      BlockType		      Constant
 	      Name		      "Constant3"
-	      SID		      548
-	      Position		      [650, 470, 680, 500]
+	      SID		      881
+	      Position		      [650, 330, 680, 360]
 	      BackgroundColor	      "gray"
 	      ShowName		      off
 	      Value		      "0"
@@ -1909,8 +2008,8 @@ Model {
 	    Block {
 	      BlockType		      DataTypeConversion
 	      Name		      "Data Type Conversion"
-	      SID		      627
-	      Position		      [765, 371, 820, 389]
+	      SID		      882
+	      Position		      [765, 296, 820, 314]
 	      ShowName		      off
 	      OutDataTypeMode	      "boolean"
 	      OutDataType	      "fixdt(1, 16)"
@@ -1926,9 +2025,47 @@ Model {
 	      }
 	    }
 	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion1"
+	      SID		      883
+	      Position		      [765, 416, 820, 434]
+	      ShowName		      off
+	      OutDataTypeMode	      "uint16"
+	      OutDataType	      "fixdt(1, 16)"
+	      OutScaling	      "2^0"
+	      OutDataTypeStr	      "uint16"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	      Port {
+		PortNumber		1
+		Name			"period"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion2"
+	      SID		      884
+	      Position		      [855, 376, 910, 394]
+	      ShowName		      off
+	      OutDataTypeMode	      "uint16"
+	      OutDataType	      "fixdt(1, 16)"
+	      OutScaling	      "2^0"
+	      OutDataTypeStr	      "uint16"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	      Port {
+		PortNumber		1
+		Name			"up"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	    }
+	    Block {
 	      BlockType		      DiscreteIntegrator
 	      Name		      "Discrete-Time\nIntegrator"
-	      SID		      612
+	      SID		      885
 	      Ports		      [1, 1]
 	      Position		      [130, 149, 165, 181]
 	      ShowName		      off
@@ -1944,7 +2081,7 @@ Model {
 	    Block {
 	      BlockType		      SubSystem
 	      Name		      "Embedded\nMATLAB Function1"
-	      SID		      293
+	      SID		      886
 	      Ports		      [2, 1]
 	      Position		      [440, 254, 505, 301]
 	      ShowName		      off
@@ -1955,6 +2092,11 @@ Model {
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
 	      Opaque		      off
+	      Array {
+		Type			"Handle"
+		Dimension		0
+		PropName		"AvailSigsLoadSave"
+	      }
 	      RequestExecContextInheritance off
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
@@ -1982,7 +2124,6 @@ Model {
 		ShowPageBoundaries	off
 		ZoomFactor		"100"
 		SIDHighWatermark	10
-		SIDPrevWatermark	10
 		Block {
 		  BlockType		  Inport
 		  Name			  "lat_accel"
@@ -2012,7 +2153,7 @@ Model {
 		  BlockType		  "S-Function"
 		  Name			  " SFunction "
 		  SID			  7
-		  Tag			  "Stateflow S-Function Boat_sim 8"
+		  Tag			  "Stateflow S-Function Boat_sim 1"
 		  Ports			  [2, 2]
 		  Position		  [180, 100, 230, 160]
 		  FunctionName		  "sf_sfun"
@@ -2042,10 +2183,22 @@ Model {
 		  OutScaling		  "2^0"
 		}
 		Line {
-		  SrcBlock		  " Demux "
+		  SrcBlock		  " SFunction "
 		  SrcPort		  1
-		  DstBlock		  " Terminator "
+		  DstBlock		  " Demux "
 		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "lat_accel"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "velocity"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  2
 		}
 		Line {
 		  Name			  "rudder"
@@ -2056,21 +2209,9 @@ Model {
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "velocity"
+		  SrcBlock		  " Demux "
 		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  2
-		}
-		Line {
-		  SrcBlock		  "lat_accel"
-		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  " SFunction "
-		  SrcPort		  1
-		  DstBlock		  " Demux "
+		  DstBlock		  " Terminator "
 		  DstPort		  1
 		}
 	      }
@@ -2078,8 +2219,8 @@ Model {
 	    Block {
 	      BlockType		      Gain
 	      Name		      "Gain2"
-	      SID		      544
-	      Position		      [815, 330, 845, 360]
+	      SID		      887
+	      Position		      [805, 370, 835, 400]
 	      ShowName		      off
 	      Gain		      ".0015"
 	      ParameterDataTypeMode   "Inherit via internal rule"
@@ -2091,17 +2232,11 @@ Model {
 	      OutScaling	      "2^0"
 	      OutDataTypeStr	      "single"
 	      SaturateOnIntegerOverflow	off
-	      Port {
-		PortNumber		1
-		Name			"up"
-		RTWStorageClass		"Auto"
-		DataLoggingNameMode	"SignalName"
-	      }
 	    }
 	    Block {
 	      BlockType		      SubSystem
 	      Name		      "L2 Plus ref WP1"
-	      SID		      292
+	      SID		      888
 	      Ports		      [4, 3]
 	      Position		      [260, 23, 410, 252]
 	      PermitHierarchicalResolution "ExplicitOnly"
@@ -2112,6 +2247,11 @@ Model {
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
 	      Opaque		      off
+	      Array {
+		Type			"Handle"
+		Dimension		0
+		PropName		"AvailSigsLoadSave"
+	      }
 	      RequestExecContextInheritance off
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
@@ -2139,7 +2279,6 @@ Model {
 		ShowPageBoundaries	off
 		ZoomFactor		"100"
 		SIDHighWatermark	15
-		SIDPrevWatermark	15
 		Block {
 		  BlockType		  Inport
 		  Name			  "WP0"
@@ -2191,7 +2330,7 @@ Model {
 		  BlockType		  "S-Function"
 		  Name			  " SFunction "
 		  SID			  11
-		  Tag			  "Stateflow S-Function Boat_sim 7"
+		  Tag			  "Stateflow S-Function Boat_sim 3"
 		  Ports			  [4, 4]
 		  Position		  [180, 100, 230, 220]
 		  FunctionName		  "sf_sfun"
@@ -2251,49 +2390,9 @@ Model {
 		  OutScaling		  "2^0"
 		}
 		Line {
-		  SrcBlock		  " SFunction "
+		  SrcBlock		  " Demux "
 		  SrcPort		  1
-		  DstBlock		  " Demux "
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "WP0"
-		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "WP1"
-		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  2
-		}
-		Line {
-		  SrcBlock		  "Puav"
-		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  3
-		}
-		Line {
-		  SrcBlock		  "Vxyz"
-		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  4
-		}
-		Line {
-		  Name			  "triggerSwitch"
-		  Labels		  [0, 0]
-		  SrcBlock		  " SFunction "
-		  SrcPort		  2
-		  DstBlock		  "triggerSwitch"
-		  DstPort		  1
-		}
-		Line {
-		  Name			  "as_c"
-		  Labels		  [0, 0]
-		  SrcBlock		  " SFunction "
-		  SrcPort		  3
-		  DstBlock		  "as_c"
+		  DstBlock		  " Terminator "
 		  DstPort		  1
 		}
 		Line {
@@ -2305,9 +2404,49 @@ Model {
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  " Demux "
+		  Name			  "as_c"
+		  Labels		  [0, 0]
+		  SrcBlock		  " SFunction "
+		  SrcPort		  3
+		  DstBlock		  "as_c"
+		  DstPort		  1
+		}
+		Line {
+		  Name			  "triggerSwitch"
+		  Labels		  [0, 0]
+		  SrcBlock		  " SFunction "
+		  SrcPort		  2
+		  DstBlock		  "triggerSwitch"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Vxyz"
 		  SrcPort		  1
-		  DstBlock		  " Terminator "
+		  DstBlock		  " SFunction "
+		  DstPort		  4
+		}
+		Line {
+		  SrcBlock		  "Puav"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  3
+		}
+		Line {
+		  SrcBlock		  "WP1"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "WP0"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  " SFunction "
+		  SrcPort		  1
+		  DstBlock		  " Demux "
 		  DstPort		  1
 		}
 	      }
@@ -2315,7 +2454,7 @@ Model {
 	    Block {
 	      BlockType		      SubSystem
 	      Name		      "Map from 313..620\nto 1..-1"
-	      SID		      620
+	      SID		      889
 	      Ports		      [1, 1]
 	      Position		      [455, 336, 520, 364]
 	      MinAlgLoopOccurrences   off
@@ -2343,7 +2482,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "In1"
-		  SID			  621
+		  SID			  890
 		  Position		  [15, 33, 45, 47]
 		  BackgroundColor	  "darkGreen"
 		  IconDisplay		  "Port number"
@@ -2351,7 +2490,7 @@ Model {
 		Block {
 		  BlockType		  Bias
 		  Name			  "Bias"
-		  SID			  619
+		  SID			  891
 		  Position		  [165, 25, 205, 55]
 		  ShowName		  off
 		  Bias			  "-466.5"
@@ -2360,7 +2499,7 @@ Model {
 		Block {
 		  BlockType		  DataTypeConversion
 		  Name			  "Data Type Conversion"
-		  SID			  626
+		  SID			  892
 		  Position		  [70, 31, 115, 49]
 		  ShowName		  off
 		  OutDataTypeMode	  "single"
@@ -2373,7 +2512,7 @@ Model {
 		Block {
 		  BlockType		  Gain
 		  Name			  "Gain"
-		  SID			  618
+		  SID			  893
 		  Position		  [230, 25, 260, 55]
 		  ShowName		  off
 		  Gain			  "-1/153.5"
@@ -2390,21 +2529,15 @@ Model {
 		Block {
 		  BlockType		  Outport
 		  Name			  "Out1"
-		  SID			  622
+		  SID			  894
 		  Position		  [285, 33, 315, 47]
 		  BackgroundColor	  "yellow"
 		  IconDisplay		  "Port number"
 		}
 		Line {
-		  SrcBlock		  "Bias"
+		  SrcBlock		  "Data Type Conversion"
 		  SrcPort		  1
-		  DstBlock		  "Gain"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "In1"
-		  SrcPort		  1
-		  DstBlock		  "Data Type Conversion"
+		  DstBlock		  "Bias"
 		  DstPort		  1
 		}
 		Line {
@@ -2414,9 +2547,15 @@ Model {
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Data Type Conversion"
+		  SrcBlock		  "In1"
 		  SrcPort		  1
-		  DstBlock		  "Bias"
+		  DstBlock		  "Data Type Conversion"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Bias"
+		  SrcPort		  1
+		  DstBlock		  "Gain"
 		  DstPort		  1
 		}
 	      }
@@ -2424,7 +2563,7 @@ Model {
 	    Block {
 	      BlockType		      Memory
 	      Name		      "Memory"
-	      SID		      481
+	      SID		      895
 	      Position		      [40, 40, 65, 70]
 	      ShowName		      off
 	      InheritSampleTime	      on
@@ -2432,9 +2571,9 @@ Model {
 	    Block {
 	      BlockType		      Saturate
 	      Name		      "Saturation1"
-	      SID		      542
+	      SID		      896
 	      Ports		      [1, 1]
-	      Position		      [700, 380, 730, 410]
+	      Position		      [700, 290, 730, 320]
 	      ShowName		      off
 	      UpperLimit	      "1"
 	      LowerLimit	      "0"
@@ -2444,14 +2583,14 @@ Model {
 	    Block {
 	      BlockType		      Signum
 	      Name		      "Sign"
-	      SID		      543
-	      Position		      [650, 380, 680, 410]
+	      SID		      897
+	      Position		      [650, 290, 680, 320]
 	      ShowName		      off
 	    }
 	    Block {
 	      BlockType		      ToWorkspace
 	      Name		      "To Workspace1"
-	      SID		      300
+	      SID		      898
 	      Ports		      [1]
 	      Position		      [445, 200, 505, 230]
 	      ShowName		      off
@@ -2463,7 +2602,7 @@ Model {
 	    Block {
 	      BlockType		      ToWorkspace
 	      Name		      "To Workspace2"
-	      SID		      534
+	      SID		      899
 	      Ports		      [1]
 	      Position		      [550, 226, 665, 254]
 	      ShowName		      off
@@ -2475,7 +2614,7 @@ Model {
 	    Block {
 	      BlockType		      SubSystem
 	      Name		      "Waypoint\nController"
-	      SID		      319
+	      SID		      900
 	      Ports		      [2, 2]
 	      Position		      [85, 37, 205, 108]
 	      LibraryVersion	      "1.31"
@@ -2486,6 +2625,11 @@ Model {
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
 	      Opaque		      off
+	      Array {
+		Type			"Handle"
+		Dimension		0
+		PropName		"AvailSigsLoadSave"
+	      }
 	      RequestExecContextInheritance off
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
@@ -2513,7 +2657,6 @@ Model {
 		ShowPageBoundaries	off
 		ZoomFactor		"100"
 		SIDHighWatermark	23
-		SIDPrevWatermark	23
 		Block {
 		  BlockType		  Inport
 		  Name			  "switchTrigger"
@@ -2541,7 +2684,7 @@ Model {
 		  BlockType		  "S-Function"
 		  Name			  " SFunction "
 		  SID			  14
-		  Tag			  "Stateflow S-Function Boat_sim 4"
+		  Tag			  "Stateflow S-Function Boat_sim 5"
 		  Ports			  [2, 3]
 		  Position		  [180, 100, 230, 180]
 		  FunctionName		  "sf_sfun"
@@ -2585,29 +2728,9 @@ Model {
 		  IconDisplay		  "Port number"
 		}
 		Line {
-		  SrcBlock		  " SFunction "
+		  SrcBlock		  " Demux "
 		  SrcPort		  1
-		  DstBlock		  " Demux "
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "switchTrigger"
-		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "mode"
-		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  2
-		}
-		Line {
-		  Name			  "waypoint_0"
-		  Labels		  [0, 0]
-		  SrcBlock		  " SFunction "
-		  SrcPort		  2
-		  DstBlock		  "waypoint_0"
+		  DstBlock		  " Terminator "
 		  DstPort		  1
 		}
 		Line {
@@ -2619,9 +2742,29 @@ Model {
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  " Demux "
+		  Name			  "waypoint_0"
+		  Labels		  [0, 0]
+		  SrcBlock		  " SFunction "
+		  SrcPort		  2
+		  DstBlock		  "waypoint_0"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "mode"
 		  SrcPort		  1
-		  DstBlock		  " Terminator "
+		  DstBlock		  " SFunction "
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "switchTrigger"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  " SFunction "
+		  SrcPort		  1
+		  DstBlock		  " Demux "
 		  DstPort		  1
 		}
 	      }
@@ -2629,183 +2772,18 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "Command"
-	      SID		      509
-	      Position		      [925, 383, 955, 397]
+	      SID		      901
+	      Position		      [985, 358, 1015, 372]
 	      BackgroundColor	      "yellow"
 	      IconDisplay	      "Port number"
 	    }
 	    Line {
-	      SrcBlock		      "L2 Plus ref WP1"
-	      SrcPort		      2
-	      Points		      [10, 0]
-	      DstBlock		      "Embedded\nMATLAB Function1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Velocity"
-	      SrcPort		      1
-	      Points		      [40, 0]
-	      Branch {
-		Points			[110, 0]
-		Branch {
-		  Points		  [0, -25]
-		  DstBlock		  "L2 Plus ref WP1"
-		  DstPort		  4
-		}
-		Branch {
-		  Points		  [0, 45]
-		  DstBlock		  "Embedded\nMATLAB Function1"
-		  DstPort		  2
-		}
-	      }
-	      Branch {
-		Points			[0, -80]
-		DstBlock		"Discrete-Time\nIntegrator"
-		DstPort			1
-	      }
-	    }
-	    Line {
-	      SrcBlock		      "L2 Plus ref WP1"
-	      SrcPort		      3
-	      DstBlock		      "To Workspace1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Waypoint\nController"
-	      SrcPort		      2
-	      Points		      [25, 0; 0, 20]
-	      DstBlock		      "L2 Plus ref WP1"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Waypoint\nController"
-	      SrcPort		      1
-	      DstBlock		      "L2 Plus ref WP1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "L2 Plus ref WP1"
-	      SrcPort		      1
-	      Points		      [10, 0; 0, -50; -400, 0]
-	      DstBlock		      "Memory"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Constant2"
-	      SrcPort		      1
-	      DstBlock		      "Waypoint\nController"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Memory"
-	      SrcPort		      1
-	      DstBlock		      "Waypoint\nController"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Embedded\nMATLAB Function1"
-	      SrcPort		      1
-	      Points		      [15, 0; 0, 0]
-	      Branch {
-		Points			[0, -40]
-		DstBlock		"To Workspace2"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, 55]
-		DstBlock		"Add"
-		DstPort			1
-	      }
-	    }
-	    Line {
-	      SrcBlock		      "Add"
-	      SrcPort		      1
-	      Points		      [10, 0]
-	      Branch {
-		DstBlock		"Abs"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, 50]
-		DstBlock		"Sign"
-		DstPort			1
-	      }
-	    }
-	    Line {
-	      SrcBlock		      "Sign"
-	      SrcPort		      1
-	      DstBlock		      "Saturation1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Abs"
-	      SrcPort		      1
-	      DstBlock		      "Compare\nTo Constant"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Compare\nTo Constant"
-	      SrcPort		      1
-	      DstBlock		      "Gain2"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Saturation1"
-	      SrcPort		      1
-	      Points		      [0, -15]
-	      DstBlock		      "Data Type Conversion"
-	      DstPort		      1
-	    }
-	    Line {
-	      Name		      "up"
+	      Name		      "direction"
 	      Labels		      [0, 0]
-	      SrcBlock		      "Gain2"
+	      SrcBlock		      "Data Type Conversion"
 	      SrcPort		      1
-	      Points		      [20, 0]
 	      DstBlock		      "Bus\nCreator"
 	      DstPort		      1
-	    }
-	    Line {
-	      Name		      "period"
-	      Labels		      [0, 0]
-	      SrcBlock		      "Constant1"
-	      SrcPort		      1
-	      Points		      [100, 0; 0, -40]
-	      DstBlock		      "Bus\nCreator"
-	      DstPort		      3
-	    }
-	    Line {
-	      Name		      "enable"
-	      Labels		      [0, 0]
-	      SrcBlock		      "Constant3"
-	      SrcPort		      1
-	      Points		      [185, 0]
-	      DstBlock		      "Bus\nCreator"
-	      DstPort		      4
-	    }
-	    Line {
-	      SrcBlock		      "Bus\nCreator"
-	      SrcPort		      1
-	      DstBlock		      "Command"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Sensors"
-	      SrcPort		      1
-	      DstBlock		      "Bus\nSelector"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Discrete-Time\nIntegrator"
-	      SrcPort		      1
-	      DstBlock		      "L2 Plus ref WP1"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "Map from 313..620\nto 1..-1"
-	      SrcPort		      1
-	      DstBlock		      "Add"
-	      DstPort		      2
 	    }
 	    Line {
 	      Name		      "<position>"
@@ -2816,21 +2794,195 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
-	      Name		      "direction"
+	      SrcBlock		      "Map from 313..620\nto 1..-1"
+	      SrcPort		      1
+	      DstBlock		      "Add"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Discrete-Time\nIntegrator"
+	      SrcPort		      1
+	      DstBlock		      "L2 Plus ref WP1"
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "Sensors"
+	      SrcPort		      1
+	      DstBlock		      "Bus\nSelector"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Bus\nCreator"
+	      SrcPort		      1
+	      DstBlock		      "Command"
+	      DstPort		      1
+	    }
+	    Line {
+	      Name		      "enable"
 	      Labels		      [0, 0]
-	      SrcBlock		      "Data Type Conversion"
+	      SrcBlock		      "Constant3"
 	      SrcPort		      1
 	      DstBlock		      "Bus\nCreator"
 	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Constant1"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Gain2"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion2"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Saturation1"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Compare\nTo Constant"
+	      SrcPort		      1
+	      DstBlock		      "Gain2"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Abs"
+	      SrcPort		      1
+	      DstBlock		      "Compare\nTo Constant"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Sign"
+	      SrcPort		      1
+	      DstBlock		      "Saturation1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Add"
+	      SrcPort		      1
+	      Points		      [10, 0]
+	      Branch {
+		Points			[0, -40]
+		DstBlock		"Sign"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[15, 0]
+		DstBlock		"Abs"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "Embedded\nMATLAB Function1"
+	      SrcPort		      1
+	      Points		      [15, 0; 0, 0]
+	      Branch {
+		Points			[0, 55]
+		DstBlock		"Add"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, -40]
+		DstBlock		"To Workspace2"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "Memory"
+	      SrcPort		      1
+	      DstBlock		      "Waypoint\nController"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Constant2"
+	      SrcPort		      1
+	      DstBlock		      "Waypoint\nController"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "L2 Plus ref WP1"
+	      SrcPort		      1
+	      Points		      [10, 0; 0, -50; -400, 0]
+	      DstBlock		      "Memory"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Waypoint\nController"
+	      SrcPort		      1
+	      DstBlock		      "L2 Plus ref WP1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Waypoint\nController"
+	      SrcPort		      2
+	      Points		      [25, 0; 0, 20]
+	      DstBlock		      "L2 Plus ref WP1"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "L2 Plus ref WP1"
+	      SrcPort		      3
+	      DstBlock		      "To Workspace1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Velocity"
+	      SrcPort		      1
+	      Points		      [40, 0]
+	      Branch {
+		Points			[0, -80]
+		DstBlock		"Discrete-Time\nIntegrator"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[110, 0]
+		Branch {
+		  Points		  [0, 45]
+		  DstBlock		  "Embedded\nMATLAB Function1"
+		  DstPort		  2
+		}
+		Branch {
+		  Points		  [0, -25]
+		  DstBlock		  "L2 Plus ref WP1"
+		  DstPort		  4
+		}
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "L2 Plus ref WP1"
+	      SrcPort		      2
+	      Points		      [10, 0]
+	      DstBlock		      "Embedded\nMATLAB Function1"
+	      DstPort		      1
+	    }
+	    Line {
+	      Name		      "period"
+	      Labels		      [0, 0]
+	      SrcBlock		      "Data Type Conversion1"
+	      SrcPort		      1
+	      DstBlock		      "Bus\nCreator"
+	      DstPort		      4
+	    }
+	    Line {
+	      Name		      "up"
+	      Labels		      [0, 0]
+	      SrcBlock		      "Data Type Conversion2"
+	      SrcPort		      1
+	      DstBlock		      "Bus\nCreator"
+	      DstPort		      3
 	    }
 	  }
 	}
 	Block {
 	  BlockType		  SubSystem
 	  Name			  "Subsystem"
-	  SID			  576
+	  SID			  902
 	  Ports			  [1, 4]
-	  Position		  [150, 327, 220, 388]
+	  Position		  [155, 452, 225, 513]
 	  ShowName		  off
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
@@ -2841,7 +2993,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Subsystem"
-	    Location		    [461, 470, 934, 739]
+	    Location		    [202, 82, 1270, 978]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -2857,7 +3009,7 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "gps"
-	      SID		      578
+	      SID		      903
 	      Position		      [35, 143, 65, 157]
 	      BackgroundColor	      "darkGreen"
 	      IconDisplay	      "Port number"
@@ -2865,7 +3017,7 @@ Model {
 	    Block {
 	      BlockType		      Reference
 	      Name		      "Angle Conversion"
-	      SID		      651
+	      SID		      904
 	      Ports		      [1, 1]
 	      Position		      [135, 108, 205, 132]
 	      ShowName		      off
@@ -2886,7 +3038,7 @@ Model {
 	    Block {
 	      BlockType		      BusSelector
 	      Name		      "Bus\nSelector"
-	      SID		      649
+	      SID		      905
 	      Ports		      [1, 1]
 	      Position		      [110, 46, 115, 84]
 	      ShowName		      off
@@ -2901,7 +3053,7 @@ Model {
 	    Block {
 	      BlockType		      BusSelector
 	      Name		      "Bus\nSelector1"
-	      SID		      650
+	      SID		      906
 	      Ports		      [1, 1]
 	      Position		      [110, 101, 115, 139]
 	      ShowName		      off
@@ -2916,7 +3068,7 @@ Model {
 	    Block {
 	      BlockType		      Constant
 	      Name		      "Constant"
-	      SID		      591
+	      SID		      907
 	      Position		      [425, 73, 455, 87]
 	      BackgroundColor	      "gray"
 	      ShowName		      off
@@ -2929,7 +3081,7 @@ Model {
 	    Block {
 	      BlockType		      Mux
 	      Name		      "Mux"
-	      SID		      590
+	      SID		      908
 	      Ports		      [3, 1]
 	      Position		      [485, 51, 490, 89]
 	      ShowName		      off
@@ -2939,7 +3091,7 @@ Model {
 	    Block {
 	      BlockType		      Product
 	      Name		      "Product"
-	      SID		      588
+	      SID		      909
 	      Ports		      [2, 1]
 	      Position		      [350, 72, 380, 103]
 	      ShowName		      off
@@ -2953,7 +3105,7 @@ Model {
 	    Block {
 	      BlockType		      Product
 	      Name		      "Product1"
-	      SID		      589
+	      SID		      910
 	      Ports		      [2, 1]
 	      Position		      [350, 42, 380, 73]
 	      ShowName		      off
@@ -2967,7 +3119,7 @@ Model {
 	    Block {
 	      BlockType		      SubSystem
 	      Name		      "Reorder"
-	      SID		      799
+	      SID		      911
 	      Ports		      [1, 2]
 	      Position		      [135, 160, 270, 220]
 	      MinAlgLoopOccurrences   off
@@ -2995,7 +3147,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "In1"
-		  SID			  800
+		  SID			  912
 		  Position		  [15, 118, 45, 132]
 		  BackgroundColor	  "darkGreen"
 		  IconDisplay		  "Port number"
@@ -3003,7 +3155,7 @@ Model {
 		Block {
 		  BlockType		  Reference
 		  Name			  "Angle Conversion1"
-		  SID			  801
+		  SID			  913
 		  Ports			  [1, 1]
 		  Position		  [185, 64, 245, 86]
 		  ShowName		  off
@@ -3024,7 +3176,7 @@ Model {
 		Block {
 		  BlockType		  Reference
 		  Name			  "Angle Conversion3"
-		  SID			  802
+		  SID			  914
 		  Ports			  [1, 1]
 		  Position		  [185, 29, 245, 51]
 		  ShowName		  off
@@ -3045,7 +3197,7 @@ Model {
 		Block {
 		  BlockType		  Bias
 		  Name			  "Bias"
-		  SID			  803
+		  SID			  915
 		  Position		  [185, 80, 225, 110]
 		  ShowName		  off
 		  Bias			  "2000"
@@ -3054,7 +3206,7 @@ Model {
 		Block {
 		  BlockType		  BusSelector
 		  Name			  "Bus\nSelector"
-		  SID			  804
+		  SID			  916
 		  Ports			  [1, 8]
 		  Position		  [80, 38, 85, 212]
 		  ShowName		  off
@@ -3111,7 +3263,7 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Constant"
-		  SID			  805
+		  SID			  917
 		  Position		  [290, 53, 320, 67]
 		  BackgroundColor	  "gray"
 		  ShowName		  off
@@ -3122,7 +3274,7 @@ Model {
 		Block {
 		  BlockType		  DataTypeConversion
 		  Name			  "Data Type Conversion1"
-		  SID			  806
+		  SID			  918
 		  Position		  [110, 86, 165, 104]
 		  ShowName		  off
 		  OutDataTypeMode	  "double"
@@ -3135,7 +3287,7 @@ Model {
 		Block {
 		  BlockType		  DataTypeConversion
 		  Name			  "Data Type Conversion2"
-		  SID			  807
+		  SID			  919
 		  Position		  [110, 106, 165, 124]
 		  ShowName		  off
 		  OutDataTypeMode	  "double"
@@ -3148,7 +3300,7 @@ Model {
 		Block {
 		  BlockType		  DataTypeConversion
 		  Name			  "Data Type Conversion3"
-		  SID			  808
+		  SID			  920
 		  Position		  [110, 126, 165, 144]
 		  ShowName		  off
 		  OutDataTypeMode	  "double"
@@ -3161,7 +3313,7 @@ Model {
 		Block {
 		  BlockType		  DataTypeConversion
 		  Name			  "Data Type Conversion4"
-		  SID			  809
+		  SID			  921
 		  Position		  [110, 146, 165, 164]
 		  ShowName		  off
 		  OutDataTypeMode	  "double"
@@ -3174,7 +3326,7 @@ Model {
 		Block {
 		  BlockType		  DataTypeConversion
 		  Name			  "Data Type Conversion5"
-		  SID			  810
+		  SID			  922
 		  Position		  [110, 166, 165, 184]
 		  ShowName		  off
 		  OutDataTypeMode	  "double"
@@ -3187,7 +3339,7 @@ Model {
 		Block {
 		  BlockType		  DataTypeConversion
 		  Name			  "Data Type Conversion6"
-		  SID			  811
+		  SID			  923
 		  Position		  [110, 186, 165, 204]
 		  ShowName		  off
 		  OutDataTypeMode	  "double"
@@ -3200,7 +3352,7 @@ Model {
 		Block {
 		  BlockType		  DataTypeConversion
 		  Name			  "Data Type Conversion7"
-		  SID			  812
+		  SID			  924
 		  Position		  [110, 66, 165, 84]
 		  ShowName		  off
 		  OutDataTypeMode	  "double"
@@ -3213,7 +3365,7 @@ Model {
 		Block {
 		  BlockType		  DataTypeConversion
 		  Name			  "Data Type Conversion8"
-		  SID			  813
+		  SID			  925
 		  Position		  [110, 46, 165, 64]
 		  ShowName		  off
 		  OutDataTypeMode	  "double"
@@ -3226,7 +3378,7 @@ Model {
 		Block {
 		  BlockType		  Mux
 		  Name			  "Mux"
-		  SID			  814
+		  SID			  926
 		  Ports			  [7, 1]
 		  Position		  [260, 83, 265, 227]
 		  ShowName		  off
@@ -3236,7 +3388,7 @@ Model {
 		Block {
 		  BlockType		  Mux
 		  Name			  "Mux1"
-		  SID			  815
+		  SID			  927
 		  Ports			  [3, 1]
 		  Position		  [350, 31, 355, 69]
 		  ShowName		  off
@@ -3246,7 +3398,7 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Phase shift2"
-		  SID			  816
+		  SID			  928
 		  Position		  [125, 206, 165, 224]
 		  BackgroundColor	  "gray"
 		  ShowName		  off
@@ -3257,7 +3409,7 @@ Model {
 		Block {
 		  BlockType		  Outport
 		  Name			  "pos"
-		  SID			  817
+		  SID			  929
 		  Position		  [395, 43, 425, 57]
 		  BackgroundColor	  "yellow"
 		  IconDisplay		  "Port number"
@@ -3265,76 +3417,97 @@ Model {
 		Block {
 		  BlockType		  Outport
 		  Name			  "time"
-		  SID			  818
+		  SID			  930
 		  Position		  [290, 148, 320, 162]
 		  BackgroundColor	  "yellow"
 		  Port			  "2"
 		  IconDisplay		  "Port number"
 		}
 		Line {
-		  Name			  "<latitude>"
-		  Labels		  [0, 0]
-		  SrcBlock		  "Bus\nSelector"
+		  SrcBlock		  "Data Type Conversion8"
 		  SrcPort		  1
-		  DstBlock		  "Data Type Conversion8"
+		  DstBlock		  "Angle Conversion3"
 		  DstPort		  1
 		}
 		Line {
-		  Name			  "<longitude>"
-		  Labels		  [0, 0]
-		  SrcBlock		  "Bus\nSelector"
-		  SrcPort		  2
-		  DstBlock		  "Data Type Conversion7"
+		  SrcBlock		  "Data Type Conversion7"
+		  SrcPort		  1
+		  DstBlock		  "Angle Conversion1"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Data Type Conversion1"
+		  SrcBlock		  "Mux1"
 		  SrcPort		  1
-		  DstBlock		  "Bias"
+		  DstBlock		  "pos"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Bias"
+		  SrcBlock		  "Constant"
 		  SrcPort		  1
-		  DstBlock		  "Mux"
-		  DstPort		  1
+		  DstBlock		  "Mux1"
+		  DstPort		  3
 		}
 		Line {
-		  SrcBlock		  "Data Type Conversion2"
+		  SrcBlock		  "Angle Conversion1"
 		  SrcPort		  1
-		  DstBlock		  "Mux"
+		  Points		  [35, 0; 0, -25]
+		  DstBlock		  "Mux1"
 		  DstPort		  2
 		}
 		Line {
-		  Name			  "<year>"
-		  Labels		  [0, 0]
-		  SrcBlock		  "Bus\nSelector"
-		  SrcPort		  3
-		  DstBlock		  "Data Type Conversion1"
+		  SrcBlock		  "Angle Conversion3"
+		  SrcPort		  1
+		  DstBlock		  "Mux1"
 		  DstPort		  1
 		}
 		Line {
-		  Name			  "<month>"
-		  Labels		  [0, 0]
-		  SrcBlock		  "Bus\nSelector"
-		  SrcPort		  4
-		  DstBlock		  "Data Type Conversion2"
+		  SrcBlock		  "Mux"
+		  SrcPort		  1
+		  DstBlock		  "time"
 		  DstPort		  1
 		}
 		Line {
-		  Name			  "<day>"
-		  Labels		  [0, 0]
-		  SrcBlock		  "Bus\nSelector"
-		  SrcPort		  5
-		  DstBlock		  "Data Type Conversion3"
+		  SrcBlock		  "In1"
+		  SrcPort		  1
+		  DstBlock		  "Bus\nSelector"
 		  DstPort		  1
 		}
 		Line {
-		  Name			  "<hour>"
+		  SrcBlock		  "Phase shift2"
+		  SrcPort		  1
+		  DstBlock		  "Mux"
+		  DstPort		  7
+		}
+		Line {
+		  SrcBlock		  "Data Type Conversion6"
+		  SrcPort		  1
+		  DstBlock		  "Mux"
+		  DstPort		  6
+		}
+		Line {
+		  SrcBlock		  "Data Type Conversion5"
+		  SrcPort		  1
+		  DstBlock		  "Mux"
+		  DstPort		  5
+		}
+		Line {
+		  SrcBlock		  "Data Type Conversion4"
+		  SrcPort		  1
+		  DstBlock		  "Mux"
+		  DstPort		  4
+		}
+		Line {
+		  SrcBlock		  "Data Type Conversion3"
+		  SrcPort		  1
+		  DstBlock		  "Mux"
+		  DstPort		  3
+		}
+		Line {
+		  Name			  "<second>"
 		  Labels		  [0, 0]
 		  SrcBlock		  "Bus\nSelector"
-		  SrcPort		  6
-		  DstBlock		  "Data Type Conversion4"
+		  SrcPort		  8
+		  DstBlock		  "Data Type Conversion6"
 		  DstPort		  1
 		}
 		Line {
@@ -3346,90 +3519,69 @@ Model {
 		  DstPort		  1
 		}
 		Line {
-		  Name			  "<second>"
+		  Name			  "<hour>"
 		  Labels		  [0, 0]
 		  SrcBlock		  "Bus\nSelector"
-		  SrcPort		  8
-		  DstBlock		  "Data Type Conversion6"
+		  SrcPort		  6
+		  DstBlock		  "Data Type Conversion4"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Data Type Conversion3"
-		  SrcPort		  1
-		  DstBlock		  "Mux"
-		  DstPort		  3
-		}
-		Line {
-		  SrcBlock		  "Data Type Conversion4"
-		  SrcPort		  1
-		  DstBlock		  "Mux"
-		  DstPort		  4
-		}
-		Line {
-		  SrcBlock		  "Data Type Conversion5"
-		  SrcPort		  1
-		  DstBlock		  "Mux"
-		  DstPort		  5
-		}
-		Line {
-		  SrcBlock		  "Data Type Conversion6"
-		  SrcPort		  1
-		  DstBlock		  "Mux"
-		  DstPort		  6
-		}
-		Line {
-		  SrcBlock		  "Phase shift2"
-		  SrcPort		  1
-		  DstBlock		  "Mux"
-		  DstPort		  7
-		}
-		Line {
-		  SrcBlock		  "In1"
-		  SrcPort		  1
-		  DstBlock		  "Bus\nSelector"
+		  Name			  "<day>"
+		  Labels		  [0, 0]
+		  SrcBlock		  "Bus\nSelector"
+		  SrcPort		  5
+		  DstBlock		  "Data Type Conversion3"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Mux"
-		  SrcPort		  1
-		  DstBlock		  "time"
+		  Name			  "<month>"
+		  Labels		  [0, 0]
+		  SrcBlock		  "Bus\nSelector"
+		  SrcPort		  4
+		  DstBlock		  "Data Type Conversion2"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Angle Conversion3"
-		  SrcPort		  1
-		  DstBlock		  "Mux1"
+		  Name			  "<year>"
+		  Labels		  [0, 0]
+		  SrcBlock		  "Bus\nSelector"
+		  SrcPort		  3
+		  DstBlock		  "Data Type Conversion1"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Angle Conversion1"
+		  SrcBlock		  "Data Type Conversion2"
 		  SrcPort		  1
-		  Points		  [35, 0; 0, -25]
-		  DstBlock		  "Mux1"
+		  DstBlock		  "Mux"
 		  DstPort		  2
 		}
 		Line {
-		  SrcBlock		  "Constant"
+		  SrcBlock		  "Bias"
 		  SrcPort		  1
-		  DstBlock		  "Mux1"
-		  DstPort		  3
-		}
-		Line {
-		  SrcBlock		  "Mux1"
-		  SrcPort		  1
-		  DstBlock		  "pos"
+		  DstBlock		  "Mux"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Data Type Conversion7"
+		  SrcBlock		  "Data Type Conversion1"
 		  SrcPort		  1
-		  DstBlock		  "Angle Conversion1"
+		  DstBlock		  "Bias"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Data Type Conversion8"
+		  Name			  "<longitude>"
+		  Labels		  [0, 0]
+		  SrcBlock		  "Bus\nSelector"
+		  SrcPort		  2
+		  DstBlock		  "Data Type Conversion7"
+		  DstPort		  1
+		}
+		Line {
+		  Name			  "<latitude>"
+		  Labels		  [0, 0]
+		  SrcBlock		  "Bus\nSelector"
 		  SrcPort		  1
-		  DstBlock		  "Angle Conversion3"
+		  DstBlock		  "Data Type Conversion8"
 		  DstPort		  1
 		}
 	      }
@@ -3437,7 +3589,7 @@ Model {
 	    Block {
 	      BlockType		      Trigonometry
 	      Name		      "Trigonometric\nFunction"
-	      SID		      585
+	      SID		      931
 	      Ports		      [1, 1]
 	      Position		      [255, 86, 285, 104]
 	      ShowName		      off
@@ -3445,7 +3597,7 @@ Model {
 	    Block {
 	      BlockType		      Trigonometry
 	      Name		      "Trigonometric\nFunction1"
-	      SID		      586
+	      SID		      932
 	      Ports		      [1, 1]
 	      Position		      [255, 56, 285, 74]
 	      ShowName		      off
@@ -3454,7 +3606,7 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "velocity"
-	      SID		      592
+	      SID		      933
 	      Position		      [520, 63, 550, 77]
 	      BackgroundColor	      "yellow"
 	      IconDisplay	      "Port number"
@@ -3462,7 +3614,7 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "heading"
-	      SID		      579
+	      SID		      934
 	      Position		      [315, 113, 345, 127]
 	      BackgroundColor	      "yellow"
 	      Port		      "2"
@@ -3471,7 +3623,7 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "pos"
-	      SID		      577
+	      SID		      935
 	      Position		      [315, 168, 345, 182]
 	      BackgroundColor	      "yellow"
 	      Port		      "3"
@@ -3480,33 +3632,98 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "time"
-	      SID		      581
+	      SID		      936
 	      Position		      [315, 198, 345, 212]
 	      BackgroundColor	      "yellow"
 	      Port		      "4"
 	      IconDisplay	      "Port number"
 	    }
 	    Line {
-	      SrcBlock		      "gps"
+	      SrcBlock		      "Reorder"
+	      SrcPort		      2
+	      DstBlock		      "time"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Reorder"
 	      SrcPort		      1
-	      Points		      [20, 0; 0, 0]
+	      DstBlock		      "pos"
+	      DstPort		      1
+	    }
+	    Line {
+	      Name		      "<sog>"
+	      Labels		      [0, 0]
+	      SrcBlock		      "Bus\nSelector"
+	      SrcPort		      1
+	      Points		      [105, 0; 0, 0]
 	      Branch {
-		Points			[0, -30]
-		Branch {
-		  Points		  [0, -55]
-		  DstBlock		  "Bus\nSelector"
-		  DstPort		  1
-		}
-		Branch {
-		  DstBlock		  "Bus\nSelector1"
-		  DstPort		  1
-		}
-	      }
-	      Branch {
-		Points			[0, 40]
-		DstBlock		"Reorder"
+		Points			[0, 15]
+		DstBlock		"Product"
 		DstPort			1
 	      }
+	      Branch {
+		Points			[0, -15]
+		DstBlock		"Product1"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "Angle Conversion"
+	      SrcPort		      1
+	      Points		      [25, 0]
+	      Branch {
+		Points			[0, -25]
+		Branch {
+		  Points		  [0, 0; 0, -30]
+		  DstBlock		  "Trigonometric\nFunction1"
+		  DstPort		  1
+		}
+		Branch {
+		  DstBlock		  "Trigonometric\nFunction"
+		  DstPort		  1
+		}
+	      }
+	      Branch {
+		DstBlock		"heading"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "Mux"
+	      SrcPort		      1
+	      DstBlock		      "velocity"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Constant"
+	      SrcPort		      1
+	      DstBlock		      "Mux"
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "Product"
+	      SrcPort		      1
+	      Points		      [35, 0; 0, -20]
+	      DstBlock		      "Mux"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Product1"
+	      SrcPort		      1
+	      DstBlock		      "Mux"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Trigonometric\nFunction1"
+	      SrcPort		      1
+	      DstBlock		      "Product1"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Trigonometric\nFunction"
+	      SrcPort		      1
+	      DstBlock		      "Product"
+	      DstPort		      2
 	    }
 	    Line {
 	      Name		      "<cog>"
@@ -3517,107 +3734,1786 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "Trigonometric\nFunction"
+	      SrcBlock		      "gps"
 	      SrcPort		      1
-	      DstBlock		      "Product"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Trigonometric\nFunction1"
-	      SrcPort		      1
-	      DstBlock		      "Product1"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Product1"
-	      SrcPort		      1
-	      DstBlock		      "Mux"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Product"
-	      SrcPort		      1
-	      Points		      [35, 0; 0, -20]
-	      DstBlock		      "Mux"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Constant"
-	      SrcPort		      1
-	      DstBlock		      "Mux"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "Mux"
-	      SrcPort		      1
-	      DstBlock		      "velocity"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Angle Conversion"
-	      SrcPort		      1
-	      Points		      [25, 0]
+	      Points		      [20, 0; 0, 0]
 	      Branch {
-		DstBlock		"heading"
+		Points			[0, 40]
+		DstBlock		"Reorder"
 		DstPort			1
 	      }
 	      Branch {
-		Points			[0, -25]
+		Points			[0, -30]
 		Branch {
-		  DstBlock		  "Trigonometric\nFunction"
+		  DstBlock		  "Bus\nSelector1"
 		  DstPort		  1
 		}
 		Branch {
-		  Points		  [0, 0; 0, -30]
-		  DstBlock		  "Trigonometric\nFunction1"
+		  Points		  [0, -55]
+		  DstBlock		  "Bus\nSelector"
 		  DstPort		  1
 		}
 	      }
-	    }
-	    Line {
-	      Name		      "<sog>"
-	      Labels		      [0, 0]
-	      SrcBlock		      "Bus\nSelector"
-	      SrcPort		      1
-	      Points		      [105, 0; 0, 0]
-	      Branch {
-		Points			[0, -15]
-		DstBlock		"Product1"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, 15]
-		DstBlock		"Product"
-		DstPort			1
-	      }
-	    }
-	    Line {
-	      SrcBlock		      "Reorder"
-	      SrcPort		      1
-	      DstBlock		      "pos"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Reorder"
-	      SrcPort		      2
-	      DstBlock		      "time"
-	      DstPort		      1
 	    }
 	  }
 	}
 	Block {
-	  BlockType		  Terminator
-	  Name			  "Terminator"
-	  SID			  532
-	  Position		  [405, 165, 425, 185]
-	  ShowName		  off
+	  BlockType		  SubSystem
+	  Name			  "Throttle\nCommand"
+	  SID			  937
+	  Ports			  [2, 1]
+	  Position		  [230, 157, 335, 228]
+	  MinAlgLoopOccurrences	  off
+	  PropExecContextOutsideSubsystem off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  Opaque		  off
+	  RequestExecContextInheritance	off
+	  MaskHideContents	  off
+	  System {
+	    Name		    "Throttle\nCommand"
+	    Location		    [202, 82, 1270, 978]
+	    Open		    off
+	    ModelBrowserVisibility  on
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "sensors"
+	      SID		      938
+	      Position		      [25, 33, 55, 47]
+	      BackgroundColor	      "darkGreen"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "speed"
+	      SID		      939
+	      Position		      [25, 118, 55, 132]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      BusCreator
+	      Name		      "Bus\nCreator"
+	      SID		      940
+	      Ports		      [4, 1]
+	      Position		      [425, 89, 430, 186]
+	      ShowName		      off
+	      DisplayOption	      "bar"
+	    }
+	    Block {
+	      BlockType		      SubSystem
+	      Name		      "Mux Everything"
+	      SID		      941
+	      Ports		      [4, 4]
+	      Position		      [255, 89, 320, 186]
+	      MinAlgLoopOccurrences   off
+	      PropExecContextOutsideSubsystem off
+	      RTWSystemCode	      "Auto"
+	      FunctionWithSeparateData off
+	      Opaque		      off
+	      RequestExecContextInheritance off
+	      MaskHideContents	      off
+	      Port {
+		PortNumber		1
+		Name			"identifier"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	      Port {
+		PortNumber		2
+		Name			"data"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	      Port {
+		PortNumber		3
+		Name			"size"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	      Port {
+		PortNumber		4
+		Name			"trigger"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	      System {
+		Name			"Mux Everything"
+		Location		[228, 106, 1242, 815]
+		Open			off
+		ModelBrowserVisibility	on
+		ModelBrowserWidth	200
+		ScreenColor		"white"
+		PaperOrientation	"landscape"
+		PaperPositionMode	"auto"
+		PaperType		"usletter"
+		PaperUnits		"inches"
+		TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+		TiledPageScale		1
+		ShowPageBoundaries	off
+		ZoomFactor		"90"
+		Block {
+		  BlockType		  Inport
+		  Name			  "speed"
+		  SID			  942
+		  Position		  [35, 123, 65, 137]
+		  BackgroundColor	  "darkGreen"
+		  IconDisplay		  "Port number"
+		  OutDataType		  "sfix(16)"
+		  OutScaling		  "2^0"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "disable"
+		  SID			  943
+		  Position		  [35, 158, 65, 172]
+		  BackgroundColor	  "darkGreen"
+		  Port			  "2"
+		  IconDisplay		  "Port number"
+		  OutDataType		  "sfix(16)"
+		  OutScaling		  "2^0"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "enable"
+		  SID			  944
+		  Position		  [35, 198, 65, 212]
+		  BackgroundColor	  "darkGreen"
+		  Port			  "3"
+		  IconDisplay		  "Port number"
+		  OutDataType		  "sfix(16)"
+		  OutScaling		  "2^0"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "Throttle"
+		  SID			  945
+		  Position		  [50, 373, 80, 387]
+		  BackgroundColor	  "darkGreen"
+		  Port			  "4"
+		  IconDisplay		  "Port number"
+		  OutDataType		  "sfix(16)"
+		  OutScaling		  "2^0"
+		}
+		Block {
+		  BlockType		  Constant
+		  Name			  "0x300"
+		  SID			  946
+		  Position		  [305, 166, 370, 184]
+		  BackgroundColor	  "gray"
+		  Value			  "768"
+		  OutDataTypeMode	  "uint32"
+		  OutDataType		  "sfix(16)"
+		  OutScaling		  "2^0"
+		  OutDataTypeStr	  "uint32"
+		}
+		Block {
+		  BlockType		  Constant
+		  Name			  "0x301"
+		  SID			  947
+		  Position		  [305, 210, 370, 230]
+		  BackgroundColor	  "gray"
+		  Value			  "769"
+		  OutDataTypeMode	  "uint32"
+		  OutDataType		  "sfix(16)"
+		  OutScaling		  "2^0"
+		  OutDataTypeStr	  "uint32"
+		}
+		Block {
+		  BlockType		  Constant
+		  Name			  "Disable motor"
+		  SID			  948
+		  Position		  [590, 286, 680, 304]
+		  BackgroundColor	  "gray"
+		  Value			  "[0 0 0 0 64 0]"
+		  OutDataTypeMode	  "uint8"
+		  OutDataType		  "sfix(16)"
+		  OutScaling		  "2^0"
+		  OutDataTypeStr	  "uint8"
+		}
+		Block {
+		  BlockType		  Constant
+		  Name			  "Enable motor"
+		  SID			  949
+		  Position		  [590, 326, 680, 344]
+		  BackgroundColor	  "gray"
+		  Value			  "[0 0 0 0 32 0]"
+		  OutDataTypeMode	  "uint8"
+		  OutDataType		  "sfix(16)"
+		  OutScaling		  "2^0"
+		  OutDataTypeStr	  "uint8"
+		}
+		Block {
+		  BlockType		  SubSystem
+		  Name			  "Generate speed command"
+		  SID			  950
+		  Ports			  [1, 1]
+		  Position		  [550, 370, 680, 390]
+		  MinAlgLoopOccurrences	  off
+		  PropExecContextOutsideSubsystem off
+		  RTWSystemCode		  "Auto"
+		  FunctionWithSeparateData off
+		  Opaque		  off
+		  RequestExecContextInheritance	off
+		  MaskHideContents	  off
+		  System {
+		    Name		    "Generate speed command"
+		    Location		    [250, 457, 1021, 556]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "107"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "In1"
+		    SID			    951
+		    Position		    [25, 38, 55, 52]
+		    BackgroundColor	    "darkGreen"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Bias
+		    Name		    "Bias1"
+		    SID			    952
+		    Position		    [140, 30, 180, 60]
+		    ShowName		    off
+		    Bias		    "-7215"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    SubSystem
+		    Name		    "Build speed command"
+		    SID			    953
+		    Ports		    [1, 1]
+		    Position		    [580, 34, 640, 56]
+		    MinAlgLoopOccurrences   off
+		    PropExecContextOutsideSubsystem off
+		    RTWSystemCode	    "Auto"
+		    FunctionWithSeparateData off
+		    Opaque		    off
+		    RequestExecContextInheritance off
+		    MaskHideContents	    off
+		    System {
+		    Name		    "Build speed command"
+		    Location		    [197, 523, 1067, 913]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "CC"
+		    SID			    954
+		    Position		    [145, 88, 175, 102]
+		    BackgroundColor	    "darkGreen"
+		    IconDisplay		    "Port number"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "Constant"
+		    SID			    955
+		    Position		    [300, 25, 330, 45]
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    OutDataTypeMode	    "int8"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    OutDataTypeStr	    "int8"
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "Constant1"
+		    SID			    956
+		    Position		    [300, 125, 330, 145]
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    Value		    "0"
+		    OutDataTypeMode	    "int8"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    OutDataTypeStr	    "int8"
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "Constant2"
+		    SID			    957
+		    Position		    [300, 150, 330, 170]
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    Value		    "0"
+		    OutDataTypeMode	    "int8"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    OutDataTypeStr	    "int8"
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "Constant3"
+		    SID			    958
+		    Position		    [300, 50, 330, 70]
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    Value		    "5"
+		    OutDataTypeMode	    "int8"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    OutDataTypeStr	    "int8"
+		    }
+		    Block {
+		    BlockType		    DataTypeConversion
+		    Name		    "Data Type Conversion"
+		    SID			    959
+		    Position		    [400, 88, 450, 112]
+		    ShowName		    off
+		    OutDataTypeMode	    "uint8"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    OutDataTypeStr	    "uint8"
+		    ConvertRealWorld	    "Stored Integer (SI)"
+		    RndMeth		    "Floor"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Reference
+		    Name		    "Extract Bits"
+		    SID			    960
+		    Ports		    [1, 1]
+		    Position		    [255, 73, 330, 97]
+		    ShowName		    off
+		    LibraryVersion	    "1.216"
+		    SourceBlock		    "simulink/Logic and Bit\nOperations/Extract Bits"
+		    SourceType		    "Extract Bits"
+		    ShowPortLabels	    "FromPortIcon"
+		    SystemSampleTime	    "-1"
+		    FunctionWithSeparateData off
+		    RTWMemSecFuncInitTerm   "Inherit from model"
+		    RTWMemSecFuncExecute    "Inherit from model"
+		    RTWMemSecDataConstants  "Inherit from model"
+		    RTWMemSecDataInternal   "Inherit from model"
+		    RTWMemSecDataParameters "Inherit from model"
+		    bitsToExtract	    "Upper half"
+		    numBits		    "8"
+		    bitIdxRange		    "[24 31]"
+		    outScalingMode	    "Treat bit field as an integer"
+		    }
+		    Block {
+		    BlockType		    Reference
+		    Name		    "Extract Bits1"
+		    SID			    961
+		    Ports		    [1, 1]
+		    Position		    [255, 98, 330, 122]
+		    ShowName		    off
+		    LibraryVersion	    "1.216"
+		    SourceBlock		    "simulink/Logic and Bit\nOperations/Extract Bits"
+		    SourceType		    "Extract Bits"
+		    ShowPortLabels	    "FromPortIcon"
+		    SystemSampleTime	    "-1"
+		    FunctionWithSeparateData off
+		    RTWMemSecFuncInitTerm   "Inherit from model"
+		    RTWMemSecFuncExecute    "Inherit from model"
+		    RTWMemSecDataConstants  "Inherit from model"
+		    RTWMemSecDataInternal   "Inherit from model"
+		    RTWMemSecDataParameters "Inherit from model"
+		    bitsToExtract	    "Lower half"
+		    numBits		    "8"
+		    bitIdxRange		    "[16 23]"
+		    outScalingMode	    "Treat bit field as an integer"
+		    }
+		    Block {
+		    BlockType		    SubSystem
+		    Name		    "myMux"
+		    SID			    962
+		    Ports		    [6, 1]
+		    Position		    [370, 24, 375, 171]
+		    BackgroundColor	    "black"
+		    ShowName		    off
+		    PermitHierarchicalResolution "ExplicitOnly"
+		    TreatAsAtomicUnit	    on
+		    MinAlgLoopOccurrences   off
+		    PropExecContextOutsideSubsystem off
+		    RTWSystemCode	    "Auto"
+		    FunctionWithSeparateData off
+		    Opaque		    off
+		    Array {
+		    Type		    "Handle"
+		    Dimension		    0
+		    PropName		    "AvailSigsLoadSave"
+		    }
+		    RequestExecContextInheritance off
+		    MaskHideContents	    off
+		    MaskType		    "Stateflow"
+		    MaskDescription	    "Embedded MATLAB block"
+		    MaskDisplay		    "disp('myMux');"
+		    MaskSelfModifiable	    on
+		    MaskIconFrame	    on
+		    MaskIconOpaque	    off
+		    MaskIconRotate	    "none"
+		    MaskPortRotate	    "default"
+		    MaskIconUnits	    "autoscale"
+		    System {
+		    Name		    "myMux"
+		    Location		    [257, 457, 812, 717]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    SIDHighWatermark	    14
+		    Block {
+		    BlockType		    Inport
+		    Name		    "u1"
+		    SID			    1
+		    Position		    [20, 101, 40, 119]
+		    IconDisplay		    "Port number"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "u2"
+		    SID			    2
+		    Position		    [20, 136, 40, 154]
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "u3"
+		    SID			    3
+		    Position		    [20, 171, 40, 189]
+		    Port		    "3"
+		    IconDisplay		    "Port number"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "u4"
+		    SID			    4
+		    Position		    [20, 206, 40, 224]
+		    Port		    "4"
+		    IconDisplay		    "Port number"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "u5"
+		    SID			    5
+		    Position		    [20, 246, 40, 264]
+		    Port		    "5"
+		    IconDisplay		    "Port number"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "u6"
+		    SID			    6
+		    Position		    [20, 281, 40, 299]
+		    Port		    "6"
+		    IconDisplay		    "Port number"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    }
+		    Block {
+		    BlockType		    Demux
+		    Name		    " Demux "
+		    SID			    12
+		    Ports		    [1, 1]
+		    Position		    [270, 245, 320, 285]
+		    Outputs		    "1"
+		    }
+		    Block {
+		    BlockType		    "S-Function"
+		    Name		    " SFunction "
+		    SID			    11
+		    Tag			    "Stateflow S-Function Boat_sim 9"
+		    Ports		    [6, 2]
+		    Position		    [180, 102, 230, 243]
+		    FunctionName	    "sf_sfun"
+		    PortCounts		    "[6 2]"
+		    EnableBusSupport	    on
+		    Port {
+		    PortNumber		    2
+		    Name		    "y"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    }
+		    Block {
+		    BlockType		    Terminator
+		    Name		    " Terminator "
+		    SID			    14
+		    Position		    [460, 256, 480, 274]
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "y"
+		    SID			    10
+		    Position		    [460, 101, 480, 119]
+		    IconDisplay		    "Port number"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    }
+		    Line {
+		    SrcBlock		    " SFunction "
+		    SrcPort		    1
+		    DstBlock		    " Demux "
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "u1"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "u2"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "u3"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    3
+		    }
+		    Line {
+		    SrcBlock		    "u4"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    4
+		    }
+		    Line {
+		    SrcBlock		    "u5"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    5
+		    }
+		    Line {
+		    SrcBlock		    "u6"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    6
+		    }
+		    Line {
+		    Name		    "y"
+		    Labels		    [0, 0]
+		    SrcBlock		    " SFunction "
+		    SrcPort		    2
+		    DstBlock		    "y"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    " Demux "
+		    SrcPort		    1
+		    DstBlock		    " Terminator "
+		    DstPort		    1
+		    }
+		    }
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "msg"
+		    SID			    963
+		    Position		    [480, 93, 510, 107]
+		    BackgroundColor	    "yellow"
+		    IconDisplay		    "Port number"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    }
+		    Line {
+		    SrcBlock		    "CC"
+		    SrcPort		    1
+		    Points		    [30, 0; 0, 0]
+		    Branch {
+		    Points		    [0, -10]
+		    DstBlock		    "Extract Bits"
+		    DstPort		    1
+		    }
+		    Branch {
+		    Points		    [0, 15]
+		    DstBlock		    "Extract Bits1"
+		    DstPort		    1
+		    }
+		    }
+		    Line {
+		    SrcBlock		    "Data Type Conversion"
+		    SrcPort		    1
+		    DstBlock		    "msg"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Constant2"
+		    SrcPort		    1
+		    DstBlock		    "myMux"
+		    DstPort		    6
+		    }
+		    Line {
+		    SrcBlock		    "Constant1"
+		    SrcPort		    1
+		    DstBlock		    "myMux"
+		    DstPort		    5
+		    }
+		    Line {
+		    SrcBlock		    "myMux"
+		    SrcPort		    1
+		    DstBlock		    "Data Type Conversion"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Extract Bits1"
+		    SrcPort		    1
+		    DstBlock		    "myMux"
+		    DstPort		    4
+		    }
+		    Line {
+		    SrcBlock		    "Extract Bits"
+		    SrcPort		    1
+		    DstBlock		    "myMux"
+		    DstPort		    3
+		    }
+		    Line {
+		    SrcBlock		    "Constant3"
+		    SrcPort		    1
+		    DstBlock		    "myMux"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "Constant"
+		    SrcPort		    1
+		    DstBlock		    "myMux"
+		    DstPort		    1
+		    }
+		    }
+		    }
+		    Block {
+		    BlockType		    DataTypeConversion
+		    Name		    "Data Type Conversion"
+		    SID			    964
+		    Position		    [80, 31, 110, 59]
+		    ShowName		    off
+		    OutDataTypeMode	    "int32"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    OutDataTypeStr	    "int32"
+		    ConvertRealWorld	    "Stored Integer (SI)"
+		    RndMeth		    "Floor"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    DataTypeConversion
+		    Name		    "Data Type Conversion1"
+		    SID			    965
+		    Position		    [370, 36, 395, 54]
+		    ShowName		    off
+		    OutDataTypeMode	    "int16"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    OutDataTypeStr	    "int16"
+		    RndMeth		    "Floor"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Saturate
+		    Name		    "Saturation1"
+		    SID			    966
+		    Ports		    [1, 1]
+		    Position		    [415, 27, 445, 63]
+		    ShowName		    off
+		    UpperLimit		    "1023"
+		    LowerLimit		    "-1023"
+		    }
+		    Block {
+		    BlockType		    Reference
+		    Name		    "Shift\nArithmetic"
+		    SID			    967
+		    Ports		    [1, 1]
+		    Position		    [225, 25, 305, 65]
+		    ShowName		    off
+		    LibraryVersion	    "1.216"
+		    SourceBlock		    "simulink/Logic and Bit\nOperations/Shift\nArithmetic"
+		    SourceType		    "Shift Arithmetic"
+		    ShowPortLabels	    "FromPortIcon"
+		    SystemSampleTime	    "-1"
+		    FunctionWithSeparateData off
+		    RTWMemSecFuncInitTerm   "Inherit from model"
+		    RTWMemSecFuncExecute    "Inherit from model"
+		    RTWMemSecDataConstants  "Inherit from model"
+		    RTWMemSecDataInternal   "Inherit from model"
+		    RTWMemSecDataParameters "Inherit from model"
+		    nBitShiftRight	    "1"
+		    nBinPtShiftRight	    "0"
+		    }
+		    Block {
+		    BlockType		    Reference
+		    Name		    "Weighted\nMoving Average1"
+		    SID			    968
+		    Ports		    [1, 1]
+		    Position		    [475, 27, 545, 63]
+		    ShowName		    off
+		    LibraryVersion	    "1.10"
+		    SourceBlock		    "simulink_need_slupdate/Weighted\nMoving Average"
+		    SourceType		    "Weighted Moving Average"
+		    mgainval		    "[.5 .5]"
+		    vinit		    "0.0"
+		    samptime		    "-1"
+		    OutDataTypeStr	    "Inherit: Inherit via back propagation"
+		    OutputDataTypeScalingMode "Inherit via back propagation"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^-10"
+		    LockScale		    off
+		    RndMeth		    "Floor"
+		    DoSatur		    off
+		    GainDataTypeStr	    "Inherit: Inherit via internal rule"
+		    GainDataTypeScalingMode "Inherit via internal rule"
+		    GainDataType	    "uint(16)"
+		    MatRadixGroup	    "Best Precision: Matrix-wise"
+		    GainScaling		    "2^-10"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "Out1"
+		    SID			    969
+		    Position		    [665, 38, 695, 52]
+		    BackgroundColor	    "yellow"
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "Bias1"
+		    SrcPort		    1
+		    DstBlock		    "Shift\nArithmetic"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Data Type Conversion"
+		    SrcPort		    1
+		    DstBlock		    "Bias1"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Shift\nArithmetic"
+		    SrcPort		    1
+		    DstBlock		    "Data Type Conversion1"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Saturation1"
+		    SrcPort		    1
+		    DstBlock		    "Weighted\nMoving Average1"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Data Type Conversion1"
+		    SrcPort		    1
+		    DstBlock		    "Saturation1"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Weighted\nMoving Average1"
+		    SrcPort		    1
+		    DstBlock		    "Build speed command"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Build speed command"
+		    SrcPort		    1
+		    DstBlock		    "Out1"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "In1"
+		    SrcPort		    1
+		    DstBlock		    "Data Type Conversion"
+		    DstPort		    1
+		    }
+		  }
+		}
+		Block {
+		  BlockType		  Logic
+		  Name			  "Logical\nOperator1"
+		  SID			  970
+		  Ports			  [2, 1]
+		  Position		  [240, 181, 270, 214]
+		  ShowName		  off
+		  Operator		  "OR"
+		  AllPortsSameDT	  off
+		  OutDataTypeMode	  "boolean"
+		  OutDataTypeStr	  "boolean"
+		}
+		Block {
+		  BlockType		  Probe
+		  Name			  "Message Length1"
+		  SID			  971
+		  Ports			  [1, 1]
+		  Position		  [815, 355, 870, 375]
+		  ShowName		  off
+		  ProbeSampleTime	  off
+		  ProbeComplexSignal	  off
+		  ProbeWidthDataType	  "uint8"
+		}
+		Block {
+		  BlockType		  MultiPortSwitch
+		  Name			  "Multiport\nSwitch"
+		  SID			  972
+		  Ports			  [4, 1]
+		  Position		  [740, 307, 770, 353]
+		  ShowName		  off
+		  zeroidx		  off
+		  InputSameDT		  off
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  MultiPortSwitch
+		  Name			  "Multiport\nSwitch1"
+		  SID			  973
+		  Ports			  [4, 1]
+		  Position		  [740, 197, 770, 243]
+		  ShowName		  off
+		  zeroidx		  off
+		  InputSameDT		  off
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  SubSystem
+		  Name			  "Select data packet"
+		  SID			  974
+		  Ports			  [2, 1]
+		  Position		  [180, 253, 250, 302]
+		  PermitHierarchicalResolution "ExplicitOnly"
+		  TreatAsAtomicUnit	  on
+		  MinAlgLoopOccurrences	  off
+		  PropExecContextOutsideSubsystem off
+		  RTWSystemCode		  "Auto"
+		  FunctionWithSeparateData off
+		  Opaque		  off
+		  Array {
+		    Type		    "Handle"
+		    Dimension		    0
+		    PropName		    "AvailSigsLoadSave"
+		  }
+		  RequestExecContextInheritance	off
+		  MaskHideContents	  off
+		  MaskType		  "Stateflow"
+		  MaskDescription	  "Embedded MATLAB block"
+		  MaskDisplay		  "disp('fcn');"
+		  MaskSelfModifiable	  on
+		  MaskIconFrame		  on
+		  MaskIconOpaque	  off
+		  MaskIconRotate	  "none"
+		  MaskPortRotate	  "default"
+		  MaskIconUnits		  "autoscale"
+		  System {
+		    Name		    "Select data packet"
+		    Location		    [257, 457, 812, 717]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    SIDHighWatermark	    11
+		    Block {
+		    BlockType		    Inport
+		    Name		    "dis"
+		    SID			    2
+		    Position		    [20, 101, 40, 119]
+		    IconDisplay		    "Port number"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "en"
+		    SID			    3
+		    Position		    [20, 136, 40, 154]
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    }
+		    Block {
+		    BlockType		    Demux
+		    Name		    " Demux "
+		    SID			    9
+		    Ports		    [1, 1]
+		    Position		    [270, 180, 320, 220]
+		    Outputs		    "1"
+		    }
+		    Block {
+		    BlockType		    "S-Function"
+		    Name		    " SFunction "
+		    SID			    8
+		    Tag			    "Stateflow S-Function Boat_sim 10"
+		    Ports		    [2, 2]
+		    Position		    [180, 100, 230, 180]
+		    FunctionName	    "sf_sfun"
+		    PortCounts		    "[2 2]"
+		    EnableBusSupport	    on
+		    Port {
+		    PortNumber		    2
+		    Name		    "y"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    }
+		    Block {
+		    BlockType		    Terminator
+		    Name		    " Terminator "
+		    SID			    11
+		    Position		    [460, 191, 480, 209]
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "y"
+		    SID			    7
+		    Position		    [460, 101, 480, 119]
+		    IconDisplay		    "Port number"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    }
+		    Line {
+		    SrcBlock		    " SFunction "
+		    SrcPort		    1
+		    DstBlock		    " Demux "
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "dis"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "en"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    2
+		    }
+		    Line {
+		    Name		    "y"
+		    Labels		    [0, 0]
+		    SrcBlock		    " SFunction "
+		    SrcPort		    2
+		    DstBlock		    "y"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    " Demux "
+		    SrcPort		    1
+		    DstBlock		    " Terminator "
+		    DstPort		    1
+		    }
+		  }
+		}
+		Block {
+		  BlockType		  Switch
+		  Name			  "Switch"
+		  SID			  975
+		  Position		  [470, 185, 500, 215]
+		  ShowName		  off
+		  Criteria		  "u2 ~= 0"
+		  InputSameDT		  off
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "iden"
+		  SID			  976
+		  Position		  [525, 193, 555, 207]
+		  BackgroundColor	  "yellow"
+		  IconDisplay		  "Port number"
+		  OutDataType		  "sfix(16)"
+		  OutScaling		  "2^0"
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "data"
+		  SID			  977
+		  Position		  [900, 323, 930, 337]
+		  BackgroundColor	  "yellow"
+		  Port			  "2"
+		  IconDisplay		  "Port number"
+		  OutDataType		  "sfix(16)"
+		  OutScaling		  "2^0"
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "size"
+		  SID			  978
+		  Position		  [900, 358, 930, 372]
+		  BackgroundColor	  "yellow"
+		  Port			  "3"
+		  IconDisplay		  "Port number"
+		  OutDataType		  "sfix(16)"
+		  OutScaling		  "2^0"
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "trig"
+		  SID			  979
+		  Position		  [815, 213, 845, 227]
+		  BackgroundColor	  "yellow"
+		  Port			  "4"
+		  IconDisplay		  "Port number"
+		  OutDataType		  "sfix(16)"
+		  OutScaling		  "2^0"
+		}
+		Line {
+		  SrcBlock		  "Enable motor"
+		  SrcPort		  1
+		  DstBlock		  "Multiport\nSwitch"
+		  DstPort		  3
+		}
+		Line {
+		  SrcBlock		  "Disable motor"
+		  SrcPort		  1
+		  Points		  [20, 0; 0, 30]
+		  DstBlock		  "Multiport\nSwitch"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "Throttle"
+		  SrcPort		  1
+		  DstBlock		  "Generate speed command"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Multiport\nSwitch"
+		  SrcPort		  1
+		  Points		  [15, 0]
+		  Branch {
+		    Points		    [0, 35]
+		    DstBlock		    "Message Length1"
+		    DstPort		    1
+		  }
+		  Branch {
+		    DstBlock		    "data"
+		    DstPort		    1
+		  }
+		}
+		Line {
+		  SrcBlock		  "Message Length1"
+		  SrcPort		  1
+		  DstBlock		  "size"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "0x300"
+		  SrcPort		  1
+		  Points		  [0, 15]
+		  DstBlock		  "Switch"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "0x301"
+		  SrcPort		  1
+		  Points		  [0, -10]
+		  DstBlock		  "Switch"
+		  DstPort		  3
+		}
+		Line {
+		  SrcBlock		  "Switch"
+		  SrcPort		  1
+		  DstBlock		  "iden"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "disable"
+		  SrcPort		  1
+		  Points		  [60, 0; 0, 25]
+		  Branch {
+		    DstBlock		    "Logical\nOperator1"
+		    DstPort		    1
+		  }
+		  Branch {
+		    Points		    [0, -25]
+		    Branch {
+		    Points		    [0, 100]
+		    DstBlock		    "Select data packet"
+		    DstPort		    1
+		    }
+		    Branch {
+		    Points		    [595, 0]
+		    DstBlock		    "Multiport\nSwitch1"
+		    DstPort		    2
+		    }
+		  }
+		}
+		Line {
+		  SrcBlock		  "enable"
+		  SrcPort		  1
+		  Points		  [40, 0]
+		  Branch {
+		    DstBlock		    "Logical\nOperator1"
+		    DstPort		    2
+		  }
+		  Branch {
+		    Points		    [0, 40]
+		    Branch {
+		    Points		    [0, 45]
+		    DstBlock		    "Select data packet"
+		    DstPort		    2
+		    }
+		    Branch {
+		    Points		    [615, 0]
+		    DstBlock		    "Multiport\nSwitch1"
+		    DstPort		    3
+		    }
+		  }
+		}
+		Line {
+		  SrcBlock		  "Logical\nOperator1"
+		  SrcPort		  1
+		  DstBlock		  "Switch"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "Select data packet"
+		  SrcPort		  1
+		  Points		  [430, 0]
+		  Branch {
+		    Points		    [40, 0]
+		    DstBlock		    "Multiport\nSwitch"
+		    DstPort		    1
+		  }
+		  Branch {
+		    Points		    [0, -75]
+		    DstBlock		    "Multiport\nSwitch1"
+		    DstPort		    1
+		  }
+		}
+		Line {
+		  SrcBlock		  "Generate speed command"
+		  SrcPort		  1
+		  Points		  [15, 0; 0, -35]
+		  DstBlock		  "Multiport\nSwitch"
+		  DstPort		  4
+		}
+		Line {
+		  SrcBlock		  "Multiport\nSwitch1"
+		  SrcPort		  1
+		  DstBlock		  "trig"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "speed"
+		  SrcPort		  1
+		  Points		  [650, 0; 0, 105]
+		  DstBlock		  "Multiport\nSwitch1"
+		  DstPort		  4
+		}
+	      }
+	    }
+	    Block {
+	      BlockType		      Terminator
+	      Name		      "Terminator"
+	      SID		      980
+	      Position		      [100, 30, 120, 50]
+	      ShowName		      off
+	    }
+	    Block {
+	      BlockType		      SubSystem
+	      Name		      "Trigger Events"
+	      SID		      981
+	      Ports		      [1, 3]
+	      Position		      [100, 86, 210, 164]
+	      MinAlgLoopOccurrences   off
+	      PropExecContextOutsideSubsystem off
+	      RTWSystemCode	      "Auto"
+	      FunctionWithSeparateData off
+	      Opaque		      off
+	      RequestExecContextInheritance off
+	      MaskHideContents	      off
+	      System {
+		Name			"Trigger Events"
+		Location		[379, 551, 1227, 855]
+		Open			off
+		ModelBrowserVisibility	on
+		ModelBrowserWidth	200
+		ScreenColor		"white"
+		PaperOrientation	"landscape"
+		PaperPositionMode	"auto"
+		PaperType		"usletter"
+		PaperUnits		"inches"
+		TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+		TiledPageScale		1
+		ShowPageBoundaries	off
+		ZoomFactor		"100"
+		Block {
+		  BlockType		  Inport
+		  Name			  "RC Throttle"
+		  SID			  982
+		  Position		  [25, 68, 55, 82]
+		  BackgroundColor	  "darkGreen"
+		  IconDisplay		  "Port number"
+		  OutDataType		  "sfix(16)"
+		  OutScaling		  "2^0"
+		}
+		Block {
+		  BlockType		  DataTypeConversion
+		  Name			  "Data Type Conversion3"
+		  SID			  983
+		  Position		  [430, 21, 460, 39]
+		  ShowName		  off
+		  OutDataTypeMode	  "boolean"
+		  OutDataType		  "sfix(16)"
+		  OutScaling		  "2^0"
+		  OutDataTypeStr	  "boolean"
+		  RndMeth		  "Floor"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Reference
+		  Name			  "Detect\nChange"
+		  SID			  984
+		  Ports			  [1, 1]
+		  Position		  [355, 20, 410, 40]
+		  ShowName		  off
+		  LibraryVersion	  "1.216"
+		  SourceBlock		  "simulink/Logic and Bit\nOperations/Detect\nChange"
+		  SourceType		  "Detect Change"
+		  ShowPortLabels	  "FromPortIcon"
+		  SystemSampleTime	  "-1"
+		  FunctionWithSeparateData off
+		  RTWMemSecFuncInitTerm	  "Inherit from model"
+		  RTWMemSecFuncExecute	  "Inherit from model"
+		  RTWMemSecDataConstants  "Inherit from model"
+		  RTWMemSecDataInternal	  "Inherit from model"
+		  RTWMemSecDataParameters "Inherit from model"
+		  vinit			  "0"
+		}
+		Block {
+		  BlockType		  SubSystem
+		  Name			  "Detect to/from zero"
+		  SID			  985
+		  Ports			  [1, 2]
+		  Position		  [340, 54, 430, 116]
+		  MinAlgLoopOccurrences	  off
+		  PropExecContextOutsideSubsystem off
+		  RTWSystemCode		  "Auto"
+		  FunctionWithSeparateData off
+		  Opaque		  off
+		  RequestExecContextInheritance	off
+		  MaskHideContents	  off
+		  System {
+		    Name		    "Detect to/from zero"
+		    Location		    [680, 502, 1132, 742]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "hightime"
+		    SID			    986
+		    Position		    [25, 25, 55, 40]
+		    BlockRotation	    270
+		    BlockMirror		    on
+		    BackgroundColor	    "darkGreen"
+		    IconDisplay		    "Port number"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    }
+		    Block {
+		    BlockType		    Reference
+		    Name		    "Compare\nTo Zero2"
+		    SID			    987
+		    Ports		    [1, 1]
+		    Position		    [190, 100, 220, 130]
+		    ShowName		    off
+		    LibraryVersion	    "1.216"
+		    SourceBlock		    "simulink/Logic and Bit\nOperations/Compare\nTo Zero"
+		    SourceType		    "Compare To Zero"
+		    ShowPortLabels	    "FromPortIcon"
+		    SystemSampleTime	    "-1"
+		    FunctionWithSeparateData off
+		    RTWMemSecFuncInitTerm   "Inherit from model"
+		    RTWMemSecFuncExecute    "Inherit from model"
+		    RTWMemSecDataConstants  "Inherit from model"
+		    RTWMemSecDataInternal   "Inherit from model"
+		    RTWMemSecDataParameters "Inherit from model"
+		    relop		    ">"
+		    LogicOutDataTypeMode    "boolean"
+		    ZeroCross		    off
+		    }
+		    Block {
+		    BlockType		    Reference
+		    Name		    "Compare\nTo Zero3"
+		    SID			    988
+		    Ports		    [1, 1]
+		    Position		    [105, 120, 135, 150]
+		    ShowName		    off
+		    LibraryVersion	    "1.216"
+		    SourceBlock		    "simulink/Logic and Bit\nOperations/Compare\nTo Zero"
+		    SourceType		    "Compare To Zero"
+		    ShowPortLabels	    "FromPortIcon"
+		    SystemSampleTime	    "-1"
+		    FunctionWithSeparateData off
+		    RTWMemSecFuncInitTerm   "Inherit from model"
+		    RTWMemSecFuncExecute    "Inherit from model"
+		    RTWMemSecDataConstants  "Inherit from model"
+		    RTWMemSecDataInternal   "Inherit from model"
+		    RTWMemSecDataParameters "Inherit from model"
+		    relop		    "=="
+		    LogicOutDataTypeMode    "boolean"
+		    ZeroCross		    off
+		    }
+		    Block {
+		    BlockType		    Reference
+		    Name		    "Compare\nTo Zero4"
+		    SID			    989
+		    Ports		    [1, 1]
+		    Position		    [105, 160, 135, 190]
+		    ShowName		    off
+		    LibraryVersion	    "1.216"
+		    SourceBlock		    "simulink/Logic and Bit\nOperations/Compare\nTo Zero"
+		    SourceType		    "Compare To Zero"
+		    ShowPortLabels	    "FromPortIcon"
+		    SystemSampleTime	    "-1"
+		    FunctionWithSeparateData off
+		    RTWMemSecFuncInitTerm   "Inherit from model"
+		    RTWMemSecFuncExecute    "Inherit from model"
+		    RTWMemSecDataConstants  "Inherit from model"
+		    RTWMemSecDataInternal   "Inherit from model"
+		    RTWMemSecDataParameters "Inherit from model"
+		    relop		    ">"
+		    LogicOutDataTypeMode    "boolean"
+		    ZeroCross		    off
+		    }
+		    Block {
+		    BlockType		    Reference
+		    Name		    "Compare\nTo Zero5"
+		    SID			    990
+		    Ports		    [1, 1]
+		    Position		    [190, 140, 220, 170]
+		    ShowName		    off
+		    LibraryVersion	    "1.216"
+		    SourceBlock		    "simulink/Logic and Bit\nOperations/Compare\nTo Zero"
+		    SourceType		    "Compare To Zero"
+		    ShowPortLabels	    "FromPortIcon"
+		    SystemSampleTime	    "-1"
+		    FunctionWithSeparateData off
+		    RTWMemSecFuncInitTerm   "Inherit from model"
+		    RTWMemSecFuncExecute    "Inherit from model"
+		    RTWMemSecDataConstants  "Inherit from model"
+		    RTWMemSecDataInternal   "Inherit from model"
+		    RTWMemSecDataParameters "Inherit from model"
+		    relop		    "=="
+		    LogicOutDataTypeMode    "boolean"
+		    ZeroCross		    off
+		    }
+		    Block {
+		    BlockType		    Reference
+		    Name		    "Integer Delay"
+		    SID			    991
+		    Ports		    [1, 1]
+		    Position		    [105, 43, 140, 77]
+		    ShowName		    off
+		    LibraryVersion	    "1.216"
+		    SourceBlock		    "simulink/Discrete/Integer Delay"
+		    SourceType		    "Integer Delay"
+		    vinit		    "0.0"
+		    samptime		    "-1"
+		    NumDelays		    "1"
+		    }
+		    Block {
+		    BlockType		    Logic
+		    Name		    "Logical\nOperator7"
+		    SID			    992
+		    Ports		    [2, 1]
+		    Position		    [285, 107, 315, 143]
+		    ShowName		    off
+		    AllPortsSameDT	    off
+		    OutDataTypeMode	    "boolean"
+		    OutDataTypeStr	    "boolean"
+		    }
+		    Block {
+		    BlockType		    Logic
+		    Name		    "Logical\nOperator8"
+		    SID			    993
+		    Ports		    [2, 1]
+		    Position		    [285, 147, 315, 183]
+		    ShowName		    off
+		    AllPortsSameDT	    off
+		    OutDataTypeMode	    "boolean"
+		    OutDataTypeStr	    "boolean"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "Went low"
+		    SID			    994
+		    Position		    [350, 118, 380, 132]
+		    BackgroundColor	    "yellow"
+		    IconDisplay		    "Port number"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "Went high"
+		    SID			    995
+		    Position		    [350, 158, 380, 172]
+		    BackgroundColor	    "yellow"
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    }
+		    Line {
+		    SrcBlock		    "Logical\nOperator7"
+		    SrcPort		    1
+		    DstBlock		    "Went low"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Compare\nTo Zero4"
+		    SrcPort		    1
+		    DstBlock		    "Logical\nOperator8"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "Compare\nTo Zero5"
+		    SrcPort		    1
+		    DstBlock		    "Logical\nOperator8"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Compare\nTo Zero3"
+		    SrcPort		    1
+		    DstBlock		    "Logical\nOperator7"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "Compare\nTo Zero2"
+		    SrcPort		    1
+		    DstBlock		    "Logical\nOperator7"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Integer Delay"
+		    SrcPort		    1
+		    Points		    [30, 0; 0, 55]
+		    Branch {
+		    DstBlock		    "Compare\nTo Zero2"
+		    DstPort		    1
+		    }
+		    Branch {
+		    DstBlock		    "Compare\nTo Zero5"
+		    DstPort		    1
+		    }
+		    }
+		    Line {
+		    SrcBlock		    "hightime"
+		    SrcPort		    1
+		    Points		    [0, 15]
+		    Branch {
+		    DstBlock		    "Integer Delay"
+		    DstPort		    1
+		    }
+		    Branch {
+		    Points		    [0, 75]
+		    Branch {
+		    DstBlock		    "Compare\nTo Zero3"
+		    DstPort		    1
+		    }
+		    Branch {
+		    Points		    [0, 40]
+		    DstBlock		    "Compare\nTo Zero4"
+		    DstPort		    1
+		    }
+		    }
+		    }
+		    Line {
+		    SrcBlock		    "Logical\nOperator8"
+		    SrcPort		    1
+		    DstBlock		    "Went high"
+		    DstPort		    1
+		    }
+		  }
+		}
+		Block {
+		  BlockType		  Reference
+		  Name			  "Shift\nArithmetic"
+		  SID			  996
+		  Ports			  [1, 1]
+		  Position		  [135, 10, 215, 50]
+		  ShowName		  off
+		  LibraryVersion	  "1.216"
+		  SourceBlock		  "simulink/Logic and Bit\nOperations/Shift\nArithmetic"
+		  SourceType		  "Shift Arithmetic"
+		  ShowPortLabels	  "FromPortIcon"
+		  SystemSampleTime	  "-1"
+		  FunctionWithSeparateData off
+		  RTWMemSecFuncInitTerm	  "Inherit from model"
+		  RTWMemSecFuncExecute	  "Inherit from model"
+		  RTWMemSecDataConstants  "Inherit from model"
+		  RTWMemSecDataInternal	  "Inherit from model"
+		  RTWMemSecDataParameters "Inherit from model"
+		  nBitShiftRight	  "2"
+		  nBinPtShiftRight	  "0"
+		}
+		Block {
+		  BlockType		  Reference
+		  Name			  "Weighted\nMoving Average"
+		  SID			  997
+		  Ports			  [1, 1]
+		  Position		  [250, 12, 320, 48]
+		  ShowName		  off
+		  LibraryVersion	  "1.10"
+		  SourceBlock		  "simulink_need_slupdate/Weighted\nMoving Average"
+		  SourceType		  "Weighted Moving Average"
+		  mgainval		  "[.5 .5]"
+		  vinit			  "0.0"
+		  samptime		  "-1"
+		  OutDataTypeStr	  "Inherit: Inherit via back propagation"
+		  OutputDataTypeScalingMode "Inherit via back propagation"
+		  OutDataType		  "sfix(16)"
+		  OutScaling		  "2^-10"
+		  LockScale		  off
+		  RndMeth		  "Floor"
+		  DoSatur		  off
+		  GainDataTypeStr	  "Inherit: Inherit via internal rule"
+		  GainDataTypeScalingMode "Inherit via internal rule"
+		  GainDataType		  "uint(16)"
+		  MatRadixGroup		  "Best Precision: Matrix-wise"
+		  GainScaling		  "2^-10"
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "Change\nSpeed"
+		  SID			  998
+		  Position		  [490, 23, 520, 37]
+		  BackgroundColor	  "yellow"
+		  IconDisplay		  "Port number"
+		  OutDataType		  "sfix(16)"
+		  OutScaling		  "2^0"
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "Disable"
+		  SID			  999
+		  Position		  [490, 63, 520, 77]
+		  BackgroundColor	  "yellow"
+		  Port			  "2"
+		  IconDisplay		  "Port number"
+		  OutDataType		  "sfix(16)"
+		  OutScaling		  "2^0"
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "Enable"
+		  SID			  1000
+		  Position		  [490, 93, 520, 107]
+		  BackgroundColor	  "yellow"
+		  Port			  "3"
+		  IconDisplay		  "Port number"
+		  OutDataType		  "sfix(16)"
+		  OutScaling		  "2^0"
+		}
+		Line {
+		  SrcBlock		  "RC Throttle"
+		  SrcPort		  1
+		  Points		  [50, 0]
+		  Branch {
+		    Points		    [0, -45]
+		    DstBlock		    "Shift\nArithmetic"
+		    DstPort		    1
+		  }
+		  Branch {
+		    Points		    [0, 10]
+		    DstBlock		    "Detect to/from zero"
+		    DstPort		    1
+		  }
+		}
+		Line {
+		  SrcBlock		  "Detect to/from zero"
+		  SrcPort		  2
+		  DstBlock		  "Enable"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Detect\nChange"
+		  SrcPort		  1
+		  DstBlock		  "Data Type Conversion3"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Detect to/from zero"
+		  SrcPort		  1
+		  DstBlock		  "Disable"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Data Type Conversion3"
+		  SrcPort		  1
+		  DstBlock		  "Change\nSpeed"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Weighted\nMoving Average"
+		  SrcPort		  1
+		  DstBlock		  "Detect\nChange"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Shift\nArithmetic"
+		  SrcPort		  1
+		  DstBlock		  "Weighted\nMoving Average"
+		  DstPort		  1
+		}
+	      }
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "command"
+	      SID		      1001
+	      Position		      [480, 133, 510, 147]
+	      BackgroundColor	      "yellow"
+	      IconDisplay	      "Port number"
+	      OutDataType	      "sfix(16)"
+	      OutScaling	      "2^0"
+	    }
+	    Line {
+	      SrcBlock		      "sensors"
+	      SrcPort		      1
+	      DstBlock		      "Terminator"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Bus\nCreator"
+	      SrcPort		      1
+	      DstBlock		      "command"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Trigger Events"
+	      SrcPort		      1
+	      DstBlock		      "Mux Everything"
+	      DstPort		      1
+	    }
+	    Line {
+	      Labels		      [0, 0]
+	      SrcBlock		      "Trigger Events"
+	      SrcPort		      3
+	      DstBlock		      "Mux Everything"
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "Trigger Events"
+	      SrcPort		      2
+	      DstBlock		      "Mux Everything"
+	      DstPort		      2
+	    }
+	    Line {
+	      Labels		      [1, 0]
+	      SrcBlock		      "speed"
+	      SrcPort		      1
+	      Points		      [15, 0]
+	      Branch {
+		Points			[0, 65; 145, 0; 0, -15]
+		DstBlock		"Mux Everything"
+		DstPort			4
+	      }
+	      Branch {
+		DstBlock		"Trigger Events"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      Name		      "identifier"
+	      Labels		      [0, 0]
+	      SrcBlock		      "Mux Everything"
+	      SrcPort		      1
+	      DstBlock		      "Bus\nCreator"
+	      DstPort		      1
+	    }
+	    Line {
+	      Name		      "data"
+	      Labels		      [0, 0]
+	      SrcBlock		      "Mux Everything"
+	      SrcPort		      2
+	      DstBlock		      "Bus\nCreator"
+	      DstPort		      2
+	    }
+	    Line {
+	      Name		      "size"
+	      Labels		      [0, 0]
+	      SrcBlock		      "Mux Everything"
+	      SrcPort		      3
+	      DstBlock		      "Bus\nCreator"
+	      DstPort		      3
+	    }
+	    Line {
+	      Name		      "trigger"
+	      Labels		      [0, 0]
+	      SrcBlock		      "Mux Everything"
+	      SrcPort		      4
+	      DstBlock		      "Bus\nCreator"
+	      DstPort		      4
+	    }
+	  }
 	}
 	Block {
 	  BlockType		  ToWorkspace
 	  Name			  "To Workspace1"
-	  SID			  594
+	  SID			  1002
 	  Ports			  [1]
-	  Position		  [250, 175, 310, 205]
+	  Position		  [255, 300, 315, 330]
 	  ShowName		  off
 	  VariableName		  "velocity"
 	  MaxDataPoints		  "inf"
@@ -3627,8 +5523,8 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Rudder command"
-	  SID			  69
-	  Position		  [525, 243, 555, 257]
+	  SID			  1003
+	  Position		  [530, 368, 560, 382]
 	  BackgroundColor	  "yellow"
 	  IconDisplay		  "Port number"
 	  OutDataType		  "sfix(16)"
@@ -3637,8 +5533,8 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Throttle command"
-	  SID			  70
-	  Position		  [525, 133, 555, 147]
+	  SID			  1004
+	  Position		  [445, 188, 475, 202]
 	  BackgroundColor	  "yellow"
 	  Port			  "2"
 	  IconDisplay		  "Port number"
@@ -3648,8 +5544,8 @@ Model {
 	Block {
 	  BlockType		  Outport
 	  Name			  "Tray angle command"
-	  SID			  71
-	  Position		  [525, 368, 555, 382]
+	  SID			  1005
+	  Position		  [530, 493, 560, 507]
 	  BackgroundColor	  "yellow"
 	  Port			  "3"
 	  IconDisplay		  "Port number"
@@ -3657,59 +5553,19 @@ Model {
 	  OutScaling		  "2^0"
 	}
 	Line {
-	  SrcBlock		  "Rudder\nCommand"
-	  SrcPort		  1
-	  DstBlock		  "Rudder command"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "GPS"
-	  SrcPort		  1
-	  DstBlock		  "Subsystem"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Constant5"
-	  SrcPort		  1
-	  DstBlock		  "Throttle command"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Ballast\nCommand"
-	  SrcPort		  1
-	  DstBlock		  "Tray angle command"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "sensors_b"
-	  SrcPort		  1
-	  DstBlock		  "Ballast\nCommand"
-	  DstPort		  4
-	}
-	Line {
-	  SrcBlock		  "sensors_r"
-	  SrcPort		  1
-	  Points		  [255, 0]
-	  DstBlock		  "Rudder\nCommand"
-	  DstPort		  2
-	}
-	Line {
-	  SrcBlock		  "sensors_t"
-	  SrcPort		  1
-	  DstBlock		  "Terminator"
-	  DstPort		  1
-	}
-	Line {
 	  SrcBlock		  "Subsystem"
-	  SrcPort		  2
-	  DstBlock		  "Ballast\nCommand"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Subsystem"
-	  SrcPort		  3
-	  DstBlock		  "Ballast\nCommand"
-	  DstPort		  2
+	  SrcPort		  1
+	  Points		  [5, 0]
+	  Branch {
+	    Points		    [0, -145]
+	    DstBlock		    "To Workspace1"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [70, 0; 0, -100]
+	    DstBlock		    "Rudder\nCommand"
+	    DstPort		    1
+	  }
 	}
 	Line {
 	  SrcBlock		  "Subsystem"
@@ -3719,18 +5575,65 @@ Model {
 	}
 	Line {
 	  SrcBlock		  "Subsystem"
+	  SrcPort		  3
+	  DstBlock		  "Ballast\nCommand"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Subsystem"
+	  SrcPort		  2
+	  DstBlock		  "Ballast\nCommand"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "sensors_t"
 	  SrcPort		  1
-	  Points		  [5, 0]
-	  Branch {
-	    Points		    [70, 0; 0, -100]
-	    DstBlock		    "Rudder\nCommand"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, -145]
-	    DstBlock		    "To Workspace1"
-	    DstPort		    1
-	  }
+	  DstBlock		  "Throttle\nCommand"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "sensors_r"
+	  SrcPort		  1
+	  Points		  [255, 0]
+	  DstBlock		  "Rudder\nCommand"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "sensors_b"
+	  SrcPort		  1
+	  DstBlock		  "Ballast\nCommand"
+	  DstPort		  4
+	}
+	Line {
+	  SrcBlock		  "Ballast\nCommand"
+	  SrcPort		  1
+	  DstBlock		  "Tray angle command"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "GPS"
+	  SrcPort		  1
+	  DstBlock		  "Subsystem"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Rudder\nCommand"
+	  SrcPort		  1
+	  DstBlock		  "Rudder command"
+	  DstPort		  1
+	}
+	Line {
+	  Labels		  [0, 0]
+	  SrcBlock		  "Constant5"
+	  SrcPort		  1
+	  DstBlock		  "Throttle\nCommand"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Throttle\nCommand"
+	  SrcPort		  1
+	  DstBlock		  "Throttle command"
+	  DstPort		  1
 	}
 	Annotation {
 	  Name			  "This subsystem currently provides autonomous control of the boat. It utilizes simple PID control\non the "
@@ -3773,6 +5676,22 @@ Model {
       }
     }
     Block {
+      BlockType		      BusSelector
+      Name		      "Bus\nSelector2"
+      SID		      1032
+      Ports		      [1, 1]
+      Position		      [130, 312, 135, 358]
+      BlockMirror	      on
+      ShowName		      off
+      OutputSignals	      "data"
+      Port {
+	PortNumber		1
+	Name			"<data>"
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
+    }
+    Block {
       BlockType		      SubSystem
       Name		      "Plant"
       SID		      78
@@ -3788,7 +5707,7 @@ Model {
       System {
 	Name			"Plant"
 	Location		[289, 134, 1263, 867]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -3848,7 +5767,7 @@ Model {
 	  System {
 	    Name		    "Actuator\nDynamics"
 	    Location		    [248, 405, 1220, 734]
-	    Open		    off
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -3874,7 +5793,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "b"
 	      SID		      84
-	      Position		      [25, 108, 55, 122]
+	      Position		      [25, 148, 55, 162]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "2"
 	      IconDisplay	      "Port number"
@@ -3885,7 +5804,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "r"
 	      SID		      85
-	      Position		      [25, 223, 55, 237]
+	      Position		      [25, 263, 55, 277]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "3"
 	      IconDisplay	      "Port number"
@@ -3897,7 +5816,7 @@ Model {
 	      Name		      "Bus\nSelector"
 	      SID		      518
 	      Ports		      [1, 2]
-	      Position		      [75, 96, 80, 134]
+	      Position		      [75, 136, 80, 174]
 	      ShowName		      off
 	      OutputSignals	      "enable,direction"
 	      Port {
@@ -3918,7 +5837,7 @@ Model {
 	      Name		      "Bus\nSelector1"
 	      SID		      549
 	      Ports		      [1, 2]
-	      Position		      [85, 211, 90, 249]
+	      Position		      [85, 251, 90, 289]
 	      ShowName		      off
 	      OutputSignals	      "enable,direction"
 	      Port {
@@ -3938,7 +5857,7 @@ Model {
 	      BlockType		      DataTypeConversion
 	      Name		      "Data Type Conversion2"
 	      SID		      86
-	      Position		      [330, 234, 375, 246]
+	      Position		      [330, 274, 375, 286]
 	      ShowName		      off
 	      OutDataTypeMode	      "double"
 	      OutDataType	      "sfix(16)"
@@ -3951,7 +5870,7 @@ Model {
 	      BlockType		      DataTypeConversion
 	      Name		      "Data Type Conversion3"
 	      SID		      87
-	      Position		      [330, 118, 375, 132]
+	      Position		      [330, 158, 375, 172]
 	      ShowName		      off
 	      OutDataTypeMode	      "double"
 	      OutDataType	      "sfix(16)"
@@ -3964,7 +5883,7 @@ Model {
 	      BlockType		      DataTypeConversion
 	      Name		      "Data Type Conversion4"
 	      SID		      88
-	      Position		      [195, 33, 240, 47]
+	      Position		      [330, 33, 375, 47]
 	      ShowName		      off
 	      OutDataTypeMode	      "double"
 	      OutDataType	      "sfix(16)"
@@ -3978,7 +5897,7 @@ Model {
 	      Name		      "Enabled\nSubsystem"
 	      SID		      520
 	      Ports		      [1, 1, 1]
-	      Position		      [135, 104, 235, 146]
+	      Position		      [135, 144, 235, 186]
 	      ShowName		      off
 	      LibraryVersion	      "1.216"
 	      TreatAsAtomicUnit	      on
@@ -3991,7 +5910,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Enabled\nSubsystem"
-		Location		[421, 323, 919, 623]
+		Location		[649, 659, 1147, 959]
 		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
@@ -4107,7 +6026,7 @@ Model {
 	      Name		      "Enabled\nSubsystem1"
 	      SID		      550
 	      Ports		      [1, 1, 1]
-	      Position		      [145, 219, 245, 261]
+	      Position		      [145, 259, 245, 301]
 	      ShowName		      off
 	      LibraryVersion	      "1.216"
 	      TreatAsAtomicUnit	      on
@@ -4251,27 +6170,11 @@ Model {
 	      }
 	    }
 	    Block {
-	      BlockType		      Gain
-	      Name		      "Gain"
-	      SID		      483
-	      Position		      [85, 25, 115, 55]
-	      Gain		      "1/1023"
-	      ParameterDataTypeMode   "Inherit via internal rule"
-	      ParameterDataType	      "fixdt(1, 16)"
-	      ParameterScaling	      "2^0"
-	      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
-	      OutDataTypeMode	      "Inherit via internal rule"
-	      OutDataType	      "fixdt(1, 16)"
-	      OutScaling	      "2^0"
-	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
-	      SaturateOnIntegerOverflow	off
-	    }
-	    Block {
 	      BlockType		      Integrator
 	      Name		      "Integrator"
 	      SID		      524
 	      Ports		      [1, 1]
-	      Position		      [265, 110, 295, 140]
+	      Position		      [265, 150, 295, 180]
 	      ShowName		      off
 	      LimitOutput	      on
 	      UpperSaturationLimit    "1"
@@ -4282,7 +6185,7 @@ Model {
 	      Name		      "Integrator1"
 	      SID		      557
 	      Ports		      [1, 1]
-	      Position		      [275, 225, 305, 255]
+	      Position		      [275, 265, 305, 295]
 	      ShowName		      off
 	      LimitOutput	      on
 	      UpperSaturationLimit    "1"
@@ -4293,7 +6196,7 @@ Model {
 	      Name		      "Logical\nOperator"
 	      SID		      560
 	      Ports		      [1, 1]
-	      Position		      [145, 198, 175, 212]
+	      Position		      [145, 238, 175, 252]
 	      ShowName		      off
 	      Operator		      "NOT"
 	      AllPortsSameDT	      off
@@ -4306,7 +6209,7 @@ Model {
 	      Name		      "Saturation"
 	      SID		      89
 	      Ports		      [1, 1]
-	      Position		      [140, 25, 170, 55]
+	      Position		      [275, 25, 305, 55]
 	      ShowName		      off
 	      UpperLimit	      "1"
 	      LowerLimit	      "-1"
@@ -4316,7 +6219,7 @@ Model {
 	      Name		      "Second Order Linear Actuator1"
 	      SID		      92
 	      Ports		      [1, 1]
-	      Position		      [265, 19, 365, 61]
+	      Position		      [400, 19, 500, 61]
 	      ShowName		      off
 	      LibraryVersion	      "1.34"
 	      SourceBlock	      "aerolibactuator/Second Order Linear Actuator"
@@ -4338,7 +6241,7 @@ Model {
 	      Name		      "Second Order Linear Actuator2"
 	      SID		      93
 	      Ports		      [1, 1]
-	      Position		      [400, 104, 500, 146]
+	      Position		      [400, 144, 500, 186]
 	      ShowName		      off
 	      LibraryVersion	      "1.34"
 	      SourceBlock	      "aerolibactuator/Second Order Linear Actuator"
@@ -4360,7 +6263,7 @@ Model {
 	      Name		      "Second Order Linear Actuator3"
 	      SID		      94
 	      Ports		      [1, 1]
-	      Position		      [400, 219, 500, 261]
+	      Position		      [400, 259, 500, 301]
 	      ShowName		      off
 	      LibraryVersion	      "1.34"
 	      SourceBlock	      "aerolibactuator/Second Order Linear Actuator"
@@ -4378,10 +6281,351 @@ Model {
 	      fin_act_0		      "0"
 	    }
 	    Block {
+	      BlockType		      SubSystem
+	      Name		      "Subsystem"
+	      SID		      1007
+	      Ports		      [1, 1]
+	      Position		      [145, 16, 250, 74]
+	      MinAlgLoopOccurrences   off
+	      PropExecContextOutsideSubsystem off
+	      RTWSystemCode	      "Auto"
+	      FunctionWithSeparateData off
+	      Opaque		      off
+	      RequestExecContextInheritance off
+	      MaskHideContents	      off
+	      System {
+		Name			"Subsystem"
+		Location		[319, 206, 996, 506]
+		Open			on
+		ModelBrowserVisibility	on
+		ModelBrowserWidth	200
+		ScreenColor		"white"
+		PaperOrientation	"landscape"
+		PaperPositionMode	"auto"
+		PaperType		"usletter"
+		PaperUnits		"inches"
+		TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+		TiledPageScale		1
+		ShowPageBoundaries	off
+		ZoomFactor		"100"
+		Block {
+		  BlockType		  Inport
+		  Name			  "In1"
+		  SID			  1008
+		  Position		  [25, 128, 55, 142]
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  BusSelector
+		  Name			  "Bus\nSelector2"
+		  SID			  1011
+		  Ports			  [1, 3]
+		  Position		  [95, 101, 100, 169]
+		  ShowName		  off
+		  OutputSignals		  "identifier,trigger,data"
+		  Port {
+		    PortNumber		    1
+		    Name		    "<identifier>"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		  }
+		  Port {
+		    PortNumber		    2
+		    Name		    "<trigger>"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		  }
+		  Port {
+		    PortNumber		    3
+		    Name		    "<data>"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		  }
+		}
+		Block {
+		  BlockType		  DataStoreMemory
+		  Name			  "Data Store\nMemory"
+		  SID			  1024
+		  Position		  [205, 25, 280, 54]
+		  DataStoreName		  "throttle_speed"
+		  WriteAfterWriteMsg	  "warning"
+		  WriteAfterReadMsg	  "warning"
+		  RTWStateStorageClass	  "Auto"
+		  VectorParams1D	  on
+		  DataType		  "int16"
+		  OutDataType		  "fixdt(1, 16)"
+		  OutScaling		  "2^0"
+		  OutDataTypeStr	  "int16"
+		}
+		Block {
+		  BlockType		  DataStoreRead
+		  Name			  "Data Store\nRead"
+		  SID			  1031
+		  Position		  [390, 245, 465, 275]
+		  ShowName		  off
+		  DataStoreName		  "throttle_speed"
+		  SampleTime		  ".01"
+		}
+		Block {
+		  BlockType		  DataTypeConversion
+		  Name			  "Data Type Conversion"
+		  SID			  1034
+		  Position		  [140, 127, 180, 143]
+		  ShowName		  off
+		  OutDataTypeMode	  "uint32"
+		  OutDataType		  "fixdt(1, 16)"
+		  OutScaling		  "2^0"
+		  OutDataTypeStr	  "uint32"
+		  RndMeth		  "Floor"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  If
+		  Name			  "If"
+		  SID			  1012
+		  Ports			  [2, 1]
+		  Position		  [215, 106, 315, 144]
+		  NumInputs		  "2"
+		  IfExpression		  "u2 ==1 & u1 == hex2dec('301')"
+		  ShowElse		  off
+		}
+		Block {
+		  BlockType		  SubSystem
+		  Name			  "If Action\nSubsystem"
+		  SID			  1013
+		  Ports			  [1, 0, 0, 0, 0, 0, 0, 1]
+		  Position		  [380, 152, 450, 188]
+		  ShowName		  off
+		  LibraryVersion	  "1.216"
+		  TreatAsAtomicUnit	  on
+		  MinAlgLoopOccurrences	  off
+		  PropExecContextOutsideSubsystem off
+		  RTWSystemCode		  "Auto"
+		  FunctionWithSeparateData off
+		  Opaque		  off
+		  RequestExecContextInheritance	off
+		  MaskHideContents	  off
+		  System {
+		    Name		    "If Action\nSubsystem"
+		    Location		    [319, 206, 817, 506]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "In1"
+		    SID			    1014
+		    Position		    [25, 113, 55, 127]
+		    IconDisplay		    "Port number"
+		    OutDataType		    "fixdt(1, 16)"
+		    OutScaling		    "2^0"
+		    }
+		    Block {
+		    BlockType		    ActionPort
+		    Name		    "Action Port"
+		    SID			    1015
+		    Position		    [170, 15, 229, 43]
+		    ActionType		    "then"
+		    }
+		    Block {
+		    BlockType		    Reference
+		    Name		    "Bitwise\nOperator"
+		    SID			    1030
+		    Ports		    [2, 1]
+		    Position		    [360, 110, 400, 130]
+		    ShowName		    off
+		    LibraryVersion	    "1.216"
+		    SourceBlock		    "simulink/Logic and Bit\nOperations/Bitwise\nOperator"
+		    SourceType		    "Bitwise Operator"
+		    logicop		    "OR"
+		    UseBitMask		    off
+		    NumInputPorts	    "2"
+		    BitMask		    "bin2dec('11011001')"
+		    BitMaskRealWorld	    "Stored Integer"
+		    }
+		    Block {
+		    BlockType		    DataStoreWrite
+		    Name		    "Data Store\nWrite"
+		    SID			    1023
+		    Position		    [425, 106, 505, 134]
+		    DataStoreName	    "throttle_speed"
+		    SampleTime		    "-1"
+		    }
+		    Block {
+		    BlockType		    DataTypeConversion
+		    Name		    "Data Type Conversion"
+		    SID			    1033
+		    Position		    [160, 111, 200, 129]
+		    ShowName		    off
+		    OutDataTypeMode	    "int16"
+		    OutDataType		    "fixdt(1, 16)"
+		    OutScaling		    "2^0"
+		    OutDataTypeStr	    "int16"
+		    RndMeth		    "Floor"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Demux
+		    Name		    "Demux"
+		    SID			    1029
+		    Ports		    [1, 2]
+		    Position		    [220, 101, 225, 139]
+		    ShowName		    off
+		    Outputs		    "2"
+		    DisplayOption	    "bar"
+		    }
+		    Block {
+		    BlockType		    Selector
+		    Name		    "Selector"
+		    SID			    1027
+		    Ports		    [1, 1]
+		    Position		    [100, 101, 140, 139]
+		    ShowName		    off
+		    InputPortWidth	    "6"
+		    IndexOptions	    "Index vector (dialog)"
+		    Indices		    "[3 4]"
+		    OutputSizes		    "1"
+		    }
+		    Block {
+		    BlockType		    Reference
+		    Name		    "Shift\nArithmetic"
+		    SID			    1028
+		    Ports		    [1, 1]
+		    Position		    [245, 123, 325, 137]
+		    ShowName		    off
+		    LibraryVersion	    "1.216"
+		    SourceBlock		    "simulink/Logic and Bit\nOperations/Shift\nArithmetic"
+		    SourceType		    "Shift Arithmetic"
+		    ShowPortLabels	    "FromPortIcon"
+		    SystemSampleTime	    "-1"
+		    FunctionWithSeparateData off
+		    RTWMemSecFuncInitTerm   "Inherit from model"
+		    RTWMemSecFuncExecute    "Inherit from model"
+		    RTWMemSecDataConstants  "Inherit from model"
+		    RTWMemSecDataInternal   "Inherit from model"
+		    RTWMemSecDataParameters "Inherit from model"
+		    nBitShiftRight	    "-8"
+		    nBinPtShiftRight	    "0"
+		    }
+		    Line {
+		    SrcBlock		    "In1"
+		    SrcPort		    1
+		    DstBlock		    "Selector"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Selector"
+		    SrcPort		    1
+		    DstBlock		    "Data Type Conversion"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Demux"
+		    SrcPort		    2
+		    DstBlock		    "Shift\nArithmetic"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Bitwise\nOperator"
+		    SrcPort		    1
+		    DstBlock		    "Data Store\nWrite"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Shift\nArithmetic"
+		    SrcPort		    1
+		    Points		    [5, 0; 0, -5]
+		    DstBlock		    "Bitwise\nOperator"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "Demux"
+		    SrcPort		    1
+		    Points		    [55, 0; 0, 5]
+		    DstBlock		    "Bitwise\nOperator"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Data Type Conversion"
+		    SrcPort		    1
+		    DstBlock		    "Demux"
+		    DstPort		    1
+		    }
+		  }
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "Out1"
+		  SID			  1009
+		  Position		  [535, 253, 565, 267]
+		  IconDisplay		  "Port number"
+		}
+		Line {
+		  SrcBlock		  "In1"
+		  SrcPort		  1
+		  DstBlock		  "Bus\nSelector2"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Data Store\nRead"
+		  SrcPort		  1
+		  DstBlock		  "Out1"
+		  DstPort		  1
+		}
+		Line {
+		  Name			  "<identifier>"
+		  Labels		  [0, 0]
+		  SrcBlock		  "Bus\nSelector2"
+		  SrcPort		  1
+		  DstBlock		  "If"
+		  DstPort		  1
+		}
+		Line {
+		  Name			  "<trigger>"
+		  Labels		  [0, 0]
+		  SrcBlock		  "Bus\nSelector2"
+		  SrcPort		  2
+		  DstBlock		  "Data Type Conversion"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "If"
+		  SrcPort		  1
+		  Points		  [95, 0]
+		  DstBlock		  "If Action\nSubsystem"
+		  DstPort		  ifaction
+		}
+		Line {
+		  Name			  "<data>"
+		  Labels		  [0, 0; 0, 0]
+		  SrcBlock		  "Bus\nSelector2"
+		  SrcPort		  3
+		  Points		  [0, -5; 210, 0; 0, 20]
+		  DstBlock		  "If Action\nSubsystem"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Data Type Conversion"
+		  SrcPort		  1
+		  DstBlock		  "If"
+		  DstPort		  2
+		}
+	      }
+	    }
+	    Block {
 	      BlockType		      Outport
 	      Name		      "t_d"
 	      SID		      95
-	      Position		      [390, 33, 420, 47]
+	      Position		      [525, 33, 555, 47]
 	      BackgroundColor	      "yellow"
 	      IconDisplay	      "Port number"
 	      OutDataType	      "sfix(16)"
@@ -4391,7 +6635,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "b_d"
 	      SID		      96
-	      Position		      [525, 118, 555, 132]
+	      Position		      [525, 158, 555, 172]
 	      BackgroundColor	      "yellow"
 	      Port		      "2"
 	      IconDisplay	      "Port number"
@@ -4402,18 +6646,12 @@ Model {
 	      BlockType		      Outport
 	      Name		      "r_d"
 	      SID		      97
-	      Position		      [525, 233, 555, 247]
+	      Position		      [525, 273, 555, 287]
 	      BackgroundColor	      "yellow"
 	      Port		      "3"
 	      IconDisplay	      "Port number"
 	      OutDataType	      "sfix(16)"
 	      OutScaling	      "2^0"
-	    }
-	    Line {
-	      SrcBlock		      "t"
-	      SrcPort		      1
-	      DstBlock		      "Gain"
-	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "r"
@@ -4464,8 +6702,9 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "Gain"
+	      SrcBlock		      "Subsystem"
 	      SrcPort		      1
+	      Points		      [0, -5]
 	      DstBlock		      "Saturation"
 	      DstPort		      1
 	    }
@@ -4539,6 +6778,13 @@ Model {
 	      DstBlock		      "r_d"
 	      DstPort		      1
 	    }
+	    Line {
+	      SrcBlock		      "t"
+	      SrcPort		      1
+	      Points		      [70, 0]
+	      DstBlock		      "Subsystem"
+	      DstPort		      1
+	    }
 	    Annotation {
 	      Name		      "This subsystem adds 2nd-order dynamics to the actuator systems.\nThis includes the propeller, ball"
 	      "ast, and rudder.\n\nNOTE: The parameters of each system is uncalibrated, these are\npurely here to provide a ba"
@@ -4548,7 +6794,7 @@ Model {
 	    }
 	    Annotation {
 	      Name		      "enable is really an active-low signal\nin the physical system"
-	      Position		      [132, 181]
+	      Position		      [132, 221]
 	    }
 	  }
 	}
@@ -5668,6 +7914,11 @@ Model {
 		  RTWMemSecDataConstants  "Inherit from model"
 		  RTWMemSecDataInternal	  "Inherit from model"
 		  RTWMemSecDataParameters "Inherit from model"
+		  Array {
+		    Type		    "Handle"
+		    Dimension		    0
+		    PropName		    "AvailSigsLoadSave"
+		  }
 		}
 		Block {
 		  BlockType		  Product
@@ -7893,6 +10144,11 @@ Model {
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
 	      Opaque		      off
+	      Array {
+		Type			"Handle"
+		Dimension		0
+		PropName		"AvailSigsLoadSave"
+	      }
 	      RequestExecContextInheritance off
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
@@ -8570,6 +10826,11 @@ Model {
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
 	      Opaque		      off
+	      Array {
+		Type			"Handle"
+		Dimension		0
+		PropName		"AvailSigsLoadSave"
+	      }
 	      RequestExecContextInheritance off
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
@@ -9360,7 +11621,7 @@ Model {
 	DstPort			2
       }
       Branch {
-	DstBlock		"To Workspace7"
+	DstBlock		"Bus\nSelector2"
 	DstPort			1
       }
     }
@@ -9430,14 +11691,14 @@ Model {
       SrcPort		      8
       Points		      [95, 0; 0, 0]
       Branch {
+	DstBlock		"Bus\nSelector"
+	DstPort			1
+      }
+      Branch {
 	Labels			[1, 0]
 	Points			[0, 130]
 	DstBlock		"Autonomous Controller"
 	DstPort			3
-      }
-      Branch {
-	DstBlock		"Bus\nSelector"
-	DstPort			1
       }
     }
     Line {
@@ -9462,6 +11723,14 @@ Model {
       DstBlock		      "To Workspace8"
       DstPort		      1
     }
+    Line {
+      Name		      "<data>"
+      Labels		      [0, 0]
+      SrcBlock		      "Bus\nSelector2"
+      SrcPort		      1
+      DstBlock		      "To Workspace7"
+      DstPort		      1
+    }
     Annotation {
       Name		      "This is the root model for the boat simulator and autonomous controller. All\nunits exposed here ar"
       "e metric/radians."
@@ -9483,28 +11752,30 @@ Stateflow {
     name		    "Boat_sim"
     created		    "13-Apr-2010 16:50:36"
     isLibrary		    0
-    firstTarget		    58
+    firstTarget		    78
     sfVersion		    75014000
   }
   chart {
     id			    2
-    name		    "Plant/Get GPS/Embedded\nMATLAB Function1"
-    windowPosition	    [303.36 255 200.25 189.75]
+    name		    "Autonomous Controller/Rudder\nCommand/Embedded\nMATLAB Function1"
+    windowPosition	    [335.45 122.325 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
-    screen		    [1 1 1280 778 1.25]
+    screen		    [1 1 1280 1024 1.333333333333333]
     treeNode		    [0 3 0 0]
     firstTransition	    5
     firstJunction	    4
     viewObj		    2
     machine		    1
-    ssIdHighWaterMark	    6
+    subviewS {
+    }
+    ssIdHighWaterMark	    7
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
     firstData		    6
-    chartFileNumber	    2
+    chartFileNumber	    1
     disableImplicitCasting  1
     eml {
-      name		      "getCOG"
+      name		      "fcn"
     }
     supportVariableSizing   0
   }
@@ -9522,9 +11793,12 @@ Stateflow {
     decomposition	    CLUSTER_STATE
     eml {
       isEML		      1
-      script		      "function cog = getCOG(Vn, Ve)\n% This block supports an embeddable subset of the MATLAB language."
-      "\n% See the help menu for details. \n\ncog = atan2(Ve,Vn);\nif cog < 0;\n    cog = cog + 2*pi;\nend\n\n    "
-      editorLayout	      "100 M4x1[146 22 1036 778]"
+      script		      "function rudder = fcn(lat_accel, wheelbase, velocity)\n%#eml\n% the -99/99 lat_accel checks for m"
+      "aximum possible accel. This should correspond to maximum rudder deflection.\n\nrudder = single(0);\n\nif (norm(v"
+      "elocity) == 0 || lat_accel == 0)\n    rudder = single(0);\nelseif (lat_accel == 99) \n    rudder = single(pi/2);"
+      "\nelseif (lat_accel == -99) \n    rudder = single(-pi/2);\nelse\n    rudder = atan(lat_accel*wheelbase/norm(velo"
+      "city)^2);\nend"
+      editorLayout	      "100 M4x1[81 67 1080 733]"
       fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
       "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
       emlDefaultFimath	      FimathUserSpecified
@@ -9563,28 +11837,8 @@ Stateflow {
   data {
     id			    6
     ssIdNumber		    4
-    name		    "cog"
+    name		    "lat_accel"
     linkNode		    [2 0 7]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    7
-    ssIdNumber		    5
-    name		    "Vn"
-    linkNode		    [2 6 8]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -9595,7 +11849,24 @@ Stateflow {
 	method			SF_INHERITED_TYPE
 	primitive		SF_DOUBLE_TYPE
       }
-      complexity	      SF_COMPLEX_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    7
+    ssIdNumber		    5
+    name		    "rudder"
+    linkNode		    [2 6 8]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_SINGLE_TYPE
+      }
       frame		      SF_FRAME_NO
     }
     dataType		    "Inherit: Same as Simulink"
@@ -9603,9 +11874,10 @@ Stateflow {
   data {
     id			    8
     ssIdNumber		    6
-    name		    "Ve"
-    linkNode		    [2 7 0]
-    scope		    INPUT_DATA
+    name		    "wheelbase"
+    linkNode		    [2 7 9]
+    scope		    PARAMETER_DATA
+    initFromWorkspace	    1
     machine		    1
     props {
       array {
@@ -9617,132 +11889,16 @@ Stateflow {
 	isSigned		1
 	wordLength		"16"
       }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
+      frame		      SF_FRAME_INHERITED
     }
     dataType		    "Inherit: Same as Simulink"
   }
-  instance {
+  data {
     id			    9
-    name		    "Plant/Get GPS/Embedded\nMATLAB Function1"
-    machine		    1
-    chart		    2
-  }
-  chart {
-    id			    10
-    name		    "Autonomous Controller/Rudder\nCommand/Waypoint\nController"
-    windowPosition	    [281.813 329.45 200.25 189.75]
-    viewLimits		    [0 156.75 0 153.75]
-    screen		    [1 1 1280 1024 1.333333333333333]
-    treeNode		    [0 11 0 0]
-    firstTransition	    13
-    firstJunction	    12
-    viewObj		    10
-    machine		    1
-    ssIdHighWaterMark	    9
-    decomposition	    CLUSTER_CHART
-    type		    EML_CHART
-    firstData		    14
-    chartFileNumber	    4
-    disableImplicitCasting  1
-    eml {
-      name		      "fcn"
-    }
-  }
-  state {
-    id			    11
-    labelString		    "eML_blk_kernel()"
-    position		    [18 64.5 118 66]
-    fontSize		    12
-    chart		    10
-    treeNode		    [10 0 0 0]
-    superState		    SUBCHART
-    subviewer		    10
-    ssIdNumber		    1
-    type		    FUNC_STATE
-    decomposition	    CLUSTER_STATE
-    eml {
-      isEML		      1
-      script		      "function [waypoint_0, waypoint_1] = fcn(waypoints, switchTrigger, mode)\n%#eml\n\npersistent inde"
-      "x_0 index_1; % Store the indices for waypoints 0 & 1 respectively\npersistent direction; % Keep track of the dir"
-      "ection for patrol mode\n\n% Make sure we have at least two waypoints to output\nassert(size(waypoints,1) >= 2);\n"
-      "\n% Inititalize to the first waypoint\nif isempty(index_0)\n    index_0 = 1;\nend\nif isempty(index_1)\n    inde"
-      "x_1 = 2;\nend\nif isempty(direction)\n    direction = 1;\nend\n \n% Increment our waypoint index if we're told t"
-      "o.\nif switchTrigger\n    switch mode\n        case 0 % Halt mode\n            if size(waypoints,1) >= index_1 +"
-      " 1\n                index_0 = index_1;\n                index_1 = index_1 + 1;\n            end\n        case 1 "
-      "% Loop mode\n            % We either continue moving forward through the waypoints...\n            if size(waypo"
-      "ints,1) >= index_1 + 1\n                index_0 = index_1;\n                index_1 = index_1 + 1;\n            "
-      "% Or we wrap-around to the starting waypoint\n            else\n                index_0 = index_1;\n            "
-      "    index_1 = 1;\n            end\n        case 2 % Patrol mode\n            if direction == 1 % For the forward"
-      "s direction\n                % We either continue moving forwards through the waypoints...\n                if s"
-      "ize(waypoints,1) >= index_1 + 1\n                    index_0 = index_1;\n                    index_1 = index_1 +"
-      " 1;\n                % Or we start to go backwards\n                else\n                    index_0 = index_1;"
-      "\n                    index_1 = index_1 - 1;\n                    direction = 0;\n                end\n         "
-      "   elseif direction == 0 % For the reverse direction\n                % We either continue moving backwards thro"
-      "ugh the waypoints...\n                if index_1 - 1 >= 1\n                    index_0 = index_1;\n             "
-      "       index_1 = index_1 - 1;\n                % Or we start to go forwards\n                else\n             "
-      "       index_0 = index_1;\n                    index_1 = index_1 + 1;\n                    direction = 1;\n     "
-      "           end\n            end\n    end\nend\n\nwaypoint_0 = waypoints(index_0,:)';\nwaypoint_1 = waypoints(ind"
-      "ex_1,:)';"
-      editorLayout	      "100 M4x1[107 228 1080 733]"
-    }
-  }
-  junction {
-    id			    12
-    position		    [23.5747 49.5747 7]
-    chart		    10
-    linkNode		    [10 0 0]
-    subviewer		    10
-    ssIdNumber		    3
-    type		    CONNECTIVE_JUNCTION
-  }
-  transition {
-    id			    13
-    labelString		    "{eML_blk_kernel();}"
-    labelPosition	    [32.125 19.875 102.544 14.964]
-    fontSize		    12
-    src {
-      intersection	      [0 0 1 0 23.5747 14.625 0 0]
-    }
-    dst {
-      id		      12
-      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
-    }
-    midPoint		    [23.5747 24.9468]
-    chart		    10
-    linkNode		    [10 0 0]
-    dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    10
-    drawStyle		    SMART
-    executionOrder	    1
-    ssIdNumber		    2
-  }
-  data {
-    id			    14
-    ssIdNumber		    5
-    name		    "waypoint_0"
-    linkNode		    [10 0 15]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"3"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    15
-    ssIdNumber		    6
-    name		    "waypoint_1"
-    linkNode		    [10 14 16]
-    scope		    OUTPUT_DATA
+    ssIdNumber		    7
+    name		    "velocity"
+    linkNode		    [2 8 0]
+    scope		    INPUT_DATA
     machine		    1
     props {
       array {
@@ -9753,6 +11909,105 @@ Stateflow {
 	primitive		SF_DOUBLE_TYPE
 	isSigned		1
 	wordLength		"16"
+      }
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  instance {
+    id			    10
+    name		    "Autonomous Controller/Rudder\nCommand/Embedded\nMATLAB Function1"
+    machine		    1
+    chart		    2
+  }
+  chart {
+    id			    11
+    name		    "Plant/Get GPS/Embedded\nMATLAB Function1"
+    windowPosition	    [303.36 255 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1280 778 1.25]
+    treeNode		    [0 12 0 0]
+    firstTransition	    14
+    firstJunction	    13
+    viewObj		    11
+    machine		    1
+    ssIdHighWaterMark	    6
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    15
+    chartFileNumber	    2
+    disableImplicitCasting  1
+    eml {
+      name		      "getCOG"
+    }
+    supportVariableSizing   0
+  }
+  state {
+    id			    12
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    11
+    treeNode		    [11 0 0 0]
+    superState		    SUBCHART
+    subviewer		    11
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function cog = getCOG(Vn, Ve)\n% This block supports an embeddable subset of the MATLAB language."
+      "\n% See the help menu for details. \n\ncog = atan2(Ve,Vn);\nif cog < 0;\n    cog = cog + 2*pi;\nend\n\n    "
+      editorLayout	      "100 M4x1[146 22 1036 778]"
+      fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
+      "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
+      emlDefaultFimath	      FimathUserSpecified
+    }
+  }
+  junction {
+    id			    13
+    position		    [23.5747 49.5747 7]
+    chart		    11
+    linkNode		    [11 0 0]
+    subviewer		    11
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    14
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      13
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    11
+    linkNode		    [11 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    11
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    15
+    ssIdNumber		    4
+    name		    "cog"
+    linkNode		    [11 0 16]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
       }
       complexity	      SF_COMPLEX_INHERITED
       frame		      SF_FRAME_NO
@@ -9761,175 +12016,10 @@ Stateflow {
   }
   data {
     id			    16
-    ssIdNumber		    7
-    name		    "waypoints"
-    linkNode		    [10 15 17]
-    scope		    PARAMETER_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    17
-    ssIdNumber		    8
-    name		    "switchTrigger"
-    linkNode		    [10 16 18]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    18
-    ssIdNumber		    9
-    name		    "mode"
-    linkNode		    [10 17 0]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  instance {
-    id			    19
-    name		    "Autonomous Controller/Rudder\nCommand/Waypoint\nController"
-    machine		    1
-    chart		    10
-  }
-  chart {
-    id			    20
-    name		    "Plant/Outputs/myMux1"
-    windowPosition	    [476.813 134.45 200.25 189.75]
-    viewLimits		    [0 156.75 0 153.75]
-    screen		    [1 1 1280 778 1.25]
-    treeNode		    [0 21 0 0]
-    firstTransition	    23
-    firstJunction	    22
-    viewObj		    20
-    machine		    1
-    ssIdHighWaterMark	    7
-    decomposition	    CLUSTER_CHART
-    type		    EML_CHART
-    firstData		    24
-    chartFileNumber	    6
-    disableImplicitCasting  1
-    eml {
-      name		      "myMux"
-      noDebugging	      1
-    }
-    supportVariableSizing   0
-  }
-  state {
-    id			    21
-    labelString		    "eML_blk_kernel()"
-    position		    [18 64.5 118 66]
-    fontSize		    12
-    chart		    20
-    treeNode		    [20 0 0 0]
-    superState		    SUBCHART
-    subviewer		    20
-    ssIdNumber		    1
-    type		    FUNC_STATE
-    decomposition	    CLUSTER_STATE
-    eml {
-      isEML		      1
-      script		      "function y = myMux(u1, u2, u3)\ny = [u1(1); u2(1); u3(1)];"
-      editorLayout	      "100 M4x1[320 609 796 336]"
-      fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
-      "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
-      emlDefaultFimath	      FimathUserSpecified
-    }
-  }
-  junction {
-    id			    22
-    position		    [23.5747 49.5747 7]
-    chart		    20
-    linkNode		    [20 0 0]
-    subviewer		    20
-    ssIdNumber		    3
-    type		    CONNECTIVE_JUNCTION
-  }
-  transition {
-    id			    23
-    labelString		    "{eML_blk_kernel();}"
-    labelPosition	    [32.125 19.875 102.544 14.964]
-    fontSize		    12
-    src {
-      intersection	      [0 0 1 0 23.5747 14.625 0 0]
-    }
-    dst {
-      id		      22
-      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
-    }
-    midPoint		    [23.5747 24.9468]
-    chart		    20
-    linkNode		    [20 0 0]
-    dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    20
-    drawStyle		    SMART
-    executionOrder	    1
-    ssIdNumber		    2
-  }
-  data {
-    id			    24
-    ssIdNumber		    4
-    name		    "u1"
-    linkNode		    [20 0 25]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    25
     ssIdNumber		    5
-    name		    "y"
-    linkNode		    [20 24 26]
-    scope		    OUTPUT_DATA
+    name		    "Vn"
+    linkNode		    [11 15 17]
+    scope		    INPUT_DATA
     machine		    1
     props {
       array {
@@ -9945,10 +12035,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    26
+    id			    17
     ssIdNumber		    6
-    name		    "u2"
-    linkNode		    [20 25 27]
+    name		    "Ve"
+    linkNode		    [11 16 0]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -9962,54 +12052,34 @@ Stateflow {
 	wordLength		"16"
       }
       complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    27
-    ssIdNumber		    7
-    name		    "u3"
-    linkNode		    [20 26 0]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
+      frame		      SF_FRAME_NO
     }
     dataType		    "Inherit: Same as Simulink"
   }
   instance {
-    id			    28
-    name		    "Plant/Outputs/myMux1"
+    id			    18
+    name		    "Plant/Get GPS/Embedded\nMATLAB Function1"
     machine		    1
-    chart		    20
+    chart		    11
   }
   chart {
-    id			    29
+    id			    19
     name		    "Autonomous Controller/Rudder\nCommand/L2 Plus ref WP1"
-    windowPosition	    [323.241 289.378 200.25 189.75]
+    windowPosition	    [332.101 128.405 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
-    screen		    [1 1 1280 778 1.25]
-    treeNode		    [0 30 0 0]
-    firstTransition	    32
-    firstJunction	    31
-    viewObj		    29
+    screen		    [1 1 1280 1024 1.333333333333333]
+    treeNode		    [0 20 0 0]
+    firstTransition	    22
+    firstJunction	    21
+    viewObj		    19
     machine		    1
+    subviewS {
+    }
     ssIdHighWaterMark	    18
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
-    firstData		    33
-    chartFileNumber	    7
+    firstData		    23
+    chartFileNumber	    3
     disableImplicitCasting  1
     eml {
       name		      "L2PlusWP1"
@@ -10017,14 +12087,14 @@ Stateflow {
     supportVariableSizing   0
   }
   state {
-    id			    30
+    id			    20
     labelString		    "eML_blk_kernel()"
     position		    [18 64.5 118 66]
     fontSize		    12
-    chart		    29
-    treeNode		    [29 0 0 0]
+    chart		    19
+    treeNode		    [19 0 0 0]
     superState		    SUBCHART
-    subviewer		    29
+    subviewer		    19
     ssIdNumber		    1
     type		    FUNC_STATE
     decomposition	    CLUSTER_STATE
@@ -10093,16 +12163,16 @@ Stateflow {
     }
   }
   junction {
-    id			    31
+    id			    21
     position		    [23.5747 49.5747 7]
-    chart		    29
-    linkNode		    [29 0 0]
-    subviewer		    29
+    chart		    19
+    linkNode		    [19 0 0]
+    subviewer		    19
     ssIdNumber		    3
     type		    CONNECTIVE_JUNCTION
   }
   transition {
-    id			    32
+    id			    22
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -10110,23 +12180,23 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      31
+      id		      21
       intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
-    chart		    29
-    linkNode		    [29 0 0]
+    chart		    19
+    linkNode		    [19 0 0]
     dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    29
+    subviewer		    19
     drawStyle		    SMART
     executionOrder	    1
     ssIdNumber		    2
   }
   data {
-    id			    33
+    id			    23
     ssIdNumber		    18
     name		    "triggerSwitch"
-    linkNode		    [29 0 34]
+    linkNode		    [19 0 24]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -10144,10 +12214,10 @@ Stateflow {
     dataType		    "uint8"
   }
   data {
-    id			    34
+    id			    24
     ssIdNumber		    4
     name		    "WP0"
-    linkNode		    [29 33 35]
+    linkNode		    [19 23 25]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -10165,10 +12235,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    35
+    id			    25
     ssIdNumber		    5
     name		    "WP1"
-    linkNode		    [29 34 36]
+    linkNode		    [19 24 26]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -10186,10 +12256,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    36
+    id			    26
     ssIdNumber		    6
     name		    "Puav"
-    linkNode		    [29 35 37]
+    linkNode		    [19 25 27]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -10204,10 +12274,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    37
+    id			    27
     ssIdNumber		    7
     name		    "Vxyz"
-    linkNode		    [29 36 38]
+    linkNode		    [19 26 28]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -10225,10 +12295,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    38
+    id			    28
     ssIdNumber		    8
     name		    "switchDistance"
-    linkNode		    [29 37 39]
+    linkNode		    [19 27 29]
     scope		    PARAMETER_DATA
     paramIndexForInitFromWorkspace 6
     machine		    1
@@ -10247,10 +12317,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    39
+    id			    29
     ssIdNumber		    9
     name		    "ISA_g"
-    linkNode		    [29 38 40]
+    linkNode		    [19 28 30]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 1
@@ -10270,10 +12340,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    40
+    id			    30
     ssIdNumber		    10
     name		    "tanIntercept"
-    linkNode		    [29 39 41]
+    linkNode		    [19 29 31]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 7
@@ -10293,10 +12363,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    41
+    id			    31
     ssIdNumber		    11
     name		    "MaxDwnPthStar"
-    linkNode		    [29 40 42]
+    linkNode		    [19 30 32]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 3
@@ -10316,10 +12386,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    42
+    id			    32
     ssIdNumber		    12
     name		    "Turn2Track"
-    linkNode		    [29 41 43]
+    linkNode		    [19 31 33]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 5
@@ -10339,10 +12409,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    43
+    id			    33
     ssIdNumber		    13
     name		    "InitialPoint"
-    linkNode		    [29 42 44]
+    linkNode		    [19 32 34]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 2
@@ -10362,10 +12432,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    44
+    id			    34
     ssIdNumber		    14
     name		    "IPStar"
-    linkNode		    [29 43 45]
+    linkNode		    [19 33 35]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     machine		    1
@@ -10384,10 +12454,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    45
+    id			    35
     ssIdNumber		    15
     name		    "TStar"
-    linkNode		    [29 44 46]
+    linkNode		    [19 34 36]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 4
@@ -10407,10 +12477,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    46
+    id			    36
     ssIdNumber		    16
     name		    "as_c"
-    linkNode		    [29 45 47]
+    linkNode		    [19 35 37]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -10426,10 +12496,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    47
+    id			    37
     ssIdNumber		    17
     name		    "L2Vec"
-    linkNode		    [29 46 0]
+    linkNode		    [19 36 0]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -10447,15 +12517,220 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   instance {
-    id			    48
+    id			    38
     name		    "Autonomous Controller/Rudder\nCommand/L2 Plus ref WP1"
     machine		    1
-    chart		    29
+    chart		    19
+  }
+  chart {
+    id			    39
+    name		    "Autonomous Controller/Rudder\nCommand/Waypoint\nController"
+    windowPosition	    [311.813 299.45 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1280 1024 1.333333333333333]
+    treeNode		    [0 40 0 0]
+    firstTransition	    42
+    firstJunction	    41
+    viewObj		    39
+    machine		    1
+    subviewS {
+    }
+    ssIdHighWaterMark	    9
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    43
+    chartFileNumber	    5
+    disableImplicitCasting  1
+    eml {
+      name		      "fcn"
+    }
+  }
+  state {
+    id			    40
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    39
+    treeNode		    [39 0 0 0]
+    superState		    SUBCHART
+    subviewer		    39
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function [waypoint_0, waypoint_1] = fcn(waypoints, switchTrigger, mode)\n%#eml\n\npersistent inde"
+      "x_0 index_1; % Store the indices for waypoints 0 & 1 respectively\npersistent direction; % Keep track of the dir"
+      "ection for patrol mode\n\n% Make sure we have at least two waypoints to output\nassert(size(waypoints,1) >= 2);\n"
+      "\n% Inititalize to the first waypoint\nif isempty(index_0)\n    index_0 = 1;\nend\nif isempty(index_1)\n    inde"
+      "x_1 = 2;\nend\nif isempty(direction)\n    direction = 1;\nend\n \n% Increment our waypoint index if we're told t"
+      "o.\nif switchTrigger\n    switch mode\n        case 0 % Halt mode\n            if size(waypoints,1) >= index_1 +"
+      " 1\n                index_0 = index_1;\n                index_1 = index_1 + 1;\n            end\n        case 1 "
+      "% Loop mode\n            % We either continue moving forward through the waypoints...\n            if size(waypo"
+      "ints,1) >= index_1 + 1\n                index_0 = index_1;\n                index_1 = index_1 + 1;\n            "
+      "% Or we wrap-around to the starting waypoint\n            else\n                index_0 = index_1;\n            "
+      "    index_1 = 1;\n            end\n        case 2 % Patrol mode\n            if direction == 1 % For the forward"
+      "s direction\n                % We either continue moving forwards through the waypoints...\n                if s"
+      "ize(waypoints,1) >= index_1 + 1\n                    index_0 = index_1;\n                    index_1 = index_1 +"
+      " 1;\n                % Or we start to go backwards\n                else\n                    index_0 = index_1;"
+      "\n                    index_1 = index_1 - 1;\n                    direction = 0;\n                end\n         "
+      "   elseif direction == 0 % For the reverse direction\n                % We either continue moving backwards thro"
+      "ugh the waypoints...\n                if index_1 - 1 >= 1\n                    index_0 = index_1;\n             "
+      "       index_1 = index_1 - 1;\n                % Or we start to go forwards\n                else\n             "
+      "       index_0 = index_1;\n                    index_1 = index_1 + 1;\n                    direction = 1;\n     "
+      "           end\n            end\n    end\nend\n\nwaypoint_0 = waypoints(index_0,:)';\nwaypoint_1 = waypoints(ind"
+      "ex_1,:)';"
+      editorLayout	      "100 M4x1[107 228 1080 733]"
+    }
+  }
+  junction {
+    id			    41
+    position		    [23.5747 49.5747 7]
+    chart		    39
+    linkNode		    [39 0 0]
+    subviewer		    39
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    42
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      41
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    39
+    linkNode		    [39 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    39
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    43
+    ssIdNumber		    5
+    name		    "waypoint_0"
+    linkNode		    [39 0 44]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"3"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    44
+    ssIdNumber		    6
+    name		    "waypoint_1"
+    linkNode		    [39 43 45]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"3"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    45
+    ssIdNumber		    7
+    name		    "waypoints"
+    linkNode		    [39 44 46]
+    scope		    PARAMETER_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    46
+    ssIdNumber		    8
+    name		    "switchTrigger"
+    linkNode		    [39 45 47]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    47
+    ssIdNumber		    9
+    name		    "mode"
+    linkNode		    [39 46 0]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  instance {
+    id			    48
+    name		    "Autonomous Controller/Rudder\nCommand/Waypoint\nController"
+    machine		    1
+    chart		    39
   }
   chart {
     id			    49
-    name		    "Autonomous Controller/Rudder\nCommand/Embedded\nMATLAB Function1"
-    windowPosition	    [326.813 284.45 200.25 189.75]
+    name		    "Plant/Outputs/myMux1"
+    windowPosition	    [476.813 134.45 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1280 778 1.25]
     treeNode		    [0 50 0 0]
@@ -10467,10 +12742,11 @@ Stateflow {
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
     firstData		    53
-    chartFileNumber	    8
+    chartFileNumber	    6
     disableImplicitCasting  1
     eml {
-      name		      "fcn"
+      name		      "myMux"
+      noDebugging	      1
     }
     supportVariableSizing   0
   }
@@ -10488,12 +12764,8 @@ Stateflow {
     decomposition	    CLUSTER_STATE
     eml {
       isEML		      1
-      script		      "function rudder = fcn(lat_accel, wheelbase, velocity)\n%#eml\n% the -99/99 lat_accel checks for m"
-      "aximum possible accel. This should correspond to maximum rudder deflection.\n\nrudder = single(0);\n\nif (norm(v"
-      "elocity) == 0 || lat_accel == 0)\n    rudder = single(0);\nelseif (lat_accel == 99) \n    rudder = single(pi/2);"
-      "\nelseif (lat_accel == -99) \n    rudder = single(-pi/2);\nelse\n    rudder = atan(lat_accel*wheelbase/norm(velo"
-      "city)^2);\nend"
-      editorLayout	      "100 M4x1[81 67 1080 733]"
+      script		      "function y = myMux(u1, u2, u3)\ny = [u1(1); u2(1); u3(1)];"
+      editorLayout	      "100 M4x1[320 609 796 336]"
       fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
       "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
       emlDefaultFimath	      FimathUserSpecified
@@ -10532,7 +12804,7 @@ Stateflow {
   data {
     id			    53
     ssIdNumber		    4
-    name		    "lat_accel"
+    name		    "u1"
     linkNode		    [49 0 54]
     scope		    INPUT_DATA
     machine		    1
@@ -10544,13 +12816,14 @@ Stateflow {
 	method			SF_INHERITED_TYPE
 	primitive		SF_DOUBLE_TYPE
       }
+      complexity	      SF_COMPLEX_INHERITED
     }
     dataType		    "Inherit: Same as Simulink"
   }
   data {
     id			    54
     ssIdNumber		    5
-    name		    "rudder"
+    name		    "y"
     linkNode		    [49 53 55]
     scope		    OUTPUT_DATA
     machine		    1
@@ -10560,8 +12833,9 @@ Stateflow {
       }
       type {
 	method			SF_INHERITED_TYPE
-	primitive		SF_SINGLE_TYPE
+	primitive		SF_DOUBLE_TYPE
       }
+      complexity	      SF_COMPLEX_INHERITED
       frame		      SF_FRAME_NO
     }
     dataType		    "Inherit: Same as Simulink"
@@ -10569,10 +12843,9 @@ Stateflow {
   data {
     id			    55
     ssIdNumber		    6
-    name		    "wheelbase"
+    name		    "u2"
     linkNode		    [49 54 56]
-    scope		    PARAMETER_DATA
-    initFromWorkspace	    1
+    scope		    INPUT_DATA
     machine		    1
     props {
       array {
@@ -10584,6 +12857,7 @@ Stateflow {
 	isSigned		1
 	wordLength		"16"
       }
+      complexity	      SF_COMPLEX_INHERITED
       frame		      SF_FRAME_INHERITED
     }
     dataType		    "Inherit: Same as Simulink"
@@ -10591,13 +12865,13 @@ Stateflow {
   data {
     id			    56
     ssIdNumber		    7
-    name		    "velocity"
+    name		    "u3"
     linkNode		    [49 55 0]
     scope		    INPUT_DATA
     machine		    1
     props {
       array {
-	size			"3"
+	size			"-1"
       }
       type {
 	method			SF_INHERITED_TYPE
@@ -10605,27 +12879,408 @@ Stateflow {
 	isSigned		1
 	wordLength		"16"
       }
+      complexity	      SF_COMPLEX_INHERITED
       frame		      SF_FRAME_INHERITED
     }
     dataType		    "Inherit: Same as Simulink"
   }
   instance {
     id			    57
-    name		    "Autonomous Controller/Rudder\nCommand/Embedded\nMATLAB Function1"
+    name		    "Plant/Outputs/myMux1"
     machine		    1
     chart		    49
   }
-  target {
+  chart {
     id			    58
+    name		    "Autonomous Controller/Throttle\nCommand/Mux Everything/Generate speed command/Build speed command/myMux"
+    windowPosition	    [551.813 59.45 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1280 1024 1.333333333333333]
+    treeNode		    [0 59 0 0]
+    firstTransition	    61
+    firstJunction	    60
+    viewObj		    58
+    machine		    1
+    subviewS {
+    }
+    ssIdHighWaterMark	    10
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    62
+    chartFileNumber	    9
+    disableImplicitCasting  1
+    eml {
+      name		      "myMux"
+      noDebugging	      1
+    }
+    supportVariableSizing   0
+  }
+  state {
+    id			    59
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    58
+    treeNode		    [58 0 0 0]
+    superState		    SUBCHART
+    subviewer		    58
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function y = myMux(u1, u2, u3, u4, u5, u6)\ny = [u1(1); u2(1); u3(1); u4(1); u5(1); u6(1);];"
+      editorLayout	      "100 M4x1[382 564 545 643]"
+      fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
+      "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
+      fimathForFiConstructors FimathMatlabFactoryDefault
+      emlDefaultFimath	      FimathUserSpecified
+    }
+  }
+  junction {
+    id			    60
+    position		    [23.5747 49.5747 7]
+    chart		    58
+    linkNode		    [58 0 0]
+    subviewer		    58
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    61
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      60
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    58
+    linkNode		    [58 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    58
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    62
+    ssIdNumber		    4
+    name		    "u1"
+    linkNode		    [58 0 63]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    63
+    ssIdNumber		    5
+    name		    "y"
+    linkNode		    [58 62 64]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    64
+    ssIdNumber		    6
+    name		    "u2"
+    linkNode		    [58 63 65]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    65
+    ssIdNumber		    7
+    name		    "u3"
+    linkNode		    [58 64 66]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    66
+    ssIdNumber		    8
+    name		    "u4"
+    linkNode		    [58 65 67]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    67
+    ssIdNumber		    9
+    name		    "u5"
+    linkNode		    [58 66 68]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    68
+    ssIdNumber		    10
+    name		    "u6"
+    linkNode		    [58 67 0]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  instance {
+    id			    69
+    name		    "Autonomous Controller/Throttle\nCommand/Mux Everything/Generate speed command/Build speed command/myMux"
+    machine		    1
+    chart		    58
+  }
+  chart {
+    id			    70
+    name		    "Autonomous Controller/Throttle\nCommand/Mux Everything/Select data packet"
+    windowPosition	    [371.813 239.45 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1280 1024 1.333333333333333]
+    treeNode		    [0 71 0 0]
+    firstTransition	    73
+    firstJunction	    72
+    viewObj		    70
+    machine		    1
+    subviewS {
+    }
+    ssIdHighWaterMark	    7
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    74
+    chartFileNumber	    10
+    disableImplicitCasting  1
+    eml {
+      name		      "fcn"
+    }
+    supportVariableSizing   0
+  }
+  state {
+    id			    71
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    70
+    treeNode		    [70 0 0 0]
+    superState		    SUBCHART
+    subviewer		    70
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function y = fcn(dis, en)\n% This block controls the switch selecting between enable, \n% disable"
+      ", and speed commands. If disable and enable are\n% both set high, disable overrides anything else.\n\ny = uint8("
+      "3);\nif dis == 1\n    y = uint8(1);\nelseif en == 1\n    y = uint8(2);\nend\n    "
+      editorLayout	      "100 M4x1[344 579 671 364]"
+      fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
+      "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
+      fimathForFiConstructors FimathMatlabFactoryDefault
+      emlDefaultFimath	      FimathUserSpecified
+    }
+  }
+  junction {
+    id			    72
+    position		    [23.5747 49.5747 7]
+    chart		    70
+    linkNode		    [70 0 0]
+    subviewer		    70
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    73
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      72
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    70
+    linkNode		    [70 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    70
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    74
+    ssIdNumber		    5
+    name		    "y"
+    linkNode		    [70 0 75]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    75
+    ssIdNumber		    6
+    name		    "dis"
+    linkNode		    [70 74 76]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    76
+    ssIdNumber		    7
+    name		    "en"
+    linkNode		    [70 75 0]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  instance {
+    id			    77
+    name		    "Autonomous Controller/Throttle\nCommand/Mux Everything/Select data packet"
+    machine		    1
+    chart		    70
+  }
+  target {
+    id			    78
     name		    "sfun"
     codeFlags		    ""
     machine		    1
-    linkNode		    [1 0 59]
+    linkNode		    [1 0 79]
   }
   target {
-    id			    59
+    id			    79
     name		    "rtw"
     machine		    1
-    linkNode		    [1 58 0]
+    linkNode		    [1 78 0]
   }
 }
