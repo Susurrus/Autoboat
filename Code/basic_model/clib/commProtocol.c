@@ -118,7 +118,7 @@ void buildAndCheckMessage(unsigned char characterIn) {
 
 		// The checksum is now verified and if successful the message
 		// is stored in the appropriate struct.
-		if (checksum == getChecksum(&message[2], messageIndex-4)) {
+		if (checksum == calculateChecksum(&message[2], messageIndex-4)) {
 			// We now memcpy all the data into our global data structs.
 			// NOTE: message[3] is used to skip the header & message ID info
 			switch (message[3]) {
