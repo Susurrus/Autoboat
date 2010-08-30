@@ -103,13 +103,13 @@ void buildAndCheckMessage(unsigned char characterIn) {
 		}
 	} else if (messageState == 3) {
 		// If we don't find the necessary ampersand we continue
-		// recording data as we haven't found the footer yet.
+		// recording data as we haven't found the footer yet until
+		// we've filled up the entire message (ends at 124 characters
+		// as we need room for the 2 footer chars).
+		message[messageIndex++] = characterIn;
 		if (characterIn == '&') {
-			message[messageIndex++] = characterIn;
-			messageIndex = 4;
 			messageState = 4;
-		} else {
-			messageIndex = 0;
+		} else if (messageIndex == 125) {
 			messageState = 0;
 		}
 	} else if (messageState == 4) {
