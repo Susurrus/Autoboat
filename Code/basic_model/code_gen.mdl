@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.378"
+    ComputedModelVersion    "1.390"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Aug 30 13:56:27 2010"
-  RTWModifiedTimeStamp	  205077386
-  ModelVersionFormat	  "1.%<AutoIncrement:378>"
+  LastModifiedDate	  "Mon Aug 30 17:10:48 2010"
+  RTWModifiedTimeStamp	  205089047
+  ModelVersionFormat	  "1.%<AutoIncrement:390>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -1066,7 +1066,7 @@ Model {
   }
   System {
     Name		    "code_gen"
-    Location		    [469, 330, 1285, 862]
+    Location		    [214, 82, 1265, 815]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1080,7 +1080,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    2776
+    SIDHighWatermark	    2779
     Block {
       BlockType		      SubSystem
       Name		      "Atomic Subsystem"
@@ -1601,7 +1601,7 @@ Model {
       System {
 	Name			"Autonomous Controller"
 	Location		[202, 82, 1270, 978]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1749,7 +1749,7 @@ Model {
 	      Name		      "Bus\nCreator"
 	      SID		      2098
 	      Ports		      [2, 1]
-	      Position		      [740, 126, 745, 164]
+	      Position		      [825, 111, 830, 209]
 	      ShowName		      off
 	      Inputs		      "2"
 	      DisplayOption	      "bar"
@@ -2007,11 +2007,30 @@ Model {
 	      RTWMemSecDataParameters "Inherit from model"
 	      relop		      ">"
 	      const		      "0.02"
-	      LogicOutDataTypeMode    "uint8"
+	      LogicOutDataTypeMode    "boolean"
 	      ZeroCross		      on
 	      Port {
 		PortNumber		1
 		Name			"enable"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion"
+	      SID		      2777
+	      Position		      [695, 178, 760, 192]
+	      ShowName		      off
+	      OutDataTypeMode	      "boolean"
+	      OutDataType	      "fixdt(1, 16)"
+	      OutScaling	      "2^0"
+	      OutDataTypeStr	      "boolean"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	      Port {
+		PortNumber		1
+		Name			"direction"
 		RTWStorageClass		"Auto"
 		DataLoggingNameMode	"SignalName"
 	      }
@@ -2034,11 +2053,6 @@ Model {
 	      RTWMemSecDataConstants  "Inherit from model"
 	      RTWMemSecDataInternal   "Inherit from model"
 	      RTWMemSecDataParameters "Inherit from model"
-	      Array {
-		Type			"Handle"
-		Dimension		0
-		PropName		"AvailSigsLoadSave"
-	      }
 	    }
 	    Block {
 	      BlockType		      SubSystem
@@ -2170,12 +2184,6 @@ Model {
 	      LowerLimit	      "0"
 	      OutDataTypeMode	      "Inherit via back propagation"
 	      OutDataTypeStr	      "Inherit: Inherit via back propagation"
-	      Port {
-		PortNumber		1
-		Name			"direction"
-		RTWStorageClass		"Auto"
-		DataLoggingNameMode	"SignalName"
-	      }
 	    }
 	    Block {
 	      BlockType		      Signum
@@ -2200,7 +2208,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "c_ballast"
 	      SID		      2123
-	      Position		      [775, 138, 805, 152]
+	      Position		      [870, 153, 900, 167]
 	      BackgroundColor	      "yellow"
 	      IconDisplay	      "Port number"
 	    }
@@ -2237,13 +2245,10 @@ Model {
 	      DstPort		      2
 	    }
 	    Line {
-	      Name		      "direction"
-	      Labels		      [0, 0]
 	      SrcBlock		      "Saturation1"
 	      SrcPort		      1
-	      Points		      [40, 0; 0, -30]
-	      DstBlock		      "Bus\nCreator"
-	      DstPort		      2
+	      DstBlock		      "Data Type Conversion"
+	      DstPort		      1
 	    }
 	    Line {
 	      Name		      "enable"
@@ -2324,6 +2329,14 @@ Model {
 	      SrcPort		      1
 	      DstBlock		      "Saturation"
 	      DstPort		      1
+	    }
+	    Line {
+	      Name		      "direction"
+	      Labels		      [0, 0]
+	      SrcBlock		      "Data Type Conversion"
+	      SrcPort		      1
+	      DstBlock		      "Bus\nCreator"
+	      DstPort		      2
 	    }
 	    Annotation {
 	      Name		      "NOTE: The current ballast sensor position range is\nunknown! This should be checked before employe"
@@ -11585,7 +11598,7 @@ Model {
       SID		      2742
       Position		      [950, 419, 990, 461]
       ShowName		      off
-      OutPortSampleTime	      "1"
+      OutPortSampleTime	      ".2"
     }
     Block {
       BlockType		      RateTransition
@@ -11593,7 +11606,7 @@ Model {
       SID		      2743
       Position		      [950, 439, 990, 481]
       ShowName		      off
-      OutPortSampleTime	      "1"
+      OutPortSampleTime	      ".2"
     }
     Block {
       BlockType		      RateTransition
@@ -11601,7 +11614,7 @@ Model {
       SID		      2744
       Position		      [950, 339, 990, 381]
       ShowName		      off
-      OutPortSampleTime	      "1"
+      OutPortSampleTime	      ".2"
     }
     Block {
       BlockType		      RateTransition
@@ -11609,7 +11622,7 @@ Model {
       SID		      2753
       Position		      [950, 489, 990, 531]
       ShowName		      off
-      OutPortSampleTime	      "1"
+      OutPortSampleTime	      ".2"
     }
     Block {
       BlockType		      SubSystem
@@ -13766,7 +13779,7 @@ Model {
       Name		      "Transmit actuator\ndata"
       SID		      2229
       Ports		      [3, 0, 1]
-      Position		      [1025, 429, 1125, 471]
+      Position		      [1025, 434, 1125, 476]
       LibraryVersion	      "1.216"
       TreatAsAtomicUnit	      on
       MinAlgLoopOccurrences   off
@@ -13778,8 +13791,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Transmit actuator\ndata"
-	Location		[314, 457, 914, 894]
-	Open			on
+	Location		[261, 401, 1095, 968]
+	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -13961,7 +13974,7 @@ Model {
 	      Name		      "Mux2"
 	      SID		      2751
 	      Ports		      [2, 1]
-	      Position		      [135, 208, 140, 257]
+	      Position		      [135, 203, 140, 252]
 	      ShowName		      off
 	      Inputs		      "2"
 	      DisplayOption	      "bar"
@@ -13983,7 +13996,7 @@ Model {
 		DstPort			4
 	      }
 	      Branch {
-		Points			[0, 85]
+		Points			[0, 80]
 		DstBlock		"Mux2"
 		DstPort			2
 	      }
@@ -14015,7 +14028,7 @@ Model {
 		DstPort			3
 	      }
 	      Branch {
-		Points			[0, 110]
+		Points			[0, 105]
 		DstBlock		"Mux2"
 		DstPort			1
 	      }
@@ -14164,6 +14177,32 @@ Model {
 	  Name			  "Data Type Conversion3"
 	  SID			  2752
 	  Position		  [310, 47, 350, 63]
+	  ShowName		  off
+	  OutDataTypeMode	  "uint8"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint8"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion4"
+	  SID			  2778
+	  Position		  [310, 247, 350, 263]
+	  ShowName		  off
+	  OutDataTypeMode	  "uint8"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint8"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion5"
+	  SID			  2779
+	  Position		  [310, 207, 350, 223]
 	  ShowName		  off
 	  OutDataTypeMode	  "uint8"
 	  OutDataType		  "fixdt(1, 16)"
@@ -14356,16 +14395,16 @@ Model {
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector2"
 	  SrcPort		  1
-	  DstBlock		  "Mux"
-	  DstPort		  5
+	  DstBlock		  "Data Type Conversion5"
+	  DstPort		  1
 	}
 	Line {
 	  Name			  "<direction>"
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector2"
 	  SrcPort		  2
-	  DstBlock		  "Mux"
-	  DstPort		  6
+	  DstBlock		  "Data Type Conversion4"
+	  DstPort		  1
 	}
 	Line {
 	  Name			  "<period>"
@@ -14401,6 +14440,18 @@ Model {
 	  DstBlock		  "Mux"
 	  DstPort		  8
 	}
+	Line {
+	  SrcBlock		  "Data Type Conversion4"
+	  SrcPort		  1
+	  DstBlock		  "Mux"
+	  DstPort		  6
+	}
+	Line {
+	  SrcBlock		  "Data Type Conversion5"
+	  SrcPort		  1
+	  DstBlock		  "Mux"
+	  DstPort		  5
+	}
       }
     }
     Block {
@@ -14430,8 +14481,8 @@ Model {
       InterruptRxWhen	      "When a character is received"
       RXInterruptPri	      "1"
       RxBufferSize	      "128"
-      BAUD		      "1200"
-      UxBRG		      "2082"
+      BAUD		      "9600"
+      UxBRG		      "259"
       Info		      "UxBRG = 2082   ||  Real Baud : 1200   ||  % error : 0.016003  ||  max 0.12002 Bytes / Step"
       RealBaud		      "0"
     }
@@ -14442,13 +14493,6 @@ Model {
       Points		      [15, 0; 0, -60]
       DstBlock		      "Atomic Subsystem"
       DstPort		      7
-    }
-    Line {
-      SrcBlock		      "Autonomous Controller"
-      SrcPort		      3
-      Points		      [10, 0; 0, 30]
-      DstBlock		      "Rate Transition3"
-      DstPort		      1
     }
     Line {
       SrcBlock		      "Radio Control\nInputs"
@@ -14673,9 +14717,15 @@ Model {
       DstPort		      1
     }
     Line {
+      SrcBlock		      "Autonomous Controller"
+      SrcPort		      3
+      Points		      [10, 0; 0, 30]
+      DstBlock		      "Rate Transition3"
+      DstPort		      1
+    }
+    Line {
       SrcBlock		      "Rate Transition"
       SrcPort		      1
-      Points		      [15, 0]
       DstBlock		      "Transmit actuator\ndata"
       DstPort		      1
     }

@@ -8,7 +8,8 @@ v_0 = 0;                % Initial speed
 T_step = 0.01;          % Simulation timestep
 battery_tray_angle = 0; % Battery tray angle
 initial_charge = 2851200;    % Initial boat charge, 60% of 6V battery rail (J)
-start_time =   1279069200; % 6/13/2010 @ 20:00pm UTC (12pm pacific)
+start_time = clock;
+%start_time =   1279069200; % 6/13/2010 @ 20:00pm UTC (12pm pacific)
 %start_time = 1271205603;% 04/13/2010 @ 7:40pm (TODO: Change to MATLAB commands to capture current time)
 
 % Waypoint stuff
