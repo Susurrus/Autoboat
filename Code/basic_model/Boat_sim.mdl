@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.1153"
+    ComputedModelVersion    "1.1155"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Sep 07 16:07:56 2010"
-  RTWModifiedTimeStamp	  205776475
-  ModelVersionFormat	  "1.%<AutoIncrement:1153>"
+  LastModifiedDate	  "Tue Sep 07 16:13:09 2010"
+  RTWModifiedTimeStamp	  205776788
+  ModelVersionFormat	  "1.%<AutoIncrement:1155>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -7657,7 +7657,7 @@ Model {
 	      System {
 		Name			"Subsystem"
 		Location		[230, 276, 984, 704]
-		Open			off
+		Open			on
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
 		ScreenColor		"white"
@@ -7727,7 +7727,7 @@ Model {
 		  ShowName		  off
 		  Priority		  "2"
 		  DataStoreName		  "throttle_speed"
-		  SampleTime		  ".2"
+		  SampleTime		  ".01"
 		}
 		Block {
 		  BlockType		  DataTypeConversion
@@ -7929,25 +7929,6 @@ Model {
 		}
 		Block {
 		  BlockType		  Scope
-		  Name			  "Scope"
-		  SID			  1465
-		  Ports			  [1]
-		  Position		  [275, 214, 305, 246]
-		  Floating		  off
-		  Location		  [1, 52, 1281, 993]
-		  Open			  off
-		  NumInputPorts		  "1"
-		  List {
-		    ListType		    AxesTitles
-		    axes1		    "%<SignalLabel>"
-		  }
-		  YMin			  "-1"
-		  YMax			  "1"
-		  DataFormat		  "StructureWithTime"
-		  SampleTime		  "0"
-		}
-		Block {
-		  BlockType		  Scope
 		  Name			  "Scope1"
 		  SID			  1474
 		  Ports			  [1]
@@ -8007,16 +7988,8 @@ Model {
 		  Labels		  [0, 0]
 		  SrcBlock		  "Bus\nSelector2"
 		  SrcPort		  2
-		  Points		  [10, 0]
-		  Branch {
-		    DstBlock		    "Data Type Conversion"
-		    DstPort		    1
-		  }
-		  Branch {
-		    Points		    [0, 95]
-		    DstBlock		    "Scope"
-		    DstPort		    1
-		  }
+		  DstBlock		  "Data Type Conversion"
+		  DstPort		  1
 		}
 		Line {
 		  SrcBlock		  "If"
@@ -13189,7 +13162,6 @@ Model {
       BlockMirror	      on
       NamePlacement	      "alternate"
       ShowName		      off
-      OutPortSampleTime	      ".2"
     }
     Block {
       BlockType		      RateTransition
@@ -13202,22 +13174,12 @@ Model {
     }
     Block {
       BlockType		      RateTransition
-      Name		      "Rate Transition10"
-      SID		      1500
-      Position		      [485, 244, 525, 286]
-      NamePlacement	      "alternate"
-      ShowName		      off
-      OutPortSampleTime	      ".2"
-    }
-    Block {
-      BlockType		      RateTransition
       Name		      "Rate Transition2"
       SID		      1151
       Position		      [370, 364, 410, 406]
       BlockMirror	      on
       NamePlacement	      "alternate"
       ShowName		      off
-      OutPortSampleTime	      ".2"
     }
     Block {
       BlockType		      RateTransition
@@ -13227,7 +13189,6 @@ Model {
       BlockMirror	      on
       NamePlacement	      "alternate"
       ShowName		      off
-      OutPortSampleTime	      ".2"
     }
     Block {
       BlockType		      RateTransition
@@ -13248,33 +13209,6 @@ Model {
       ShowName		      off
     }
     Block {
-      BlockType		      RateTransition
-      Name		      "Rate Transition6"
-      SID		      1496
-      Position		      [485, 144, 525, 186]
-      NamePlacement	      "alternate"
-      ShowName		      off
-      OutPortSampleTime	      ".2"
-    }
-    Block {
-      BlockType		      RateTransition
-      Name		      "Rate Transition8"
-      SID		      1498
-      Position		      [485, 194, 525, 236]
-      NamePlacement	      "alternate"
-      ShowName		      off
-      OutPortSampleTime	      ".2"
-    }
-    Block {
-      BlockType		      RateTransition
-      Name		      "Rate Transition9"
-      SID		      1499
-      Position		      [485, 219, 525, 261]
-      NamePlacement	      "alternate"
-      ShowName		      off
-      OutPortSampleTime	      ".2"
-    }
-    Block {
       BlockType		      SubSystem
       Name		      "Raw command\ndisplay"
       SID		      1349
@@ -13291,7 +13225,7 @@ Model {
       System {
 	Name			"Raw command\ndisplay"
 	Location		[210, 476, 922, 851]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -13763,8 +13697,16 @@ Model {
       Labels		      [1, 0]
       SrcBlock		      "Plant"
       SrcPort		      4
-      DstBlock		      "Rate Transition6"
-      DstPort		      1
+      Points		      [255, 0; 0, 180]
+      Branch {
+	Points			[0, 105]
+	DstBlock		"HIL Interface"
+	DstPort			1
+      }
+      Branch {
+	DstBlock		"Autonomous Controller"
+	DstPort			1
+      }
     }
     Line {
       SrcBlock		      "Plant"
@@ -13775,27 +13717,51 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      6
-      DstBlock		      "Rate Transition8"
-      DstPort		      1
+      Points		      [225, 0; 0, 155]
+      Branch {
+	Points			[0, 105]
+	DstBlock		"HIL Interface"
+	DstPort			2
+      }
+      Branch {
+	DstBlock		"Autonomous Controller"
+	DstPort			2
+      }
     }
     Line {
       SrcBlock		      "Plant"
       SrcPort		      7
-      DstBlock		      "Rate Transition9"
-      DstPort		      1
+      Points		      [285, 0; 0, 180]
+      Branch {
+	Points			[0, 105]
+	DstBlock		"HIL Interface"
+	DstPort			4
+      }
+      Branch {
+	DstBlock		"Autonomous Controller"
+	DstPort			4
+      }
     }
     Line {
       SrcBlock		      "Plant"
       SrcPort		      8
       Points		      [15, 0]
       Branch {
-	DstBlock		"Rate Transition10"
-	DstPort			1
-      }
-      Branch {
 	Points			[0, 30; 285, 0]
 	DstBlock		"Bus\nSelector"
 	DstPort			1
+      }
+      Branch {
+	Points			[255, 0; 0, 130]
+	Branch {
+	  Points		  [0, 105]
+	  DstBlock		  "HIL Interface"
+	  DstPort		  3
+	}
+	Branch {
+	  DstBlock		  "Autonomous Controller"
+	  DstPort		  3
+	}
       }
     }
     Line {
@@ -13974,63 +13940,6 @@ Model {
       SrcPort		      1
       DstBlock		      "HIL Demux"
       DstPort		      6
-    }
-    Line {
-      Labels		      [1, 0]
-      SrcBlock		      "Rate Transition6"
-      SrcPort		      1
-      Points		      [175, 0; 0, 180]
-      Branch {
-	Points			[0, 105]
-	DstBlock		"HIL Interface"
-	DstPort			1
-      }
-      Branch {
-	DstBlock		"Autonomous Controller"
-	DstPort			1
-      }
-    }
-    Line {
-      SrcBlock		      "Rate Transition8"
-      SrcPort		      1
-      Points		      [145, 0; 0, 155]
-      Branch {
-	Points			[0, 105]
-	DstBlock		"HIL Interface"
-	DstPort			2
-      }
-      Branch {
-	DstBlock		"Autonomous Controller"
-	DstPort			2
-      }
-    }
-    Line {
-      SrcBlock		      "Rate Transition9"
-      SrcPort		      1
-      Points		      [205, 0; 0, 180]
-      Branch {
-	Points			[0, 105]
-	DstBlock		"HIL Interface"
-	DstPort			4
-      }
-      Branch {
-	DstBlock		"Autonomous Controller"
-	DstPort			4
-      }
-    }
-    Line {
-      SrcBlock		      "Rate Transition10"
-      SrcPort		      1
-      Points		      [190, 0; 0, 130]
-      Branch {
-	Points			[0, 105]
-	DstBlock		"HIL Interface"
-	DstPort			3
-      }
-      Branch {
-	DstBlock		"Autonomous Controller"
-	DstPort			3
-      }
     }
     Annotation {
       Name		      "This is the root model for the boat simulator and autonomous controller. All\nunits exposed here ar"
