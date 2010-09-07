@@ -121,9 +121,10 @@ void buildAndCheckMessage(unsigned char characterIn) {
 		if (checksum == calculateChecksum(&message[2], messageIndex-4)) {
 			// We now memcpy all the data into our global data structs.
 			// NOTE: message[3] is used to skip the header & message ID info
-			switch (message[3]) {
+			switch (message[2]) {
 				case 1:
-					memcpy(&sensorDataMessage, &message[3], sizeof(tSensorData));
+					setSensorData(&message[3]);
+					//memcpy(&sensorDataMessage, &message[3], sizeof(tSensorData));
 					break;
 				case 2:
 					memcpy(&actuatorDataMessage, &message[3], sizeof(tActuatorData));
@@ -158,73 +159,207 @@ unsigned char calculateChecksum(char* sentence, unsigned char size) {
     return checkSum;
 }
 
-void getSensorData(float* data) {
-	data[0] = (float)sensorDataMessage.speed;
-	data[1] = sensorDataMessage.lat;
-	data[2] = sensorDataMessage.lon;
-	data[3] = sensorDataMessage.alt;
-	data[4] = (float)(((unsigned long)sensorDataMessage.month) | ((unsigned long)sensorDataMessage.year) << 16);
-	data[5] = (float)(((unsigned long)sensorDataMessage.hour) | ((unsigned long)sensorDataMessage.day) << 16);
-	data[6] = (float)(((unsigned long)sensorDataMessage.second) | ((unsigned long)sensorDataMessage.minute)<< 16);
-	data[7] = sensorDataMessage.cog;
-	data[8] = sensorDataMessage.sog;
-	data[9] = sensorDataMessage.r_Position;
-	data[10] = (float)(((unsigned long)sensorDataMessage.r_PortLimit) | ((unsigned long)sensorDataMessage.r_SBLimit) << 16);
-	data[11] = sensorDataMessage.b_Position;
-	data[12] = (float)(((unsigned long)sensorDataMessage.b_PortLimit) | ((unsigned long)sensorDataMessage.b_SBLimit) << 16);
+void getSensorData(unsigned char* data) {
+	data[0] = sensorDataMessage.speed.chData[0];
+	data[1] = sensorDataMessage.speed.chData[1];
+	data[2] = sensorDataMessage.lat.chData[0];
+	data[3] = sensorDataMessage.lat.chData[1];
+	data[4] = sensorDataMessage.lat.chData[2];
+	data[5] = sensorDataMessage.lat.chData[3];
+	data[6] = sensorDataMessage.lon.chData[0];
+	data[7] = sensorDataMessage.lon.chData[1];
+	data[8] = sensorDataMessage.lon.chData[2];
+	data[9] = sensorDataMessage.lon.chData[3];
+	data[10] = sensorDataMessage.alt.chData[0];
+	data[11] = sensorDataMessage.alt.chData[1];
+	data[12] = sensorDataMessage.alt.chData[2];
+	data[13] = sensorDataMessage.alt.chData[3];
+	data[14] = sensorDataMessage.year;
+	data[15] = sensorDataMessage.month;
+	data[16] = sensorDataMessage.day;
+	data[17] = sensorDataMessage.hour;
+	data[18] = sensorDataMessage.minute;
+	data[19] = sensorDataMessage.second;
+	data[20] = sensorDataMessage.cog.chData[0];
+	data[21] = sensorDataMessage.cog.chData[1];
+	data[22] = sensorDataMessage.cog.chData[2];
+	data[23] = sensorDataMessage.cog.chData[3];
+	data[24] = sensorDataMessage.sog.chData[0];
+	data[25] = sensorDataMessage.sog.chData[1];
+	data[26] = sensorDataMessage.sog.chData[2];
+	data[27] = sensorDataMessage.sog.chData[3];
+	data[28] = sensorDataMessage.r_Position.chData[0];
+	data[29] = sensorDataMessage.r_Position.chData[1];
+	data[30] = sensorDataMessage.r_SBLimit;
+	data[31] = sensorDataMessage.r_PortLimit;
+	data[32] = sensorDataMessage.b_Position.chData[0];
+	data[33] = sensorDataMessage.b_Position.chData[1];
+	data[34] = sensorDataMessage.b_SBLimit;
+	data[35] = sensorDataMessage.b_PortLimit;
 }
 
-void getActuatorData(unsigned long* data) {
-	data[0] = ((unsigned long)actuatorDataMessage.r_enable) | ((unsigned long)actuatorDataMessage.r_direction) << 16;
-	data[1] = ((unsigned long)actuatorDataMessage.r_up) | ((unsigned long)actuatorDataMessage.r_period) << 16;
-	data[2] = ((unsigned long)actuatorDataMessage.b_enable) | ((unsigned long)actuatorDataMessage.b_direction) << 16;
-	data[3] = actuatorDataMessage.t_identifier;
-	data[4] = ((unsigned long)actuatorDataMessage.data[0]) | ((unsigned long)actuatorDataMessage.data[1]) << 8 | ((unsigned long)actuatorDataMessage.data[2]) << 16 | ((unsigned long)actuatorDataMessage.data[3]) << 24;
-	data[5] = ((unsigned long)actuatorDataMessage.data[4]) | ((unsigned long)actuatorDataMessage.data[5]) << 8 | ((unsigned long)actuatorDataMessage.size) << 16 | ((unsigned long)actuatorDataMessage.trigger) << 24;
+void setSensorData(unsigned char* data) {
+	sensorDataMessage.speed.chData[0] = data[0];
+	sensorDataMessage.speed.chData[1] = data[1];
+	sensorDataMessage.lat.chData[0] = data[2];
+	sensorDataMessage.lat.chData[1] = data[3];
+	sensorDataMessage.lat.chData[2] = data[4];
+	sensorDataMessage.lat.chData[3] = data[5];
+	sensorDataMessage.lon.chData[0] = data[6];
+	sensorDataMessage.lon.chData[1] = data[7];
+	sensorDataMessage.lon.chData[2] = data[8];
+	sensorDataMessage.lon.chData[3] = data[9];
+	sensorDataMessage.alt.chData[0] = data[10];
+	sensorDataMessage.alt.chData[1] = data[11];
+	sensorDataMessage.alt.chData[2] = data[12];
+	sensorDataMessage.alt.chData[3] = data[13];
+	sensorDataMessage.year = data[14];
+	sensorDataMessage.month = data[15];
+	sensorDataMessage.day = data[16];
+	sensorDataMessage.hour = data[17];
+	sensorDataMessage.minute = data[18];
+	sensorDataMessage.second = data[19];
+	sensorDataMessage.cog.chData[0] = data[20];
+	sensorDataMessage.cog.chData[1] = data[21];
+	sensorDataMessage.cog.chData[2] = data[22];
+	sensorDataMessage.cog.chData[3] = data[23];
+	sensorDataMessage.sog.chData[0] = data[24];
+	sensorDataMessage.sog.chData[1] = data[25];
+	sensorDataMessage.sog.chData[2] = data[26];
+	sensorDataMessage.sog.chData[3] = data[27];
+	sensorDataMessage.r_Position.chData[0] = data[28];
+	sensorDataMessage.r_Position.chData[1] = data[29];
+	sensorDataMessage.r_SBLimit = data[30];
+	sensorDataMessage.r_PortLimit = data[31];
+	sensorDataMessage.b_Position.chData[0] = data[32];
+	sensorDataMessage.b_Position.chData[1] = data[33];
+	sensorDataMessage.b_SBLimit = data[34];
+	sensorDataMessage.b_PortLimit = data[35];
 }
 
-void setActuatorData(unsigned long* data) {
-	actuatorDataMessage.r_enable = (unsigned char)data[0];
-	actuatorDataMessage.r_direction = (unsigned char)(data[0] >> 16);
-	actuatorDataMessage.r_up = (unsigned short)data[1];
-	actuatorDataMessage.r_period = (unsigned short)((data[1] & 0xFF00) >> 16);
-	actuatorDataMessage.t_identifier = data[3];
-	actuatorDataMessage.data[0] = (unsigned char)data[4];
-	actuatorDataMessage.data[1] = (unsigned char)(data[4] >> 8);
-	actuatorDataMessage.data[2] = (unsigned char)(data[4] >> 16);
-	actuatorDataMessage.data[3] = (unsigned char)(data[4] >> 24);
-	actuatorDataMessage.data[4] = (unsigned char)data[5];
-	actuatorDataMessage.data[5] = (unsigned char)(data[5] >> 8);
-	actuatorDataMessage.size = (unsigned char)(data[5] >> 16);
-	actuatorDataMessage.trigger = (unsigned char)(data[5] >> 24);
+void getActuatorData(unsigned char* data) {
+	data[0] = actuatorDataMessage.r_enable;
+	data[1] = actuatorDataMessage.r_direction;
+	data[2] = actuatorDataMessage.r_up.chData[0];
+	data[3] = actuatorDataMessage.r_up.chData[1];
+	data[4] = actuatorDataMessage.r_period.chData[0];
+	data[5] = actuatorDataMessage.r_period.chData[1];
+	data[6] = actuatorDataMessage.b_enable;
+	data[7] = actuatorDataMessage.b_direction;
+	data[8] = actuatorDataMessage.t_identifier.chData[0];
+	data[9] = actuatorDataMessage.t_identifier.chData[1];
+	data[10] = actuatorDataMessage.t_identifier.chData[2];
+	data[11] = actuatorDataMessage.t_identifier.chData[3];
+	data[12] = actuatorDataMessage.data[0];
+	data[13] = actuatorDataMessage.data[1];
+	data[14] = actuatorDataMessage.data[2];
+	data[15] = actuatorDataMessage.data[3];
+	data[16] = actuatorDataMessage.data[4];
+	data[17] = actuatorDataMessage.data[5];
+	data[18] = actuatorDataMessage.size;
+	data[19] = actuatorDataMessage.trigger;
 }
 
-void getStateData(float* data) {
-	data[0] = stateDataMessage.L2_Vector[0];
-	data[1] = stateDataMessage.L2_Vector[1];
-	data[2] = stateDataMessage.L2_Vector[2];
-	data[3] = stateDataMessage.desiredRudder;
-	data[4] = stateDataMessage.velocity[0];
-	data[5] = stateDataMessage.velocity[2];
-	data[6] = stateDataMessage.velocity[3];
-	data[7] = stateDataMessage.solar_azimuth;
-	data[8] = stateDataMessage.solar_zenith;
-	data[9] = (float)(((unsigned long)stateDataMessage.currentWaypointIndex) | ((unsigned long)stateDataMessage.waypointMode) << 16);
-	data[10] = (float)stateDataMessage.waypointCount;
+void setActuatorData(unsigned char* data) {
+	actuatorDataMessage.r_enable = data[0];
+	actuatorDataMessage.r_direction = data[1];
+	actuatorDataMessage.r_up.chData[0] = data[2];
+	actuatorDataMessage.r_up.chData[1] = data[3];
+	actuatorDataMessage.r_period.chData[0] = data[4];
+	actuatorDataMessage.r_period.chData[1] = data[5];
+	actuatorDataMessage.b_enable = data[0];
+	actuatorDataMessage.b_direction = data[1];
+	actuatorDataMessage.t_identifier.chData[0] = data[6];
+	actuatorDataMessage.t_identifier.chData[1] = data[7];
+	actuatorDataMessage.t_identifier.chData[2] = data[8];
+	actuatorDataMessage.t_identifier.chData[3] = data[9];
+	actuatorDataMessage.data[0] = data[10];
+	actuatorDataMessage.data[1] = data[11];
+	actuatorDataMessage.data[2] = data[12];
+	actuatorDataMessage.data[3] = data[13];
+	actuatorDataMessage.data[4] = data[14];
+	actuatorDataMessage.data[5] = data[15];
+	actuatorDataMessage.size = data[16];
+	actuatorDataMessage.trigger = data[17];
 }
 
-void getCommandData(unsigned long* data) {
-	data[0] = ((unsigned long)commandDataMessage.stop) | (((unsigned long)commandDataMessage.go) << 16);
-	data[1] = ((unsigned long)commandDataMessage.returnToBase) | (((unsigned long)commandDataMessage.setWaypointMode) << 16);
-	data[2] = ((unsigned long)commandDataMessage.setWaypoints[0]) | (((unsigned long)commandDataMessage.setWaypoints[1]) << 16);
-	data[3] = ((unsigned long)commandDataMessage.setWaypoints[2]) | (((unsigned long)commandDataMessage.setWaypoints[3]) << 16);
-	data[4] = ((unsigned long)commandDataMessage.setWaypoints[4]) | (((unsigned long)commandDataMessage.setWaypoints[5]) << 16);
-	data[5] = ((unsigned long)commandDataMessage.setWaypoints[6]) | (((unsigned long)commandDataMessage.setWaypoints[7]) << 16);
-	data[6] = ((unsigned long)commandDataMessage.setWaypoints[8]) | (((unsigned long)commandDataMessage.setWaypoints[9]) << 16);
-	data[7] = ((unsigned long)commandDataMessage.setWaypoints[10]) | (((unsigned long)commandDataMessage.setWaypoints[11]) << 16);
-	data[8] = ((unsigned long)commandDataMessage.setWaypoints[12]) | (((unsigned long)commandDataMessage.setWaypoints[13]) << 16);
-	data[9] = ((unsigned long)commandDataMessage.setWaypoints[14]) | (((unsigned long)commandDataMessage.setWaypoints[15]) << 16);
-	data[10] = ((unsigned long)commandDataMessage.setWaypointCount) | (((unsigned long)commandDataMessage.enableManualControl) << 16);
+void getStateData(unsigned char* data) {
+	data[0] = stateDataMessage.L2_Vector[0].chData[0];
+	data[1] = stateDataMessage.L2_Vector[0].chData[1];
+	data[2] = stateDataMessage.L2_Vector[0].chData[2];
+	data[3] = stateDataMessage.L2_Vector[0].chData[3];
+	data[4] = stateDataMessage.L2_Vector[1].chData[0];
+	data[5] = stateDataMessage.L2_Vector[1].chData[1];
+	data[6] = stateDataMessage.L2_Vector[1].chData[2];
+	data[7] = stateDataMessage.L2_Vector[1].chData[3];
+	data[8] = stateDataMessage.L2_Vector[2].chData[0];
+	data[9] = stateDataMessage.L2_Vector[2].chData[1];
+	data[10] = stateDataMessage.L2_Vector[2].chData[2];
+	data[11] = stateDataMessage.L2_Vector[2].chData[3];
+	data[12] = stateDataMessage.desiredRudder.chData[0];
+	data[13] = stateDataMessage.desiredRudder.chData[1];
+	data[14] = stateDataMessage.desiredRudder.chData[2];
+	data[15] = stateDataMessage.desiredRudder.chData[3];
+	data[16] = stateDataMessage.velocity[0].chData[0];
+	data[17] = stateDataMessage.velocity[0].chData[1];
+	data[18] = stateDataMessage.velocity[0].chData[2];
+	data[19] = stateDataMessage.velocity[0].chData[3];
+	data[20] = stateDataMessage.velocity[1].chData[0];
+	data[21] = stateDataMessage.velocity[1].chData[1];
+	data[22] = stateDataMessage.velocity[1].chData[2];
+	data[23] = stateDataMessage.velocity[1].chData[3];
+	data[24] = stateDataMessage.velocity[2].chData[0];
+	data[25] = stateDataMessage.velocity[2].chData[1];
+	data[26] = stateDataMessage.velocity[2].chData[2];
+	data[27] = stateDataMessage.velocity[2].chData[3];
+	data[28] = stateDataMessage.solar_azimuth.chData[0];
+	data[29] = stateDataMessage.solar_azimuth.chData[1];
+	data[30] = stateDataMessage.solar_azimuth.chData[2];
+	data[31] = stateDataMessage.solar_azimuth.chData[3];
+	data[32] = stateDataMessage.solar_zenith.chData[0];
+	data[33] = stateDataMessage.solar_zenith.chData[1];
+	data[34] = stateDataMessage.solar_zenith.chData[2];
+	data[35] = stateDataMessage.solar_zenith.chData[3];
+	data[36] = stateDataMessage.currentWaypointIndex;
+	data[37] = stateDataMessage.waypointMode;
+	data[38] = stateDataMessage.waypointCount;
 }
 
-
+void getCommandData(unsigned char* data) {
+	data[0] = commandDataMessage.runMode;
+	data[1] = commandDataMessage.HILEnable;
+	data[2] = commandDataMessage.waypointMode;
+	data[3] = commandDataMessage.waypointCount;
+	data[4] = commandDataMessage.waypoints[0].chData[0];
+	data[5] = commandDataMessage.waypoints[0].chData[1];
+	data[6] = commandDataMessage.waypoints[1].chData[0];
+	data[7] = commandDataMessage.waypoints[1].chData[1];
+	data[8] = commandDataMessage.waypoints[2].chData[0];
+	data[9] = commandDataMessage.waypoints[2].chData[1];
+	data[10] = commandDataMessage.waypoints[3].chData[0];
+	data[11] = commandDataMessage.waypoints[3].chData[1];
+	data[12] = commandDataMessage.waypoints[4].chData[0];
+	data[13] = commandDataMessage.waypoints[4].chData[1];
+	data[14] = commandDataMessage.waypoints[5].chData[0];
+	data[15] = commandDataMessage.waypoints[5].chData[1];
+	data[16] = commandDataMessage.waypoints[6].chData[0];
+	data[17] = commandDataMessage.waypoints[6].chData[1];
+	data[18] = commandDataMessage.waypoints[7].chData[0];
+	data[19] = commandDataMessage.waypoints[7].chData[1];
+	data[20] = commandDataMessage.waypoints[8].chData[0];
+	data[21] = commandDataMessage.waypoints[8].chData[1];
+	data[22] = commandDataMessage.waypoints[9].chData[0];
+	data[23] = commandDataMessage.waypoints[9].chData[1];
+	data[24] = commandDataMessage.waypoints[10].chData[0];
+	data[25] = commandDataMessage.waypoints[10].chData[1];
+	data[26] = commandDataMessage.waypoints[11].chData[0];
+	data[27] = commandDataMessage.waypoints[11].chData[1];
+	data[28] = commandDataMessage.waypoints[12].chData[0];
+	data[29] = commandDataMessage.waypoints[12].chData[1];
+	data[30] = commandDataMessage.waypoints[13].chData[0];
+	data[31] = commandDataMessage.waypoints[13].chData[1];
+	data[32] = commandDataMessage.waypoints[14].chData[0];
+	data[33] = commandDataMessage.waypoints[14].chData[1];
+	data[34] = commandDataMessage.waypoints[15].chData[0];
+	data[35] = commandDataMessage.waypoints[15].chData[1];
+}

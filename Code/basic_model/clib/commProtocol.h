@@ -42,24 +42,51 @@ THE SOFTWARE.
 // First Revision: Aug 25 2010
 // ==============================================================
 
+// Definitions of unions useful in transmitting data serially
+typedef union{
+	unsigned char    chData[2];
+	unsigned short   usData;
+} tUnsignedShortToChar; 
+
+typedef union{
+	unsigned char    chData[2];
+ 	short   		 shData;
+} tShortToChar; 
+
+typedef union{
+	unsigned char   chData[4];
+ 	unsigned int   	uiData;
+} tUnsignedIntToChar; 
+
+typedef union{
+	unsigned char   chData[4];
+ 	int   			inData;
+} tIntToChar; 
+
+typedef union{
+	unsigned char   chData[4];
+ 	float   		flData;
+	unsigned short	shData[2];
+} tFloatToChar; 
+
 // Declaration of the relevant message structs used.
 typedef struct tSensorData {
-	short speed;
-	float lat;
-	float lon;
-	float alt;
+	tShortToChar speed;
+	tFloatToChar lat;
+	tFloatToChar lon;
+	tFloatToChar alt;
 	unsigned char day;
 	unsigned char month;
 	unsigned char year;
 	unsigned char second;
 	unsigned char minute;
 	unsigned char hour;
-	float cog;
-	float sog;
-	float r_Position;
+	tFloatToChar cog;
+	tFloatToChar sog;
+	tUnsignedShortToChar r_Position;
 	unsigned char r_SBLimit;
 	unsigned char r_PortLimit;
-	float b_Position;
+	tUnsignedShortToChar b_Position;
 	unsigned char b_SBLimit;
 	unsigned char b_PortLimit;
 } tSensorData;
@@ -67,35 +94,33 @@ typedef struct tSensorData {
 typedef struct tActuatorData {
 	unsigned char r_enable;
 	unsigned char r_direction;
-	unsigned short r_up;
-	unsigned short r_period;
+	tUnsignedShortToChar r_up;
+	tUnsignedShortToChar r_period;
 	unsigned char b_enable;
 	unsigned char b_direction;
-	unsigned long t_identifier;
+	tUnsignedIntToChar t_identifier;
 	unsigned char data[6];
 	unsigned char size;
 	unsigned char trigger;
 } tActuatorData;
 
 typedef struct tStateData {
-	float L2_Vector[3];
-	float desiredRudder;
-	float velocity[3];
-	float solar_azimuth;
-	float solar_zenith;
+	tFloatToChar L2_Vector[3];
+	tFloatToChar desiredRudder;
+	tFloatToChar velocity[3];
+	tFloatToChar solar_azimuth;
+	tFloatToChar solar_zenith;
 	unsigned char currentWaypointIndex;
 	unsigned char waypointMode;
 	unsigned char waypointCount;
 } tStateData;
 
 typedef struct tCommandData {
-	unsigned char stop;
-	unsigned char go;
-	unsigned char returnToBase;
-	unsigned char setWaypointMode;
-	unsigned short setWaypoints[16]; // Store room for 8 north/east pairs of waypoints
-	unsigned char setWaypointCount;
-	unsigned char enableManualControl;
+	unsigned char runMode; // 0 for stop, 1 for run, 2 for return-to-base, 3 for manual RC control)
+	unsigned char HILEnable; // 0 to enable normal running, 1 for HIL running)
+	unsigned char waypointMode; // Sets the waypoint navigation modes.
+	unsigned char waypointCount; // Number of waypoints being transmit
+	tShortToChar waypoints[16]; // Store room for 8 north/east pairs of waypoints
 } tCommandData;
 
 /**
@@ -111,12 +136,16 @@ void buildAndCheckMessage(unsigned char characterIn);
  */
 unsigned char calculateChecksum(char* sentence, unsigned char size);
 
-void getSensorData(float* data);
+void getSensorData(unsigned char* data);
 
-void getActuatorData(unsigned long* data);
+void setSensorData(unsigned char* data);
 
-void getStateData(float* data);
+void getActuatorData(unsigned char* data);
 
-void getCommandData(unsigned long* data);
+void setActuatorData(unsigned char* data);
+
+void getStateData(unsigned char* data);
+
+void getCommandData(unsigned char* data);
 
 
