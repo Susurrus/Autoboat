@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.1135"
+    ComputedModelVersion    "1.1142"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,11 +26,11 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Sep 07 12:23:05 2010"
-  RTWModifiedTimeStamp	  205762984
-  ModelVersionFormat	  "1.%<AutoIncrement:1135>"
+  LastModifiedDate	  "Tue Sep 07 15:20:29 2010"
+  RTWModifiedTimeStamp	  205773621
+  ModelVersionFormat	  "1.%<AutoIncrement:1142>"
   ConfigurationManager	  "None"
-  SampleTimeColors	  off
+  SampleTimeColors	  on
   SampleTimeAnnotations	  off
   LibraryLinkDisplay	  "none"
   WideLines		  on
@@ -1098,7 +1098,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "112"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    1490
+    SIDHighWatermark	    1492
     Block {
       BlockType		      SubSystem
       Name		      "Autonomous Controller"
@@ -3123,6 +3123,23 @@ Model {
 	      OutDataTypeStr	      "single"
 	    }
 	    Block {
+	      BlockType		      Gain
+	      Name		      "Gain"
+	      SID		      1491
+	      Position		      [155, 50, 185, 80]
+	      ShowName		      off
+	      Gain		      ".5144444"
+	      ParameterDataTypeMode   "Inherit via internal rule"
+	      ParameterDataType	      "fixdt(1, 16)"
+	      ParameterScaling	      "2^0"
+	      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
+	      OutDataTypeMode	      "Inherit via internal rule"
+	      OutDataType	      "fixdt(1, 16)"
+	      OutScaling	      "2^0"
+	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
 	      BlockType		      Mux
 	      Name		      "Mux"
 	      SID		      1233
@@ -3699,17 +3716,8 @@ Model {
 	      Labels		      [0, 0]
 	      SrcBlock		      "Bus\nSelector"
 	      SrcPort		      1
-	      Points		      [105, 0; 0, 0]
-	      Branch {
-		Points			[0, 15]
-		DstBlock		"Product"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, -15]
-		DstBlock		"Product1"
-		DstPort			1
-	      }
+	      DstBlock		      "Gain"
+	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "Angle Conversion"
@@ -3798,6 +3806,26 @@ Model {
 		  DstPort		  1
 		}
 	      }
+	    }
+	    Line {
+	      SrcBlock		      "Gain"
+	      SrcPort		      1
+	      Points		      [35, 0]
+	      Branch {
+		Points			[0, 15]
+		DstBlock		"Product"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, -15]
+		DstBlock		"Product1"
+		DstPort			1
+	      }
+	    }
+	    Annotation {
+	      Name		      "Multiply by .51444 to\nconvert knots to m/s"
+	      Position		      [127, 25]
+	      HorizontalAlignment     "left"
 	    }
 	  }
 	}
@@ -5259,16 +5287,11 @@ Model {
       Name		      "Bus\nSelector1"
       SID		      628
       Ports		      [1, 1]
-      Position		      [130, 347, 135, 393]
+      Position		      [130, 341, 135, 389]
       BlockMirror	      on
       ShowName		      off
-      OutputSignals	      "up"
-      Port {
-	PortNumber		1
-	Name			"<up>"
-	RTWStorageClass		"Auto"
-	DataLoggingNameMode	"SignalName"
-      }
+      OutputSignals	      "enable,direction"
+      OutputAsBus	      on
     }
     Block {
       BlockType		      BusSelector
@@ -5589,8 +5612,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"HIL Interface"
-	Location		[202, 78, 1278, 974]
-	Open			on
+	Location		[202, 82, 1270, 978]
+	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -5667,7 +5690,7 @@ Model {
 	  System {
 	    Name		    "Build HIL\nsentence"
 	    Location		    [455, 596, 885, 971]
-	    Open		    on
+	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -6662,7 +6685,7 @@ Model {
 	  SID			  1119
 	  Position		  [650, 469, 690, 511]
 	  ShowName		  off
-	  OutPortSampleTime	  ".2"
+	  OutPortSampleTime	  ".05"
 	}
 	Block {
 	  BlockType		  RateTransition
@@ -7022,8 +7045,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Plant"
-	Location		[319, 206, 1056, 634]
-	Open			off
+	Location		[319, 206, 1230, 919]
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -11422,8 +11445,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Get GPS"
-	    Location		    [202, 78, 1278, 974]
-	    Open		    off
+	    Location		    [202, 82, 1270, 978]
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -11525,7 +11548,7 @@ Model {
 	      BlockType		      DataTypeConversion
 	      Name		      "Data Type Conversion1"
 	      SID		      632
-	      Position		      [510, 508, 565, 522]
+	      Position		      [435, 508, 490, 522]
 	      ShowName		      off
 	      OutDataTypeMode	      "single"
 	      OutDataType	      "fixdt(1, 16)"
@@ -11533,12 +11556,6 @@ Model {
 	      OutDataTypeStr	      "single"
 	      RndMeth		      "Floor"
 	      SaturateOnIntegerOverflow	off
-	      Port {
-		PortNumber		1
-		Name			"sog"
-		RTWStorageClass		"Auto"
-		DataLoggingNameMode	"SignalName"
-	      }
 	    }
 	    Block {
 	      BlockType		      DataTypeConversion
@@ -11921,6 +11938,29 @@ Model {
 	      psi		      "0"
 	    }
 	    Block {
+	      BlockType		      Gain
+	      Name		      "Gain"
+	      SID		      1492
+	      Position		      [535, 500, 565, 530]
+	      ShowName		      off
+	      Gain		      "1.94384449"
+	      ParameterDataTypeMode   "Inherit via internal rule"
+	      ParameterDataType	      "fixdt(1, 16)"
+	      ParameterScaling	      "2^0"
+	      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
+	      OutDataTypeMode	      "Inherit via internal rule"
+	      OutDataType	      "fixdt(1, 16)"
+	      OutScaling	      "2^0"
+	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
+	      Port {
+		PortNumber		1
+		Name			"sog"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	    }
+	    Block {
 	      BlockType		      MATLABFcn
 	      Name		      "Get current\ntime"
 	      SID		      1332
@@ -12168,13 +12208,10 @@ Model {
 	      DstPort		      10
 	    }
 	    Line {
-	      Name		      "sog"
-	      Labels		      [0, 0]
 	      SrcBlock		      "Data Type Conversion1"
 	      SrcPort		      1
-	      Points		      [75, 0]
-	      DstBlock		      "Bus\nCreator"
-	      DstPort		      11
+	      DstBlock		      "Gain"
+	      DstPort		      1
 	    }
 	    Line {
 	      Name		      "second"
@@ -12261,6 +12298,15 @@ Model {
 	      SrcPort		      1
 	      DstBlock		      "Demux"
 	      DstPort		      1
+	    }
+	    Line {
+	      Name		      "sog"
+	      Labels		      [0, 0]
+	      SrcBlock		      "Gain"
+	      SrcPort		      1
+	      Points		      [75, 0]
+	      DstBlock		      "Bus\nCreator"
+	      DstPort		      11
 	    }
 	  }
 	}
@@ -13178,7 +13224,7 @@ Model {
 	  ComPortMenu		  "COM9"
 	  ComPort		  "COM9"
 	  ObjConstructor	  "serial('COM9');"
-	  BaudRate		  "1200"
+	  BaudRate		  "115200"
 	  DataBits		  "8"
 	  Parity		  "none"
 	  StopBits		  "1"
@@ -13231,8 +13277,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Raw command\ndisplay"
-	Location		[240, 562, 952, 937]
-	Open			off
+	Location		[210, 476, 922, 851]
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -13707,7 +13753,7 @@ Model {
       Name		      "To Workspace8"
       SID		      271
       Ports		      [1]
-      Position		      [15, 356, 110, 384]
+      Position		      [15, 351, 110, 379]
       BlockMirror	      on
       ShowName		      off
       VariableName	      "rudder_command"
@@ -13814,8 +13860,6 @@ Model {
       DstPort		      1
     }
     Line {
-      Name		      "<up>"
-      Labels		      [0, 0]
       SrcBlock		      "Bus\nSelector1"
       SrcPort		      1
       DstBlock		      "To Workspace8"

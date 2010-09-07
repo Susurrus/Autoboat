@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.466"
+    ComputedModelVersion    "1.474"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Sep 07 11:49:03 2010"
-  RTWModifiedTimeStamp	  205760941
-  ModelVersionFormat	  "1.%<AutoIncrement:466>"
+  LastModifiedDate	  "Tue Sep 07 15:08:47 2010"
+  RTWModifiedTimeStamp	  205772891
+  ModelVersionFormat	  "1.%<AutoIncrement:474>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -1087,7 +1087,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    4338
+    SIDHighWatermark	    4339
     Block {
       BlockType		      SubSystem
       Name		      "Atomic Subsystem"
@@ -3497,8 +3497,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Subsystem"
-	    Location		    [549, 655, 1022, 924]
-	    Open		    off
+	    Location		    [351, 171, 966, 457]
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -3583,6 +3583,23 @@ Model {
 	      OutDataTypeStr	      "single"
 	    }
 	    Block {
+	      BlockType		      Gain
+	      Name		      "Gain"
+	      SID		      4339
+	      Position		      [155, 50, 185, 80]
+	      ShowName		      off
+	      Gain		      ".5144444"
+	      ParameterDataTypeMode   "Inherit via internal rule"
+	      ParameterDataType	      "fixdt(1, 16)"
+	      ParameterScaling	      "2^0"
+	      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
+	      OutDataTypeMode	      "Inherit via internal rule"
+	      OutDataType	      "fixdt(1, 16)"
+	      OutScaling	      "2^0"
+	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
 	      BlockType		      Mux
 	      Name		      "Mux"
 	      SID		      4252
@@ -3636,7 +3653,7 @@ Model {
 	      System {
 		Name			"Reorder"
 		Location		[461, 470, 934, 756]
-		Open			off
+		Open			on
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
 		ScreenColor		"white"
@@ -4235,17 +4252,8 @@ Model {
 	      Labels		      [0, 0]
 	      SrcBlock		      "Bus\nSelector"
 	      SrcPort		      1
-	      Points		      [105, 0; 0, 0]
-	      Branch {
-		Points			[0, -15]
-		DstBlock		"Product1"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, 15]
-		DstBlock		"Product"
-		DstPort			1
-	      }
+	      DstBlock		      "Gain"
+	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "Reorder"
@@ -4258,6 +4266,26 @@ Model {
 	      SrcPort		      2
 	      DstBlock		      "time"
 	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Gain"
+	      SrcPort		      1
+	      Points		      [35, 0]
+	      Branch {
+		Points			[0, -15]
+		DstBlock		"Product1"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, 15]
+		DstBlock		"Product"
+		DstPort			1
+	      }
+	    }
+	    Annotation {
+	      Name		      "Multiply by .51444 to\nconvert knots to m/s"
+	      Position		      [132, 25]
+	      HorizontalAlignment     "left"
 	    }
 	  }
 	}
@@ -8155,7 +8183,7 @@ Model {
       System {
 	Name			"Parse for HIL data"
 	Location		[202, 82, 1270, 978]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -10110,7 +10138,7 @@ Model {
       SID		      2742
       Position		      [950, 419, 990, 461]
       ShowName		      off
-      OutPortSampleTime	      "1"
+      OutPortSampleTime	      ".05"
     }
     Block {
       BlockType		      RateTransition
@@ -10118,7 +10146,7 @@ Model {
       SID		      2743
       Position		      [950, 439, 990, 481]
       ShowName		      off
-      OutPortSampleTime	      "1"
+      OutPortSampleTime	      ".05"
     }
     Block {
       BlockType		      RateTransition
@@ -10126,7 +10154,7 @@ Model {
       SID		      2744
       Position		      [950, 339, 990, 381]
       ShowName		      off
-      OutPortSampleTime	      "1"
+      OutPortSampleTime	      ".05"
     }
     Block {
       BlockType		      RateTransition
@@ -10134,7 +10162,7 @@ Model {
       SID		      2753
       Position		      [950, 489, 990, 531]
       ShowName		      off
-      OutPortSampleTime	      "1"
+      OutPortSampleTime	      ".05"
     }
     Block {
       BlockType		      SubSystem
@@ -12821,7 +12849,7 @@ Model {
       SourceBlock	      "dsPICdrivers/Serial PORT/UART Configuration"
       SourceType	      "Configure UART"
       UART		      "2"
-      proposed_BAUD	      "1200"
+      proposed_BAUD	      "115200"
       ALT_TX_RX		      on
       InterruptTxWhen	      "Do not use interrupt"
       TXInterruptPri	      "2"
@@ -12830,9 +12858,9 @@ Model {
       InterruptRxWhen	      "When a character is received"
       RXInterruptPri	      "1"
       RxBufferSize	      "128"
-      BAUD		      "1200"
-      UxBRG		      "2082"
-      Info		      "UxBRG = 2082   ||  Real Baud : 1200   ||  % error : 0.016003  ||  max 0.12002 Bytes / Step"
+      BAUD		      "115200"
+      UxBRG		      "21"
+      Info		      "UxBRG = 21   ||  Real Baud : 113636   ||  % error : -1.3573  ||  max 11.3636 Bytes / Step"
       RealBaud		      "0"
     }
     Line {
