@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.1142"
+    ComputedModelVersion    "1.1153"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Sep 07 15:20:29 2010"
-  RTWModifiedTimeStamp	  205773621
-  ModelVersionFormat	  "1.%<AutoIncrement:1142>"
+  LastModifiedDate	  "Tue Sep 07 16:07:56 2010"
+  RTWModifiedTimeStamp	  205776475
+  ModelVersionFormat	  "1.%<AutoIncrement:1153>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -1087,7 +1087,7 @@ Model {
     Location		    [202, 78, 1278, 974]
     Open		    on
     ModelBrowserVisibility  on
-    ModelBrowserWidth	    200
+    ModelBrowserWidth	    294
     ScreenColor		    "white"
     PaperOrientation	    "landscape"
     PaperPositionMode	    "auto"
@@ -1098,7 +1098,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "112"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    1492
+    SIDHighWatermark	    1505
     Block {
       BlockType		      SubSystem
       Name		      "Autonomous Controller"
@@ -1903,7 +1903,7 @@ Model {
 	  System {
 	    Name		    "Rudder\nCommand"
 	    Location		    [202, 82, 1270, 978]
-	    Open		    off
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -1927,7 +1927,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "Sensors"
 	      SID		      1198
-	      Position		      [315, 343, 345, 357]
+	      Position		      [270, 343, 300, 357]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "2"
 	      IconDisplay	      "Port number"
@@ -1971,7 +1971,7 @@ Model {
 	      Name		      "Bus\nSelector"
 	      SID		      1202
 	      Ports		      [1, 1]
-	      Position		      [385, 331, 390, 369]
+	      Position		      [340, 331, 345, 369]
 	      ShowName		      off
 	      OutputSignals	      "position"
 	      Port {
@@ -2501,7 +2501,7 @@ Model {
 	      Name		      "Map from 313..620\nto 1..-1"
 	      SID		      1214
 	      Ports		      [1, 1]
-	      Position		      [455, 336, 520, 364]
+	      Position		      [410, 336, 475, 364]
 	      MinAlgLoopOccurrences   off
 	      PropExecContextOutsideSubsystem off
 	      RTWSystemCode	      "Auto"
@@ -2512,7 +2512,7 @@ Model {
 	      System {
 		Name			"Map from 313..620\nto 1..-1"
 		Location		[443, 630, 978, 813]
-		Open			off
+		Open			on
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
 		ScreenColor		"white"
@@ -2612,6 +2612,39 @@ Model {
 	      Position		      [40, 40, 65, 70]
 	      ShowName		      off
 	      InheritSampleTime	      on
+	    }
+	    Block {
+	      BlockType		      RateTransition
+	      Name		      "Rate Transition1"
+	      SID		      1502
+	      Position		      [84, 190, 126, 230]
+	      BlockRotation	      270
+	      NamePlacement	      "alternate"
+	      ShowName		      off
+	    }
+	    Block {
+	      BlockType		      RateTransition
+	      Name		      "Rate Transition2"
+	      SID		      1503
+	      Position		      [340, 269, 380, 311]
+	      NamePlacement	      "alternate"
+	      ShowName		      off
+	    }
+	    Block {
+	      BlockType		      RateTransition
+	      Name		      "Rate Transition3"
+	      SID		      1504
+	      Position		      [195, 199, 235, 241]
+	      NamePlacement	      "alternate"
+	      ShowName		      off
+	    }
+	    Block {
+	      BlockType		      RateTransition
+	      Name		      "Rate Transition6"
+	      SID		      1501
+	      Position		      [500, 329, 540, 371]
+	      NamePlacement	      "alternate"
+	      ShowName		      off
 	    }
 	    Block {
 	      BlockType		      Saturate
@@ -2841,8 +2874,8 @@ Model {
 	    Line {
 	      SrcBlock		      "Map from 313..620\nto 1..-1"
 	      SrcPort		      1
-	      DstBlock		      "Add"
-	      DstPort		      2
+	      DstBlock		      "Rate Transition6"
+	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "Discrete-Time\nIntegrator"
@@ -2970,22 +3003,21 @@ Model {
 	      SrcPort		      1
 	      Points		      [40, 0]
 	      Branch {
-		Points			[0, -80]
-		DstBlock		"Discrete-Time\nIntegrator"
-		DstPort			1
+		Points			[0, -5; 65, 0]
+		Branch {
+		  Points		  [0, 50]
+		  DstBlock		  "Rate Transition2"
+		  DstPort		  1
+		}
+		Branch {
+		  Points		  [0, -20]
+		  DstBlock		  "Rate Transition3"
+		  DstPort		  1
+		}
 	      }
 	      Branch {
-		Points			[110, 0]
-		Branch {
-		  Points		  [0, 45]
-		  DstBlock		  "Embedded\nMATLAB Function1"
-		  DstPort		  2
-		}
-		Branch {
-		  Points		  [0, -25]
-		  DstBlock		  "L2 Plus ref WP1"
-		  DstPort		  4
-		}
+		DstBlock		"Rate Transition1"
+		DstPort			1
 	      }
 	    }
 	    Line {
@@ -3019,6 +3051,31 @@ Model {
 	      DstBlock		      "Bus\nCreator"
 	      DstPort		      1
 	    }
+	    Line {
+	      SrcBlock		      "Rate Transition6"
+	      SrcPort		      1
+	      DstBlock		      "Add"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Rate Transition1"
+	      SrcPort		      1
+	      Points		      [0, -20]
+	      DstBlock		      "Discrete-Time\nIntegrator"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Rate Transition2"
+	      SrcPort		      1
+	      DstBlock		      "Embedded\nMATLAB Function1"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Rate Transition3"
+	      SrcPort		      1
+	      DstBlock		      "L2 Plus ref WP1"
+	      DstPort		      4
+	    }
 	  }
 	}
 	Block {
@@ -3037,8 +3094,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Subsystem"
-	    Location		    [549, 655, 1022, 924]
-	    Open		    off
+	    Location		    [202, 78, 1278, 974]
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -6019,89 +6076,6 @@ Model {
 	  }
 	}
 	Block {
-	  BlockType		  BusSelector
-	  Name			  "Bus\nSelector3"
-	  SID			  1475
-	  Ports			  [1, 4]
-	  Position		  [885, 245, 890, 350]
-	  BlockMirror		  on
-	  NamePlacement		  "alternate"
-	  ShowName		  off
-	  OutputSignals		  "enable,direction,up,period"
-	  Port {
-	    PortNumber		    1
-	    Name		    "<enable>"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	  Port {
-	    PortNumber		    2
-	    Name		    "<direction>"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	  Port {
-	    PortNumber		    3
-	    Name		    "<up>"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	  Port {
-	    PortNumber		    4
-	    Name		    "<period>"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	}
-	Block {
-	  BlockType		  Display
-	  Name			  "Display"
-	  SID			  1476
-	  Ports			  [1]
-	  Position		  [735, 247, 825, 273]
-	  BlockMirror		  on
-	  NamePlacement		  "alternate"
-	  ShowName		  off
-	  Decimation		  "1"
-	  Lockdown		  off
-	}
-	Block {
-	  BlockType		  Display
-	  Name			  "Display1"
-	  SID			  1477
-	  Ports			  [1]
-	  Position		  [735, 272, 825, 298]
-	  BlockMirror		  on
-	  NamePlacement		  "alternate"
-	  ShowName		  off
-	  Decimation		  "1"
-	  Lockdown		  off
-	}
-	Block {
-	  BlockType		  Display
-	  Name			  "Display2"
-	  SID			  1478
-	  Ports			  [1]
-	  Position		  [735, 297, 825, 323]
-	  BlockMirror		  on
-	  NamePlacement		  "alternate"
-	  ShowName		  off
-	  Decimation		  "1"
-	  Lockdown		  off
-	}
-	Block {
-	  BlockType		  Display
-	  Name			  "Display3"
-	  SID			  1479
-	  Ports			  [1]
-	  Position		  [735, 322, 825, 348]
-	  BlockMirror		  on
-	  NamePlacement		  "alternate"
-	  ShowName		  off
-	  Decimation		  "1"
-	  Lockdown		  off
-	}
-	Block {
 	  BlockType		  From
 	  Name			  "From"
 	  SID			  1456
@@ -6550,7 +6524,7 @@ Model {
 	  System {
 	    Name		    "RS232 Receive"
 	    Location		    [421, 301, 919, 601]
-	    Open		    off
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -6573,8 +6547,8 @@ Model {
 	      BlockType		      Reference
 	      Name		      "Serial Receive"
 	      SID		      1450
-	      Ports		      [0, 1]
-	      Position		      [170, 87, 280, 133]
+	      Ports		      [0, 2]
+	      Position		      [170, 103, 280, 152]
 	      LibraryVersion	      "1.84"
 	      DialogController	      "instrumentcreatedialog"
 	      DialogControllerArgs    "DataTag0"
@@ -6586,16 +6560,23 @@ Model {
 	      Terminator	      "<none>"
 	      DataSize		      "[1  1]"
 	      DataType		      "uint8"
-	      EnableBlockingMode      on
+	      EnableBlockingMode      off
 	      ActionDataUnavailable   "Output custom value"
 	      CustomValue	      "0"
 	      SampleTime	      "0.01"
 	    }
 	    Block {
+	      BlockType		      Terminator
+	      Name		      "Terminator"
+	      SID		      1505
+	      Position		      [310, 130, 330, 150]
+	      ShowName		      off
+	    }
+	    Block {
 	      BlockType		      Outport
 	      Name		      "Out1"
 	      SID		      1449
-	      Position		      [360, 103, 390, 117]
+	      Position		      [360, 108, 390, 122]
 	      IconDisplay	      "Port number"
 	      OutDataType	      "fixdt(1, 16)"
 	      OutScaling	      "2^0"
@@ -6604,6 +6585,12 @@ Model {
 	      SrcBlock		      "Serial Receive"
 	      SrcPort		      1
 	      DstBlock		      "Out1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Serial Receive"
+	      SrcPort		      2
+	      DstBlock		      "Terminator"
 	      DstPort		      1
 	    }
 	  }
@@ -6811,16 +6798,8 @@ Model {
 	Line {
 	  SrcBlock		  "Rate Transition3"
 	  SrcPort		  1
-	  Points		  [55, 0]
-	  Branch {
-	    DstBlock		    "Rudder command"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, -35; 205, 0; 0, 275]
-	    DstBlock		    "Bus\nSelector3"
-	    DstPort		    1
-	  }
+	  DstBlock		  "Rudder command"
+	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Pack"
@@ -6983,38 +6962,6 @@ Model {
 	  SrcPort		  1
 	  DstBlock		  "RS232 Transmit"
 	  DstPort		  enable
-	}
-	Line {
-	  Name			  "<period>"
-	  Labels		  [0, 0]
-	  SrcBlock		  "Bus\nSelector3"
-	  SrcPort		  4
-	  DstBlock		  "Display3"
-	  DstPort		  1
-	}
-	Line {
-	  Name			  "<enable>"
-	  Labels		  [0, 0]
-	  SrcBlock		  "Bus\nSelector3"
-	  SrcPort		  1
-	  DstBlock		  "Display"
-	  DstPort		  1
-	}
-	Line {
-	  Name			  "<direction>"
-	  Labels		  [0, 0]
-	  SrcBlock		  "Bus\nSelector3"
-	  SrcPort		  2
-	  DstBlock		  "Display1"
-	  DstPort		  1
-	}
-	Line {
-	  Name			  "<up>"
-	  Labels		  [0, 0]
-	  SrcBlock		  "Bus\nSelector3"
-	  SrcPort		  3
-	  DstBlock		  "Display2"
-	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Build HIL\nsentence"
@@ -7780,7 +7727,7 @@ Model {
 		  ShowName		  off
 		  Priority		  "2"
 		  DataStoreName		  "throttle_speed"
-		  SampleTime		  ".01"
+		  SampleTime		  ".2"
 		}
 		Block {
 		  BlockType		  DataTypeConversion
@@ -11446,7 +11393,7 @@ Model {
 	  System {
 	    Name		    "Get GPS"
 	    Location		    [202, 82, 1270, 978]
-	    Open		    on
+	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -13242,6 +13189,7 @@ Model {
       BlockMirror	      on
       NamePlacement	      "alternate"
       ShowName		      off
+      OutPortSampleTime	      ".2"
     }
     Block {
       BlockType		      RateTransition
@@ -13254,12 +13202,77 @@ Model {
     }
     Block {
       BlockType		      RateTransition
+      Name		      "Rate Transition10"
+      SID		      1500
+      Position		      [485, 244, 525, 286]
+      NamePlacement	      "alternate"
+      ShowName		      off
+      OutPortSampleTime	      ".2"
+    }
+    Block {
+      BlockType		      RateTransition
       Name		      "Rate Transition2"
       SID		      1151
       Position		      [370, 364, 410, 406]
       BlockMirror	      on
       NamePlacement	      "alternate"
       ShowName		      off
+      OutPortSampleTime	      ".2"
+    }
+    Block {
+      BlockType		      RateTransition
+      Name		      "Rate Transition3"
+      SID		      1493
+      Position		      [370, 434, 410, 476]
+      BlockMirror	      on
+      NamePlacement	      "alternate"
+      ShowName		      off
+      OutPortSampleTime	      ".2"
+    }
+    Block {
+      BlockType		      RateTransition
+      Name		      "Rate Transition4"
+      SID		      1494
+      Position		      [370, 469, 410, 511]
+      BlockMirror	      on
+      NamePlacement	      "alternate"
+      ShowName		      off
+    }
+    Block {
+      BlockType		      RateTransition
+      Name		      "Rate Transition5"
+      SID		      1495
+      Position		      [370, 504, 410, 546]
+      BlockMirror	      on
+      NamePlacement	      "alternate"
+      ShowName		      off
+    }
+    Block {
+      BlockType		      RateTransition
+      Name		      "Rate Transition6"
+      SID		      1496
+      Position		      [485, 144, 525, 186]
+      NamePlacement	      "alternate"
+      ShowName		      off
+      OutPortSampleTime	      ".2"
+    }
+    Block {
+      BlockType		      RateTransition
+      Name		      "Rate Transition8"
+      SID		      1498
+      Position		      [485, 194, 525, 236]
+      NamePlacement	      "alternate"
+      ShowName		      off
+      OutPortSampleTime	      ".2"
+    }
+    Block {
+      BlockType		      RateTransition
+      Name		      "Rate Transition9"
+      SID		      1499
+      Position		      [485, 219, 525, 261]
+      NamePlacement	      "alternate"
+      ShowName		      off
+      OutPortSampleTime	      ".2"
     }
     Block {
       BlockType		      SubSystem
@@ -13534,26 +13547,6 @@ Model {
 	  Decimation		  "1"
 	  Lockdown		  off
 	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope"
-	  SID			  1473
-	  Ports			  [1]
-	  Position		  [575, 204, 605, 236]
-	  Floating		  off
-	  Location		  [1, 52, 1281, 993]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  YMin			  "-1"
-	  YMax			  "1"
-	  SaveName		  "ScopeData1"
-	  DataFormat		  "StructureWithTime"
-	  SampleTime		  "0"
-	}
 	Line {
 	  Name			  "<period>"
 	  Labels		  [0, 0]
@@ -13591,16 +13584,8 @@ Model {
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector4"
 	  SrcPort		  4
-	  Points		  [-50, 0]
-	  Branch {
-	    DstBlock		    "Display7"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, 55]
-	    DstBlock		    "Scope"
-	    DstPort		    1
-	  }
+	  DstBlock		  "Display7"
+	  DstPort		  1
 	}
 	Line {
 	  Name			  "<identifier>"
@@ -13778,16 +13763,8 @@ Model {
       Labels		      [1, 0]
       SrcBlock		      "Plant"
       SrcPort		      4
-      Points		      [255, 0; 0, 180]
-      Branch {
-	Points			[0, 105]
-	DstBlock		"HIL Interface"
-	DstPort			1
-      }
-      Branch {
-	DstBlock		"Autonomous Controller"
-	DstPort			1
-      }
+      DstBlock		      "Rate Transition6"
+      DstPort		      1
     }
     Line {
       SrcBlock		      "Plant"
@@ -13798,51 +13775,27 @@ Model {
     Line {
       SrcBlock		      "Plant"
       SrcPort		      6
-      Points		      [225, 0; 0, 155]
-      Branch {
-	Points			[0, 105]
-	DstBlock		"HIL Interface"
-	DstPort			2
-      }
-      Branch {
-	DstBlock		"Autonomous Controller"
-	DstPort			2
-      }
+      DstBlock		      "Rate Transition8"
+      DstPort		      1
     }
     Line {
       SrcBlock		      "Plant"
       SrcPort		      7
-      Points		      [285, 0; 0, 180]
-      Branch {
-	Points			[0, 105]
-	DstBlock		"HIL Interface"
-	DstPort			4
-      }
-      Branch {
-	DstBlock		"Autonomous Controller"
-	DstPort			4
-      }
+      DstBlock		      "Rate Transition9"
+      DstPort		      1
     }
     Line {
       SrcBlock		      "Plant"
       SrcPort		      8
-      Points		      [270, 0]
+      Points		      [15, 0]
       Branch {
-	DstBlock		"Bus\nSelector"
+	DstBlock		"Rate Transition10"
 	DstPort			1
       }
       Branch {
-	Labels			[1, 0]
-	Points			[0, 130]
-	Branch {
-	  Points		  [0, 105]
-	  DstBlock		  "HIL Interface"
-	  DstPort		  3
-	}
-	Branch {
-	  DstBlock		  "Autonomous Controller"
-	  DstPort		  3
-	}
+	Points			[0, 30; 285, 0]
+	DstBlock		"Bus\nSelector"
+	DstPort			1
       }
     }
     Line {
@@ -13943,20 +13896,20 @@ Model {
     Line {
       SrcBlock		      "HIL Interface"
       SrcPort		      1
-      DstBlock		      "HIL Demux"
-      DstPort		      4
+      DstBlock		      "Rate Transition3"
+      DstPort		      1
     }
     Line {
       SrcBlock		      "HIL Interface"
       SrcPort		      2
-      DstBlock		      "HIL Demux"
-      DstPort		      5
+      DstBlock		      "Rate Transition4"
+      DstPort		      1
     }
     Line {
       SrcBlock		      "HIL Interface"
       SrcPort		      3
-      DstBlock		      "HIL Demux"
-      DstPort		      6
+      DstBlock		      "Rate Transition5"
+      DstPort		      1
     }
     Line {
       SrcBlock		      "HIL Demux"
@@ -14003,6 +13956,81 @@ Model {
       Points		      [5, 0]
       DstBlock		      "RS232\nConfiguration"
       DstPort		      enable
+    }
+    Line {
+      SrcBlock		      "Rate Transition3"
+      SrcPort		      1
+      DstBlock		      "HIL Demux"
+      DstPort		      4
+    }
+    Line {
+      SrcBlock		      "Rate Transition4"
+      SrcPort		      1
+      DstBlock		      "HIL Demux"
+      DstPort		      5
+    }
+    Line {
+      SrcBlock		      "Rate Transition5"
+      SrcPort		      1
+      DstBlock		      "HIL Demux"
+      DstPort		      6
+    }
+    Line {
+      Labels		      [1, 0]
+      SrcBlock		      "Rate Transition6"
+      SrcPort		      1
+      Points		      [175, 0; 0, 180]
+      Branch {
+	Points			[0, 105]
+	DstBlock		"HIL Interface"
+	DstPort			1
+      }
+      Branch {
+	DstBlock		"Autonomous Controller"
+	DstPort			1
+      }
+    }
+    Line {
+      SrcBlock		      "Rate Transition8"
+      SrcPort		      1
+      Points		      [145, 0; 0, 155]
+      Branch {
+	Points			[0, 105]
+	DstBlock		"HIL Interface"
+	DstPort			2
+      }
+      Branch {
+	DstBlock		"Autonomous Controller"
+	DstPort			2
+      }
+    }
+    Line {
+      SrcBlock		      "Rate Transition9"
+      SrcPort		      1
+      Points		      [205, 0; 0, 180]
+      Branch {
+	Points			[0, 105]
+	DstBlock		"HIL Interface"
+	DstPort			4
+      }
+      Branch {
+	DstBlock		"Autonomous Controller"
+	DstPort			4
+      }
+    }
+    Line {
+      SrcBlock		      "Rate Transition10"
+      SrcPort		      1
+      Points		      [190, 0; 0, 130]
+      Branch {
+	Points			[0, 105]
+	DstBlock		"HIL Interface"
+	DstPort			3
+      }
+      Branch {
+	DstBlock		"Autonomous Controller"
+	DstPort			3
+      }
     }
     Annotation {
       Name		      "This is the root model for the boat simulator and autonomous controller. All\nunits exposed here ar"
