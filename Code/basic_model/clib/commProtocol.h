@@ -75,12 +75,12 @@ typedef struct tSensorData {
 	tFloatToChar lat;
 	tFloatToChar lon;
 	tFloatToChar alt;
-	unsigned char day;
-	unsigned char month;
 	unsigned char year;
-	unsigned char second;
-	unsigned char minute;
+	unsigned char month;
+	unsigned char day;
 	unsigned char hour;
+	unsigned char minute;
+	unsigned char second;
 	tFloatToChar cog;
 	tFloatToChar sog;
 	tUnsignedShortToChar r_Position;

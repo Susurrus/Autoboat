@@ -124,10 +124,9 @@ void buildAndCheckMessage(unsigned char characterIn) {
 			switch (message[2]) {
 				case 1:
 					setSensorData(&message[3]);
-					//memcpy(&sensorDataMessage, &message[3], sizeof(tSensorData));
 					break;
 				case 2:
-					memcpy(&actuatorDataMessage, &message[3], sizeof(tActuatorData));
+					setActuatorData(&message[3]);
 					break;
 				case 3:
 					memcpy(&stateDataMessage, &message[3], sizeof(tStateData));
