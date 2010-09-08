@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.1186"
+    ComputedModelVersion    "1.1217"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Sep 08 11:16:02 2010"
-  RTWModifiedTimeStamp	  205845361
-  ModelVersionFormat	  "1.%<AutoIncrement:1186>"
+  LastModifiedDate	  "Wed Sep 08 16:15:44 2010"
+  RTWModifiedTimeStamp	  205863341
+  ModelVersionFormat	  "1.%<AutoIncrement:1217>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -1098,7 +1098,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "118"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    1554
+    SIDHighWatermark	    1579
     Block {
       BlockType		      SubSystem
       Name		      "Autonomous Controller"
@@ -1116,7 +1116,7 @@ Model {
       System {
 	Name			"Autonomous Controller"
 	Location		[228, 106, 1242, 815]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1883,8 +1883,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Rudder\nCommand"
-	    Location		    [202, 82, 1270, 978]
-	    Open		    off
+	    Location		    [228, 106, 1242, 815]
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -1916,8 +1916,8 @@ Model {
 	    Block {
 	      BlockType		      Abs
 	      Name		      "Abs"
-	      SID		      1199
-	      Position		      [655, 370, 685, 400]
+	      SID		      1564
+	      Position		      [635, 470, 665, 500]
 	      ShowName		      off
 	      OutDataType	      "fixdt(1, 16)"
 	      OutScaling	      "2^0"
@@ -1943,7 +1943,7 @@ Model {
 	      Name		      "Bus\nCreator"
 	      SID		      1201
 	      Ports		      [4, 1]
-	      Position		      [955, 284, 960, 446]
+	      Position		      [935, 284, 940, 446]
 	      ShowName		      off
 	      DisplayOption	      "bar"
 	    }
@@ -1965,9 +1965,9 @@ Model {
 	    Block {
 	      BlockType		      Reference
 	      Name		      "Compare\nTo Constant"
-	      SID		      1203
+	      SID		      1565
 	      Ports		      [1, 1]
-	      Position		      [710, 376, 760, 394]
+	      Position		      [685, 476, 735, 494]
 	      ShowName		      off
 	      LibraryVersion	      "1.216"
 	      SourceBlock	      "simulink/Logic and Bit\nOperations/Compare\nTo Constant"
@@ -1982,21 +1982,21 @@ Model {
 	      RTWMemSecDataParameters "Inherit from model"
 	      relop		      ">"
 	      const		      "0.02"
-	      LogicOutDataTypeMode    "uint8"
+	      LogicOutDataTypeMode    "boolean"
 	      ZeroCross		      on
 	    }
 	    Block {
 	      BlockType		      Constant
 	      Name		      "Constant1"
-	      SID		      1204
-	      Position		      [655, 410, 685, 440]
+	      SID		      1576
+	      Position		      [685, 400, 715, 430]
 	      BackgroundColor	      "gray"
 	      ShowName		      off
-	      Value		      ".003"
-	      OutDataTypeMode	      "single"
+	      Value		      ".003*OC2max/.01"
+	      OutDataTypeMode	      "uint16"
 	      OutDataType	      "sfix(16)"
 	      OutScaling	      "2^0"
-	      OutDataTypeStr	      "single"
+	      OutDataTypeStr	      "uint16"
 	    }
 	    Block {
 	      BlockType		      Constant
@@ -2015,7 +2015,7 @@ Model {
 	      BlockType		      Constant
 	      Name		      "Constant3"
 	      SID		      1331
-	      Position		      [655, 290, 685, 320]
+	      Position		      [855, 290, 885, 320]
 	      BackgroundColor	      "gray"
 	      ShowName		      off
 	      Value		      "0"
@@ -2031,10 +2031,23 @@ Model {
 	      }
 	    }
 	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant4"
+	      SID		      1579
+	      Position		      [685, 435, 715, 465]
+	      BackgroundColor	      "gray"
+	      ShowName		      off
+	      Value		      "0"
+	      OutDataTypeMode	      "uint16"
+	      OutDataType	      "sfix(16)"
+	      OutScaling	      "2^0"
+	      OutDataTypeStr	      "uint16"
+	    }
+	    Block {
 	      BlockType		      DataTypeConversion
 	      Name		      "Data Type Conversion"
 	      SID		      1207
-	      Position		      [855, 336, 910, 354]
+	      Position		      [830, 336, 885, 354]
 	      ShowName		      off
 	      OutDataTypeMode	      "boolean"
 	      OutDataType	      "fixdt(1, 16)"
@@ -2045,44 +2058,6 @@ Model {
 	      Port {
 		PortNumber		1
 		Name			"direction"
-		RTWStorageClass		"Auto"
-		DataLoggingNameMode	"SignalName"
-	      }
-	    }
-	    Block {
-	      BlockType		      DataTypeConversion
-	      Name		      "Data Type Conversion1"
-	      SID		      1208
-	      Position		      [855, 416, 910, 434]
-	      ShowName		      off
-	      OutDataTypeMode	      "uint16"
-	      OutDataType	      "fixdt(1, 16)"
-	      OutScaling	      "2^0"
-	      OutDataTypeStr	      "uint16"
-	      RndMeth		      "Simplest"
-	      SaturateOnIntegerOverflow	off
-	      Port {
-		PortNumber		1
-		Name			"period"
-		RTWStorageClass		"Auto"
-		DataLoggingNameMode	"SignalName"
-	      }
-	    }
-	    Block {
-	      BlockType		      DataTypeConversion
-	      Name		      "Data Type Conversion2"
-	      SID		      1209
-	      Position		      [855, 376, 910, 394]
-	      ShowName		      off
-	      OutDataTypeMode	      "uint16"
-	      OutDataType	      "fixdt(1, 16)"
-	      OutScaling	      "2^0"
-	      OutDataTypeStr	      "uint16"
-	      RndMeth		      "Simplest"
-	      SaturateOnIntegerOverflow	off
-	      Port {
-		PortNumber		1
-		Name			"up"
 		RTWStorageClass		"Auto"
 		DataLoggingNameMode	"SignalName"
 	      }
@@ -2241,23 +2216,6 @@ Model {
 		  DstPort		  1
 		}
 	      }
-	    }
-	    Block {
-	      BlockType		      Gain
-	      Name		      "Gain2"
-	      SID		      1212
-	      Position		      [790, 368, 835, 402]
-	      ShowName		      off
-	      Gain		      ".0015"
-	      ParameterDataTypeMode   "Inherit via internal rule"
-	      ParameterDataType	      "sfix(16)"
-	      ParameterScaling	      "2^0"
-	      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
-	      OutDataTypeMode	      "single"
-	      OutDataType	      "sfix(16)"
-	      OutScaling	      "2^0"
-	      OutDataTypeStr	      "single"
-	      SaturateOnIntegerOverflow	off
 	    }
 	    Block {
 	      BlockType		      Goto
@@ -2642,7 +2600,7 @@ Model {
 	      Name		      "Saturation1"
 	      SID		      1221
 	      Ports		      [1, 1]
-	      Position		      [705, 330, 735, 360]
+	      Position		      [740, 330, 770, 360]
 	      ShowName		      off
 	      UpperLimit	      "1"
 	      LowerLimit	      "0"
@@ -2650,11 +2608,68 @@ Model {
 	      OutDataTypeStr	      "Inherit: Inherit via back propagation"
 	    }
 	    Block {
+	      BlockType		      Reference
+	      Name		      "Shift\nArithmetic"
+	      SID		      1563
+	      Ports		      [1, 1]
+	      Position		      [740, 368, 820, 382]
+	      ShowName		      off
+	      LibraryVersion	      "1.216"
+	      SourceBlock	      "simulink/Logic and Bit\nOperations/Shift\nArithmetic"
+	      SourceType	      "Shift Arithmetic"
+	      ShowPortLabels	      "FromPortIcon"
+	      SystemSampleTime	      "-1"
+	      FunctionWithSeparateData off
+	      RTWMemSecFuncInitTerm   "Inherit from model"
+	      RTWMemSecFuncExecute    "Inherit from model"
+	      RTWMemSecDataConstants  "Inherit from model"
+	      RTWMemSecDataInternal   "Inherit from model"
+	      RTWMemSecDataParameters "Inherit from model"
+	      nBitShiftRight	      "1"
+	      nBinPtShiftRight	      "0"
+	    }
+	    Block {
 	      BlockType		      Signum
 	      Name		      "Sign"
 	      SID		      1222
-	      Position		      [655, 330, 685, 360]
+	      Position		      [635, 330, 665, 360]
 	      ShowName		      off
+	    }
+	    Block {
+	      BlockType		      Switch
+	      Name		      "Switch"
+	      SID		      1577
+	      Position		      [855, 410, 885, 440]
+	      ShowName		      off
+	      Criteria		      "u2 ~= 0"
+	      InputSameDT	      off
+	      OutDataType	      "fixdt(1, 16)"
+	      OutScaling	      "2^0"
+	      SaturateOnIntegerOverflow	off
+	      Port {
+		PortNumber		1
+		Name			"period"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	    }
+	    Block {
+	      BlockType		      Switch
+	      Name		      "Switch1"
+	      SID		      1578
+	      Position		      [855, 370, 885, 400]
+	      ShowName		      off
+	      Criteria		      "u2 ~= 0"
+	      InputSameDT	      off
+	      OutDataType	      "fixdt(1, 16)"
+	      OutScaling	      "2^0"
+	      SaturateOnIntegerOverflow	off
+	      Port {
+		PortNumber		1
+		Name			"up"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
 	    }
 	    Block {
 	      BlockType		      SubSystem
@@ -2818,7 +2833,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "Command"
 	      SID		      1226
-	      Position		      [985, 358, 1015, 372]
+	      Position		      [965, 358, 995, 372]
 	      BackgroundColor	      "yellow"
 	      IconDisplay	      "Port number"
 	    }
@@ -2863,33 +2878,9 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "Constant1"
-	      SrcPort		      1
-	      DstBlock		      "Data Type Conversion1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Gain2"
-	      SrcPort		      1
-	      DstBlock		      "Data Type Conversion2"
-	      DstPort		      1
-	    }
-	    Line {
 	      SrcBlock		      "Saturation1"
 	      SrcPort		      1
 	      DstBlock		      "Data Type Conversion"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Compare\nTo Constant"
-	      SrcPort		      1
-	      DstBlock		      "Gain2"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Abs"
-	      SrcPort		      1
-	      DstBlock		      "Compare\nTo Constant"
 	      DstPort		      1
 	    }
 	    Line {
@@ -2907,7 +2898,6 @@ Model {
 		DstPort			1
 	      }
 	      Branch {
-		Points			[0, 40]
 		DstBlock		"Abs"
 		DstPort			1
 	      }
@@ -2915,7 +2905,7 @@ Model {
 	    Line {
 	      SrcBlock		      "Embedded\nMATLAB Function1"
 	      SrcPort		      1
-	      Points		      [15, 0; 0, 55]
+	      Points		      [40, 0; 0, 55]
 	      DstBlock		      "Add"
 	      DstPort		      1
 	    }
@@ -2987,22 +2977,6 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
-	      Name		      "period"
-	      Labels		      [0, 0]
-	      SrcBlock		      "Data Type Conversion1"
-	      SrcPort		      1
-	      DstBlock		      "Bus\nCreator"
-	      DstPort		      4
-	    }
-	    Line {
-	      Name		      "up"
-	      Labels		      [0, 0]
-	      SrcBlock		      "Data Type Conversion2"
-	      SrcPort		      1
-	      DstBlock		      "Bus\nCreator"
-	      DstPort		      3
-	    }
-	    Line {
 	      Name		      "enable"
 	      Labels		      [0, 0]
 	      SrcBlock		      "Constant3"
@@ -3034,6 +3008,81 @@ Model {
 	      SrcPort		      1
 	      DstBlock		      "L2 Plus ref WP1"
 	      DstPort		      4
+	    }
+	    Line {
+	      SrcBlock		      "Constant1"
+	      SrcPort		      1
+	      Points		      [5, 0]
+	      Branch {
+		DstBlock		"Shift\nArithmetic"
+		DstPort			1
+	      }
+	      Branch {
+		Labels			[1, 0]
+		DstBlock		"Switch"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "Abs"
+	      SrcPort		      1
+	      DstBlock		      "Compare\nTo Constant"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Shift\nArithmetic"
+	      SrcPort		      1
+	      DstBlock		      "Switch1"
+	      DstPort		      1
+	    }
+	    Line {
+	      Name		      "period"
+	      Labels		      [0, 0]
+	      SrcBlock		      "Switch"
+	      SrcPort		      1
+	      DstBlock		      "Bus\nCreator"
+	      DstPort		      4
+	    }
+	    Line {
+	      Name		      "up"
+	      Labels		      [0, 0]
+	      SrcBlock		      "Switch1"
+	      SrcPort		      1
+	      DstBlock		      "Bus\nCreator"
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "Compare\nTo Constant"
+	      SrcPort		      1
+	      Points		      [95, 0; 0, -60]
+	      Branch {
+		DstBlock		"Switch"
+		DstPort			2
+	      }
+	      Branch {
+		Points			[0, -40]
+		DstBlock		"Switch1"
+		DstPort			2
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "Constant4"
+	      SrcPort		      1
+	      Points		      [100, 0; 0, -15]
+	      Branch {
+		DstBlock		"Switch"
+		DstPort			3
+	      }
+	      Branch {
+		Points			[0, -40]
+		DstBlock		"Switch1"
+		DstPort			3
+	      }
+	    }
+	    Annotation {
+	      Name		      "Up and period are both defined to generate a 50% duty cycle PWM with \na period of 3ms."
+	      Position		      [608, 525]
+	      HorizontalAlignment     "left"
 	    }
 	  }
 	}
@@ -7196,7 +7245,7 @@ Model {
       System {
 	Name			"Plant"
 	Location		[319, 206, 1230, 919]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -7255,8 +7304,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Actuator\nDynamics"
-	    Location		    [319, 206, 1073, 634]
-	    Open		    off
+	    Location		    [554, 543, 1087, 900]
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -7325,10 +7374,10 @@ Model {
 	      BlockType		      BusSelector
 	      Name		      "Bus\nSelector1"
 	      SID		      549
-	      Ports		      [1, 2]
+	      Ports		      [1, 4]
 	      Position		      [85, 251, 90, 289]
 	      ShowName		      off
-	      OutputSignals	      "enable,direction"
+	      OutputSignals	      "enable,up,period,direction"
 	      Port {
 		PortNumber		1
 		Name			"<enable>"
@@ -7337,6 +7386,18 @@ Model {
 	      }
 	      Port {
 		PortNumber		2
+		Name			"<up>"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	      Port {
+		PortNumber		3
+		Name			"<period>"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	      Port {
+		PortNumber		4
 		Name			"<direction>"
 		RTWStorageClass		"Auto"
 		DataLoggingNameMode	"SignalName"
@@ -7409,33 +7470,6 @@ Model {
 	      Lockdown		      off
 	    }
 	    Block {
-	      BlockType		      Display
-	      Name		      "Display3"
-	      SID		      1464
-	      Ports		      [1]
-	      Position		      [390, 80, 480, 110]
-	      Decimation	      "1"
-	      Lockdown		      off
-	    }
-	    Block {
-	      BlockType		      Display
-	      Name		      "Display4"
-	      SID		      1466
-	      Ports		      [1]
-	      Position		      [150, 320, 240, 350]
-	      Decimation	      "1"
-	      Lockdown		      off
-	    }
-	    Block {
-	      BlockType		      Display
-	      Name		      "Display5"
-	      SID		      1467
-	      Ports		      [1]
-	      Position		      [150, 370, 240, 400]
-	      Decimation	      "1"
-	      Lockdown		      off
-	    }
-	    Block {
 	      BlockType		      SubSystem
 	      Name		      "Enabled\nSubsystem"
 	      SID		      520
@@ -7453,7 +7487,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Enabled\nSubsystem"
-		Location		[649, 659, 1147, 959]
+		Location		[556, 517, 1106, 891]
 		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
@@ -7569,7 +7603,7 @@ Model {
 	      Name		      "Enabled\nSubsystem1"
 	      SID		      550
 	      Ports		      [1, 1, 1]
-	      Position		      [145, 259, 245, 301]
+	      Position		      [145, 279, 245, 321]
 	      ShowName		      off
 	      LibraryVersion	      "1.216"
 	      TreatAsAtomicUnit	      on
@@ -7582,7 +7616,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Enabled\nSubsystem1"
-		Location		[248, 405, 1220, 734]
+		Location		[240, 547, 1212, 876]
 		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
@@ -7651,27 +7685,31 @@ Model {
 		  SaturateOnIntegerOverflow off
 		}
 		Block {
-		  BlockType		  Gain
-		  Name			  "Gain1"
-		  SID			  555
-		  Position		  [295, 94, 330, 126]
+		  BlockType		  Reference
+		  Name			  "Shift\nArithmetic"
+		  SID			  1562
+		  Ports			  [1, 1]
+		  Position		  [295, 103, 375, 117]
 		  ShowName		  off
-		  Gain			  ".2"
-		  ParameterDataTypeMode	  "Inherit via internal rule"
-		  ParameterDataType	  "fixdt(1, 16)"
-		  ParameterScaling	  "2^0"
-		  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
-		  OutDataTypeMode	  "Inherit via internal rule"
-		  OutDataType		  "fixdt(1, 16)"
-		  OutScaling		  "2^0"
-		  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-		  SaturateOnIntegerOverflow off
+		  LibraryVersion	  "1.216"
+		  SourceBlock		  "simulink/Logic and Bit\nOperations/Shift\nArithmetic"
+		  SourceType		  "Shift Arithmetic"
+		  ShowPortLabels	  "FromPortIcon"
+		  SystemSampleTime	  "-1"
+		  FunctionWithSeparateData off
+		  RTWMemSecFuncInitTerm	  "Inherit from model"
+		  RTWMemSecFuncExecute	  "Inherit from model"
+		  RTWMemSecDataConstants  "Inherit from model"
+		  RTWMemSecDataInternal	  "Inherit from model"
+		  RTWMemSecDataParameters "Inherit from model"
+		  nBitShiftRight	  "1"
+		  nBinPtShiftRight	  "0"
 		}
 		Block {
 		  BlockType		  Outport
 		  Name			  "Out1"
 		  SID			  556
-		  Position		  [400, 103, 430, 117]
+		  Position		  [430, 103, 460, 117]
 		  IconDisplay		  "Port number"
 		  OutDataType		  "fixdt(1, 16)"
 		  OutScaling		  "2^0"
@@ -7691,11 +7729,11 @@ Model {
 		Line {
 		  SrcBlock		  "Bias"
 		  SrcPort		  1
-		  DstBlock		  "Gain1"
+		  DstBlock		  "Shift\nArithmetic"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Gain1"
+		  SrcBlock		  "Shift\nArithmetic"
 		  SrcPort		  1
 		  DstBlock		  "Out1"
 		  DstPort		  1
@@ -7707,7 +7745,7 @@ Model {
 		  DstPort		  1
 		}
 		Annotation {
-		  Name			  "Map from 0,1 to -.02,.02"
+		  Name			  "Map from 0,1 to -.5,.5"
 		  Position		  [246, 152]
 		}
 	      }
@@ -7733,19 +7771,6 @@ Model {
 	      LimitOutput	      on
 	      UpperSaturationLimit    "1"
 	      LowerSaturationLimit    "-1"
-	    }
-	    Block {
-	      BlockType		      Logic
-	      Name		      "Logical\nOperator"
-	      SID		      560
-	      Ports		      [1, 1]
-	      Position		      [145, 238, 175, 252]
-	      ShowName		      off
-	      Operator		      "NOT"
-	      AllPortsSameDT	      off
-	      OutDataTypeMode	      "boolean"
-	      LogicDataType	      "fixdt(0, 8)"
-	      OutDataTypeStr	      "boolean"
 	    }
 	    Block {
 	      BlockType		      RateTransition
@@ -8226,6 +8251,193 @@ Model {
 	      }
 	    }
 	    Block {
+	      BlockType		      SubSystem
+	      Name		      "Subsystem1"
+	      SID		      1567
+	      Ports		      [3, 1]
+	      Position		      [135, 249, 175, 281]
+	      ShowName		      off
+	      MinAlgLoopOccurrences   off
+	      PropExecContextOutsideSubsystem off
+	      RTWSystemCode	      "Auto"
+	      FunctionWithSeparateData off
+	      Opaque		      off
+	      RequestExecContextInheritance off
+	      MaskHideContents	      off
+	      System {
+		Name			"Subsystem1"
+		Location		[767, 335, 1258, 591]
+		Open			off
+		ModelBrowserVisibility	on
+		ModelBrowserWidth	200
+		ScreenColor		"white"
+		PaperOrientation	"landscape"
+		PaperPositionMode	"auto"
+		PaperType		"usletter"
+		PaperUnits		"inches"
+		TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+		TiledPageScale		1
+		ShowPageBoundaries	off
+		ZoomFactor		"100"
+		Block {
+		  BlockType		  Inport
+		  Name			  "e"
+		  SID			  1568
+		  Position		  [25, 33, 55, 47]
+		  BackgroundColor	  "darkGreen"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "u"
+		  SID			  1570
+		  Position		  [25, 68, 55, 82]
+		  BackgroundColor	  "darkGreen"
+		  Port			  "2"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "p"
+		  SID			  1571
+		  Position		  [25, 103, 55, 117]
+		  BackgroundColor	  "darkGreen"
+		  Port			  "3"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Reference
+		  Name			  "Compare\nTo Zero"
+		  SID			  1574
+		  Ports			  [1, 1]
+		  Position		  [95, 102, 125, 118]
+		  ShowName		  off
+		  LibraryVersion	  "1.216"
+		  SourceBlock		  "simulink/Logic and Bit\nOperations/Compare\nTo Zero"
+		  SourceType		  "Compare To Zero"
+		  ShowPortLabels	  "FromPortIcon"
+		  SystemSampleTime	  "-1"
+		  FunctionWithSeparateData off
+		  RTWMemSecFuncInitTerm	  "Inherit from model"
+		  RTWMemSecFuncExecute	  "Inherit from model"
+		  RTWMemSecDataConstants  "Inherit from model"
+		  RTWMemSecDataInternal	  "Inherit from model"
+		  RTWMemSecDataParameters "Inherit from model"
+		  relop			  "~="
+		  LogicOutDataTypeMode	  "boolean"
+		  ZeroCross		  on
+		}
+		Block {
+		  BlockType		  Reference
+		  Name			  "Compare\nTo Zero1"
+		  SID			  1575
+		  Ports			  [1, 1]
+		  Position		  [95, 67, 125, 83]
+		  ShowName		  off
+		  LibraryVersion	  "1.216"
+		  SourceBlock		  "simulink/Logic and Bit\nOperations/Compare\nTo Zero"
+		  SourceType		  "Compare To Zero"
+		  ShowPortLabels	  "FromPortIcon"
+		  SystemSampleTime	  "-1"
+		  FunctionWithSeparateData off
+		  RTWMemSecFuncInitTerm	  "Inherit from model"
+		  RTWMemSecFuncExecute	  "Inherit from model"
+		  RTWMemSecDataConstants  "Inherit from model"
+		  RTWMemSecDataInternal	  "Inherit from model"
+		  RTWMemSecDataParameters "Inherit from model"
+		  relop			  "~="
+		  LogicOutDataTypeMode	  "boolean"
+		  ZeroCross		  on
+		}
+		Block {
+		  BlockType		  Logic
+		  Name			  "Logical\nOperator"
+		  SID			  560
+		  Ports			  [1, 1]
+		  Position		  [95, 33, 125, 47]
+		  ShowName		  off
+		  Operator		  "NOT"
+		  AllPortsSameDT	  off
+		  OutDataTypeMode	  "boolean"
+		  LogicDataType		  "fixdt(0, 8)"
+		  OutDataTypeStr	  "boolean"
+		}
+		Block {
+		  BlockType		  Logic
+		  Name			  "Logical\nOperator1"
+		  SID			  1572
+		  Ports			  [3, 1]
+		  Position		  [175, 56, 205, 94]
+		  ShowName		  off
+		  Inputs		  "3"
+		  AllPortsSameDT	  off
+		  OutDataTypeMode	  "boolean"
+		  LogicDataType		  "fixdt(0, 8)"
+		  OutDataTypeStr	  "boolean"
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "Out1"
+		  SID			  1569
+		  Position		  [230, 68, 260, 82]
+		  BackgroundColor	  "yellow"
+		  IconDisplay		  "Port number"
+		}
+		Line {
+		  SrcBlock		  "e"
+		  SrcPort		  1
+		  DstBlock		  "Logical\nOperator"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Logical\nOperator1"
+		  SrcPort		  1
+		  DstBlock		  "Out1"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "p"
+		  SrcPort		  1
+		  DstBlock		  "Compare\nTo Zero"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Compare\nTo Zero"
+		  SrcPort		  1
+		  Points		  [15, 0; 0, -25]
+		  DstBlock		  "Logical\nOperator1"
+		  DstPort		  3
+		}
+		Line {
+		  SrcBlock		  "Compare\nTo Zero1"
+		  SrcPort		  1
+		  DstBlock		  "Logical\nOperator1"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "u"
+		  SrcPort		  1
+		  DstBlock		  "Compare\nTo Zero1"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Logical\nOperator"
+		  SrcPort		  1
+		  Points		  [15, 0; 0, 25]
+		  DstBlock		  "Logical\nOperator1"
+		  DstPort		  1
+		}
+		Annotation {
+		  Name			  "This block simulates the stepper motor driver board logic for stepping the motor.\nThe enable line must "
+		  "be low, it's active low, and a pulse train must be received. As\nthe enable line is always low to provide holding "
+		  "torque, the lines specifying a pulse\ntrain must are therefore checked to confirm that the rudder should be moving"
+		  ". The \nexact values of both the up and period signals are unimportant, so they're just \ncompared to zero."
+		  Position		  [25, 184]
+		  HorizontalAlignment	  "left"
+		}
+	      }
+	    }
+	    Block {
 	      BlockType		      Outport
 	      Name		      "t_d"
 	      SID		      95
@@ -8324,16 +8536,8 @@ Model {
 	    Line {
 	      SrcBlock		      "Subsystem"
 	      SrcPort		      1
-	      Points		      [0, 0]
-	      Branch {
-		DstBlock		"Rate Transition3"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, 50]
-		DstBlock		"Display3"
-		DstPort			1
-	      }
+	      DstBlock		      "Rate Transition3"
+	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "b"
@@ -8373,6 +8577,7 @@ Model {
 	    Line {
 	      SrcBlock		      "Enabled\nSubsystem1"
 	      SrcPort		      1
+	      Points		      [0, -20]
 	      DstBlock		      "Rate Transition2"
 	      DstPort		      1
 	    }
@@ -8380,38 +8585,23 @@ Model {
 	      Name		      "<direction>"
 	      Labels		      [0, 0]
 	      SrcBlock		      "Bus\nSelector1"
-	      SrcPort		      2
-	      Points		      [5, 0]
-	      Branch {
-		DstBlock		"Enabled\nSubsystem1"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, 105]
-		DstBlock		"Display5"
-		DstPort			1
-	      }
+	      SrcPort		      4
+	      Points		      [0, 15]
+	      DstBlock		      "Enabled\nSubsystem1"
+	      DstPort		      1
 	    }
 	    Line {
 	      Name		      "<enable>"
 	      Labels		      [0, 0]
 	      SrcBlock		      "Bus\nSelector1"
 	      SrcPort		      1
-	      Points		      [15, 0]
-	      Branch {
-		Points			[0, -15]
-		DstBlock		"Logical\nOperator"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, 75]
-		DstBlock		"Display4"
-		DstPort			1
-	      }
+	      DstBlock		      "Subsystem1"
+	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "Logical\nOperator"
+	      SrcBlock		      "Subsystem1"
 	      SrcPort		      1
+	      Points		      [5, 0; 0, -1]
 	      DstBlock		      "Enabled\nSubsystem1"
 	      DstPort		      enable
 	    }
@@ -8452,6 +8642,22 @@ Model {
 	      SrcPort		      1
 	      DstBlock		      "Integrator1"
 	      DstPort		      1
+	    }
+	    Line {
+	      Name		      "<up>"
+	      Labels		      [0, 0; 0, 0]
+	      SrcBlock		      "Bus\nSelector1"
+	      SrcPort		      2
+	      DstBlock		      "Subsystem1"
+	      DstPort		      2
+	    }
+	    Line {
+	      Name		      "<period>"
+	      Labels		      [0, 0; 0, 0]
+	      SrcBlock		      "Bus\nSelector1"
+	      SrcPort		      3
+	      DstBlock		      "Subsystem1"
+	      DstPort		      3
 	    }
 	    Annotation {
 	      Name		      "This subsystem adds 2nd-order dynamics to the actuator systems.\nThis includes the propeller, ball"
@@ -13317,7 +13523,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Raw command\ndisplay"
-	Location		[210, 476, 922, 851]
+	Location		[202, 78, 1278, 974]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200

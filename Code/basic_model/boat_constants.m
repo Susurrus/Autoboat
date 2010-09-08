@@ -12,6 +12,10 @@ start_time = clock;
 %start_time =   1279069200; % 6/13/2010 @ 20:00pm UTC (12pm pacific)
 %start_time = 1271205603;% 04/13/2010 @ 7:40pm (TODO: Change to MATLAB commands to capture current time)
 
+% Physical input/output parameters
+
+OC2max = 49999; % Parameter used for calculating up-time & period for output compare 2.
+
 % Waypoint stuff
 waypoints = [0 0 0;
              450 100 0;
