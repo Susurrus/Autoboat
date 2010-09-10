@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.1295"
+    ComputedModelVersion    "1.1310"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Sep 10 13:27:21 2010"
-  RTWModifiedTimeStamp	  206026039
-  ModelVersionFormat	  "1.%<AutoIncrement:1295>"
+  LastModifiedDate	  "Fri Sep 10 13:53:27 2010"
+  RTWModifiedTimeStamp	  206027606
+  ModelVersionFormat	  "1.%<AutoIncrement:1310>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -698,33 +698,6 @@ Model {
       BusSelectionMode	      off
     }
     Block {
-      BlockType		      DiscreteFilter
-      Numerator		      "[1]"
-      Denominator	      "[1 0.5]"
-      InitialStates	      "0"
-      SampleTime	      "-1"
-      a0EqualsOne	      off
-      NumCoefMin	      "[]"
-      NumCoefMax	      "[]"
-      DenCoefMin	      "[]"
-      DenCoefMax	      "[]"
-      OutMin		      "[]"
-      OutMax		      "[]"
-      StateDataTypeStr	      "Inherit: Same as input"
-      NumCoefDataTypeStr      "Inherit: Inherit via internal rule"
-      DenCoefDataTypeStr      "Inherit: Inherit via internal rule"
-      NumProductDataTypeStr   "Inherit: Inherit via internal rule"
-      DenProductDataTypeStr   "Inherit: Inherit via internal rule"
-      NumAccumDataTypeStr     "Inherit: Inherit via internal rule"
-      DenAccumDataTypeStr     "Inherit: Inherit via internal rule"
-      OutDataTypeStr	      "Inherit: Inherit via internal rule"
-      LockScale		      off
-      RndMeth		      "Floor"
-      SaturateOnIntegerOverflow	off
-      StateMustResolveToSignalObject off
-      RTWStateStorageClass    "Auto"
-    }
-    Block {
       BlockType		      DiscreteIntegrator
       IntegratorMethod	      "Integration: Forward Euler"
       gainval		      "1.0"
@@ -1025,6 +998,15 @@ Model {
       SampleTime	      "-1"
     }
     Block {
+      BlockType		      Step
+      Time		      "1"
+      Before		      "0"
+      After		      "1"
+      SampleTime	      "-1"
+      VectorParams1D	      on
+      ZeroCross		      on
+    }
+    Block {
       BlockType		      SubSystem
       ShowPortLabels	      "FromPortIcon"
       Permissions	      "ReadWrite"
@@ -1102,7 +1084,7 @@ Model {
   }
   System {
     Name		    "Boat_sim"
-    Location		    [243, 170, 1226, 823]
+    Location		    [202, 78, 1261, 974]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1116,7 +1098,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "118"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    2046
+    SIDHighWatermark	    2052
     Block {
       BlockType		      SubSystem
       Name		      "Autonomous Controller"
@@ -1133,8 +1115,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Autonomous Controller"
-	Location		[202, 82, 1270, 978]
-	Open			on
+	Location		[243, 170, 1171, 900]
+	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1901,8 +1883,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Rudder\nCommand"
-	    Location		    [228, 106, 1242, 815]
-	    Open		    on
+	    Location		    [243, 170, 1243, 823]
+	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -2079,15 +2061,6 @@ Model {
 		RTWStorageClass		"Auto"
 		DataLoggingNameMode	"SignalName"
 	      }
-	    }
-	    Block {
-	      BlockType		      DiscreteFilter
-	      Name		      "Discrete Filter"
-	      SID		      2028
-	      Ports		      [1, 1]
-	      Position		      [605, 147, 665, 183]
-	      Denominator	      "[1 10]"
-	      SampleTime	      "1"
 	    }
 	    Block {
 	      BlockType		      DiscreteIntegrator
@@ -5142,7 +5115,6 @@ Model {
       Position		      [25, 1060, 55, 1090]
       BackgroundColor	      "gray"
       ShowName		      off
-      Value		      "0"
       OutDataTypeMode	      "boolean"
       OutDataType	      "fixdt(1, 16)"
       OutScaling	      "2^0"
@@ -6724,8 +6696,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "RS232 Transmit"
-	    Location		    [421, 301, 919, 601]
-	    Open		    off
+	    Location		    [568, 593, 1121, 893]
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -6741,7 +6713,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "In1"
 	      SID		      1452
-	      Position		      [110, 103, 140, 117]
+	      Position		      [80, 93, 110, 107]
 	      IconDisplay	      "Port number"
 	      OutDataType	      "fixdt(1, 16)"
 	      OutScaling	      "2^0"
@@ -6754,11 +6726,24 @@ Model {
 	      Position		      [235, 20, 255, 40]
 	    }
 	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant"
+	      SID		      2048
+	      Position		      [35, 169, 115, 191]
+	      BackgroundColor	      "gray"
+	      ShowName		      off
+	      Value		      "5*ones(42,1)"
+	      OutDataTypeMode	      "uint8"
+	      OutDataType	      "fixdt(1, 16)"
+	      OutScaling	      "2^0"
+	      OutDataTypeStr	      "uint8"
+	    }
+	    Block {
 	      BlockType		      Reference
 	      Name		      "Serial Send"
 	      SID		      1455
 	      Ports		      [1]
-	      Position		      [210, 87, 320, 133]
+	      Position		      [250, 122, 360, 168]
 	      LibraryVersion	      "1.84"
 	      DialogController	      "instrumentcreatedialog"
 	      DialogControllerArgs    "DataTag1"
@@ -6770,11 +6755,55 @@ Model {
 	      Terminator	      "<none>"
 	      EnableBlockingMode      off
 	    }
+	    Block {
+	      BlockType		      Step
+	      Name		      "Step"
+	      SID		      2051
+	      Position		      [80, 130, 110, 160]
+	      ShowName		      off
+	    }
+	    Block {
+	      BlockType		      Switch
+	      Name		      "Switch"
+	      SID		      2049
+	      Position		      [165, 130, 195, 160]
+	      Criteria		      "u2 ~= 0"
+	      InputSameDT	      off
+	      OutDataType	      "fixdt(1, 16)"
+	      OutScaling	      "2^0"
+	      SaturateOnIntegerOverflow	off
+	    }
 	    Line {
-	      SrcBlock		      "In1"
+	      SrcBlock		      "Constant"
+	      SrcPort		      1
+	      Points		      [25, 0; 0, -25]
+	      DstBlock		      "Switch"
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "Switch"
 	      SrcPort		      1
 	      DstBlock		      "Serial Send"
 	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "In1"
+	      SrcPort		      1
+	      Points		      [30, 0; 0, 35]
+	      DstBlock		      "Switch"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Step"
+	      SrcPort		      1
+	      DstBlock		      "Switch"
+	      DstPort		      2
+	    }
+	    Annotation {
+	      Name		      "This subsystem transmits the necessary data to the dsPIC. The first timestep of the\nrun will tran"
+	      "smit all inquiry characters in order to set the dsPIC into HIL mode."
+	      Position		      [34, 226]
+	      HorizontalAlignment     "left"
 	    }
 	  }
 	}
@@ -7199,7 +7228,7 @@ Model {
 	  System {
 	    Name		    "Actuator\nDynamics"
 	    Location		    [226, 376, 1183, 863]
-	    Open		    on
+	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -7809,7 +7838,7 @@ Model {
 	      System {
 		Name			"Subsystem"
 		Location		[263, 383, 931, 683]
-		Open			on
+		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	294
 		ScreenColor		"white"
@@ -11109,7 +11138,7 @@ Model {
 	  System {
 	    Name		    "Generate sensor data\nfrom actuator position"
 	    Location		    [214, 388, 1192, 843]
-	    Open		    on
+	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -13965,7 +13994,7 @@ Model {
       System {
 	Name			"Raw sensors\ndisplay"
 	Location		[202, 82, 1270, 978]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
