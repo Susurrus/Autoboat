@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.1310"
+    ComputedModelVersion    "1.1394"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Sep 10 13:53:27 2010"
-  RTWModifiedTimeStamp	  206027606
-  ModelVersionFormat	  "1.%<AutoIncrement:1310>"
+  LastModifiedDate	  "Wed Sep 15 11:36:44 2010"
+  RTWModifiedTimeStamp	  206451398
+  ModelVersionFormat	  "1.%<AutoIncrement:1394>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -95,7 +95,7 @@ Model {
   ExtModeSkipDownloadWhenConnect off
   ExtModeLogAll		  on
   ExtModeAutoUpdateStatusClock off
-  BufferReuse		  on
+  BufferReuse		  off
   ShowModelReferenceBlockVersion off
   ShowModelReferenceBlockIO off
   Array {
@@ -113,7 +113,7 @@ Model {
 	  StartTime		  "0.0"
 	  StopTime		  "1000"
 	  AbsTol		  "auto"
-	  FixedStep		  "T_step"
+	  FixedStep		  ".01"
 	  InitialStep		  "auto"
 	  MaxNumMinSteps	  "-1"
 	  MaxOrder		  5
@@ -186,14 +186,14 @@ Model {
 	    Cell		    "PassReuseOutputArgsThreshold"
 	    PropName		    "DisabledProps"
 	  }
-	  BlockReduction	  on
+	  BlockReduction	  off
 	  BooleanDataType	  on
 	  ConditionallyExecuteInputs on
 	  InlineParams		  on
 	  UseIntDivNetSlope	  on
 	  InlineInvariantSignals  on
 	  OptimizeBlockIOStorage  on
-	  BufferReuse		  on
+	  BufferReuse		  off
 	  EnhancedBackFolding	  off
 	  StrengthReduction	  off
 	  EnforceIntegerDowncast  on
@@ -352,7 +352,7 @@ Model {
 	  SimExtrinsic		  on
 	  SimIntegrity		  on
 	  SimUseLocalCustomCode	  off
-	  SimBuildMode		  "sf_nonincremental_build"
+	  SimBuildMode		  "sf_incremental_build"
 	}
 	Simulink.RTWCC {
 	  $BackupClass		  "Simulink.RTWCC"
@@ -554,7 +554,7 @@ Model {
       }
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=0 "
-      CurrentDlgPage	      "Diagnostics"
+      CurrentDlgPage	      "Solver"
       ConfigPrmDlgPosition    " [ 97, 171, 1074, 801 ] "
     }
     PropName		    "ConfigurationSets"
@@ -696,6 +696,10 @@ Model {
       Outputs		      "4"
       DisplayOption	      "none"
       BusSelectionMode	      off
+    }
+    Block {
+      BlockType		      DigitalClock
+      SampleTime	      "1"
     }
     Block {
       BlockType		      DiscreteIntegrator
@@ -1098,7 +1102,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "118"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    2052
+    SIDHighWatermark	    2094
     Block {
       BlockType		      SubSystem
       Name		      "Autonomous Controller"
@@ -1115,7 +1119,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Autonomous Controller"
-	Location		[243, 170, 1171, 900]
+	Location		[319, 206, 1247, 936]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -1186,7 +1190,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Ballast\nCommand"
-	    Location		    [243, 170, 1243, 840]
+	    Location		    [443, 630, 961, 796]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -1589,7 +1593,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Map from 313..620\nto 1..-1"
-		Location		[443, 630, 978, 813]
+		Location		[512, 693, 1047, 876]
 		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
@@ -1684,6 +1688,23 @@ Model {
 	      }
 	    }
 	    Block {
+	      BlockType		      RateTransition
+	      Name		      "Rate Transition1"
+	      SID		      2074
+	      Position		      [395, 119, 415, 161]
+	      ShowName		      off
+	      Integrity		      off
+	      OutPortSampleTimeOpt    "Inherit"
+	    }
+	    Block {
+	      BlockType		      RateTransition
+	      Name		      "Rate Transition9"
+	      SID		      2073
+	      Position		      [435, 119, 470, 161]
+	      ShowName		      off
+	      OutPortSampleTimeOpt    "Inherit"
+	    }
+	    Block {
 	      BlockType		      Saturate
 	      Name		      "Saturation"
 	      SID		      1190
@@ -1723,8 +1744,8 @@ Model {
 	    Line {
 	      SrcBlock		      "Map from 313..620\nto 1..-1"
 	      SrcPort		      1
-	      DstBlock		      "Add"
-	      DstPort		      2
+	      DstBlock		      "Rate Transition1"
+	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "Embedded\nMATLAB Function"
@@ -1840,6 +1861,18 @@ Model {
 	      DstBlock		      "Bus\nCreator"
 	      DstPort		      2
 	    }
+	    Line {
+	      SrcBlock		      "Rate Transition9"
+	      SrcPort		      1
+	      DstBlock		      "Add"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Rate Transition1"
+	      SrcPort		      1
+	      DstBlock		      "Rate Transition9"
+	      DstPort		      1
+	    }
 	    Annotation {
 	      Name		      "NOTE: The current ballast sensor position range is\nunknown! This should be checked before employe"
 	      "d\nonboard."
@@ -1883,7 +1916,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Rudder\nCommand"
-	    Location		    [243, 170, 1243, 823]
+	    Location		    [473, 431, 1138, 714]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -1908,7 +1941,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "Sensors"
 	      SID		      1198
-	      Position		      [270, 343, 300, 357]
+	      Position		      [205, 343, 235, 357]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "2"
 	      IconDisplay	      "Port number"
@@ -2543,6 +2576,13 @@ Model {
 	    }
 	    Block {
 	      BlockType		      RateTransition
+	      Name		      "Rate Transition4"
+	      SID		      2077
+	      Position		      [290, 329, 310, 371]
+	      ShowName		      off
+	    }
+	    Block {
+	      BlockType		      RateTransition
 	      Name		      "Rate Transition6"
 	      SID		      1501
 	      Position		      [500, 329, 540, 371]
@@ -2664,7 +2704,7 @@ Model {
 	    Line {
 	      SrcBlock		      "Sensors"
 	      SrcPort		      1
-	      DstBlock		      "Bus\nSelector"
+	      DstBlock		      "Rate Transition4"
 	      DstPort		      1
 	    }
 	    Line {
@@ -2850,6 +2890,12 @@ Model {
 		DstPort			3
 	      }
 	    }
+	    Line {
+	      SrcBlock		      "Rate Transition4"
+	      SrcPort		      1
+	      DstBlock		      "Bus\nSelector"
+	      DstPort		      1
+	    }
 	    Annotation {
 	      Name		      "Up and period are both defined to generate a 50% duty cycle PWM with \na period of 3ms."
 	      Position		      [608, 525]
@@ -2873,7 +2919,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Subsystem"
-	    Location		    [202, 82, 1270, 978]
+	    Location		    [473, 431, 1155, 731]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -2890,7 +2936,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "gps"
 	      SID		      1228
-	      Position		      [35, 143, 65, 157]
+	      Position		      [15, 143, 45, 157]
 	      BackgroundColor	      "darkGreen"
 	      IconDisplay	      "Port number"
 	    }
@@ -3014,6 +3060,13 @@ Model {
 	      SaturateOnIntegerOverflow	off
 	    }
 	    Block {
+	      BlockType		      RateTransition
+	      Name		      "Rate Transition6"
+	      SID		      2076
+	      Position		      [65, 129, 85, 171]
+	      ShowName		      off
+	    }
+	    Block {
 	      BlockType		      SubSystem
 	      Name		      "Reorder"
 	      SID		      1236
@@ -3028,7 +3081,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Reorder"
-		Location		[461, 470, 934, 756]
+		Location		[769, 613, 1242, 882]
 		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
@@ -3054,7 +3107,7 @@ Model {
 		  Name			  "Angle Conversion1"
 		  SID			  1238
 		  Ports			  [1, 1]
-		  Position		  [185, 64, 245, 86]
+		  Position		  [245, 64, 305, 86]
 		  ShowName		  off
 		  LibraryVersion	  "1.68"
 		  SourceBlock		  "aerolibconvert2/Angle Conversion"
@@ -3075,7 +3128,7 @@ Model {
 		  Name			  "Angle Conversion3"
 		  SID			  1239
 		  Ports			  [1, 1]
-		  Position		  [185, 29, 245, 51]
+		  Position		  [245, 29, 305, 51]
 		  ShowName		  off
 		  LibraryVersion	  "1.68"
 		  SourceBlock		  "aerolibconvert2/Angle Conversion"
@@ -3095,7 +3148,7 @@ Model {
 		  BlockType		  Bias
 		  Name			  "Bias"
 		  SID			  1240
-		  Position		  [185, 80, 225, 110]
+		  Position		  [245, 80, 285, 110]
 		  ShowName		  off
 		  Bias			  "2000"
 		  SaturateOnIntegerOverflow off
@@ -3105,7 +3158,7 @@ Model {
 		  Name			  "Bus\nSelector"
 		  SID			  1241
 		  Ports			  [1, 8]
-		  Position		  [80, 38, 85, 212]
+		  Position		  [140, 38, 145, 212]
 		  ShowName		  off
 		  OutputSignals		  "latitude,longitude,year,month,day,hour,minute,second"
 		  Port {
@@ -3161,7 +3214,7 @@ Model {
 		  BlockType		  Constant
 		  Name			  "Constant"
 		  SID			  1242
-		  Position		  [290, 53, 320, 67]
+		  Position		  [350, 53, 380, 67]
 		  BackgroundColor	  "gray"
 		  ShowName		  off
 		  Value			  "0"
@@ -3172,7 +3225,7 @@ Model {
 		  BlockType		  DataTypeConversion
 		  Name			  "Data Type Conversion1"
 		  SID			  1243
-		  Position		  [110, 86, 165, 104]
+		  Position		  [170, 86, 225, 104]
 		  ShowName		  off
 		  OutDataTypeMode	  "double"
 		  OutDataType		  "fixdt(1, 16)"
@@ -3185,7 +3238,7 @@ Model {
 		  BlockType		  DataTypeConversion
 		  Name			  "Data Type Conversion2"
 		  SID			  1244
-		  Position		  [110, 106, 165, 124]
+		  Position		  [170, 106, 225, 124]
 		  ShowName		  off
 		  OutDataTypeMode	  "double"
 		  OutDataType		  "fixdt(1, 16)"
@@ -3198,7 +3251,7 @@ Model {
 		  BlockType		  DataTypeConversion
 		  Name			  "Data Type Conversion3"
 		  SID			  1245
-		  Position		  [110, 126, 165, 144]
+		  Position		  [170, 126, 225, 144]
 		  ShowName		  off
 		  OutDataTypeMode	  "double"
 		  OutDataType		  "fixdt(1, 16)"
@@ -3211,7 +3264,7 @@ Model {
 		  BlockType		  DataTypeConversion
 		  Name			  "Data Type Conversion4"
 		  SID			  1246
-		  Position		  [110, 146, 165, 164]
+		  Position		  [170, 146, 225, 164]
 		  ShowName		  off
 		  OutDataTypeMode	  "double"
 		  OutDataType		  "fixdt(1, 16)"
@@ -3224,7 +3277,7 @@ Model {
 		  BlockType		  DataTypeConversion
 		  Name			  "Data Type Conversion5"
 		  SID			  1247
-		  Position		  [110, 166, 165, 184]
+		  Position		  [170, 166, 225, 184]
 		  ShowName		  off
 		  OutDataTypeMode	  "double"
 		  OutDataType		  "fixdt(1, 16)"
@@ -3237,7 +3290,7 @@ Model {
 		  BlockType		  DataTypeConversion
 		  Name			  "Data Type Conversion6"
 		  SID			  1248
-		  Position		  [110, 186, 165, 204]
+		  Position		  [170, 186, 225, 204]
 		  ShowName		  off
 		  OutDataTypeMode	  "double"
 		  OutDataType		  "fixdt(1, 16)"
@@ -3250,7 +3303,7 @@ Model {
 		  BlockType		  DataTypeConversion
 		  Name			  "Data Type Conversion7"
 		  SID			  1249
-		  Position		  [110, 66, 165, 84]
+		  Position		  [170, 66, 225, 84]
 		  ShowName		  off
 		  OutDataTypeMode	  "double"
 		  OutDataType		  "fixdt(1, 16)"
@@ -3263,7 +3316,7 @@ Model {
 		  BlockType		  DataTypeConversion
 		  Name			  "Data Type Conversion8"
 		  SID			  1250
-		  Position		  [110, 46, 165, 64]
+		  Position		  [170, 46, 225, 64]
 		  ShowName		  off
 		  OutDataTypeMode	  "double"
 		  OutDataType		  "fixdt(1, 16)"
@@ -3277,7 +3330,7 @@ Model {
 		  Name			  "Mux"
 		  SID			  1251
 		  Ports			  [7, 1]
-		  Position		  [260, 83, 265, 227]
+		  Position		  [320, 83, 325, 227]
 		  ShowName		  off
 		  Inputs		  "7"
 		  DisplayOption		  "bar"
@@ -3287,7 +3340,7 @@ Model {
 		  Name			  "Mux1"
 		  SID			  1252
 		  Ports			  [3, 1]
-		  Position		  [350, 31, 355, 69]
+		  Position		  [410, 31, 415, 69]
 		  ShowName		  off
 		  Inputs		  "3"
 		  DisplayOption		  "bar"
@@ -3296,7 +3349,7 @@ Model {
 		  BlockType		  Constant
 		  Name			  "Phase shift2"
 		  SID			  1253
-		  Position		  [125, 206, 165, 224]
+		  Position		  [185, 206, 225, 224]
 		  BackgroundColor	  "gray"
 		  ShowName		  off
 		  Value			  "-8"
@@ -3307,7 +3360,7 @@ Model {
 		  BlockType		  Outport
 		  Name			  "pos"
 		  SID			  1254
-		  Position		  [395, 43, 425, 57]
+		  Position		  [455, 43, 485, 57]
 		  BackgroundColor	  "yellow"
 		  IconDisplay		  "Port number"
 		}
@@ -3315,7 +3368,7 @@ Model {
 		  BlockType		  Outport
 		  Name			  "time"
 		  SID			  1255
-		  Position		  [290, 148, 320, 162]
+		  Position		  [350, 148, 380, 162]
 		  BackgroundColor	  "yellow"
 		  Port			  "2"
 		  IconDisplay		  "Port number"
@@ -3624,7 +3677,28 @@ Model {
 	    Line {
 	      SrcBlock		      "gps"
 	      SrcPort		      1
-	      Points		      [20, 0; 0, 0]
+	      DstBlock		      "Rate Transition6"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Gain"
+	      SrcPort		      1
+	      Points		      [35, 0]
+	      Branch {
+		Points			[0, 15]
+		DstBlock		"Product"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, -15]
+		DstBlock		"Product1"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "Rate Transition6"
+	      SrcPort		      1
+	      Points		      [0, 0]
 	      Branch {
 		Points			[0, 40]
 		DstBlock		"Reorder"
@@ -3641,21 +3715,6 @@ Model {
 		  DstBlock		  "Bus\nSelector"
 		  DstPort		  1
 		}
-	      }
-	    }
-	    Line {
-	      SrcBlock		      "Gain"
-	      SrcPort		      1
-	      Points		      [35, 0]
-	      Branch {
-		Points			[0, 15]
-		DstBlock		"Product"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, -15]
-		DstBlock		"Product1"
-		DstPort			1
 	      }
 	    }
 	    Annotation {
@@ -5121,6 +5180,15 @@ Model {
       OutDataTypeStr	      "boolean"
     }
     Block {
+      BlockType		      Display
+      Name		      "Display"
+      SID		      2094
+      Ports		      [1]
+      Position		      [540, 575, 630, 605]
+      Decimation	      "1"
+      Lockdown		      off
+    }
+    Block {
       BlockType		      From
       Name		      "From"
       SID		      1445
@@ -5403,7 +5471,7 @@ Model {
       BlockType		      Goto
       Name		      "Goto10"
       SID		      1532
-      Position		      [400, 200, 480, 220]
+      Position		      [410, 200, 490, 220]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "sensors_b"
@@ -5413,7 +5481,7 @@ Model {
       BlockType		      Goto
       Name		      "Goto11"
       SID		      1533
-      Position		      [400, 255, 480, 275]
+      Position		      [410, 255, 490, 275]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "sensors_r"
@@ -5443,7 +5511,7 @@ Model {
       BlockType		      Goto
       Name		      "Goto7"
       SID		      1529
-      Position		      [400, 90, 470, 110]
+      Position		      [410, 90, 480, 110]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "GPS"
@@ -5453,7 +5521,7 @@ Model {
       BlockType		      Goto
       Name		      "Goto9"
       SID		      1531
-      Position		      [400, 145, 480, 165]
+      Position		      [410, 145, 490, 165]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "sensors_t"
@@ -5715,7 +5783,7 @@ Model {
       BlockType		      SubSystem
       Name		      "HIL Interface"
       SID		      1035
-      Ports		      [4, 4]
+      Ports		      [4, 3]
       Position		      [260, 435, 455, 540]
       LibraryVersion	      "1.216"
       MinAlgLoopOccurrences   off
@@ -5727,7 +5795,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"HIL Interface"
-	Location		[202, 82, 1270, 978]
+	Location		[206, 82, 1274, 970]
 	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -5794,7 +5862,7 @@ Model {
 	  Name			  "Build HIL\nsentence"
 	  SID			  1480
 	  Ports			  [1, 1]
-	  Position		  [745, 454, 815, 526]
+	  Position		  [745, 464, 815, 536]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -6134,6 +6202,26 @@ Model {
 	  }
 	}
 	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion"
+	  SID			  2056
+	  Position		  [355, 718, 415, 732]
+	  ShowName		  off
+	  OutDataTypeMode	  "uint16"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint16"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  DigitalClock
+	  Name			  "Digital Clock"
+	  SID			  2054
+	  Position		  [190, 723, 255, 747]
+	  SampleTime		  ".01"
+	}
+	Block {
 	  BlockType		  From
 	  Name			  "From"
 	  SID			  1456
@@ -6147,23 +6235,39 @@ Model {
 	  BlockType		  From
 	  Name			  "From1"
 	  SID			  1457
-	  Position		  [845, 425, 920, 455]
+	  Position		  [845, 435, 920, 465]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "HIL_enable"
 	  TagVisibility		  "global"
 	}
 	Block {
+	  BlockType		  Gain
+	  Name			  "Gain"
+	  SID			  2055
+	  Position		  [275, 720, 305, 750]
+	  Gain			  "100"
+	  ParameterDataTypeMode	  "Inherit via internal rule"
+	  ParameterDataType	  "fixdt(1, 16)"
+	  ParameterScaling	  "2^0"
+	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
 	  BlockType		  Reference
 	  Name			  "Pack"
 	  SID			  1410
-	  Ports			  [18, 1]
-	  Position		  [530, 243, 620, 732]
+	  Ports			  [19, 1]
+	  Position		  [530, 255, 620, 745]
 	  LibraryVersion	  "1.1656"
 	  SourceBlock		  "xpclib/UDP/Pack"
 	  SourceType		  "xpcany2byte"
 	  datatypes		  "{'int16','single','single','single','uint8','uint8','uint8','uint8','uint8','uint8','single','single'"
-	  ",'uint16','boolean','boolean','uint16','boolean','boolean'}"
+	  ",'uint16','boolean','boolean','uint16','boolean','boolean','uint16'}"
 	  byteAlign		  "1"
 	}
 	Block {
@@ -6181,8 +6285,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Parse HIL\ninput"
-	    Location		    [289, 355, 1099, 857]
-	    Open		    off
+	    Location		    [202, 82, 1270, 978]
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -6235,7 +6339,7 @@ Model {
 	      Name		      "Embedded\nMATLAB Function"
 	      SID		      1074
 	      Ports		      [1, 1]
-	      Position		      [75, 202, 145, 248]
+	      Position		      [75, 201, 145, 249]
 	      LibraryVersion	      "1.31"
 	      PermitHierarchicalResolution "ExplicitOnly"
 	      TreatAsAtomicUnit	      on
@@ -6253,7 +6357,7 @@ Model {
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
 	      MaskDescription	      "Embedded MATLAB block"
-	      MaskDisplay	      "disp('fcn');"
+	      MaskDisplay	      "disp('parseMessage');"
 	      MaskSelfModifiable      on
 	      MaskIconFrame	      on
 	      MaskIconOpaque	      off
@@ -6275,10 +6379,10 @@ Model {
 		TiledPageScale		1
 		ShowPageBoundaries	off
 		ZoomFactor		"100"
-		SIDHighWatermark	17
+		SIDHighWatermark	18
 		Block {
 		  BlockType		  Inport
-		  Name			  "characterIn"
+		  Name			  "in"
 		  SID			  1
 		  Position		  [20, 101, 40, 119]
 		  IconDisplay		  "Port number"
@@ -6290,7 +6394,7 @@ Model {
 		  Name			  " Demux "
 		  SID			  15
 		  Ports			  [1, 1]
-		  Position		  [270, 160, 320, 200]
+		  Position		  [270, 180, 320, 220]
 		  Outputs		  "1"
 		}
 		Block {
@@ -6299,13 +6403,13 @@ Model {
 		  SID			  14
 		  Tag			  "Stateflow S-Function Boat_sim 4"
 		  Ports			  [1, 2]
-		  Position		  [180, 100, 230, 160]
+		  Position		  [180, 100, 230, 180]
 		  FunctionName		  "sf_sfun"
 		  PortCounts		  "[1 2]"
 		  EnableBusSupport	  on
 		  Port {
 		    PortNumber		    2
-		    Name		    "data"
+		    Name		    "out"
 		    RTWStorageClass	    "Auto"
 		    DataLoggingNameMode	    "SignalName"
 		  }
@@ -6314,11 +6418,11 @@ Model {
 		  BlockType		  Terminator
 		  Name			  " Terminator "
 		  SID			  17
-		  Position		  [460, 171, 480, 189]
+		  Position		  [460, 191, 480, 209]
 		}
 		Block {
 		  BlockType		  Outport
-		  Name			  "data"
+		  Name			  "out"
 		  SID			  5
 		  Position		  [460, 101, 480, 119]
 		  IconDisplay		  "Port number"
@@ -6332,17 +6436,17 @@ Model {
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "characterIn"
+		  SrcBlock		  "in"
 		  SrcPort		  1
 		  DstBlock		  " SFunction "
 		  DstPort		  1
 		}
 		Line {
-		  Name			  "data"
+		  Name			  "out"
 		  Labels		  [0, 0]
 		  SrcBlock		  " SFunction "
 		  SrcPort		  2
-		  DstBlock		  "data"
+		  DstBlock		  "out"
 		  DstPort		  1
 		}
 		Line {
@@ -6364,7 +6468,7 @@ Model {
 	      SourceType	      "xpcbyte2any"
 	      dimensions	      "{[1],[1],[1],[1],[1],[1],[1],[6],[1],[1],[1]}"
 	      datatypes		      "{'boolean','boolean','uint16','uint16','boolean','boolean','uint32','uint8','uint8','boolean'"
-	      ",'uint8'}"
+	      ",'uint16'}"
 	      byteAlign		      "1"
 	      Port {
 		PortNumber		1
@@ -6632,7 +6736,7 @@ Model {
 	      Name		      "Serial Receive"
 	      SID		      1450
 	      Ports		      [0, 2]
-	      Position		      [170, 103, 280, 152]
+	      Position		      [115, 101, 225, 154]
 	      LibraryVersion	      "1.84"
 	      DialogController	      "instrumentcreatedialog"
 	      DialogControllerArgs    "DataTag0"
@@ -6642,7 +6746,7 @@ Model {
 	      ComPort		      "COM9"
 	      ObjConstructor	      "serial('COM9');"
 	      Terminator	      "<none>"
-	      DataSize		      "[1  1]"
+	      DataSize		      "[5  1]"
 	      DataType		      "uint8"
 	      EnableBlockingMode      off
 	      ActionDataUnavailable   "Output custom value"
@@ -6650,17 +6754,10 @@ Model {
 	      SampleTime	      "0.01"
 	    }
 	    Block {
-	      BlockType		      Terminator
-	      Name		      "Terminator"
-	      SID		      1505
-	      Position		      [310, 130, 330, 150]
-	      ShowName		      off
-	    }
-	    Block {
 	      BlockType		      Outport
 	      Name		      "Out1"
 	      SID		      1449
-	      Position		      [360, 108, 390, 122]
+	      Position		      [305, 118, 335, 132]
 	      IconDisplay	      "Port number"
 	      OutDataType	      "fixdt(1, 16)"
 	      OutScaling	      "2^0"
@@ -6668,13 +6765,8 @@ Model {
 	    Line {
 	      SrcBlock		      "Serial Receive"
 	      SrcPort		      1
+	      Points		      [0, 10]
 	      DstBlock		      "Out1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Serial Receive"
-	      SrcPort		      2
-	      DstBlock		      "Terminator"
 	      DstPort		      1
 	    }
 	  }
@@ -6684,7 +6776,7 @@ Model {
 	  Name			  "RS232 Transmit"
 	  SID			  1451
 	  Ports			  [1, 0, 1]
-	  Position		  [875, 469, 975, 511]
+	  Position		  [875, 479, 975, 521]
 	  LibraryVersion	  "1.216"
 	  TreatAsAtomicUnit	  on
 	  MinAlgLoopOccurrences	  off
@@ -6696,8 +6788,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "RS232 Transmit"
-	    Location		    [568, 593, 1121, 893]
-	    Open		    on
+	    Location		    [325, 468, 874, 769]
+	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -6732,7 +6824,7 @@ Model {
 	      Position		      [35, 169, 115, 191]
 	      BackgroundColor	      "gray"
 	      ShowName		      off
-	      Value		      "5*ones(42,1)"
+	      Value		      "5*ones(44,1)"
 	      OutDataTypeMode	      "uint8"
 	      OutDataType	      "fixdt(1, 16)"
 	      OutScaling	      "2^0"
@@ -6781,17 +6873,19 @@ Model {
 	      DstPort		      3
 	    }
 	    Line {
-	      SrcBlock		      "Switch"
-	      SrcPort		      1
-	      DstBlock		      "Serial Send"
-	      DstPort		      1
-	    }
-	    Line {
 	      SrcBlock		      "In1"
 	      SrcPort		      1
-	      Points		      [30, 0; 0, 35]
-	      DstBlock		      "Switch"
-	      DstPort		      1
+	      Points		      [30, 0]
+	      Branch {
+		Points			[0, 35]
+		DstBlock		"Switch"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[90, 0]
+		DstBlock		"Serial Send"
+		DstPort			1
+	      }
 	    }
 	    Line {
 	      SrcBlock		      "Step"
@@ -6811,9 +6905,10 @@ Model {
 	  BlockType		  RateTransition
 	  Name			  "Rate Transition"
 	  SID			  1119
-	  Position		  [650, 469, 690, 511]
+	  Position		  [650, 479, 690, 521]
 	  ShowName		  off
-	  OutPortSampleTime	  ".05"
+	  Integrity		  off
+	  OutPortSampleTime	  ".2"
 	}
 	Block {
 	  BlockType		  RateTransition
@@ -6845,11 +6940,48 @@ Model {
 	Block {
 	  BlockType		  RateTransition
 	  Name			  "Rate Transition4"
-	  SID			  1936
-	  Position		  [615, 204, 655, 246]
+	  SID			  2084
+	  Position		  [555, 204, 595, 246]
 	  ShowName		  off
-	  OutPortSampleTimeOpt	  "Inherit"
-	  OutPortSampleTime	  ".2"
+	}
+	Block {
+	  BlockType		  RateTransition
+	  Name			  "Rate Transition5"
+	  SID			  2067
+	  Position		  [435, 704, 475, 746]
+	  ShowName		  off
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "Scope"
+	  SID			  2087
+	  Ports			  [1]
+	  Position		  [760, 659, 790, 691]
+	  Floating		  off
+	  Location		  [188, 390, 512, 629]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  SaveName		  "ScopeData4"
+	  DataFormat		  "StructureWithTime"
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Sum
+	  Name			  "Subtract"
+	  SID			  2061
+	  Ports			  [2, 1]
+	  Position		  [705, 657, 735, 688]
+	  Inputs		  "+-"
+	  InputSameDT		  off
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^-10"
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
 	}
 	Block {
 	  BlockType		  Outport
@@ -6879,17 +7011,6 @@ Model {
 	  Position		  [750, 113, 780, 127]
 	  BackgroundColor	  "yellow"
 	  Port			  "3"
-	  IconDisplay		  "Port number"
-	  OutDataType		  "fixdt(1, 16)"
-	  OutScaling		  "2^0"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "Sensor timestamp"
-	  SID			  1935
-	  Position		  [750, 218, 780, 232]
-	  BackgroundColor	  "yellow"
-	  Port			  "4"
 	  IconDisplay		  "Port number"
 	  OutDataType		  "fixdt(1, 16)"
 	  OutScaling		  "2^0"
@@ -7132,17 +7253,57 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Rate Transition4"
-	  SrcPort		  1
-	  DstBlock		  "Sensor timestamp"
-	  DstPort		  1
-	}
-	Line {
 	  SrcBlock		  "Parse HIL\ninput"
 	  SrcPort		  4
 	  Points		  [85, 0; 0, 75]
 	  DstBlock		  "Rate Transition4"
 	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Gain"
+	  SrcPort		  1
+	  Points		  [30, 0]
+	  DstBlock		  "Data Type Conversion"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Digital Clock"
+	  SrcPort		  1
+	  DstBlock		  "Gain"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Data Type Conversion"
+	  SrcPort		  1
+	  DstBlock		  "Rate Transition5"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Subtract"
+	  SrcPort		  1
+	  DstBlock		  "Scope"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Rate Transition5"
+	  SrcPort		  1
+	  Points		  [30, 0]
+	  Branch {
+	    DstBlock		    "Pack"
+	    DstPort		    19
+	  }
+	  Branch {
+	    Points		    [0, -60]
+	    DstBlock		    "Subtract"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  SrcBlock		  "Rate Transition4"
+	  SrcPort		  1
+	  Points		  [55, 0; 0, 455]
+	  DstBlock		  "Subtract"
+	  DstPort		  2
 	}
 	Annotation {
 	  Name			  "This subsystem handles 2-way communication with a dsPIC running \nthe autocaptain. World input and output"
@@ -7167,8 +7328,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Plant"
-	Location		[243, 170, 1154, 883]
-	Open			off
+	Location		[228, 307, 1168, 794]
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -7227,7 +7388,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Actuator\nDynamics"
-	    Location		    [226, 376, 1183, 863]
+	    Location		    [228, 307, 1185, 794]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -7325,33 +7486,6 @@ Model {
 		RTWStorageClass		"Auto"
 		DataLoggingNameMode	"SignalName"
 	      }
-	    }
-	    Block {
-	      BlockType		      Display
-	      Name		      "Display"
-	      SID		      1461
-	      Ports		      [1]
-	      Position		      [645, 95, 735, 125]
-	      Decimation	      "1"
-	      Lockdown		      off
-	    }
-	    Block {
-	      BlockType		      Display
-	      Name		      "Display1"
-	      SID		      1462
-	      Ports		      [1]
-	      Position		      [645, 205, 735, 235]
-	      Decimation	      "1"
-	      Lockdown		      off
-	    }
-	    Block {
-	      BlockType		      Display
-	      Name		      "Display2"
-	      SID		      1463
-	      Ports		      [1]
-	      Position		      [645, 320, 735, 350]
-	      Decimation	      "1"
-	      Lockdown		      off
 	    }
 	    Block {
 	      BlockType		      SubSystem
@@ -7695,68 +7829,6 @@ Model {
 	      ShowName		      off
 	    }
 	    Block {
-	      BlockType		      Scope
-	      Name		      "Scope"
-	      SID		      2039
-	      Ports		      [1]
-	      Position		      [645, 369, 675, 401]
-	      Floating		      off
-	      Location		      [1, 52, 1281, 993]
-	      Open		      off
-	      NumInputPorts	      "1"
-	      List {
-		ListType		AxesTitles
-		axes1			"%<SignalLabel>"
-	      }
-	      YMin		      "-0.06"
-	      YMax		      "0.06"
-	      DataFormat	      "StructureWithTime"
-	      LimitDataPoints	      off
-	      SampleTime	      "0"
-	    }
-	    Block {
-	      BlockType		      Scope
-	      Name		      "Scope1"
-	      SID		      2044
-	      Ports		      [1]
-	      Position		      [645, 244, 675, 276]
-	      Floating		      off
-	      Location		      [5, 52, 1285, 993]
-	      Open		      off
-	      NumInputPorts	      "1"
-	      List {
-		ListType		AxesTitles
-		axes1			"%<SignalLabel>"
-	      }
-	      YMin		      "-0.06"
-	      YMax		      "0.06"
-	      SaveName		      "ScopeData1"
-	      DataFormat	      "StructureWithTime"
-	      LimitDataPoints	      off
-	      SampleTime	      "0"
-	    }
-	    Block {
-	      BlockType		      Scope
-	      Name		      "Scope2"
-	      SID		      2045
-	      Ports		      [1]
-	      Position		      [650, 134, 680, 166]
-	      Floating		      off
-	      Location		      [5, 52, 1285, 993]
-	      Open		      off
-	      NumInputPorts	      "1"
-	      List {
-		ListType		AxesTitles
-		axes1			"%<SignalLabel>"
-	      }
-	      YMin		      "-0.06"
-	      YMax		      "0.06"
-	      SaveName		      "ScopeData3"
-	      DataFormat	      "StructureWithTime"
-	      LimitDataPoints	      off
-	      SampleTime	      "0"
-	    }
-	    Block {
 	      BlockType		      Reference
 	      Name		      "Second Order Linear Actuator1"
 	      SID		      92
@@ -7837,7 +7909,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Subsystem"
-		Location		[263, 383, 931, 683]
+		Location		[353, 339, 1184, 740]
 		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	294
@@ -8474,44 +8546,14 @@ Model {
 	    Line {
 	      SrcBlock		      "Second Order Linear Actuator2"
 	      SrcPort		      1
-	      Points		      [65, 0]
-	      Branch {
-		DstBlock		"b_d"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, 55]
-		Branch {
-		  DstBlock		  "Display1"
-		  DstPort		  1
-		}
-		Branch {
-		  Points		  [0, 40]
-		  DstBlock		  "Scope1"
-		  DstPort		  1
-		}
-	      }
+	      DstBlock		      "b_d"
+	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "Second Order Linear Actuator1"
 	      SrcPort		      1
-	      Points		      [65, 0]
-	      Branch {
-		DstBlock		"t_d"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, 65]
-		Branch {
-		  DstBlock		  "Display"
-		  DstPort		  1
-		}
-		Branch {
-		  Points		  [0, 40]
-		  DstBlock		  "Scope2"
-		  DstPort		  1
-		}
-	      }
+	      DstBlock		      "t_d"
+	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "Limited integrator1"
@@ -8594,23 +8636,8 @@ Model {
 	    Line {
 	      SrcBlock		      "Second Order Linear Actuator3"
 	      SrcPort		      1
-	      Points		      [65, 0]
-	      Branch {
-		DstBlock		"r_d"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, 55]
-		Branch {
-		  DstBlock		  "Display2"
-		  DstPort		  1
-		}
-		Branch {
-		  Points		  [0, 50]
-		  DstBlock		  "Scope"
-		  DstPort		  1
-		}
-	      }
+	      DstBlock		      "r_d"
+	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "t"
@@ -8680,8 +8707,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Charge Plant"
-	    Location		    [214, 82, 1270, 978]
-	    Open		    off
+	    Location		    [202, 78, 1278, 974]
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -8775,15 +8802,6 @@ Model {
 	      OutScaling	      "2^-10"
 	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
 	      SaturateOnIntegerOverflow	off
-	    }
-	    Block {
-	      BlockType		      Display
-	      Name		      "Display1"
-	      SID		      466
-	      Ports		      [1]
-	      Position		      [545, 17, 645, 43]
-	      Decimation	      "1"
-	      Lockdown		      off
 	    }
 	    Block {
 	      BlockType		      Integrator
@@ -10380,7 +10398,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "Charge (J)"
 	      SID		      444
-	      Position		      [675, 133, 705, 147]
+	      Position		      [775, 133, 805, 147]
 	      BackgroundColor	      "yellow"
 	      IconDisplay	      "Port number"
 	      OutDataType	      "sfix(16)"
@@ -10396,15 +10414,8 @@ Model {
 	      SrcBlock		      "Power Drain from \nOnboard Systems"
 	      SrcPort		      1
 	      Points		      [15, 0]
-	      Branch {
-		DstBlock		"Add1"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[0, -35]
-		DstBlock		"Display1"
-		DstPort			1
-	      }
+	      DstBlock		      "Add1"
+	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "Roll"
@@ -10452,12 +10463,6 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "Add2"
-	      SrcPort		      1
-	      DstBlock		      "Charge (J)"
-	      DstPort		      1
-	    }
-	    Line {
 	      SrcBlock		      "Ballast"
 	      SrcPort		      1
 	      DstBlock		      "Power Drain from \nOnboard Systems"
@@ -10474,6 +10479,12 @@ Model {
 	      SrcPort		      2
 	      DstBlock		      "Power Gain from Solar\nSubsystem"
 	      DstPort		      4
+	    }
+	    Line {
+	      SrcBlock		      "Add2"
+	      SrcPort		      1
+	      DstBlock		      "Charge (J)"
+	      DstPort		      1
 	    }
 	    Annotation {
 	      Name		      "This subsystem calculates charge for the boat by integrating a sum of the\npower drain and power g"
@@ -11640,7 +11651,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "Throttle sensors"
 	      SID		      486
-	      Position		      [385, 103, 415, 117]
+	      Position		      [405, 103, 435, 117]
 	      BackgroundColor	      "yellow"
 	      IconDisplay	      "Port number"
 	      OutDataType	      "fixdt(1, 16)"
@@ -11650,7 +11661,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "Ballast sensors"
 	      SID		      490
-	      Position		      [385, 198, 415, 212]
+	      Position		      [405, 198, 435, 212]
 	      BackgroundColor	      "yellow"
 	      Port		      "2"
 	      IconDisplay	      "Port number"
@@ -11661,7 +11672,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "Rudder sensors"
 	      SID		      491
-	      Position		      [385, 353, 415, 367]
+	      Position		      [405, 353, 435, 367]
 	      BackgroundColor	      "yellow"
 	      Port		      "3"
 	      IconDisplay	      "Port number"
@@ -12333,10 +12344,17 @@ Model {
 	      Name		      "Get current\ntime"
 	      SID		      1332
 	      Ports		      [1, 1]
-	      Position		      [165, 200, 225, 230]
+	      Position		      [95, 200, 155, 230]
 	      MATLABFcn		      "u(1)*clock"
 	      OutputSignalType	      "real"
-	      SampleTime	      "T_step"
+	      SampleTime	      "1"
+	    }
+	    Block {
+	      BlockType		      RateTransition
+	      Name		      "Rate Transition"
+	      SID		      2088
+	      Position		      [195, 194, 235, 236]
+	      ShowName		      off
 	    }
 	    Block {
 	      BlockType		      Rounding
@@ -12383,7 +12401,7 @@ Model {
 	      BlockType		      Constant
 	      Name		      "Zero level trust1"
 	      SID		      341
-	      Position		      [55, 205, 130, 225]
+	      Position		      [30, 205, 60, 225]
 	      BackgroundColor	      "gray"
 	      ShowName		      off
 	      OutDataType	      "sfix(16)"
@@ -12664,7 +12682,7 @@ Model {
 	    Line {
 	      SrcBlock		      "Get current\ntime"
 	      SrcPort		      1
-	      DstBlock		      "Demux"
+	      DstBlock		      "Rate Transition"
 	      DstPort		      1
 	    }
 	    Line {
@@ -12675,6 +12693,12 @@ Model {
 	      Points		      [75, 0]
 	      DstBlock		      "Bus\nCreator"
 	      DstPort		      11
+	    }
+	    Line {
+	      SrcBlock		      "Rate Transition"
+	      SrcPort		      1
+	      DstBlock		      "Demux"
+	      DstPort		      1
 	    }
 	  }
 	}
@@ -13488,7 +13512,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"RS232\nConfiguration"
-	Location		[421, 301, 919, 601]
+	Location		[202, 82, 1270, 978]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -13580,7 +13604,7 @@ Model {
       BlockType		      SubSystem
       Name		      "Raw command\ndisplay"
       SID		      1349
-      Ports		      [4]
+      Ports		      [3]
       Position		      [190, 664, 285, 776]
       NamePlacement	      "alternate"
       MinAlgLoopOccurrences   off
@@ -13632,16 +13656,6 @@ Model {
 	  BlockMirror		  on
 	  BackgroundColor	  "darkGreen"
 	  Port			  "3"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Inport
-	  Name			  "timestamp"
-	  SID			  1937
-	  Position		  [310, 378, 340, 392]
-	  BlockMirror		  on
-	  BackgroundColor	  "darkGreen"
-	  Port			  "4"
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -13755,18 +13769,6 @@ Model {
 	  SID			  1336
 	  Ports			  [1]
 	  Position		  [25, 57, 115, 83]
-	  BlockMirror		  on
-	  NamePlacement		  "alternate"
-	  ShowName		  off
-	  Decimation		  "1"
-	  Lockdown		  off
-	}
-	Block {
-	  BlockType		  Display
-	  Name			  "Display10"
-	  SID			  1938
-	  Ports			  [1]
-	  Position		  [120, 372, 210, 398]
 	  BlockMirror		  on
 	  NamePlacement		  "alternate"
 	  ShowName		  off
@@ -13969,20 +13971,14 @@ Model {
 	  DstBlock		  "Bus\nSelector5"
 	  DstPort		  1
 	}
-	Line {
-	  SrcBlock		  "timestamp"
-	  SrcPort		  1
-	  DstBlock		  "Display10"
-	  DstPort		  1
-	}
       }
     }
     Block {
       BlockType		      SubSystem
       Name		      "Raw sensors\ndisplay"
       SID		      1898
-      Ports		      [5]
-      Position		      [190, 817, 285, 953]
+      Ports		      [4]
+      Position		      [190, 814, 285, 951]
       NamePlacement	      "alternate"
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
@@ -14039,15 +14035,6 @@ Model {
 	  Position		  [485, 343, 515, 357]
 	  BackgroundColor	  "darkGreen"
 	  Port			  "4"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Inport
-	  Name			  "timestamp"
-	  SID			  1939
-	  Position		  [40, 448, 70, 462]
-	  BackgroundColor	  "darkGreen"
-	  Port			  "5"
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -14275,18 +14262,6 @@ Model {
 	  SID			  1933
 	  Ports			  [1]
 	  Position		  [595, 357, 685, 383]
-	  ShowName		  off
-	  Decimation		  "1"
-	  Lockdown		  off
-	}
-	Block {
-	  BlockType		  Display
-	  Name			  "Display18"
-	  SID			  1940
-	  Ports			  [1]
-	  Position		  [310, 332, 400, 358]
-	  BlockMirror		  on
-	  NamePlacement		  "alternate"
 	  ShowName		  off
 	  Decimation		  "1"
 	  Lockdown		  off
@@ -14531,14 +14506,22 @@ Model {
 	  DstBlock		  "Display17"
 	  DstPort		  1
 	}
-	Line {
-	  SrcBlock		  "timestamp"
-	  SrcPort		  1
-	  Points		  [340, 0]
-	  DstBlock		  "Display18"
-	  DstPort		  1
-	}
       }
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Simulation Pace"
+      SID		      2093
+      Ports		      [0, 1]
+      Position		      [415, 567, 475, 613]
+      AttributesFormatString  "%<SimulationPace> sec/sec"
+      LibraryVersion	      "1.69"
+      SourceBlock	      "aerolibanimutils/Simulation Pace"
+      SourceType	      "Simulation Pace"
+      SimulationPace	      "1"
+      SleepMode		      "MATLAB Thread"
+      OutputPaceError	      on
+      SampleTime	      ".03"
     }
     Block {
       BlockType		      ToWorkspace
@@ -14685,21 +14668,18 @@ Model {
     Line {
       SrcBlock		      "HIL Interface"
       SrcPort		      1
-      Points		      [0, 5]
       DstBlock		      "Rate Transition3"
       DstPort		      1
     }
     Line {
       SrcBlock		      "HIL Interface"
       SrcPort		      2
-      Points		      [0, 15]
       DstBlock		      "Rate Transition4"
       DstPort		      1
     }
     Line {
       SrcBlock		      "HIL Interface"
       SrcPort		      3
-      Points		      [10, 0; 0, 20; 5, 0]
       DstBlock		      "Rate Transition5"
       DstPort		      1
     }
@@ -14784,21 +14764,18 @@ Model {
     Line {
       SrcBlock		      "From4"
       SrcPort		      1
-      Points		      [10, 0]
       DstBlock		      "Raw command\ndisplay"
       DstPort		      1
     }
     Line {
       SrcBlock		      "From5"
       SrcPort		      1
-      Points		      [10, 0]
       DstBlock		      "Raw command\ndisplay"
       DstPort		      2
     }
     Line {
       SrcBlock		      "From6"
       SrcPort		      1
-      Points		      [10, 0]
       DstBlock		      "Raw command\ndisplay"
       DstPort		      3
     }
@@ -14939,45 +14916,32 @@ Model {
     Line {
       SrcBlock		      "From24"
       SrcPort		      1
-      Points		      [10, 0]
       DstBlock		      "Raw sensors\ndisplay"
       DstPort		      1
     }
     Line {
       SrcBlock		      "From25"
       SrcPort		      1
-      Points		      [10, 0]
       DstBlock		      "Raw sensors\ndisplay"
       DstPort		      2
     }
     Line {
       SrcBlock		      "From26"
       SrcPort		      1
-      Points		      [10, 0]
       DstBlock		      "Raw sensors\ndisplay"
       DstPort		      3
     }
     Line {
       SrcBlock		      "From27"
       SrcPort		      1
-      Points		      [10, 0]
       DstBlock		      "Raw sensors\ndisplay"
       DstPort		      4
     }
     Line {
-      SrcBlock		      "HIL Interface"
-      SrcPort		      4
-      Points		      [0, 50; -450, 0; 0, 200]
-      Branch {
-	Points			[165, 0]
-	DstBlock		"Raw command\ndisplay"
-	DstPort			4
-      }
-      Branch {
-	Points			[0, 160]
-	DstBlock		"Raw sensors\ndisplay"
-	DstPort			5
-      }
+      SrcBlock		      "Simulation Pace"
+      SrcPort		      1
+      DstBlock		      "Display"
+      DstPort		      1
     }
     Annotation {
       Name		      "This is the root model for the boat simulator and autonomous controller. All\nunits exposed here ar"
@@ -15005,7 +14969,7 @@ Model {
       Name		      "Status & System Inputs/Outputs\n-------------------------------------------------------------------"
       "----------------------------------------------------------------------------------------------------------------"
       "----------------------------------------------------------------------"
-      Position		      [17, 593]
+      Position		      [2, 63]
       HorizontalAlignment     "left"
     }
   }
@@ -15042,6 +15006,8 @@ Stateflow {
     created		    "13-Apr-2010 16:50:36"
     isLibrary		    0
     firstTarget		    62
+    debug {
+    }
     sfVersion		    75014000
   }
   chart {
@@ -15360,14 +15326,14 @@ Stateflow {
     firstJunction	    21
     viewObj		    19
     machine		    1
-    ssIdHighWaterMark	    5
+    ssIdHighWaterMark	    6
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
     firstData		    23
     chartFileNumber	    4
     disableImplicitCasting  1
     eml {
-      name		      "fcn"
+      name		      "parseMessage"
     }
     supportVariableSizing   0
   }
@@ -15385,33 +15351,36 @@ Stateflow {
     decomposition	    CLUSTER_STATE
     eml {
       isEML		      1
-      script		      "function data = fcn(characterIn)\n%#eml\n\npersistent message messageIndex checksum messageState "
-      "actuatorData;\n\nif isempty(message)\n    message = zeros(127, 1, 'uint8');\n    messageIndex = uint8(0);\n    c"
-      "hecksum = uint8(0);\n    messageState = uint8(0);\n    actuatorData = zeros(21, 1, 'uint8');\nend\n\n% This cont"
-      "ains the function's state of whether\n% it is currently building a message.\n% 0 - Awaiting header byte 0 (%)\n%"
-      " 1 - Awaiting header byte 1 (&)\n% 2 - Building message\n% 3 - Awaiting header byte 0 (^)\n% 4 - Awaiting header"
-      " byte 1 (&)\n% 5 - Reading checksum character\n	\n% We start recording a new message if we see the header\nif me"
-      "ssageState == 0\n    if characterIn == '%'\n        message(1) = characterIn;\n        messageIndex = uint8(2);\n"
-      "        messageState = uint8(1);\n    end\nelseif messageState == 1\n    % If we don't find the necessary ampers"
-      "and we start over\n    % waiting for a new sentence\n    if characterIn == '&'\n        message(2) = characterIn"
-      ";\n        messageIndex = uint8(3);\n        messageState = uint8(2);\n    else\n        messageIndex = uint8(1)"
-      ";\n        messageState = uint8(0);\n    end\nelseif messageState == 2\n    % Record every character that comes "
-      "in now that we're building a sentence.\n    % Only stop if we run out of room or an asterisk is found.\n    mess"
-      "age(messageIndex) = characterIn;\n    messageIndex = messageIndex + 1;\n    if characterIn == '^'\n        messa"
-      "geState = uint8(3);\n    elseif messageIndex > 127\n        % If we've filled up the buffer, ignore the entire m"
-      "essage as we can't store it all\n        messageState = uint8(0);\n        messageIndex = uint8(1);\n    end\nel"
-      "seif messageState == 3\n    % If we don't find the necessary ampersand we continue\n    % recording data as we h"
-      "aven't found the footer yet until\n    % we've filled up the entire message (ends at 124 characters\n    % as we"
-      " need room for the 2 footer chars).\n    message(messageIndex) = characterIn;\n    messageIndex = messageIndex +"
-      " 1;\n    if characterIn == '&'\n        messageState = uint8(4);\n    elseif messageIndex == 125\n        messag"
-      "eState = uint8(0);\n    end\nelseif messageState == 4\n    % Record the second ASCII-hex character of the checks"
-      "um byte.\n    checksum = characterIn;\n\n    % The checksum is now verified and if successful the message\n    %"
-      " is stored in the appropriate struct.\n    checksumCalculated = uint8(0);\n    for i=3:messageIndex-3\n        c"
-      "hecksumCalculated = bitxor(checksumCalculated, message(i));\n    end\n    \n    if checksum == checksumCalculate"
-      "d\n        % If we've found an actuator message, update our local data store\n        if message(3) == 2\n      "
-      "      actuatorData = message(4:24);\n        end\n    end\n\n    % We clear all state variables here regardless "
-      "of success.\n    messageIndex = uint8(1);\n    messageState = uint8(0);\nend\n\ndata = actuatorData;"
-      editorLayout	      "100 M4x1[15 154 867 722]"
+      script		      "function out = parseMessage(in)\n    persistent g;\n    \n    if isempty(g)\n        g = zeros(22"
+      ", 1, 'uint8');\n    end\n    \n    for i = 1:5\n        [t c] = fcn(in(i));\n        if t\n            g = c;\n "
+      "       end\n    end\n    out = g;\nend\n\nfunction [new data] = fcn(characterIn)\n%#eml\n\npersistent message me"
+      "ssageIndex messageState actuatorData;\n\nif isempty(message)\n    message = zeros(60, 1, 'uint8');\n    messageI"
+      "ndex = uint8(0);\n    messageState = uint8(0);\n    actuatorData = zeros(22, 1, 'uint8');\nend\n\n% This contain"
+      "s the function's state of whether\n% it is currently building a message.\n% 0 - Awaiting header byte 0 (%)\n% 1 "
+      "- Awaiting header byte 1 (&)\n% 2 - Building message\n% 3 - Awaiting header byte 0 (^)\n% 4 - Awaiting header by"
+      "te 1 (&)\n% 5 - Reading checksum character\n\nnew = 0;\n\n% We start recording a new message if we see the heade"
+      "r\nif messageState == 0\n    if characterIn == '%'\n        message(1) = characterIn;\n        messageIndex = ui"
+      "nt8(2);\n        messageState = uint8(1);\n    end\nelseif messageState == 1\n    % If we don't find the necessa"
+      "ry ampersand we start over\n    % waiting for a new sentence\n    if characterIn == '&'\n        message(2) = ch"
+      "aracterIn;\n        messageIndex = uint8(3);\n        messageState = uint8(2);\n    else\n        messageIndex ="
+      " uint8(1);\n        messageState = uint8(0);\n    end\nelseif messageState == 2\n    % Record every character th"
+      "at comes in now that we're building a sentence.\n    % Only stop if we run out of room or an asterisk is found.\n"
+      "    message(messageIndex) = characterIn;\n    messageIndex = messageIndex + 1;\n    if characterIn == '^'\n     "
+      "   messageState = uint8(3);\n    elseif messageIndex == 58\n        % If we've filled up the buffer, ignore the "
+      "entire message as we can't store it all\n        messageState = uint8(0);\n        messageIndex = uint8(1);\n   "
+      " end\nelseif messageState == 3\n    % If we don't find the necessary ampersand we continue\n    % recording data"
+      " as we haven't found the footer yet until\n    % we've filled up the entire message (ends at 124 characters\n   "
+      " % as we need room for the 2 footer chars).\n    message(messageIndex) = characterIn;\n    messageIndex = messag"
+      "eIndex + 1;\n    if characterIn == '&'\n        messageState = uint8(4);\n    elseif messageIndex == 59\n       "
+      " messageState = uint8(0);\n    end\nelseif messageState == 4\n    % Record the checksum byte.\n    message(messa"
+      "geIndex) = characterIn;\n\n    % The checksum is now verified and if successful the message\n    % is stored in "
+      "the appropriate struct.\n    checksumCalculated = uint8(0);\n    for i=3:messageIndex-3\n        checksumCalcula"
+      "ted = bitxor(checksumCalculated, message(i));\n    end\n    \n    if message(messageIndex) == checksumCalculated"
+      "\n        % If we've found an actuator message, update our local data store\n        if message(3) == 2\n       "
+      "     actuatorData = message(4:25);\n            new = 1;\n        end\n    end\n\n    % We clear all state varia"
+      "bles here regardless of success.\n    messageIndex = uint8(1);\n    messageState = uint8(0);\n    message = zero"
+      "s(60,1,'uint8');\nend\n\ndata = actuatorData;\nend"
+      editorLayout	      "100 M4x1[205 45 1288 998]"
       saturateOnIntegerOverflow	0
     }
   }
@@ -15448,13 +15417,13 @@ Stateflow {
   data {
     id			    23
     ssIdNumber		    4
-    name		    "characterIn"
+    name		    "in"
     linkNode		    [19 0 24]
     scope		    INPUT_DATA
     machine		    1
     props {
       array {
-	size			"1"
+	size			"5"
       }
       type {
 	primitive		SF_UINT8_TYPE
@@ -15466,13 +15435,13 @@ Stateflow {
   data {
     id			    24
     ssIdNumber		    5
-    name		    "data"
+    name		    "out"
     linkNode		    [19 23 0]
     scope		    OUTPUT_DATA
     machine		    1
     props {
       array {
-	size			"21"
+	size			"22"
       }
       type {
 	primitive		SF_UINT8_TYPE
@@ -15762,7 +15731,7 @@ Stateflow {
       "_1 - 1;\n                % Or we start to go forwards\n                else\n                    index_0 = index"
       "_1;\n                    index_1 = index_1 + 1;\n                    direction = 1;\n                end\n      "
       "      end\n    end\nend"
-      editorLayout	      "100 M4x1[324 314 720 621]"
+      editorLayout	      "100 M4x1[76 276 720 621]"
       fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
       "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
       emlDefaultFimath	      FimathUserSpecified

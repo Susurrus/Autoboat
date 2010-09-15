@@ -42,6 +42,9 @@ THE SOFTWARE.
 // First Revision: Aug 25 2010
 // ==============================================================
 
+#ifndef _COMMPROTOCOL_H_
+#define _COMMPROTOCOL_H_
+
 // Definitions of unions useful in transmitting data serially
 typedef union{
 	unsigned char    chData[2];
@@ -67,7 +70,7 @@ typedef union{
 	unsigned char   chData[4];
  	float   		flData;
 	unsigned short	shData[2];
-} tFloatToChar; 
+} tFloatToChar;
 
 // Declaration of the relevant message structs used.
 typedef struct tSensorData {
@@ -89,6 +92,7 @@ typedef struct tSensorData {
 	tUnsignedShortToChar b_Position;
 	unsigned char b_SBLimit;
 	unsigned char b_PortLimit;
+	tShortToChar timestamp;
 } tSensorData;
 
 typedef struct tActuatorData {
@@ -102,6 +106,7 @@ typedef struct tActuatorData {
 	unsigned char data[6];
 	unsigned char size;
 	unsigned char trigger;
+	tShortToChar timestamp;
 } tActuatorData;
 
 typedef struct tStateData {
@@ -134,7 +139,7 @@ void buildAndCheckMessage(unsigned char characterIn);
  * This function calculates the checksum of some bytes in an
  * array by XORing all of them.
  */
-unsigned char calculateChecksum(char* sentence, unsigned char size);
+unsigned char calculateChecksum(unsigned char* sentence, unsigned char size);
 
 void getSensorData(unsigned char* data);
 
@@ -148,4 +153,4 @@ void getStateData(unsigned char* data);
 
 void getCommandData(unsigned char* data);
 
-
+#endif /* _COMMPROTOCOL_H_ */

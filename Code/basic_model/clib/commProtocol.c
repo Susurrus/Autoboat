@@ -58,9 +58,8 @@ tCommandData commandDataMessage;
  * appropriate struct.
  */
 void buildAndCheckMessage(unsigned char characterIn) {
-	static char message[127];
+	static unsigned char message[64];
 	static unsigned char messageIndex;
-	static unsigned char checksum;
 	static unsigned char messageState;
 
 	// This contains the function's state of whether
@@ -96,7 +95,7 @@ void buildAndCheckMessage(unsigned char characterIn) {
 		message[messageIndex++] = characterIn;
 		if (characterIn == '^') {
 			messageState = 3;
-		} else if (messageIndex > 127) {
+		} else if (messageIndex == 62) {
 			// If we've filled up the buffer, ignore the entire message as we can't store it all
 			messageState = 0;
 			messageIndex = 0;
@@ -109,16 +108,19 @@ void buildAndCheckMessage(unsigned char characterIn) {
 		message[messageIndex++] = characterIn;
 		if (characterIn == '&') {
 			messageState = 4;
-		} else if (messageIndex == 125) {
+		} else if (messageIndex == 63) {
 			messageState = 0;
+			messageIndex = 0;
+		} else {
+			messageState = 3;
 		}
 	} else if (messageState == 4) {
 		// Record the second ASCII-hex character of the checksum byte.
-		checksum = characterIn;
+		message[messageIndex] = characterIn;
 
 		// The checksum is now verified and if successful the message
 		// is stored in the appropriate struct.
-		if (checksum == calculateChecksum(&message[2], messageIndex-4)) {
+		if (message[messageIndex] == calculateChecksum(&message[2], messageIndex-4)) {
 			// We now memcpy all the data into our global data structs.
 			// NOTE: message[3] is used to skip the header & message ID info
 			switch (message[2]) {
@@ -129,10 +131,10 @@ void buildAndCheckMessage(unsigned char characterIn) {
 					setActuatorData(&message[3]);
 					break;
 				case 3:
-					memcpy(&stateDataMessage, &message[3], sizeof(tStateData));
+					//memcpy(&stateDataMessage, &message[3], sizeof(tStateData));
 					break;
 				case 4:
-					memcpy(&commandDataMessage, &message[3], sizeof(tCommandData));
+					//memcpy(&commandDataMessage, &message[3], sizeof(tCommandData));
 					break;
 			}
 		}
@@ -140,6 +142,10 @@ void buildAndCheckMessage(unsigned char characterIn) {
 		// We clear all state variables here regardless of success.
 		messageIndex = 0;
 		messageState = 0;
+		int b;
+		for (b = 0;b < 64;b++) {
+			message[b] = 0;
+		}
 	}
 }
 
@@ -147,7 +153,7 @@ void buildAndCheckMessage(unsigned char characterIn) {
  * This function calculates the checksum of some bytes in an
  * array by XORing all of them.
  */
-unsigned char calculateChecksum(char* sentence, unsigned char size) {
+unsigned char calculateChecksum(unsigned char* sentence, unsigned char size) {
 
     unsigned char checkSum = 0;
 	unsigned char i;
@@ -195,6 +201,8 @@ void getSensorData(unsigned char* data) {
 	data[33] = sensorDataMessage.b_Position.chData[1];
 	data[34] = sensorDataMessage.b_SBLimit;
 	data[35] = sensorDataMessage.b_PortLimit;
+	data[36] = sensorDataMessage.timestamp.chData[0];
+	data[37] = sensorDataMessage.timestamp.chData[1];
 }
 
 void setSensorData(unsigned char* data) {
@@ -234,6 +242,8 @@ void setSensorData(unsigned char* data) {
 	sensorDataMessage.b_Position.chData[1] = data[33];
 	sensorDataMessage.b_SBLimit = data[34];
 	sensorDataMessage.b_PortLimit = data[35];
+	sensorDataMessage.timestamp.chData[0] = data[36];
+	sensorDataMessage.timestamp.chData[1] = data[37];
 }
 
 void getActuatorData(unsigned char* data) {
@@ -257,6 +267,8 @@ void getActuatorData(unsigned char* data) {
 	data[17] = actuatorDataMessage.data[5];
 	data[18] = actuatorDataMessage.size;
 	data[19] = actuatorDataMessage.trigger;
+	actuatorDataMessage.timestamp.chData[0] = data[20];
+	actuatorDataMessage.timestamp.chData[1] = data[21];
 }
 
 void setActuatorData(unsigned char* data) {
@@ -266,20 +278,22 @@ void setActuatorData(unsigned char* data) {
 	actuatorDataMessage.r_up.chData[1] = data[3];
 	actuatorDataMessage.r_period.chData[0] = data[4];
 	actuatorDataMessage.r_period.chData[1] = data[5];
-	actuatorDataMessage.b_enable = data[0];
-	actuatorDataMessage.b_direction = data[1];
-	actuatorDataMessage.t_identifier.chData[0] = data[6];
-	actuatorDataMessage.t_identifier.chData[1] = data[7];
-	actuatorDataMessage.t_identifier.chData[2] = data[8];
-	actuatorDataMessage.t_identifier.chData[3] = data[9];
-	actuatorDataMessage.data[0] = data[10];
-	actuatorDataMessage.data[1] = data[11];
-	actuatorDataMessage.data[2] = data[12];
-	actuatorDataMessage.data[3] = data[13];
-	actuatorDataMessage.data[4] = data[14];
-	actuatorDataMessage.data[5] = data[15];
-	actuatorDataMessage.size = data[16];
-	actuatorDataMessage.trigger = data[17];
+	actuatorDataMessage.b_enable = data[6];
+	actuatorDataMessage.b_direction = data[7];
+	actuatorDataMessage.t_identifier.chData[0] = data[8];
+	actuatorDataMessage.t_identifier.chData[1] = data[9];
+	actuatorDataMessage.t_identifier.chData[2] = data[10];
+	actuatorDataMessage.t_identifier.chData[3] = data[11];
+	actuatorDataMessage.data[0] = data[12];
+	actuatorDataMessage.data[1] = data[13];
+	actuatorDataMessage.data[2] = data[14];
+	actuatorDataMessage.data[3] = data[15];
+	actuatorDataMessage.data[4] = data[16];
+	actuatorDataMessage.data[5] = data[17];
+	actuatorDataMessage.size = data[18];
+	actuatorDataMessage.trigger = data[19];
+	actuatorDataMessage.timestamp.chData[0] = data[20];
+	actuatorDataMessage.timestamp.chData[1] = data[21];
 }
 
 void getStateData(unsigned char* data) {
