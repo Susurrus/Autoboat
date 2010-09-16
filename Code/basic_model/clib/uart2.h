@@ -1,6 +1,6 @@
 
-#ifndef _UART2_TX_H_
-#define _UART2_TX_H_
+#ifndef _UART2_H_
+#define _UART2_H_
 
 // USAGE:
 // Add initUart2Transmission() to an initialization sequence called once on startup.
@@ -10,6 +10,9 @@
 void startUart2Transmission();
 void uart2EnqueueActuatorData(unsigned char *data);
 void uart2EnqueueStateData(unsigned char *data);
-void initUart2Transmission();
 
-#endif /* _UART2_TX_H_ */
+// UART2 Reception code
+void parseNewRxData(unsigned char* message);
+void initUart2();
+
+#endif /* _UART2_H_ */
