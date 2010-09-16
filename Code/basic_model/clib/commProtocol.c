@@ -152,6 +152,26 @@ void buildAndCheckMessage(unsigned char characterIn) {
 }
 
 /**
+ * This function sets the proper UART2
+ * baud rate depending on the HIL mode.
+ * A mode value of 0 will set the baud
+ * rate back to the default 1200. A value
+ * of 1 will set it to 115200.
+ */
+void setHilMode(unsigned char mode) {
+	static oldMode = 0;
+	
+	// Detect a change to HIL
+	if (!oldMode && mode) {
+		changeUart2BaudRate(HILBRG);
+		oldMode = mode;
+	} else if (oldMode && !mode) {
+		changeUart2BaudRate(DEFAULT_BRG_REG);
+		oldMode = mode;
+	}
+}
+
+/**
  * This function calculates the checksum of some bytes in an
  * array by XORing all of them.
  */

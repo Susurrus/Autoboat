@@ -41,7 +41,7 @@ void initUart2() {
 	
 	// U2BRG Register
 	// ==============
-	U2BRG = 21;						// Set the baud rate to 115200 (used Lubin's UART config block to calculate this for me)
+	U2BRG = DEFAULT_BRG_REG;					// Set the baud rate to 1200 for GPS reception (used Lubin's UART config block to calculate this for me)
 
   	IPC7bits.U2TXIP = 6;    		// Interrupt priority 6  
   	IPC7bits.U2RXIP = 6;    		// Interrupt priority 6 
@@ -52,6 +52,18 @@ void initUart2() {
 	U2MODEbits.UARTEN	= 1;		// Enable the port	
 	U2STAbits.UTXEN		= 1;		// Enable TX
 	
+}
+
+void changeUart2BaudRate(unsigned short brgReg) {
+	
+	// Disable the port;
+	U2MODEbits.UARTEN = 0;
+	
+	// Change the BRG register to set the new baud rate
+	U2BRG = brgReg;
+	
+	// Enable the port;
+	U2MODEbits.UARTEN	= 1;
 }
 
 /**
@@ -101,7 +113,7 @@ void uart2EnqueueStateData(unsigned char *data) {
 	startUart2Transmission();
 }
 
-void __attribute__((__interrupt__, no_auto_psv_)) _U2RXInterrupt(void) {
+void __attribute__((__interrupt__, no_auto_psv)) _U2RXInterrupt(void) {
 
 	while (U2STAbits.URXDA == 1) {
 		writeBack(&uart2RxBuffer, (unsigned char)U2RXREG);
@@ -122,7 +134,7 @@ void __attribute__((__interrupt__, no_auto_psv_)) _U2RXInterrupt(void) {
  * therefore keeps adding bytes to transmit if there're more
  * in the queue.
  */
-void __attribute__((__interrupt__, no_auto_psv_)) _U2TXInterrupt(void) {
+void __attribute__((__interrupt__, no_auto_psv)) _U2TXInterrupt(void) {
 	IFS1bits.U2TXIF = 0;
 	startUart2Transmission();
 }
