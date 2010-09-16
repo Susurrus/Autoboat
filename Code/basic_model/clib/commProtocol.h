@@ -45,6 +45,10 @@ THE SOFTWARE.
 #ifndef _COMMPROTOCOL_H_
 #define _COMMPROTOCOL_H_
 
+// This is the value of the BRG to set the baud rate
+// to 115200 for running HIL.
+#define HILBRG 21
+
 // Definitions of unions useful in transmitting data serially
 typedef union{
 	unsigned char    chData[2];

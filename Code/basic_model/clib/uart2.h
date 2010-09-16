@@ -9,10 +9,13 @@
 
 #include "circBuffer.h"
 
+#define DEFAULT_BRG_REG 2082
+
 extern CircBuffer uart2RxBuffer;
 extern CircBuffer uart2TxBuffer;
 
 void initUart2();
+void changeUart2BaudRate(unsigned short brgReg);
 void startUart2Transmission();
 void uart2EnqueueActuatorData(unsigned char *data);
 void uart2EnqueueStateData(unsigned char *data);

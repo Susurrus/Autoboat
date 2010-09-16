@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.674"
+    ComputedModelVersion    "1.680"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Sep 16 12:48:57 2010"
-  RTWModifiedTimeStamp	  206542136
-  ModelVersionFormat	  "1.%<AutoIncrement:674>"
+  LastModifiedDate	  "Thu Sep 16 15:08:49 2010"
+  RTWModifiedTimeStamp	  206550528
+  ModelVersionFormat	  "1.%<AutoIncrement:680>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -1065,7 +1065,7 @@ Model {
   }
   System {
     Name		    "code_gen"
-    Location		    [206, 82, 1274, 953]
+    Location		    [202, 78, 1278, 974]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1079,7 +1079,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    6201
+    SIDHighWatermark	    6209
     Block {
       BlockType		      SubSystem
       Name		      "Blink LED D10 a 1Hz"
@@ -10727,7 +10727,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Sensor Inputs"
-	Location		[214, 82, 1282, 832]
+	Location		[202, 82, 1270, 978]
 	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -11206,6 +11206,108 @@ Model {
 	      SrcPort		      1
 	      Points		      [45, 0; 0, 30]
 	      DstBlock		      "Bus\nCreator"
+	      DstPort		      1
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "Change UART Baudrate"
+	  SID			  6206
+	  Ports			  [1, 0, 1]
+	  Position		  [585, 66, 690, 134]
+	  MinAlgLoopOccurrences	  off
+	  PropExecContextOutsideSubsystem off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  Opaque		  off
+	  RequestExecContextInheritance	off
+	  MaskHideContents	  off
+	  System {
+	    Name		    "Change UART Baudrate"
+	    Location		    [775, 530, 1160, 743]
+	    Open		    on
+	    ModelBrowserVisibility  on
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "HIL"
+	      SID		      6207
+	      Position		      [25, 108, 55, 122]
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      EnablePort
+	      Name		      "Enable"
+	      SID		      6208
+	      Ports		      []
+	      Position		      [125, 15, 145, 35]
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion"
+	      SID		      6209
+	      Position		      [95, 106, 145, 124]
+	      ShowName		      off
+	      OutDataType	      "fixdt(1, 16)"
+	      OutScaling	      "2^0"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Reconfigure UART2\nbaud rate\n[commProtocol.c]"
+	      SID		      6204
+	      Tag		      "dsPIC_dsPIC_CFunctionCall"
+	      Ports		      [1]
+	      Position		      [190, 91, 330, 139]
+	      BackgroundColor	      "orange"
+	      LibraryVersion	      "1.1096"
+	      List {
+		ListType		RTWdata
+		FctDeclaration		"extern void setHilMode(uint8_T u1);"
+		FctCall			"setHilMode(%u1);"
+		fctName			"setHilMode"
+		INPUT_SIZE		"1"
+		OUTPUT_SIZE		"1"
+		NBR_INPUT		"1"
+		NBR_OUTPUT		"0"
+	      }
+	      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+	      SourceType	      "C Function Call"
+	      fctName		      "'setHilMode'"
+	      INPUT_SIZE	      "1"
+	      INPUT1		      "uint8"
+	      INPUT2		      "--"
+	      INPUT3		      "--"
+	      OUTPUT_SIZE	      "1"
+	      OUTPUT1		      "--"
+	      SampleTime	      "T_step"
+	      InputType		      "[ 2 ]"
+	      OutputType	      "[ ]"
+	      FctDeclaration	      "extern void setHilMode(uint8_T u1);"
+	      FctCall		      "setHilMode(%u1);"
+	      OrderingInOutPopup      "None"
+	    }
+	    Line {
+	      SrcBlock		      "HIL"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion"
+	      SrcPort		      1
+	      DstBlock		      "Reconfigure UART2\nbaud rate\n[commProtocol.c]"
 	      DstPort		      1
 	    }
 	  }
@@ -11982,7 +12084,7 @@ Model {
 	  System {
 	    Name		    "Parse for HIL data"
 	    Location		    [202, 82, 1270, 978]
-	    Open		    on
+	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -12968,30 +13070,37 @@ Model {
 	  Branch {
 	    Points		    [0, 35]
 	    Branch {
-	      Points		      [0, 30]
-	      Branch {
-		DstBlock		"Atomic Subsystem"
-		DstPort			1
-	      }
-	      Branch {
-		DstBlock		"HIL"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[-105, 0]
-		Branch {
-		  DstBlock		  "Parse for HIL data"
-		  DstPort		  enable
-		}
-		Branch {
-		  DstBlock		  "Logical\nOperator"
-		  DstPort		  1
-		}
-	      }
-	    }
-	    Branch {
 	      DstBlock		      "Detect\nChange1"
 	      DstPort		      1
+	    }
+	    Branch {
+	      Points		      [0, 25]
+	      Branch {
+		Points			[0, 5]
+		Branch {
+		  DstBlock		  "Atomic Subsystem"
+		  DstPort		  1
+		}
+		Branch {
+		  DstBlock		  "HIL"
+		  DstPort		  1
+		}
+		Branch {
+		  Points		  [-105, 0]
+		  Branch {
+		    DstBlock		    "Parse for HIL data"
+		    DstPort		    enable
+		  }
+		  Branch {
+		    DstBlock		    "Logical\nOperator"
+		    DstPort		    1
+		  }
+		}
+	      }
+	      Branch {
+		DstBlock		"Change UART Baudrate"
+		DstPort			1
+	      }
 	    }
 	  }
 	}
@@ -13004,8 +13113,16 @@ Model {
 	Line {
 	  SrcBlock		  "Detect\nChange1"
 	  SrcPort		  1
-	  DstBlock		  "reset"
-	  DstPort		  1
+	  Points		  [10, 0]
+	  Branch {
+	    DstBlock		    "reset"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, -24]
+	    DstBlock		    "Change UART Baudrate"
+	    DstPort		    enable
+	  }
 	}
 	Line {
 	  SrcBlock		  "Logical\nOperator"
