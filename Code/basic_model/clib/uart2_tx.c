@@ -25,10 +25,12 @@ void __attribute__((__interrupt__, no_auto_psv_)) _U2TXInterrupt(void) {
  * attempts to start transmission with the first element
  * in the queue if transmission isn't already proceeding.
  * Once transmission starts the interrupt handler will
- * keep things moving from there.
+ * keep things moving from there. The buffer is checked
+ * for new data and the transmission buffer is checked that
+ * it has room for new data before attempting to transmit.
  */
 void startUart2Transmission() {
-	if (getLength(&uart2TxBuffer) > 0 ) {
+	if (getLength(&uart2TxBuffer) > 0 && !U2STAbits.UTXBF) {
 		U2TXREG = readFront(&uart2TxBuffer);
 	}
 }
@@ -46,6 +48,7 @@ void uart2EnqueueActuatorData(unsigned char *data) {
 	for (g = 0; g < 28;g++) {
 		writeBack(&uart2TxBuffer,data[g]);
 	}
+	startUart2Transmission();
 }
 
 /**
@@ -61,6 +64,7 @@ void uart2EnqueueStateData(unsigned char *data) {
 	for (g = 0; g < 29;g++) {
 		writeBack(&uart2TxBuffer,data[g]);
 	}
+	startUart2Transmission();
 }
 
 /**
