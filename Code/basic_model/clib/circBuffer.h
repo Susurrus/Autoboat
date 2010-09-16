@@ -39,7 +39,9 @@ THE SOFTWARE.
 #define _CIRCBUFFER_H_
 
 #define BSIZE 64
-#define NULL 0
+#ifndef NULL
+	#define NULL 0
+#endif
 
 #ifdef __cplusplus
        extern "C"{

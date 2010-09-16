@@ -43,6 +43,7 @@ THE SOFTWARE.
 // ==============================================================
 
 #include "gps.h"
+#include "uart2.h"
 
 tGpsData gpsControlData;
 char sentence[127];
@@ -120,6 +121,12 @@ void buildAndCheckSentence(unsigned char characterIn) {
 		// We clear all state variables here regardless of success.
 		sentenceIndex = 0;
 		sentenceState = 0;
+	}
+}
+
+void processNewGpsData(unsigned char* message) {
+	while (getLength(&uart2RxBuffer) > 0) {
+		buildAndCheckSentence(readFront(&uart2RxBuffer));
 	}
 }
 

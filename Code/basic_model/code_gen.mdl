@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.660"
+    ComputedModelVersion    "1.674"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Sep 16 11:45:11 2010"
-  RTWModifiedTimeStamp	  206538308
-  ModelVersionFormat	  "1.%<AutoIncrement:660>"
+  LastModifiedDate	  "Thu Sep 16 12:48:57 2010"
+  RTWModifiedTimeStamp	  206542136
+  ModelVersionFormat	  "1.%<AutoIncrement:674>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -1065,7 +1065,7 @@ Model {
   }
   System {
     Name		    "code_gen"
-    Location		    [281, 82, 1270, 961]
+    Location		    [206, 82, 1274, 953]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1079,7 +1079,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    6188
+    SIDHighWatermark	    6201
     Block {
       BlockType		      SubSystem
       Name		      "Blink LED D10 a 1Hz"
@@ -1502,7 +1502,7 @@ Model {
       System {
 	Name			"Controller"
 	Location		[206, 82, 1274, 970]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -10727,8 +10727,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Sensor Inputs"
-	Location		[206, 82, 1274, 970]
-	Open			off
+	Location		[214, 82, 1282, 832]
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -10745,7 +10745,7 @@ Model {
 	  Name			  "Atomic Subsystem"
 	  SID			  1567
 	  Ports			  [9, 4]
-	  Position		  [345, 116, 445, 254]
+	  Position		  [345, 171, 445, 309]
 	  ShowName		  off
 	  LibraryVersion	  "1.216"
 	  MinAlgLoopOccurrences	  off
@@ -11075,7 +11075,7 @@ Model {
 	  Name			  "Ballast\nSensors"
 	  SID			  192
 	  Ports			  [0, 1]
-	  Position		  [25, 304, 105, 336]
+	  Position		  [25, 359, 105, 391]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -11215,7 +11215,7 @@ Model {
 	  Name			  "Detect\nChange1"
 	  SID			  6181
 	  Ports			  [1, 1]
-	  Position		  [580, 76, 630, 94]
+	  Position		  [385, 66, 435, 84]
 	  ShowName		  off
 	  LibraryVersion	  "1.216"
 	  SourceBlock		  "simulink/Logic and Bit\nOperations/Detect\nChange"
@@ -11272,7 +11272,7 @@ Model {
 	  SID			  1814
 	  Tag			  "dsPIC_Digital_Output"
 	  Ports			  [1]
-	  Position		  [425, 35, 540, 75]
+	  Position		  [425, 20, 540, 60]
 	  ShowName		  off
 	  Priority		  "5"
 	  LibraryVersion	  "1.1096"
@@ -11287,8 +11287,8 @@ Model {
 	  BlockType		  SubSystem
 	  Name			  "GPS"
 	  SID			  208
-	  Ports			  [0, 1]
-	  Position		  [25, 98, 105, 132]
+	  Ports			  [0, 1, 1]
+	  Position		  [25, 168, 105, 202]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -11311,6 +11311,13 @@ Model {
 	    TiledPageScale	    1
 	    ShowPageBoundaries	    off
 	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      EnablePort
+	      Name		      "Enable"
+	      SID		      6199
+	      Ports		      []
+	      Position		      [235, 55, 255, 75]
+	    }
 	    Block {
 	      BlockType		      BusCreator
 	      Name		      "Bus\nCreator"
@@ -11733,10 +11740,45 @@ Model {
 	    }
 	    Block {
 	      BlockType		      Reference
-	      Name		      "Produce the GPS Main\nData and update the AP State\n(lat lon hei cog sog ddmmyy hhmmss)\n[gps.c]"
-	      SID		      630
+	      Name		      "Parse out new data since the last\ntimestep\n[gps.c]"
+	      SID		      6191
 	      Tag		      "dsPIC_dsPIC_CFunctionCall"
 	      Ports		      [0, 1]
+	      Position		      [220, 171, 360, 219]
+	      BackgroundColor	      "orange"
+	      LibraryVersion	      "1.1096"
+	      List {
+		ListType		RTWdata
+		FctDeclaration		"extern void processNewGpsData();"
+		FctCall			"processNewGpsData();"
+		fctName			"processNewGpsData"
+		INPUT_SIZE		"1"
+		OUTPUT_SIZE		"1"
+		NBR_INPUT		"0"
+		NBR_OUTPUT		"0"
+	      }
+	      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+	      SourceType	      "C Function Call"
+	      fctName		      "'processNewGpsData'"
+	      INPUT_SIZE	      "1"
+	      INPUT1		      "--"
+	      INPUT2		      "--"
+	      INPUT3		      "--"
+	      OUTPUT_SIZE	      "1"
+	      OUTPUT1		      "--"
+	      SampleTime	      ".01"
+	      InputType		      "[ ]"
+	      OutputType	      "[ ]"
+	      FctDeclaration	      "extern void processNewGpsData();"
+	      FctCall		      "processNewGpsData();"
+	      OrderingInOutPopup      "Output"
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Retrieve last GPS data\n[gps.c]"
+	      SID		      630
+	      Tag		      "dsPIC_dsPIC_CFunctionCall"
+	      Ports		      [1, 1]
 	      Position		      [220, 302, 360, 348]
 	      BackgroundColor	      "orange"
 	      LibraryVersion	      "1.1096"
@@ -11764,42 +11806,7 @@ Model {
 	      OutputType	      "[ 7 ]"
 	      FctDeclaration	      "extern void getGpsMainData(real32_T* y1);"
 	      FctCall		      "getGpsMainData(*%y1);"
-	      OrderingInOutPopup      "None"
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "Record UART2 input\nparsing for HIL data\n[uart2_rx.c]"
-	      SID		      4633
-	      Tag		      "dsPIC_dsPIC_CFunctionCall"
-	      Ports		      []
-	      Position		      [220, 472, 360, 518]
-	      BackgroundColor	      "orange"
-	      LibraryVersion	      "1.1096"
-	      List {
-		ListType		RTWdata
-		FctDeclaration		"extern void parseNewRxData();"
-		FctCall			"parseNewRxData();"
-		fctName			"parseNewRxData"
-		INPUT_SIZE		"1"
-		OUTPUT_SIZE		"7"
-		NBR_INPUT		"0"
-		NBR_OUTPUT		"0"
-	      }
-	      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
-	      SourceType	      "C Function Call"
-	      fctName		      "'parseNewRxData'"
-	      INPUT_SIZE	      "1"
-	      INPUT1		      "--"
-	      INPUT2		      "--"
-	      INPUT3		      "--"
-	      OUTPUT_SIZE	      "7"
-	      OUTPUT1		      "--"
-	      SampleTime	      ".01"
-	      InputType		      "[ ]"
-	      OutputType	      "[ ]"
-	      FctDeclaration	      "extern void parseNewRxData();"
-	      FctCall		      "parseNewRxData();"
-	      OrderingInOutPopup      "None"
+	      OrderingInOutPopup      "Input"
 	    }
 	    Block {
 	      BlockType		      Outport
@@ -11810,8 +11817,7 @@ Model {
 	      IconDisplay	      "Port number"
 	    }
 	    Line {
-	      SrcBlock		      "Produce the GPS Main\nData and update the AP State\n(lat lon hei cog sog ddmmyy hhmmss)\n[gps."
-	      "c]"
+	      SrcBlock		      "Retrieve last GPS data\n[gps.c]"
 	      SrcPort		      1
 	      DstBlock		      "Demux"
 	      DstPort		      1
@@ -11933,17 +11939,39 @@ Model {
 	      DstBlock		      "Bus\nCreator"
 	      DstPort		      11
 	    }
+	    Line {
+	      SrcBlock		      "Parse out new data since the last\ntimestep\n[gps.c]"
+	      SrcPort		      1
+	      Points		      [20, 0; 0, 95; -180, 0]
+	      DstBlock		      "Retrieve last GPS data\n[gps.c]"
+	      DstPort		      1
+	    }
 	    Annotation {
 	      Position		      [141, 405]
 	    }
 	  }
 	}
 	Block {
+	  BlockType		  Logic
+	  Name			  "Logical\nOperator"
+	  SID			  6200
+	  Ports			  [1, 1]
+	  Position		  [100, 97, 130, 113]
+	  BlockMirror		  on
+	  NamePlacement		  "alternate"
+	  ShowName		  off
+	  Operator		  "NOT"
+	  AllPortsSameDT	  off
+	  OutDataTypeMode	  "boolean"
+	  LogicDataType		  "fixdt(0, 8)"
+	  OutDataTypeStr	  "boolean"
+	}
+	Block {
 	  BlockType		  SubSystem
 	  Name			  "Parse for HIL data"
 	  SID			  1590
-	  Ports			  [0, 5]
-	  Position		  [185, 73, 265, 137]
+	  Ports			  [0, 5, 1]
+	  Position		  [185, 123, 265, 187]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -11953,8 +11981,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Parse for HIL data"
-	    Location		    [206, 82, 1274, 970]
-	    Open		    off
+	    Location		    [202, 82, 1270, 978]
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -11966,6 +11994,13 @@ Model {
 	    TiledPageScale	    1
 	    ShowPageBoundaries	    off
 	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      EnablePort
+	      Name		      "Enable"
+	      SID		      6189
+	      Ports		      []
+	      Position		      [260, 50, 280, 70]
+	    }
 	    Block {
 	      BlockType		      BusCreator
 	      Name		      "Bus\nCreator"
@@ -11995,6 +12030,76 @@ Model {
 	      ShowName		      off
 	      Inputs		      "11"
 	      DisplayOption	      "bar"
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Getter for actuator struct\n[commProtocol.c]"
+	      SID		      4631
+	      Tag		      "dsPIC_dsPIC_CFunctionCall"
+	      Ports		      [1, 1]
+	      Position		      [80, 367, 220, 413]
+	      BackgroundColor	      "orange"
+	      LibraryVersion	      "1.1096"
+	      List {
+		ListType		RTWdata
+		FctDeclaration		"extern void getSensorData(uint8_T* y1);"
+		FctCall			"getSensorData(*%y1);"
+		fctName			"getSensorData"
+		INPUT_SIZE		"1"
+		OUTPUT_SIZE		"38"
+		NBR_INPUT		"0"
+		NBR_OUTPUT		"1"
+	      }
+	      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+	      SourceType	      "C Function Call"
+	      fctName		      "'getSensorData'"
+	      INPUT_SIZE	      "1"
+	      INPUT1		      "--"
+	      INPUT2		      "--"
+	      INPUT3		      "--"
+	      OUTPUT_SIZE	      "38"
+	      OUTPUT1		      "uint8"
+	      SampleTime	      ".01"
+	      InputType		      "[ ]"
+	      OutputType	      "[ 2 ]"
+	      FctDeclaration	      "extern void getSensorData(uint8_T* y1);"
+	      FctCall		      "getSensorData(*%y1);"
+	      OrderingInOutPopup      "Input"
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Parse all new bytes\n[commProtocol.c]"
+	      SID		      6201
+	      Tag		      "dsPIC_dsPIC_CFunctionCall"
+	      Ports		      [0, 1]
+	      Position		      [80, 261, 220, 309]
+	      BackgroundColor	      "orange"
+	      LibraryVersion	      "1.1096"
+	      List {
+		ListType		RTWdata
+		FctDeclaration		"extern void processNewCommData();"
+		FctCall			"processNewCommData();"
+		fctName			"processNewCommData"
+		INPUT_SIZE		"1"
+		OUTPUT_SIZE		"1"
+		NBR_INPUT		"0"
+		NBR_OUTPUT		"0"
+	      }
+	      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+	      SourceType	      "C Function Call"
+	      fctName		      "'processNewCommData'"
+	      INPUT_SIZE	      "1"
+	      INPUT1		      "--"
+	      INPUT2		      "--"
+	      INPUT3		      "--"
+	      OUTPUT_SIZE	      "1"
+	      OUTPUT1		      "--"
+	      SampleTime	      ".01"
+	      InputType		      "[ ]"
+	      OutputType	      "[ ]"
+	      FctDeclaration	      "extern void processNewCommData();"
+	      FctCall		      "processNewCommData();"
+	      OrderingInOutPopup      "Output"
 	    }
 	    Block {
 	      BlockType		      Reference
@@ -12113,39 +12218,12 @@ Model {
 	      }
 	    }
 	    Block {
-	      BlockType		      Reference
-	      Name		      "getSensorData\n[commProtocol.c]"
-	      SID		      4631
-	      Tag		      "dsPIC_dsPIC_CFunctionCall"
-	      Ports		      [0, 1]
-	      Position		      [80, 367, 220, 413]
-	      BackgroundColor	      "orange"
-	      LibraryVersion	      "1.1096"
-	      List {
-		ListType		RTWdata
-		FctDeclaration		"extern void getSensorData(uint8_T* y1);"
-		FctCall			"getSensorData(*%y1);"
-		fctName			"getSensorData"
-		INPUT_SIZE		"1"
-		OUTPUT_SIZE		"38"
-		NBR_INPUT		"0"
-		NBR_OUTPUT		"1"
-	      }
-	      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
-	      SourceType	      "C Function Call"
-	      fctName		      "'getSensorData'"
-	      INPUT_SIZE	      "1"
-	      INPUT1		      "--"
-	      INPUT2		      "--"
-	      INPUT3		      "--"
-	      OUTPUT_SIZE	      "38"
-	      OUTPUT1		      "uint8"
-	      SampleTime	      ".01"
-	      InputType		      "[ ]"
-	      OutputType	      "[ 2 ]"
-	      FctDeclaration	      "extern void getSensorData(uint8_T* y1);"
-	      FctCall		      "getSensorData(*%y1);"
-	      OrderingInOutPopup      "None"
+	      BlockType		      Outport
+	      Name		      "timestamp"
+	      SID		      4620
+	      Position		      [785, 608, 815, 622]
+	      BackgroundColor	      "yellow"
+	      IconDisplay	      "Port number"
 	    }
 	    Block {
 	      BlockType		      Outport
@@ -12153,6 +12231,7 @@ Model {
 	      SID		      1801
 	      Position		      [785, 308, 815, 322]
 	      BackgroundColor	      "yellow"
+	      Port		      "2"
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
@@ -12161,7 +12240,7 @@ Model {
 	      SID		      1596
 	      Position		      [785, 158, 815, 172]
 	      BackgroundColor	      "yellow"
-	      Port		      "2"
+	      Port		      "3"
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
@@ -12170,7 +12249,7 @@ Model {
 	      SID		      1597
 	      Position		      [785, 483, 815, 497]
 	      BackgroundColor	      "yellow"
-	      Port		      "3"
+	      Port		      "4"
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
@@ -12178,15 +12257,6 @@ Model {
 	      Name		      "Ballast"
 	      SID		      1598
 	      Position		      [785, 558, 815, 572]
-	      BackgroundColor	      "yellow"
-	      Port		      "4"
-	      IconDisplay	      "Port number"
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "timestamp"
-	      SID		      4620
-	      Position		      [785, 608, 815, 622]
 	      BackgroundColor	      "yellow"
 	      Port		      "5"
 	      IconDisplay	      "Port number"
@@ -12352,7 +12422,7 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "getSensorData\n[commProtocol.c]"
+	      SrcBlock		      "Getter for actuator struct\n[commProtocol.c]"
 	      SrcPort		      1
 	      DstBlock		      "Unpack"
 	      DstPort		      1
@@ -12361,6 +12431,13 @@ Model {
 	      SrcBlock		      "Unpack"
 	      SrcPort		      19
 	      DstBlock		      "timestamp"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Parse all new bytes\n[commProtocol.c]"
+	      SrcPort		      1
+	      Points		      [0, 70; -160, 0]
+	      DstBlock		      "Getter for actuator struct\n[commProtocol.c]"
 	      DstPort		      1
 	    }
 	    Annotation {
@@ -12377,7 +12454,7 @@ Model {
 	  Name			  "Rudder\nSensors"
 	  SID			  189
 	  Ports			  [0, 1]
-	  Position		  [25, 234, 105, 266]
+	  Position		  [25, 289, 105, 321]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -12546,7 +12623,7 @@ Model {
 	  Name			  "Throttle\nSensors"
 	  SID			  216
 	  Ports			  [0, 1]
-	  Position		  [25, 154, 105, 186]
+	  Position		  [25, 224, 105, 256]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -12730,7 +12807,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "HIL"
 	  SID			  4519
-	  Position		  [470, 83, 500, 97]
+	  Position		  [470, 98, 500, 112]
 	  BackgroundColor	  "yellow"
 	  IconDisplay		  "Port number"
 	}
@@ -12738,7 +12815,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "sensors_GPS"
 	  SID			  4520
-	  Position		  [470, 128, 500, 142]
+	  Position		  [470, 183, 500, 197]
 	  BackgroundColor	  "yellow"
 	  Port			  "2"
 	  IconDisplay		  "Port number"
@@ -12747,7 +12824,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "sensors_t"
 	  SID			  4521
-	  Position		  [470, 163, 500, 177]
+	  Position		  [470, 218, 500, 232]
 	  BackgroundColor	  "yellow"
 	  Port			  "3"
 	  IconDisplay		  "Port number"
@@ -12756,7 +12833,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "sensors_r"
 	  SID			  4522
-	  Position		  [470, 198, 500, 212]
+	  Position		  [470, 253, 500, 267]
 	  BackgroundColor	  "yellow"
 	  Port			  "4"
 	  IconDisplay		  "Port number"
@@ -12765,7 +12842,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "sensors_b"
 	  SID			  4523
-	  Position		  [470, 233, 500, 247]
+	  Position		  [470, 288, 500, 302]
 	  BackgroundColor	  "yellow"
 	  Port			  "5"
 	  IconDisplay		  "Port number"
@@ -12774,7 +12851,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "timestamp"
 	  SID			  4621
-	  Position		  [540, 103, 570, 117]
+	  Position		  [470, 128, 500, 142]
 	  BackgroundColor	  "yellow"
 	  Port			  "6"
 	  IconDisplay		  "Port number"
@@ -12783,7 +12860,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "reset"
 	  SID			  6180
-	  Position		  [665, 78, 695, 92]
+	  Position		  [470, 68, 500, 82]
 	  BackgroundColor	  "yellow"
 	  Port			  "7"
 	  IconDisplay		  "Port number"
@@ -12799,14 +12876,13 @@ Model {
 	Line {
 	  SrcBlock		  "GPS"
 	  SrcPort		  1
-	  Points		  [20, 0; 0, 40]
+	  Points		  [20, 0; 0, 25]
 	  DstBlock		  "Atomic Subsystem"
 	  DstPort		  3
 	}
 	Line {
 	  SrcBlock		  "Throttle\nSensors"
 	  SrcPort		  1
-	  Points		  [165, 0; 0, 15]
 	  DstBlock		  "Atomic Subsystem"
 	  DstPort		  5
 	}
@@ -12819,29 +12895,29 @@ Model {
 	}
 	Line {
 	  SrcBlock		  "Parse for HIL data"
-	  SrcPort		  1
-	  Points		  [45, 0; 0, 55]
+	  SrcPort		  2
+	  Points		  [45, 0; 0, 50]
 	  DstBlock		  "Atomic Subsystem"
 	  DstPort		  2
 	}
 	Line {
 	  SrcBlock		  "Parse for HIL data"
-	  SrcPort		  2
-	  Points		  [35, 0; 0, 75]
+	  SrcPort		  3
+	  Points		  [35, 0; 0, 70]
 	  DstBlock		  "Atomic Subsystem"
 	  DstPort		  4
 	}
 	Line {
 	  SrcBlock		  "Parse for HIL data"
-	  SrcPort		  3
-	  Points		  [25, 0; 0, 95]
+	  SrcPort		  4
+	  Points		  [25, 0; 0, 90]
 	  DstBlock		  "Atomic Subsystem"
 	  DstPort		  6
 	}
 	Line {
 	  SrcBlock		  "Parse for HIL data"
-	  SrcPort		  4
-	  Points		  [15, 0; 0, 115]
+	  SrcPort		  5
+	  Points		  [15, 0; 0, 110]
 	  DstBlock		  "Atomic Subsystem"
 	  DstPort		  8
 	}
@@ -12871,8 +12947,7 @@ Model {
 	}
 	Line {
 	  SrcBlock		  "Parse for HIL data"
-	  SrcPort		  5
-	  Points		  [55, 0; 0, -15]
+	  SrcPort		  1
 	  DstBlock		  "timestamp"
 	  DstPort		  1
 	}
@@ -12885,15 +12960,15 @@ Model {
 	Line {
 	  SrcBlock		  "Toggle"
 	  SrcPort		  1
-	  Points		  [15, 0; 0, 15]
+	  Points		  [15, 0]
 	  Branch {
 	    DstBlock		    "Digital Output Write"
 	    DstPort		    1
 	  }
 	  Branch {
-	    Points		    [0, 30]
+	    Points		    [0, 35]
 	    Branch {
-	      Points		      [0, 5]
+	      Points		      [0, 30]
 	      Branch {
 		DstBlock		"Atomic Subsystem"
 		DstPort			1
@@ -12901,6 +12976,17 @@ Model {
 	      Branch {
 		DstBlock		"HIL"
 		DstPort			1
+	      }
+	      Branch {
+		Points			[-105, 0]
+		Branch {
+		  DstBlock		  "Parse for HIL data"
+		  DstPort		  enable
+		}
+		Branch {
+		  DstBlock		  "Logical\nOperator"
+		  DstPort		  1
+		}
 	      }
 	    }
 	    Branch {
@@ -12921,12 +13007,19 @@ Model {
 	  DstBlock		  "reset"
 	  DstPort		  1
 	}
+	Line {
+	  SrcBlock		  "Logical\nOperator"
+	  SrcPort		  1
+	  Points		  [-30, 0]
+	  DstBlock		  "GPS"
+	  DstPort		  enable
+	}
 	Annotation {
 	  Name			  "This subsystem handles all of the sensor input and pipes out relevant input. Data can come\nfrom either H"
 	  "IL input over the serial port (UART2) or from the actual sensors and is routed\naccording to the current HIL enable"
 	  " status. This is enabled via the transmission of 5 0x05 \ncharacters (inquiry characters in ASCII).\n\nThis status "
 	  "is also displayed via LED D4 on the board."
-	  Position		  [203, 314]
+	  Position		  [203, 369]
 	  HorizontalAlignment	  "left"
 	}
       }

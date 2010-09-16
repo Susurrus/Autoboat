@@ -135,6 +135,8 @@ typedef struct tCommandData {
  */
 void buildAndCheckMessage(unsigned char characterIn);
 
+void processNewCommData(unsigned char* message);
+
 /**
  * This function calculates the checksum of some bytes in an
  * array by XORing all of them.

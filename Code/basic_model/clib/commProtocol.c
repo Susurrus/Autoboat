@@ -44,6 +44,8 @@ THE SOFTWARE.
 
 #include "commProtocol.h"
 #include <string.h>
+#include "circBuffer.h"
+#include "uart2.h"
 
 // These are local declarations of each of the message structs.
 // They're populated with relevant data by buildAndcheckMessage().
@@ -162,6 +164,19 @@ unsigned char calculateChecksum(unsigned char* sentence, unsigned char size) {
     }
 	
     return checkSum;
+}
+
+/**
+ * This function should be called continously. Each timestep
+ * it runs through the most recently received data, parsing
+ * it for sensor data. Once a complete message has been parsed
+ * the data inside will be returned through the message
+ * array.
+ */
+void processNewCommData(unsigned char* message) {
+	while (getLength(&uart2RxBuffer) > 0) {
+		buildAndCheckMessage(readFront(&uart2RxBuffer));
+	}
 }
 
 void getSensorData(unsigned char* data) {

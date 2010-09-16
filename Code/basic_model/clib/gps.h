@@ -102,6 +102,12 @@ float degMinToDeg(unsigned char degrees, float minutes);
 void buildAndCheckSentence(unsigned char characterIn);
 
 /**
+ * Pull new bytes from the UART2 receive buffer and
+ * calls buildAndCheckSentence on each of them.
+ */
+void processNewGpsData(unsigned char* message);
+
+/**
  * Computes the checksum for a given GPS sentence.
  */
 unsigned char getChecksum(char* sentence, unsigned char size);
