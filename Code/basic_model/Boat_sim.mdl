@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.1468"
+    ComputedModelVersion    "1.1469"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,16 +26,16 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun Sep 19 13:52:52 2010"
-  RTWModifiedTimeStamp	  206805171
-  ModelVersionFormat	  "1.%<AutoIncrement:1468>"
+  LastModifiedDate	  "Sun Sep 19 14:05:34 2010"
+  RTWModifiedTimeStamp	  206805933
+  ModelVersionFormat	  "1.%<AutoIncrement:1469>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
   LibraryLinkDisplay	  "none"
   WideLines		  on
   ShowLineDimensions	  on
-  ShowPortDataTypes	  off
+  ShowPortDataTypes	  on
   ShowLoopsOnError	  on
   IgnoreBidirectionalLines off
   ShowStorageClass	  off
@@ -1088,8 +1088,8 @@ Model {
   }
   System {
     Name		    "Boat_sim"
-    Location		    [202, 82, 1253, 978]
-    Open		    on
+    Location		    [202, 78, 1261, 974]
+    Open		    off
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -1102,7 +1102,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "118"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    2151
+    SIDHighWatermark	    2154
     Block {
       BlockType		      SubSystem
       Name		      "Autonomous Controller"
@@ -5622,7 +5622,7 @@ Model {
       System {
 	Name			"HIL\nConfiguration1"
 	Location		[202, 82, 1270, 978]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -5642,14 +5642,37 @@ Model {
 	  Position		  [235, 20, 255, 40]
 	}
 	Block {
+	  BlockType		  DigitalClock
+	  Name			  "Digital Clock"
+	  SID			  2152
+	  Position		  [210, 173, 275, 197]
+	  SampleTime		  "-1"
+	}
+	Block {
 	  BlockType		  Display
 	  Name			  "Display"
 	  SID			  2146
 	  Ports			  [1]
-	  Position		  [300, 90, 390, 120]
+	  Position		  [520, 120, 610, 150]
 	  ShowName		  off
 	  Decimation		  "1"
 	  Lockdown		  off
+	}
+	Block {
+	  BlockType		  Product
+	  Name			  "Divide"
+	  SID			  2154
+	  Ports			  [2, 1]
+	  Position		  [460, 117, 490, 148]
+	  ShowName		  off
+	  Inputs		  "*/"
+	  InputSameDT		  off
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^-10"
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
 	}
 	Block {
 	  BlockType		  Reference
@@ -5664,13 +5687,35 @@ Model {
 	  SimulationPace	  "1"
 	  SleepMode		  "MATLAB Thread"
 	  OutputPaceError	  on
-	  SampleTime		  ".03"
+	  SampleTime		  ".1"
 	}
 	Line {
 	  SrcBlock		  "Simulation Pace"
 	  SrcPort		  1
+	  Points		  [155, 0; 0, 20]
+	  DstBlock		  "Divide"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Digital Clock"
+	  SrcPort		  1
+	  Points		  [155, 0; 0, -45]
+	  DstBlock		  "Divide"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Divide"
+	  SrcPort		  1
 	  DstBlock		  "Display"
 	  DstPort		  1
+	}
+	Annotation {
+	  Name			  "This block attempts to lock the simulation down to real-time. This does, however, require that the sim ru"
+	  "n faster than real time originally,\nthen the Set Pace block sleeps the MATLAB  process to fill up the time til it "
+	  "paces realtime. The number in the display block shouldn't be\nfar from 0 and will probably bounce around both above"
+	  " and below. If it stays substantially below zero (<-.01), then there's a problem as\nthe sim isn't keeping time."
+	  Position		  [320, 41]
+	  HorizontalAlignment	  "left"
 	}
       }
     }
@@ -5942,8 +5987,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"HIL Interface"
-	Location		[202, 82, 1270, 978]
-	Open			on
+	Location		[202, 78, 1278, 974]
+	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
