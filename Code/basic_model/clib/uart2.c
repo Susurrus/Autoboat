@@ -56,6 +56,8 @@ void initUart2() {
 
 void changeUart2BaudRate(unsigned short brgReg) {
 	
+	unsigned char utxen = U2STAbits.UTXEN;
+
 	// Disable the port;
 	U2MODEbits.UARTEN = 0;
 	
@@ -64,6 +66,7 @@ void changeUart2BaudRate(unsigned short brgReg) {
 	
 	// Enable the port;
 	U2MODEbits.UARTEN	= 1;
+	U2STAbits.UTXEN		= utxen;		// Restore TX
 }
 
 /**

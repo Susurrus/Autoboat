@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.681"
+    ComputedModelVersion    "1.691"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Sep 16 15:21:56 2010"
-  RTWModifiedTimeStamp	  206550528
-  ModelVersionFormat	  "1.%<AutoIncrement:681>"
+  LastModifiedDate	  "Sun Sep 19 12:00:16 2010"
+  RTWModifiedTimeStamp	  206798416
+  ModelVersionFormat	  "1.%<AutoIncrement:691>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -113,7 +113,7 @@ Model {
 	  StartTime		  "0.0"
 	  StopTime		  "10.0"
 	  AbsTol		  "auto"
-	  FixedStep		  "0.001"
+	  FixedStep		  "0.01"
 	  InitialStep		  "auto"
 	  MaxNumMinSteps	  "-1"
 	  MaxOrder		  5
@@ -673,7 +673,7 @@ Model {
       }
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=0 "
-      CurrentDlgPage	      "Real-Time Workshop/Custom Code"
+      CurrentDlgPage	      "Solver"
       ConfigPrmDlgPosition    " [ 104, 76, 1199, 937 ] "
     }
     PropName		    "ConfigurationSets"
@@ -1065,7 +1065,7 @@ Model {
   }
   System {
     Name		    "code_gen"
-    Location		    [202, 78, 1278, 974]
+    Location		    [202, 82, 1270, 961]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1079,7 +1079,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    6209
+    SIDHighWatermark	    6213
     Block {
       BlockType		      SubSystem
       Name		      "Blink LED D10 a 1Hz"
@@ -1501,7 +1501,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Controller"
-	Location		[206, 82, 1274, 970]
+	Location		[202, 82, 1270, 978]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -7184,29 +7184,8 @@ Model {
 		  Timer			  "[2  2  2]"
 		  ChangeDetected	  "[2  2  2]"
 		  ChangeDetectedPortRef	  "3"
-		  SampleTime		  ".1"
+		  SampleTime		  ".01"
 		  Status		  "OK"
-		}
-		Block {
-		  BlockType		  RateTransition
-		  Name			  "Rate Transition"
-		  SID			  1211
-		  Position		  [335, 29, 375, 71]
-		  ShowName		  off
-		}
-		Block {
-		  BlockType		  RateTransition
-		  Name			  "Rate Transition1"
-		  SID			  1212
-		  Position		  [335, 84, 375, 126]
-		  ShowName		  off
-		}
-		Block {
-		  BlockType		  RateTransition
-		  Name			  "Rate Transition2"
-		  SID			  1216
-		  Position		  [335, 139, 375, 181]
-		  ShowName		  off
 		}
 		Block {
 		  BlockType		  Terminator
@@ -7251,21 +7230,21 @@ Model {
 		Line {
 		  SrcBlock		  "Clear to Zero\nif Disconnect"
 		  SrcPort		  2
-		  DstBlock		  "Rate Transition1"
+		  DstBlock		  "Throttle"
 		  DstPort		  1
 		}
 		Line {
 		  SrcBlock		  "Clear to Zero\nif Disconnect"
 		  SrcPort		  1
 		  Points		  [15, 0; 0, -35]
-		  DstBlock		  "Rate Transition"
+		  DstBlock		  "Rudder"
 		  DstPort		  1
 		}
 		Line {
 		  SrcBlock		  "Clear to Zero\nif Disconnect"
 		  SrcPort		  3
 		  Points		  [15, 0; 0, 35]
-		  DstBlock		  "Rate Transition2"
+		  DstBlock		  "Compare\nTo Constant"
 		  DstPort		  1
 		}
 		Line {
@@ -7288,24 +7267,6 @@ Model {
 		  Points		  [80, 0]
 		  DstBlock		  "Clear to Zero\nif Disconnect"
 		  DstPort		  4
-		}
-		Line {
-		  SrcBlock		  "Rate Transition"
-		  SrcPort		  1
-		  DstBlock		  "Rudder"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Rate Transition1"
-		  SrcPort		  1
-		  DstBlock		  "Throttle"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Rate Transition2"
-		  SrcPort		  1
-		  DstBlock		  "Compare\nTo Constant"
-		  DstPort		  1
 		}
 		Line {
 		  SrcBlock		  "RC Input"
@@ -9554,8 +9515,8 @@ Model {
       Quartz_33f	      "8e6"
       PLLActive_33f	      on
       fcyDesired_33f	      "40000000"
-      tmr1		      "[1  39999  0]"
-      tmr1Info		      "Time Step : 0.001  ;   Error : 0%  PR1=39999"
+      tmr1		      "[8  49999  0]"
+      tmr1Info		      "Time Step : 0.01  ;   Error : 0%  PR1=49999"
       tmr2345		      "[8  0  0  0  0  0  0  0]"
       tmr2345cfg	      "[-1 -1 -1 -1 -1 -1 -1 -1]"
       IOautoConf	      on
@@ -10728,7 +10689,7 @@ Model {
       System {
 	Name			"Sensor Inputs"
 	Location		[202, 82, 1270, 978]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -13158,8 +13119,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Transmit actuator\ndata"
-	Location		[281, 82, 1270, 978]
-	Open			off
+	Location		[281, 78, 1278, 974]
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -14216,34 +14177,34 @@ Model {
 	Block {
 	  BlockType		  RateTransition
 	  Name			  "Rate Transition1"
-	  SID			  4531
-	  Position		  [125, 249, 155, 291]
+	  SID			  6210
+	  Position		  [125, 124, 155, 166]
 	  ShowName		  off
-	  OutPortSampleTime	  ".2"
+	  OutPortSampleTime	  ".04"
 	}
 	Block {
 	  BlockType		  RateTransition
 	  Name			  "Rate Transition2"
-	  SID			  4532
-	  Position		  [125, 183, 155, 227]
+	  SID			  6211
+	  Position		  [125, 184, 155, 226]
 	  ShowName		  off
-	  OutPortSampleTime	  ".2"
+	  OutPortSampleTime	  ".04"
 	}
 	Block {
 	  BlockType		  RateTransition
 	  Name			  "Rate Transition3"
-	  SID			  4530
-	  Position		  [125, 304, 155, 346]
+	  SID			  6212
+	  Position		  [125, 249, 155, 291]
 	  ShowName		  off
-	  OutPortSampleTime	  ".2"
+	  OutPortSampleTime	  ".04"
 	}
 	Block {
 	  BlockType		  RateTransition
 	  Name			  "Rate Transition4"
-	  SID			  4533
-	  Position		  [125, 124, 155, 166]
+	  SID			  6213
+	  Position		  [125, 304, 155, 346]
 	  ShowName		  off
-	  OutPortSampleTime	  ".2"
+	  OutPortSampleTime	  ".04"
 	}
 	Block {
 	  BlockType		  RateTransition
@@ -14251,18 +14212,18 @@ Model {
 	  SID			  4542
 	  Position		  [125, 59, 155, 101]
 	  ShowName		  off
-	  OutPortSampleTime	  ".2"
+	  OutPortSampleTime	  ".04"
 	}
 	Line {
 	  SrcBlock		  "rudder"
 	  SrcPort		  1
-	  DstBlock		  "Rate Transition4"
+	  DstBlock		  "Rate Transition1"
 	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "throttle"
 	  SrcPort		  1
-	  DstBlock		  "Rate Transition1"
+	  DstBlock		  "Rate Transition3"
 	  DstPort		  1
 	}
 	Line {
@@ -14274,11 +14235,11 @@ Model {
 	Line {
 	  SrcBlock		  "seconds"
 	  SrcPort		  1
-	  DstBlock		  "Rate Transition3"
+	  DstBlock		  "Rate Transition4"
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Rate Transition1"
+	  SrcBlock		  "Rate Transition3"
 	  SrcPort		  1
 	  DstBlock		  "Package and Transmit\nSensor Struct"
 	  DstPort		  3
@@ -14291,7 +14252,7 @@ Model {
 	  DstPort		  2
 	}
 	Line {
-	  SrcBlock		  "Rate Transition4"
+	  SrcBlock		  "Rate Transition1"
 	  SrcPort		  1
 	  Points		  [240, 0]
 	  DstBlock		  "Package and Transmit\nSensor Struct"
@@ -14311,7 +14272,7 @@ Model {
 	  DstPort		  enable
 	}
 	Line {
-	  SrcBlock		  "Rate Transition3"
+	  SrcBlock		  "Rate Transition4"
 	  SrcPort		  1
 	  Points		  [120, 0; 0, -20]
 	  DstBlock		  "Package and Transmit\nSensor Struct"
@@ -14876,7 +14837,7 @@ Stateflow {
       "(t_id,-16),hex2dec('FF')));\ny(12) = uint8(bitand(bitshift(t_id,-24),hex2dec('FF')));\ny(13:18) = t_data(1:6);\n"
       "y(19) = t_size;\ny(20) = uint8(t_trig);\ny(21) = uint8(bitand(time,hex2dec('FF')));\ny(22) = uint8(bitand(bitshi"
       "ft(time,-8),hex2dec('FF')));"
-      editorLayout	      "100 M4x1[108 328 828 514]"
+      editorLayout	      "100 M4x1[108 44 1288 1002]"
     }
   }
   junction {
@@ -16825,8 +16786,6 @@ Stateflow {
     viewObj		    118
     machine		    1
     toolbarMode		    LIBRARY_TOOLBAR
-    subviewS {
-    }
     ssIdHighWaterMark	    6
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
