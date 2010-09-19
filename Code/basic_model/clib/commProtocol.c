@@ -54,6 +54,8 @@ tActuatorData actuatorDataMessage;
 tStateData stateDataMessage;
 tCommandData commandDataMessage;
 
+unsigned long receivedMessageCount; // Keep track of how many messages were successfully received.
+
 /**
  * This function builds a full message internally byte-by-byte,
  * verifies its checksum, and then pushes that data into the
@@ -125,6 +127,7 @@ void buildAndCheckMessage(unsigned char characterIn) {
 		if (message[messageIndex] == calculateChecksum(&message[2], messageIndex-4)) {
 			// We now memcpy all the data into our global data structs.
 			// NOTE: message[3] is used to skip the header & message ID info
+			receivedMessageCount++;
 			switch (message[2]) {
 				case 1:
 					setSensorData(&message[3]);
@@ -159,7 +162,7 @@ void buildAndCheckMessage(unsigned char characterIn) {
  * of 1 will set it to 115200.
  */
 void setHilMode(unsigned char mode) {
-	static oldMode = 0;
+	static unsigned char oldMode = 0;
 	
 	// Detect a change to HIL
 	if (!oldMode && mode) {
