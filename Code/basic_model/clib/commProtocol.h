@@ -116,9 +116,9 @@ typedef struct tActuatorData {
 typedef struct tStateData {
 	tFloatToChar L2_Vector[3];
 	tFloatToChar desiredRudder;
-	tFloatToChar velocity[3];
-	tFloatToChar solar_azimuth;
-	tFloatToChar solar_zenith;
+	tFloatToChar actualRudder;
+	tFloatToChar desiredVelocity;
+	tFloatToChar actualVelocity[3];
 	unsigned char currentWaypointIndex;
 	unsigned char waypointMode;
 	unsigned char waypointCount;
