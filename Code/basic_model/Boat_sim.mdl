@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.1605"
+    ComputedModelVersion    "1.1617"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Sep 21 16:01:21 2010"
-  RTWModifiedTimeStamp	  206984447
-  ModelVersionFormat	  "1.%<AutoIncrement:1605>"
+  LastModifiedDate	  "Wed Sep 22 15:13:01 2010"
+  RTWModifiedTimeStamp	  207068750
+  ModelVersionFormat	  "1.%<AutoIncrement:1617>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -42,7 +42,7 @@ Model {
   ShowTestPointIcons	  on
   ShowSignalResolutionIcons on
   ShowViewerIcons	  on
-  SortedOrder		  off
+  SortedOrder		  on
   ExecutionContextIcon	  off
   ShowLinearizationAnnotations on
   BlockNameDataTip	  on
@@ -554,7 +554,7 @@ Model {
       }
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=0 "
-      CurrentDlgPage	      "Solver"
+      CurrentDlgPage	      "Diagnostics/Data Validity"
       ConfigPrmDlgPosition    " [ 97, 171, 1074, 801 ] "
     }
     PropName		    "ConfigurationSets"
@@ -700,33 +700,6 @@ Model {
     Block {
       BlockType		      DigitalClock
       SampleTime	      "1"
-    }
-    Block {
-      BlockType		      DiscreteIntegrator
-      IntegratorMethod	      "Integration: Forward Euler"
-      gainval		      "1.0"
-      ExternalReset	      "none"
-      InitialConditionSource  "internal"
-      InitialCondition	      "0"
-      InitialConditionMode    "State and output"
-      SampleTime	      "1"
-      OutMin		      "[]"
-      OutMax		      "[]"
-      OutDataTypeMode	      "Inherit via internal rule"
-      OutDataType	      "fixdt(1,16,0)"
-      OutScaling	      "[]"
-      OutDataTypeStr	      "Inherit: Inherit via internal rule"
-      LockScale		      off
-      RndMeth		      "Floor"
-      SaturateOnIntegerOverflow	off
-      LimitOutput	      off
-      UpperSaturationLimit    "inf"
-      LowerSaturationLimit    "-inf"
-      ShowSaturationPort      off
-      ShowStatePort	      off
-      IgnoreLimit	      off
-      StateMustResolveToSignalObject off
-      RTWStateStorageClass    "Auto"
     }
     Block {
       BlockType		      Display
@@ -1093,7 +1066,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "118"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    2341
+    SIDHighWatermark	    2358
     Block {
       BlockType		      BusSelector
       Name		      "Bus\nSelector"
@@ -10699,8 +10672,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Subsystem"
-	Location		[228, 106, 1242, 815]
-	Open			off
+	Location		[28, 106, 1096, 815]
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -10774,8 +10747,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Autonomous Controller"
-	    Location		    [202, 78, 1278, 974]
-	    Open		    off
+	    Location		    [202, 82, 1270, 978]
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -12454,8 +12427,8 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"State Keeper &\nEstimator"
-		Location		[202, 82, 1270, 961]
-		Open			off
+		Location		[202, 82, 1270, 978]
+		Open			on
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
 		ScreenColor		"white"
@@ -12685,11 +12658,30 @@ Model {
 		  OutDataTypeStr	  "int16"
 		}
 		Block {
+		  BlockType		  DataStoreMemory
+		  Name			  "Data Store\nMemory7"
+		  SID			  2346
+		  Position		  [320, 15, 397, 42]
+		  ShowName		  off
+		  DataStoreName		  "relativePosition"
+		  ReadBeforeWriteMsg	  "warning"
+		  WriteAfterWriteMsg	  "warning"
+		  WriteAfterReadMsg	  "warning"
+		  InitialValue		  "[0;0;0]"
+		  RTWStateStorageClass	  "Auto"
+		  VectorParams1D	  on
+		  DataType		  "single"
+		  OutDataType		  "fixdt(1, 16)"
+		  OutScaling		  "2^0"
+		  OutDataTypeStr	  "single"
+		}
+		Block {
 		  BlockType		  DataStoreRead
 		  Name			  "Data Store\nRead"
 		  SID			  2262
 		  Position		  [555, 65, 605, 95]
 		  ShowName		  off
+		  Priority		  "2"
 		  DataStoreName		  "velocity"
 		  SampleTime		  "T_step"
 		}
@@ -12699,6 +12691,7 @@ Model {
 		  SID			  2263
 		  Position		  [555, 95, 605, 125]
 		  ShowName		  off
+		  Priority		  "2"
 		  DataStoreName		  "heading"
 		  SampleTime		  "T_step"
 		}
@@ -12708,6 +12701,7 @@ Model {
 		  SID			  2264
 		  Position		  [555, 125, 605, 155]
 		  ShowName		  off
+		  Priority		  "2"
 		  DataStoreName		  "position"
 		  SampleTime		  "T_step"
 		}
@@ -12717,6 +12711,7 @@ Model {
 		  SID			  2265
 		  Position		  [555, 155, 605, 185]
 		  ShowName		  off
+		  Priority		  "2"
 		  DataStoreName		  "datetime"
 		  SampleTime		  "T_step"
 		}
@@ -12724,8 +12719,9 @@ Model {
 		  BlockType		  DataStoreRead
 		  Name			  "Data Store\nRead4"
 		  SID			  2280
-		  Position		  [625, 320, 675, 350]
+		  Position		  [625, 321, 670, 349]
 		  ShowName		  off
+		  Priority		  "2"
 		  DataStoreName		  "rudder"
 		  SampleTime		  "T_step"
 		  Port {
@@ -12737,10 +12733,21 @@ Model {
 		}
 		Block {
 		  BlockType		  DataStoreRead
+		  Name			  "Data Store\nRead5"
+		  SID			  2352
+		  Position		  [555, 185, 605, 215]
+		  ShowName		  off
+		  Priority		  "2"
+		  DataStoreName		  "relativePosition"
+		  SampleTime		  "T_step"
+		}
+		Block {
+		  BlockType		  DataStoreRead
 		  Name			  "Data Store\nRead6"
 		  SID			  2331
 		  Position		  [625, 575, 675, 605]
 		  ShowName		  off
+		  Priority		  "2"
 		  DataStoreName		  "throttle"
 		  SampleTime		  "T_step"
 		}
@@ -12750,6 +12757,7 @@ Model {
 		  SID			  2338
 		  Position		  [625, 475, 675, 505]
 		  ShowName		  off
+		  Priority		  "2"
 		  DataStoreName		  "ballast"
 		  SampleTime		  "T_step"
 		  Port {
@@ -12813,22 +12821,6 @@ Model {
 		  vinit			  "0"
 		}
 		Block {
-		  BlockType		  DiscreteIntegrator
-		  Name			  "Discrete-Time\nIntegrator"
-		  SID			  2238
-		  Ports			  [2, 1]
-		  Position		  [775, 356, 810, 389]
-		  ShowName		  off
-		  IntegratorMethod	  "Integration: Forward Euler"
-		  ExternalReset		  "level"
-		  InitialConditionSource  "internal"
-		  SampleTime		  "T_step"
-		  OutDataType		  "fixdt(1, 16)"
-		  OutScaling		  "2^0"
-		  ICPrevOutput		  "DiscIntNeverNeededParam"
-		  ICPrevScaledInput	  "DiscIntNeverNeededParam"
-		}
-		Block {
 		  BlockType		  If
 		  Name			  "If"
 		  SID			  2239
@@ -12844,8 +12836,9 @@ Model {
 		  Name			  "If Action\nSubsystem"
 		  SID			  2240
 		  Ports			  [0, 0, 0, 0, 0, 0, 0, 1]
-		  Position		  [400, 202, 470, 238]
+		  Position		  [390, 217, 460, 253]
 		  ShowName		  off
+		  Priority		  "1"
 		  LibraryVersion	  "1.216"
 		  TreatAsAtomicUnit	  on
 		  MinAlgLoopOccurrences	  off
@@ -12857,8 +12850,8 @@ Model {
 		  MaskHideContents	  off
 		  System {
 		    Name		    "If Action\nSubsystem"
-		    Location		    [342, 471, 840, 771]
-		    Open		    off
+		    Location		    [427, 485, 925, 785]
+		    Open		    on
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
 		    ScreenColor		    "white"
@@ -12884,9 +12877,10 @@ Model {
 		  Name			  "If Action\nSubsystem1"
 		  SID			  2244
 		  Ports			  [4, 0, 0, 0, 0, 0, 0, 1]
-		  Position		  [435, 58, 510, 117]
+		  Position		  [440, 62, 515, 123]
 		  NamePlacement		  "alternate"
 		  ShowName		  off
+		  Priority		  "1"
 		  LibraryVersion	  "1.216"
 		  TreatAsAtomicUnit	  on
 		  MinAlgLoopOccurrences	  off
@@ -12899,7 +12893,7 @@ Model {
 		  System {
 		    Name		    "If Action\nSubsystem1"
 		    Location		    [333, 558, 1097, 858]
-		    Open		    off
+		    Open		    on
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
 		    ScreenColor		    "white"
@@ -12958,6 +12952,30 @@ Model {
 		    ActionType		    "then"
 		    }
 		    Block {
+		    BlockType		    Sum
+		    Name		    "Add"
+		    SID			    2357
+		    Ports		    [2, 1]
+		    Position		    [220, 207, 250, 238]
+		    ShowName		    off
+		    InputSameDT		    off
+		    OutDataTypeMode	    "Inherit via internal rule"
+		    OutDataType		    "fixdt(1, 16)"
+		    OutScaling		    "2^-10"
+		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    DataStoreRead
+		    Name		    "Data Store\nRead5"
+		    SID			    2358
+		    Position		    [20, 215, 105, 245]
+		    ShowName		    off
+		    Priority		    "2"
+		    DataStoreName	    "relativePosition"
+		    SampleTime		    "-1"
+		    }
+		    Block {
 		    BlockType		    DataStoreWrite
 		    Name		    "Data Store\nWrite"
 		    SID			    2258
@@ -12993,11 +13011,28 @@ Model {
 		    DataStoreName	    "datetime"
 		    SampleTime		    "-1"
 		    }
+		    Block {
+		    BlockType		    DataStoreWrite
+		    Name		    "Data Store\nWrite4"
+		    SID			    2349
+		    Position		    [320, 209, 410, 241]
+		    ShowName		    off
+		    DataStoreName	    "relativePosition"
+		    SampleTime		    "-1"
+		    }
 		    Line {
 		    SrcBlock		    "In1"
 		    SrcPort		    1
+		    Points		    [45, 0]
+		    Branch {
 		    DstBlock		    "Data Store\nWrite"
 		    DstPort		    1
+		    }
+		    Branch {
+		    Points		    [0, 130]
+		    DstBlock		    "Add"
+		    DstPort		    1
+		    }
 		    }
 		    Line {
 		    SrcBlock		    "In2"
@@ -13017,6 +13052,18 @@ Model {
 		    DstBlock		    "Data Store\nWrite3"
 		    DstPort		    1
 		    }
+		    Line {
+		    SrcBlock		    "Add"
+		    SrcPort		    1
+		    DstBlock		    "Data Store\nWrite4"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Data Store\nRead5"
+		    SrcPort		    1
+		    DstBlock		    "Add"
+		    DstPort		    2
+		    }
 		  }
 		}
 		Block {
@@ -13026,6 +13073,7 @@ Model {
 		  Ports			  [0, 0, 0, 0, 0, 0, 0, 1]
 		  Position		  [400, 617, 470, 653]
 		  ShowName		  off
+		  Priority		  "1"
 		  LibraryVersion	  "1.216"
 		  TreatAsAtomicUnit	  on
 		  MinAlgLoopOccurrences	  off
@@ -13066,6 +13114,7 @@ Model {
 		  Ports			  [0, 0, 0, 0, 0, 0, 0, 1]
 		  Position		  [480, 607, 555, 633]
 		  ShowName		  off
+		  Priority		  "1"
 		  LibraryVersion	  "1.216"
 		  TreatAsAtomicUnit	  on
 		  MinAlgLoopOccurrences	  off
@@ -13135,6 +13184,7 @@ Model {
 		  Position		  [435, 272, 510, 298]
 		  NamePlacement		  "alternate"
 		  ShowName		  off
+		  Priority		  "1"
 		  LibraryVersion	  "1.216"
 		  TreatAsAtomicUnit	  on
 		  MinAlgLoopOccurrences	  off
@@ -13199,6 +13249,7 @@ Model {
 		  Ports			  [0, 0, 0, 0, 0, 0, 0, 1]
 		  Position		  [400, 362, 470, 398]
 		  ShowName		  off
+		  Priority		  "1"
 		  LibraryVersion	  "1.216"
 		  TreatAsAtomicUnit	  on
 		  MinAlgLoopOccurrences	  off
@@ -13239,6 +13290,7 @@ Model {
 		  Ports			  [0, 0, 0, 0, 0, 0, 0, 1]
 		  Position		  [475, 177, 545, 213]
 		  ShowName		  off
+		  Priority		  "1"
 		  LibraryVersion	  "1.216"
 		  TreatAsAtomicUnit	  on
 		  MinAlgLoopOccurrences	  off
@@ -13250,7 +13302,7 @@ Model {
 		  MaskHideContents	  off
 		  System {
 		    Name		    "If Action\nSubsystem4"
-		    Location		    [333, 558, 1097, 858]
+		    Location		    [202, 82, 1270, 978]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -13323,6 +13375,19 @@ Model {
 		    OutDataTypeStr	    "Inherit: Inherit via back propagation"
 		    }
 		    Block {
+		    BlockType		    Constant
+		    Name		    "Constant4"
+		    SID			    2353
+		    Position		    [90, 220, 120, 250]
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    Value		    "[0 0 0]"
+		    OutDataTypeMode	    "Inherit via back propagation"
+		    OutDataType		    "fixdt(1, 16)"
+		    OutScaling		    "2^0"
+		    OutDataTypeStr	    "Inherit: Inherit via back propagation"
+		    }
+		    Block {
 		    BlockType		    DataStoreWrite
 		    Name		    "Data Store\nWrite"
 		    SID			    2283
@@ -13358,6 +13423,15 @@ Model {
 		    DataStoreName	    "datetime"
 		    SampleTime		    "-1"
 		    }
+		    Block {
+		    BlockType		    DataStoreWrite
+		    Name		    "Data Store\nWrite4"
+		    SID			    2354
+		    Position		    [275, 221, 365, 249]
+		    ShowName		    off
+		    DataStoreName	    "relativePosition"
+		    SampleTime		    "-1"
+		    }
 		    Line {
 		    SrcBlock		    "Constant"
 		    SrcPort		    1
@@ -13382,6 +13456,12 @@ Model {
 		    DstBlock		    "Data Store\nWrite3"
 		    DstPort		    1
 		    }
+		    Line {
+		    SrcBlock		    "Constant4"
+		    SrcPort		    1
+		    DstBlock		    "Data Store\nWrite4"
+		    DstPort		    1
+		    }
 		  }
 		}
 		Block {
@@ -13391,6 +13471,7 @@ Model {
 		  Ports			  [0, 0, 0, 0, 0, 0, 0, 1]
 		  Position		  [480, 352, 555, 378]
 		  ShowName		  off
+		  Priority		  "1"
 		  LibraryVersion	  "1.216"
 		  TreatAsAtomicUnit	  on
 		  MinAlgLoopOccurrences	  off
@@ -13460,6 +13541,7 @@ Model {
 		  Position		  [440, 407, 515, 433]
 		  NamePlacement		  "alternate"
 		  ShowName		  off
+		  Priority		  "1"
 		  LibraryVersion	  "1.216"
 		  TreatAsAtomicUnit	  on
 		  MinAlgLoopOccurrences	  off
@@ -13524,6 +13606,7 @@ Model {
 		  Ports			  [0, 0, 0, 0, 0, 0, 0, 1]
 		  Position		  [400, 487, 470, 523]
 		  ShowName		  off
+		  Priority		  "1"
 		  LibraryVersion	  "1.216"
 		  TreatAsAtomicUnit	  on
 		  MinAlgLoopOccurrences	  off
@@ -13564,6 +13647,7 @@ Model {
 		  Ports			  [0, 0, 0, 0, 0, 0, 0, 1]
 		  Position		  [480, 477, 555, 503]
 		  ShowName		  off
+		  Priority		  "1"
 		  LibraryVersion	  "1.216"
 		  TreatAsAtomicUnit	  on
 		  MinAlgLoopOccurrences	  off
@@ -13633,6 +13717,7 @@ Model {
 		  Position		  [440, 537, 515, 563]
 		  NamePlacement		  "alternate"
 		  ShowName		  off
+		  Priority		  "1"
 		  LibraryVersion	  "1.216"
 		  TreatAsAtomicUnit	  on
 		  MinAlgLoopOccurrences	  off
@@ -13679,6 +13764,7 @@ Model {
 		    SID			    2322
 		    Position		    [320, 69, 375, 101]
 		    ShowName		    off
+		    Priority		    "1"
 		    DataStoreName	    "throttle"
 		    SampleTime		    "-1"
 		    }
@@ -14583,7 +14669,7 @@ Model {
 		  BlockType		  Outport
 		  Name			  "pos"
 		  SID			  2237
-		  Position		  [840, 368, 870, 382]
+		  Position		  [645, 193, 675, 207]
 		  BackgroundColor	  "yellow"
 		  Port			  "5"
 		  IconDisplay		  "Port number"
@@ -14690,16 +14776,8 @@ Model {
 		Line {
 		  SrcBlock		  "Data Store\nRead"
 		  SrcPort		  1
-		  Points		  [10, 0]
-		  Branch {
-		    DstBlock		    "velocity"
-		    DstPort		    1
-		  }
-		  Branch {
-		    Points		    [0, 190; 140, 0]
-		    DstBlock		    "Discrete-Time\nIntegrator"
-		    DstPort		    1
-		  }
+		  DstBlock		  "velocity"
+		  DstPort		  1
 		}
 		Line {
 		  SrcBlock		  "Data Store\nRead1"
@@ -14753,7 +14831,7 @@ Model {
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Discrete-Time\nIntegrator"
+		  SrcBlock		  "Data Store\nRead5"
 		  SrcPort		  1
 		  DstBlock		  "pos"
 		  DstPort		  1
@@ -14768,31 +14846,35 @@ Model {
 		Line {
 		  SrcBlock		  "If"
 		  SrcPort		  3
-		  Points		  [25, 0]
+		  Points		  [15, 0]
 		  DstBlock		  "If Action\nSubsystem"
 		  DstPort		  ifaction
 		}
 		Line {
 		  SrcBlock		  "Subsystem"
 		  SrcPort		  1
+		  Points		  [245, 0]
 		  DstBlock		  "If Action\nSubsystem1"
 		  DstPort		  1
 		}
 		Line {
 		  SrcBlock		  "Subsystem"
 		  SrcPort		  2
+		  Points		  [245, 0]
 		  DstBlock		  "If Action\nSubsystem1"
 		  DstPort		  2
 		}
 		Line {
 		  SrcBlock		  "Subsystem"
 		  SrcPort		  3
+		  Points		  [245, 0]
 		  DstBlock		  "If Action\nSubsystem1"
 		  DstPort		  3
 		}
 		Line {
 		  SrcBlock		  "Subsystem"
 		  SrcPort		  4
+		  Points		  [245, 0]
 		  DstBlock		  "If Action\nSubsystem1"
 		  DstPort		  4
 		}
@@ -14899,14 +14981,7 @@ Model {
 		    DstPort		    2
 		    }
 		    Branch {
-		    Points		    [0, -35]
-		    Branch {
-		    Points		    [455, 0; 0, -55]
-		    DstBlock		    "Discrete-Time\nIntegrator"
-		    DstPort		    2
-		    }
-		    Branch {
-		    Points		    [0, -90]
+		    Points		    [0, -125]
 		    Branch {
 		    DstBlock		    "If1"
 		    DstPort		    2
@@ -14915,7 +14990,6 @@ Model {
 		    Points		    [0, -175]
 		    DstBlock		    "If"
 		    DstPort		    2
-		    }
 		    }
 		    }
 		  }
