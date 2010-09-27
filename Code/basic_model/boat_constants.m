@@ -2,7 +2,7 @@
 
 % Initial conditions
 
-initial_LL = [36.80611 -121.79639];    % Initial latitude/longitude/altitude (radians)
+initial_LL = [36.80611 -121.79639];    % Initial latitude/longitude (degrees)
 phi_0 = 0;              % Initial heading (eastward positive from north)
 v_0 = 0;                % Initial speed
 T_step = 0.01;          % Simulation timestep
@@ -17,6 +17,8 @@ start_time = clock;
 OC2max = 49999; % Parameter used for calculating up-time & period for output compare 2.
 
 % Waypoint stuff
+% Waypoints are all defined within a local tangent plane in meters North,
+% East, Down.
 waypoints = [0 0 0;
              450 100 0;
              600 600 0;
