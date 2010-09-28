@@ -7,7 +7,7 @@
 %  2) Builds the model with the RTW Embedded Coder to generate a .hex file
 load_system('Boat_sim');
 load_system('code_gen');
-replace_block('code_gen', 'Name', 'Autonomous Controller', 'boat_sim/Autonomous Controller', 'noprompt');
+replace_block('code_gen', 'Name', 'Autonomous Controller', 'boat_sim/Subsystem/Autonomous Controller', 'noprompt');
 save_system('code_gen');
 save_system('boat_sim');
 close_system('code_gen');
