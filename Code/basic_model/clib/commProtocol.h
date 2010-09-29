@@ -96,6 +96,7 @@ typedef struct tSensorData {
 	tUnsignedShortToChar b_Position;
 	unsigned char b_SBLimit;
 	unsigned char b_PortLimit;
+	unsigned char newData;
 	tShortToChar timestamp;
 } tSensorData;
 
@@ -117,7 +118,7 @@ typedef struct tStateData {
 	tFloatToChar L2_Vector[3];
 	tFloatToChar desiredRudder;
 	tFloatToChar actualRudder;
-	tFloatToChar desiredVelocity;
+	tFloatToChar desiredVelocity[3];
 	tFloatToChar actualVelocity[3];
 	unsigned char currentWaypointIndex;
 	unsigned char waypointMode;

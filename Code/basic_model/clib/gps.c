@@ -175,6 +175,7 @@ void getGpsMainData(float* data) {
 	
 	data[5] = (float)gpsControlData.cog.usData;
 	data[6] = (float)gpsControlData.sog.usData/100.0;
+	data[7] = (float)gpsControlData.newData;
 	
 	// Mark this data as old now
 	gpsControlData.newData = 0;
