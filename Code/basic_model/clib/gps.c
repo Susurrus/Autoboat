@@ -124,7 +124,7 @@ void buildAndCheckSentence(unsigned char characterIn) {
 	}
 }
 
-void processNewGpsData(unsigned char* message) {
+void processNewGpsData() {
 	while (getLength(&uart2RxBuffer) > 0) {
 		buildAndCheckSentence(readFront(&uart2RxBuffer));
 	}
