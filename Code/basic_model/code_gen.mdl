@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.722"
+    ComputedModelVersion    "1.723"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Oct 04 16:08:17 2010"
-  RTWModifiedTimeStamp	  208108839
-  ModelVersionFormat	  "1.%<AutoIncrement:722>"
+  LastModifiedDate	  "Mon Oct 04 16:11:55 2010"
+  RTWModifiedTimeStamp	  208109515
+  ModelVersionFormat	  "1.%<AutoIncrement:723>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -1539,7 +1539,7 @@ Model {
       System {
 	Name			"Controller"
 	Location		[228, 106, 1242, 815]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1807,7 +1807,7 @@ Model {
 	  System {
 	    Name		    "Autonomous Controller"
 	    Location		    [90, 82, 1158, 832]
-	    Open		    off
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -6511,7 +6511,7 @@ Model {
 	      System {
 		Name			"Throttle\nCommand"
 		Location		[228, 106, 1242, 815]
-		Open			off
+		Open			on
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
 		ScreenColor		"white"
@@ -6592,8 +6592,8 @@ Model {
 		  }
 		  System {
 		    Name		    "Mux Everything"
-		    Location		    [145, 57, 1159, 766]
-		    Open		    off
+		    Location		    [145, 82, 1159, 791]
+		    Open		    on
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
 		    ScreenColor		    "white"
@@ -6687,8 +6687,8 @@ Model {
 		    MaskHideContents	    off
 		    System {
 		    Name		    "Build speed command"
-		    Location		    [24, 65, 894, 455]
-		    Open		    off
+		    Location		    [252, 502, 1122, 892]
+		    Open		    on
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
 		    ScreenColor		    "white"
@@ -6772,15 +6772,69 @@ Model {
 		    DisplayOption	    "bar"
 		    }
 		    Block {
-		    BlockType		    Reference
+		    BlockType		    SubSystem
 		    Name		    "uint16 to uchar"
 		    SID			    6436
 		    Ports		    [1, 1]
 		    Position		    [215, 84, 275, 106]
 		    ShowName		    off
-		    LibraryVersion	    "1.47"
-		    SourceBlock		    "microSimulink/Conversions/uint16 to uchar"
-		    SourceType		    "SubSystem"
+		    AncestorBlock	    "microSimulink/Conversions/uint16 to uchar"
+		    LibraryVersion	    "*1.47"
+		    MinAlgLoopOccurrences   off
+		    PropExecContextOutsideSubsystem off
+		    RTWSystemCode	    "Auto"
+		    FunctionWithSeparateData off
+		    Opaque		    off
+		    RequestExecContextInheritance off
+		    MaskHideContents	    off
+		    System {
+		    Name		    "uint16 to uchar"
+		    Location		    [495, 717, 968, 922]
+		    Open		    on
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    SIDHighWatermark	    140
+		    SIDPrevWatermark	    138
+		    Block {
+		    BlockType		    Inport
+		    Name		    "ushort"
+		    SID			    124
+		    Position		    [25, 48, 55, 62]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    DataTypeConversion
+		    Name		    "Data Type Conversion"
+		    SID			    138
+		    Position		    [75, 39, 135, 71]
+		    ShowName		    off
+		    OutDataTypeMode	    "uint16"
+		    OutDataType		    "fixdt(1, 16)"
+		    OutScaling		    "2^0"
+		    OutDataTypeStr	    "uint16"
+		    ConvertRealWorld	    "Stored Integer (SI)"
+		    RndMeth		    "Simplest"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Reference
+		    Name		    "Extract Bits1"
+		    SID			    140
+		    Ports		    [1, 1]
+		    Position		    [160, 62, 240, 88]
+		    ShowName		    off
+		    LibraryVersion	    "1.216"
+		    SourceBlock		    "simulink/Logic and Bit\nOperations/Extract Bits"
+		    SourceType		    "Extract Bits"
 		    ShowPortLabels	    "FromPortIcon"
 		    SystemSampleTime	    "-1"
 		    FunctionWithSeparateData off
@@ -6789,6 +6843,94 @@ Model {
 		    RTWMemSecDataConstants  "Inherit from model"
 		    RTWMemSecDataInternal   "Inherit from model"
 		    RTWMemSecDataParameters "Inherit from model"
+		    bitsToExtract	    "Lower half"
+		    numBits		    "8"
+		    bitIdxRange		    "[0 7]"
+		    outScalingMode	    "Treat bit field as an integer"
+		    }
+		    Block {
+		    BlockType		    Reference
+		    Name		    "Extract Bits2"
+		    SID			    139
+		    Ports		    [1, 1]
+		    Position		    [160, 27, 240, 53]
+		    ShowName		    off
+		    LibraryVersion	    "1.216"
+		    SourceBlock		    "simulink/Logic and Bit\nOperations/Extract Bits"
+		    SourceType		    "Extract Bits"
+		    ShowPortLabels	    "FromPortIcon"
+		    SystemSampleTime	    "-1"
+		    FunctionWithSeparateData off
+		    RTWMemSecFuncInitTerm   "Inherit from model"
+		    RTWMemSecFuncExecute    "Inherit from model"
+		    RTWMemSecDataConstants  "Inherit from model"
+		    RTWMemSecDataInternal   "Inherit from model"
+		    RTWMemSecDataParameters "Inherit from model"
+		    bitsToExtract	    "Upper half"
+		    numBits		    "8"
+		    bitIdxRange		    "[0 7]"
+		    outScalingMode	    "Treat bit field as an integer"
+		    }
+		    Block {
+		    BlockType		    Mux
+		    Name		    "Mux"
+		    SID			    127
+		    Ports		    [2, 1]
+		    Position		    [270, 23, 275, 87]
+		    ShowName		    off
+		    Inputs		    "2"
+		    DisplayOption	    "bar"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "uchar"
+		    SID			    128
+		    Position		    [305, 48, 335, 62]
+		    IconDisplay		    "Port number"
+		    OutDataType		    "fixdt(1, 16)"
+		    OutScaling		    "2^0"
+		    }
+		    Line {
+		    SrcBlock		    "Data Type Conversion"
+		    SrcPort		    1
+		    Points		    [0, 0]
+		    Branch {
+		    Points		    [0, 20]
+		    DstBlock		    "Extract Bits1"
+		    DstPort		    1
+		    }
+		    Branch {
+		    Points		    [0, -15]
+		    DstBlock		    "Extract Bits2"
+		    DstPort		    1
+		    }
+		    }
+		    Line {
+		    SrcBlock		    "ushort"
+		    SrcPort		    1
+		    DstBlock		    "Data Type Conversion"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Extract Bits2"
+		    SrcPort		    1
+		    DstBlock		    "Mux"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Extract Bits1"
+		    SrcPort		    1
+		    Points		    [0, -5]
+		    DstBlock		    "Mux"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "Mux"
+		    SrcPort		    1
+		    DstBlock		    "uchar"
+		    DstPort		    1
+		    }
+		    }
 		    }
 		    Block {
 		    BlockType		    Outport
@@ -8036,7 +8178,7 @@ Model {
 	  System {
 	    Name		    "RC Inputs"
 	    Location		    [202, 82, 1270, 978]
-	    Open		    on
+	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
