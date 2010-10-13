@@ -50,34 +50,34 @@ THE SOFTWARE.
 #define HILBRG 21
 
 // Definitions of unions useful in transmitting data serially
-typedef union{
+typedef union {
 	unsigned char    chData[2];
 	unsigned short   usData;
 } tUnsignedShortToChar; 
 
-typedef union{
+typedef union {
 	unsigned char    chData[2];
  	short   		 shData;
 } tShortToChar; 
 
-typedef union{
+typedef union {
 	unsigned char   chData[4];
  	unsigned int   	uiData;
 } tUnsignedIntToChar; 
 
-typedef union{
+typedef union {
 	unsigned char   chData[4];
  	int   			inData;
 } tIntToChar; 
 
-typedef union{
+typedef union {
 	unsigned char   chData[4];
  	float   		flData;
 	unsigned short	shData[2];
 } tFloatToChar;
 
 // Declaration of the relevant message structs used.
-typedef struct tSensorData {
+typedef struct {
 	tShortToChar speed;
 	tFloatToChar lat;
 	tFloatToChar lon;
@@ -90,6 +90,7 @@ typedef struct tSensorData {
 	unsigned char second;
 	tFloatToChar cog;
 	tFloatToChar sog;
+	unsigned char newGpsData;
 	tUnsignedShortToChar r_Position;
 	unsigned char r_SBLimit;
 	unsigned char r_PortLimit;
@@ -100,7 +101,7 @@ typedef struct tSensorData {
 	tShortToChar timestamp;
 } tSensorData;
 
-typedef struct tActuatorData {
+typedef struct {
 	unsigned char r_enable;
 	unsigned char r_direction;
 	tUnsignedShortToChar r_up;
@@ -114,7 +115,7 @@ typedef struct tActuatorData {
 	tShortToChar timestamp;
 } tActuatorData;
 
-typedef struct tStateData {
+typedef struct {
 	tFloatToChar L2_Vector[3];
 	tFloatToChar desiredRudder;
 	tFloatToChar actualRudder;
@@ -125,7 +126,7 @@ typedef struct tStateData {
 	unsigned char waypointCount;
 } tStateData;
 
-typedef struct tCommandData {
+typedef struct {
 	unsigned char runMode; // 0 for stop, 1 for run, 2 for return-to-base, 3 for manual RC control)
 	unsigned char HILEnable; // 0 to enable normal running, 1 for HIL running)
 	unsigned char waypointMode; // Sets the waypoint navigation modes.

@@ -231,7 +231,7 @@ void getSensorData(unsigned char* data) {
 	data[25] = sensorDataMessage.sog.chData[1];
 	data[26] = sensorDataMessage.sog.chData[2];
 	data[27] = sensorDataMessage.sog.chData[3];
-	data[28] = sensorDataMessage.newData;
+	data[28] = sensorDataMessage.newGpsData;
 	data[29] = sensorDataMessage.r_Position.chData[0];
 	data[30] = sensorDataMessage.r_Position.chData[1];
 	data[31] = sensorDataMessage.r_SBLimit;
@@ -242,6 +242,7 @@ void getSensorData(unsigned char* data) {
 	data[36] = sensorDataMessage.b_PortLimit;
 	data[37] = sensorDataMessage.timestamp.chData[0];
 	data[38] = sensorDataMessage.timestamp.chData[1];
+	data[39] = sensorDataMessage.newData;
 	sensorDataMessage.newData = 0;
 }
 
@@ -274,16 +275,17 @@ void setSensorData(unsigned char* data) {
 	sensorDataMessage.sog.chData[1] = data[25];
 	sensorDataMessage.sog.chData[2] = data[26];
 	sensorDataMessage.sog.chData[3] = data[27];
-	sensorDataMessage.r_Position.chData[0] = data[28];
-	sensorDataMessage.r_Position.chData[1] = data[29];
-	sensorDataMessage.r_SBLimit = data[30];
-	sensorDataMessage.r_PortLimit = data[31];
-	sensorDataMessage.b_Position.chData[0] = data[32];
-	sensorDataMessage.b_Position.chData[1] = data[33];
-	sensorDataMessage.b_SBLimit = data[34];
-	sensorDataMessage.b_PortLimit = data[35];
-	sensorDataMessage.timestamp.chData[0] = data[36];
-	sensorDataMessage.timestamp.chData[1] = data[37];
+	sensorDataMessage.newGpsData = data[28];
+	sensorDataMessage.r_Position.chData[0] = data[29];
+	sensorDataMessage.r_Position.chData[1] = data[30];
+	sensorDataMessage.r_SBLimit = data[31];
+	sensorDataMessage.r_PortLimit = data[32];
+	sensorDataMessage.b_Position.chData[0] = data[33];
+	sensorDataMessage.b_Position.chData[1] = data[34];
+	sensorDataMessage.b_SBLimit = data[35];
+	sensorDataMessage.b_PortLimit = data[36];
+	sensorDataMessage.timestamp.chData[0] = data[37];
+	sensorDataMessage.timestamp.chData[1] = data[38];
 	sensorDataMessage.newData = 1;
 }
 
