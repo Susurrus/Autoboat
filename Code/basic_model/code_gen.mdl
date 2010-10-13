@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.798"
+    ComputedModelVersion    "1.801"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Oct 12 17:56:27 2010"
-  RTWModifiedTimeStamp	  208806986
-  ModelVersionFormat	  "1.%<AutoIncrement:798>"
+  LastModifiedDate	  "Wed Oct 13 09:21:35 2010"
+  RTWModifiedTimeStamp	  208862493
+  ModelVersionFormat	  "1.%<AutoIncrement:801>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -1125,7 +1125,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    7175
+    SIDHighWatermark	    7178
     Block {
       BlockType		      SubSystem
       Name		      "Blink LED D10 a 1Hz"
@@ -12467,7 +12467,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Rudder\nOutputs"
-	Location		[202, 82, 1270, 978]
+	Location		[411, 491, 1194, 881]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -14964,7 +14964,7 @@ Model {
 	  Name			  "Hold in reset\non init"
 	  SID			  7065
 	  Ports			  [1, 1]
-	  Position		  [680, 134, 715, 166]
+	  Position		  [665, 162, 715, 188]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -15106,11 +15106,11 @@ Model {
 	  BlockType		  Logic
 	  Name			  "Logical\nOperator1"
 	  SID			  6765
-	  Ports			  [3, 1]
-	  Position		  [755, 49, 785, 81]
+	  Ports			  [4, 1]
+	  Position		  [760, 59, 790, 91]
 	  ShowName		  off
 	  Operator		  "OR"
-	  Inputs		  "3"
+	  Inputs		  "4"
 	  AllPortsSameDT	  off
 	  OutDataTypeMode	  "boolean"
 	  LogicDataType		  "fixdt(0, 8)"
@@ -15120,7 +15120,7 @@ Model {
 	  BlockType		  SubSystem
 	  Name			  "Parse for HIL data"
 	  SID			  1590
-	  Ports			  [0, 5, 1]
+	  Ports			  [0, 6, 1]
 	  Position		  [185, 123, 265, 187]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
@@ -15180,6 +15180,34 @@ Model {
 	      ShowName		      off
 	      Inputs		      "12"
 	      DisplayOption	      "bar"
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant"
+	      SID		      7177
+	      Position		      [495, 708, 525, 722]
+	      BackgroundColor	      "gray"
+	      ShowName		      off
+	      OutDataType	      "fixdt(1, 16)"
+	      OutScaling	      "2^0"
+	    }
+	    Block {
+	      BlockType		      DiscreteIntegrator
+	      Name		      "Discrete-Time\nIntegrator"
+	      SID		      7176
+	      Ports		      [2, 1]
+	      Position		      [575, 706, 610, 739]
+	      IntegratorMethod	      "Integration: Forward Euler"
+	      ExternalReset	      "level"
+	      InitialConditionSource  "internal"
+	      SampleTime	      "T_step"
+	      OutDataType	      "fixdt(1, 16)"
+	      OutScaling	      "2^0"
+	      LimitOutput	      on
+	      UpperSaturationLimit    "20"
+	      LowerSaturationLimit    "0"
+	      ICPrevOutput	      "DiscIntNeverNeededParam"
+	      ICPrevScaledInput	      "DiscIntNeverNeededParam"
 	    }
 	    Block {
 	      BlockType		      Reference
@@ -15375,7 +15403,7 @@ Model {
 	    }
 	    Block {
 	      BlockType		      Outport
-	      Name		      "timestamp"
+	      Name		      "Timestamp"
 	      SID		      4620
 	      Position		      [785, 633, 815, 647]
 	      BackgroundColor	      "yellow"
@@ -15385,7 +15413,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "GPS"
 	      SID		      1801
-	      Position		      [785, 318, 815, 332]
+	      Position		      [785, 323, 815, 337]
 	      BackgroundColor	      "yellow"
 	      Port		      "2"
 	      IconDisplay	      "Port number"
@@ -15415,6 +15443,15 @@ Model {
 	      Position		      [785, 583, 815, 597]
 	      BackgroundColor	      "yellow"
 	      Port		      "5"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "Discon"
+	      SID		      7178
+	      Position		      [665, 718, 695, 732]
+	      BackgroundColor	      "yellow"
+	      Port		      "6"
 	      IconDisplay	      "Port number"
 	    }
 	    Line {
@@ -15547,8 +15584,16 @@ Model {
 	      Labels		      [0, 0]
 	      SrcBlock		      "Unpack"
 	      SrcPort		      13
-	      DstBlock		      "Bus\nCreator2"
-	      DstPort		      12
+	      Points		      [90, 0]
+	      Branch {
+		DstBlock		"Bus\nCreator2"
+		DstPort			12
+	      }
+	      Branch {
+		Points			[0, 265]
+		DstBlock		"Discrete-Time\nIntegrator"
+		DstPort			2
+	      }
 	    }
 	    Line {
 	      Name		      "position"
@@ -15601,7 +15646,19 @@ Model {
 	    Line {
 	      SrcBlock		      "Unpack"
 	      SrcPort		      20
-	      DstBlock		      "timestamp"
+	      DstBlock		      "Timestamp"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Constant"
+	      SrcPort		      1
+	      DstBlock		      "Discrete-Time\nIntegrator"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Discrete-Time\nIntegrator"
+	      SrcPort		      1
+	      DstBlock		      "Discon"
 	      DstPort		      1
 	    }
 	    Annotation {
@@ -16035,7 +16092,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "reset"
 	  SID			  6180
-	  Position		  [825, 63, 855, 77]
+	  Position		  [835, 58, 865, 72]
 	  BackgroundColor	  "yellow"
 	  Port			  "7"
 	  IconDisplay		  "Port number"
@@ -16071,28 +16128,28 @@ Model {
 	Line {
 	  SrcBlock		  "Parse for HIL data"
 	  SrcPort		  2
-	  Points		  [45, 0; 0, 50]
+	  Points		  [45, 0; 0, 55]
 	  DstBlock		  "Atomic Subsystem"
 	  DstPort		  2
 	}
 	Line {
 	  SrcBlock		  "Parse for HIL data"
 	  SrcPort		  3
-	  Points		  [35, 0; 0, 70]
+	  Points		  [35, 0; 0, 75]
 	  DstBlock		  "Atomic Subsystem"
 	  DstPort		  4
 	}
 	Line {
 	  SrcBlock		  "Parse for HIL data"
 	  SrcPort		  4
-	  Points		  [25, 0; 0, 90]
+	  Points		  [25, 0; 0, 95]
 	  DstBlock		  "Atomic Subsystem"
 	  DstPort		  6
 	}
 	Line {
 	  SrcBlock		  "Parse for HIL data"
 	  SrcPort		  5
-	  Points		  [15, 0; 0, 110]
+	  Points		  [15, 0; 0, 115]
 	  DstBlock		  "Atomic Subsystem"
 	  DstPort		  8
 	}
@@ -16123,7 +16180,7 @@ Model {
 	    DstPort		    1
 	  }
 	  Branch {
-	    Points		    [0, -40]
+	    Points		    [0, -15]
 	    DstBlock		    "Hold in reset\non init"
 	    DstPort		    1
 	  }
@@ -16131,6 +16188,7 @@ Model {
 	Line {
 	  SrcBlock		  "Parse for HIL data"
 	  SrcPort		  1
+	  Points		  [0, 5]
 	  DstBlock		  "timestamp"
 	  DstPort		  1
 	}
@@ -16201,9 +16259,9 @@ Model {
 	    DstPort		    enable
 	  }
 	  Branch {
-	    Points		    [165, 0]
+	    Points		    [155, 0; 0, 10]
 	    DstBlock		    "Logical\nOperator1"
-	    DstPort		    2
+	    DstPort		    1
 	  }
 	}
 	Line {
@@ -16216,23 +16274,30 @@ Model {
 	Line {
 	  SrcBlock		  "Logical\nOperator1"
 	  SrcPort		  1
-	  Points		  [0, 5]
+	  Points		  [0, -10]
 	  DstBlock		  "reset"
 	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Step"
 	  SrcPort		  1
-	  Points		  [25, 0; 0, 25]
+	  Points		  [30, 0; 0, 40]
 	  DstBlock		  "Logical\nOperator1"
-	  DstPort		  1
+	  DstPort		  2
 	}
 	Line {
 	  SrcBlock		  "Hold in reset\non init"
 	  SrcPort		  1
-	  Points		  [10, 0; 0, -75]
+	  Points		  [10, 0; 0, -95]
 	  DstBlock		  "Logical\nOperator1"
 	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Parse for HIL data"
+	  SrcPort		  6
+	  Points		  [0, 35; 475, 0]
+	  DstBlock		  "Logical\nOperator1"
+	  DstPort		  4
 	}
 	Annotation {
 	  Name			  "This subsystem handles all of the sensor input and pipes out relevant input. Data can come\nfrom either H"
