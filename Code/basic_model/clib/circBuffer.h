@@ -47,7 +47,7 @@ THE SOFTWARE.
        extern "C"{
 #endif
 
-typedef struct CircBuffer{
+typedef struct{
 	unsigned char buffer[BSIZE];
 	int head;
 	int tail;
@@ -57,7 +57,7 @@ typedef struct CircBuffer{
 
 // Exported Types
 // ==============
-typedef struct CircBuffer* CBRef;
+typedef CircBuffer* CBRef;
 	
 // Constructors - Destructors
 // ==========================
@@ -83,8 +83,11 @@ int readTail (CBRef cB);
 // returns the byte (actual value) that the head points to. this
 // does not mark the byte as read, so succesive calls to peek will
 // always return the same value
-unsigned char myPeek(CBRef cB);
+unsigned char peek(CBRef cB);
 
+// Fills RV with the specified number of bytes in cB. These bytes
+// aren't considered read after this operation.
+void deepPeek(CBRef cB, unsigned char bytes, unsigned char* rv);
 
 // Manipulation Procedures
 // ======================

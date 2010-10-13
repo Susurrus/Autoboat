@@ -119,7 +119,7 @@ int readTail (CBRef cB){
 // returns the byte (actual value) that the head points to. this
 // does not mark the byte as read, so succesive calls to peek will
 // always return the same value
-unsigned char myPeek(CBRef cB){
+unsigned char peek(CBRef cB){
 	// if the circular buffer is not null
 	if (cB != NULL)
 	{	
@@ -129,6 +129,26 @@ unsigned char myPeek(CBRef cB){
 		}
 	}
 	return 0;	
+}
+
+// returns the byte (actual value) that the head points to. this
+// does not mark the byte as read, so succesive calls to peek will
+// always return the same value
+void deepPeek(CBRef cB, unsigned char bytes, unsigned char* rv){
+	unsigned char i;
+	int tmpHead;
+	
+	// if the circular buffer is not null
+	if (cB != NULL) {	
+		// if there are bytes in the buffer
+		if (getLength(cB) >= bytes) {
+			tmpHead = cB->head;
+			for (i=0;i<bytes;i++) {
+				rv[i] = cB->buffer[tmpHead];
+				tmpHead = tmpHead < (cB->size-1)? tmpHead+1: 0;
+			}
+		}
+	}	
 }
 
 
