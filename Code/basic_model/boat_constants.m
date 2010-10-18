@@ -19,25 +19,35 @@ OC2max = 49999; % Parameter used for calculating up-time & period for output com
 % Waypoint stuff
 % Waypoints are all defined within a local tangent plane in meters North,
 % East, Down.
-% waypoints = [0 0 0;
-%              450 100 0;
-%              600 600 0;
-%              150 300 0;
-%             ];
+test_waypoints = [
+             0   0   0;
+             450 100 0;
+             600 600 0;
+             150 300 0;
+             0   0   0;
+             0   0   0;
+             0   0   0;
+             0   0   0;
+             0   0   0;
+             0   0   0;
+             0   0   0;
+            ];
 % Figure eight
-% waypoints = [
-%              0   0   0;
-%              30  60  0;
-%              0   90  0;
-%              -30 60  0;
-%              0   0   0;
-%              30  -60 0;
-%              0   -90 0;
-%              -30 -60 0;
-%              0   0   0;
-%             ];
+figure8_waypoints = [
+             0   0   0;
+             30  60  0;
+             0   90  0;
+             -30 60  0;
+             0   0   0;
+             30  -60 0;
+             0   -90 0;
+             -30 -60 0;
+             0   0   0;
+             0   0   0;
+             0   0   0;
+            ];
 % Sampling pattern
-waypoints = [
+sampling_waypoints = [
              0    0    0;
              0    210  0;
              -30  210  0;

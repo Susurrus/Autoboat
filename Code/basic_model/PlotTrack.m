@@ -4,13 +4,17 @@ figure(1);clf;
 hold on;
 axis equal;
 
-% Plot waypoints (red is initial waypoint blue are following
-plot(waypoints(:,2)', waypoints(:,1)', 'r^', 'MarkerSize', 10);
-text(waypoints(:,2)'+10, waypoints(:,1)'-10, cellstr({int2str((1:size(waypoints,1))')}));
+% Plot waypoints (red, green, and blue)
+plot(test_waypoints(:,2)', test_waypoints(:,1)', 'r^', 'MarkerSize', 10);
+text(test_waypoints(:,2)'+10, test_waypoints(:,1)'-10, cellstr({int2str((1:size(test_waypoints,1))')}), 'Color', 'r');
+plot(figure8_waypoints(:,2)', figure8_waypoints(:,1)', 'g^', 'MarkerSize', 10);
+text(figure8_waypoints(:,2)'+10, figure8_waypoints(:,1)'-10, cellstr({int2str((1:size(figure8_waypoints,1))')}), 'Color', 'g');
+plot(sampling_waypoints(:,2)', sampling_waypoints(:,1)', 'b^', 'MarkerSize', 10);
+text(sampling_waypoints(:,2)'+10, sampling_waypoints(:,1)'-10, cellstr({int2str((1:size(sampling_waypoints,1))')}), 'Color', 'b');
 
 % Add the boat path
 title('Boat position');
-plot(position(:,2),position(:,1));
+plot(position(:,2),position(:,1), 'k');
 grid on;
 %% Add additional decorations
 
