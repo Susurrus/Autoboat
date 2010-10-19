@@ -25,12 +25,12 @@ test_waypoints = [
              600 600 0;
              150 300 0;
              0   0   0;
-             0   0   0;
-             0   0   0;
-             0   0   0;
-             0   0   0;
-             0   0   0;
-             0   0   0;
+             -1  -1  -1;
+             -1  -1  -1;
+             -1  -1  -1;
+             -1  -1  -1;
+             -1  -1  -1;
+             -1  -1  -1;
             ];
 % Figure eight
 figure8_waypoints = [
@@ -43,8 +43,8 @@ figure8_waypoints = [
              0   -90 0;
              -30 -60 0;
              0   0   0;
-             0   0   0;
-             0   0   0;
+             -1  -1  -1;
+             -1  -1  -1;
             ];
 % Sampling pattern
 sampling_waypoints = [

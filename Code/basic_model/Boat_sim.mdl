@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.1995"
+    ComputedModelVersion    "1.2000"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bwmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Oct 18 15:22:52 2010"
-  RTWModifiedTimeStamp	  209316170
-  ModelVersionFormat	  "1.%<AutoIncrement:1995>"
+  LastModifiedDate	  "Mon Oct 18 16:51:27 2010"
+  RTWModifiedTimeStamp	  209321487
+  ModelVersionFormat	  "1.%<AutoIncrement:2000>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -1084,7 +1084,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "118"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    3908
+    SIDHighWatermark	    3909
     Block {
       BlockType		      BusSelector
       Name		      "Bus\nSelector"
@@ -1263,7 +1263,7 @@ Model {
       BlockType		      From
       Name		      "From15"
       SID		      2992
-      Position		      [315, 497, 380, 523]
+      Position		      [310, 482, 375, 508]
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "sensors_t"
@@ -1272,7 +1272,7 @@ Model {
       BlockType		      From
       Name		      "From16"
       SID		      2993
-      Position		      [315, 522, 380, 548]
+      Position		      [310, 507, 375, 533]
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "sensors_r"
@@ -1281,7 +1281,7 @@ Model {
       BlockType		      From
       Name		      "From17"
       SID		      2994
-      Position		      [315, 547, 380, 573]
+      Position		      [310, 532, 375, 558]
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "sensors_b"
@@ -1479,7 +1479,7 @@ Model {
       BlockType		      Goto
       Name		      "Goto4"
       SID		      2974
-      Position		      [785, 363, 845, 387]
+      Position		      [780, 378, 840, 402]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "rudder_c"
@@ -1489,7 +1489,7 @@ Model {
       BlockType		      Goto
       Name		      "Goto5"
       SID		      2975
-      Position		      [785, 433, 845, 457]
+      Position		      [780, 448, 840, 472]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "throttle_c"
@@ -1499,7 +1499,7 @@ Model {
       BlockType		      Goto
       Name		      "Goto6"
       SID		      2976
-      Position		      [785, 503, 845, 527]
+      Position		      [780, 518, 840, 542]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "ballast_c"
@@ -1960,7 +1960,7 @@ Model {
       Name		      "HIL Interface"
       SID		      2995
       Ports		      [4, 3]
-      Position		      [410, 470, 605, 575]
+      Position		      [410, 455, 605, 560]
       LibraryVersion	      "1.216"
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
@@ -12001,7 +12001,7 @@ Model {
 	  System {
 	    Name		    "Autonomous Controller"
 	    Location		    [202, 82, 1270, 978]
-	    Open		    on
+	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -16528,17 +16528,6 @@ Model {
 		    SaturateOnIntegerOverflow off
 		    }
 		    Block {
-		    BlockType		    ToWorkspace
-		    Name		    "To Workspace"
-		    SID			    3908
-		    Ports		    [1]
-		    Position		    [655, 145, 715, 175]
-		    VariableName	    "initPos"
-		    MaxDataPoints	    "inf"
-		    SampleTime		    "-1"
-		    SaveFormat		    "Structure"
-		    }
-		    Block {
 		    BlockType		    Outport
 		    Name		    "velocity"
 		    SID			    2363
@@ -16855,17 +16844,9 @@ Model {
 		    Line {
 		    SrcBlock		    "Embedded\nMATLAB Function1"
 		    SrcPort		    1
-		    Points		    [5, 0]
-		    Branch {
-		    Points		    [0, 15]
+		    Points		    [5, 0; 0, 15]
 		    DstBlock		    "Embedded\nMATLAB Function"
 		    DstPort		    1
-		    }
-		    Branch {
-		    Points		    [0, -130]
-		    DstBlock		    "To Workspace"
-		    DstPort		    1
-		    }
 		    }
 		    Line {
 		    SrcBlock		    "Detect Rise\nPositive"
@@ -16876,8 +16857,12 @@ Model {
 		    }
 		    Annotation {
 		    Name		    "This switch prevents odd initial values to be used.\n(stem from distance from initial_LL to 0,0). "
-		    Position		    [692, 271]
+		    Position		    [702, 301]
 		    HorizontalAlignment	    "left"
+		    }
+		    Annotation {
+		    Name		    "This SaH block latches the first valid GPS signal after a reset."
+		    Position		    [528, 204]
 		    }
 		  }
 		}
@@ -18962,6 +18947,18 @@ Model {
 	  }
 	}
 	Block {
+	  BlockType		  ToWorkspace
+	  Name			  "To Workspace4"
+	  SID			  3909
+	  Ports			  [1]
+	  Position		  [380, 320, 440, 350]
+	  ShowName		  off
+	  VariableName		  "nextTrack"
+	  MaxDataPoints		  "inf"
+	  SampleTime		  "-1"
+	  SaveFormat		  "Array"
+	}
+	Block {
 	  BlockType		  Outport
 	  Name			  "command_r"
 	  SID			  2173
@@ -19071,8 +19068,16 @@ Model {
 	Line {
 	  SrcBlock		  "Detect\nIncrease"
 	  SrcPort		  1
-	  DstBlock		  "Select current\nwaypoint track"
-	  DstPort		  1
+	  Points		  [5, 0]
+	  Branch {
+	    DstBlock		    "Select current\nwaypoint track"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, 85]
+	    DstBlock		    "To Workspace4"
+	    DstPort		    1
+	  }
 	}
 	Line {
 	  SrcBlock		  "Detect\nIncrease1"
@@ -19612,21 +19617,18 @@ Model {
     Line {
       SrcBlock		      "HIL Interface"
       SrcPort		      1
-      Points		      [0, -15]
       DstBlock		      "HIL Demux"
       DstPort		      4
     }
     Line {
       SrcBlock		      "HIL Interface"
       SrcPort		      2
-      Points		      [0, -15]
       DstBlock		      "HIL Demux"
       DstPort		      5
     }
     Line {
       SrcBlock		      "HIL Interface"
       SrcPort		      3
-      Points		      [0, -15]
       DstBlock		      "HIL Demux"
       DstPort		      6
     }
@@ -19784,13 +19786,13 @@ Model {
 	  DstPort		  1
 	}
 	Branch {
-	  Points		  [0, 100]
+	  Points		  [0, 85]
 	  Branch {
 	    DstBlock		    "HIL Interface"
 	    DstPort		    1
 	  }
 	  Branch {
-	    Points		    [0, 260; -225, 0; 0, 205]
+	    Points		    [0, 275; -225, 0; 0, 205]
 	    DstBlock		    "Raw sensors\ndisplay"
 	    DstPort		    1
 	  }
@@ -21530,7 +21532,6 @@ Stateflow {
     firstJunction	    85
     viewObj		    83
     machine		    1
-    toolbarMode		    LIBRARY_TOOLBAR
     subviewS {
     }
     ssIdHighWaterMark	    11
@@ -21775,7 +21776,6 @@ Stateflow {
     firstJunction	    97
     viewObj		    95
     machine		    1
-    toolbarMode		    LIBRARY_TOOLBAR
     subviewS {
     }
     ssIdHighWaterMark	    7
