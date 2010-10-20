@@ -2,11 +2,13 @@
 
 % Initial conditions
 
-initial_LL = [36.80611 -121.79639];    % Initial latitude/longitude (degrees)
+% Initial latitude & longitude. This provides the baseline for the plant
+% to generate GPS data.
+initial_LL = [36.80611 -121.79639];
 phi_0 = 0;              % Initial heading (eastward positive from north)
 v_0 = 0;                % Initial speed
+battery_tray_angle = 0; % Initial battery tray angle
 T_step = 0.01;          % Simulation timestep
-battery_tray_angle = 0; % Battery tray angle
 initial_charge = 2851200;    % Initial boat charge, 60% of 6V battery rail (J)
 start_time = clock;
 %start_time =   1279069200; % 6/13/2010 @ 20:00pm UTC (12pm pacific)
