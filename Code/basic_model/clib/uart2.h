@@ -4,12 +4,13 @@
 
 // USAGE:
 // Add initUart2Transmission() to an initialization sequence called once on startup.
-// Use uart2Transmit*Data() to push appropriately-sized data chunks into the queue.
+// Use uart2Enqueue*Data() to push appropriately-sized data chunks into the queue.
 // Call startUart2Transmission() every so often to initiate transmission of the data.
 
 #include "circBuffer.h"
 
-#define DEFAULT_BRG_REG 2082
+#define BAUD1200_BRG_REG 2082
+#define BAUD4800_BRG_REG 520
 
 extern CircBuffer uart2RxBuffer;
 extern CircBuffer uart2TxBuffer;
