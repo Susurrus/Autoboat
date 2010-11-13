@@ -60,46 +60,18 @@ void initUart2() {
 	unsigned char disableGSASentence[] = "$PSRF103,2,0,0,1*26\r\n\0";
 	unsigned char disableGSVSentence[] = "$PSRF103,3,0,0,1*27\r\n\0";
 	
-	// Put some huge delays to wait for GPS power-up without the need of a timer
-	for( i = 0; i < 750; i += 1 ){
-		for( j = 0; j < 32700; j += 1 )
-		{
-			Nop();
-		}
-	}
 	putsUART2((unsigned int *)disableGSASentence);
 	while(BusyUART2());	
 	
-	// Put some huge delays to wait for GPS power-up without the need of a timer
-	for( i = 0; i < 750; i += 1 ){
-		for( j = 0; j < 32700; j += 1 )
-		{
-			Nop();
-		}
-	}
 	putsUART2((unsigned int *)disableGSVSentence);
 	while(BusyUART2());	
 	
 	// Configure GPS for a baud rate of 1200
 	unsigned char changeBaudRate[] = "$PSRF100,1,1200,8,1,0*01\r\n\0";
 	
-	// Put some huge delays to wait for GPS power-up without the need of a timer
-	for( i = 0; i < 750; i += 1 ){
-		for( j = 0; j < 32700; j += 1 )
-		{
-			Nop();
-		}
-	}
 	putsUART2((unsigned int *)changeBaudRate);
 	while(BusyUART2());
 	
-	// Put some huge delays to wait for GPS power-up without the need of a timer
-	for( i = 0; i < 750; i += 1 ){
-		for( j = 0; j < 32700; j += 1 )
-		{
-			Nop();
-		}
-	}
 	// Disable the port to set the final configuration bits
 	U1MODEbits.UARTEN	= 0;		// Disable the port	
 	
