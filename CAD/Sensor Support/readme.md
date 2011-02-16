@@ -1,0 +1,3 @@
+= Sensor Support =
+
+This directory contain Solidworks 2008 CAD files for a truss support for the CTD sensor payload in use with the Autoboat. It is designed to fit between the boat deck and the top rung of the sensor payload. Four of each truss should be manufactored (designed for 1/4" MDF and for laser cutting) and fit together in duplicate to make a square. Zip ties fit through the top little slits to hold it to the payload.
