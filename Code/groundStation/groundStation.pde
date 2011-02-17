@@ -31,8 +31,16 @@ void draw() {
   
   // Grab some data from the serial port
   if (myPort != null && myPort.available() > 0) {
+    fill(0,255,0);
     buildAndCheckMessage(myPort.readChar());
+  } else {
+    fill(0,100,0);
   }
+  // Draw the RX status
+  arc(95, 85, 10, 10, 0, TWO_PI);
+  // Draw the TX status
+  fill(100,0,0);
+  arc(80, 85, 10, 10, 0, TWO_PI);
   
 }
 
