@@ -83,6 +83,11 @@ void draw() {
   // Display the boat heading
   text("Heading", 400, 290);
   text(heading, 400, 300);
+  pushMatrix();
+  translate(420,350);
+  rotate(heading);
+  triangle(10,30,0,-30,-10,30);
+  popMatrix();
 }
 
 void controlEvent(ControlEvent theEvent) {
