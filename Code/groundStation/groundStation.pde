@@ -1,5 +1,6 @@
 import controlP5.*;
 import processing.serial.*;
+import java.util.*;
 
 ControlP5 controlP5;
 
@@ -15,12 +16,19 @@ int messageState = 0;
 // Reference
 PVector trueNorth = new PVector(0, 1, 0);
 
-// Boat state data
+// Current timestep boat state data
 PVector L2 = new PVector(0,0,0);
-float[] globalPosition = new float[3];
+PVector globalPosition = new PVector(0,0,0);
 float heading = 0;
-float[] localPosition = new float[3];
-float[] velocity = new float[3];
+PVector localPosition = new PVector(0,0,0);
+PVector velocity = new PVector(0,0,0);
+
+// Boat state data recording
+ArrayList L2List = new ArrayList(255);
+ArrayList globalPositionList = new ArrayList(255);
+ArrayList headingList = new ArrayList(255);
+ArrayList localPositionList = new ArrayList(255);
+ArrayList velocityList = new ArrayList(255);
 
 void setup() {
   size(800, 600);
@@ -83,21 +91,21 @@ void draw() {
   
   // Draw the velocity vector values
   text("Velocity", 200, 290);
-  text(velocity[0], 200, 300);
-  text(velocity[1], 200, 310);
-  text(velocity[2], 200, 320);
+  text(velocity.x, 200, 300);
+  text(velocity.y, 200, 310);
+  text(velocity.z, 200, 320);
   
   // Draw the local position values
   text("Local position", 200, 390);
-  text(localPosition[0], 200, 400);
-  text(localPosition[1], 200, 410);
-  text(localPosition[2], 200, 420);
+  text(localPosition.x, 200, 400);
+  text(localPosition.y, 200, 410);
+  text(localPosition.z, 200, 420);
   
   // Draw the local position values
   text("Global position", 300, 390);
-  text(globalPosition[0], 300, 400);
-  text(globalPosition[1], 300, 410);
-  text(globalPosition[2], 300, 420);
+  text(globalPosition.x, 300, 400);
+  text(globalPosition.y, 300, 410);
+  text(globalPosition.z, 300, 420);
   
   // Display the boat heading
   text("Heading", 400, 290);
@@ -248,22 +256,27 @@ void buildAndCheckMessage(byte characterIn) {
 }
 
 void updateStateData(byte message[]) {  
+  // Wrap the message in a DataInputStream so that readFloat() can be used
   InputStream in = new ByteArrayInputStream(message);
   DataInputStream din = new DataInputStream(in);
+  
+  // Save the last set of data into an array list
+  
+  // Import new data from a complete StateData message
   try {
     L2.x = din.readFloat();
     L2.y = din.readFloat();
     L2.z = din.readFloat();
-    globalPosition[0] = din.readFloat();
-    globalPosition[1] = din.readFloat();
-    globalPosition[2] = din.readFloat();
+    globalPosition.x = din.readFloat();
+    globalPosition.y = din.readFloat();
+    globalPosition.z = din.readFloat();
     heading = din.readFloat();
-    localPosition[0] = din.readFloat();
-    localPosition[1] = din.readFloat();
-    localPosition[2] = din.readFloat();
-    velocity[0] = din.readFloat();
-    velocity[1] = din.readFloat();
-    velocity[2] = din.readFloat();
+    localPosition.x = din.readFloat();
+    localPosition.y = din.readFloat();
+    localPosition.z = din.readFloat();
+    velocity.x = din.readFloat();
+    velocity.y = din.readFloat();
+    velocity.z = din.readFloat();
   } catch (Exception e) {
     println("Crap, failed to extract the data");
   }
