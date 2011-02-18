@@ -1,6 +1,5 @@
 import controlP5.*;
 import processing.serial.*;
-import gnu.io.PortInUseException;
 
 ControlP5 controlP5;
 
@@ -42,9 +41,7 @@ void draw() {
   // Grab some data from the serial port
   // TODO: Grab serial data faster.
   if (myPort != null && myPort.available() > 0) {
-    //println(myPort.available());
     fill(0,255,0);
-    //buildAndCheckMessage((byte)myPort.read());
     while(myPort.available() > 0) {
       byte[] inBuffer = new byte[7];
       int bytesToRead = myPort.readBytes(inBuffer);
@@ -52,7 +49,6 @@ void draw() {
         buildAndCheckMessage(inBuffer[i]);
       }
     }
-    //println(char(inBuffer));
   } else {
     fill(0,100,0);
   }
