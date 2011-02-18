@@ -261,6 +261,11 @@ void updateStateData(byte message[]) {
   DataInputStream din = new DataInputStream(in);
   
   // Save the last set of data into an array list
+  L2List.add(L2);
+  globalPositionList.add(globalPosition);
+  headingList.add(heading);
+  localPositionList.add(localPosition);
+  velocityList.add(velocity);
   
   // Import new data from a complete StateData message
   try {
@@ -279,6 +284,7 @@ void updateStateData(byte message[]) {
     velocity.z = din.readFloat();
   } catch (Exception e) {
     println("Crap, failed to extract the data");
+    exit();
   }
 }
 
