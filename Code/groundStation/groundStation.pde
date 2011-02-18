@@ -9,9 +9,15 @@ DropdownList serialPortsList;
 Serial myPort;
 
 // Used for parsing message data
-char message[] = new char[64];
-int messageIndex;
-int messageState;
+byte[] message = new byte[64];
+int messageIndex = 0;
+int messageState = 0;
+byte[] inBuffer = new byte[255];
+
+// Boat state data
+float L2_x = 0.0;
+float L2_y = 0.0;
+float L2_z = 0.0;
 
 void setup() {
   size(800, 600);
@@ -30,18 +36,28 @@ void draw() {
   background(128);
   
   // Grab some data from the serial port
+  // TODO: Grab serial data faster.
   if (myPort != null && myPort.available() > 0) {
-    fill(0,255,0);
-    buildAndCheckMessage(myPort.readChar());
+    //println(myPort.available());
+    fill(0,255,0); 
+    buildAndCheckMessage((byte)myPort.read());
+    //for (int i=0;i<myPort.readBytes(inBuffer);i++) {
+    //  buildAndCheckMessage(inBuffer[i]);
+    //}
+      //println(char(inBuffer));
   } else {
     fill(0,100,0);
   }
   // Draw the RX status
-  arc(95, 85, 10, 10, 0, TWO_PI);
+  arc(90, 90, 10, 10, 0, TWO_PI);
   // Draw the TX status
   fill(100,0,0);
-  arc(80, 85, 10, 10, 0, TWO_PI);
+  arc(75, 90, 10, 10, 0, TWO_PI);
   
+  // Draw the L2 vector values
+  text(L2_x, 300, 300);
+  text(L2_y, 300, 310);
+  text(L2_z, 300, 320);
 }
 
 void controlEvent(ControlEvent theEvent) {
@@ -65,7 +81,6 @@ void controlEvent(ControlEvent theEvent) {
     }
     catch (Exception e) {
       println("Port in use or otherwise unavailable. Please select another.");
-      //e.printStackTrace();
     }
   }
 }
@@ -92,7 +107,7 @@ void customizeSerialPortsList(DropdownList ddl) {
 /**
  * Parses another character from the serialport
  */
-void buildAndCheckMessage(char characterIn) {
+void buildAndCheckMessage(byte characterIn) {
 
 	// This contains the function's state of whether
 	// it is currently building a message.
@@ -103,6 +118,7 @@ void buildAndCheckMessage(char characterIn) {
 	// 4 - Awaiting header byte 1 (&)
 	// 5 - Reading checksum character
 	
+print(char(characterIn));
 	// We start recording a new message if we see the header
 	if (messageState == 0) {
 		if (characterIn == '%') {
@@ -153,6 +169,7 @@ void buildAndCheckMessage(char characterIn) {
 		// The checksum is now verified and if successful the message
 		// is stored in the appropriate struct.
 		if (message[messageIndex] == calculateChecksum(subset(message, 2, messageIndex-4))) {
+    println("Yay! Successfully parsed a new data!");
 			// We now memcpy all the data into our global data structs.
 			// NOTE: message[3] is used to skip the header & message ID info
 			//receivedMessageCount++;
@@ -164,7 +181,7 @@ void buildAndCheckMessage(char characterIn) {
 					//setActuatorData(&message[3]);
 					break;
 				case 3:
-                                        updateStateData(message);
+                                        updateStateData(subset(message, 3, messageIndex-4));
 					//memcpy(&stateDataMessage, &message[3], sizeof(tStateData));
 					break;
 				case 4:
@@ -183,17 +200,29 @@ void buildAndCheckMessage(char characterIn) {
 	}
 }
 
-void updateStateData(char message[]) {
-  println("Yay! Successfully parsed a new stateDataMessage!");
+void updateStateData(byte message[]) {  
+  InputStream in = new ByteArrayInputStream(message);
+  DataInputStream din = new DataInputStream(in);
+  try {
+    L2_x = din.readFloat(); 
+    L2_y = din.readFloat(); 
+    L2_z = din.readFloat();
+    println(L2_x);
+    println(L2_y);
+    println(L2_z);
+    println("Yay! Successfully parsed a new stateDataMessage!");
+  } catch (Exception e) {
+    println("Crap, failed to extract the data");
+  }
 }
 
 /**
  * This function calculates the checksum of some bytes in an
  * array by XORing all of them.
  */
-char calculateChecksum(char sentence[]) {
+byte calculateChecksum(byte sentence[]) {
 
-  char checkSum = 0;
+  byte checkSum = 0;
   for (int i = 0; i < sentence.length; i++) {
     checkSum ^= sentence[i];
   }
