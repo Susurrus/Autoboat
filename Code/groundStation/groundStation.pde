@@ -12,7 +12,6 @@ Serial myPort;
 byte[] message = new byte[64];
 int messageIndex = 0;
 int messageState = 0;
-byte[] inBuffer = new byte[255];
 
 // Reference
 PVector trueNorth = new PVector(0, 1, 0);
@@ -44,12 +43,16 @@ void draw() {
   // TODO: Grab serial data faster.
   if (myPort != null && myPort.available() > 0) {
     //println(myPort.available());
-    fill(0,255,0); 
-    buildAndCheckMessage((byte)myPort.read());
-    //for (int i=0;i<myPort.readBytes(inBuffer);i++) {
-    //  buildAndCheckMessage(inBuffer[i]);
-    //}
-      //println(char(inBuffer));
+    fill(0,255,0);
+    //buildAndCheckMessage((byte)myPort.read());
+    while(myPort.available() > 0) {
+      byte[] inBuffer = new byte[7];
+      int bytesToRead = myPort.readBytes(inBuffer);
+      for (int i=0;i<bytesToRead;i++) {
+        buildAndCheckMessage(inBuffer[i]);
+      }
+    }
+    //println(char(inBuffer));
   } else {
     fill(0,100,0);
   }
