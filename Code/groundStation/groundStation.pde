@@ -39,7 +39,7 @@ PVector velocity = new PVector(0,0,0);
 // Boat state data recording
 ArrayList<float[]> L2List = new ArrayList<float[]>(255);
 ArrayList<float[]> globalPositionList = new ArrayList<float[]>(255);
-ArrayList headingList = new ArrayList(255);
+ArrayList<Float> headingList = new ArrayList<Float>(255);
 ArrayList<float[]> localPositionList = new ArrayList<float[]>(255);
 ArrayList<float[]> velocityList = new ArrayList<float[]>(255);
 
@@ -200,10 +200,50 @@ public void record(boolean theValue) {
         output[i][j] = (double)t[i][j];
       }
     }
-
-    MLDouble mlDouble = new MLDouble("L2", output);
+    MLDouble L2Double = new MLDouble("L2", output);
+    globalPositionList.toArray(t);
+    output = new double[L2List.size()][3];
+    for (int i = 0; i < L2List.size(); i++){
+      for (int j=0;j<3;j++) {
+        output[i][j] = (double)t[i][j];
+      }
+    }
+    
+    MLDouble globalPositionDouble = new MLDouble("globalPosition", output);
+    localPositionList.toArray(t);
+    output = new double[L2List.size()][3];
+    for (int i = 0; i < L2List.size(); i++){
+      for (int j=0;j<3;j++) {
+        output[i][j] = (double)t[i][j];
+      }
+    }
+    
+    Float[] g = new Float[L2List.size()];
+    double[] gg = new double[L2List.size()];
+    headingList.toArray(g);
+    for (int i = 0; i < L2List.size(); i++){
+      gg[i] = (double)g[i];
+    }
+    MLDouble headingDouble = new MLDouble("heading", gg, L2List.size());
+    
+    MLDouble localPositionDouble = new MLDouble("localPosition", output);
+    velocityList.toArray(t);
+    output = new double[L2List.size()][3];
+    for (int i = 0; i < L2List.size(); i++){
+      for (int j=0;j<3;j++) {
+        output[i][j] = (double)t[i][j];
+      }
+    }
+    
+    MLDouble velocityDouble = new MLDouble("velocity", output);
+    
     ArrayList matList = new ArrayList();
-    matList.add( mlDouble );
+    matList.add(L2Double);
+    matList.add(headingDouble);
+    matList.add(globalPositionDouble);
+    matList.add(localPositionDouble);
+    matList.add(velocityDouble);
+    
     try {
       new MatFileWriter(sketchPath(str(year())+str(month())+str(day())+str(hour())+str(minute())+str(second())+".mat"), matList);
     }
