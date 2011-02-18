@@ -1,7 +1,14 @@
+import com.jmatio.types.*;
+import com.jmatio.io.*;
+
+// GUI Toolkit
 import controlP5.*;
+
+// Serial port interface
 import processing.serial.*;
+
 import java.util.*;
-import java.lang.Long;
+import java.lang.*;
 
 // Used for parsing message data
 byte[] message = new byte[64];
@@ -30,11 +37,11 @@ PVector localPosition = new PVector(0,0,0);
 PVector velocity = new PVector(0,0,0);
 
 // Boat state data recording
-ArrayList L2List = new ArrayList(255);
-ArrayList globalPositionList = new ArrayList(255);
+ArrayList<float[]> L2List = new ArrayList<float[]>(255);
+ArrayList<float[]> globalPositionList = new ArrayList<float[]>(255);
 ArrayList headingList = new ArrayList(255);
-ArrayList localPositionList = new ArrayList(255);
-ArrayList velocityList = new ArrayList(255);
+ArrayList<float[]> localPositionList = new ArrayList<float[]>(255);
+ArrayList<float[]> velocityList = new ArrayList<float[]>(255);
 
 void setup() {
   size(800, 600);
@@ -184,6 +191,27 @@ void customizeSerialPortsList(DropdownList ddl) {
 public void record(boolean theValue) {
   record = theValue;
   recordTimer.reset();
+  if (!theValue) {
+    float[][] t = new float[L2List.size()][3];
+    L2List.toArray(t);
+    double[][] output = new double[L2List.size()][3];
+    for (int i = 0; i < L2List.size(); i++){
+      for (int j=0;j<3;j++) {
+        output[i][j] = (double)t[i][j];
+      }
+    }
+
+    MLDouble mlDouble = new MLDouble("L2", output);
+    ArrayList matList = new ArrayList();
+    matList.add( mlDouble );
+    try {
+      new MatFileWriter(sketchPath(str(year())+str(month())+str(day())+str(hour())+str(minute())+str(second())+".mat"), matList);
+    }
+    catch (Exception e){
+      println("Failed to write output to a .mat file");
+    }
+
+  }
 }
 
 /**
@@ -282,11 +310,11 @@ void updateStateData(byte message[]) {
   
   // Save the last set of data into an array list
   if (record) {
-    L2List.add(L2);
-    globalPositionList.add(globalPosition);
+    L2List.add(L2.array().clone());
+    globalPositionList.add(globalPosition.array().clone());
     headingList.add(heading);
-    localPositionList.add(localPosition);
-    velocityList.add(velocity);
+    localPositionList.add(localPosition.array().clone());
+    velocityList.add(velocity.array().clone());
     recordedMessages++;
   }
   
