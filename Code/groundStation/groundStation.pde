@@ -7,8 +7,7 @@ import controlP5.*;
 // Serial port interface
 import processing.serial.*;
 
-import java.util.*;
-import java.lang.*;
+import java.util.Calendar;
 
 // Used for parsing message data
 byte[] message = new byte[64];
@@ -245,7 +244,9 @@ public void record(boolean theValue) {
     matList.add(velocityDouble);
     
     try {
-      new MatFileWriter(sketchPath(str(year())+str(month())+str(day())+str(hour())+str(minute())+str(second())+".mat"), matList);
+      Calendar cal = Calendar.getInstance();
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-hhmmss");
+      new MatFileWriter(sketchPath(sdf.format(cal.getTime())+".mat"), matList);
     }
     catch (Exception e){
       println("Failed to write output to a .mat file");
