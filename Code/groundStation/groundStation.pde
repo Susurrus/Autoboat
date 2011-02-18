@@ -15,7 +15,7 @@ int messageIndex = 0;
 int messageState = 0;
 
 // Internal program state
-boolean record = false;
+boolean recording = false;
 Long recordedMessages = new Long(0);
 Serial myPort;
 ControlTimer recordTimer;
@@ -23,6 +23,8 @@ ControlP5 controlP5;
 DropdownList serialPortsList;
 Textlabel recordTimerLabel;
 Textlabel recordedMessagesLabel;
+Toggle recordToggle;
+Button selectMatFile;
 
 
 // Reference
@@ -47,11 +49,15 @@ void setup() {
   frameRate(30);
   controlP5 = new ControlP5(this);
   serialPortsList = controlP5.addDropdownList("serialPortsList",100,100,100,120);
-  controlP5.addToggle("record",false,100,100,20,20);
+  serialPortsList.setId(0);
+  recordToggle = controlP5.addToggle("record",false,100,100,20,20);
+  recordToggle.setId(1);
   recordTimer = new ControlTimer();
   recordTimer.setSpeedOfTime(1);
   recordTimerLabel = controlP5.addTextlabel("recordTimer",recordTimer.toString(),20,100);
   recordedMessagesLabel = controlP5.addTextlabel("recordedMessages","Messages: " + recordedMessages.toString(),20,120);
+  selectMatFile = controlP5.addButton("Select .mat file",0,400,50,100,20);
+  selectMatFile.setId(2);
   customizeSerialPortsList(serialPortsList);
 }
 
@@ -137,7 +143,7 @@ void draw() {
   // Reset fill color to white
   fill(255);
   
-  if (record) {
+  if (recording) {
     recordTimerLabel.setValue(recordTimer.toString());
     recordedMessagesLabel.setValue("Messages: " + recordedMessages.toString());
   }
@@ -150,21 +156,34 @@ void controlEvent(ControlEvent theEvent) {
   // if (theEvent.isGroup())
   // to avoid an error message from controlP5.
 
-  if (theEvent.isGroup()) {
-    // check if the Event was triggered from a ControlGroup
-    cursor(WAIT);
-    if (myPort != null) {
-      myPort.stop();
-    }
-    
-    // TODO: This try/catch statement needs to be fixed to properly suppress the error
-    // warning from gnu.io.PortInUseException and inform the user.
-    try {
-      myPort = new Serial(this, theEvent.group().stringValue(), 57600);
-    }
-    catch (Exception e) {
-      println("Port in use or otherwise unavailable. Please select another.");
-    }
+  switch (theEvent.id()) {
+    case(0):
+      // check if the Event was triggered from a ControlGroup
+      cursor(WAIT);
+      if (myPort != null) {
+        myPort.stop();
+      }
+      
+      // TODO: This try/catch statement needs to be fixed to properly suppress the error
+      // warning from gnu.io.PortInUseException and inform the user.
+      try {
+        myPort = new Serial(this, theEvent.group().stringValue(), 57600);
+      }
+      catch (Exception e) {
+        println("Port in use or otherwise unavailable. Please select another.");
+      }
+      break;
+    case(1):
+      println("toggle "+theEvent.value());
+      if (theEvent.value() == 0) {
+        stopRecordingAndSave();
+      } else if (theEvent.value() == 1) {
+        startRecording();
+      } 
+      break;
+    case(2):
+      println(".mat");
+      break;
   }
 }
 
@@ -187,71 +206,72 @@ void customizeSerialPortsList(DropdownList ddl) {
   ddl.setColorActive(color(255,128));
 }
 
-public void record(boolean theValue) {
-  record = theValue;
+public void startRecording() {
+  recording = true;
   recordTimer.reset();
-  if (!theValue) {
-    float[][] t = new float[L2List.size()][3];
-    L2List.toArray(t);
-    double[][] output = new double[L2List.size()][3];
-    for (int i = 0; i < L2List.size(); i++){
-      for (int j=0;j<3;j++) {
-        output[i][j] = (double)t[i][j];
-      }
-    }
-    MLDouble L2Double = new MLDouble("L2", output);
-    globalPositionList.toArray(t);
-    output = new double[L2List.size()][3];
-    for (int i = 0; i < L2List.size(); i++){
-      for (int j=0;j<3;j++) {
-        output[i][j] = (double)t[i][j];
-      }
-    }
-    
-    MLDouble globalPositionDouble = new MLDouble("globalPosition", output);
-    localPositionList.toArray(t);
-    output = new double[L2List.size()][3];
-    for (int i = 0; i < L2List.size(); i++){
-      for (int j=0;j<3;j++) {
-        output[i][j] = (double)t[i][j];
-      }
-    }
-    
-    Float[] g = new Float[L2List.size()];
-    double[] gg = new double[L2List.size()];
-    headingList.toArray(g);
-    for (int i = 0; i < L2List.size(); i++){
-      gg[i] = (double)g[i];
-    }
-    MLDouble headingDouble = new MLDouble("heading", gg, L2List.size());
-    
-    MLDouble localPositionDouble = new MLDouble("localPosition", output);
-    velocityList.toArray(t);
-    output = new double[L2List.size()][3];
-    for (int i = 0; i < L2List.size(); i++){
-      for (int j=0;j<3;j++) {
-        output[i][j] = (double)t[i][j];
-      }
-    }
-    
-    MLDouble velocityDouble = new MLDouble("velocity", output);
-    
-    ArrayList matList = new ArrayList();
-    matList.add(L2Double);
-    matList.add(headingDouble);
-    matList.add(globalPositionDouble);
-    matList.add(localPositionDouble);
-    matList.add(velocityDouble);
-    
-    try {
-      Calendar cal = Calendar.getInstance();
-      SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-hhmmss");
-      new MatFileWriter(sketchPath(sdf.format(cal.getTime())+".mat"), matList);
-    }
-    catch (Exception e){
-      println("Failed to write output to a .mat file");
-    }
+}
 
+public void stopRecordingAndSave() {
+  recording = false;
+  float[][] t = new float[L2List.size()][3];
+  L2List.toArray(t);
+  double[][] output = new double[L2List.size()][3];
+  for (int i = 0; i < L2List.size(); i++){
+    for (int j=0;j<3;j++) {
+      output[i][j] = (double)t[i][j];
+    }
+  }
+  MLDouble L2Double = new MLDouble("L2", output);
+  globalPositionList.toArray(t);
+  output = new double[L2List.size()][3];
+  for (int i = 0; i < L2List.size(); i++){
+    for (int j=0;j<3;j++) {
+      output[i][j] = (double)t[i][j];
+    }
+  }
+  
+  MLDouble globalPositionDouble = new MLDouble("globalPosition", output);
+  localPositionList.toArray(t);
+  output = new double[L2List.size()][3];
+  for (int i = 0; i < L2List.size(); i++){
+    for (int j=0;j<3;j++) {
+      output[i][j] = (double)t[i][j];
+    }
+  }
+  
+  Float[] g = new Float[L2List.size()];
+  double[] gg = new double[L2List.size()];
+  headingList.toArray(g);
+  for (int i = 0; i < L2List.size(); i++){
+    gg[i] = (double)g[i];
+  }
+  MLDouble headingDouble = new MLDouble("heading", gg, L2List.size());
+  
+  MLDouble localPositionDouble = new MLDouble("localPosition", output);
+  velocityList.toArray(t);
+  output = new double[L2List.size()][3];
+  for (int i = 0; i < L2List.size(); i++){
+    for (int j=0;j<3;j++) {
+      output[i][j] = (double)t[i][j];
+    }
+  }
+  
+  MLDouble velocityDouble = new MLDouble("velocity", output);
+  
+  ArrayList matList = new ArrayList();
+  matList.add(L2Double);
+  matList.add(headingDouble);
+  matList.add(globalPositionDouble);
+  matList.add(localPositionDouble);
+  matList.add(velocityDouble);
+  
+  try {
+    Calendar cal = Calendar.getInstance();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-hhmmss");
+    new MatFileWriter(sketchPath(sdf.format(cal.getTime())+".mat"), matList);
+  }
+  catch (Exception e){
+    println("Failed to write output to a .mat file");
   }
 }
 
@@ -350,7 +370,7 @@ void updateStateData(byte message[]) {
   DataInputStream din = new DataInputStream(in);
   
   // Save the last set of data into an array list
-  if (record) {
+  if (recording) {
     L2List.add(L2.array().clone());
     globalPositionList.add(globalPosition.array().clone());
     headingList.add(heading);
