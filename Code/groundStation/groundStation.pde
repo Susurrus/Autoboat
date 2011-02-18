@@ -15,9 +15,11 @@ int messageState = 0;
 byte[] inBuffer = new byte[255];
 
 // Boat state data
-float L2_x = 0.0;
-float L2_y = 0.0;
-float L2_z = 0.0;
+float[] L2 = new float[3];
+float[] globalPosition = new float[3];
+float heading = 0;
+float[] localPosition = new float[3];
+float[] velocity = new float[3];
 
 void setup() {
   size(800, 600);
@@ -55,9 +57,32 @@ void draw() {
   arc(75, 90, 10, 10, 0, TWO_PI);
   
   // Draw the L2 vector values
-  text(L2_x, 300, 300);
-  text(L2_y, 300, 310);
-  text(L2_z, 300, 320);
+  text("L2 Vector", 300, 290);
+  text(L2[0], 300, 300);
+  text(L2[1], 300, 310);
+  text(L2[2], 300, 320);
+  
+  // Draw the velocity vector values
+  text("Velocity", 200, 290);
+  text(velocity[0], 200, 300);
+  text(velocity[1], 200, 310);
+  text(velocity[2], 200, 320);
+  
+  // Draw the local position values
+  text("Local position", 200, 390);
+  text(localPosition[0], 200, 400);
+  text(localPosition[1], 200, 410);
+  text(localPosition[2], 200, 420);
+  
+  // Draw the local position values
+  text("Global position", 300, 390);
+  text(globalPosition[0], 300, 400);
+  text(globalPosition[1], 300, 410);
+  text(globalPosition[2], 300, 420);
+  
+  // Display the boat heading
+  text("Heading", 400, 290);
+  text(heading, 400, 300);
 }
 
 void controlEvent(ControlEvent theEvent) {
@@ -169,23 +194,18 @@ print(char(characterIn));
 		// The checksum is now verified and if successful the message
 		// is stored in the appropriate struct.
 		if (message[messageIndex] == calculateChecksum(subset(message, 2, messageIndex-4))) {
-    println("Yay! Successfully parsed a new data!");
+                  println("Yay! Successfully parsed a new data!");
 			// We now memcpy all the data into our global data structs.
 			// NOTE: message[3] is used to skip the header & message ID info
-			//receivedMessageCount++;
 			switch (message[2]) {
 				case 1:
-					//setSensorData(&message[3]);
 					break;
 				case 2:
-					//setActuatorData(&message[3]);
 					break;
 				case 3:
                                         updateStateData(subset(message, 3, messageIndex-4));
-					//memcpy(&stateDataMessage, &message[3], sizeof(tStateData));
 					break;
 				case 4:
-					//memcpy(&commandDataMessage, &message[3], sizeof(tCommandData));
 					break;
 			}
 		}
@@ -204,13 +224,19 @@ void updateStateData(byte message[]) {
   InputStream in = new ByteArrayInputStream(message);
   DataInputStream din = new DataInputStream(in);
   try {
-    L2_x = din.readFloat(); 
-    L2_y = din.readFloat(); 
-    L2_z = din.readFloat();
-    println(L2_x);
-    println(L2_y);
-    println(L2_z);
-    println("Yay! Successfully parsed a new stateDataMessage!");
+    L2[0] = din.readFloat();
+    L2[1] = din.readFloat();
+    L2[2] = din.readFloat();
+    globalPosition[0] = din.readFloat();
+    globalPosition[1] = din.readFloat();
+    globalPosition[2] = din.readFloat();
+    heading = din.readFloat();
+    localPosition[0] = din.readFloat();
+    localPosition[1] = din.readFloat();
+    localPosition[2] = din.readFloat();
+    velocity[0] = din.readFloat();
+    velocity[1] = din.readFloat();
+    velocity[2] = din.readFloat();
   } catch (Exception e) {
     println("Crap, failed to extract the data");
   }
