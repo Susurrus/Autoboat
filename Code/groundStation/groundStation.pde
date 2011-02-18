@@ -2,16 +2,18 @@ import controlP5.*;
 import processing.serial.*;
 import java.util.*;
 
-ControlP5 controlP5;
-
-DropdownList serialPortsList;
-
-Serial myPort;
-
 // Used for parsing message data
 byte[] message = new byte[64];
 int messageIndex = 0;
 int messageState = 0;
+
+// Internal program state
+boolean record = false;
+Serial myPort;
+ControlTimer recordTimer;
+ControlP5 controlP5;
+DropdownList serialPortsList;
+Textlabel recordTimerLabel;
 
 // Reference
 PVector trueNorth = new PVector(0, 1, 0);
@@ -35,16 +37,20 @@ void setup() {
   frameRate(30);
   controlP5 = new ControlP5(this);
   serialPortsList = controlP5.addDropdownList("serialPortsList",100,100,100,120);
+  controlP5.addToggle("record",false,100,100,20,20);
+  recordTimer = new ControlTimer();
+  recordTimer.setSpeedOfTime(1);
+  recordTimerLabel = controlP5.addTextlabel("recordTimer",recordTimer.toString(),20,110);
   customizeSerialPortsList(serialPortsList);
 }
 
 void draw() {
-  // Restore the cursor to the regular arrow.
-  cursor(ARROW);
-  
   // Redraw the background at every timestep
   // (Necessary for clearing things like the dropdown)
   background(0);
+  
+  // Restore the cursor to the regular arrow.
+  cursor(ARROW);
   
   // Grab some data from the serial port
   // TODO: Grab serial data faster.
@@ -119,6 +125,10 @@ void draw() {
   
   // Reset fill color to white
   fill(255);
+  
+  if (record) {
+    recordTimerLabel.setValue(recordTimer.toString());
+  }
 }
 
 void controlEvent(ControlEvent theEvent) {
@@ -163,6 +173,11 @@ void customizeSerialPortsList(DropdownList ddl) {
   
   ddl.setColorBackground(color(60));
   ddl.setColorActive(color(255,128));
+}
+
+public void record(boolean theValue) {
+  record = theValue;
+  recordTimer.reset();
 }
 
 /**
@@ -261,11 +276,13 @@ void updateStateData(byte message[]) {
   DataInputStream din = new DataInputStream(in);
   
   // Save the last set of data into an array list
-  L2List.add(L2);
-  globalPositionList.add(globalPosition);
-  headingList.add(heading);
-  localPositionList.add(localPosition);
-  velocityList.add(velocity);
+  if (record) {
+    L2List.add(L2);
+    globalPositionList.add(globalPosition);
+    headingList.add(heading);
+    localPositionList.add(localPosition);
+    velocityList.add(velocity);
+  }
   
   // Import new data from a complete StateData message
   try {
