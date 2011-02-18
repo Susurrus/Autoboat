@@ -1,6 +1,7 @@
 import controlP5.*;
 import processing.serial.*;
 import java.util.*;
+import java.lang.Long;
 
 // Used for parsing message data
 byte[] message = new byte[64];
@@ -9,11 +10,14 @@ int messageState = 0;
 
 // Internal program state
 boolean record = false;
+Long recordedMessages = new Long(0);
 Serial myPort;
 ControlTimer recordTimer;
 ControlP5 controlP5;
 DropdownList serialPortsList;
 Textlabel recordTimerLabel;
+Textlabel recordedMessagesLabel;
+
 
 // Reference
 PVector trueNorth = new PVector(0, 1, 0);
@@ -40,7 +44,8 @@ void setup() {
   controlP5.addToggle("record",false,100,100,20,20);
   recordTimer = new ControlTimer();
   recordTimer.setSpeedOfTime(1);
-  recordTimerLabel = controlP5.addTextlabel("recordTimer",recordTimer.toString(),20,110);
+  recordTimerLabel = controlP5.addTextlabel("recordTimer",recordTimer.toString(),20,100);
+  recordedMessagesLabel = controlP5.addTextlabel("recordedMessages","Messages: " + recordedMessages.toString(),20,120);
   customizeSerialPortsList(serialPortsList);
 }
 
@@ -128,6 +133,7 @@ void draw() {
   
   if (record) {
     recordTimerLabel.setValue(recordTimer.toString());
+    recordedMessagesLabel.setValue("Messages: " + recordedMessages.toString());
   }
 }
 
@@ -244,7 +250,6 @@ void buildAndCheckMessage(byte characterIn) {
 		// The checksum is now verified and if successful the message
 		// is stored in the appropriate struct.
 		if (message[messageIndex] == calculateChecksum(subset(message, 2, messageIndex-4))) {
-                  println("New data!");
 			// We now memcpy all the data into our global data structs.
 			// NOTE: message[3] is used to skip the header & message ID info
 			switch (message[2]) {
@@ -282,6 +287,7 @@ void updateStateData(byte message[]) {
     headingList.add(heading);
     localPositionList.add(localPosition);
     velocityList.add(velocity);
+    recordedMessages++;
   }
   
   // Import new data from a complete StateData message
