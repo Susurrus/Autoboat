@@ -14,8 +14,11 @@ int messageIndex = 0;
 int messageState = 0;
 byte[] inBuffer = new byte[255];
 
+// Reference
+PVector trueNorth = new PVector(0, 1, 0);
+
 // Boat state data
-float[] L2 = new float[3];
+PVector L2 = new PVector(0,0,0);
 float[] globalPosition = new float[3];
 float heading = 0;
 float[] localPosition = new float[3];
@@ -35,7 +38,7 @@ void draw() {
   
   // Redraw the background at every timestep
   // (Necessary for clearing things like the dropdown)
-  background(128);
+  background(0);
   
   // Grab some data from the serial port
   // TODO: Grab serial data faster.
@@ -56,11 +59,28 @@ void draw() {
   fill(100,0,0);
   arc(75, 90, 10, 10, 0, TWO_PI);
   
+  // Reset fill color to white
+  fill(255);
+  
   // Draw the L2 vector values
   text("L2 Vector", 300, 290);
-  text(L2[0], 300, 300);
-  text(L2[1], 300, 310);
-  text(L2[2], 300, 320);
+  text(L2.x, 300, 300);
+  text(L2.y, 300, 310);
+  text(L2.z, 300, 320);
+  
+  pushMatrix();
+  fill(0,0,255);
+  translate(320,220);
+  float rotation = PVector.angleBetween(L2, trueNorth);
+  if (!Float.isNaN(rotation)) {
+    rotate(rotation);
+  }
+  scale(L2.mag()/3);
+  triangle(10,30,0,-30,-10,30);
+  popMatrix();
+  
+  // Reset fill color to white
+  fill(255);
   
   // Draw the velocity vector values
   text("Velocity", 200, 290);
@@ -84,10 +104,14 @@ void draw() {
   text("Heading", 400, 290);
   text(heading, 400, 300);
   pushMatrix();
-  translate(420,350);
+  fill(155,155,0);
+  translate(420,220);
   rotate(heading);
   triangle(10,30,0,-30,-10,30);
   popMatrix();
+  
+  // Reset fill color to white
+  fill(255);
 }
 
 void controlEvent(ControlEvent theEvent) {
@@ -148,7 +172,6 @@ void buildAndCheckMessage(byte characterIn) {
 	// 4 - Awaiting header byte 1 (&)
 	// 5 - Reading checksum character
 	
-print(char(characterIn));
 	// We start recording a new message if we see the header
 	if (messageState == 0) {
 		if (characterIn == '%') {
@@ -199,7 +222,7 @@ print(char(characterIn));
 		// The checksum is now verified and if successful the message
 		// is stored in the appropriate struct.
 		if (message[messageIndex] == calculateChecksum(subset(message, 2, messageIndex-4))) {
-                  println("Yay! Successfully parsed a new data!");
+                  println("New data!");
 			// We now memcpy all the data into our global data structs.
 			// NOTE: message[3] is used to skip the header & message ID info
 			switch (message[2]) {
@@ -229,9 +252,9 @@ void updateStateData(byte message[]) {
   InputStream in = new ByteArrayInputStream(message);
   DataInputStream din = new DataInputStream(in);
   try {
-    L2[0] = din.readFloat();
-    L2[1] = din.readFloat();
-    L2[2] = din.readFloat();
+    L2.x = din.readFloat();
+    L2.y = din.readFloat();
+    L2.z = din.readFloat();
     globalPosition[0] = din.readFloat();
     globalPosition[1] = din.readFloat();
     globalPosition[2] = din.readFloat();
