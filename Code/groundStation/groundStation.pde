@@ -208,7 +208,6 @@ void controlEvent(ControlEvent theEvent) {
       }
       break;
     case(1):
-      println("toggle "+theEvent.value());
       if (theEvent.value() == 0) {
         stopRecordingAndSave();
       } else if (theEvent.value() == 1) {
