@@ -16,7 +16,7 @@ CircBuffer uart2TxBuffer;
  * messages, and then switches to 1200baud.
  */
 void initUart2() {
-	int i,j;
+	int i;
 	
 	// First initialize the necessary circular buffers.
 	newCircBuffer(&uart2RxBuffer);
@@ -152,19 +152,19 @@ void uart2EnqueueStateData(unsigned char *data) {
 	startUart2Transmission();
 }
 
-// void __attribute__((__interrupt__, no_auto_psv)) _U2RXInterrupt(void) {
+void __attribute__((__interrupt__, no_auto_psv)) _U2RXInterrupt(void) {
 
-	// while (U2STAbits.URXDA == 1) {
-		// writeBack(&uart2RxBuffer, (unsigned char)U2RXREG);
-	// }
+	while (U2STAbits.URXDA == 1) {
+		writeBack(&uart2RxBuffer, (unsigned char)U2RXREG);
+	}
 	
-	//Clear buffer overflow bit if triggered
-	// if (U2STAbits.OERR == 1) {
-		// U2STAbits.OERR = 0;
-	// }
+	// Clear buffer overflow bit if triggered
+	if (U2STAbits.OERR == 1) {
+		U2STAbits.OERR = 0;
+	}
 
-	// IFS1bits.U2RXIF = 0;
-// }
+	IFS1bits.U2RXIF = 0;
+}
 
 /**
  * This is the interrupt handler for UART2 transmission.
@@ -173,7 +173,7 @@ void uart2EnqueueStateData(unsigned char *data) {
  * therefore keeps adding bytes to transmit if there're more
  * in the queue.
  */
-//void __attribute__((__interrupt__, no_auto_psv)) _U2TXInterrupt(void) {
-//	IFS1bits.U2TXIF = 0;
-//	startUart2Transmission();
-//}
+void __attribute__((__interrupt__, no_auto_psv)) _U2TXInterrupt(void) {
+	IFS1bits.U2TXIF = 0;
+	startUart2Transmission();
+}
