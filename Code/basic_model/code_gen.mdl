@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.1508"
+    ComputedModelVersion    "1.1516"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant Mairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Feb 25 14:28:56 2011"
-  RTWModifiedTimeStamp	  220544530
-  ModelVersionFormat	  "1.%<AutoIncrement:1508>"
+  LastModifiedDate	  "Fri Feb 25 15:39:58 2011"
+  RTWModifiedTimeStamp	  220549195
+  ModelVersionFormat	  "1.%<AutoIncrement:1516>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -221,9 +221,9 @@ Model {
 	  ArrayBoundsChecking	  "none"
 	  SignalInfNanChecking	  "none"
 	  SignalRangeChecking	  "none"
-	  ReadBeforeWriteMsg	  "EnableAllAsError"
-	  WriteAfterWriteMsg	  "EnableAllAsError"
-	  WriteAfterReadMsg	  "EnableAllAsError"
+	  ReadBeforeWriteMsg	  "DisableAll"
+	  WriteAfterWriteMsg	  "DisableAll"
+	  WriteAfterReadMsg	  "DisableAll"
 	  AlgebraicLoopMsg	  "warning"
 	  ArtificialAlgebraicLoopMsg "warning"
 	  SaveWithDisabledLinksMsg "warning"
@@ -565,7 +565,7 @@ Model {
 		  ExtModeStaticAlloc	  off
 		  ExtModeStaticAllocSize  1000000
 		  ExtModeTesting	  off
-		  ExtModeMexFile	  "noextcomm"
+		  ExtModeMexFile	  "ext_serial_win32_comm"
 		  ExtModeIntrfLevel	  "Level1"
 		  InlinedParameterPlacement "NonHierarchical"
 		  TargetOS		  "BareBoardExample"
@@ -674,7 +674,7 @@ Model {
       }
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=1 "
-      CurrentDlgPage	      "Real-Time Workshop"
+      CurrentDlgPage	      "Diagnostics/Data Validity"
       ConfigPrmDlgPosition    " [ 20, 81, 1115, 942 ] "
     }
     PropName		    "ConfigurationSets"
@@ -1188,7 +1188,7 @@ Model {
   }
   System {
     Name		    "code_gen"
-    Location		    [202, 82, 1253, 961]
+    Location		    [268, 83, 1319, 962]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1202,7 +1202,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "117"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    13041
+    SIDHighWatermark	    13044
     Block {
       BlockType		      SubSystem
       Name		      "Blink LED D10 a 1Hz"
@@ -1252,22 +1252,6 @@ Model {
 	}
 	Block {
 	  BlockType		  Reference
-	  Name			  "LED D10"
-	  SID			  2740
-	  Tag			  "dsPIC_Digital_Output"
-	  Ports			  [1]
-	  Position		  [240, 28, 345, 62]
-	  Priority		  "5"
-	  LibraryVersion	  "3.21"
-	  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Output Write"
-	  SourceType		  ""
-	  PORT			  "A"
-	  Pin			  "[7]"
-	  Simultaneous		  off
-	  OrderingInOutPopup	  "None"
-	}
-	Block {
-	  BlockType		  Reference
 	  Name			  "Repeating\nSequence\nStair"
 	  SID			  7076
 	  Ports			  [0, 1]
@@ -1295,6 +1279,22 @@ Model {
 	  OutScaling		  "2^-12"
 	  LockScale		  off
 	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Running status\n(LED D10)"
+	  SID			  2740
+	  Tag			  "dsPIC_Digital_Output"
+	  Ports			  [1]
+	  Position		  [240, 28, 345, 62]
+	  Priority		  "5"
+	  LibraryVersion	  "3.21"
+	  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Output Write"
+	  SourceType		  ""
+	  PORT			  "A"
+	  Pin			  "[7]"
+	  Simultaneous		  off
+	  OrderingInOutPopup	  "None"
+	}
 	Line {
 	  SrcBlock		  "Repeating\nSequence\nStair"
 	  SrcPort		  1
@@ -1304,7 +1304,7 @@ Model {
 	Line {
 	  SrcBlock		  "Data Type Conversion"
 	  SrcPort		  1
-	  DstBlock		  "LED D10"
+	  DstBlock		  "Running status\n(LED D10)"
 	  DstPort		  1
 	}
       }
@@ -2797,6 +2797,11 @@ Model {
 		  RTWMemSecDataConstants  "Inherit from model"
 		  RTWMemSecDataInternal	  "Inherit from model"
 		  RTWMemSecDataParameters "Inherit from model"
+		  Array {
+		    Type		    "Handle"
+		    Dimension		    0
+		    PropName		    "AvailSigsLoadSave"
+		  }
 		}
 		Block {
 		  BlockType		  SubSystem
@@ -3364,6 +3369,11 @@ Model {
 		  RTWSystemCode		  "Auto"
 		  FunctionWithSeparateData off
 		  Opaque		  off
+		  Array {
+		    Type		    "Handle"
+		    Dimension		    0
+		    PropName		    "AvailSigsLoadSave"
+		  }
 		  RequestExecContextInheritance	off
 		  MaskHideContents	  off
 		  MaskType		  "Stateflow"
@@ -3516,6 +3526,11 @@ Model {
 		  RTWSystemCode		  "Auto"
 		  FunctionWithSeparateData off
 		  Opaque		  off
+		  Array {
+		    Type		    "Handle"
+		    Dimension		    0
+		    PropName		    "AvailSigsLoadSave"
+		  }
 		  RequestExecContextInheritance	off
 		  MaskHideContents	  off
 		  MaskType		  "Stateflow"
@@ -4660,6 +4675,11 @@ Model {
 		    RTWSystemCode	    "Auto"
 		    FunctionWithSeparateData off
 		    Opaque		    off
+		    Array {
+		    Type		    "Handle"
+		    Dimension		    0
+		    PropName		    "AvailSigsLoadSave"
+		    }
 		    RequestExecContextInheritance off
 		    MaskHideContents	    off
 		    MaskType		    "Stateflow"
@@ -4793,6 +4813,11 @@ Model {
 		    RTWSystemCode	    "Auto"
 		    FunctionWithSeparateData off
 		    Opaque		    off
+		    Array {
+		    Type		    "Handle"
+		    Dimension		    0
+		    PropName		    "AvailSigsLoadSave"
+		    }
 		    RequestExecContextInheritance off
 		    MaskHideContents	    off
 		    MaskType		    "Stateflow"
@@ -5572,6 +5597,11 @@ Model {
 		    RTWSystemCode	    "Auto"
 		    FunctionWithSeparateData off
 		    Opaque		    off
+		    Array {
+		    Type		    "Handle"
+		    Dimension		    0
+		    PropName		    "AvailSigsLoadSave"
+		    }
 		    RequestExecContextInheritance off
 		    MaskHideContents	    off
 		    MaskType		    "Stateflow"
@@ -7987,6 +8017,11 @@ Model {
 		    RTWSystemCode	    "Auto"
 		    FunctionWithSeparateData off
 		    Opaque		    off
+		    Array {
+		    Type		    "Handle"
+		    Dimension		    0
+		    PropName		    "AvailSigsLoadSave"
+		    }
 		    RequestExecContextInheritance off
 		    MaskHideContents	    off
 		    MaskType		    "Stateflow"
@@ -8341,6 +8376,9 @@ Model {
 		    SrcPort		    1
 		    DstBlock		    "Multiport\nSwitch"
 		    DstPort		    3
+		    }
+		    Annotation {
+		    Position		    [394, 529]
 		    }
 		  }
 		}
@@ -8999,22 +9037,6 @@ Model {
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
-	}
-	Block {
-	  BlockType		  Reference
-	  Name			  "LED D5"
-	  SID			  12351
-	  Tag			  "dsPIC_Digital_Output"
-	  Ports			  [1]
-	  Position		  [600, 360, 715, 400]
-	  Priority		  "5"
-	  LibraryVersion	  "3.21"
-	  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Output Write"
-	  SourceType		  ""
-	  PORT			  "A"
-	  Pin			  "[2]"
-	  Simultaneous		  off
-	  OrderingInOutPopup	  "None"
 	}
 	Block {
 	  BlockType		  Logic
@@ -10080,6 +10102,11 @@ Model {
 		    RTWSystemCode	    "Auto"
 		    FunctionWithSeparateData off
 		    Opaque		    off
+		    Array {
+		    Type		    "Handle"
+		    Dimension		    0
+		    PropName		    "AvailSigsLoadSave"
+		    }
 		    RequestExecContextInheritance off
 		    MaskHideContents	    off
 		    MaskType		    "Stateflow"
@@ -10840,7 +10867,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Radio Control\nInputs"
-	    Location		    [221, 82, 1280, 983]
+	    Location		    [202, 82, 1270, 961]
 	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -13666,6 +13693,22 @@ Model {
 		}
 		Block {
 		  BlockType		  Reference
+		  Name			  "Calibration mode\n(LED D6)"
+		  SID			  12567
+		  Tag			  "dsPIC_Digital_Output"
+		  Ports			  [1]
+		  Position		  [570, 323, 675, 357]
+		  Priority		  "5"
+		  LibraryVersion	  "3.21"
+		  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Output Write"
+		  SourceType		  ""
+		  PORT			  "A"
+		  Pin			  "3"
+		  Simultaneous		  off
+		  OrderingInOutPopup	  "None"
+		}
+		Block {
+		  BlockType		  Reference
 		  Name			  "Compare\nTo Constant"
 		  SID			  12562
 		  Ports			  [1, 1]
@@ -13746,22 +13789,6 @@ Model {
 		  RTWMemSecDataInternal	  "Inherit from model"
 		  RTWMemSecDataParameters "Inherit from model"
 		  vinit			  "0"
-		}
-		Block {
-		  BlockType		  Reference
-		  Name			  "LED D6"
-		  SID			  12567
-		  Tag			  "dsPIC_Digital_Output"
-		  Ports			  [1]
-		  Position		  [570, 323, 675, 357]
-		  Priority		  "5"
-		  LibraryVersion	  "3.21"
-		  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Output Write"
-		  SourceType		  ""
-		  PORT			  "A"
-		  Pin			  "3"
-		  Simultaneous		  off
-		  OrderingInOutPopup	  "None"
 		}
 		Block {
 		  BlockType		  SubSystem
@@ -15253,7 +15280,7 @@ Model {
 		Line {
 		  SrcBlock		  "State outputs"
 		  SrcPort		  1
-		  DstBlock		  "LED D6"
+		  DstBlock		  "Calibration mode\n(LED D6)"
 		  DstPort		  1
 		}
 		Line {
@@ -15816,6 +15843,11 @@ Model {
 		  RTWSystemCode		  "Auto"
 		  FunctionWithSeparateData off
 		  Opaque		  off
+		  Array {
+		    Type		    "Handle"
+		    Dimension		    0
+		    PropName		    "AvailSigsLoadSave"
+		  }
 		  RequestExecContextInheritance	off
 		  MaskHideContents	  off
 		  MaskType		  "Stateflow"
@@ -16510,6 +16542,11 @@ Model {
 		  RTWSystemCode		  "Auto"
 		  FunctionWithSeparateData off
 		  Opaque		  off
+		  Array {
+		    Type		    "Handle"
+		    Dimension		    0
+		    PropName		    "AvailSigsLoadSave"
+		  }
 		  RequestExecContextInheritance	off
 		  MaskHideContents	  off
 		  MaskType		  "Stateflow"
@@ -17202,6 +17239,11 @@ Model {
 		  RTWSystemCode		  "Auto"
 		  FunctionWithSeparateData off
 		  Opaque		  off
+		  Array {
+		    Type		    "Handle"
+		    Dimension		    0
+		    PropName		    "AvailSigsLoadSave"
+		  }
 		  RequestExecContextInheritance	off
 		  MaskHideContents	  off
 		  MaskType		  "Stateflow"
@@ -18002,6 +18044,22 @@ Model {
 	  }
 	}
 	Block {
+	  BlockType		  Reference
+	  Name			  "Run mode\n(LED D5)"
+	  SID			  12351
+	  Tag			  "dsPIC_Digital_Output"
+	  Ports			  [1]
+	  Position		  [600, 360, 715, 400]
+	  Priority		  "5"
+	  LibraryVersion	  "3.21"
+	  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Output Write"
+	  SourceType		  ""
+	  PORT			  "A"
+	  Pin			  "[2]"
+	  Simultaneous		  off
+	  OrderingInOutPopup	  "None"
+	}
+	Block {
 	  BlockType		  SubSystem
 	  Name			  "Select current\nwaypoint track"
 	  SID			  12761
@@ -18015,6 +18073,11 @@ Model {
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
 	  Opaque		  off
+	  Array {
+	    Type		    "Handle"
+	    Dimension		    0
+	    PropName		    "AvailSigsLoadSave"
+	  }
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
 	  MaskType		  "Stateflow"
@@ -18591,7 +18654,7 @@ Model {
 	  Branch {
 	    Points		    [475, 0]
 	    Branch {
-	      DstBlock		      "LED D5"
+	      DstBlock		      "Run mode\n(LED D5)"
 	      DstPort		      1
 	    }
 	    Branch {
@@ -19086,13 +19149,13 @@ Model {
       tmr2345		      "[8  0  0  0  0  0  0  0]"
       tmr2345cfg	      "[-1 -1 -1 -1 -1 -1 -1 -1]"
       IOautoConf	      on
-      typePort		      "[ 10  10  10  10   0   0  10  10   0   0   0   0   0   0   0   0   8   0   0   0   0   0   0   "
+      typePort		      "[ 10  10  10  10   0   0   0  10   0   0   0   0   0   0   0   0   8   0   0   0   0   0   0   "
       "0   0   0   0   0   0   0   0   0   0   0   9   0   0   0   0   0   0   0   0   0   0   0   0   0   0   7   0   "
       "0   0  10   9   0   0   6   6   6   0   0   0   6   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   "
       "0   0   0   4   5   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   9   0   0   0   0   0  10   0   "
       "0   0   0   0   0 ]"
-      TRIS		      "[ 65328  65535  65535  65501  65535  65535  65023 ]"
-      ADPCFG		      "12713984"
+      TRIS		      "[ 65392  65535  65535  65501  65535  65535  65023 ]"
+      ADPCFG		      "8519680"
       MasterBusyPort	      "None"
       MasterOverloadPort      "None"
       FOSC		      "Quartz (XT - HS)"
@@ -19612,6 +19675,11 @@ Model {
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
 	      Opaque		      off
+	      Array {
+		Type			"Handle"
+		Dimension		0
+		PropName		"AvailSigsLoadSave"
+	      }
 	      RequestExecContextInheritance off
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
@@ -20896,7 +20964,7 @@ Model {
 	  BlockType		  DataTypeConversion
 	  Name			  "Data Type Conversion1"
 	  SID			  13041
-	  Position		  [680, 61, 725, 79]
+	  Position		  [690, 61, 735, 79]
 	  ShowName		  off
 	  OutDataTypeMode	  "boolean"
 	  OutDataType		  "fixdt(1, 16)"
@@ -20910,7 +20978,7 @@ Model {
 	  Name			  "Detect\nChange1"
 	  SID			  12889
 	  Ports			  [1, 1]
-	  Position		  [370, 66, 420, 84]
+	  Position		  [370, 41, 420, 59]
 	  ShowName		  off
 	  LibraryVersion	  "1.216"
 	  SourceBlock		  "simulink/Logic and Bit\nOperations/Detect\nChange"
@@ -21060,6 +21128,11 @@ Model {
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
 	      Opaque		      off
+	      Array {
+		Type			"Handle"
+		Dimension		0
+		PropName		"AvailSigsLoadSave"
+	      }
 	      RequestExecContextInheritance off
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
@@ -21346,6 +21419,11 @@ Model {
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
 	      Opaque		      off
+	      Array {
+		Type			"Handle"
+		Dimension		0
+		PropName		"AvailSigsLoadSave"
+	      }
 	      RequestExecContextInheritance off
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
@@ -21530,6 +21608,11 @@ Model {
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
 	      Opaque		      off
+	      Array {
+		Type			"Handle"
+		Dimension		0
+		PropName		"AvailSigsLoadSave"
+	      }
 	      RequestExecContextInheritance off
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
@@ -21929,6 +22012,22 @@ Model {
 	  }
 	}
 	Block {
+	  BlockType		  Reference
+	  Name			  "HIL status\n(LED D4)"
+	  SID			  13028
+	  Tag			  "dsPIC_Digital_Output"
+	  Ports			  [1]
+	  Position		  [915, 60, 1030, 100]
+	  Priority		  "5"
+	  LibraryVersion	  "3.21"
+	  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Output Write"
+	  SourceType		  ""
+	  PORT			  "A"
+	  Pin			  "[1]"
+	  Simultaneous		  off
+	  OrderingInOutPopup	  "None"
+	}
+	Block {
 	  BlockType		  SubSystem
 	  Name			  "Hold in reset\non init"
 	  SID			  12902
@@ -22057,70 +22156,6 @@ Model {
 	  }
 	}
 	Block {
-	  BlockType		  Reference
-	  Name			  "LED D3"
-	  SID			  12908
-	  Tag			  "dsPIC_Digital_Output"
-	  Ports			  [1]
-	  Position		  [825, 250, 940, 290]
-	  Priority		  "5"
-	  LibraryVersion	  "3.21"
-	  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Output Write"
-	  SourceType		  ""
-	  PORT			  "A"
-	  Pin			  "[0]"
-	  Simultaneous		  off
-	  OrderingInOutPopup	  "None"
-	}
-	Block {
-	  BlockType		  Reference
-	  Name			  "LED D4"
-	  SID			  13025
-	  Tag			  "dsPIC_Digital_Output"
-	  Ports			  [1]
-	  Position		  [810, 190, 925, 230]
-	  Priority		  "5"
-	  LibraryVersion	  "3.21"
-	  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Output Write"
-	  SourceType		  ""
-	  PORT			  "A"
-	  Pin			  "[1]"
-	  Simultaneous		  off
-	  OrderingInOutPopup	  "None"
-	}
-	Block {
-	  BlockType		  Reference
-	  Name			  "LED D5"
-	  SID			  13026
-	  Tag			  "dsPIC_Digital_Output"
-	  Ports			  [1]
-	  Position		  [820, 100, 935, 140]
-	  Priority		  "5"
-	  LibraryVersion	  "3.21"
-	  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Output Write"
-	  SourceType		  ""
-	  PORT			  "A"
-	  Pin			  "[2]"
-	  Simultaneous		  off
-	  OrderingInOutPopup	  "None"
-	}
-	Block {
-	  BlockType		  Reference
-	  Name			  "LED D6"
-	  SID			  13028
-	  Tag			  "dsPIC_Digital_Output"
-	  Ports			  [1]
-	  Position		  [825, 45, 940, 85]
-	  Priority		  "5"
-	  LibraryVersion	  "3.21"
-	  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Output Write"
-	  SourceType		  ""
-	  PORT			  "A"
-	  Pin			  "[3]"
-	  Simultaneous		  off
-	  OrderingInOutPopup	  "None"
-	}
-	Block {
 	  BlockType		  Logic
 	  Name			  "Logical\nOperator"
 	  SID			  12910
@@ -22150,11 +22185,37 @@ Model {
 	  OutDataTypeStr	  "boolean"
 	}
 	Block {
+	  BlockType		  Logic
+	  Name			  "Logical\nOperator2"
+	  SID			  13043
+	  Ports			  [2, 1]
+	  Position		  [855, 61, 885, 94]
+	  ShowName		  off
+	  AllPortsSameDT	  off
+	  OutDataTypeMode	  "boolean"
+	  LogicDataType		  "fixdt(0, 8)"
+	  OutDataTypeStr	  "boolean"
+	}
+	Block {
+	  BlockType		  Logic
+	  Name			  "Logical\nOperator3"
+	  SID			  13044
+	  Ports			  [1, 1]
+	  Position		  [800, 88, 830, 122]
+	  ShowName		  off
+	  Operator		  "NOT"
+	  Inputs		  "1"
+	  AllPortsSameDT	  off
+	  OutDataTypeMode	  "boolean"
+	  LogicDataType		  "fixdt(0, 8)"
+	  OutDataTypeStr	  "boolean"
+	}
+	Block {
 	  BlockType		  SubSystem
 	  Name			  "Parse for HIL data"
 	  SID			  12912
-	  Ports			  [0, 6, 1]
-	  Position		  [185, 128, 265, 192]
+	  Ports			  [0, 7, 1]
+	  Position		  [235, 168, 315, 232]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -22302,22 +22363,6 @@ Model {
 	      FctDeclaration	      "extern void getSensorData(uint8_T* y1);"
 	      FctCall		      "getSensorData(*%y1);"
 	      OrderingInOutPopup      "Input"
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "LED D9"
-	      SID		      13024
-	      Tag		      "dsPIC_Digital_Output"
-	      Ports		      [1]
-	      Position		      [450, 763, 555, 797]
-	      Priority		      "5"
-	      LibraryVersion	      "3.21"
-	      SourceBlock	      "dsPICdrivers/Digital I//O/Digital Output Write"
-	      SourceType	      ""
-	      PORT		      "A"
-	      Pin		      "[6]"
-	      Simultaneous	      off
-	      OrderingInOutPopup      "None"
 	    }
 	    Block {
 	      BlockType		      Reference
@@ -22529,6 +22574,15 @@ Model {
 	      Port		      "6"
 	      IconDisplay	      "Port number"
 	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "newData"
+	      SID		      13042
+	      Position		      [785, 728, 815, 742]
+	      BackgroundColor	      "yellow"
+	      Port		      "7"
+	      IconDisplay	      "Port number"
+	    }
 	    Line {
 	      SrcBlock		      "Unpack"
 	      SrcPort		      1
@@ -22737,7 +22791,8 @@ Model {
 		DstPort			2
 	      }
 	      Branch {
-		DstBlock		"LED D9"
+		Points			[0, 40]
+		DstBlock		"newData"
 		DstPort			1
 	      }
 	    }
@@ -22756,10 +22811,26 @@ Model {
 	    }
 	    Annotation {
 	      Name		      "This integrator tests for a disconnection with the HIL \nusing a timeout of 0.5 seconds."
-	      Position		      [450, 746]
+	      Position		      [450, 751]
 	      HorizontalAlignment     "left"
 	    }
 	  }
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Reset status\n(LED D3 )"
+	  SID			  12908
+	  Tag			  "dsPIC_Digital_Output"
+	  Ports			  [1]
+	  Position		  [885, 240, 1000, 280]
+	  Priority		  "5"
+	  LibraryVersion	  "3.21"
+	  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Output Write"
+	  SourceType		  ""
+	  PORT			  "A"
+	  Pin			  "[0]"
+	  Simultaneous		  off
+	  OrderingInOutPopup	  "None"
 	}
 	Block {
 	  BlockType		  SubSystem
@@ -23010,6 +23081,11 @@ Model {
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
 	  Opaque		  off
+	  Array {
+	    Type		    "Handle"
+	    Dimension		    0
+	    PropName		    "AvailSigsLoadSave"
+	  }
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
 	  MaskType		  "Stateflow"
@@ -23207,28 +23283,28 @@ Model {
 	Line {
 	  SrcBlock		  "Parse for HIL data"
 	  SrcPort		  2
-	  Points		  [45, 0; 0, 50]
+	  Points		  [-5, 0; 0, 15]
 	  DstBlock		  "Atomic Subsystem"
 	  DstPort		  2
 	}
 	Line {
 	  SrcBlock		  "Parse for HIL data"
 	  SrcPort		  3
-	  Points		  [35, 0; 0, 70]
+	  Points		  [-15, 0; 0, 35]
 	  DstBlock		  "Atomic Subsystem"
 	  DstPort		  4
 	}
 	Line {
 	  SrcBlock		  "Parse for HIL data"
 	  SrcPort		  4
-	  Points		  [25, 0; 0, 90]
+	  Points		  [-25, 0; 0, 55]
 	  DstBlock		  "Atomic Subsystem"
 	  DstPort		  6
 	}
 	Line {
 	  SrcBlock		  "Parse for HIL data"
 	  SrcPort		  5
-	  Points		  [15, 0; 0, 110]
+	  Points		  [-35, 0; 0, 75]
 	  DstBlock		  "Atomic Subsystem"
 	  DstPort		  8
 	}
@@ -23267,6 +23343,7 @@ Model {
 	Line {
 	  SrcBlock		  "Parse for HIL data"
 	  SrcPort		  1
+	  Points		  [0, -35]
 	  DstBlock		  "timestamp"
 	  DstPort		  1
 	}
@@ -23279,38 +23356,46 @@ Model {
 	Line {
 	  SrcBlock		  "Toggle"
 	  SrcPort		  1
-	  Points		  [15, 0; 0, 35]
+	  Points		  [15, 0; 0, 10]
 	  Branch {
 	    DstBlock		    "Detect\nChange1"
 	    DstPort		    1
 	  }
 	  Branch {
-	    Points		    [0, 25]
+	    Points		    [0, 20]
 	    Branch {
-	      Points		      [0, 5]
+	      Points		      [0, 30]
 	      Branch {
-		DstBlock		"Atomic Subsystem"
-		DstPort			1
-	      }
-	      Branch {
-		DstBlock		"HIL"
-		DstPort			1
-	      }
-	      Branch {
-		Points			[-105, 0]
+		Points			[0, 5]
 		Branch {
-		  DstBlock		  "Parse for HIL data"
-		  DstPort		  enable
-		}
-		Branch {
-		  DstBlock		  "Logical\nOperator"
+		  DstBlock		  "Atomic Subsystem"
 		  DstPort		  1
 		}
+		Branch {
+		  DstBlock		  "HIL"
+		  DstPort		  1
+		}
+		Branch {
+		  Points		  [-105, 0]
+		  Branch {
+		    Points		    [0, 48]
+		    DstBlock		    "Parse for HIL data"
+		    DstPort		    enable
+		  }
+		  Branch {
+		    DstBlock		    "Logical\nOperator"
+		    DstPort		    1
+		  }
+		}
+	      }
+	      Branch {
+		Points			[180, 0]
+		DstBlock		"Change UART Baudrate"
+		DstPort			1
 	      }
 	    }
 	    Branch {
-	      Points		      [180, 0]
-	      DstBlock		      "Change UART Baudrate"
+	      DstBlock		      "Logical\nOperator2"
 	      DstPort		      1
 	    }
 	  }
@@ -23324,7 +23409,6 @@ Model {
 	Line {
 	  SrcBlock		  "Detect\nChange1"
 	  SrcPort		  1
-	  Points		  [25, 0; 0, -25]
 	  DstBlock		  "Data Type Conversion"
 	  DstPort		  1
 	}
@@ -23338,8 +23422,16 @@ Model {
 	Line {
 	  SrcBlock		  "Logical\nOperator1"
 	  SrcPort		  1
-	  DstBlock		  "reset"
-	  DstPort		  1
+	  Points		  [15, 0]
+	  Branch {
+	    DstBlock		    "reset"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, 80]
+	    DstBlock		    "Reset status\n(LED D3 )"
+	    DstPort		    1
+	  }
 	}
 	Line {
 	  SrcBlock		  "Discrete step"
@@ -23350,32 +23442,16 @@ Model {
 	Line {
 	  SrcBlock		  "Hold in reset\non init"
 	  SrcPort		  1
-	  Points		  [10, 0]
-	  Branch {
-	    Points		    [0, 10]
-	    DstBlock		    "Logical\nOperator1"
-	    DstPort		    3
-	  }
-	  Branch {
-	    Points		    [0, 35]
-	    DstBlock		    "LED D4"
-	    DstPort		    1
-	  }
+	  Points		  [10, 0; 0, 10]
+	  DstBlock		  "Logical\nOperator1"
+	  DstPort		  3
 	}
 	Line {
 	  SrcBlock		  "Parse for HIL data"
 	  SrcPort		  6
-	  Points		  [0, 30; 475, 0]
-	  Branch {
-	    Points		    [0, -20]
-	    DstBlock		    "Logical\nOperator1"
-	    DstPort		    4
-	  }
-	  Branch {
-	    Points		    [0, 55]
-	    DstBlock		    "LED D3"
-	    DstPort		    1
-	  }
+	  Points		  [0, -5; 425, 0; 0, -20]
+	  DstBlock		  "Logical\nOperator1"
+	  DstPort		  4
 	}
 	Line {
 	  SrcBlock		  "Data Type Conversion"
@@ -23386,32 +23462,37 @@ Model {
 	    DstPort		    enable
 	  }
 	  Branch {
-	    Points		    [155, 0; 0, 15]
-	    Branch {
-	      Points		      [0, 100]
-	      DstBlock		      "Logical\nOperator1"
-	      DstPort		      1
-	    }
-	    Branch {
-	      DstBlock		      "LED D6"
-	      DstPort		      1
-	    }
+	    Points		    [210, 0]
+	    DstBlock		    "Logical\nOperator1"
+	    DstPort		    1
 	  }
 	}
 	Line {
 	  SrcBlock		  "Data Type Conversion1"
 	  SrcPort		  1
-	  Points		  [10, 0]
-	  Branch {
-	    Points		    [45, 0]
-	    DstBlock		    "Logical\nOperator1"
-	    DstPort		    2
-	  }
-	  Branch {
-	    Points		    [0, 50]
-	    DstBlock		    "LED D5"
-	    DstPort		    1
-	  }
+	  Points		  [35, 0; 0, 105]
+	  DstBlock		  "Logical\nOperator1"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Logical\nOperator2"
+	  SrcPort		  1
+	  DstBlock		  "HIL status\n(LED D4)"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Logical\nOperator3"
+	  SrcPort		  1
+	  Points		  [5, 0]
+	  DstBlock		  "Logical\nOperator2"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Parse for HIL data"
+	  SrcPort		  7
+	  Points		  [5, 0; 0, -70; 335, 0; 0, -55]
+	  DstBlock		  "Logical\nOperator3"
+	  DstPort		  1
 	}
 	Annotation {
 	  Name			  "This subsystem handles all of the sensor input and pipes out relevant input. Data can come\nfrom either H"
@@ -23764,6 +23845,11 @@ Model {
 		  RTWSystemCode		  "Auto"
 		  FunctionWithSeparateData off
 		  Opaque		  off
+		  Array {
+		    Type		    "Handle"
+		    Dimension		    0
+		    PropName		    "AvailSigsLoadSave"
+		  }
 		  RequestExecContextInheritance	off
 		  MaskHideContents	  off
 		  MaskType		  "Stateflow"
@@ -24135,6 +24221,11 @@ Model {
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
 	      Opaque		      off
+	      Array {
+		Type			"Handle"
+		Dimension		0
+		PropName		"AvailSigsLoadSave"
+	      }
 	      RequestExecContextInheritance off
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
@@ -24817,6 +24908,11 @@ Model {
 	      RTWSystemCode	      "Auto"
 	      FunctionWithSeparateData off
 	      Opaque		      off
+	      Array {
+		Type			"Handle"
+		Dimension		0
+		PropName		"AvailSigsLoadSave"
+	      }
 	      RequestExecContextInheritance off
 	      MaskHideContents	      off
 	      MaskType		      "Stateflow"
@@ -25114,6 +25210,11 @@ Model {
 	  RTWSystemCode		  "Auto"
 	  FunctionWithSeparateData off
 	  Opaque		  off
+	  Array {
+	    Type		    "Handle"
+	    Dimension		    0
+	    PropName		    "AvailSigsLoadSave"
+	  }
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
 	  MaskType		  "Stateflow"
