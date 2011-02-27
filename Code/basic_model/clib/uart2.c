@@ -45,7 +45,7 @@ void initUart2() {
 	
 	U2BRG = BAUD4800_BRG_REG;		// Set the baud rate to 4800
 	
-	U2MODEbits.UARTEN	= 1;		// Enable the port	
+/*	U2MODEbits.UARTEN	= 1;		// Enable the port	
 	U2STAbits.UTXEN		= 1;		// Enable TX
 
 	// Give some time for the UART to settle.
@@ -76,7 +76,7 @@ void initUart2() {
 	U1MODEbits.UARTEN	= 0;		// Disable the port	
 	
 	// Set the baud rate to 1200 for GPS reception
-	U2BRG = BAUD1200_BRG_REG;
+	U2BRG = BAUD1200_BRG_REG; */
 	
 	// Finally setup interrupts for proper UART communication.
   	IPC7bits.U2TXIP = 6;    		// Interrupt priority 6  

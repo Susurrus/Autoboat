@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.1520"
+    ComputedModelVersion    "1.1525"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant Mairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun Feb 27 12:59:49 2011"
-  RTWModifiedTimeStamp	  220712387
-  ModelVersionFormat	  "1.%<AutoIncrement:1520>"
+  LastModifiedDate	  "Sun Feb 27 13:52:46 2011"
+  RTWModifiedTimeStamp	  220715280
+  ModelVersionFormat	  "1.%<AutoIncrement:1525>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -1188,8 +1188,8 @@ Model {
   }
   System {
     Name		    "code_gen"
-    Location		    [202, 82, 1253, 961]
-    Open		    off
+    Location		    [224, 100, 1221, 792]
+    Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -1202,7 +1202,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "117"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    13047
+    SIDHighWatermark	    13051
     Block {
       BlockType		      SubSystem
       Name		      "Blink LED D10 a 1Hz"
@@ -1634,8 +1634,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Controller"
-	Location		[224, 100, 1238, 809]
-	Open			off
+	Location		[202, 82, 1270, 978]
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -2152,8 +2152,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Autonomous Controller"
-	    Location		    [202, 82, 1270, 978]
-	    Open		    off
+	    Location		    [224, 100, 1238, 809]
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -7409,8 +7409,8 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Throttle\nCommand"
-		Location		[224, 100, 1238, 809]
-		Open			off
+		Location		[391, 279, 1157, 669]
+		Open			on
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
 		ScreenColor		"white"
@@ -7513,7 +7513,7 @@ Model {
 		  }
 		  System {
 		    Name		    "Mux Everything"
-		    Location		    [224, 100, 1238, 809]
+		    Location		    [287, 279, 1140, 652]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -7611,7 +7611,7 @@ Model {
 		    Location		    [287, 279, 1157, 669]
 		    Open		    off
 		    ModelBrowserVisibility  on
-		    ModelBrowserWidth	    200
+		    ModelBrowserWidth	    304
 		    ScreenColor		    "white"
 		    PaperOrientation	    "landscape"
 		    PaperPositionMode	    "auto"
@@ -7677,6 +7677,19 @@ Model {
 		    BackgroundColor	    "gray"
 		    ShowName		    off
 		    Value		    "5"
+		    OutDataTypeMode	    "uint8"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    OutDataTypeStr	    "uint8"
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "Constant4"
+		    SID			    13051
+		    Position		    [300, 85, 330, 105]
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    Value		    "[1 44]"
 		    OutDataTypeMode	    "uint8"
 		    OutDataType		    "sfix(16)"
 		    OutScaling		    "2^0"
@@ -7875,12 +7888,6 @@ Model {
 		    DstPort		    2
 		    }
 		    Line {
-		    SrcBlock		    "uint16 to uchar"
-		    SrcPort		    1
-		    DstBlock		    "Mux"
-		    DstPort		    3
-		    }
-		    Line {
 		    SrcBlock		    "Mux"
 		    SrcPort		    1
 		    DstBlock		    "msg"
@@ -7903,6 +7910,12 @@ Model {
 		    SrcPort		    1
 		    DstBlock		    "uint16 to uchar"
 		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Constant4"
+		    SrcPort		    1
+		    DstBlock		    "Mux"
+		    DstPort		    3
 		    }
 		    }
 		    }
@@ -8382,7 +8395,7 @@ Model {
 		  MaskHideContents	  off
 		  System {
 		    Name		    "Trigger Events"
-		    Location		    [269, 449, 1162, 855]
+		    Location		    [269, 449, 1502, 872]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -8679,8 +8692,24 @@ Model {
 		Line {
 		  SrcBlock		  "Constant5"
 		  SrcPort		  1
-		  DstBlock		  "Switch"
-		  DstPort		  3
+		  Points		  [5, 0]
+		  Branch {
+		    DstBlock		    "Switch"
+		    DstPort		    3
+		  }
+		  Branch {
+		    Points		    [0, 10; 70, 0]
+		    Branch {
+		    Points		    [0, -20]
+		    DstBlock		    "Trigger Events"
+		    DstPort		    1
+		    }
+		    Branch {
+		    Points		    [0, 50]
+		    DstBlock		    "Mux Everything"
+		    DstPort		    4
+		    }
+		  }
 		}
 		Line {
 		  SrcBlock		  "Constant1"
@@ -8688,21 +8717,6 @@ Model {
 		  Points		  [15, 0]
 		  DstBlock		  "Switch"
 		  DstPort		  1
-		}
-		Line {
-		  Labels		  [1, 0]
-		  SrcBlock		  "Switch"
-		  SrcPort		  1
-		  Points		  [10, 0]
-		  Branch {
-		    DstBlock		    "Trigger Events"
-		    DstPort		    1
-		  }
-		  Branch {
-		    Points		    [0, 80; 210, 0]
-		    DstBlock		    "Mux Everything"
-		    DstPort		    4
-		  }
 		}
 		Line {
 		  Name			  "trigger"
@@ -8780,6 +8794,9 @@ Model {
 		  SrcPort		  1
 		  DstBlock		  "Terminator"
 		  DstPort		  1
+		}
+		Annotation {
+		  Position		  [352, 53]
 		}
 	      }
 	    }
@@ -10829,7 +10846,7 @@ Model {
 	  System {
 	    Name		    "Radio Control\nInputs"
 	    Location		    [202, 82, 1270, 961]
-	    Open		    off
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -18006,6 +18023,22 @@ Model {
 	  OrderingInOutPopup	  "None"
 	}
 	Block {
+	  BlockType		  Reference
+	  Name			  "Run mode\n(LED D9)"
+	  SID			  13050
+	  Tag			  "dsPIC_Digital_Output"
+	  Ports			  [1]
+	  Position		  [600, 440, 715, 480]
+	  Priority		  "5"
+	  LibraryVersion	  "3.21"
+	  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Output Write"
+	  SourceType		  ""
+	  PORT			  "A"
+	  Pin			  "[6]"
+	  Simultaneous		  off
+	  OrderingInOutPopup	  "None"
+	}
+	Block {
 	  BlockType		  SubSystem
 	  Name			  "Select current\nwaypoint track"
 	  SID			  12761
@@ -18636,9 +18669,17 @@ Model {
 	Line {
 	  SrcBlock		  "Logical\nOperator"
 	  SrcPort		  1
-	  Points		  [10, 0; 0, -45]
-	  DstBlock		  "Autonomous Controller"
-	  DstPort		  5
+	  Points		  [10, 0]
+	  Branch {
+	    Points		    [0, -45]
+	    DstBlock		    "Autonomous Controller"
+	    DstPort		    5
+	  }
+	  Branch {
+	    Points		    [0, 265]
+	    DstBlock		    "Run mode\n(LED D9)"
+	    DstPort		    1
+	  }
 	}
 	Line {
 	  SrcBlock		  "reset"
@@ -19090,13 +19131,13 @@ Model {
       tmr2345		      "[8  0  0  0  0  0  0  0]"
       tmr2345cfg	      "[-1 -1 -1 -1 -1 -1 -1 -1]"
       IOautoConf	      on
-      typePort		      "[ 10  10  10  10   0   0   0  10   0   0   0   0   0   0   0   0   8   0   0   0   0   0   0   "
+      typePort		      "[ 10  10  10  10   0   0  10  10   0   0   0   0   0   0   0   0   8   0   0   0   0   0   0   "
       "0   0   0   0   0   0   0   0   0   0   0   9   0   0   0   0   0   0   0   0   0   0   0   0   0   0   7   0   "
       "0   0  10   9   0   0   6   6   6   0   0   0   6   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   "
       "0   0   0   4   5   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   9   0   0   0   0   0  10   0   "
       "0   0   0   0   0 ]"
-      TRIS		      "[ 65392  65535  65535  65501  65535  65535  65023 ]"
-      ADPCFG		      "8519680"
+      TRIS		      "[ 65328  65535  65535  65501  65535  65535  65023 ]"
+      ADPCFG		      "12713984"
       MasterBusyPort	      "None"
       MasterOverloadPort      "None"
       FOSC		      "Quartz (XT - HS)"
@@ -20299,7 +20340,7 @@ Model {
       System {
 	Name			"Sensor Inputs"
 	Location		[202, 82, 1270, 978]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
