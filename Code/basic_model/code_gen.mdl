@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.1519"
+    ComputedModelVersion    "1.1520"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant Mairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun Feb 27 12:24:29 2011"
-  RTWModifiedTimeStamp	  220709988
-  ModelVersionFormat	  "1.%<AutoIncrement:1519>"
+  LastModifiedDate	  "Sun Feb 27 12:59:49 2011"
+  RTWModifiedTimeStamp	  220712387
+  ModelVersionFormat	  "1.%<AutoIncrement:1520>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -1188,8 +1188,8 @@ Model {
   }
   System {
     Name		    "code_gen"
-    Location		    [205, 249, 1256, 875]
-    Open		    on
+    Location		    [202, 82, 1253, 961]
+    Open		    off
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -1202,7 +1202,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "117"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    13046
+    SIDHighWatermark	    13047
     Block {
       BlockType		      SubSystem
       Name		      "Blink LED D10 a 1Hz"
@@ -21887,11 +21887,23 @@ Model {
 	  OutDataTypeStr	  "boolean"
 	}
 	Block {
+	  BlockType		  Logic
+	  Name			  "Logical\nOperator4"
+	  SID			  13047
+	  Ports			  [2, 1]
+	  Position		  [705, 231, 735, 264]
+	  ShowName		  off
+	  AllPortsSameDT	  off
+	  OutDataTypeMode	  "boolean"
+	  LogicDataType		  "fixdt(0, 8)"
+	  OutDataTypeStr	  "boolean"
+	}
+	Block {
 	  BlockType		  SubSystem
 	  Name			  "Parse for HIL data"
 	  SID			  12912
 	  Ports			  [0, 7, 1]
-	  Position		  [235, 168, 315, 232]
+	  Position		  [190, 133, 270, 197]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -22954,28 +22966,28 @@ Model {
 	Line {
 	  SrcBlock		  "Parse for HIL data"
 	  SrcPort		  2
-	  Points		  [-5, 0; 0, 15]
+	  Points		  [40, 0; 0, 50]
 	  DstBlock		  "Atomic Subsystem"
 	  DstPort		  2
 	}
 	Line {
 	  SrcBlock		  "Parse for HIL data"
 	  SrcPort		  3
-	  Points		  [-15, 0; 0, 35]
+	  Points		  [30, 0; 0, 70]
 	  DstBlock		  "Atomic Subsystem"
 	  DstPort		  4
 	}
 	Line {
 	  SrcBlock		  "Parse for HIL data"
 	  SrcPort		  4
-	  Points		  [-25, 0; 0, 55]
+	  Points		  [20, 0; 0, 90]
 	  DstBlock		  "Atomic Subsystem"
 	  DstPort		  6
 	}
 	Line {
 	  SrcBlock		  "Parse for HIL data"
 	  SrcPort		  5
-	  Points		  [-35, 0; 0, 75]
+	  Points		  [0, 110]
 	  DstBlock		  "Atomic Subsystem"
 	  DstPort		  8
 	}
@@ -23014,7 +23026,6 @@ Model {
 	Line {
 	  SrcBlock		  "Parse for HIL data"
 	  SrcPort		  1
-	  Points		  [0, -35]
 	  DstBlock		  "timestamp"
 	  DstPort		  1
 	}
@@ -23039,23 +23050,30 @@ Model {
 	      Branch {
 		Points			[0, 5]
 		Branch {
-		  DstBlock		  "Atomic Subsystem"
-		  DstPort		  1
-		}
-		Branch {
 		  DstBlock		  "HIL"
 		  DstPort		  1
 		}
 		Branch {
-		  Points		  [-105, 0]
+		  Points		  [-100, 0]
 		  Branch {
-		    Points		    [0, 48]
 		    DstBlock		    "Parse for HIL data"
 		    DstPort		    enable
 		  }
 		  Branch {
 		    DstBlock		    "Logical\nOperator"
 		    DstPort		    1
+		  }
+		}
+		Branch {
+		  Points		  [0, 60]
+		  Branch {
+		    DstBlock		    "Atomic Subsystem"
+		    DstPort		    1
+		  }
+		  Branch {
+		    Points		    [200, 0; 0, 90]
+		    DstBlock		    "Logical\nOperator4"
+		    DstPort		    2
 		  }
 		}
 	      }
@@ -23120,9 +23138,9 @@ Model {
 	Line {
 	  SrcBlock		  "Parse for HIL data"
 	  SrcPort		  6
-	  Points		  [0, -5; 425, 0; 0, -20]
-	  DstBlock		  "Logical\nOperator1"
-	  DstPort		  4
+	  Points		  [0, 30; 410, 0; 0, 25]
+	  DstBlock		  "Logical\nOperator4"
+	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Data Type Conversion"
@@ -23161,9 +23179,16 @@ Model {
 	Line {
 	  SrcBlock		  "Parse for HIL data"
 	  SrcPort		  7
-	  Points		  [5, 0; 0, -70; 335, 0; 0, -55]
+	  Points		  [50, 0; 0, -35; 335, 0; 0, -55]
 	  DstBlock		  "Logical\nOperator3"
 	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Logical\nOperator4"
+	  SrcPort		  1
+	  Points		  [20, 0; 0, -55]
+	  DstBlock		  "Logical\nOperator1"
+	  DstPort		  4
 	}
 	Annotation {
 	  Name			  "This subsystem handles all of the sensor input and pipes out relevant input. Data can come\nfrom either H"
