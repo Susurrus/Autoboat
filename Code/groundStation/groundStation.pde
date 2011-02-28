@@ -10,7 +10,7 @@ import processing.serial.*;
 import java.util.Calendar;
 
 // Used for parsing message data
-byte[] message = new byte[64];
+byte[] message = new byte[128];
 int messageIndex = 0;
 int messageState = 0;
 
@@ -40,6 +40,8 @@ PVector globalPosition = new PVector(0,0,0);
 float heading = 0;
 PVector localPosition = new PVector(0,0,0);
 PVector velocity = new PVector(0,0,0);
+PVector waypoint0 = new PVector(0,0,0);
+PVector waypoint1 = new PVector(0,0,0);
 
 // Boat state data recording
 ArrayList<float[]> L2List = new ArrayList<float[]>(255);
@@ -164,6 +166,16 @@ void draw() {
   text(globalPosition.y, 300, 410);
   text(globalPosition.z, 300, 420);
   
+  // Draw the current and next waypoints
+  text("Waypoint0", 50, 290);
+  text(waypoint0.x, 50, 300);
+  text(waypoint0.y, 50, 310);
+  text(waypoint0.z, 50, 320);
+  text("Waypoint1", 50, 390);
+  text(waypoint1.x, 50, 400);
+  text(waypoint1.y, 50, 410);
+  text(waypoint1.z, 50, 420);
+  
   // Display the boat heading
   text("Heading", 400, 290);
   text(heading, 400, 300);
@@ -201,7 +213,7 @@ void controlEvent(ControlEvent theEvent) {
       // TODO: This try/catch statement needs to be fixed to properly suppress the error
       // warning from gnu.io.PortInUseException and inform the user.
       try {
-        myPort = new Serial(this, theEvent.group().stringValue(), 57600);
+        myPort = new Serial(this, theEvent.group().stringValue(), 115200);
       }
       catch (Exception e) {
         println("Port in use or otherwise unavailable. Please select another.");
@@ -369,7 +381,7 @@ void buildAndCheckMessage(byte characterIn) {
 		message[messageIndex++] = characterIn;
 		if (characterIn == '^') {
 			messageState = 3;
-		} else if (messageIndex == 62) {
+		} else if (messageIndex == 126) {
 			// If we've filled up the buffer, ignore the entire message as we can't store it all
 			messageState = 0;
 			messageIndex = 0;
@@ -382,7 +394,7 @@ void buildAndCheckMessage(byte characterIn) {
 		message[messageIndex++] = characterIn;
 		if (characterIn == '&') {
 			messageState = 4;
-		} else if (messageIndex == 63) {
+		} else if (messageIndex == 127) {
 			messageState = 0;
 			messageIndex = 0;
 		} else {
@@ -450,7 +462,14 @@ void updateStateData(byte message[]) {
     velocity.x = din.readFloat();
     velocity.y = din.readFloat();
     velocity.z = din.readFloat();
+    waypoint0.x = din.readInt();
+    waypoint0.y = din.readInt();
+    waypoint0.z = din.readInt();
+    waypoint1.x = din.readInt();
+    waypoint1.y = din.readInt();
+    waypoint1.z = din.readInt();
   } catch (Exception e) {
+    e.printStackTrace();
     println("Crap, failed to extract the data");
     exit();
   }

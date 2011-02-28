@@ -1,12 +1,17 @@
-%% Plot waypoints and the vehicle track
+    %% Plot waypoints and the vehicle track
 
 figure(1);clf;
 hold on;
 axis equal;
 
 % Plot waypoints (red, green, and blue)
-plot(test_waypoints(:,2)', test_waypoints(:,1)', 'r^', 'MarkerSize', 10);
-text(test_waypoints(:,2)'+10, test_waypoints(:,1)'-10, cellstr({int2str((1:size(test_waypoints,1))')}), 'Color', 'r');
+% Here we do some predicate indexing to ignore the -1 values at the end
+tmp1 = double(test_waypoints(:,1));
+tmp1 = tmp1(tmp1 ~= -1)';
+tmp2 = double(test_waypoints(:,2));
+tmp2 = tmp2(tmp2 ~= -1)';
+plot(tmp2, tmp1, 'r^', 'MarkerSize', 10);
+text(tmp2+10, tmp1-10, cellstr({int2str((1:size(tmp1,2))')}), 'Color', 'r');
 
 % The extra two tracks are offset by the current boat position when it
 % reset to properly illustrate where the boat thought the waypoints were.

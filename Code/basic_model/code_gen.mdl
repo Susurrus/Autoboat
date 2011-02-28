@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.1532"
+    ComputedModelVersion    "1.1570"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant Mairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun Feb 27 15:48:29 2011"
-  RTWModifiedTimeStamp	  220722508
-  ModelVersionFormat	  "1.%<AutoIncrement:1532>"
+  LastModifiedDate	  "Mon Feb 28 12:12:11 2011"
+  RTWModifiedTimeStamp	  220795924
+  ModelVersionFormat	  "1.%<AutoIncrement:1570>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -1181,8 +1181,8 @@ Model {
   }
   System {
     Name		    "code_gen"
-    Location		    [202, 82, 1661, 1004]
-    Open		    on
+    Location		    [202, 78, 1530, 974]
+    Open		    off
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -1195,7 +1195,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "117"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    13053
+    SIDHighWatermark	    13133
     Block {
       BlockType		      SubSystem
       Name		      "Blink LED D10 a 1Hz"
@@ -1616,7 +1616,7 @@ Model {
       BlockType		      SubSystem
       Name		      "Controller"
       SID		      12040
-      Ports		      [5, 3]
+      Ports		      [5, 4]
       Position		      [460, 424, 565, 626]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
@@ -1627,8 +1627,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Controller"
-	Location		[202, 82, 1525, 978]
-	Open			on
+	Location		[203, 86, 1548, 982]
+	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -2145,8 +2145,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Autonomous Controller"
-	    Location		    [224, 100, 1238, 809]
-	    Open		    on
+	    Location		    [206, 82, 1274, 978]
+	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -3111,7 +3111,7 @@ Model {
 	      System {
 		Name			"Rudder\nCommand"
 		Location		[202, 82, 1270, 978]
-		Open			on
+		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
 		ScreenColor		"white"
@@ -3449,6 +3449,26 @@ Model {
 		  BackgroundColor	  "cyan"
 		  ShowName		  off
 		  GotoTag		  "L2"
+		  TagVisibility		  "global"
+		}
+		Block {
+		  BlockType		  Goto
+		  Name			  "Goto1"
+		  SID			  13056
+		  Position		  [450, 162, 515, 188]
+		  BackgroundColor	  "cyan"
+		  ShowName		  off
+		  GotoTag		  "i0"
+		  TagVisibility		  "global"
+		}
+		Block {
+		  BlockType		  Goto
+		  Name			  "Goto2"
+		  SID			  13057
+		  Position		  [450, 222, 515, 248]
+		  BackgroundColor	  "cyan"
+		  ShowName		  off
+		  GotoTag		  "i1"
 		  TagVisibility		  "global"
 		}
 		Block {
@@ -3909,20 +3929,6 @@ Model {
 		  }
 		}
 		Block {
-		  BlockType		  Terminator
-		  Name			  "Terminator"
-		  SID			  13052
-		  Position		  [455, 165, 475, 185]
-		  ShowName		  off
-		}
-		Block {
-		  BlockType		  Terminator
-		  Name			  "Terminator1"
-		  SID			  13053
-		  Position		  [455, 225, 475, 245]
-		  ShowName		  off
-		}
-		Block {
 		  BlockType		  Outport
 		  Name			  "Command"
 		  SID			  12162
@@ -4142,13 +4148,13 @@ Model {
 		Line {
 		  SrcBlock		  "L2 Plus ref WP1"
 		  SrcPort		  3
-		  DstBlock		  "Terminator"
+		  DstBlock		  "Goto1"
 		  DstPort		  1
 		}
 		Line {
 		  SrcBlock		  "L2 Plus ref WP1"
 		  SrcPort		  4
-		  DstBlock		  "Terminator1"
+		  DstBlock		  "Goto2"
 		  DstPort		  1
 		}
 		Annotation {
@@ -7354,7 +7360,7 @@ Model {
 		  Position		  [165, 100, 195, 130]
 		  BackgroundColor	  "gray"
 		  ShowName		  off
-		  Value			  "300"
+		  Value			  "1000"
 		  OutDataTypeMode	  "int16"
 		  OutDataType		  "sfix(16)"
 		  OutScaling		  "2^0"
@@ -8578,24 +8584,8 @@ Model {
 		Line {
 		  SrcBlock		  "Constant5"
 		  SrcPort		  1
-		  Points		  [5, 0]
-		  Branch {
-		    DstBlock		    "Switch"
-		    DstPort		    3
-		  }
-		  Branch {
-		    Points		    [0, 10; 70, 0]
-		    Branch {
-		    Points		    [0, -20]
-		    DstBlock		    "Trigger Events"
-		    DstPort		    1
-		    }
-		    Branch {
-		    Points		    [0, 50]
-		    DstBlock		    "Mux Everything"
-		    DstPort		    4
-		    }
-		  }
+		  DstBlock		  "Switch"
+		  DstPort		  3
 		}
 		Line {
 		  SrcBlock		  "Constant1"
@@ -8680,6 +8670,20 @@ Model {
 		  SrcPort		  1
 		  DstBlock		  "Terminator"
 		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Switch"
+		  SrcPort		  1
+		  Points		  [30, 0]
+		  Branch {
+		    DstBlock		    "Trigger Events"
+		    DstPort		    1
+		  }
+		  Branch {
+		    Points		    [0, 70]
+		    DstBlock		    "Mux Everything"
+		    DstPort		    4
+		  }
 		}
 		Annotation {
 		  Position		  [352, 53]
@@ -10731,7 +10735,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Radio Control\nInputs"
-	    Location		    [202, 82, 1525, 978]
+	    Location		    [221, 82, 1280, 983]
 	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -10763,7 +10767,7 @@ Model {
 	      System {
 		Name			"Calibration"
 		Location		[202, 82, 1270, 978]
-		Open			off
+		Open			on
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
 		ScreenColor		"white"
@@ -11390,541 +11394,6 @@ Model {
 		Block {
 		  BlockType		  SubSystem
 		  Name			  "Update range\nfrom input"
-		  SID			  12455
-		  Ports			  [2, 1]
-		  Position		  [175, 375, 215, 455]
-		  MinAlgLoopOccurrences	  off
-		  PropExecContextOutsideSubsystem off
-		  RTWSystemCode		  "Auto"
-		  FunctionWithSeparateData off
-		  Opaque		  off
-		  RequestExecContextInheritance	off
-		  MaskHideContents	  off
-		  System {
-		    Name		    "Update range\nfrom input"
-		    Location		    [202, 82, 1270, 978]
-		    Open		    off
-		    ModelBrowserVisibility  on
-		    ModelBrowserWidth	    200
-		    ScreenColor		    "white"
-		    PaperOrientation	    "landscape"
-		    PaperPositionMode	    "auto"
-		    PaperType		    "usletter"
-		    PaperUnits		    "inches"
-		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-		    TiledPageScale	    1
-		    ShowPageBoundaries	    off
-		    ZoomFactor		    "100"
-		    Block {
-		    BlockType		    Inport
-		    Name		    "limitRange"
-		    SID			    12456
-		    Position		    [30, 98, 60, 112]
-		    IconDisplay		    "Port number"
-		    }
-		    Block {
-		    BlockType		    Inport
-		    Name		    "newValue"
-		    SID			    12457
-		    Position		    [30, 138, 60, 152]
-		    Port		    "2"
-		    IconDisplay		    "Port number"
-		    }
-		    Block {
-		    BlockType		    If
-		    Name		    "If"
-		    SID			    12458
-		    Ports		    [2, 2]
-		    Position		    [190, 93, 285, 122]
-		    ShowName		    off
-		    NumInputs		    "2"
-		    IfExpression	    "u1 < u2 & u1 > 5000"
-		    }
-		    Block {
-		    BlockType		    SubSystem
-		    Name		    "If Action\nSubsystem"
-		    SID			    12459
-		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
-		    Position		    [310, 47, 380, 83]
-		    NamePlacement	    "alternate"
-		    ShowName		    off
-		    LibraryVersion	    "1.216"
-		    TreatAsAtomicUnit	    on
-		    MinAlgLoopOccurrences   off
-		    PropExecContextOutsideSubsystem off
-		    RTWSystemCode	    "Auto"
-		    FunctionWithSeparateData off
-		    Opaque		    off
-		    RequestExecContextInheritance off
-		    MaskHideContents	    off
-		    System {
-		    Name		    "If Action\nSubsystem"
-		    Location		    [698, 153, 1196, 453]
-		    Open		    off
-		    ModelBrowserVisibility  on
-		    ModelBrowserWidth	    200
-		    ScreenColor		    "white"
-		    PaperOrientation	    "landscape"
-		    PaperPositionMode	    "auto"
-		    PaperType		    "usletter"
-		    PaperUnits		    "inches"
-		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-		    TiledPageScale	    1
-		    ShowPageBoundaries	    off
-		    ZoomFactor		    "100"
-		    Block {
-		    BlockType		    Inport
-		    Name		    "In1"
-		    SID			    12460
-		    Position		    [75, 78, 105, 92]
-		    IconDisplay		    "Port number"
-		    OutDataType		    "fixdt(1, 16)"
-		    OutScaling		    "2^0"
-		    }
-		    Block {
-		    BlockType		    ActionPort
-		    Name		    "Action Port"
-		    SID			    12461
-		    Position		    [170, 15, 229, 43]
-		    ActionType		    "then"
-		    }
-		    Block {
-		    BlockType		    Outport
-		    Name		    "Out1"
-		    SID			    12462
-		    Position		    [325, 78, 355, 92]
-		    IconDisplay		    "Port number"
-		    OutDataType		    "fixdt(1, 16)"
-		    OutScaling		    "2^0"
-		    }
-		    Line {
-		    SrcBlock		    "In1"
-		    SrcPort		    1
-		    DstBlock		    "Out1"
-		    DstPort		    1
-		    }
-		    }
-		    }
-		    Block {
-		    BlockType		    SubSystem
-		    Name		    "If Action\nSubsystem1"
-		    SID			    12463
-		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
-		    Position		    [310, 127, 380, 163]
-		    ShowName		    off
-		    LibraryVersion	    "1.216"
-		    TreatAsAtomicUnit	    on
-		    MinAlgLoopOccurrences   off
-		    PropExecContextOutsideSubsystem off
-		    RTWSystemCode	    "Auto"
-		    FunctionWithSeparateData off
-		    Opaque		    off
-		    RequestExecContextInheritance off
-		    MaskHideContents	    off
-		    System {
-		    Name		    "If Action\nSubsystem1"
-		    Location		    [342, 471, 840, 771]
-		    Open		    off
-		    ModelBrowserVisibility  on
-		    ModelBrowserWidth	    200
-		    ScreenColor		    "white"
-		    PaperOrientation	    "landscape"
-		    PaperPositionMode	    "auto"
-		    PaperType		    "usletter"
-		    PaperUnits		    "inches"
-		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-		    TiledPageScale	    1
-		    ShowPageBoundaries	    off
-		    ZoomFactor		    "100"
-		    Block {
-		    BlockType		    Inport
-		    Name		    "In1"
-		    SID			    12464
-		    Position		    [75, 78, 105, 92]
-		    IconDisplay		    "Port number"
-		    OutDataType		    "fixdt(1, 16)"
-		    OutScaling		    "2^0"
-		    }
-		    Block {
-		    BlockType		    ActionPort
-		    Name		    "Action Port"
-		    SID			    12465
-		    Position		    [170, 15, 229, 43]
-		    ActionType		    "else"
-		    }
-		    Block {
-		    BlockType		    Outport
-		    Name		    "Out1"
-		    SID			    12466
-		    Position		    [325, 78, 355, 92]
-		    IconDisplay		    "Port number"
-		    OutDataType		    "fixdt(1, 16)"
-		    OutScaling		    "2^0"
-		    }
-		    Line {
-		    SrcBlock		    "In1"
-		    SrcPort		    1
-		    DstBlock		    "Out1"
-		    DstPort		    1
-		    }
-		    }
-		    }
-		    Block {
-		    BlockType		    SubSystem
-		    Name		    "If Action\nSubsystem2"
-		    SID			    12467
-		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
-		    Position		    [310, 212, 380, 248]
-		    NamePlacement	    "alternate"
-		    ShowName		    off
-		    LibraryVersion	    "1.216"
-		    TreatAsAtomicUnit	    on
-		    MinAlgLoopOccurrences   off
-		    PropExecContextOutsideSubsystem off
-		    RTWSystemCode	    "Auto"
-		    FunctionWithSeparateData off
-		    Opaque		    off
-		    RequestExecContextInheritance off
-		    MaskHideContents	    off
-		    System {
-		    Name		    "If Action\nSubsystem2"
-		    Location		    [342, 471, 840, 771]
-		    Open		    off
-		    ModelBrowserVisibility  on
-		    ModelBrowserWidth	    200
-		    ScreenColor		    "white"
-		    PaperOrientation	    "landscape"
-		    PaperPositionMode	    "auto"
-		    PaperType		    "usletter"
-		    PaperUnits		    "inches"
-		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-		    TiledPageScale	    1
-		    ShowPageBoundaries	    off
-		    ZoomFactor		    "100"
-		    Block {
-		    BlockType		    Inport
-		    Name		    "In1"
-		    SID			    12468
-		    Position		    [75, 78, 105, 92]
-		    IconDisplay		    "Port number"
-		    OutDataType		    "fixdt(1, 16)"
-		    OutScaling		    "2^0"
-		    }
-		    Block {
-		    BlockType		    ActionPort
-		    Name		    "Action Port"
-		    SID			    12469
-		    Position		    [170, 15, 229, 43]
-		    ActionType		    "then"
-		    }
-		    Block {
-		    BlockType		    Outport
-		    Name		    "Out1"
-		    SID			    12470
-		    Position		    [325, 78, 355, 92]
-		    IconDisplay		    "Port number"
-		    OutDataType		    "fixdt(1, 16)"
-		    OutScaling		    "2^0"
-		    }
-		    Line {
-		    SrcBlock		    "In1"
-		    SrcPort		    1
-		    DstBlock		    "Out1"
-		    DstPort		    1
-		    }
-		    }
-		    }
-		    Block {
-		    BlockType		    SubSystem
-		    Name		    "If Action\nSubsystem3"
-		    SID			    12471
-		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
-		    Position		    [310, 302, 380, 338]
-		    ShowName		    off
-		    LibraryVersion	    "1.216"
-		    TreatAsAtomicUnit	    on
-		    MinAlgLoopOccurrences   off
-		    PropExecContextOutsideSubsystem off
-		    RTWSystemCode	    "Auto"
-		    FunctionWithSeparateData off
-		    Opaque		    off
-		    RequestExecContextInheritance off
-		    MaskHideContents	    off
-		    System {
-		    Name		    "If Action\nSubsystem3"
-		    Location		    [342, 471, 840, 771]
-		    Open		    off
-		    ModelBrowserVisibility  on
-		    ModelBrowserWidth	    200
-		    ScreenColor		    "white"
-		    PaperOrientation	    "landscape"
-		    PaperPositionMode	    "auto"
-		    PaperType		    "usletter"
-		    PaperUnits		    "inches"
-		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-		    TiledPageScale	    1
-		    ShowPageBoundaries	    off
-		    ZoomFactor		    "100"
-		    Block {
-		    BlockType		    Inport
-		    Name		    "In1"
-		    SID			    12472
-		    Position		    [75, 78, 105, 92]
-		    IconDisplay		    "Port number"
-		    OutDataType		    "fixdt(1, 16)"
-		    OutScaling		    "2^0"
-		    }
-		    Block {
-		    BlockType		    ActionPort
-		    Name		    "Action Port"
-		    SID			    12473
-		    Position		    [170, 15, 229, 43]
-		    ActionType		    "else"
-		    }
-		    Block {
-		    BlockType		    Outport
-		    Name		    "Out1"
-		    SID			    12474
-		    Position		    [325, 78, 355, 92]
-		    IconDisplay		    "Port number"
-		    OutDataType		    "fixdt(1, 16)"
-		    OutScaling		    "2^0"
-		    }
-		    Line {
-		    SrcBlock		    "In1"
-		    SrcPort		    1
-		    DstBlock		    "Out1"
-		    DstPort		    1
-		    }
-		    }
-		    }
-		    Block {
-		    BlockType		    If
-		    Name		    "If1"
-		    SID			    12475
-		    Ports		    [2, 2]
-		    Position		    [190, 263, 285, 292]
-		    ShowName		    off
-		    NumInputs		    "2"
-		    IfExpression	    "u1 > u2 & u1 < 11000"
-		    }
-		    Block {
-		    BlockType		    Merge
-		    Name		    "Merge"
-		    SID			    12476
-		    Ports		    [2, 1]
-		    Position		    [425, 85, 465, 125]
-		    }
-		    Block {
-		    BlockType		    Merge
-		    Name		    "Merge1"
-		    SID			    12477
-		    Ports		    [2, 1]
-		    Position		    [425, 250, 465, 290]
-		    }
-		    Block {
-		    BlockType		    Mux
-		    Name		    "Mux"
-		    SID			    12478
-		    Ports		    [2, 1]
-		    Position		    [495, 141, 500, 179]
-		    ShowName		    off
-		    Inputs		    "2"
-		    DisplayOption	    "bar"
-		    }
-		    Block {
-		    BlockType		    Selector
-		    Name		    "Selector"
-		    SID			    12479
-		    Ports		    [1, 1]
-		    Position		    [120, 126, 160, 164]
-		    ShowName		    off
-		    InputPortWidth	    "2"
-		    IndexOptions	    "Index vector (dialog)"
-		    Indices		    "[1]"
-		    OutputSizes		    "1"
-		    }
-		    Block {
-		    BlockType		    Selector
-		    Name		    "Selector1"
-		    SID			    12480
-		    Ports		    [1, 1]
-		    Position		    [110, 301, 150, 339]
-		    ShowName		    off
-		    InputPortWidth	    "2"
-		    IndexOptions	    "Index vector (dialog)"
-		    Indices		    "[2]"
-		    OutputSizes		    "1"
-		    }
-		    Block {
-		    BlockType		    Outport
-		    Name		    "newRange"
-		    SID			    12481
-		    Position		    [525, 153, 555, 167]
-		    IconDisplay		    "Port number"
-		    }
-		    Line {
-		    SrcBlock		    "limitRange"
-		    SrcPort		    1
-		    Points		    [15, 0]
-		    Branch {
-		    Points		    [0, 215]
-		    DstBlock		    "Selector1"
-		    DstPort		    1
-		    }
-		    Branch {
-		    Points		    [25, 0]
-		    DstBlock		    "Selector"
-		    DstPort		    1
-		    }
-		    }
-		    Line {
-		    SrcBlock		    "newValue"
-		    SrcPort		    1
-		    Points		    [30, 0]
-		    Branch {
-		    Points		    [0, 85]
-		    Branch {
-		    Points		    [0, 40]
-		    DstBlock		    "If1"
-		    DstPort		    1
-		    }
-		    Branch {
-		    DstBlock		    "If Action\nSubsystem2"
-		    DstPort		    1
-		    }
-		    }
-		    Branch {
-		    Points		    [0, -45; 35, 0]
-		    Branch {
-		    DstBlock		    "If"
-		    DstPort		    1
-		    }
-		    Branch {
-		    Points		    [0, -35]
-		    DstBlock		    "If Action\nSubsystem"
-		    DstPort		    1
-		    }
-		    }
-		    }
-		    Line {
-		    SrcBlock		    "If"
-		    SrcPort		    1
-		    Points		    [55, 0]
-		    DstBlock		    "If Action\nSubsystem"
-		    DstPort		    ifaction
-		    }
-		    Line {
-		    SrcBlock		    "If"
-		    SrcPort		    2
-		    Points		    [55, 0]
-		    DstBlock		    "If Action\nSubsystem1"
-		    DstPort		    ifaction
-		    }
-		    Line {
-		    SrcBlock		    "If Action\nSubsystem"
-		    SrcPort		    1
-		    Points		    [10, 0; 0, 30]
-		    DstBlock		    "Merge"
-		    DstPort		    1
-		    }
-		    Line {
-		    SrcBlock		    "If Action\nSubsystem1"
-		    SrcPort		    1
-		    Points		    [10, 0; 0, -30]
-		    DstBlock		    "Merge"
-		    DstPort		    2
-		    }
-		    Line {
-		    SrcBlock		    "If1"
-		    SrcPort		    1
-		    Points		    [55, 0]
-		    DstBlock		    "If Action\nSubsystem2"
-		    DstPort		    ifaction
-		    }
-		    Line {
-		    SrcBlock		    "If1"
-		    SrcPort		    2
-		    Points		    [55, 0]
-		    DstBlock		    "If Action\nSubsystem3"
-		    DstPort		    ifaction
-		    }
-		    Line {
-		    SrcBlock		    "If Action\nSubsystem2"
-		    SrcPort		    1
-		    Points		    [10, 0; 0, 30]
-		    DstBlock		    "Merge1"
-		    DstPort		    1
-		    }
-		    Line {
-		    SrcBlock		    "If Action\nSubsystem3"
-		    SrcPort		    1
-		    Points		    [10, 0; 0, -40]
-		    DstBlock		    "Merge1"
-		    DstPort		    2
-		    }
-		    Line {
-		    SrcBlock		    "Merge"
-		    SrcPort		    1
-		    Points		    [5, 0; 0, 45]
-		    DstBlock		    "Mux"
-		    DstPort		    1
-		    }
-		    Line {
-		    SrcBlock		    "Merge1"
-		    SrcPort		    1
-		    Points		    [5, 0; 0, -100]
-		    DstBlock		    "Mux"
-		    DstPort		    2
-		    }
-		    Line {
-		    SrcBlock		    "Mux"
-		    SrcPort		    1
-		    DstBlock		    "newRange"
-		    DstPort		    1
-		    }
-		    Line {
-		    SrcBlock		    "Selector1"
-		    SrcPort		    1
-		    Points		    [10, 0]
-		    Branch {
-		    Points		    [0, -35]
-		    DstBlock		    "If1"
-		    DstPort		    2
-		    }
-		    Branch {
-		    DstBlock		    "If Action\nSubsystem3"
-		    DstPort		    1
-		    }
-		    }
-		    Line {
-		    SrcBlock		    "Selector"
-		    SrcPort		    1
-		    Points		    [10, 0]
-		    Branch {
-		    DstBlock		    "If Action\nSubsystem1"
-		    DstPort		    1
-		    }
-		    Branch {
-		    DstBlock		    "If"
-		    DstPort		    2
-		    }
-		    }
-		    Annotation {
-		    Name		    "Update upper range limit"
-		    Position		    [174, 199]
-		    }
-		    Annotation {
-		    Name		    "Update lower range limit.\nThe new value is checked against a sane range of 5000-11000\nto keep value"
-		    "s realistic."
-		    Position		    [106, 26]
-		    HorizontalAlignment	    "left"
-		    }
-		  }
-		}
-		Block {
-		  BlockType		  SubSystem
-		  Name			  "Update range\nfrom input1"
 		  SID			  12482
 		  Ports			  [2, 1]
 		  Position		  [175, 115, 215, 195]
@@ -11936,7 +11405,7 @@ Model {
 		  RequestExecContextInheritance	off
 		  MaskHideContents	  off
 		  System {
-		    Name		    "Update range\nfrom input1"
+		    Name		    "Update range\nfrom input"
 		    Location		    [202, 82, 1270, 978]
 		    Open		    off
 		    ModelBrowserVisibility  on
@@ -11973,7 +11442,7 @@ Model {
 		    Position		    [190, 93, 285, 122]
 		    ShowName		    off
 		    NumInputs		    "2"
-		    IfExpression	    "u1 < u2 & u1 > 5000"
+		    IfExpression	    "u1 < u2 & u1 > 5000 & u1 >= 0"
 		    }
 		    Block {
 		    BlockType		    SubSystem
@@ -12241,7 +11710,7 @@ Model {
 		    Position		    [190, 263, 285, 292]
 		    ShowName		    off
 		    NumInputs		    "2"
-		    IfExpression	    "u1 > u2 & u1 < 11000"
+		    IfExpression	    "u1 > u2 & u1 < 11000 & u1 >= 0"
 		    }
 		    Block {
 		    BlockType		    Merge
@@ -12459,8 +11928,8 @@ Model {
 		}
 		Block {
 		  BlockType		  SubSystem
-		  Name			  "Update range\nfrom input2"
-		  SID			  12509
+		  Name			  "Update range\nfrom input1"
+		  SID			  13072
 		  Ports			  [2, 1]
 		  Position		  [175, 250, 215, 330]
 		  MinAlgLoopOccurrences	  off
@@ -12471,9 +11940,9 @@ Model {
 		  RequestExecContextInheritance	off
 		  MaskHideContents	  off
 		  System {
-		    Name		    "Update range\nfrom input2"
+		    Name		    "Update range\nfrom input1"
 		    Location		    [202, 82, 1270, 978]
-		    Open		    off
+		    Open		    on
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
 		    ScreenColor		    "white"
@@ -12488,14 +11957,14 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "limitRange"
-		    SID			    12510
+		    SID			    13073
 		    Position		    [30, 98, 60, 112]
 		    IconDisplay		    "Port number"
 		    }
 		    Block {
 		    BlockType		    Inport
 		    Name		    "newValue"
-		    SID			    12511
+		    SID			    13074
 		    Position		    [30, 138, 60, 152]
 		    Port		    "2"
 		    IconDisplay		    "Port number"
@@ -12503,17 +11972,17 @@ Model {
 		    Block {
 		    BlockType		    If
 		    Name		    "If"
-		    SID			    12512
+		    SID			    13075
 		    Ports		    [2, 2]
 		    Position		    [190, 93, 285, 122]
 		    ShowName		    off
 		    NumInputs		    "2"
-		    IfExpression	    "u1 < u2 & u1 > 5000"
+		    IfExpression	    "u1 < u2 & u1 > 5000 & u1 >= 0"
 		    }
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "If Action\nSubsystem"
-		    SID			    12513
+		    SID			    13076
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [310, 47, 380, 83]
 		    NamePlacement	    "alternate"
@@ -12529,7 +11998,7 @@ Model {
 		    MaskHideContents	    off
 		    System {
 		    Name		    "If Action\nSubsystem"
-		    Location		    [698, 153, 1196, 453]
+		    Location		    [518, 557, 1016, 857]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -12545,7 +12014,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    12514
+		    SID			    13077
 		    Position		    [75, 78, 105, 92]
 		    IconDisplay		    "Port number"
 		    OutDataType		    "fixdt(1, 16)"
@@ -12554,14 +12023,14 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    12515
+		    SID			    13078
 		    Position		    [170, 15, 229, 43]
 		    ActionType		    "then"
 		    }
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    12516
+		    SID			    13079
 		    Position		    [325, 78, 355, 92]
 		    IconDisplay		    "Port number"
 		    OutDataType		    "fixdt(1, 16)"
@@ -12578,7 +12047,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "If Action\nSubsystem1"
-		    SID			    12517
+		    SID			    13080
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [310, 127, 380, 163]
 		    ShowName		    off
@@ -12609,7 +12078,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    12518
+		    SID			    13081
 		    Position		    [75, 78, 105, 92]
 		    IconDisplay		    "Port number"
 		    OutDataType		    "fixdt(1, 16)"
@@ -12618,14 +12087,14 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    12519
+		    SID			    13082
 		    Position		    [170, 15, 229, 43]
 		    ActionType		    "else"
 		    }
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    12520
+		    SID			    13083
 		    Position		    [325, 78, 355, 92]
 		    IconDisplay		    "Port number"
 		    OutDataType		    "fixdt(1, 16)"
@@ -12642,7 +12111,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "If Action\nSubsystem2"
-		    SID			    12521
+		    SID			    13084
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [310, 212, 380, 248]
 		    NamePlacement	    "alternate"
@@ -12674,7 +12143,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    12522
+		    SID			    13085
 		    Position		    [75, 78, 105, 92]
 		    IconDisplay		    "Port number"
 		    OutDataType		    "fixdt(1, 16)"
@@ -12683,14 +12152,14 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    12523
+		    SID			    13086
 		    Position		    [170, 15, 229, 43]
 		    ActionType		    "then"
 		    }
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    12524
+		    SID			    13087
 		    Position		    [325, 78, 355, 92]
 		    IconDisplay		    "Port number"
 		    OutDataType		    "fixdt(1, 16)"
@@ -12707,7 +12176,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "If Action\nSubsystem3"
-		    SID			    12525
+		    SID			    13088
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [310, 302, 380, 338]
 		    ShowName		    off
@@ -12738,7 +12207,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    12526
+		    SID			    13089
 		    Position		    [75, 78, 105, 92]
 		    IconDisplay		    "Port number"
 		    OutDataType		    "fixdt(1, 16)"
@@ -12747,14 +12216,14 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    12527
+		    SID			    13090
 		    Position		    [170, 15, 229, 43]
 		    ActionType		    "else"
 		    }
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    12528
+		    SID			    13091
 		    Position		    [325, 78, 355, 92]
 		    IconDisplay		    "Port number"
 		    OutDataType		    "fixdt(1, 16)"
@@ -12771,31 +12240,31 @@ Model {
 		    Block {
 		    BlockType		    If
 		    Name		    "If1"
-		    SID			    12529
+		    SID			    13092
 		    Ports		    [2, 2]
 		    Position		    [190, 263, 285, 292]
 		    ShowName		    off
 		    NumInputs		    "2"
-		    IfExpression	    "u1 > u2 & u1 < 11000"
+		    IfExpression	    "u1 > u2 & u1 < 11000 & u1 >= 0"
 		    }
 		    Block {
 		    BlockType		    Merge
 		    Name		    "Merge"
-		    SID			    12530
+		    SID			    13093
 		    Ports		    [2, 1]
 		    Position		    [425, 85, 465, 125]
 		    }
 		    Block {
 		    BlockType		    Merge
 		    Name		    "Merge1"
-		    SID			    12531
+		    SID			    13094
 		    Ports		    [2, 1]
 		    Position		    [425, 250, 465, 290]
 		    }
 		    Block {
 		    BlockType		    Mux
 		    Name		    "Mux"
-		    SID			    12532
+		    SID			    13095
 		    Ports		    [2, 1]
 		    Position		    [495, 141, 500, 179]
 		    ShowName		    off
@@ -12805,7 +12274,7 @@ Model {
 		    Block {
 		    BlockType		    Selector
 		    Name		    "Selector"
-		    SID			    12533
+		    SID			    13096
 		    Ports		    [1, 1]
 		    Position		    [120, 126, 160, 164]
 		    ShowName		    off
@@ -12817,7 +12286,7 @@ Model {
 		    Block {
 		    BlockType		    Selector
 		    Name		    "Selector1"
-		    SID			    12534
+		    SID			    13097
 		    Ports		    [1, 1]
 		    Position		    [110, 301, 150, 339]
 		    ShowName		    off
@@ -12829,115 +12298,41 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "newRange"
-		    SID			    12535
+		    SID			    13098
 		    Position		    [525, 153, 555, 167]
 		    IconDisplay		    "Port number"
 		    }
 		    Line {
-		    SrcBlock		    "limitRange"
+		    SrcBlock		    "Selector"
 		    SrcPort		    1
-		    Points		    [15, 0]
+		    Points		    [10, 0]
 		    Branch {
-		    Points		    [0, 215]
-		    DstBlock		    "Selector1"
-		    DstPort		    1
+		    DstBlock		    "If"
+		    DstPort		    2
 		    }
 		    Branch {
-		    Points		    [25, 0]
-		    DstBlock		    "Selector"
+		    DstBlock		    "If Action\nSubsystem1"
 		    DstPort		    1
 		    }
 		    }
 		    Line {
-		    SrcBlock		    "newValue"
+		    SrcBlock		    "Selector1"
 		    SrcPort		    1
-		    Points		    [30, 0]
+		    Points		    [10, 0]
 		    Branch {
-		    Points		    [0, 85]
-		    Branch {
-		    Points		    [0, 40]
-		    DstBlock		    "If1"
-		    DstPort		    1
-		    }
-		    Branch {
-		    DstBlock		    "If Action\nSubsystem2"
-		    DstPort		    1
-		    }
-		    }
-		    Branch {
-		    Points		    [0, -45; 35, 0]
-		    Branch {
-		    DstBlock		    "If"
+		    DstBlock		    "If Action\nSubsystem3"
 		    DstPort		    1
 		    }
 		    Branch {
 		    Points		    [0, -35]
-		    DstBlock		    "If Action\nSubsystem"
-		    DstPort		    1
-		    }
-		    }
-		    }
-		    Line {
-		    SrcBlock		    "If"
-		    SrcPort		    1
-		    Points		    [55, 0]
-		    DstBlock		    "If Action\nSubsystem"
-		    DstPort		    ifaction
-		    }
-		    Line {
-		    SrcBlock		    "If"
-		    SrcPort		    2
-		    Points		    [55, 0]
-		    DstBlock		    "If Action\nSubsystem1"
-		    DstPort		    ifaction
-		    }
-		    Line {
-		    SrcBlock		    "If Action\nSubsystem"
-		    SrcPort		    1
-		    Points		    [10, 0; 0, 30]
-		    DstBlock		    "Merge"
-		    DstPort		    1
-		    }
-		    Line {
-		    SrcBlock		    "If Action\nSubsystem1"
-		    SrcPort		    1
-		    Points		    [10, 0; 0, -30]
-		    DstBlock		    "Merge"
+		    DstBlock		    "If1"
 		    DstPort		    2
 		    }
-		    Line {
-		    SrcBlock		    "If1"
-		    SrcPort		    1
-		    Points		    [55, 0]
-		    DstBlock		    "If Action\nSubsystem2"
-		    DstPort		    ifaction
 		    }
 		    Line {
-		    SrcBlock		    "If1"
-		    SrcPort		    2
-		    Points		    [55, 0]
-		    DstBlock		    "If Action\nSubsystem3"
-		    DstPort		    ifaction
-		    }
-		    Line {
-		    SrcBlock		    "If Action\nSubsystem2"
+		    SrcBlock		    "Mux"
 		    SrcPort		    1
-		    Points		    [10, 0; 0, 30]
-		    DstBlock		    "Merge1"
-		    DstPort		    1
-		    }
-		    Line {
-		    SrcBlock		    "If Action\nSubsystem3"
-		    SrcPort		    1
-		    Points		    [10, 0; 0, -40]
-		    DstBlock		    "Merge1"
-		    DstPort		    2
-		    }
-		    Line {
-		    SrcBlock		    "Merge"
-		    SrcPort		    1
-		    Points		    [5, 0; 0, 45]
-		    DstBlock		    "Mux"
+		    DstBlock		    "newRange"
 		    DstPort		    1
 		    }
 		    Line {
@@ -12948,41 +12343,111 @@ Model {
 		    DstPort		    2
 		    }
 		    Line {
-		    SrcBlock		    "Mux"
+		    SrcBlock		    "Merge"
 		    SrcPort		    1
-		    DstBlock		    "newRange"
+		    Points		    [5, 0; 0, 45]
+		    DstBlock		    "Mux"
 		    DstPort		    1
 		    }
 		    Line {
-		    SrcBlock		    "Selector1"
+		    SrcBlock		    "If Action\nSubsystem3"
 		    SrcPort		    1
-		    Points		    [10, 0]
-		    Branch {
-		    Points		    [0, -35]
-		    DstBlock		    "If1"
+		    Points		    [10, 0; 0, -40]
+		    DstBlock		    "Merge1"
 		    DstPort		    2
 		    }
-		    Branch {
-		    DstBlock		    "If Action\nSubsystem3"
+		    Line {
+		    SrcBlock		    "If Action\nSubsystem2"
+		    SrcPort		    1
+		    Points		    [10, 0; 0, 30]
+		    DstBlock		    "Merge1"
 		    DstPort		    1
 		    }
+		    Line {
+		    SrcBlock		    "If1"
+		    SrcPort		    2
+		    Points		    [55, 0]
+		    DstBlock		    "If Action\nSubsystem3"
+		    DstPort		    ifaction
 		    }
 		    Line {
-		    SrcBlock		    "Selector"
+		    SrcBlock		    "If1"
 		    SrcPort		    1
-		    Points		    [10, 0]
-		    Branch {
+		    Points		    [55, 0]
+		    DstBlock		    "If Action\nSubsystem2"
+		    DstPort		    ifaction
+		    }
+		    Line {
+		    SrcBlock		    "If Action\nSubsystem1"
+		    SrcPort		    1
+		    Points		    [10, 0; 0, -30]
+		    DstBlock		    "Merge"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "If Action\nSubsystem"
+		    SrcPort		    1
+		    Points		    [10, 0; 0, 30]
+		    DstBlock		    "Merge"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "If"
+		    SrcPort		    2
+		    Points		    [55, 0]
 		    DstBlock		    "If Action\nSubsystem1"
+		    DstPort		    ifaction
+		    }
+		    Line {
+		    SrcBlock		    "If"
+		    SrcPort		    1
+		    Points		    [55, 0]
+		    DstBlock		    "If Action\nSubsystem"
+		    DstPort		    ifaction
+		    }
+		    Line {
+		    SrcBlock		    "newValue"
+		    SrcPort		    1
+		    Points		    [30, 0]
+		    Branch {
+		    Points		    [0, -45; 35, 0]
+		    Branch {
+		    Points		    [0, -35]
+		    DstBlock		    "If Action\nSubsystem"
 		    DstPort		    1
 		    }
 		    Branch {
 		    DstBlock		    "If"
-		    DstPort		    2
+		    DstPort		    1
 		    }
 		    }
-		    Annotation {
-		    Name		    "Update upper range limit"
-		    Position		    [174, 199]
+		    Branch {
+		    Points		    [0, 85]
+		    Branch {
+		    DstBlock		    "If Action\nSubsystem2"
+		    DstPort		    1
+		    }
+		    Branch {
+		    Points		    [0, 40]
+		    DstBlock		    "If1"
+		    DstPort		    1
+		    }
+		    }
+		    }
+		    Line {
+		    SrcBlock		    "limitRange"
+		    SrcPort		    1
+		    Points		    [15, 0]
+		    Branch {
+		    Points		    [25, 0]
+		    DstBlock		    "Selector"
+		    DstPort		    1
+		    }
+		    Branch {
+		    Points		    [0, 215]
+		    DstBlock		    "Selector1"
+		    DstPort		    1
+		    }
 		    }
 		    Annotation {
 		    Name		    "Update lower range limit.\nThe new value is checked against a sane range of 5000-11000\nto keep value"
@@ -12990,10 +12455,549 @@ Model {
 		    Position		    [106, 26]
 		    HorizontalAlignment	    "left"
 		    }
+		    Annotation {
+		    Name		    "Update upper range limit"
+		    Position		    [174, 199]
+		    }
+		  }
+		}
+		Block {
+		  BlockType		  SubSystem
+		  Name			  "Update range\nfrom input2"
+		  SID			  13099
+		  Ports			  [2, 1]
+		  Position		  [175, 375, 215, 455]
+		  MinAlgLoopOccurrences	  off
+		  PropExecContextOutsideSubsystem off
+		  RTWSystemCode		  "Auto"
+		  FunctionWithSeparateData off
+		  Opaque		  off
+		  RequestExecContextInheritance	off
+		  MaskHideContents	  off
+		  System {
+		    Name		    "Update range\nfrom input2"
+		    Location		    [202, 82, 1270, 978]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "limitRange"
+		    SID			    13100
+		    Position		    [30, 98, 60, 112]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "newValue"
+		    SID			    13101
+		    Position		    [30, 138, 60, 152]
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    If
+		    Name		    "If"
+		    SID			    13102
+		    Ports		    [2, 2]
+		    Position		    [190, 93, 285, 122]
+		    ShowName		    off
+		    NumInputs		    "2"
+		    IfExpression	    "u1 < u2 & u1 > 5000 & u1 >= 0"
+		    }
+		    Block {
+		    BlockType		    SubSystem
+		    Name		    "If Action\nSubsystem"
+		    SID			    13103
+		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
+		    Position		    [310, 47, 380, 83]
+		    NamePlacement	    "alternate"
+		    ShowName		    off
+		    LibraryVersion	    "1.216"
+		    TreatAsAtomicUnit	    on
+		    MinAlgLoopOccurrences   off
+		    PropExecContextOutsideSubsystem off
+		    RTWSystemCode	    "Auto"
+		    FunctionWithSeparateData off
+		    Opaque		    off
+		    RequestExecContextInheritance off
+		    MaskHideContents	    off
+		    System {
+		    Name		    "If Action\nSubsystem"
+		    Location		    [518, 557, 1016, 857]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "In1"
+		    SID			    13104
+		    Position		    [75, 78, 105, 92]
+		    IconDisplay		    "Port number"
+		    OutDataType		    "fixdt(1, 16)"
+		    OutScaling		    "2^0"
+		    }
+		    Block {
+		    BlockType		    ActionPort
+		    Name		    "Action Port"
+		    SID			    13105
+		    Position		    [170, 15, 229, 43]
+		    ActionType		    "then"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "Out1"
+		    SID			    13106
+		    Position		    [325, 78, 355, 92]
+		    IconDisplay		    "Port number"
+		    OutDataType		    "fixdt(1, 16)"
+		    OutScaling		    "2^0"
+		    }
+		    Line {
+		    SrcBlock		    "In1"
+		    SrcPort		    1
+		    DstBlock		    "Out1"
+		    DstPort		    1
+		    }
+		    }
+		    }
+		    Block {
+		    BlockType		    SubSystem
+		    Name		    "If Action\nSubsystem1"
+		    SID			    13107
+		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
+		    Position		    [310, 127, 380, 163]
+		    ShowName		    off
+		    LibraryVersion	    "1.216"
+		    TreatAsAtomicUnit	    on
+		    MinAlgLoopOccurrences   off
+		    PropExecContextOutsideSubsystem off
+		    RTWSystemCode	    "Auto"
+		    FunctionWithSeparateData off
+		    Opaque		    off
+		    RequestExecContextInheritance off
+		    MaskHideContents	    off
+		    System {
+		    Name		    "If Action\nSubsystem1"
+		    Location		    [342, 471, 840, 771]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "In1"
+		    SID			    13108
+		    Position		    [75, 78, 105, 92]
+		    IconDisplay		    "Port number"
+		    OutDataType		    "fixdt(1, 16)"
+		    OutScaling		    "2^0"
+		    }
+		    Block {
+		    BlockType		    ActionPort
+		    Name		    "Action Port"
+		    SID			    13109
+		    Position		    [170, 15, 229, 43]
+		    ActionType		    "else"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "Out1"
+		    SID			    13110
+		    Position		    [325, 78, 355, 92]
+		    IconDisplay		    "Port number"
+		    OutDataType		    "fixdt(1, 16)"
+		    OutScaling		    "2^0"
+		    }
+		    Line {
+		    SrcBlock		    "In1"
+		    SrcPort		    1
+		    DstBlock		    "Out1"
+		    DstPort		    1
+		    }
+		    }
+		    }
+		    Block {
+		    BlockType		    SubSystem
+		    Name		    "If Action\nSubsystem2"
+		    SID			    13111
+		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
+		    Position		    [310, 212, 380, 248]
+		    NamePlacement	    "alternate"
+		    ShowName		    off
+		    LibraryVersion	    "1.216"
+		    TreatAsAtomicUnit	    on
+		    MinAlgLoopOccurrences   off
+		    PropExecContextOutsideSubsystem off
+		    RTWSystemCode	    "Auto"
+		    FunctionWithSeparateData off
+		    Opaque		    off
+		    RequestExecContextInheritance off
+		    MaskHideContents	    off
+		    System {
+		    Name		    "If Action\nSubsystem2"
+		    Location		    [342, 471, 840, 771]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "In1"
+		    SID			    13112
+		    Position		    [75, 78, 105, 92]
+		    IconDisplay		    "Port number"
+		    OutDataType		    "fixdt(1, 16)"
+		    OutScaling		    "2^0"
+		    }
+		    Block {
+		    BlockType		    ActionPort
+		    Name		    "Action Port"
+		    SID			    13113
+		    Position		    [170, 15, 229, 43]
+		    ActionType		    "then"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "Out1"
+		    SID			    13114
+		    Position		    [325, 78, 355, 92]
+		    IconDisplay		    "Port number"
+		    OutDataType		    "fixdt(1, 16)"
+		    OutScaling		    "2^0"
+		    }
+		    Line {
+		    SrcBlock		    "In1"
+		    SrcPort		    1
+		    DstBlock		    "Out1"
+		    DstPort		    1
+		    }
+		    }
+		    }
+		    Block {
+		    BlockType		    SubSystem
+		    Name		    "If Action\nSubsystem3"
+		    SID			    13115
+		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
+		    Position		    [310, 302, 380, 338]
+		    ShowName		    off
+		    LibraryVersion	    "1.216"
+		    TreatAsAtomicUnit	    on
+		    MinAlgLoopOccurrences   off
+		    PropExecContextOutsideSubsystem off
+		    RTWSystemCode	    "Auto"
+		    FunctionWithSeparateData off
+		    Opaque		    off
+		    RequestExecContextInheritance off
+		    MaskHideContents	    off
+		    System {
+		    Name		    "If Action\nSubsystem3"
+		    Location		    [342, 471, 840, 771]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "In1"
+		    SID			    13116
+		    Position		    [75, 78, 105, 92]
+		    IconDisplay		    "Port number"
+		    OutDataType		    "fixdt(1, 16)"
+		    OutScaling		    "2^0"
+		    }
+		    Block {
+		    BlockType		    ActionPort
+		    Name		    "Action Port"
+		    SID			    13117
+		    Position		    [170, 15, 229, 43]
+		    ActionType		    "else"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "Out1"
+		    SID			    13118
+		    Position		    [325, 78, 355, 92]
+		    IconDisplay		    "Port number"
+		    OutDataType		    "fixdt(1, 16)"
+		    OutScaling		    "2^0"
+		    }
+		    Line {
+		    SrcBlock		    "In1"
+		    SrcPort		    1
+		    DstBlock		    "Out1"
+		    DstPort		    1
+		    }
+		    }
+		    }
+		    Block {
+		    BlockType		    If
+		    Name		    "If1"
+		    SID			    13119
+		    Ports		    [2, 2]
+		    Position		    [190, 263, 285, 292]
+		    ShowName		    off
+		    NumInputs		    "2"
+		    IfExpression	    "u1 > u2 & u1 < 11000 & u1 >= 0"
+		    }
+		    Block {
+		    BlockType		    Merge
+		    Name		    "Merge"
+		    SID			    13120
+		    Ports		    [2, 1]
+		    Position		    [425, 85, 465, 125]
+		    }
+		    Block {
+		    BlockType		    Merge
+		    Name		    "Merge1"
+		    SID			    13121
+		    Ports		    [2, 1]
+		    Position		    [425, 250, 465, 290]
+		    }
+		    Block {
+		    BlockType		    Mux
+		    Name		    "Mux"
+		    SID			    13122
+		    Ports		    [2, 1]
+		    Position		    [495, 141, 500, 179]
+		    ShowName		    off
+		    Inputs		    "2"
+		    DisplayOption	    "bar"
+		    }
+		    Block {
+		    BlockType		    Selector
+		    Name		    "Selector"
+		    SID			    13123
+		    Ports		    [1, 1]
+		    Position		    [120, 126, 160, 164]
+		    ShowName		    off
+		    InputPortWidth	    "2"
+		    IndexOptions	    "Index vector (dialog)"
+		    Indices		    "[1]"
+		    OutputSizes		    "1"
+		    }
+		    Block {
+		    BlockType		    Selector
+		    Name		    "Selector1"
+		    SID			    13124
+		    Ports		    [1, 1]
+		    Position		    [110, 301, 150, 339]
+		    ShowName		    off
+		    InputPortWidth	    "2"
+		    IndexOptions	    "Index vector (dialog)"
+		    Indices		    "[2]"
+		    OutputSizes		    "1"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "newRange"
+		    SID			    13125
+		    Position		    [525, 153, 555, 167]
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "Selector"
+		    SrcPort		    1
+		    Points		    [10, 0]
+		    Branch {
+		    DstBlock		    "If"
+		    DstPort		    2
+		    }
+		    Branch {
+		    DstBlock		    "If Action\nSubsystem1"
+		    DstPort		    1
+		    }
+		    }
+		    Line {
+		    SrcBlock		    "Selector1"
+		    SrcPort		    1
+		    Points		    [10, 0]
+		    Branch {
+		    DstBlock		    "If Action\nSubsystem3"
+		    DstPort		    1
+		    }
+		    Branch {
+		    Points		    [0, -35]
+		    DstBlock		    "If1"
+		    DstPort		    2
+		    }
+		    }
+		    Line {
+		    SrcBlock		    "Mux"
+		    SrcPort		    1
+		    DstBlock		    "newRange"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Merge1"
+		    SrcPort		    1
+		    Points		    [5, 0; 0, -100]
+		    DstBlock		    "Mux"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "Merge"
+		    SrcPort		    1
+		    Points		    [5, 0; 0, 45]
+		    DstBlock		    "Mux"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "If Action\nSubsystem3"
+		    SrcPort		    1
+		    Points		    [10, 0; 0, -40]
+		    DstBlock		    "Merge1"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "If Action\nSubsystem2"
+		    SrcPort		    1
+		    Points		    [10, 0; 0, 30]
+		    DstBlock		    "Merge1"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "If1"
+		    SrcPort		    2
+		    Points		    [55, 0]
+		    DstBlock		    "If Action\nSubsystem3"
+		    DstPort		    ifaction
+		    }
+		    Line {
+		    SrcBlock		    "If1"
+		    SrcPort		    1
+		    Points		    [55, 0]
+		    DstBlock		    "If Action\nSubsystem2"
+		    DstPort		    ifaction
+		    }
+		    Line {
+		    SrcBlock		    "If Action\nSubsystem1"
+		    SrcPort		    1
+		    Points		    [10, 0; 0, -30]
+		    DstBlock		    "Merge"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "If Action\nSubsystem"
+		    SrcPort		    1
+		    Points		    [10, 0; 0, 30]
+		    DstBlock		    "Merge"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "If"
+		    SrcPort		    2
+		    Points		    [55, 0]
+		    DstBlock		    "If Action\nSubsystem1"
+		    DstPort		    ifaction
+		    }
+		    Line {
+		    SrcBlock		    "If"
+		    SrcPort		    1
+		    Points		    [55, 0]
+		    DstBlock		    "If Action\nSubsystem"
+		    DstPort		    ifaction
+		    }
+		    Line {
+		    SrcBlock		    "newValue"
+		    SrcPort		    1
+		    Points		    [30, 0]
+		    Branch {
+		    Points		    [0, -45; 35, 0]
+		    Branch {
+		    Points		    [0, -35]
+		    DstBlock		    "If Action\nSubsystem"
+		    DstPort		    1
+		    }
+		    Branch {
+		    DstBlock		    "If"
+		    DstPort		    1
+		    }
+		    }
+		    Branch {
+		    Points		    [0, 85]
+		    Branch {
+		    DstBlock		    "If Action\nSubsystem2"
+		    DstPort		    1
+		    }
+		    Branch {
+		    Points		    [0, 40]
+		    DstBlock		    "If1"
+		    DstPort		    1
+		    }
+		    }
+		    }
+		    Line {
+		    SrcBlock		    "limitRange"
+		    SrcPort		    1
+		    Points		    [15, 0]
+		    Branch {
+		    Points		    [25, 0]
+		    DstBlock		    "Selector"
+		    DstPort		    1
+		    }
+		    Branch {
+		    Points		    [0, 215]
+		    DstBlock		    "Selector1"
+		    DstPort		    1
+		    }
+		    }
+		    Annotation {
+		    Name		    "Update lower range limit.\nThe new value is checked against a sane range of 5000-11000\nto keep value"
+		    "s realistic."
+		    Position		    [106, 26]
+		    HorizontalAlignment	    "left"
+		    }
+		    Annotation {
+		    Name		    "Update upper range limit"
+		    Position		    [174, 199]
+		    }
 		  }
 		}
 		Line {
-		  SrcBlock		  "Update range\nfrom input1"
+		  SrcBlock		  "Update range\nfrom input"
 		  SrcPort		  1
 		  Points		  [25, 0]
 		  Branch {
@@ -13010,18 +13014,18 @@ Model {
 		  Labels		  [0, 0]
 		  SrcBlock		  "Data Store\nRead1"
 		  SrcPort		  1
-		  DstBlock		  "Update range\nfrom input1"
+		  DstBlock		  "Update range\nfrom input"
 		  DstPort		  1
 		}
 		Line {
 		  Labels		  [0, 0]
 		  SrcBlock		  "r"
 		  SrcPort		  1
-		  DstBlock		  "Update range\nfrom input1"
+		  DstBlock		  "Update range\nfrom input"
 		  DstPort		  2
 		}
 		Line {
-		  SrcBlock		  "Update range\nfrom input"
+		  SrcBlock		  "Update range\nfrom input2"
 		  SrcPort		  1
 		  Points		  [25, 0]
 		  Branch {
@@ -13038,18 +13042,18 @@ Model {
 		  Labels		  [0, 0]
 		  SrcBlock		  "Data Store\nRead2"
 		  SrcPort		  1
-		  DstBlock		  "Update range\nfrom input"
+		  DstBlock		  "Update range\nfrom input2"
 		  DstPort		  1
 		}
 		Line {
 		  Labels		  [0, 0]
 		  SrcBlock		  "tr"
 		  SrcPort		  1
-		  DstBlock		  "Update range\nfrom input"
+		  DstBlock		  "Update range\nfrom input2"
 		  DstPort		  2
 		}
 		Line {
-		  SrcBlock		  "Update range\nfrom input2"
+		  SrcBlock		  "Update range\nfrom input1"
 		  SrcPort		  1
 		  Points		  [25, 0]
 		  Branch {
@@ -13066,21 +13070,21 @@ Model {
 		  Labels		  [0, 0]
 		  SrcBlock		  "Data Store\nRead"
 		  SrcPort		  1
-		  DstBlock		  "Update range\nfrom input2"
+		  DstBlock		  "Update range\nfrom input1"
 		  DstPort		  1
 		}
 		Line {
 		  Labels		  [0, 0]
 		  SrcBlock		  "t"
 		  SrcPort		  1
-		  DstBlock		  "Update range\nfrom input2"
+		  DstBlock		  "Update range\nfrom input1"
 		  DstPort		  2
 		}
 	      }
 	    }
 	    Block {
 	      BlockType		      SubSystem
-	      Name		      "Clear to Zero\nif Disconnect"
+	      Name		      "Clear to -1\nif Disconnect"
 	      SID		      12536
 	      Ports		      [5, 4]
 	      Position		      [245, 54, 285, 176]
@@ -13092,8 +13096,8 @@ Model {
 	      RequestExecContextInheritance off
 	      MaskHideContents	      off
 	      System {
-		Name			"Clear to Zero\nif Disconnect"
-		Location		[367, 623, 1101, 918]
+		Name			"Clear to -1\nif Disconnect"
+		Location		[422, 540, 1156, 835]
 		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
@@ -13180,10 +13184,10 @@ Model {
 		  Position		  [25, 66, 55, 84]
 		  BackgroundColor	  "gray"
 		  ShowName		  off
-		  OutDataTypeMode	  "uint16"
+		  OutDataTypeMode	  "uint8"
 		  OutDataType		  "sfix(16)"
 		  OutScaling		  "2^0"
-		  OutDataTypeStr	  "uint16"
+		  OutDataTypeStr	  "uint8"
 		}
 		Block {
 		  BlockType		  DiscreteIntegrator
@@ -13209,7 +13213,7 @@ Model {
 		  BlockType		  Switch
 		  Name			  "Switch"
 		  SID			  12545
-		  Position		  [295, 35, 325, 65]
+		  Position		  [325, 35, 355, 65]
 		  ShowName		  off
 		  Criteria		  "u2 > Threshold"
 		  Threshold		  "40"
@@ -13220,7 +13224,7 @@ Model {
 		  BlockType		  Switch
 		  Name			  "Switch1"
 		  SID			  12546
-		  Position		  [295, 80, 325, 110]
+		  Position		  [325, 80, 355, 110]
 		  ShowName		  off
 		  Criteria		  "u2 > Threshold"
 		  Threshold		  "40"
@@ -13231,7 +13235,7 @@ Model {
 		  BlockType		  Switch
 		  Name			  "Switch2"
 		  SID			  12547
-		  Position		  [295, 125, 325, 155]
+		  Position		  [325, 125, 355, 155]
 		  ShowName		  off
 		  Criteria		  "u2 > Threshold"
 		  Threshold		  "40"
@@ -13242,7 +13246,7 @@ Model {
 		  BlockType		  Switch
 		  Name			  "Switch3"
 		  SID			  12548
-		  Position		  [295, 170, 325, 200]
+		  Position		  [325, 170, 355, 200]
 		  ShowName		  off
 		  Criteria		  "u2 > Threshold"
 		  Threshold		  "40"
@@ -13253,7 +13257,7 @@ Model {
 		  BlockType		  Outport
 		  Name			  "o1"
 		  SID			  12549
-		  Position		  [375, 43, 405, 57]
+		  Position		  [405, 43, 435, 57]
 		  BackgroundColor	  "yellow"
 		  IconDisplay		  "Port number"
 		  OutDataType		  "sfix(16)"
@@ -13263,7 +13267,7 @@ Model {
 		  BlockType		  Outport
 		  Name			  "o2"
 		  SID			  12550
-		  Position		  [375, 88, 405, 102]
+		  Position		  [405, 88, 435, 102]
 		  BackgroundColor	  "yellow"
 		  Port			  "2"
 		  IconDisplay		  "Port number"
@@ -13274,7 +13278,7 @@ Model {
 		  BlockType		  Outport
 		  Name			  "o3"
 		  SID			  12551
-		  Position		  [375, 133, 405, 147]
+		  Position		  [405, 133, 435, 147]
 		  BackgroundColor	  "yellow"
 		  Port			  "3"
 		  IconDisplay		  "Port number"
@@ -13285,7 +13289,7 @@ Model {
 		  BlockType		  Outport
 		  Name			  "o4"
 		  SID			  12552
-		  Position		  [375, 178, 405, 192]
+		  Position		  [405, 178, 435, 192]
 		  BackgroundColor	  "yellow"
 		  Port			  "4"
 		  IconDisplay		  "Port number"
@@ -13326,7 +13330,7 @@ Model {
 		  Labels		  [0, 0]
 		  SrcBlock		  "Constant"
 		  SrcPort		  1
-		  Points		  [195, 0]
+		  Points		  [225, 0]
 		  Branch {
 		    DstBlock		    "Switch"
 		    DstPort		    1
@@ -13523,7 +13527,7 @@ Model {
 	      BlockType		      SubSystem
 	      Name		      "Detect calibration\ntrigger"
 	      SID		      12560
-	      Ports		      [1, 1]
+	      Ports		      [2, 1]
 	      Position		      [470, 160, 555, 200]
 	      MinAlgLoopOccurrences   off
 	      PropExecContextOutsideSubsystem off
@@ -13534,8 +13538,8 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Detect calibration\ntrigger"
-		Location		[202, 82, 1270, 978]
-		Open			off
+		Location		[445, 602, 1454, 902]
+		Open			on
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
 		ScreenColor		"white"
@@ -13549,10 +13553,19 @@ Model {
 		ZoomFactor		"146"
 		Block {
 		  BlockType		  Inport
-		  Name			  "In1"
+		  Name			  "mode"
 		  SID			  12561
 		  Position		  [15, 183, 45, 197]
 		  BackgroundColor	  "lightBlue"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "value"
+		  SID			  13130
+		  Position		  [15, 218, 45, 232]
+		  BackgroundColor	  "lightBlue"
+		  Port			  "2"
 		  IconDisplay		  "Port number"
 		}
 		Block {
@@ -13592,6 +13605,29 @@ Model {
 		  relop			  "=="
 		  const			  "2"
 		  LogicOutDataTypeMode	  "boolean"
+		  ZeroCross		  on
+		}
+		Block {
+		  BlockType		  Reference
+		  Name			  "Compare\nTo Constant1"
+		  SID			  13131
+		  Ports			  [1, 1]
+		  Position		  [95, 210, 125, 240]
+		  ShowName		  off
+		  LibraryVersion	  "1.216"
+		  SourceBlock		  "simulink/Logic and Bit\nOperations/Compare\nTo Constant"
+		  SourceType		  "Compare To Constant"
+		  ShowPortLabels	  "FromPortIcon"
+		  SystemSampleTime	  "-1"
+		  FunctionWithSeparateData off
+		  RTWMemSecFuncInitTerm	  "Inherit from model"
+		  RTWMemSecFuncExecute	  "Inherit from model"
+		  RTWMemSecDataConstants  "Inherit from model"
+		  RTWMemSecDataInternal	  "Inherit from model"
+		  RTWMemSecDataParameters "Inherit from model"
+		  relop			  ">"
+		  const			  "0"
+		  LogicOutDataTypeMode	  "uint8"
 		  ZeroCross		  on
 		}
 		Block {
@@ -13635,11 +13671,24 @@ Model {
 		  SampleTime		  "T_step"
 		}
 		Block {
+		  BlockType		  DataTypeConversion
+		  Name			  "Data Type Conversion"
+		  SID			  13133
+		  Position		  [210, 202, 255, 218]
+		  ShowName		  off
+		  OutDataTypeMode	  "uint8"
+		  OutDataType		  "fixdt(1, 16)"
+		  OutScaling		  "2^0"
+		  OutDataTypeStr	  "uint8"
+		  RndMeth		  "Floor"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
 		  BlockType		  Reference
 		  Name			  "Detect\nChange1"
 		  SID			  12566
 		  Ports			  [1, 1]
-		  Position		  [95, 179, 145, 201]
+		  Position		  [75, 179, 125, 201]
 		  ShowName		  off
 		  LibraryVersion	  "1.216"
 		  SourceBlock		  "simulink/Logic and Bit\nOperations/Detect\nChange"
@@ -13653,6 +13702,18 @@ Model {
 		  RTWMemSecDataInternal	  "Inherit from model"
 		  RTWMemSecDataParameters "Inherit from model"
 		  vinit			  "0"
+		}
+		Block {
+		  BlockType		  Logic
+		  Name			  "Logical\nOperator"
+		  SID			  13132
+		  Ports			  [2, 1]
+		  Position		  [160, 192, 190, 223]
+		  ShowName		  off
+		  AllPortsSameDT	  off
+		  OutDataTypeMode	  "boolean"
+		  LogicDataType		  "fixdt(0, 8)"
+		  OutDataTypeStr	  "boolean"
 		}
 		Block {
 		  BlockType		  SubSystem
@@ -15025,7 +15086,7 @@ Model {
 		  Name			  "Transition\ncounter"
 		  SID			  12640
 		  Ports			  [2, 1]
-		  Position		  [260, 182, 295, 218]
+		  Position		  [325, 182, 360, 218]
 		  IntegratorMethod	  "Integration: Forward Euler"
 		  gainval		  "100"
 		  ExternalReset		  "level"
@@ -15071,7 +15132,7 @@ Model {
 		  OutScaling		  "2^0"
 		}
 		Line {
-		  SrcBlock		  "In1"
+		  SrcBlock		  "mode"
 		  SrcPort		  1
 		  DstBlock		  "Detect\nChange1"
 		  DstPort		  1
@@ -15127,19 +15188,10 @@ Model {
 		  DstPort		  2
 		}
 		Line {
-		  SrcBlock		  "Detect\nChange1"
+		  SrcBlock		  "Logical\nOperator"
 		  SrcPort		  1
-		  Points		  [45, 0]
-		  Branch {
-		    Labels		    [0, 0]
-		    Points		    [0, 60; 250, 0; 0, -35]
-		    DstBlock		    "State transitions"
-		    DstPort		    3
-		  }
-		  Branch {
-		    DstBlock		    "Transition\ncounter"
-		    DstPort		    1
-		  }
+		  DstBlock		  "Data Type Conversion"
+		  DstPort		  1
 		}
 		Line {
 		  SrcBlock		  "State outputs"
@@ -15164,7 +15216,7 @@ Model {
 		Line {
 		  SrcBlock		  "Unit Delay2"
 		  SrcPort		  1
-		  Points		  [-155, 0]
+		  Points		  [-90, 0]
 		  DstBlock		  "Transition\ncounter"
 		  DstPort		  2
 		}
@@ -15174,10 +15226,52 @@ Model {
 		  DstBlock		  "calibrate"
 		  DstPort		  1
 		}
+		Line {
+		  SrcBlock		  "value"
+		  SrcPort		  1
+		  DstBlock		  "Compare\nTo Constant1"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Detect\nChange1"
+		  SrcPort		  1
+		  Points		  [5, 0; 0, 10]
+		  DstBlock		  "Logical\nOperator"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Compare\nTo Constant1"
+		  SrcPort		  1
+		  Points		  [5, 0; 0, -10]
+		  DstBlock		  "Logical\nOperator"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "Data Type Conversion"
+		  SrcPort		  1
+		  Points		  [50, 0]
+		  Branch {
+		    Labels		    [0, 0]
+		    Points		    [0, 40; 135, 0; 0, -35]
+		    DstBlock		    "State transitions"
+		    DstPort		    3
+		  }
+		  Branch {
+		    Points		    [0, 0]
+		    DstBlock		    "Transition\ncounter"
+		    DstPort		    1
+		  }
+		}
 		Annotation {
 		  Name			  "calibrationState is a uint8 with 3 states:\n0 is off,\n1 is timing down waiting to transition,\n2 is in "
 		  "calibration mode"
 		  Position		  [460, 57]
+		  HorizontalAlignment	  "left"
+		}
+		Annotation {
+		  Name			  "This part checks for a mode change and checks that\nit isn't the result of a disconnect. We don't want t"
+		  "hose\nto accidently trigger a calibration."
+		  Position		  [13, 148]
 		  HorizontalAlignment	  "left"
 		}
 	      }
@@ -15218,7 +15312,7 @@ Model {
 	      BlockType		      From
 	      Name		      "From4"
 	      SID		      12648
-	      Position		      [15, 315, 75, 335]
+	      Position		      [15, 290, 75, 310]
 	      ShowName		      off
 	      GotoTag		      "rudder"
 	    }
@@ -15226,7 +15320,7 @@ Model {
 	      BlockType		      From
 	      Name		      "From6"
 	      SID		      12649
-	      Position		      [15, 440, 75, 460]
+	      Position		      [15, 435, 75, 455]
 	      ShowName		      off
 	      GotoTag		      "throttle"
 	    }
@@ -16101,7 +16195,7 @@ Model {
 		  MaskHideContents	  off
 		  System {
 		    Name		    "Add 4% low-end deadband"
-		    Location		    [423, 78, 1278, 974]
+		    Location		    [423, 82, 1278, 978]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -17580,37 +17674,45 @@ Model {
 	      IconDisplay	      "Port number"
 	    }
 	    Line {
-	      SrcBlock		      "Clear to Zero\nif Disconnect"
+	      SrcBlock		      "Clear to -1\nif Disconnect"
 	      SrcPort		      3
-	      DstBlock		      "Compare\nTo Constant"
-	      DstPort		      1
+	      Points		      [15, 0]
+	      Branch {
+		DstBlock		"Compare\nTo Constant"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, 60]
+		DstBlock		"Detect calibration\ntrigger"
+		DstPort			2
+	      }
 	    }
 	    Line {
 	      SrcBlock		      "RC Input"
 	      SrcPort		      1
 	      Points		      [75, 0; 0, 35]
-	      DstBlock		      "Clear to Zero\nif Disconnect"
+	      DstBlock		      "Clear to -1\nif Disconnect"
 	      DstPort		      2
 	    }
 	    Line {
 	      SrcBlock		      "RC Input"
 	      SrcPort		      3
 	      Points		      [80, 0]
-	      DstBlock		      "Clear to Zero\nif Disconnect"
+	      DstBlock		      "Clear to -1\nif Disconnect"
 	      DstPort		      3
 	    }
 	    Line {
 	      SrcBlock		      "RC Input"
 	      SrcPort		      5
 	      Points		      [80, 0]
-	      DstBlock		      "Clear to Zero\nif Disconnect"
+	      DstBlock		      "Clear to -1\nif Disconnect"
 	      DstPort		      4
 	    }
 	    Line {
 	      SrcBlock		      "RC Input"
 	      SrcPort		      2
 	      Points		      [80, 0]
-	      DstBlock		      "Clear to Zero\nif Disconnect"
+	      DstBlock		      "Clear to -1\nif Disconnect"
 	      DstPort		      1
 	    }
 	    Line {
@@ -17635,7 +17737,7 @@ Model {
 	      SrcBlock		      "RC Input"
 	      SrcPort		      7
 	      Points		      [80, 0]
-	      DstBlock		      "Clear to Zero\nif Disconnect"
+	      DstBlock		      "Clear to -1\nif Disconnect"
 	      DstPort		      5
 	    }
 	    Line {
@@ -17646,19 +17748,19 @@ Model {
 	      DstPort		      ifaction
 	    }
 	    Line {
-	      SrcBlock		      "Clear to Zero\nif Disconnect"
+	      SrcBlock		      "Clear to -1\nif Disconnect"
 	      SrcPort		      1
 	      DstBlock		      "Goto"
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "Clear to Zero\nif Disconnect"
+	      SrcBlock		      "Clear to -1\nif Disconnect"
 	      SrcPort		      2
 	      DstBlock		      "Goto1"
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "Clear to Zero\nif Disconnect"
+	      SrcBlock		      "Clear to -1\nif Disconnect"
 	      SrcPort		      4
 	      DstBlock		      "Goto2"
 	      DstPort		      1
@@ -17666,13 +17768,13 @@ Model {
 	    Line {
 	      SrcBlock		      "From4"
 	      SrcPort		      1
-	      Points		      [0, 5; 30, 0]
+	      Points		      [30, 0]
 	      Branch {
+		Points			[0, 30]
 		DstBlock		"If Action\nSubsystem1"
 		DstPort			1
 	      }
 	      Branch {
-		Points			[0, -30]
 		DstBlock		"If1"
 		DstPort			1
 	      }
@@ -17728,12 +17830,11 @@ Model {
 	      SrcPort		      1
 	      Points		      [30, 0]
 	      Branch {
-		Points			[0, -5]
 		DstBlock		"If2"
 		DstPort			1
 	      }
 	      Branch {
-		Points			[0, 25]
+		Points			[0, 30]
 		DstBlock		"If Action\nSubsystem3"
 		DstPort			1
 	      }
@@ -17775,13 +17876,14 @@ Model {
 	    Line {
 	      SrcBlock		      "From3"
 	      SrcPort		      1
-	      Points		      [5, 0; 0, 30]
+	      Points		      [5, 0; 0, 0]
 	      Branch {
-		Points			[0, -30]
+		Points			[0, 0]
 		DstBlock		"If3"
 		DstPort			1
 	      }
 	      Branch {
+		Points			[0, 30]
 		DstBlock		"If Action\nSubsystem5"
 		DstPort			1
 	      }
@@ -17836,7 +17938,7 @@ Model {
 	      }
 	      Branch {
 		Labels			[0, 0]
-		Points			[0, 50]
+		Points			[0, 40]
 		DstBlock		"Detect calibration\ntrigger"
 		DstPort			1
 	      }
@@ -17886,8 +17988,11 @@ Model {
 	      "g all control channels besides channel \n5 (which is reserved for switching AutoMode) will calibrate the contro"
 	      "ller to the proper values.\n\nAs the vehicle enters reset automatically on startup, the proper way to calibrate"
 	      " is to startup the vehicle.\nMove all the control sticks (excl channel 5 again) and then switch into RC mode. E"
-	      "ven if the vessel stays\nin reset mode, it will still be controllable via the RC transmitter."
-	      Position		      [527, 397]
+	      "ven if the vessel stays\nin reset mode, it will still be controllable via the RC transmitter.\n\nThe output for"
+	      " rudder, throttle, and trackCommand are all in the range -1..1000. -1 means disconnected, \nwhile 0 is a low RC"
+	      " signal and 1000 is a high. These ranges also have deadbands: 4% at the low-end or \n8% around the center. This"
+	      " helps to keep the actuator dead if the user desires it."
+	      Position		      [527, 427]
 	      HorizontalAlignment     "left"
 	    }
 	  }
@@ -18076,7 +18181,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Split trackCommand\nto singular commands"
-	    Location		    [455, 795, 1005, 930]
+	    Location		    [455, 795, 1131, 930]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -18123,7 +18228,7 @@ Model {
 	      RTWMemSecDataInternal   "Inherit from model"
 	      RTWMemSecDataParameters "Inherit from model"
 	      relop		      ">"
-	      const		      "75"
+	      const		      "800"
 	      LogicOutDataTypeMode    "boolean"
 	      ZeroCross		      on
 	    }
@@ -18146,7 +18251,7 @@ Model {
 	      RTWMemSecDataInternal   "Inherit from model"
 	      RTWMemSecDataParameters "Inherit from model"
 	      relop		      "<"
-	      const		      "25"
+	      const		      "200"
 	      LogicOutDataTypeMode    "boolean"
 	      ZeroCross		      on
 	    }
@@ -18378,6 +18483,15 @@ Model {
 	  ShowName		  off
 	}
 	Block {
+	  BlockType		  Constant
+	  Name			  "Waypoints"
+	  SID			  13054
+	  Position		  [75, 270, 105, 300]
+	  Value			  "sampling_waypoints"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
 	  BlockType		  Outport
 	  Name			  "command_b"
 	  SID			  12776
@@ -18401,6 +18515,15 @@ Model {
 	  Position		  [780, 278, 810, 292]
 	  BackgroundColor	  "yellow"
 	  Port			  "3"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "waypoints"
+	  SID			  13055
+	  Position		  [715, 423, 745, 437]
+	  BackgroundColor	  "yellow"
+	  Port			  "4"
 	  IconDisplay		  "Port number"
 	}
 	Line {
@@ -18518,13 +18641,6 @@ Model {
 	  DstPort		  2
 	}
 	Line {
-	  SrcBlock		  "Select current\nwaypoint track"
-	  SrcPort		  2
-	  Points		  [20, 0; 0, -110; -60, 0]
-	  DstBlock		  "Autonomous Controller"
-	  DstPort		  6
-	}
-	Line {
 	  SrcBlock		  "Logical\nOperator"
 	  SrcPort		  1
 	  Points		  [10, 0; 0, -45]
@@ -18595,6 +18711,20 @@ Model {
 	  SrcPort		  2
 	  DstBlock		  "command_t"
 	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Select current\nwaypoint track"
+	  SrcPort		  2
+	  Points		  [85, 0]
+	  Branch {
+	    DstBlock		    "waypoints"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, -100; -125, 0]
+	    DstBlock		    "Autonomous Controller"
+	    DstPort		    6
+	  }
 	}
       }
     }
@@ -18682,6 +18812,26 @@ Model {
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "SensedVelocity"
+      TagVisibility	      "global"
+    }
+    Block {
+      BlockType		      From
+      Name		      "From17"
+      SID		      13066
+      Position		      [635, 959, 715, 981]
+      BackgroundColor	      "magenta"
+      ShowName		      off
+      GotoTag		      "i1"
+      TagVisibility	      "global"
+    }
+    Block {
+      BlockType		      From
+      Name		      "From18"
+      SID		      13067
+      Position		      [635, 929, 715, 951]
+      BackgroundColor	      "magenta"
+      ShowName		      off
+      GotoTag		      "i0"
       TagVisibility	      "global"
     }
     Block {
@@ -18810,7 +18960,7 @@ Model {
       BlockType		      Goto
       Name		      "Goto5"
       SID		      12801
-      Position		      [595, 446, 665, 474]
+      Position		      [595, 436, 665, 464]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "command_b"
@@ -18820,7 +18970,7 @@ Model {
       BlockType		      Goto
       Name		      "Goto6"
       SID		      12802
-      Position		      [595, 511, 665, 539]
+      Position		      [595, 486, 665, 514]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "command_r"
@@ -18830,7 +18980,7 @@ Model {
       BlockType		      Goto
       Name		      "Goto7"
       SID		      12803
-      Position		      [595, 576, 665, 604]
+      Position		      [595, 536, 665, 564]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "command_t"
@@ -18993,13 +19143,13 @@ Model {
       tmr2345		      "[8  0  0  0  0  0  0  0]"
       tmr2345cfg	      "[-1 -1 -1 -1 -1 -1 -1 -1]"
       IOautoConf	      on
-      typePort		      "[ 10  10  10  10   0   0  10  10   0   0   0   0   0   0   0   0   8   0   0   0   0   0   0   "
+      typePort		      "[ 10  10  10  10   0   0   0  10   0   0   0   0   0   0   0   0   8   0   0   0   0   0   0   "
       "0   0   0   0   0   0   0   0   0   0   0   9   0   0   0   0   0   0   0   0   0   0   0   0   0   0   7   0   "
       "0   0  10   9   0   0   6   6   6   0   0   0   6   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   "
       "0   0   0   4   5   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   9   0   0   0   0   0  10   0   "
       "0   0   0   0   0 ]"
-      TRIS		      "[ 65328  65535  65535  65501  65535  65535  65023 ]"
-      ADPCFG		      "12713984"
+      TRIS		      "[ 65392  65535  65535  65501  65535  65535  65023 ]"
+      ADPCFG		      "8519680"
       MasterBusyPort	      "None"
       MasterOverloadPort      "None"
       FOSC		      "Quartz (XT - HS)"
@@ -19052,6 +19202,30 @@ Model {
       Name		      "Rate Transition4"
       SID		      13013
       Position		      [780, 874, 820, 906]
+      ShowName		      off
+      OutPortSampleTime	      "1"
+    }
+    Block {
+      BlockType		      RateTransition
+      Name		      "Rate Transition5"
+      SID		      13065
+      Position		      [780, 894, 820, 926]
+      ShowName		      off
+      OutPortSampleTime	      "1"
+    }
+    Block {
+      BlockType		      RateTransition
+      Name		      "Rate Transition6"
+      SID		      13068
+      Position		      [780, 924, 820, 956]
+      ShowName		      off
+      OutPortSampleTime	      "1"
+    }
+    Block {
+      BlockType		      RateTransition
+      Name		      "Rate Transition7"
+      SID		      13069
+      Position		      [780, 954, 820, 986]
       ShowName		      off
       OutPortSampleTime	      "1"
     }
@@ -24288,8 +24462,8 @@ Model {
       BlockType		      SubSystem
       Name		      "Transmit state data\nvia UART1"
       SID		      12979
-      Ports		      [5]
-      Position		      [860, 750, 970, 910]
+      Ports		      [8]
+      Position		      [870, 747, 950, 983]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -24299,7 +24473,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Transmit state data\nvia UART1"
-	Location		[202, 82, 1270, 978]
+	Location		[206, 82, 1274, 978]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -24324,7 +24498,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "gPos"
 	  SID			  12981
-	  Position		  [25, 108, 55, 122]
+	  Position		  [25, 93, 55, 107]
 	  BackgroundColor	  "darkGreen"
 	  Port			  "2"
 	  IconDisplay		  "Port number"
@@ -24333,7 +24507,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "head"
 	  SID			  12982
-	  Position		  [25, 163, 55, 177]
+	  Position		  [25, 133, 55, 147]
 	  BackgroundColor	  "darkGreen"
 	  Port			  "3"
 	  IconDisplay		  "Port number"
@@ -24342,7 +24516,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "lPos"
 	  SID			  12983
-	  Position		  [25, 218, 55, 232]
+	  Position		  [25, 173, 55, 187]
 	  BackgroundColor	  "darkGreen"
 	  Port			  "4"
 	  IconDisplay		  "Port number"
@@ -24351,9 +24525,36 @@ Model {
 	  BlockType		  Inport
 	  Name			  "vel"
 	  SID			  12984
-	  Position		  [25, 273, 55, 287]
+	  Position		  [25, 213, 55, 227]
 	  BackgroundColor	  "darkGreen"
 	  Port			  "5"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "waypoints"
+	  SID			  13058
+	  Position		  [25, 253, 55, 267]
+	  BackgroundColor	  "darkGreen"
+	  Port			  "6"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "i0"
+	  SID			  13070
+	  Position		  [25, 293, 55, 307]
+	  BackgroundColor	  "darkGreen"
+	  Port			  "7"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "i1"
+	  SID			  13071
+	  Position		  [25, 323, 55, 337]
+	  BackgroundColor	  "darkGreen"
+	  Port			  "8"
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -24361,7 +24562,7 @@ Model {
 	  Name			  "Build HIL\nsentence"
 	  SID			  12985
 	  Ports			  [1, 1]
-	  Position		  [270, 134, 340, 206]
+	  Position		  [435, 144, 505, 216]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -24771,7 +24972,7 @@ Model {
 	  BlockType		  DataTypeConversion
 	  Name			  "Data Type Conversion"
 	  SID			  12996
-	  Position		  [80, 106, 145, 124]
+	  Position		  [80, 91, 145, 109]
 	  ShowName		  off
 	  OutDataTypeMode	  "single"
 	  OutDataType		  "fixdt(1, 16)"
@@ -24782,10 +24983,179 @@ Model {
 	}
 	Block {
 	  BlockType		  SubSystem
+	  Name			  "Embedded\nMATLAB Function"
+	  SID			  13064
+	  Ports			  [3, 2]
+	  Position		  [140, 276, 210, 324]
+	  LibraryVersion	  "1.31"
+	  PermitHierarchicalResolution "ExplicitOnly"
+	  TreatAsAtomicUnit	  on
+	  MinAlgLoopOccurrences	  off
+	  PropExecContextOutsideSubsystem off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  Opaque		  off
+	  RequestExecContextInheritance	off
+	  MaskHideContents	  off
+	  MaskType		  "Stateflow"
+	  MaskDescription	  "Embedded MATLAB block"
+	  MaskDisplay		  "disp('fcn');"
+	  MaskSelfModifiable	  on
+	  MaskIconFrame		  on
+	  MaskIconOpaque	  off
+	  MaskIconRotate	  "none"
+	  MaskPortRotate	  "default"
+	  MaskIconUnits		  "autoscale"
+	  System {
+	    Name		    "Embedded\nMATLAB Function"
+	    Location		    [257, 457, 812, 717]
+	    Open		    off
+	    ModelBrowserVisibility  on
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    SIDHighWatermark	    20
+	    SIDPrevWatermark	    13
+	    Block {
+	      BlockType		      Inport
+	      Name		      "T"
+	      SID		      1
+	      Position		      [20, 101, 40, 119]
+	      IconDisplay	      "Port number"
+	      OutDataType	      "sfix(16)"
+	      OutScaling	      "2^0"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "i0"
+	      SID		      18
+	      Position		      [20, 136, 40, 154]
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "i1"
+	      SID		      19
+	      Position		      [20, 171, 40, 189]
+	      Port		      "3"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Demux
+	      Name		      " Demux "
+	      SID		      15
+	      Ports		      [1, 1]
+	      Position		      [270, 180, 320, 220]
+	      Outputs		      "1"
+	    }
+	    Block {
+	      BlockType		      "S-Function"
+	      Name		      " SFunction "
+	      SID		      14
+	      Tag		      "Stateflow S-Function code_gen 18"
+	      Ports		      [3, 3]
+	      Position		      [180, 100, 230, 180]
+	      FunctionName	      "sf_sfun"
+	      PortCounts	      "[3 3]"
+	      EnableBusSupport	      on
+	      Port {
+		PortNumber		2
+		Name			"wp0"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	      Port {
+		PortNumber		3
+		Name			"wp1"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	    }
+	    Block {
+	      BlockType		      Terminator
+	      Name		      " Terminator "
+	      SID		      17
+	      Position		      [460, 191, 480, 209]
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "wp0"
+	      SID		      5
+	      Position		      [460, 101, 480, 119]
+	      IconDisplay	      "Port number"
+	      OutDataType	      "sfix(16)"
+	      OutScaling	      "2^0"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "wp1"
+	      SID		      20
+	      Position		      [460, 136, 480, 154]
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Line {
+	      SrcBlock		      " SFunction "
+	      SrcPort		      1
+	      DstBlock		      " Demux "
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "T"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "i0"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "i1"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      3
+	    }
+	    Line {
+	      Name		      "wp0"
+	      Labels		      [0, 0]
+	      SrcBlock		      " SFunction "
+	      SrcPort		      2
+	      DstBlock		      "wp0"
+	      DstPort		      1
+	    }
+	    Line {
+	      Name		      "wp1"
+	      Labels		      [0, 0]
+	      SrcBlock		      " SFunction "
+	      SrcPort		      3
+	      DstBlock		      "wp1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      " Demux "
+	      SrcPort		      1
+	      DstBlock		      " Terminator "
+	      DstPort		      1
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  SubSystem
 	  Name			  "Pack"
 	  SID			  12997
-	  Ports			  [5, 1]
-	  Position		  [165, 27, 240, 313]
+	  Ports			  [7, 1]
+	  Position		  [325, 36, 400, 324]
 	  LibraryVersion	  "1.31"
 	  PermitHierarchicalResolution "ExplicitOnly"
 	  TreatAsAtomicUnit	  on
@@ -24820,7 +25190,7 @@ Model {
 	    TiledPageScale	    1
 	    ShowPageBoundaries	    off
 	    ZoomFactor		    "100"
-	    SIDHighWatermark	    21
+	    SIDHighWatermark	    23
 	    Block {
 	      BlockType		      Inport
 	      Name		      "L2"
@@ -24863,6 +25233,22 @@ Model {
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
+	      BlockType		      Inport
+	      Name		      "wp0"
+	      SID		      22
+	      Position		      [20, 281, 40, 299]
+	      Port		      "6"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "wp1"
+	      SID		      23
+	      Position		      [20, 316, 40, 334]
+	      Port		      "7"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
 	      BlockType		      Demux
 	      Name		      " Demux "
 	      SID		      15
@@ -24875,10 +25261,10 @@ Model {
 	      Name		      " SFunction "
 	      SID		      14
 	      Tag		      "Stateflow S-Function code_gen 16"
-	      Ports		      [5, 2]
+	      Ports		      [7, 2]
 	      Position		      [180, 118, 230, 362]
 	      FunctionName	      "sf_sfun"
-	      PortCounts	      "[5 2]"
+	      PortCounts	      "[7 2]"
 	      EnableBusSupport	      on
 	      Port {
 		PortNumber		2
@@ -24939,6 +25325,18 @@ Model {
 	      DstPort		      5
 	    }
 	    Line {
+	      SrcBlock		      "wp0"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      6
+	    }
+	    Line {
+	      SrcBlock		      "wp1"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      7
+	    }
+	    Line {
 	      Name		      "y"
 	      Labels		      [0, 0]
 	      SrcBlock		      " SFunction "
@@ -24960,7 +25358,7 @@ Model {
 	  SID			  13003
 	  Tag			  "dsPIC_TX"
 	  Ports			  [1]
-	  Position		  [470, 154, 540, 186]
+	  Position		  [535, 164, 605, 196]
 	  ShowName		  off
 	  Priority		  "5"
 	  LibraryVersion	  "3.21"
@@ -25017,6 +25415,40 @@ Model {
 	  DstBlock		  "Pack"
 	  DstPort		  5
 	}
+	Line {
+	  SrcBlock		  "i0"
+	  SrcPort		  1
+	  DstBlock		  "Embedded\nMATLAB Function"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "waypoints"
+	  SrcPort		  1
+	  Points		  [65, 0]
+	  DstBlock		  "Embedded\nMATLAB Function"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "i1"
+	  SrcPort		  1
+	  Points		  [65, 0]
+	  DstBlock		  "Embedded\nMATLAB Function"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Embedded\nMATLAB Function"
+	  SrcPort		  1
+	  Points		  [0, -30]
+	  DstBlock		  "Pack"
+	  DstPort		  6
+	}
+	Line {
+	  SrcBlock		  "Embedded\nMATLAB Function"
+	  SrcPort		  2
+	  Points		  [75, 0; 0, -15]
+	  DstBlock		  "Pack"
+	  DstPort		  7
+	}
       }
     }
     Block {
@@ -25037,8 +25469,8 @@ Model {
       SourceBlock	      "dsPICdrivers/Serial PORT/UART Configuration"
       SourceType	      "Configure UART"
       UART		      "1"
-      proposed_BAUD	      "57600"
-      BAUD		      "57600"
+      proposed_BAUD	      "115200"
+      BAUD		      "115200"
       ALT_TX_RX		      on
       InterruptTxWhen	      "When Transmit Buffer is empty"
       TXInterruptPri	      "1"
@@ -25047,11 +25479,11 @@ Model {
       InterruptRxWhen	      "When Receive Buffer is full (contain 4 characters)"
       RXInterruptPri	      "2"
       RxBufferSize	      "32"
-      UxBRG		      "42"
-      Info		      "UxBRG = 42   ||  Real Baud : 58140   ||  % error : 0.93669  ||  max 58.1395 Bytes / Step"
+      UxBRG		      "21"
+      Info		      "UxBRG = 21   ||  Real Baud : 113636   ||  % error : -1.3573  ||  max 113.6364 Bytes / Step"
       RealBaud		      "0"
-      ERROR		      "0.93669"
-      BYTES_STEP	      "58.1395"
+      ERROR		      "-1.3573"
+      BYTES_STEP	      "113.6364"
     }
     Line {
       SrcBlock		      "From16"
@@ -25218,32 +25650,74 @@ Model {
     Line {
       SrcBlock		      "Rate Transition"
       SrcPort		      1
+      Points		      [30, 0]
       DstBlock		      "Transmit state data\nvia UART1"
       DstPort		      1
     }
     Line {
       SrcBlock		      "Rate Transition1"
       SrcPort		      1
+      Points		      [30, 0]
       DstBlock		      "Transmit state data\nvia UART1"
       DstPort		      2
     }
     Line {
       SrcBlock		      "Rate Transition2"
       SrcPort		      1
+      Points		      [30, 0]
       DstBlock		      "Transmit state data\nvia UART1"
       DstPort		      3
     }
     Line {
       SrcBlock		      "Rate Transition3"
       SrcPort		      1
+      Points		      [30, 0]
       DstBlock		      "Transmit state data\nvia UART1"
       DstPort		      4
     }
     Line {
       SrcBlock		      "Rate Transition4"
       SrcPort		      1
+      Points		      [30, 0]
       DstBlock		      "Transmit state data\nvia UART1"
       DstPort		      5
+    }
+    Line {
+      SrcBlock		      "Controller"
+      SrcPort		      4
+      Points		      [20, 0; 0, 310]
+      DstBlock		      "Rate Transition5"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Rate Transition5"
+      SrcPort		      1
+      DstBlock		      "Transmit state data\nvia UART1"
+      DstPort		      6
+    }
+    Line {
+      SrcBlock		      "From18"
+      SrcPort		      1
+      DstBlock		      "Rate Transition6"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "From17"
+      SrcPort		      1
+      DstBlock		      "Rate Transition7"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Rate Transition6"
+      SrcPort		      1
+      DstBlock		      "Transmit state data\nvia UART1"
+      DstPort		      7
+    }
+    Line {
+      SrcBlock		      "Rate Transition7"
+      SrcPort		      1
+      DstBlock		      "Transmit state data\nvia UART1"
+      DstPort		      8
     }
     Annotation {
       Name		      "This model is designed to be compiled and uploaded to a dsPIC processor. \nSpecifically this model "
@@ -25271,6 +25745,9 @@ Model {
     Annotation {
       Position		      [101, 56]
     }
+    Annotation {
+      Position		      [868, 860]
+    }
   }
 }
 # Finite State Machines
@@ -25286,7 +25763,7 @@ Stateflow {
     name		    "code_gen"
     created		    "20-Jul-2010 14:18:50"
     isLibrary		    0
-    firstTarget		    213
+    firstTarget		    225
     sfVersion		    75014000
   }
   chart {
@@ -26626,66 +27103,66 @@ Stateflow {
       "   persistent IPActive;  %true if flying toward IP\n    persistent IP; % location of initial point\n\n    persis"
       "tent index_0 index_1; % Store the indices for waypoints 0 & 1 respectively\n    persistent direction; % Keep tra"
       "ck of the direction for patrol mode\n    \n    % Make sure we have at least two waypoints\n    assert(size(waypo"
-      "ints,1) >= 2);\n\n    % Inititalize to the first waypoint\n    if isempty(index_0)\n        index_0 = 1;\n    en"
-      "d\n    if isempty(index_1)\n        index_1 = 2;\n    end\n    if isempty(direction)\n        direction = 1;\n  "
-      "  end\n    \n    % Reset the waypoints\n    if (reset)\n        index_0 = 1;\n        index_1 = 2;\n    end\n   "
-      " \n    % Select the two current waypoints we're dealing with\n    WP0 = single(waypoints(index_0,:)');\n    WP1 "
-      "= single(waypoints(index_1,:)');\n    i0 = index_0;\n    i1 = index_1;\n    \n    switchToNextWaypoint = false;\n"
-      "    Pwp1 = single(zeros(3,1));\n    Pe_y = single(0);\n    Dist2WP1 = single(0);\n    MinDownPath = single(0);\n"
-      "    Dist2WPSwitch = single(0);\n    L2DownPath = single(0);\n    L2ToT = single(zeros(3,1));\n    L2Vec = single"
-      "(zeros(3,1));\n    IP1 = single([0; 0;-999]); %signal for no IP\n    \n    Pne = [Puav(1); Puav(2); 0]; %horizon"
-      "tal position\n    Vne = [Vxyz(1); Vxyz(2); 0]; % horizontal velocity\n    Groundspeed = norm(Vne);\n    L2 = sin"
-      "gle(TStar*Groundspeed);\n    WP0ne = single(zeros(3,1));\n    \n% Calculate N1 and T1\nassert(norm(WP1 - WP0) ~="
-      " 0);\nT1 = WP1-WP0;\nT1 = T1/norm(T1);\nN1 = [-T1(2); T1(1); 0];\n    \n%     initialize IP\n    if (isempty(IPA"
-      "ctive))\n        if (InitialPoint)\n%             IP is set relative to the first \"from\" waypoint\n           "
-      " IPActive = -1;\n            IP = [WP0(1); WP0(2); 0] - L2*IPStar*T1;\n            \n            if (norm(IP-Pne"
-      ") < .001)\n                IPActive = 0;\n                IP = single([0; 0; -999]);\n            end\n        e"
-      "lse\n            IPActive = 0;\n            IP = single([0; 0;-999]); %signal for no IP\n        end\n    end\n "
-      "   IP1 = IP;\n    \n    \n    if (IPActive)\n%         no line tracking, direct to IP\n        L2Vec = L2*(IP - "
-      "Pne)/norm(IP - Pne);\n%         check to see if at the IP to terminate this mode\n        if norm(IP - Pne) < .1"
-      "*L2\n            IPActive = 0;\n        end\n    else\n         if (Pne(1) < 2)\n             IP1 = IP1;\n      "
-      "   end\n%         IP not active, track WP lines\n        WPOne = [WP1(1); WP1(2); 0];\n        Pwp1 = Pne - [WP1"
-      "(1); WP1(2); 0]; % position of UAV relative to WP1\n        Pe_y = single(Pwp1'*N1); % cross track error\n      "
-      "  Dist2WP1 = -single(Pwp1'*T1); % distance to WP1\n\n%         minimum down path distance for Aim Point intersec"
-      "tion on T\n%         is determined by the intercept angle but limited \n%         in case of very distant intece"
-      "pts to MaxDwnPthStar*L2\n        MinDownPath = single ( min( abs(Pe_y)/tanIntercept, MaxDwnPthStar*L2)); \n     "
-      "   Dist2WPSwitch = Dist2WP1 - switchDistance;\n        if ( abs(Pe_y) > L2 )\n    %             Make sure aimpoi"
-      "nt is no closer to waypoint than calculated switch point.\n            L2DownPath = MinDownPath;\n        else\n"
-      "    %             within L2 of T and Dist2WPSwitch >= 0, but limit angle of L2 wrt T\n            L2DownPath = ("
-      "max(MinDownPath, (sqrt( L2^2 - Pe_y^2 ))));\n        end\n        \n        if ( Dist2WPSwitch < 0 )\n          "
-      "  switchToNextWaypoint = true;\n        end\n        \n         % vector from Pwp1 to aim point on T1\n         "
-      "L2ToT = single(( Dist2WP1 - L2DownPath )*(-T1) - Pwp1);\n         if (norm(L2ToT) < .001)\n             L2Vec = "
-      "L2*T1;\n         else\n            L2Vec = single(L2*( L2ToT/norm(L2ToT) )); % limit size to L2\n         end\n "
-      "   %         L2Vec = L2ToT;\n%         dummy statements\n    end\n    Zprod = single(Vxyz(1)*L2Vec(2) - Vxyz(2)*"
-      "L2Vec(1)); %Z component of cross product\n    sinEta = single(Zprod/(Groundspeed*L2));\n\n    as_c = single(2*Gr"
-      "oundspeed^2/(L2)*sinEta);\n%         bank angle limits outside of this block\n    phi_c = single(atan(as_c/ISA_g"
-      "));\n\n%         now override bank angle if heading in the wrong direction\n    if ( Turn2Track && Dist2WPSwitch"
-      " > 0 && ~IPActive ) \n%             turn to track not L2, gives min displacement from track\n        if ( T1'*Vx"
-      "yz < 0 )\n            if ( Pe_y > 0 )\n                phi_c = single(+pi/2);\n                as_c = single(99)"
-      ";\n            else\n                phi_c = single(-pi/2);\n                as_c = single(-99);\n            en"
-      "d\n        end\n     else\n%           turn toward L2, give min displacement toward WP0\n        if ( L2Vec'*Vxy"
-      "z < 0 )\n            if ( sinEta < 0 )\n                phi_c = single(-pi/2); \n                as_c = single(-"
-      "99);\n            else\n                phi_c = single(+pi/2);\n                as_c = single(99);\n            "
-      "end\n        end\n    end\n\n% Now we process waypoint switching. This relies on the switchTrigger\n% value set "
-      "in the above L2+ controller code.\ntheEnd = false;\nif index_1 + 1 <= size(waypoints,1) && waypoints(index_1+1,1"
-      ") == -1 ...\n                                    && waypoints(index_1+1,2) == -1 ...\n                          "
-      "          && waypoints(index_1+1,3) == -1\n    theEnd = true;\nend\nif switchToNextWaypoint\n    switch mode\n  "
-      "      case 0 % Halt mode\n            if size(waypoints,1) >= index_1 + 1 && ~theEnd\n                index_0 = "
-      "index_1;\n                index_1 = index_1 + 1;\n            end\n        case 1 % Loop mode\n            % We "
-      "either continue moving forward through the waypoints...\n            if size(waypoints,1) >= index_1 + 1 && ~the"
-      "End\n                index_0 = index_1;\n                index_1 = index_1 + 1;\n            % Or we wrap-around"
-      " to the starting waypoint\n            else\n                index_0 = index_1;\n                index_1 = 1;\n "
-      "           end\n        case 2 % Patrol mode\n            if direction == 1 % For the forwards direction\n      "
-      "          % We either continue moving forwards through the waypoints...\n                if size(waypoints,1) >="
-      " index_1 + 1 && ~theEnd\n                    index_0 = index_1;\n                    index_1 = index_1 + 1;\n   "
-      "             % Or we start to go backwards\n                else\n                    index_0 = index_1;\n      "
-      "              index_1 = index_1 - 1;\n                    direction = 0;\n                end\n            elsei"
-      "f direction == 0 % For the reverse direction\n                % We either continue moving backwards through the "
-      "waypoints...\n                if index_1 - 1 >= 1\n                    index_0 = index_1;\n                    i"
-      "ndex_1 = index_1 - 1;\n                % Or we start to go forwards\n                else\n                    i"
-      "ndex_0 = index_1;\n                    index_1 = index_1 + 1;\n                    direction = 1;\n             "
-      "   end\n            end\n    end\nend"
-      editorLayout	      "100 M4x1[2 46 1288 1002]"
+      "ints,1) >= 2);\n\n    % Inititalize to the first waypoint\n    if isempty(index_0)\n        index_0 = int8(1);\n"
+      "    end\n    if isempty(index_1)\n        index_1 = int8(2);\n    end\n    if isempty(direction)\n        direct"
+      "ion = int8(1);\n    end\n    \n    % Reset the waypoints\n    if (reset)\n        index_0 = int8(1);\n        in"
+      "dex_1 = int8(2);\n    end\n    \n    % Select the two current waypoints we're dealing with\n    WP0 = single(way"
+      "points(index_0,:)');\n    WP1 = single(waypoints(index_1,:)');\n    i0 = index_0;\n    i1 = index_1;\n    \n    "
+      "switchToNextWaypoint = false;\n    Pwp1 = single(zeros(3,1));\n    Pe_y = single(0);\n    Dist2WP1 = single(0);\n"
+      "    MinDownPath = single(0);\n    Dist2WPSwitch = single(0);\n    L2DownPath = single(0);\n    L2ToT = single(ze"
+      "ros(3,1));\n    L2Vec = single(zeros(3,1));\n    IP1 = single([0; 0;-999]); %signal for no IP\n    \n    Pne = ["
+      "Puav(1); Puav(2); 0]; %horizontal position\n    Vne = [Vxyz(1); Vxyz(2); 0]; % horizontal velocity\n    Groundsp"
+      "eed = norm(Vne);\n    L2 = single(TStar*Groundspeed);\n    WP0ne = single(zeros(3,1));\n    \n% Calculate N1 and"
+      " T1\nassert(norm(WP1 - WP0) ~= 0);\nT1 = WP1-WP0;\nT1 = T1/norm(T1);\nN1 = [-T1(2); T1(1); 0];\n    \n%     init"
+      "ialize IP\n    if (isempty(IPActive))\n        if (InitialPoint)\n%             IP is set relative to the first "
+      "\"from\" waypoint\n            IPActive = -1;\n            IP = [WP0(1); WP0(2); 0] - L2*IPStar*T1;\n           "
+      " \n            if (norm(IP-Pne) < .001)\n                IPActive = 0;\n                IP = single([0; 0; -999]"
+      ");\n            end\n        else\n            IPActive = 0;\n            IP = single([0; 0;-999]); %signal for "
+      "no IP\n        end\n    end\n    IP1 = IP;\n    \n    \n    if (IPActive)\n%         no line tracking, direct to"
+      " IP\n        L2Vec = L2*(IP - Pne)/norm(IP - Pne);\n%         check to see if at the IP to terminate this mode\n"
+      "        if norm(IP - Pne) < .1*L2\n            IPActive = 0;\n        end\n    else\n         if (Pne(1) < 2)\n "
+      "            IP1 = IP1;\n         end\n%         IP not active, track WP lines\n        WPOne = [WP1(1); WP1(2); "
+      "0];\n        Pwp1 = Pne - [WP1(1); WP1(2); 0]; % position of UAV relative to WP1\n        Pe_y = single(Pwp1'*N1"
+      "); % cross track error\n        Dist2WP1 = -single(Pwp1'*T1); % distance to WP1\n\n%         minimum down path d"
+      "istance for Aim Point intersection on T\n%         is determined by the intercept angle but limited \n%         "
+      "in case of very distant intecepts to MaxDwnPthStar*L2\n        MinDownPath = single ( min( abs(Pe_y)/tanIntercep"
+      "t, MaxDwnPthStar*L2)); \n        Dist2WPSwitch = Dist2WP1 - switchDistance;\n        if ( abs(Pe_y) > L2 )\n    "
+      "%             Make sure aimpoint is no closer to waypoint than calculated switch point.\n            L2DownPath "
+      "= MinDownPath;\n        else\n    %             within L2 of T and Dist2WPSwitch >= 0, but limit angle of L2 wrt"
+      " T\n            L2DownPath = (max(MinDownPath, (sqrt( L2^2 - Pe_y^2 ))));\n        end\n        \n        if ( D"
+      "ist2WPSwitch < 0 )\n            switchToNextWaypoint = true;\n        end\n        \n         % vector from Pwp1"
+      " to aim point on T1\n         L2ToT = single(( Dist2WP1 - L2DownPath )*(-T1) - Pwp1);\n         if (norm(L2ToT) "
+      "< .001)\n             L2Vec = L2*T1;\n         else\n            L2Vec = single(L2*( L2ToT/norm(L2ToT) )); % lim"
+      "it size to L2\n         end\n    %         L2Vec = L2ToT;\n%         dummy statements\n    end\n    Zprod = sing"
+      "le(Vxyz(1)*L2Vec(2) - Vxyz(2)*L2Vec(1)); %Z component of cross product\n    sinEta = single(Zprod/(Groundspeed*L"
+      "2));\n\n    as_c = single(2*Groundspeed^2/(L2)*sinEta);\n%         bank angle limits outside of this block\n    "
+      "phi_c = single(atan(as_c/ISA_g));\n\n%         now override bank angle if heading in the wrong direction\n    if"
+      " ( Turn2Track && Dist2WPSwitch > 0 && ~IPActive ) \n%             turn to track not L2, gives min displacement f"
+      "rom track\n        if ( T1'*Vxyz < 0 )\n            if ( Pe_y > 0 )\n                phi_c = single(+pi/2);\n   "
+      "             as_c = single(99);\n            else\n                phi_c = single(-pi/2);\n                as_c "
+      "= single(-99);\n            end\n        end\n     else\n%           turn toward L2, give min displacement towar"
+      "d WP0\n        if ( L2Vec'*Vxyz < 0 )\n            if ( sinEta < 0 )\n                phi_c = single(-pi/2); \n "
+      "               as_c = single(-99);\n            else\n                phi_c = single(+pi/2);\n                as"
+      "_c = single(99);\n            end\n        end\n    end\n\n% Now we process waypoint switching. This relies on t"
+      "he switchTrigger\n% value set in the above L2+ controller code.\ntheEnd = false;\nif index_1 + 1 <= size(waypoin"
+      "ts,1) && waypoints(index_1+1,1) == -1 ...\n                                    && waypoints(index_1+1,2) == -1 ."
+      "..\n                                    && waypoints(index_1+1,3) == -1\n    theEnd = true;\nend\nif switchToNex"
+      "tWaypoint\n    switch mode\n        case 0 % Halt mode\n            if size(waypoints,1) >= index_1 + 1 && ~theE"
+      "nd\n                index_0 = index_1;\n                index_1 = index_1 + 1;\n            end\n        case 1 "
+      "% Loop mode\n            % We either continue moving forward through the waypoints...\n            if size(waypo"
+      "ints,1) >= index_1 + 1 && ~theEnd\n                index_0 = index_1;\n                index_1 = index_1 + 1;\n "
+      "           % Or we wrap-around to the starting waypoint\n            else\n                index_0 = index_1;\n "
+      "               index_1 = int8(1);\n            end\n        case 2 % Patrol mode\n            if direction == 1 "
+      "% For the forwards direction\n                % We either continue moving forwards through the waypoints...\n   "
+      "             if size(waypoints,1) >= index_1 + 1 && ~theEnd\n                    index_0 = index_1;\n           "
+      "         index_1 = index_1 + 1;\n                % Or we start to go backwards\n                else\n          "
+      "          index_0 = index_1;\n                    index_1 = index_1 - 1;\n                    direction = int8(0"
+      ");\n                end\n            elseif direction == 0 % For the reverse direction\n                % We eit"
+      "her continue moving backwards through the waypoints...\n                if index_1 - 1 >= 1\n                   "
+      " index_0 = index_1;\n                    index_1 = index_1 - 1;\n                % Or we start to go forwards\n "
+      "               else\n                    index_0 = index_1;\n                    index_1 = index_1 + 1;\n       "
+      "             direction = int8(1);\n                end\n            end\n    end\nend"
+      editorLayout	      "100 M4x1[102 192 1080 733]"
       fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
       "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
       emlDefaultFimath	      FimathUserSpecified
@@ -28085,7 +28562,7 @@ Stateflow {
       "\n    reset = true;\nelse\n    reset = false;\nend\n\n% 1 is for the test waypoints, 2 is for the figure eight, "
       "and 3 is\n% for the data gathering waypoints.\nswitch trackNumber\n    case 1\n        waypoints = test_waypoint"
       "s;\n    case 2\n        waypoints = figure8_waypoints;\n    case 3\n        waypoints = sampling_waypoints;\n   "
-      " otherwise\n        waypoints = zeros(size(test_waypoints));\nend"
+      " otherwise\n        waypoints = zeros(size(test_waypoints), 'int32');\nend"
       editorLayout	      "100 M4x1[102 192 1080 733]"
       saturateOnIntegerOverflow	0
     }
@@ -28541,7 +29018,7 @@ Stateflow {
     viewObj		    169
     machine		    1
     toolbarMode		    LIBRARY_TOOLBAR
-    ssIdHighWaterMark	    15
+    ssIdHighWaterMark	    17
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
     firstData		    173
@@ -28565,17 +29042,20 @@ Stateflow {
     decomposition	    CLUSTER_STATE
     eml {
       isEML		      1
-      script		      "function y = fcn(L2, gPos, head, lPos, vel)\n%#eml\n\ny = zeros(52, 1, 'uint8');\ny(1:4) = packUi"
-      "nt32BE(typecast(L2(1),'uint32'));\ny(5:8) = packUint32BE(typecast(L2(2),'uint32'));\ny(9:12) = packUint32BE(type"
-      "cast(L2(3),'uint32'));\ny(13:16) = packUint32BE(typecast(gPos(1),'uint32'));\ny(17:20) = packUint32BE(typecast(g"
-      "Pos(2),'uint32'));\ny(21:24) = packUint32BE(typecast(gPos(3),'uint32'));\ny(25:28) = packUint32BE(typecast(head,"
-      "'uint32'));\ny(29:32) = packUint32BE(typecast(lPos(1),'uint32'));\ny(33:36) = packUint32BE(typecast(lPos(2),'uin"
-      "t32'));\ny(37:40) = packUint32BE(typecast(lPos(3),'uint32'));\ny(41:44) = packUint32BE(typecast(vel(1),'uint32')"
-      ");\ny(45:48) = packUint32BE(typecast(vel(2),'uint32'));\ny(49:52) = packUint32BE(typecast(vel(3),'uint32'));\n\n"
-      "function out = packUint32BE(in)\nout = zeros(4, 1, 'uint8');\nout(1) = uint8(bitand(bitshift(in,-24),hex2dec('FF"
-      "')));\nout(2) = uint8(bitand(bitshift(in,-16),hex2dec('FF')));\nout(3) = uint8(bitand(bitshift(in,-8),hex2dec('F"
-      "F')));\nout(4) = uint8(bitand(in,hex2dec('FF')));"
-      editorLayout	      "100 M4x1[208 219 767 621]"
+      script		      "function y = fcn(L2, gPos, head, lPos, vel, wp0, wp1)\n%#eml\n\ny = zeros(76, 1, 'uint8');\ny(1:4"
+      ") = packUint32BE(typecast(L2(1),'uint32'));\ny(5:8) = packUint32BE(typecast(L2(2),'uint32'));\ny(9:12) = packUin"
+      "t32BE(typecast(L2(3),'uint32'));\ny(13:16) = packUint32BE(typecast(gPos(1),'uint32'));\ny(17:20) = packUint32BE("
+      "typecast(gPos(2),'uint32'));\ny(21:24) = packUint32BE(typecast(gPos(3),'uint32'));\ny(25:28) = packUint32BE(type"
+      "cast(head,'uint32'));\ny(29:32) = packUint32BE(typecast(lPos(1),'uint32'));\ny(33:36) = packUint32BE(typecast(lP"
+      "os(2),'uint32'));\ny(37:40) = packUint32BE(typecast(lPos(3),'uint32'));\ny(41:44) = packUint32BE(typecast(vel(1)"
+      ",'uint32'));\ny(45:48) = packUint32BE(typecast(vel(2),'uint32'));\ny(49:52) = packUint32BE(typecast(vel(3),'uint"
+      "32'));\ny(53:56) = packUint32BE(typecast(wp0(1),'uint32'));\ny(57:60) = packUint32BE(typecast(wp0(2),'uint32'));"
+      "\ny(61:64) = packUint32BE(typecast(wp0(3),'uint32'));\ny(65:68) = packUint32BE(typecast(wp1(1),'uint32'));\ny(69"
+      ":72) = packUint32BE(typecast(wp1(2),'uint32'));\ny(73:76) = packUint32BE(typecast(wp1(3),'uint32'));\n\nfunction"
+      " out = packUint32BE(in)\nout = zeros(4, 1, 'uint8');\nout(1) = uint8(bitand(bitshift(in,-24),hex2dec('FF')));\no"
+      "ut(2) = uint8(bitand(bitshift(in,-16),hex2dec('FF')));\nout(3) = uint8(bitand(bitshift(in,-8),hex2dec('FF')));\n"
+      "out(4) = uint8(bitand(in,hex2dec('FF')));"
+      editorLayout	      "100 M4x1[639 259 767 621]"
     }
   }
   junction {
@@ -28717,7 +29197,51 @@ Stateflow {
     id			    178
     ssIdNumber		    9
     name		    "vel"
-    linkNode		    [169 177 0]
+    linkNode		    [169 177 179]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    179
+    ssIdNumber		    16
+    name		    "wp0"
+    linkNode		    [169 178 180]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    180
+    ssIdNumber		    17
+    name		    "wp1"
+    linkNode		    [169 179 0]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -28736,27 +29260,27 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   instance {
-    id			    179
+    id			    181
     name		    "Transmit state data\nvia UART1/Pack"
     machine		    1
     chart		    169
   }
   chart {
-    id			    180
+    id			    182
     name		    "Controller/Radio Control\nInputs/If Action\nSubsystem1/Map into range"
     windowPosition	    [326.813 284.45 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1280 1024 1.333333333333333]
-    treeNode		    [0 181 0 0]
-    firstTransition	    183
-    firstJunction	    182
-    viewObj		    180
+    treeNode		    [0 183 0 0]
+    firstTransition	    185
+    firstJunction	    184
+    viewObj		    182
     machine		    1
     toolbarMode		    LIBRARY_TOOLBAR
     ssIdHighWaterMark	    14
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
-    firstData		    184
+    firstData		    186
     chartFileNumber	    17
     disableImplicitCasting  1
     eml {
@@ -28764,14 +29288,14 @@ Stateflow {
     }
   }
   state {
-    id			    181
+    id			    183
     labelString		    "eML_blk_kernel()"
     position		    [18 64.5 118 66]
     fontSize		    12
-    chart		    180
-    treeNode		    [180 0 0 0]
+    chart		    182
+    treeNode		    [182 0 0 0]
     superState		    SUBCHART
-    subviewer		    180
+    subviewer		    182
     ssIdNumber		    1
     type		    FUNC_STATE
     decomposition	    CLUSTER_STATE
@@ -28785,16 +29309,16 @@ Stateflow {
     }
   }
   junction {
-    id			    182
+    id			    184
     position		    [23.5747 49.5747 7]
-    chart		    180
-    linkNode		    [180 0 0]
-    subviewer		    180
+    chart		    182
+    linkNode		    [182 0 0]
+    subviewer		    182
     ssIdNumber		    3
     type		    CONNECTIVE_JUNCTION
   }
   transition {
-    id			    183
+    id			    185
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -28802,23 +29326,23 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      182
+      id		      184
       intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
-    chart		    180
-    linkNode		    [180 0 0]
+    chart		    182
+    linkNode		    [182 0 0]
     dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    180
+    subviewer		    182
     drawStyle		    SMART
     executionOrder	    1
     ssIdNumber		    2
   }
   data {
-    id			    184
+    id			    186
     ssIdNumber		    5
     name		    "mappedValue"
-    linkNode		    [180 0 185]
+    linkNode		    [182 0 187]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -28834,52 +29358,10 @@ Stateflow {
     dataType		    "int32"
   }
   data {
-    id			    185
+    id			    187
     ssIdNumber		    6
     name		    "val"
-    linkNode		    [180 184 186]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	primitive		SF_INT32_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "int32"
-  }
-  data {
-    id			    186
-    ssIdNumber		    8
-    name		    "in_min"
-    linkNode		    [180 185 187]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	primitive		SF_INT32_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "int32"
-  }
-  data {
-    id			    187
-    ssIdNumber		    10
-    name		    "in_max"
-    linkNode		    [180 186 188]
+    linkNode		    [182 186 188]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -28898,9 +29380,9 @@ Stateflow {
   }
   data {
     id			    188
-    ssIdNumber		    12
-    name		    "out_min"
-    linkNode		    [180 187 189]
+    ssIdNumber		    8
+    name		    "in_min"
+    linkNode		    [182 187 189]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -28919,9 +29401,51 @@ Stateflow {
   }
   data {
     id			    189
+    ssIdNumber		    10
+    name		    "in_max"
+    linkNode		    [182 188 190]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_INT32_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "int32"
+  }
+  data {
+    id			    190
+    ssIdNumber		    12
+    name		    "out_min"
+    linkNode		    [182 189 191]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_INT32_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "int32"
+  }
+  data {
+    id			    191
     ssIdNumber		    14
     name		    "out_max"
-    linkNode		    [180 188 0]
+    linkNode		    [182 190 0]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -28939,27 +29463,208 @@ Stateflow {
     dataType		    "int32"
   }
   instance {
-    id			    190
+    id			    192
     name		    "Controller/Radio Control\nInputs/If Action\nSubsystem1/Map into range"
     machine		    1
-    chart		    180
+    chart		    182
   }
   chart {
-    id			    191
+    id			    193
+    name		    "Transmit state data\nvia UART1/Embedded\nMATLAB Function"
+    windowPosition	    [369.879 321.305 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1680 1050 1.333333333333333]
+    treeNode		    [0 194 0 0]
+    firstTransition	    196
+    firstJunction	    195
+    viewObj		    193
+    machine		    1
+    toolbarMode		    LIBRARY_TOOLBAR
+    ssIdHighWaterMark	    8
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    197
+    chartFileNumber	    18
+    disableImplicitCasting  1
+    eml {
+      name		      "fcn"
+    }
+  }
+  state {
+    id			    194
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    193
+    treeNode		    [193 0 0 0]
+    superState		    SUBCHART
+    subviewer		    193
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function [wp0, wp1] = fcn(T, i0, i1)\n%#eml\n\nwp0 = T(i0,:);\nwp1 = T(i1,:);"
+      editorLayout	      "100 M4x1[506 244 1080 733]"
+    }
+  }
+  junction {
+    id			    195
+    position		    [23.5747 49.5747 7]
+    chart		    193
+    linkNode		    [193 0 0]
+    subviewer		    193
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    196
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      195
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    193
+    linkNode		    [193 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    193
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    197
+    ssIdNumber		    4
+    name		    "T"
+    linkNode		    [193 0 198]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    198
+    ssIdNumber		    5
+    name		    "wp0"
+    linkNode		    [193 197 199]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    199
+    ssIdNumber		    6
+    name		    "i0"
+    linkNode		    [193 198 200]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    200
+    ssIdNumber		    7
+    name		    "i1"
+    linkNode		    [193 199 201]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    201
+    ssIdNumber		    8
+    name		    "wp1"
+    linkNode		    [193 200 0]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  instance {
+    id			    202
+    name		    "Transmit state data\nvia UART1/Embedded\nMATLAB Function"
+    machine		    1
+    chart		    193
+  }
+  chart {
+    id			    203
     name		    "Controller/Radio Control\nInputs/If Action\nSubsystem3/Map into range"
     windowPosition	    [341.813 269.45 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1280 1024 1.333333333333333]
-    treeNode		    [0 192 0 0]
-    firstTransition	    194
-    firstJunction	    193
-    viewObj		    191
+    treeNode		    [0 204 0 0]
+    firstTransition	    206
+    firstJunction	    205
+    viewObj		    203
     machine		    1
     toolbarMode		    LIBRARY_TOOLBAR
     ssIdHighWaterMark	    14
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
-    firstData		    195
+    firstData		    207
     chartFileNumber	    19
     disableImplicitCasting  1
     eml {
@@ -28967,14 +29672,14 @@ Stateflow {
     }
   }
   state {
-    id			    192
+    id			    204
     labelString		    "eML_blk_kernel()"
     position		    [18 64.5 118 66]
     fontSize		    12
-    chart		    191
-    treeNode		    [191 0 0 0]
+    chart		    203
+    treeNode		    [203 0 0 0]
     superState		    SUBCHART
-    subviewer		    191
+    subviewer		    203
     ssIdNumber		    1
     type		    FUNC_STATE
     decomposition	    CLUSTER_STATE
@@ -28988,219 +29693,16 @@ Stateflow {
     }
   }
   junction {
-    id			    193
-    position		    [23.5747 49.5747 7]
-    chart		    191
-    linkNode		    [191 0 0]
-    subviewer		    191
-    ssIdNumber		    3
-    type		    CONNECTIVE_JUNCTION
-  }
-  transition {
-    id			    194
-    labelString		    "{eML_blk_kernel();}"
-    labelPosition	    [32.125 19.875 102.544 14.964]
-    fontSize		    12
-    src {
-      intersection	      [0 0 1 0 23.5747 14.625 0 0]
-    }
-    dst {
-      id		      193
-      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
-    }
-    midPoint		    [23.5747 24.9468]
-    chart		    191
-    linkNode		    [191 0 0]
-    dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    191
-    drawStyle		    SMART
-    executionOrder	    1
-    ssIdNumber		    2
-  }
-  data {
-    id			    195
-    ssIdNumber		    5
-    name		    "mappedValue"
-    linkNode		    [191 0 196]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	primitive		SF_INT32_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "int32"
-  }
-  data {
-    id			    196
-    ssIdNumber		    6
-    name		    "val"
-    linkNode		    [191 195 197]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	primitive		SF_INT32_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "int32"
-  }
-  data {
-    id			    197
-    ssIdNumber		    8
-    name		    "in_min"
-    linkNode		    [191 196 198]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	primitive		SF_INT32_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "int32"
-  }
-  data {
-    id			    198
-    ssIdNumber		    10
-    name		    "in_max"
-    linkNode		    [191 197 199]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	primitive		SF_INT32_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "int32"
-  }
-  data {
-    id			    199
-    ssIdNumber		    12
-    name		    "out_min"
-    linkNode		    [191 198 200]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	primitive		SF_INT32_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "int32"
-  }
-  data {
-    id			    200
-    ssIdNumber		    14
-    name		    "out_max"
-    linkNode		    [191 199 0]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	primitive		SF_INT32_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "int32"
-  }
-  instance {
-    id			    201
-    name		    "Controller/Radio Control\nInputs/If Action\nSubsystem3/Map into range"
-    machine		    1
-    chart		    191
-  }
-  chart {
-    id			    202
-    name		    "Controller/Radio Control\nInputs/If Action\nSubsystem5/Map into range"
-    windowPosition	    [341.813 269.45 200.25 189.75]
-    viewLimits		    [0 156.75 0 153.75]
-    screen		    [1 1 1280 1024 1.333333333333333]
-    treeNode		    [0 203 0 0]
-    firstTransition	    205
-    firstJunction	    204
-    viewObj		    202
-    machine		    1
-    toolbarMode		    LIBRARY_TOOLBAR
-    ssIdHighWaterMark	    14
-    decomposition	    CLUSTER_CHART
-    type		    EML_CHART
-    firstData		    206
-    chartFileNumber	    22
-    disableImplicitCasting  1
-    eml {
-      name		      "map"
-    }
-  }
-  state {
-    id			    203
-    labelString		    "eML_blk_kernel()"
-    position		    [18 64.5 118 66]
-    fontSize		    12
-    chart		    202
-    treeNode		    [202 0 0 0]
-    superState		    SUBCHART
-    subviewer		    202
-    ssIdNumber		    1
-    type		    FUNC_STATE
-    decomposition	    CLUSTER_STATE
-    eml {
-      isEML		      1
-      script		      "function mappedValue = map(val, in_min, in_max, out_min, out_max)\n%#eml\n% Pulled from: http://w"
-      "ww.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1289758376, first post\n% This is a basic integer implementation of a ma"
-      "p() function.\n% NOTE: There can be integer overflow in the first multiplication.\n\n  mappedValue = (val - in_m"
-      "in) * (out_max - out_min) / (in_max - in_min) + out_min;\n\nend"
-      editorLayout	      "100 M4x1[253 157 783 785]"
-    }
-  }
-  junction {
-    id			    204
-    position		    [23.5747 49.5747 7]
-    chart		    202
-    linkNode		    [202 0 0]
-    subviewer		    202
-    ssIdNumber		    3
-    type		    CONNECTIVE_JUNCTION
-  }
-  transition {
     id			    205
+    position		    [23.5747 49.5747 7]
+    chart		    203
+    linkNode		    [203 0 0]
+    subviewer		    203
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    206
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -29208,43 +29710,24 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      204
+      id		      205
       intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
-    chart		    202
-    linkNode		    [202 0 0]
+    chart		    203
+    linkNode		    [203 0 0]
     dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    202
+    subviewer		    203
     drawStyle		    SMART
     executionOrder	    1
     ssIdNumber		    2
-  }
-  data {
-    id			    206
-    ssIdNumber		    5
-    name		    "mappedValue"
-    linkNode		    [202 0 207]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	primitive		SF_INT32_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "int32"
   }
   data {
     id			    207
-    ssIdNumber		    6
-    name		    "val"
-    linkNode		    [202 206 208]
-    scope		    INPUT_DATA
+    ssIdNumber		    5
+    name		    "mappedValue"
+    linkNode		    [203 0 208]
+    scope		    OUTPUT_DATA
     machine		    1
     props {
       array {
@@ -29252,19 +29735,17 @@ Stateflow {
       }
       type {
 	primitive		SF_INT32_TYPE
-	isSigned		1
-	wordLength		"16"
       }
       complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
+      frame		      SF_FRAME_NO
     }
     dataType		    "int32"
   }
   data {
     id			    208
-    ssIdNumber		    8
-    name		    "in_min"
-    linkNode		    [202 207 209]
+    ssIdNumber		    6
+    name		    "val"
+    linkNode		    [203 207 209]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -29283,9 +29764,9 @@ Stateflow {
   }
   data {
     id			    209
-    ssIdNumber		    10
-    name		    "in_max"
-    linkNode		    [202 208 210]
+    ssIdNumber		    8
+    name		    "in_min"
+    linkNode		    [203 208 210]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -29304,9 +29785,9 @@ Stateflow {
   }
   data {
     id			    210
-    ssIdNumber		    12
-    name		    "out_min"
-    linkNode		    [202 209 211]
+    ssIdNumber		    10
+    name		    "in_max"
+    linkNode		    [203 209 211]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -29325,9 +29806,30 @@ Stateflow {
   }
   data {
     id			    211
+    ssIdNumber		    12
+    name		    "out_min"
+    linkNode		    [203 210 212]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_INT32_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "int32"
+  }
+  data {
+    id			    212
     ssIdNumber		    14
     name		    "out_max"
-    linkNode		    [202 210 0]
+    linkNode		    [203 211 0]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -29345,22 +29847,225 @@ Stateflow {
     dataType		    "int32"
   }
   instance {
-    id			    212
+    id			    213
+    name		    "Controller/Radio Control\nInputs/If Action\nSubsystem3/Map into range"
+    machine		    1
+    chart		    203
+  }
+  chart {
+    id			    214
+    name		    "Controller/Radio Control\nInputs/If Action\nSubsystem5/Map into range"
+    windowPosition	    [341.813 269.45 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1280 1024 1.333333333333333]
+    treeNode		    [0 215 0 0]
+    firstTransition	    217
+    firstJunction	    216
+    viewObj		    214
+    machine		    1
+    toolbarMode		    LIBRARY_TOOLBAR
+    ssIdHighWaterMark	    14
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    218
+    chartFileNumber	    22
+    disableImplicitCasting  1
+    eml {
+      name		      "map"
+    }
+  }
+  state {
+    id			    215
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    214
+    treeNode		    [214 0 0 0]
+    superState		    SUBCHART
+    subviewer		    214
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function mappedValue = map(val, in_min, in_max, out_min, out_max)\n%#eml\n% Pulled from: http://w"
+      "ww.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1289758376, first post\n% This is a basic integer implementation of a ma"
+      "p() function.\n% NOTE: There can be integer overflow in the first multiplication.\n\n  mappedValue = (val - in_m"
+      "in) * (out_max - out_min) / (in_max - in_min) + out_min;\n\nend"
+      editorLayout	      "100 M4x1[253 157 783 785]"
+    }
+  }
+  junction {
+    id			    216
+    position		    [23.5747 49.5747 7]
+    chart		    214
+    linkNode		    [214 0 0]
+    subviewer		    214
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    217
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      216
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    214
+    linkNode		    [214 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    214
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    218
+    ssIdNumber		    5
+    name		    "mappedValue"
+    linkNode		    [214 0 219]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_INT32_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "int32"
+  }
+  data {
+    id			    219
+    ssIdNumber		    6
+    name		    "val"
+    linkNode		    [214 218 220]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_INT32_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "int32"
+  }
+  data {
+    id			    220
+    ssIdNumber		    8
+    name		    "in_min"
+    linkNode		    [214 219 221]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_INT32_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "int32"
+  }
+  data {
+    id			    221
+    ssIdNumber		    10
+    name		    "in_max"
+    linkNode		    [214 220 222]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_INT32_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "int32"
+  }
+  data {
+    id			    222
+    ssIdNumber		    12
+    name		    "out_min"
+    linkNode		    [214 221 223]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_INT32_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "int32"
+  }
+  data {
+    id			    223
+    ssIdNumber		    14
+    name		    "out_max"
+    linkNode		    [214 222 0]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_INT32_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "int32"
+  }
+  instance {
+    id			    224
     name		    "Controller/Radio Control\nInputs/If Action\nSubsystem5/Map into range"
     machine		    1
-    chart		    202
+    chart		    214
   }
   target {
-    id			    213
+    id			    225
     name		    "sfun"
     description		    "Default Simulink S-Function Target."
     machine		    1
-    linkNode		    [1 0 214]
+    linkNode		    [1 0 226]
   }
   target {
-    id			    214
+    id			    226
     name		    "rtw"
     machine		    1
-    linkNode		    [1 213 0]
+    linkNode		    [1 225 0]
   }
 }
