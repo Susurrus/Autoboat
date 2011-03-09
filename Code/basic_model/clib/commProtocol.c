@@ -169,7 +169,7 @@ void setHilMode(unsigned char mode) {
 		changeUart2BaudRate(HILBRG);
 		oldMode = mode;
 	} else if (oldMode && !mode) {
-		changeUart2BaudRate(BAUD1200_BRG_REG);
+		changeUart2BaudRate(BAUD4800_BRG_REG);
 		oldMode = mode;
 	}
 }

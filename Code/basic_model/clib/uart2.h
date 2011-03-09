@@ -9,7 +9,6 @@
 
 #include "circBuffer.h"
 
-#define BAUD1200_BRG_REG 2082
 #define BAUD4800_BRG_REG 520
 
 extern CircBuffer uart2RxBuffer;
