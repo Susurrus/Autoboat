@@ -9,11 +9,11 @@ CircBuffer uart2RxBuffer;
 CircBuffer uart2TxBuffer;
 
 /**
- * Initialization function for the circular buffer.
+ * Initialization function for the UART2 peripheral.
  * Should be called in initialization code for the
- * model. This function first configures the UART
- * for 4800baud, then configures the GPS for 1sGGA&RMC
- * messages, and then switches to 1200baud.
+ * model. This function configures the UART
+ * for 4800baud using interrupts and two circular buffers
+ * for transmission and reception.
  */
 void initUart2() {
 	int i;
@@ -44,40 +44,7 @@ void initUart2() {
 	U2STAbits.OERR		= 0;		// clear overun error
 	
 	U2BRG = BAUD4800_BRG_REG;		// Set the baud rate to 4800
-	
-/*	U2MODEbits.UARTEN	= 1;		// Enable the port	
-	U2STAbits.UTXEN		= 1;		// Enable TX
 
-	// Give some time for the UART to settle.
-	for( i = 0; i < 32700; i += 1 )
-	{
-		Nop();
-	}
-	
-	// Configure GPS sentences by:
-	// - Disabling GSA
-	// - Disabling GSV
-	unsigned char disableGSASentence[] = "$PSRF103,2,0,0,1*26\r\n\0";
-	unsigned char disableGSVSentence[] = "$PSRF103,3,0,0,1*27\r\n\0";
-	
-	putsUART2((unsigned int *)disableGSASentence);
-	while(BusyUART2());	
-	
-	putsUART2((unsigned int *)disableGSVSentence);
-	while(BusyUART2());	
-	
-	// Configure GPS for a baud rate of 1200
-	unsigned char changeBaudRate[] = "$PSRF100,1,1200,8,1,0*01\r\n\0";
-	
-	putsUART2((unsigned int *)changeBaudRate);
-	while(BusyUART2());
-	
-	// Disable the port to set the final configuration bits
-	U1MODEbits.UARTEN	= 0;		// Disable the port	
-	
-	// Set the baud rate to 1200 for GPS reception
-	U2BRG = BAUD1200_BRG_REG; */
-	
 	// Finally setup interrupts for proper UART communication.
   	IPC7bits.U2TXIP = 6;    		// Interrupt priority 6  
   	IPC7bits.U2RXIP = 6;    		// Interrupt priority 6 

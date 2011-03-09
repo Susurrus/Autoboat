@@ -66,6 +66,32 @@ float degMinToDeg(unsigned char degrees, float minutes) {
 	return ((float)degrees + minutes/60.0);
 }
 
+/**
+ * This function initializes the GPS by reconfiguring it to NOT output
+ * GSA or GSV messages. This should leave just GGA and RMC messages,
+ * which are the only two we care about.
+ * It assumes that it is using UART2 and relies on the circular buffer
+ * initialized for UART2 for transmission.
+ */
+void initGps() {
+	int i;
+	
+	// Configure GPS sentences by:
+	// - Disabling GSA
+	// - Disabling GSV
+	unsigned char disableGSASentence[] = "$PSRF103,2,0,0,1*26\r\n\0";
+	unsigned char disableGSVSentence[] = "$PSRF103,3,0,0,1*27\r\n\0";
+	
+	for (i = 0; i < strlen(disableGSASentence);i++) {
+		writeBack(&uart2TxBuffer,disableGSASentence[i]);
+	}
+	for (i = 0; i < strlen(disableGSVSentence);i++) {
+		writeBack(&uart2TxBuffer,disableGSVSentence[i]);
+	}
+	startUart2Transmission();
+
+}
+
 void buildAndCheckSentence(unsigned char characterIn) {
 	// Full specification for NMEA0138 specifies a maximum sentence length
 	// of 255 characters. We're going to ignore this for half the length as

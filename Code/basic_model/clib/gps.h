@@ -95,6 +95,11 @@ char hex2char(char halfhex);
 float degMinToDeg(unsigned char degrees, float minutes);
 
 /**
+ * Initializes the GPS to only return RMC and GGA data
+ */
+void initGps();
+
+/**
  * Compiles GPS sentences one-byte at a time. Because of this
  * it is stateful. Once complete sentences are built, attempts
  * to parse and store in a tGpsData struct
