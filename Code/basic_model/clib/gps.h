@@ -65,15 +65,15 @@ typedef struct tGpsData{
 	unsigned char			day;
 	unsigned char			hour;
 	unsigned char			min;
-	unsigned char			sec;	 
+	unsigned char			sec;
 	tFloatToChar 			lat;
 	tFloatToChar 			lon;
 	tFloatToChar 			height;
-	tUnsignedShortToChar	cog;
-	tUnsignedShortToChar	sog;
-	tUnsignedShortToChar	hdop;	
+	tFloatToChar			cog;
+	tFloatToChar			sog;
+	tFloatToChar			hdop;
 	unsigned char			fix;
-	unsigned char 			sats;	
+	unsigned char 			sats;
 	unsigned char			newData; // Flag for whether this struct stores new data
 }tGpsData;
 
@@ -122,7 +122,7 @@ unsigned char getChecksum(char* sentence, unsigned char size);
  * GPS data in a large array that Matlab can handle.
  * @param data A pointer to a float array for storing the GPS data that was requested.
  */
-void getGpsMainData(float* data);
+void getGpsData(unsigned char* data);
 
 /**
  * A simple tokenizer. Similar to strtok(), but supports
