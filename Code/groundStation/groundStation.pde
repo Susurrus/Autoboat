@@ -174,7 +174,7 @@ void draw() {
   if (!Float.isNaN(rotation)) {
     rotate(rotation);
   }
-  scale(L2.mag()/3);
+  scale(L2.mag()/8);
   triangle(10,30,0,-30,-10,30);
   popMatrix();
   
