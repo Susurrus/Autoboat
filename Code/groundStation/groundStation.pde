@@ -40,6 +40,20 @@ PVector waypoint1 = new PVector(0,0,0);
 int rudderPot = 0;
 boolean rudderPortLimit = false;
 boolean rudderSbLimit = false;
+float gpsLatitude = 0;
+float gpsLongitude = 0;
+float gpsAltitude = 0;
+byte gpsYear = 0;
+byte gpsMonth = 0;
+byte gpsDay = 0;
+byte gpsHour = 0;
+byte gpsMinute = 0;
+byte gpsSecond = 0;
+float gpsCourse = 0;
+float gpsSpeed = 0;
+float gpsHdop = 0;
+byte gpsFix = 0;
+byte gpsSatellites = 0;
 
 // Boat state data recording
 ArrayList<float[]> L2List = new ArrayList<float[]>(255);
@@ -55,9 +69,18 @@ double[] headingPlayback;
 double[][] localPositionPlayback;
 double[][] velocityPlayback;
 
+// Rendering variables
+PFont regularFont;
+PFont boldFont;
+
 void setup() {
   size(800, 600);
   frameRate(30);
+  
+  regularFont = loadFont("DejaVuSansMono-15.vlw");
+  textFont(regularFont);
+  boldFont = loadFont("DejaVuSansMono-Bold-15.vlw");
+  
   controlP5 = new ControlP5(this);
   serialPortsList = controlP5.addDropdownList("serialPortsList",100,100,100,120);
   serialPortsList.setId(0);
@@ -66,7 +89,7 @@ void setup() {
   recordTimer = new ControlTimer();
   recordTimer.setSpeedOfTime(1);
   recordTimerLabel = controlP5.addTextlabel("recordTimer",recordTimer.toString(),20,100);
-  recordedMessagesLabel = controlP5.addTextlabel("recordedMessages","Messages: " + recordedMessages.toString(),20,120);
+  recordedMessagesLabel = controlP5.addTextlabel("recordedMessages",String.format("Messages: %d", recordedMessages),20,120);
   selectMatFile = controlP5.addButton("Select .mat file",0,400,50,100,20);
   selectMatFile.setId(2);
   customizeSerialPortsList(serialPortsList);
@@ -126,11 +149,23 @@ void draw() {
   // Reset fill color to white
   fill(255);
   
-  // Draw the L2 vector values
+  // Add text section headers
+  textFont(boldFont);
   text("L2 Vector", 300, 290);
-  text(L2.x, 300, 300);
-  text(L2.y, 300, 310);
-  text(L2.z, 300, 320);
+  text("Rudder", 400, 390);
+  text("GPS", 500, 390);
+  text("Velocity", 200, 290);
+  text("Local position", 200, 390);
+  text("Global position", 200, 450);
+  text("Waypoint0", 50, 290);
+  text("Waypoint1", 50, 350);
+  text("Heading", 400, 290);
+  textFont(regularFont);
+  
+  // Draw the L2 vector values
+  text(L2.x, 300, 305);
+  text(L2.y, 300, 320);
+  text(L2.z, 300, 335);
   
   pushMatrix();
   fill(0,0,255);
@@ -146,43 +181,49 @@ void draw() {
   // Reset fill color to white
   fill(255);
   
-  // Add rudder information
-  text("Rudder", 400, 390);
-  text(rudderPot, 400, 400);
-  text(rudderPortLimit?"true":"false", 400, 410);
-  text(rudderSbLimit?"true":"false", 400, 420);
+  // Add rudder sensor information
+  text(rudderPot, 400, 405);
+  text(rudderPortLimit?"true":"false", 400, 420);
+  text(rudderSbLimit?"true":"false", 400, 435);
+  
+  // Add GPS sensor information
+  text(gpsLatitude, 500, 405);
+  text(gpsLongitude, 500, 420);
+  text(gpsAltitude, 500, 435);
+  text(String.format("%02d/%02d/%04d", gpsDay, gpsMonth, 2000+gpsYear), 500, 450);
+  text(String.format("%02d:%02d:%02d", gpsHour, gpsMinute, gpsSecond), 500, 465);
+  text(gpsCourse, 500, 480);
+  text(gpsSpeed, 500, 495);
+  text(gpsHdop, 500, 510);
+  text(gpsFix, 500, 525);
+  text(gpsSatellites, 500, 540);
   
   // Draw the velocity vector values
-  text("Velocity", 200, 290);
-  text(velocity.x, 200, 300);
-  text(velocity.y, 200, 310);
-  text(velocity.z, 200, 320);
+  text(velocity.x, 200, 305);
+  text(velocity.y, 200, 320);
+  text(velocity.z, 200, 335);
   
   // Draw the local position values
-  text("Local position", 200, 390);
-  text(localPosition.x, 200, 400);
-  text(localPosition.y, 200, 410);
-  text(localPosition.z, 200, 420);
+  text(localPosition.x, 200, 405);
+  text(localPosition.y, 200, 420);
+  text(localPosition.z, 200, 435);
   
   // Draw the local position values
-  text("Global position", 300, 390);
-  text(globalPosition.x, 300, 400);
-  text(globalPosition.y, 300, 410);
-  text(globalPosition.z, 300, 420);
+  text(globalPosition.x, 200, 465);
+  text(globalPosition.y, 200, 480);
+  text(globalPosition.z, 200, 495);
   
   // Draw the current and next waypoints
-  text("Waypoint0", 50, 290);
-  text(waypoint0.x, 50, 300);
-  text(waypoint0.y, 50, 310);
-  text(waypoint0.z, 50, 320);
-  text("Waypoint1", 50, 390);
-  text(waypoint1.x, 50, 400);
-  text(waypoint1.y, 50, 410);
-  text(waypoint1.z, 50, 420);
+  text(waypoint0.x, 50, 305);
+  text(waypoint0.y, 50, 320);
+  text(waypoint0.z, 50, 335);
+  text(waypoint1.x, 50, 365);
+  text(waypoint1.y, 50, 380);
+  text(waypoint1.z, 50, 395);
   
   // Display the boat heading
-  text("Heading", 400, 290);
-  text(heading, 400, 300);
+  text(heading, 400, 305);
+  
   pushMatrix();
   fill(155,155,0);
   translate(420,220);
@@ -195,7 +236,7 @@ void draw() {
   
   if (recording) {
     recordTimerLabel.setValue(recordTimer.toString());
-    recordedMessagesLabel.setValue("Messages: " + recordedMessages.toString());
+    recordedMessagesLabel.setValue(String.format("Messages: %d", recordedMessages.toString()));
   }
 }
 

@@ -133,6 +133,20 @@ void updateStateData(byte message[]) {
     rudderPot = din.readUnsignedShort();
     rudderPortLimit = din.readBoolean();
     rudderSbLimit = din.readBoolean();
+    gpsLatitude = din.readFloat();
+    gpsLongitude = din.readFloat();
+    gpsAltitude = din.readFloat();
+    gpsYear = din.readByte();
+    gpsMonth = din.readByte();
+    gpsDay = din.readByte();
+    gpsHour = din.readByte();
+    gpsMinute = din.readByte();
+    gpsSecond = din.readByte();
+    gpsCourse = din.readFloat();
+    gpsSpeed = din.readFloat();
+    gpsHdop = din.readFloat();
+    gpsFix = din.readByte();
+    gpsSatellites = din.readByte();
   } catch (Exception e) {
     e.printStackTrace();
     println("Crap, failed to extract the data");
