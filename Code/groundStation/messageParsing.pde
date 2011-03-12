@@ -111,6 +111,18 @@ void updateStateData(byte message[]) {
     rudderPotList.add(rudderPot);
     rudderPortLimitList.add((byte)(rudderPortLimit?1:0));
     rudderSbLimitList.add((byte)(rudderSbLimit?1:0));
+    gpsYearList.add(gpsYear);
+    gpsMonthList.add(gpsMonth);
+    gpsDayList.add(gpsDay);
+    gpsHourList.add(gpsHour);
+    gpsMinuteList.add(gpsMinute);
+    gpsSecondList.add(gpsSecond);
+    gpsCourseList.add(gpsCourse);
+    gpsSpeedList.add(gpsSpeed);
+    gpsHdopList.add(gpsHdop);
+    gpsFixList.add(gpsFix);
+    gpsSatellitesList.add(gpsSatellites);
+    
     recordedMessages++;
   }
   
