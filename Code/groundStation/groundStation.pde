@@ -61,6 +61,8 @@ ArrayList<float[]> globalPositionList = new ArrayList<float[]>(255);
 ArrayList<Float> headingList = new ArrayList<Float>(255);
 ArrayList<float[]> localPositionList = new ArrayList<float[]>(255);
 ArrayList<float[]> velocityList = new ArrayList<float[]>(255);
+ArrayList<float[]> waypoint0List = new ArrayList<float[]>(255);
+ArrayList<float[]> waypoint1List = new ArrayList<float[]>(255);
 
 // Boat state data playback
 double[][] L2Playback;
@@ -68,6 +70,8 @@ double[][] globalPositionPlayback;
 double[] headingPlayback;
 double[][] localPositionPlayback;
 double[][] velocityPlayback;
+double[][] waypoint0Playback;
+double[][] waypoint1Playback;
 
 // Rendering variables
 PFont regularFont;
@@ -129,6 +133,12 @@ void draw() {
         velocity.x = (float)velocityPlayback[playbackIndex][0];
         velocity.y = (float)velocityPlayback[playbackIndex][1];
         velocity.z = (float)velocityPlayback[playbackIndex][2];
+        waypoint0.x = (float)waypoint0Playback[playbackIndex][0];
+        waypoint0.y = (float)waypoint0Playback[playbackIndex][1];
+        waypoint0.z = (float)waypoint0Playback[playbackIndex][2];
+        waypoint1.x = (float)waypoint1Playback[playbackIndex][0];
+        waypoint1.y = (float)waypoint1Playback[playbackIndex][1];
+        waypoint1.z = (float)waypoint1Playback[playbackIndex][2];
         
         playbackIndex++;
         lastPlaybackTime = millis();
@@ -236,7 +246,7 @@ void draw() {
   
   if (recording) {
     recordTimerLabel.setValue(recordTimer.toString());
-    recordedMessagesLabel.setValue(String.format("Messages: %d", recordedMessages.toString()));
+    recordedMessagesLabel.setValue(String.format("Messages: %d", recordedMessages));
   }
 }
 
@@ -286,6 +296,8 @@ void controlEvent(ControlEvent theEvent) {
           }
           localPositionPlayback = ((MLDouble)inputMatFileReader.getMLArray("localPosition")).getArray().clone();
           velocityPlayback = ((MLDouble)inputMatFileReader.getMLArray("velocity")).getArray().clone();
+          waypoint0Playback = ((MLDouble)inputMatFileReader.getMLArray("waypoint0")).getArray().clone();
+          waypoint1Playback = ((MLDouble)inputMatFileReader.getMLArray("waypoint1")).getArray().clone();
         } catch (IOException e) {
           e.printStackTrace();
           exit();
@@ -327,6 +339,7 @@ public void startRecording() {
 public void stopRecordingAndSave() {
   recording = false;
   float[][] t = new float[L2List.size()][3];
+  
   L2List.toArray(t);
   double[][] output = new double[L2List.size()][3];
   for (int i = 0; i < L2List.size(); i++){
@@ -335,41 +348,59 @@ public void stopRecordingAndSave() {
     }
   }
   MLDouble L2Double = new MLDouble("L2", output);
+  
   globalPositionList.toArray(t);
-  output = new double[L2List.size()][3];
-  for (int i = 0; i < L2List.size(); i++){
+  output = new double[globalPositionList.size()][3];
+  for (int i = 0; i < globalPositionList.size(); i++){
     for (int j=0;j<3;j++) {
       output[i][j] = (double)t[i][j];
     }
   }
-  
   MLDouble globalPositionDouble = new MLDouble("globalPosition", output);
+  
   localPositionList.toArray(t);
-  output = new double[L2List.size()][3];
-  for (int i = 0; i < L2List.size(); i++){
+  output = new double[localPositionList.size()][3];
+  for (int i = 0; i < localPositionList.size(); i++){
     for (int j=0;j<3;j++) {
       output[i][j] = (double)t[i][j];
     }
   }
+  MLDouble localPositionDouble = new MLDouble("localPosition", output);
   
-  Float[] g = new Float[L2List.size()];
-  double[] gg = new double[L2List.size()];
+  Float[] g = new Float[headingList.size()];
   headingList.toArray(g);
-  for (int i = 0; i < L2List.size(); i++){
+  double[] gg = new double[headingList.size()];
+  for (int i = 0; i < headingList.size(); i++){
     gg[i] = (double)g[i];
   }
-  MLDouble headingDouble = new MLDouble("heading", gg, L2List.size());
+  MLDouble headingDouble = new MLDouble("heading", gg, gg.length);
   
-  MLDouble localPositionDouble = new MLDouble("localPosition", output);
   velocityList.toArray(t);
-  output = new double[L2List.size()][3];
-  for (int i = 0; i < L2List.size(); i++){
+  output = new double[velocityList.size()][3];
+  for (int i = 0; i < velocityList.size(); i++){
     for (int j=0;j<3;j++) {
       output[i][j] = (double)t[i][j];
     }
   }
-  
   MLDouble velocityDouble = new MLDouble("velocity", output);
+  
+  waypoint0List.toArray(t);
+  output = new double[waypoint0List.size()][3];
+  for (int i = 0; i < waypoint0List.size(); i++){
+    for (int j=0;j<3;j++) {
+      output[i][j] = (double)t[i][j];
+    }
+  }
+  MLDouble waypoint0Double = new MLDouble("waypoint0", output);
+  
+  waypoint1List.toArray(t);
+  output = new double[waypoint1List.size()][3];
+  for (int i = 0; i < waypoint1List.size(); i++){
+    for (int j=0;j<3;j++) {
+      output[i][j] = (double)t[i][j];
+    }
+  }
+  MLDouble waypoint1Double = new MLDouble("waypoint1", output);
   
   ArrayList matList = new ArrayList();
   matList.add(L2Double);
@@ -377,6 +408,8 @@ public void stopRecordingAndSave() {
   matList.add(globalPositionDouble);
   matList.add(localPositionDouble);
   matList.add(velocityDouble);
+  matList.add(waypoint0Double);
+  matList.add(waypoint1Double);
   
   try {
     Calendar cal = Calendar.getInstance();

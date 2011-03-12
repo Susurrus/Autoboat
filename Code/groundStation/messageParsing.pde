@@ -106,6 +106,8 @@ void updateStateData(byte message[]) {
     headingList.add(heading);
     localPositionList.add(localPosition.array().clone());
     velocityList.add(velocity.array().clone());
+    waypoint0List.add(waypoint0.array().clone());
+    waypoint1List.add(waypoint1.array().clone());
     recordedMessages++;
   }
   
