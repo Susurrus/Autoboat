@@ -63,6 +63,9 @@ ArrayList<float[]> localPositionList = new ArrayList<float[]>(255);
 ArrayList<float[]> velocityList = new ArrayList<float[]>(255);
 ArrayList<float[]> waypoint0List = new ArrayList<float[]>(255);
 ArrayList<float[]> waypoint1List = new ArrayList<float[]>(255);
+ArrayList<Integer> rudderPotList = new ArrayList<Integer>(255);
+ArrayList<Byte> rudderPortLimitList = new ArrayList<Byte>(255);
+ArrayList<Byte> rudderSbLimitList = new ArrayList<Byte>(255);
 
 // Boat state data playback
 double[][] L2Playback;
@@ -72,6 +75,9 @@ double[][] localPositionPlayback;
 double[][] velocityPlayback;
 double[][] waypoint0Playback;
 double[][] waypoint1Playback;
+int[] rudderPotPlayback;
+boolean[] rudderPortLimitPlayback;
+boolean[] rudderSbLimitPlayback;
 
 // Rendering variables
 PFont regularFont;
@@ -139,6 +145,9 @@ void draw() {
         waypoint1.x = (float)waypoint1Playback[playbackIndex][0];
         waypoint1.y = (float)waypoint1Playback[playbackIndex][1];
         waypoint1.z = (float)waypoint1Playback[playbackIndex][2];
+        rudderPot = rudderPotPlayback[playbackIndex];
+        rudderPortLimit = (boolean)rudderPortLimitPlayback[playbackIndex];
+        rudderSbLimit = (boolean)rudderSbLimitPlayback[playbackIndex];
         
         playbackIndex++;
         lastPlaybackTime = millis();
@@ -289,15 +298,36 @@ void controlEvent(ControlEvent theEvent) {
           inputMatFileReader = new MatFileReader(inputMatFileName);
           L2Playback = ((MLDouble)inputMatFileReader.getMLArray("L2")).getArray().clone();
           globalPositionPlayback = ((MLDouble)inputMatFileReader.getMLArray("globalPosition")).getArray().clone();
-          double[][] data = ((MLDouble)inputMatFileReader.getMLArray("heading")).getArray();
-          headingPlayback = new double[data.length];
-          for (int i=0;i<data.length;i++) {
-            headingPlayback[i] = data[i][0];
+          
+          double[][] doubleData = ((MLDouble)inputMatFileReader.getMLArray("heading")).getArray();
+          headingPlayback = new double[doubleData.length];
+          for (int i=0;i<doubleData.length;i++) {
+            headingPlayback[i] = doubleData[i][0];
           }
+          
           localPositionPlayback = ((MLDouble)inputMatFileReader.getMLArray("localPosition")).getArray().clone();
           velocityPlayback = ((MLDouble)inputMatFileReader.getMLArray("velocity")).getArray().clone();
           waypoint0Playback = ((MLDouble)inputMatFileReader.getMLArray("waypoint0")).getArray().clone();
           waypoint1Playback = ((MLDouble)inputMatFileReader.getMLArray("waypoint1")).getArray().clone();
+          
+          long[][] longData = ((MLInt64)inputMatFileReader.getMLArray("rudderPot")).getArray();
+          rudderPotPlayback = new int[longData.length];
+          for (int i=0;i<longData.length;i++) {
+            rudderPotPlayback[i] = (int)longData[i][0];
+          }
+          
+          byte[][] byteData = ((MLInt8)inputMatFileReader.getMLArray("rudderPortLimit")).getArray();
+          rudderPortLimitPlayback = new boolean[byteData.length];
+          for (int i=0;i<byteData.length;i++) {
+            rudderPortLimitPlayback[i] = byteData[i][0] > 0;
+          }
+          
+          byteData = ((MLInt8)inputMatFileReader.getMLArray("rudderSbLimit")).getArray();
+          rudderSbLimitPlayback = new boolean[byteData.length];
+          for (int i=0;i<byteData.length;i++) {
+            rudderSbLimitPlayback[i] = byteData[i][0] > 0;
+          }
+          
         } catch (IOException e) {
           e.printStackTrace();
           exit();
@@ -343,6 +373,9 @@ public void startRecording() {
   velocityList.clear();
   waypoint0List.clear();
   waypoint1List.clear();
+  rudderPotList.clear();
+  rudderPortLimitList.clear();
+  rudderSbLimitList.clear();
   
   // Reset the messages counter
   recordedMessages = new Long(0);
@@ -414,6 +447,30 @@ public void stopRecordingAndSave() {
   }
   MLDouble waypoint1Double = new MLDouble("waypoint1", output);
   
+  Integer[] int_g = new Integer[rudderPotList.size()];
+  rudderPotList.toArray(int_g);
+  long[] long_gg = new long[rudderPotList.size()];
+  for (int i = 0; i < rudderPotList.size(); i++){
+    long_gg[i] = (long)int_g[i];
+  }
+  MLInt64 rudderPotInt = new MLInt64("rudderPot", long_gg, long_gg.length);
+  
+  Byte[] byte_g = new Byte[rudderPortLimitList.size()];
+  rudderPortLimitList.toArray(byte_g);
+  byte[] byte_gg = new byte[rudderPortLimitList.size()];
+  for (int i = 0; i < rudderPortLimitList.size(); i++){
+    byte_gg[i] = (byte)byte_g[i];
+  }
+  MLInt8 rudderPortInt = new MLInt8("rudderPortLimit", byte_gg, byte_gg.length);
+  
+  byte_g = new Byte[rudderSbLimitList.size()];
+  rudderSbLimitList.toArray(byte_g);
+  byte_gg = new byte[rudderSbLimitList.size()];
+  for (int i = 0; i < rudderSbLimitList.size(); i++){
+    byte_gg[i] = (byte)byte_g[i];
+  }
+  MLInt8 rudderSbInt = new MLInt8("rudderSbLimit", byte_gg, byte_gg.length);
+  
   ArrayList matList = new ArrayList();
   matList.add(L2Double);
   matList.add(headingDouble);
@@ -422,6 +479,9 @@ public void stopRecordingAndSave() {
   matList.add(velocityDouble);
   matList.add(waypoint0Double);
   matList.add(waypoint1Double);
+  matList.add(rudderPotInt);
+  matList.add(rudderPortInt);
+  matList.add(rudderSbInt);
   
   try {
     Calendar cal = Calendar.getInstance();

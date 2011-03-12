@@ -108,6 +108,9 @@ void updateStateData(byte message[]) {
     velocityList.add(velocity.array().clone());
     waypoint0List.add(waypoint0.array().clone());
     waypoint1List.add(waypoint1.array().clone());
+    rudderPotList.add(rudderPot);
+    rudderPortLimitList.add((byte)(rudderPortLimit?1:0));
+    rudderSbLimitList.add((byte)(rudderSbLimit?1:0));
     recordedMessages++;
   }
   
