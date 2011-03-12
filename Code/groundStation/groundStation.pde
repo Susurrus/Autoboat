@@ -334,6 +334,18 @@ void customizeSerialPortsList(DropdownList ddl) {
 public void startRecording() {
   recording = true;
   recordTimer.reset();
+  
+  // Clear all the data structures for new data
+  L2List.clear();
+  globalPositionList.clear();
+  headingList.clear();
+  localPositionList.clear();
+  velocityList.clear();
+  waypoint0List.clear();
+  waypoint1List.clear();
+  
+  // Reset the messages counter
+  recordedMessages = new Long(0);
 }
 
 public void stopRecordingAndSave() {
