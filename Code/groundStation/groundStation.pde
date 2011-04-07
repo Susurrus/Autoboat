@@ -16,10 +16,6 @@ int messageState = 0;
 
 // Internal program state
 boolean recording = false;
-boolean playing = false;
-int playbackIndex = 0;
-int lastPlaybackTime = 0;
-MatFileReader inputMatFileReader;
 Long recordedMessages = new Long(0);
 Serial myPort;
 ControlTimer recordTimer;
@@ -48,13 +44,6 @@ ArrayList<Float> headingList = new ArrayList<Float>(255);
 ArrayList<float[]> localPositionList = new ArrayList<float[]>(255);
 ArrayList<float[]> velocityList = new ArrayList<float[]>(255);
 
-// Boat state data playback
-double[][] L2Playback;
-double[][] globalPositionPlayback;
-double[] headingPlayback;
-double[][] localPositionPlayback;
-double[][] velocityPlayback;
-
 void setup() {
   size(800, 600);
   frameRate(30);
@@ -81,7 +70,8 @@ void draw() {
   cursor(ARROW);
   
   // Grab some data from the serial port
-  if (myPort != null && myPort.available() > 0 && !playing) {
+  // TODO: Grab serial data faster.
+  if (myPort != null && myPort.available() > 0) {
     fill(0,255,0);
     while(myPort.available() > 0) {
       byte[] inBuffer = new byte[7];
@@ -90,30 +80,6 @@ void draw() {
         buildAndCheckMessage(inBuffer[i]);
       }
     }
-  } else if (playing) {
-    if (playbackIndex < headingPlayback.length) {
-      if (millis() - lastPlaybackTime >= 10) { // Assume .01s sampletime
-        L2.x = (float)L2Playback[playbackIndex][0];
-        L2.y = (float)L2Playback[playbackIndex][1];
-        L2.z = (float)L2Playback[playbackIndex][2];
-        globalPosition.x = (float)globalPositionPlayback[playbackIndex][0];
-        globalPosition.y = (float)globalPositionPlayback[playbackIndex][1];
-        globalPosition.z = (float)globalPositionPlayback[playbackIndex][2];
-        heading = (float)headingPlayback[playbackIndex];
-        localPosition.x = (float)localPositionPlayback[playbackIndex][0];
-        localPosition.y = (float)localPositionPlayback[playbackIndex][1];
-        localPosition.z = (float)localPositionPlayback[playbackIndex][2];
-        velocity.x = (float)velocityPlayback[playbackIndex][0];
-        velocity.y = (float)velocityPlayback[playbackIndex][1];
-        velocity.z = (float)velocityPlayback[playbackIndex][2];
-        
-        playbackIndex++;
-        lastPlaybackTime = millis();
-      }
-    } else {
-      playing = false;
-    }
-    fill(0,100,0);
   } else {
     fill(0,100,0);
   }
@@ -216,30 +182,7 @@ void controlEvent(ControlEvent theEvent) {
       } 
       break;
     case(2):
-      String inputMatFileName = selectInput();
-      cursor(WAIT);
-      if (inputMatFileName != null) {
-        try {
-          inputMatFileReader = new MatFileReader(inputMatFileName);
-          L2Playback = ((MLDouble)inputMatFileReader.getMLArray("L2")).getArray().clone();
-          globalPositionPlayback = ((MLDouble)inputMatFileReader.getMLArray("globalPosition")).getArray().clone();
-          double[][] data = ((MLDouble)inputMatFileReader.getMLArray("heading")).getArray();
-          headingPlayback = new double[data.length];
-          for (int i=0;i<data.length;i++) {
-            headingPlayback[i] = data[i][0];
-          }
-          localPositionPlayback = ((MLDouble)inputMatFileReader.getMLArray("localPosition")).getArray().clone();
-          velocityPlayback = ((MLDouble)inputMatFileReader.getMLArray("velocity")).getArray().clone();
-        } catch (IOException e) {
-          e.printStackTrace();
-          exit();
-        }
-        
-        if (inputMatFileReader != null) {
-          playing = true;
-          playbackIndex = 0;
-        }
-      }
+      println(".mat");
       break;
   }
 }
