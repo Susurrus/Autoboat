@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2057"
+    ComputedModelVersion    "1.2058"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Apr 07 13:26:01 2011"
-  RTWModifiedTimeStamp	  224083560
-  ModelVersionFormat	  "1.%<AutoIncrement:2057>"
+  LastModifiedDate	  "Fri Apr 08 09:46:22 2011"
+  RTWModifiedTimeStamp	  224156625
+  ModelVersionFormat	  "1.%<AutoIncrement:2058>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -1067,17 +1067,10 @@ Model {
       OutputSignalType	      "auto"
       SampleTime	      "-1"
     }
-    Block {
-      BlockType		      UnitDelay
-      X0		      "0"
-      SampleTime	      "1"
-      StateMustResolveToSignalObject off
-      RTWStateStorageClass    "Auto"
-    }
   }
   System {
     Name		    "Boat_sim"
-    Location		    [202, 82, 1253, 871]
+    Location		    [369, 161, 1300, 764]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1091,7 +1084,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "118"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    3998
+    SIDHighWatermark	    4001
     Block {
       BlockType		      BusSelector
       Name		      "Bus\nSelector"
@@ -1124,6 +1117,7 @@ Model {
       Position		      [25, 1160, 55, 1190]
       BackgroundColor	      "gray"
       ShowName		      off
+      Value		      "0"
       OutDataTypeMode	      "boolean"
       OutDataType	      "fixdt(1, 16)"
       OutScaling	      "2^0"
@@ -4947,7 +4941,7 @@ Model {
 	    Block {
 	      BlockType		      SubSystem
 	      Name		      "Second Order Linear Actuator1"
-	      SID		      3992
+	      SID		      4000
 	      Ports		      [1, 1]
 	      Position		      [405, 144, 505, 186]
 	      ShowName		      off
@@ -4982,7 +4976,7 @@ Model {
 	      MaskValueString	      "15|0.8|0"
 	      System {
 		Name			"Second Order Linear Actuator1"
-		Location		[535, 472, 1326, 689]
+		Location		[203, 180, 994, 397]
 		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
@@ -5019,6 +5013,42 @@ Model {
 		  OutScaling		  "2^0"
 		}
 		Block {
+		  BlockType		  DiscreteIntegrator
+		  Name			  "Discrete-Time\nIntegrator1"
+		  SID			  11
+		  Ports			  [1, 1]
+		  Position		  [505, 44, 540, 76]
+		  ShowName		  off
+		  IntegratorMethod	  "Integration: Forward Euler"
+		  ExternalReset		  "none"
+		  InitialConditionSource  "internal"
+		  SampleTime		  "-1"
+		  OutDataType		  "fixdt(1, 16)"
+		  OutScaling		  "2^0"
+		  UpperSaturationLimit	  "1"
+		  LowerSaturationLimit	  "-1"
+		  ICPrevOutput		  "DiscIntNeverNeededParam"
+		  ICPrevScaledInput	  "DiscIntNeverNeededParam"
+		}
+		Block {
+		  BlockType		  DiscreteIntegrator
+		  Name			  "Discrete-Time\nIntegrator2"
+		  SID			  12
+		  Ports			  [1, 1]
+		  Position		  [400, 44, 435, 76]
+		  ShowName		  off
+		  IntegratorMethod	  "Integration: Forward Euler"
+		  ExternalReset		  "none"
+		  InitialConditionSource  "internal"
+		  SampleTime		  "-1"
+		  OutDataType		  "fixdt(1, 16)"
+		  OutScaling		  "2^0"
+		  UpperSaturationLimit	  "1"
+		  LowerSaturationLimit	  "-1"
+		  ICPrevOutput		  "DiscIntNeverNeededParam"
+		  ICPrevScaledInput	  "DiscIntNeverNeededParam"
+		}
+		Block {
 		  BlockType		  Sum
 		  Name			  "Sum2"
 		  SID			  6
@@ -5043,20 +5073,6 @@ Model {
 		  OutScaling		  "2^0"
 		}
 		Block {
-		  BlockType		  UnitDelay
-		  Name			  "Unit Delay"
-		  SID			  11
-		  Position		  [505, 43, 540, 77]
-		  SampleTime		  "-1"
-		}
-		Block {
-		  BlockType		  UnitDelay
-		  Name			  "Unit Delay1"
-		  SID			  12
-		  Position		  [405, 43, 440, 77]
-		  SampleTime		  "-1"
-		}
-		Block {
 		  BlockType		  Gain
 		  Name			  "wn^2"
 		  SID			  8
@@ -5078,16 +5094,44 @@ Model {
 		  InitialOutput		  "0"
 		}
 		Line {
-		  SrcBlock		  "Sum3"
+		  SrcBlock		  "Discrete-Time\nIntegrator1"
 		  SrcPort		  1
-		  DstBlock		  "wn^2"
+		  Points		  [80, 0]
+		  Branch {
+		    DstBlock		    "Ac_ac"
+		    DstPort		    1
+		  }
+		  Branch {
+		    Points		    [0, 120; -465, 0]
+		    DstBlock		    "Sum3"
+		    DstPort		    2
+		  }
+		}
+		Line {
+		  SrcBlock		  "wn^2"
+		  SrcPort		  1
+		  DstBlock		  "Sum2"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Ac_dem"
+		  SrcBlock		  "Sum2"
 		  SrcPort		  1
-		  DstBlock		  "Sum3"
+		  DstBlock		  "Discrete-Time\nIntegrator2"
 		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Discrete-Time\nIntegrator2"
+		  SrcPort		  1
+		  Points		  [35, 0]
+		  Branch {
+		    Points		    [0, 70]
+		    DstBlock		    "2*zeta * wn"
+		    DstPort		    1
+		  }
+		  Branch {
+		    DstBlock		    "Discrete-Time\nIntegrator1"
+		    DstPort		    1
+		  }
 		}
 		Line {
 		  SrcBlock		  "2*zeta * wn"
@@ -5097,51 +5141,23 @@ Model {
 		  DstPort		  2
 		}
 		Line {
-		  SrcBlock		  "Unit Delay1"
+		  SrcBlock		  "Ac_dem"
 		  SrcPort		  1
-		  Points		  [30, 0]
-		  Branch {
-		    DstBlock		    "Unit Delay"
-		    DstPort		    1
-		  }
-		  Branch {
-		    Points		    [0, 70]
-		    DstBlock		    "2*zeta * wn"
-		    DstPort		    1
-		  }
-		}
-		Line {
-		  SrcBlock		  "Sum2"
-		  SrcPort		  1
-		  DstBlock		  "Unit Delay1"
+		  DstBlock		  "Sum3"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "wn^2"
+		  SrcBlock		  "Sum3"
 		  SrcPort		  1
-		  DstBlock		  "Sum2"
+		  DstBlock		  "wn^2"
 		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Unit Delay"
-		  SrcPort		  1
-		  Points		  [80, 0]
-		  Branch {
-		    Points		    [0, 120; -465, 0]
-		    DstBlock		    "Sum3"
-		    DstPort		    2
-		  }
-		  Branch {
-		    DstBlock		    "Ac_ac"
-		    DstPort		    1
-		  }
 		}
 	      }
 	    }
 	    Block {
 	      BlockType		      SubSystem
 	      Name		      "Second Order Linear Actuator2"
-	      SID		      3993
+	      SID		      4001
 	      Ports		      [1, 1]
 	      Position		      [405, 334, 505, 376]
 	      ShowName		      off
@@ -5176,7 +5192,7 @@ Model {
 	      MaskValueString	      "15|0.8|0"
 	      System {
 		Name			"Second Order Linear Actuator2"
-		Location		[535, 472, 1326, 689]
+		Location		[203, 180, 994, 397]
 		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
@@ -5213,6 +5229,42 @@ Model {
 		  OutScaling		  "2^0"
 		}
 		Block {
+		  BlockType		  DiscreteIntegrator
+		  Name			  "Discrete-Time\nIntegrator1"
+		  SID			  11
+		  Ports			  [1, 1]
+		  Position		  [505, 44, 540, 76]
+		  ShowName		  off
+		  IntegratorMethod	  "Integration: Forward Euler"
+		  ExternalReset		  "none"
+		  InitialConditionSource  "internal"
+		  SampleTime		  "-1"
+		  OutDataType		  "fixdt(1, 16)"
+		  OutScaling		  "2^0"
+		  UpperSaturationLimit	  "1"
+		  LowerSaturationLimit	  "-1"
+		  ICPrevOutput		  "DiscIntNeverNeededParam"
+		  ICPrevScaledInput	  "DiscIntNeverNeededParam"
+		}
+		Block {
+		  BlockType		  DiscreteIntegrator
+		  Name			  "Discrete-Time\nIntegrator2"
+		  SID			  12
+		  Ports			  [1, 1]
+		  Position		  [400, 44, 435, 76]
+		  ShowName		  off
+		  IntegratorMethod	  "Integration: Forward Euler"
+		  ExternalReset		  "none"
+		  InitialConditionSource  "internal"
+		  SampleTime		  "-1"
+		  OutDataType		  "fixdt(1, 16)"
+		  OutScaling		  "2^0"
+		  UpperSaturationLimit	  "1"
+		  LowerSaturationLimit	  "-1"
+		  ICPrevOutput		  "DiscIntNeverNeededParam"
+		  ICPrevScaledInput	  "DiscIntNeverNeededParam"
+		}
+		Block {
 		  BlockType		  Sum
 		  Name			  "Sum2"
 		  SID			  6
@@ -5237,20 +5289,6 @@ Model {
 		  OutScaling		  "2^0"
 		}
 		Block {
-		  BlockType		  UnitDelay
-		  Name			  "Unit Delay"
-		  SID			  11
-		  Position		  [505, 43, 540, 77]
-		  SampleTime		  "-1"
-		}
-		Block {
-		  BlockType		  UnitDelay
-		  Name			  "Unit Delay1"
-		  SID			  12
-		  Position		  [405, 43, 440, 77]
-		  SampleTime		  "-1"
-		}
-		Block {
 		  BlockType		  Gain
 		  Name			  "wn^2"
 		  SID			  8
@@ -5272,7 +5310,7 @@ Model {
 		  InitialOutput		  "0"
 		}
 		Line {
-		  SrcBlock		  "Unit Delay"
+		  SrcBlock		  "Discrete-Time\nIntegrator1"
 		  SrcPort		  1
 		  Points		  [80, 0]
 		  Branch {
@@ -5294,20 +5332,20 @@ Model {
 		Line {
 		  SrcBlock		  "Sum2"
 		  SrcPort		  1
-		  DstBlock		  "Unit Delay1"
+		  DstBlock		  "Discrete-Time\nIntegrator2"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Unit Delay1"
+		  SrcBlock		  "Discrete-Time\nIntegrator2"
 		  SrcPort		  1
-		  Points		  [30, 0]
+		  Points		  [35, 0]
 		  Branch {
 		    Points		    [0, 70]
 		    DstBlock		    "2*zeta * wn"
 		    DstPort		    1
 		  }
 		  Branch {
-		    DstBlock		    "Unit Delay"
+		    DstBlock		    "Discrete-Time\nIntegrator1"
 		    DstPort		    1
 		  }
 		}
@@ -5335,7 +5373,7 @@ Model {
 	    Block {
 	      BlockType		      SubSystem
 	      Name		      "Second Order Linear Actuator3"
-	      SID		      3372
+	      SID		      3999
 	      Ports		      [1, 1]
 	      Position		      [405, 24, 505, 66]
 	      ShowName		      off
@@ -5370,7 +5408,7 @@ Model {
 	      MaskValueString	      "15|0.8|0"
 	      System {
 		Name			"Second Order Linear Actuator3"
-		Location		[535, 472, 1326, 689]
+		Location		[203, 180, 994, 397]
 		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
@@ -5384,7 +5422,7 @@ Model {
 		ShowPageBoundaries	off
 		ZoomFactor		"100"
 		SIDHighWatermark	12
-		SIDPrevWatermark	10
+		SIDPrevWatermark	12
 		Block {
 		  BlockType		  Inport
 		  Name			  "Ac_dem"
@@ -5405,6 +5443,42 @@ Model {
 		  ParameterScaling	  "2^0"
 		  OutDataType		  "sfix(16)"
 		  OutScaling		  "2^0"
+		}
+		Block {
+		  BlockType		  DiscreteIntegrator
+		  Name			  "Discrete-Time\nIntegrator1"
+		  SID			  11
+		  Ports			  [1, 1]
+		  Position		  [505, 44, 540, 76]
+		  ShowName		  off
+		  IntegratorMethod	  "Integration: Forward Euler"
+		  ExternalReset		  "none"
+		  InitialConditionSource  "internal"
+		  SampleTime		  "-1"
+		  OutDataType		  "fixdt(1, 16)"
+		  OutScaling		  "2^0"
+		  UpperSaturationLimit	  "1"
+		  LowerSaturationLimit	  "-1"
+		  ICPrevOutput		  "DiscIntNeverNeededParam"
+		  ICPrevScaledInput	  "DiscIntNeverNeededParam"
+		}
+		Block {
+		  BlockType		  DiscreteIntegrator
+		  Name			  "Discrete-Time\nIntegrator2"
+		  SID			  12
+		  Ports			  [1, 1]
+		  Position		  [400, 44, 435, 76]
+		  ShowName		  off
+		  IntegratorMethod	  "Integration: Forward Euler"
+		  ExternalReset		  "none"
+		  InitialConditionSource  "internal"
+		  SampleTime		  "-1"
+		  OutDataType		  "fixdt(1, 16)"
+		  OutScaling		  "2^0"
+		  UpperSaturationLimit	  "1"
+		  LowerSaturationLimit	  "-1"
+		  ICPrevOutput		  "DiscIntNeverNeededParam"
+		  ICPrevScaledInput	  "DiscIntNeverNeededParam"
 		}
 		Block {
 		  BlockType		  Sum
@@ -5431,20 +5505,6 @@ Model {
 		  OutScaling		  "2^0"
 		}
 		Block {
-		  BlockType		  UnitDelay
-		  Name			  "Unit Delay"
-		  SID			  11
-		  Position		  [505, 43, 540, 77]
-		  SampleTime		  "-1"
-		}
-		Block {
-		  BlockType		  UnitDelay
-		  Name			  "Unit Delay1"
-		  SID			  12
-		  Position		  [405, 43, 440, 77]
-		  SampleTime		  "-1"
-		}
-		Block {
 		  BlockType		  Gain
 		  Name			  "wn^2"
 		  SID			  8
@@ -5466,7 +5526,7 @@ Model {
 		  InitialOutput		  "0"
 		}
 		Line {
-		  SrcBlock		  "Unit Delay"
+		  SrcBlock		  "Discrete-Time\nIntegrator1"
 		  SrcPort		  1
 		  Points		  [80, 0]
 		  Branch {
@@ -5488,20 +5548,20 @@ Model {
 		Line {
 		  SrcBlock		  "Sum2"
 		  SrcPort		  1
-		  DstBlock		  "Unit Delay1"
+		  DstBlock		  "Discrete-Time\nIntegrator2"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Unit Delay1"
+		  SrcBlock		  "Discrete-Time\nIntegrator2"
 		  SrcPort		  1
-		  Points		  [30, 0]
+		  Points		  [35, 0]
 		  Branch {
 		    Points		    [0, 70]
 		    DstBlock		    "2*zeta * wn"
 		    DstPort		    1
 		  }
 		  Branch {
-		    DstBlock		    "Unit Delay"
+		    DstBlock		    "Discrete-Time\nIntegrator1"
 		    DstPort		    1
 		  }
 		}
@@ -18036,7 +18096,7 @@ Model {
 		  System {
 		    Name		    "Mux Everything"
 		    Location		    [224, 100, 1238, 809]
-		    Open		    on
+		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
 		    ScreenColor		    "white"
