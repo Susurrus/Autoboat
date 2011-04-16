@@ -62,7 +62,7 @@ unsigned long receivedMessageCount; // Keep track of how many messages were succ
  * appropriate struct.
  */
 void buildAndCheckMessage(unsigned char characterIn) {
-	static unsigned char message[64];
+	static unsigned char message[128];
 	static unsigned char messageIndex;
 	static unsigned char messageState;
 
@@ -99,7 +99,7 @@ void buildAndCheckMessage(unsigned char characterIn) {
 		message[messageIndex++] = characterIn;
 		if (characterIn == '^') {
 			messageState = 3;
-		} else if (messageIndex == 62) {
+		} else if (messageIndex == 127) {
 			// If we've filled up the buffer, ignore the entire message as we can't store it all
 			messageState = 0;
 			messageIndex = 0;
@@ -166,12 +166,20 @@ void setHilMode(unsigned char mode) {
 	
 	// Detect a change to HIL
 	if (!oldMode && mode) {
-		changeUart2BaudRate(HILBRG);
+		changeUart2BaudRate(HIL_BRG_REG);
 		oldMode = mode;
 	} else if (oldMode && !mode) {
 		changeUart2BaudRate(BAUD4800_BRG_REG);
 		oldMode = mode;
 	}
+}
+
+void enableHil() {
+	setHilMode(1);
+}
+
+void disableHil() {
+	setHilMode(0);
 }
 
 /**

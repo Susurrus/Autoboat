@@ -47,7 +47,7 @@ THE SOFTWARE.
 
 // This is the value of the BRG to set the baud rate
 // to 115200 for running HIL.
-#define HILBRG 21
+#define HIL_BRG_REG 21
 
 // Definitions of unions useful in transmitting data serially
 typedef union {
@@ -142,6 +142,12 @@ typedef struct {
 void buildAndCheckMessage(unsigned char characterIn);
 
 void processNewCommData(unsigned char* message);
+
+void setHilMode(unsigned char mode);
+
+void enableHil();
+
+void disableHil();
 
 /**
  * This function calculates the checksum of some bytes in an
