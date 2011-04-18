@@ -96,8 +96,8 @@ void startUart2Transmission() {
  */
 void uart2EnqueueActuatorData(unsigned char *data) {
 	unsigned char g;
-	// Add all 22+6 bytes of the actuator struct to the queue.
-	for (g = 0; g < 28;g++) {
+	// Add all 22+7 bytes of the actuator struct to the queue.
+	for (g = 0; g < 29;g++) {
 		writeBack(&uart2TxBuffer,data[g]);
 	}
 	startUart2Transmission();
