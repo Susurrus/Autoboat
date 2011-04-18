@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.1727"
+    ComputedModelVersion    "1.1730"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun Apr 17 18:47:30 2011"
-  RTWModifiedTimeStamp	  224965630
-  ModelVersionFormat	  "1.%<AutoIncrement:1727>"
+  LastModifiedDate	  "Sun Apr 17 20:56:19 2011"
+  RTWModifiedTimeStamp	  224973367
+  ModelVersionFormat	  "1.%<AutoIncrement:1730>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -1181,7 +1181,7 @@ Model {
   }
   System {
     Name		    "code_gen"
-    Location		    [301, 162, 1352, 788]
+    Location		    [202, 74, 1581, 839]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1195,7 +1195,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "117"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    13643
+    SIDHighWatermark	    13644
     Block {
       BlockType		      SubSystem
       Name		      "Blink LED D10 a 1Hz"
@@ -24201,8 +24201,8 @@ Model {
 	  BlockType		  SubSystem
 	  Name			  "Hold in reset\non init"
 	  SID			  12902
-	  Ports			  [1, 1]
-	  Position		  [665, 162, 715, 188]
+	  Ports			  [2, 1]
+	  Position		  [665, 164, 715, 191]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -24212,7 +24212,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Hold in reset\non init"
-	    Location		    [301, 162, 1369, 805]
+	    Location		    [626, 519, 1072, 747]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -24231,6 +24231,15 @@ Model {
 	      SID		      12903
 	      Position		      [25, 53, 55, 67]
 	      BackgroundColor	      "darkGreen"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "HIL\nButton"
+	      SID		      13644
+	      Position		      [25, 108, 55, 122]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "2"
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
@@ -24259,7 +24268,7 @@ Model {
 	      Name		      "Compare\nTo Zero"
 	      SID		      12905
 	      Ports		      [1, 1]
-	      Position		      [270, 45, 300, 75]
+	      Position		      [270, 55, 300, 85]
 	      ShowName		      off
 	      LibraryVersion	      "1.216"
 	      SourceBlock	      "simulink/Logic and Bit\nOperations/Compare\nTo Zero"
@@ -24280,11 +24289,11 @@ Model {
 	      BlockType		      DiscreteIntegrator
 	      Name		      "Discrete-Time\nIntegrator"
 	      SID		      12906
-	      Ports		      [1, 1]
-	      Position		      [205, 44, 240, 76]
+	      Ports		      [2, 1]
+	      Position		      [205, 51, 240, 84]
 	      ShowName		      off
 	      IntegratorMethod	      "Integration: Forward Euler"
-	      ExternalReset	      "none"
+	      ExternalReset	      "either"
 	      InitialConditionSource  "internal"
 	      SampleTime	      "-1"
 	      OutDataType	      "fixdt(1, 16)"
@@ -24310,7 +24319,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "Out1"
 	      SID		      12907
-	      Position		      [345, 53, 375, 67]
+	      Position		      [345, 63, 375, 77]
 	      BackgroundColor	      "yellow"
 	      IconDisplay	      "Port number"
 	    }
@@ -24354,6 +24363,19 @@ Model {
 	      SrcPort		      1
 	      DstBlock		      "Discrete-Time\nIntegrator"
 	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "HIL\nButton"
+	      SrcPort		      1
+	      Points		      [130, 0]
+	      DstBlock		      "Discrete-Time\nIntegrator"
+	      DstPort		      2
+	    }
+	    Annotation {
+	      Name		      "This block outputs a 1 while it hasn't received 100 new and valid GPS fixes.\nThis counter gets re"
+	      "set on every transition to/from HIL mode."
+	      Position		      [29, 177]
+	      HorizontalAlignment     "left"
 	    }
 	  }
 	}
@@ -26325,7 +26347,7 @@ Model {
 	    DstPort		    1
 	  }
 	  Branch {
-	    Points		    [0, -15]
+	    Points		    [0, -20]
 	    DstBlock		    "Hold in reset\non init"
 	    DstPort		    1
 	  }
@@ -26374,14 +26396,22 @@ Model {
 		  }
 		}
 		Branch {
-		  Points		  [0, 60]
+		  Points		  [0, 45]
 		  Branch {
+		    Points		    [0, 15]
+		    Branch {
 		    DstBlock		    "Atomic Subsystem"
 		    DstPort		    1
-		  }
-		  Branch {
+		    }
+		    Branch {
 		    Points		    [200, 0; 0, 90]
 		    DstBlock		    "Logical\nOperator4"
+		    DstPort		    2
+		    }
+		  }
+		  Branch {
+		    Points		    [120, 0; 0, 35]
+		    DstBlock		    "Hold in reset\non init"
 		    DstPort		    2
 		  }
 		}
@@ -26440,7 +26470,7 @@ Model {
 	Line {
 	  SrcBlock		  "Hold in reset\non init"
 	  SrcPort		  1
-	  Points		  [10, 0; 0, 10]
+	  Points		  [10, 0; 0, 5]
 	  DstBlock		  "Logical\nOperator1"
 	  DstPort		  3
 	}
@@ -26532,7 +26562,7 @@ Model {
       System {
 	Name			"Transmit actuator\ndata"
 	Location		[202, 82, 1270, 871]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
