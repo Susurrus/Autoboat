@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.1730"
+    ComputedModelVersion    "1.1740"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun Apr 17 20:56:19 2011"
-  RTWModifiedTimeStamp	  224973367
-  ModelVersionFormat	  "1.%<AutoIncrement:1730>"
+  LastModifiedDate	  "Tue Apr 19 13:57:03 2011"
+  RTWModifiedTimeStamp	  225122209
+  ModelVersionFormat	  "1.%<AutoIncrement:1740>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -1181,7 +1181,7 @@ Model {
   }
   System {
     Name		    "code_gen"
-    Location		    [202, 74, 1581, 839]
+    Location		    [202, 82, 1565, 847]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1195,7 +1195,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "117"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    13644
+    SIDHighWatermark	    13658
     Block {
       BlockType		      SubSystem
       Name		      "Blink LED D10 a 1Hz"
@@ -2163,7 +2163,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Autonomous Controller"
-	    Location		    [206, 82, 1274, 871]
+	    Location		    [202, 82, 1582, 847]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -4197,7 +4197,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"State Keeper &\nEstimator"
-		Location		[221, 82, 1280, 1000]
+		Location		[202, 82, 1565, 847]
 		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
@@ -4350,7 +4350,7 @@ Model {
 		  MaskHideContents	  off
 		  System {
 		    Name		    "GPS Estimator"
-		    Location		    [202, 74, 1598, 839]
+		    Location		    [202, 82, 1582, 847]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -4824,8 +4824,8 @@ Model {
 		    BlockType		    SubSystem
 		    Name		    "Forces & Moments"
 		    SID			    12189
-		    Ports		    [3, 2]
-		    Position		    [315, 425, 430, 525]
+		    Ports		    [4, 2]
+		    Position		    [315, 427, 430, 528]
 		    MinAlgLoopOccurrences   off
 		    PropExecContextOutsideSubsystem off
 		    RTWSystemCode	    "Auto"
@@ -4835,7 +4835,7 @@ Model {
 		    MaskHideContents	    off
 		    System {
 		    Name		    "Forces & Moments"
-		    Location		    [214, 388, 1216, 784]
+		    Location		    [757, 471, 1507, 832]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -4876,6 +4876,17 @@ Model {
 		    Position		    [30, 128, 60, 142]
 		    BackgroundColor	    "darkGreen"
 		    Port		    "3"
+		    IconDisplay		    "Port number"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "Reset"
+		    SID			    13645
+		    Position		    [30, 248, 60, 262]
+		    BackgroundColor	    "darkGreen"
+		    Port		    "4"
 		    IconDisplay		    "Port number"
 		    OutDataType		    "sfix(16)"
 		    OutScaling		    "2^0"
@@ -4930,11 +4941,11 @@ Model {
 		    BlockType		    DiscreteIntegrator
 		    Name		    "Discrete-Time\nIntegrator"
 		    SID			    12196
-		    Ports		    [1, 1]
-		    Position		    [385, 179, 420, 211]
+		    Ports		    [2, 1]
+		    Position		    [385, 186, 420, 219]
 		    ShowName		    off
 		    IntegratorMethod	    "Integration: Forward Euler"
-		    ExternalReset	    "none"
+		    ExternalReset	    "level"
 		    InitialConditionSource  "internal"
 		    SampleTime		    "-1"
 		    OutDataType		    "fixdt(1, 16)"
@@ -5020,7 +5031,7 @@ Model {
 		    Name		    "Sum2"
 		    SID			    12203
 		    Ports		    [2, 1]
-		    Position		    [470, 190, 490, 210]
+		    Position		    [470, 200, 490, 220]
 		    ShowName		    off
 		    InputSameDT		    off
 		    OutDataTypeMode	    "double"
@@ -5063,13 +5074,14 @@ Model {
 		    Line {
 		    SrcBlock		    "Sum2"
 		    SrcPort		    1
+		    Points		    [0, -10]
 		    DstBlock		    "heading"
 		    DstPort		    1
 		    }
 		    Line {
 		    SrcBlock		    "Initial heading"
 		    SrcPort		    1
-		    Points		    [10, 0; 0, -30]
+		    Points		    [10, 0; 0, -20]
 		    DstBlock		    "Sum2"
 		    DstPort		    2
 		    }
@@ -5161,6 +5173,13 @@ Model {
 		    SrcPort		    1
 		    DstBlock		    "Convert to force"
 		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Reset"
+		    SrcPort		    1
+		    Points		    [305, 0]
+		    DstBlock		    "Discrete-Time\nIntegrator"
+		    DstPort		    2
 		    }
 		    Annotation {
 		    Name		    "This subsystem computes the forward force, heading and roll of the boat that \nis to be expected base"
@@ -5331,7 +5350,7 @@ Model {
 		    BlockType		    SubSystem
 		    Name		    "Outputs"
 		    SID			    12216
-		    Ports		    [2, 1]
+		    Ports		    [3, 1]
 		    Position		    [530, 427, 660, 523]
 		    MinAlgLoopOccurrences   off
 		    PropExecContextOutsideSubsystem off
@@ -5342,7 +5361,7 @@ Model {
 		    MaskHideContents	    off
 		    System {
 		    Name		    "Outputs"
-		    Location		    [508, 122, 1258, 500]
+		    Location		    [757, 471, 1507, 849]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -5369,9 +5388,20 @@ Model {
 		    BlockType		    Inport
 		    Name		    "heading"
 		    SID			    12218
-		    Position		    [100, 68, 130, 82]
+		    Position		    [15, 118, 45, 132]
 		    BackgroundColor	    "darkGreen"
 		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    OutDataType		    "sfix(16)"
+		    OutScaling		    "2^0"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "Reset"
+		    SID			    13646
+		    Position		    [15, 78, 45, 92]
+		    BackgroundColor	    "darkGreen"
+		    Port		    "3"
 		    IconDisplay		    "Port number"
 		    OutDataType		    "sfix(16)"
 		    OutScaling		    "2^0"
@@ -5409,11 +5439,11 @@ Model {
 		    BlockType		    DiscreteIntegrator
 		    Name		    "Discrete-Time\nIntegrator1"
 		    SID			    12221
-		    Ports		    [1, 1]
-		    Position		    [155, 29, 190, 61]
+		    Ports		    [2, 1]
+		    Position		    [155, 36, 190, 69]
 		    ShowName		    off
 		    IntegratorMethod	    "Integration: Forward Euler"
-		    ExternalReset	    "none"
+		    ExternalReset	    "level"
 		    InitialConditionSource  "internal"
 		    SampleTime		    "-1"
 		    OutDataType		    "fixdt(1, 16)"
@@ -5674,7 +5704,7 @@ Model {
 		    Line {
 		    SrcBlock		    "heading"
 		    SrcPort		    1
-		    Points		    [35, 0; 0, 50]
+		    Points		    [120, 0]
 		    Branch {
 		    Points		    [0, 50]
 		    DstBlock		    "Trigonometric\nFunction1"
@@ -5688,7 +5718,7 @@ Model {
 		    Line {
 		    SrcBlock		    "Discrete-Time\nIntegrator1"
 		    SrcPort		    1
-		    Points		    [5, 0; 0, 65]
+		    Points		    [5, 0; 0, 55]
 		    Branch {
 		    Points		    [0, 50]
 		    DstBlock		    "Product1"
@@ -5705,6 +5735,13 @@ Model {
 		    SrcPort		    1
 		    DstBlock		    "Discrete-Time\nIntegrator1"
 		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Reset"
+		    SrcPort		    1
+		    Points		    [90, 0]
+		    DstBlock		    "Discrete-Time\nIntegrator1"
+		    DstPort		    2
 		    }
 		    Annotation {
 		    Name		    "This subsystem converts the heading and forward forces into a current position\n defined by the latit"
@@ -6577,7 +6614,7 @@ Model {
 		    BlockType		    Switch
 		    Name		    "Switch2"
 		    SID			    12267
-		    Position		    [480, 485, 510, 515]
+		    Position		    [480, 460, 510, 490]
 		    ShowName		    off
 		    Criteria		    "u2 ~= 0"
 		    InputSameDT		    off
@@ -6676,7 +6713,7 @@ Model {
 		    Line {
 		    SrcBlock		    "Forces & Moments"
 		    SrcPort		    2
-		    Points		    [15, 0; 0, 10]
+		    Points		    [30, 0]
 		    DstBlock		    "Switch2"
 		    DstPort		    3
 		    }
@@ -6719,7 +6756,7 @@ Model {
 		    Labels		    [0, 0; 0, 0]
 		    SrcBlock		    "Bus\nSelector1"
 		    SrcPort		    3
-		    Points		    [10, 0; 0, 55; 365, 0; 0, -20]
+		    Points		    [10, 0; 0, 35]
 		    DstBlock		    "Discrete-Time\nIntegrator3"
 		    DstPort		    1
 		    }
@@ -6771,7 +6808,11 @@ Model {
 		    Line {
 		    SrcBlock		    "reset"
 		    SrcPort		    1
-		    Points		    [375, 0; 0, 110; 245, 0]
+		    Points		    [215, 0]
+		    Branch {
+		    Points		    [160, 0; 0, 110; 60, 0]
+		    Branch {
+		    Points		    [185, 0]
 		    Branch {
 		    Points		    [0, -25]
 		    DstBlock		    "Discrete-Time\nIntegrator3"
@@ -6780,6 +6821,18 @@ Model {
 		    Branch {
 		    DstBlock		    "Logical\nOperator"
 		    DstPort		    1
+		    }
+		    }
+		    Branch {
+		    Points		    [0, 110]
+		    DstBlock		    "Outputs"
+		    DstPort		    3
+		    }
+		    }
+		    Branch {
+		    Points		    [0, 230]
+		    DstBlock		    "Forces & Moments"
+		    DstPort		    4
 		    }
 		    }
 		    Line {
@@ -6824,7 +6877,7 @@ Model {
 		    SrcPort		    1
 		    Points		    [80, 0]
 		    Branch {
-		    Points		    [0, 45; 265, 0; 0, -55]
+		    Points		    [0, 45; 265, 0; 0, -80]
 		    DstBlock		    "Switch2"
 		    DstPort		    2
 		    }
@@ -6843,18 +6896,21 @@ Model {
 		    Labels		    [0, 0]
 		    SrcBlock		    "Map from to 655..347 to -1..1"
 		    SrcPort		    1
+		    Points		    [115, 0]
 		    DstBlock		    "Forces & Moments"
 		    DstPort		    2
 		    }
 		    Line {
 		    SrcBlock		    "Switch"
 		    SrcPort		    1
+		    Points		    [40, 0]
 		    DstBlock		    "Forces & Moments"
 		    DstPort		    3
 		    }
 		    Line {
 		    SrcBlock		    "Forces & Moments"
 		    SrcPort		    1
+		    Points		    [0, -10]
 		    DstBlock		    "Outputs"
 		    DstPort		    1
 		    }
@@ -6875,7 +6931,7 @@ Model {
 		    SrcPort		    2
 		    Points		    [5, 0]
 		    Branch {
-		    Points		    [0, 385]
+		    Points		    [0, 360]
 		    DstBlock		    "Switch2"
 		    DstPort		    1
 		    }
@@ -21320,7 +21376,7 @@ Model {
       TempProtection_33f      "TEMP_ON"
       FPBOR		      "<empty>"
       PWRT		      "disable"
-      MCLR		      "<empty>"
+      MCLR		      "MCLR_DIS"
       ICD		      "ICS_PGD1"
       JTAGEN		      "JTAGEN_OFF"
       PowerSave		      off
@@ -22572,7 +22628,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Sensor Inputs"
-	Location		[301, 162, 1369, 805]
+	Location		[463, 173, 1531, 816]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -23060,7 +23116,7 @@ Model {
 	  Name			  "Change UART Baudrate"
 	  SID			  12884
 	  Ports			  [1, 0, 1]
-	  Position		  [525, 71, 630, 139]
+	  Position		  [525, 66, 630, 134]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -24202,7 +24258,7 @@ Model {
 	  Name			  "Hold in reset\non init"
 	  SID			  12902
 	  Ports			  [2, 1]
-	  Position		  [665, 164, 715, 191]
+	  Position		  [665, 169, 715, 196]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -26020,6 +26076,154 @@ Model {
 	}
 	Block {
 	  BlockType		  SubSystem
+	  Name			  "Sensor & GPS\nReset"
+	  SID			  13647
+	  Ports			  [0, 0, 0, 1]
+	  Position		  [810, 303, 890, 337]
+	  MinAlgLoopOccurrences	  off
+	  PropExecContextOutsideSubsystem off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  Opaque		  off
+	  RequestExecContextInheritance	off
+	  MaskHideContents	  off
+	  System {
+	    Name		    "Sensor & GPS\nReset"
+	    Location		    [463, 173, 1531, 816]
+	    Open		    off
+	    ModelBrowserVisibility  on
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      TriggerPort
+	      Name		      "Trigger"
+	      SID		      13658
+	      Ports		      []
+	      Position		      [175, 60, 195, 80]
+	      TriggerType	      "either"
+	      StatesWhenEnabling      "held"
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Clear GPS struct\n[gps.c]"
+	      SID		      13653
+	      Tag		      "dsPIC_dsPIC_CFunctionCall"
+	      Ports		      []
+	      Position		      [125, 196, 265, 244]
+	      BackgroundColor	      "orange"
+	      LibraryVersion	      "3.40"
+	      List {
+		ListType		RTWdata
+		isFctUpdate		"1"
+		FctDeclaration		"extern void clearGpsData();"
+		FctCall			"clearGpsData();"
+		fctName			"clearGpsData"
+		INPUT_SIZE		"1"
+		OUTPUT_SIZE		"1"
+		NBR_INPUT		"0"
+		NBR_OUTPUT		"0"
+		isFctStart		"0"
+		FctStart_Declaration	"inline extern void Init_onlyOnce();"
+		FctStart_Call		"Init_onlyOnce();"
+		FctStart_Name		"Init_onlyOnce"
+		isFctInit		"0"
+		FctInit_Declaration	"inline extern void Init_Reset();"
+		FctInit_Call		"Init_Reset();"
+		FctInit_Name		"Init_Reset"
+	      }
+	      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+	      SourceType	      "C Function Call"
+	      FctUpdate		      "Output Function"
+	      fctName		      "'clearGpsData'"
+	      INPUT_SIZE	      "1"
+	      INPUT1		      "--"
+	      INPUT2		      "--"
+	      INPUT3		      "--"
+	      OUTPUT_SIZE	      "1"
+	      OUTPUT1		      "--"
+	      SampleTime	      "-1"
+	      InputType		      "[ ]"
+	      OutputType	      "[ ]"
+	      FctDeclaration	      "extern void clearGpsData();"
+	      FctCall		      "clearGpsData();"
+	      OrderingInOutPopup      "None"
+	      FctStart		      "None"
+	      FctStart_Name	      "Init_onlyOnce"
+	      FctStart_Declaration    "inline extern void Init_onlyOnce();"
+	      FctStart_Call	      "Init_onlyOnce();"
+	      FctInit		      "None"
+	      FctInit_Name	      "Init_Reset"
+	      FctInit_Declaration     "inline extern void Init_Reset();"
+	      FctInit_Call	      "Init_Reset();"
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Clear sensor data struct\n[commProtocol.c]"
+	      SID		      13657
+	      Tag		      "dsPIC_dsPIC_CFunctionCall"
+	      Ports		      []
+	      Position		      [125, 286, 265, 334]
+	      BackgroundColor	      "orange"
+	      LibraryVersion	      "3.40"
+	      List {
+		ListType		RTWdata
+		isFctUpdate		"1"
+		FctDeclaration		"extern void clearSensorData();"
+		FctCall			"clearSensorData();"
+		fctName			"clearSensorData"
+		INPUT_SIZE		"1"
+		OUTPUT_SIZE		"1"
+		NBR_INPUT		"0"
+		NBR_OUTPUT		"0"
+		isFctStart		"0"
+		FctStart_Declaration	"inline extern void Init_onlyOnce();"
+		FctStart_Call		"Init_onlyOnce();"
+		FctStart_Name		"Init_onlyOnce"
+		isFctInit		"0"
+		FctInit_Declaration	"inline extern void Init_Reset();"
+		FctInit_Call		"Init_Reset();"
+		FctInit_Name		"Init_Reset"
+	      }
+	      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+	      SourceType	      "C Function Call"
+	      FctUpdate		      "Output Function"
+	      fctName		      "'clearSensorData'"
+	      INPUT_SIZE	      "1"
+	      INPUT1		      "--"
+	      INPUT2		      "--"
+	      INPUT3		      "--"
+	      OUTPUT_SIZE	      "1"
+	      OUTPUT1		      "--"
+	      SampleTime	      "-1"
+	      InputType		      "[ ]"
+	      OutputType	      "[ ]"
+	      FctDeclaration	      "extern void clearSensorData();"
+	      FctCall		      "clearSensorData();"
+	      OrderingInOutPopup      "None"
+	      FctStart		      "None"
+	      FctStart_Name	      "Init_onlyOnce"
+	      FctStart_Declaration    "inline extern void Init_onlyOnce();"
+	      FctStart_Call	      "Init_onlyOnce();"
+	      FctInit		      "None"
+	      FctInit_Name	      "Init_Reset"
+	      FctInit_Declaration     "inline extern void Init_Reset();"
+	      FctInit_Call	      "Init_Reset();"
+	    }
+	    Annotation {
+	      Position		      [141, 405]
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  SubSystem
 	  Name			  "Throttle\nSensors"
 	  SID			  12935
 	  Ports			  [0, 1]
@@ -26347,7 +26551,7 @@ Model {
 	    DstPort		    1
 	  }
 	  Branch {
-	    Points		    [0, -20]
+	    Points		    [0, -15]
 	    DstBlock		    "Hold in reset\non init"
 	    DstPort		    1
 	  }
@@ -26384,7 +26588,7 @@ Model {
 		  DstPort		  1
 		}
 		Branch {
-		  Points		  [0, -15; -100, 0]
+		  Points		  [0, -15; -105, 0]
 		  Branch {
 		    DstBlock		    "Logical\nOperator"
 		    DstPort		    1
@@ -26410,14 +26614,13 @@ Model {
 		    }
 		  }
 		  Branch {
-		    Points		    [120, 0; 0, 35]
+		    Points		    [0, 5; 295, 0; 0, 35]
 		    DstBlock		    "Hold in reset\non init"
 		    DstPort		    2
 		  }
 		}
 	      }
 	      Branch {
-		Points			[180, 0]
 		DstBlock		"Change UART Baudrate"
 		DstPort			1
 	      }
@@ -26457,8 +26660,14 @@ Model {
 	  }
 	  Branch {
 	    Points		    [0, 80]
-	    DstBlock		    "Reset status\n(LED D3 )"
-	    DstPort		    1
+	    Branch {
+	      DstBlock		      "Reset status\n(LED D3 )"
+	      DstPort		      1
+	    }
+	    Branch {
+	      DstBlock		      "Sensor & GPS\nReset"
+	      DstPort		      trigger
+	    }
 	  }
 	}
 	Line {
@@ -26470,7 +26679,6 @@ Model {
 	Line {
 	  SrcBlock		  "Hold in reset\non init"
 	  SrcPort		  1
-	  Points		  [10, 0; 0, 5]
 	  DstBlock		  "Logical\nOperator1"
 	  DstPort		  3
 	}
@@ -27753,7 +27961,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Transmit state data\nvia UART1"
-	Location		[206, 82, 1274, 978]
+	Location		[206, 82, 1274, 871]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -29291,8 +29499,6 @@ Model {
       List {
 	ListType		RTWdata
 	RxBufferSize		"32"
-	DoNotImplementRxInterrupt "0"
-	DoNotImplementTxInterrupt "0"
       }
       SourceBlock	      "dsPICdrivers/Serial PORT/UART Configuration"
       SourceType	      "Configure UART"

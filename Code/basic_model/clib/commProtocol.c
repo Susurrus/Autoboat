@@ -297,6 +297,30 @@ void setSensorData(unsigned char* data) {
 	sensorDataMessage.newData = 1;
 }
 
+void clearSensorData() {
+	sensorDataMessage.speed.shData = 0;
+	sensorDataMessage.lat.flData = 0.0;
+	sensorDataMessage.lon.flData = 0.0;
+	sensorDataMessage.alt.flData = 0.0;
+	sensorDataMessage.year = 0;
+	sensorDataMessage.month = 0;
+	sensorDataMessage.day = 0;
+	sensorDataMessage.hour = 0;
+	sensorDataMessage.minute = 0;
+	sensorDataMessage.second = 0;
+	sensorDataMessage.cog.flData = 0.0;
+	sensorDataMessage.sog.flData = 0.0;
+	sensorDataMessage.newGpsData = 0;
+	sensorDataMessage.r_Position.usData = 0;
+	sensorDataMessage.r_SBLimit = 0;
+	sensorDataMessage.r_PortLimit = 0;
+	sensorDataMessage.b_Position.usData = 0;
+	sensorDataMessage.b_SBLimit = 0;
+	sensorDataMessage.b_PortLimit = 0;
+	sensorDataMessage.timestamp.shData = 0;
+	sensorDataMessage.newData = 0;
+}
+
 void getActuatorData(unsigned char* data) {
 	data[0] = actuatorDataMessage.r_enable;
 	data[1] = actuatorDataMessage.r_direction;

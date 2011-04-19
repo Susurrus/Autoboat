@@ -188,10 +188,10 @@ void getGpsData(unsigned char* data) {
 	data[5] = gpsControlData.lon.chData[1];
 	data[6] = gpsControlData.lon.chData[2];
 	data[7] = gpsControlData.lon.chData[3];
-	data[8] = gpsControlData.height.chData[0];
-	data[9] = gpsControlData.height.chData[1];
-	data[10] = gpsControlData.height.chData[2];
-	data[11] = gpsControlData.height.chData[3];
+	data[8] = gpsControlData.alt.chData[0];
+	data[9] = gpsControlData.alt.chData[1];
+	data[10] = gpsControlData.alt.chData[2];
+	data[11] = gpsControlData.alt.chData[3];
 	
 	// Add date info
 	data[12] = gpsControlData.day;
@@ -221,6 +221,24 @@ void getGpsData(unsigned char* data) {
 	data[32] = gpsControlData.newData;
 	
 	// Mark this data as old now
+	gpsControlData.newData = 0;
+}
+
+void clearGpsData() {
+	gpsControlData.year = 0;
+	gpsControlData.month = 0;
+	gpsControlData.day = 0;
+	gpsControlData.hour = 0;
+	gpsControlData.min = 0;
+	gpsControlData.sec = 0;
+	gpsControlData.lat.flData = 0.0;
+	gpsControlData.lon.flData = 0.0;
+	gpsControlData.alt.flData = 0.0;
+	gpsControlData.cog.flData = 0.0;
+	gpsControlData.sog.flData = 0.0;
+	gpsControlData.hdop.flData = 0.0;
+	gpsControlData.fix = 0;
+	gpsControlData.sats = 0;
 	gpsControlData.newData = 0;
 }
 
@@ -462,7 +480,7 @@ void parseGGA(char* stream) {
 	// xxx.xxx
 	myTokenizer(NULL, ',', token);	
 	if (strlen(token)>0) {
-		gpsControlData.height.flData = atof(token);	
+		gpsControlData.alt.flData = atof(token);	
 	}
 	
 	// turn the flag on of new data

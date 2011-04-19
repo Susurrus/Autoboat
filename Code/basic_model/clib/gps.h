@@ -68,7 +68,7 @@ typedef struct tGpsData{
 	unsigned char			sec;
 	tFloatToChar 			lat;
 	tFloatToChar 			lon;
-	tFloatToChar 			height;
+	tFloatToChar 			alt;
 	tFloatToChar			cog;
 	tFloatToChar			sog;
 	tFloatToChar			hdop;
@@ -123,6 +123,11 @@ unsigned char getChecksum(char* sentence, unsigned char size);
  * @param data A pointer to a float array for storing the GPS data that was requested.
  */
 void getGpsData(unsigned char* data);
+
+/**
+ * This function resets the entire GPS data struct to zeros.
+ */
+void clearGpsData();
 
 /**
  * A simple tokenizer. Similar to strtok(), but supports

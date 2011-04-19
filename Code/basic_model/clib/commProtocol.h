@@ -159,6 +159,11 @@ void getSensorData(unsigned char* data);
 
 void setSensorData(unsigned char* data);
 
+/**
+ * This function clears the sensor data struct to all zeros.
+ */
+void clearSensorData();
+
 void getActuatorData(unsigned char* data);
 
 void setActuatorData(unsigned char* data);
