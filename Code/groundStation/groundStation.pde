@@ -219,17 +219,6 @@ void draw() {
   text(L2.y, 300, 320);
   text(L2.z, 300, 335);
   
-  pushMatrix();
-  fill(0,0,255);
-  translate(320,220);
-  float rotation = PVector.angleBetween(L2, trueNorth);
-  if (!Float.isNaN(rotation)) {
-    rotate(rotation);
-  }
-  scale(L2.mag()/8);
-  triangle(10,30,0,-30,-10,30);
-  popMatrix();
-  
   // Reset fill color to white
   fill(255);
   
@@ -276,15 +265,29 @@ void draw() {
   // Display the boat heading
   text(heading, 400, 305);
   
+  // Draw the boat itself
   pushMatrix();
   fill(155,155,0);
   translate(420,220);
   rotate(heading);
-  triangle(10,30,0,-30,-10,30);
+  rect(-20, -50, 40, 100);
   popMatrix();
+  
+  // Draw the velocity vector on top of the boat
+  if (velocity.mag() > 0) {
+    // Prepare the vector from a NED to an ESD vector draw call
+    drawVector(new PVector(velocity.y, -velocity.x, velocity.z), 420, 220, 40, 2, new PVector(34, 139, 34));
+  }
+  
+  // Draw the L2 vector on top of the boat also
+  if (L2.mag() > 0) {
+    // Prepare the vector from a NED to an ESD vector draw call
+    drawVector(new PVector(L2.y, -L2.x, L2.z), 420, 220, 10, 2, new PVector(34, 34, 139));
+  }
   
   // Reset fill color to white
   fill(255);
+  stroke(255);
   
   if (recording) {
     recordTimerLabel.setValue(recordTimer.toString());
