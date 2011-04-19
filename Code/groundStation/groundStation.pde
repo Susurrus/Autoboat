@@ -265,24 +265,31 @@ void draw() {
   // Display the boat heading
   text(heading, 400, 305);
   
-  // Draw the boat itself
-  pushMatrix();
+  // Draw the boat and rudder
   fill(155,155,0);
-  translate(420,220);
+  pushMatrix();
+  translate(420,200);
   rotate(heading);
+  pushMatrix();
+  translate(0, 49);
+  if (rudderPot > 0) {
+    rotate((rudderPot - 500)/300*PI/3);
+  }
+  rect(0, 0, 5, 15);
+  popMatrix();
   rect(-20, -50, 40, 100);
   popMatrix();
   
   // Draw the velocity vector on top of the boat
   if (velocity.mag() > 0) {
     // Prepare the vector from a NED to an ESD vector draw call
-    drawVector(new PVector(velocity.y, -velocity.x, velocity.z), 420, 220, 40, 2, new PVector(34, 139, 34));
+    drawVector(new PVector(velocity.y, -velocity.x, velocity.z), 420, 200, 40, 2, new PVector(34, 139, 34));
   }
   
   // Draw the L2 vector on top of the boat also
   if (L2.mag() > 0) {
     // Prepare the vector from a NED to an ESD vector draw call
-    drawVector(new PVector(L2.y, -L2.x, L2.z), 420, 220, 10, 2, new PVector(34, 34, 139));
+    drawVector(new PVector(L2.y, -L2.x, L2.z), 420, 200, 10, 2, new PVector(34, 34, 139));
   }
   
   // Reset fill color to white
