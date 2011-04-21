@@ -21,13 +21,13 @@ myLegend{end + 1} = 'Test waypoints';
 % reset to properly illustrate where the boat thought the waypoints were.
 offsets = position(nextTrack > 0,:);
 if size(offsets,1) > 0
-    figure8_waypoints_offset = figure8_waypoints + repmat(offsets(1,:),size(figure8_waypoints,1),1);
+    figure8_waypoints_offset = double(figure8_waypoints) + repmat(offsets(1,:),size(figure8_waypoints,1),1);
     plot(figure8_waypoints_offset(:,2)', figure8_waypoints_offset(:,1)', 'g^', 'MarkerSize', 10);
     text(figure8_waypoints_offset(:,2)'+10, figure8_waypoints_offset(:,1)'-10, cellstr({int2str((1:size(figure8_waypoints_offset,1))')}), 'Color', 'g');
     myLegend{end + 1} = 'Figure-8 waypoints';
 end
 if size(offsets,1) > 1
-    sampling_waypoints_offset = sampling_waypoints + repmat(offsets(2,:),size(sampling_waypoints,1),1);
+    sampling_waypoints_offset = double(sampling_waypoints) + repmat(offsets(2,:),size(sampling_waypoints,1),1);
     plot(sampling_waypoints_offset(:,2)', sampling_waypoints_offset(:,1)', 'b^', 'MarkerSize', 10);
     text(sampling_waypoints_offset(:,2)'+10, sampling_waypoints_offset(:,1)'-10, cellstr({int2str((1:size(sampling_waypoints_offset,1))')}), 'Color', 'b');
     myLegend{end + 1} = 'Search waypoints';
