@@ -68,16 +68,15 @@ void buildAndCheckMessage(byte characterIn) {
 
 		// The checksum is now verified and if successful the message
 		// is stored in the appropriate struct.
-		if (message[messageIndex] == calculateChecksum(subset(message, 2, messageIndex-4))) {
-			// We now memcpy all the data into our global data structs.
-			// NOTE: message[3] is used to skip the header & message ID info
+		if (message[messageIndex] == calculateChecksum(subset(message, 2, messageIndex-4)) && message[3] == messageIndex - 6) {
+			// NOTE: message[2] is used to skip the header & message ID info
 			switch (message[2]) {
 				case 1:
 					break;
 				case 2:
 					break;
 				case 3:
-                                        updateStateData(subset(message, 3, messageIndex-4));
+                                        updateStateData(subset(message, 4, messageIndex-6));
 					break;
 				case 4:
 					break;
@@ -94,7 +93,7 @@ void buildAndCheckMessage(byte characterIn) {
 	}
 }
 
-void updateStateData(byte message[]) {  
+void updateStateData(byte message[]) {
   // Wrap the message in a DataInputStream so that readFloat() can be used
   InputStream in = new ByteArrayInputStream(message);
   DataInputStream din = new DataInputStream(in);
