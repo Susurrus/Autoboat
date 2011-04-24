@@ -62,7 +62,7 @@ unsigned long receivedMessageCount; // Keep track of how many messages were succ
  * appropriate struct.
  */
 void buildAndCheckMessage(unsigned char characterIn) {
-	static unsigned char message[128];
+	static unsigned char message[64];
 	static unsigned char messageIndex;
 	static unsigned char messageState;
 
@@ -78,16 +78,19 @@ void buildAndCheckMessage(unsigned char characterIn) {
 	// We start recording a new message if we see the header
 	if (messageState == 0) {
 		if (characterIn == '%') {
-			message[0] = characterIn;
-			messageIndex = 1;
+			message[messageIndex] = characterIn;
+			messageIndex++;
 			messageState = 1;
+		} else {
+			messageIndex = 0;
+			messageState = 0;
 		}
 	} else if (messageState == 1) {
 		// If we don't find the necessary ampersand we start over
 		// waiting for a new sentence
 		if (characterIn == '&') {
-			message[1] = characterIn;
-			messageIndex = 2;
+			message[messageIndex] = characterIn;
+			messageIndex++;
 			messageState = 2;
 		} else {
 			messageIndex = 0;
@@ -96,10 +99,11 @@ void buildAndCheckMessage(unsigned char characterIn) {
 	} else if (messageState == 2) {
 		// Record every character that comes in now that we're building a sentence.
 		// Only stop if we run out of room or an asterisk is found.
-		message[messageIndex++] = characterIn;
+		message[messageIndex] = characterIn;
+		messageIndex++;
 		if (characterIn == '^') {
 			messageState = 3;
-		} else if (messageIndex == 127) {
+		} else if (messageIndex == 62) {
 			// If we've filled up the buffer, ignore the entire message as we can't store it all
 			messageState = 0;
 			messageIndex = 0;
@@ -109,14 +113,13 @@ void buildAndCheckMessage(unsigned char characterIn) {
 		// recording data as we haven't found the footer yet until
 		// we've filled up the entire message (ends at 124 characters
 		// as we need room for the 2 footer chars).
-		message[messageIndex++] = characterIn;
+		message[messageIndex] = characterIn;
+		messageIndex++;
 		if (characterIn == '&') {
 			messageState = 4;
 		} else if (messageIndex == 63) {
 			messageState = 0;
 			messageIndex = 0;
-		} else {
-			messageState = 3;
 		}
 	} else if (messageState == 4) {
 		// Record the second ASCII-hex character of the checksum byte.
@@ -124,7 +127,7 @@ void buildAndCheckMessage(unsigned char characterIn) {
 
 		// The checksum is now verified and if successful the message
 		// is stored in the appropriate struct.
-		if (message[messageIndex] == calculateChecksum(&message[2], messageIndex-4)) {
+		if (message[messageIndex] == calculateChecksum(&message[2], messageIndex - 4)) {
 			// We now memcpy all the data into our global data structs.
 			// NOTE: message[3] is used to skip the header & message ID info
 			receivedMessageCount++;
@@ -143,12 +146,12 @@ void buildAndCheckMessage(unsigned char characterIn) {
 					break;
 			}
 		}
-		
+
 		// We clear all state variables here regardless of success.
 		messageIndex = 0;
 		messageState = 0;
 		int b;
-		for (b = 0;b < 64;b++) {
+		for (b = 0; b < sizeof(message); b++) {
 			message[b] = 0;
 		}
 	}
@@ -188,13 +191,13 @@ void disableHil() {
  */
 unsigned char calculateChecksum(unsigned char* sentence, unsigned char size) {
 
-    unsigned char checkSum = 0;
+	unsigned char checkSum = 0;
 	unsigned char i;
 	for (i = 0; i < size; i++) {
 		checkSum ^= sentence[i];
-    }
-	
-    return checkSum;
+	}
+
+	return checkSum;
 }
 
 /**
