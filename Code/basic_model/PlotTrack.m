@@ -4,6 +4,10 @@ figure(1);clf;
 hold on;
 axis equal;
 
+% Clean up some variables that may have singleton dimensions:
+position = squeeze(position);
+velocity = squeeze(velocity);
+
 % Keep track of what's on the plot for a legend() call
 myLegend = {};
 
