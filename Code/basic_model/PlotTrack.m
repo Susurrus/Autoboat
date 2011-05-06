@@ -8,6 +8,14 @@ axis equal;
 position = squeeze(position);
 velocity = squeeze(velocity);
 
+% Fix velocity + position orientation
+if size(velocity, 1) == 3
+    velocity = velocity';
+end
+if size(position, 1) == 3
+    position = position';
+end
+
 % Keep track of what's on the plot for a legend() call
 myLegend = {};
 
