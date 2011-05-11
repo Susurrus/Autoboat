@@ -163,6 +163,7 @@ void updateStateData(byte message[]) {
     gpsHdop = din.readFloat();
     gpsFix = din.readByte();
     gpsSatellites = din.readByte();
+    reset = din.readByte();
   } catch (Exception e) {
     e.printStackTrace();
     println("Crap, failed to extract the data");
