@@ -78,6 +78,7 @@ ArrayList<Float> gpsSpeedList = new ArrayList<Float>(255);
 ArrayList<Float> gpsHdopList = new ArrayList<Float>(255);
 ArrayList<Byte> gpsFixList = new ArrayList<Byte>(255);
 ArrayList<Byte> gpsSatellitesList = new ArrayList<Byte>(255);
+ArrayList<Byte> resetList = new ArrayList<Byte>(255);
 
 // Boat state data playback
 double[][] L2Playback;
@@ -101,6 +102,7 @@ float[] gpsSpeedPlayback;
 float[] gpsHdopPlayback;
 byte[] gpsFixPlayback;
 byte[] gpsSatellitesPlayback;
+byte[] resetPlayback;
 
 // Rendering variables
 PFont regularFont;
@@ -148,7 +150,7 @@ void draw() {
     }
   } else if (playing) {
     if (playbackIndex < headingPlayback.length) {
-      if (millis() - lastPlaybackTime >= 200) { // Assume .2s sampletime
+      if (millis() - lastPlaybackTime >= 100) { // Assume .2s sampletime
         L2.x = (float)L2Playback[playbackIndex][0];
         L2.y = (float)L2Playback[playbackIndex][1];
         L2.z = (float)L2Playback[playbackIndex][2];
@@ -182,6 +184,7 @@ void draw() {
         gpsHdop = gpsHdopPlayback[playbackIndex];
         gpsFix = gpsFixPlayback[playbackIndex];
         gpsSatellites = gpsSatellitesPlayback[playbackIndex];
+        reset = resetPlayback[playbackIndex];
         
         playbackIndex++;
         lastPlaybackTime = millis();
@@ -442,6 +445,12 @@ void controlEvent(ControlEvent theEvent) {
             gpsSatellitesPlayback[i] = (byte)byteData[i][0];
           }
           
+          byteData = ((MLUInt8)inputMatFileReader.getMLArray("reset")).getArray();
+          resetPlayback = new byte[byteData.length];
+          for (int i=0;i<byteData.length;i++) {
+            resetPlayback[i] = (byte)byteData[i][0];
+          }
+          
         } catch (IOException e) {
           e.printStackTrace();
           exit();
@@ -501,6 +510,7 @@ public void startRecording() {
   gpsHdopList.clear();
   gpsFixList.clear();
   gpsSatellitesList.clear();
+  resetList.clear();
   
   // Reset the messages counter
   recordedMessages = new Long(0);
@@ -684,6 +694,14 @@ public void stopRecordingAndSave() {
   }
   MLInt8 gpsSatellitesML = new MLInt8("gpsSatellites", byte_gg, byte_gg.length);
   
+  byte_g = new Byte[resetList.size()];
+  resetList.toArray(byte_g);
+  byte_gg = new byte[resetList.size()];
+  for (int i = 0; i < resetList.size(); i++){
+    byte_gg[i] = (byte)byte_g[i];
+  }
+  MLUInt8 resetML = new MLUInt8("reset", byte_gg, byte_gg.length);
+  
   ArrayList matList = new ArrayList();
   matList.add(L2ML);
   matList.add(headingML);
@@ -706,6 +724,7 @@ public void stopRecordingAndSave() {
   matList.add(gpsHdopML);
   matList.add(gpsFixML);
   matList.add(gpsSatellitesML);
+  matList.add(resetML);
   
   try {
     Calendar cal = Calendar.getInstance();

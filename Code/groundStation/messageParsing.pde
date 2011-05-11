@@ -121,6 +121,7 @@ void updateStateData(byte message[]) {
     gpsHdopList.add(gpsHdop);
     gpsFixList.add(gpsFix);
     gpsSatellitesList.add(gpsSatellites);
+    resetList.add(reset);
     
     recordedMessages++;
   }
