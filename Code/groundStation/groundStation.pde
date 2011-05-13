@@ -80,6 +80,7 @@ ArrayList<Float> gpsHdopList = new ArrayList<Float>(255);
 ArrayList<Byte> gpsFixList = new ArrayList<Byte>(255);
 ArrayList<Byte> gpsSatellitesList = new ArrayList<Byte>(255);
 ArrayList<Byte> resetList = new ArrayList<Byte>(255);
+ArrayList<Byte> loadList = new ArrayList<Byte>(255);
 
 // Boat state data playback
 double[][] L2Playback;
@@ -104,6 +105,7 @@ float[] gpsHdopPlayback;
 byte[] gpsFixPlayback;
 byte[] gpsSatellitesPlayback;
 byte[] resetPlayback;
+byte[] loadPlayback;
 
 // Rendering variables
 PFont regularFont;
@@ -186,6 +188,7 @@ void draw() {
         gpsFix = gpsFixPlayback[playbackIndex];
         gpsSatellites = gpsSatellitesPlayback[playbackIndex];
         reset = resetPlayback[playbackIndex];
+        load = loadPlayback[playbackIndex];
         
         playbackIndex++;
         lastPlaybackTime = millis();
@@ -456,6 +459,12 @@ void controlEvent(ControlEvent theEvent) {
             resetPlayback[i] = (byte)byteData[i][0];
           }
           
+          byteData = ((MLUInt8)inputMatFileReader.getMLArray("load")).getArray();
+          loadPlayback = new byte[byteData.length];
+          for (int i=0;i<byteData.length;i++) {
+            loadPlayback[i] = (byte)byteData[i][0];
+          }
+          
         } catch (IOException e) {
           e.printStackTrace();
           exit();
@@ -516,6 +525,7 @@ public void startRecording() {
   gpsFixList.clear();
   gpsSatellitesList.clear();
   resetList.clear();
+  loadList.clear();
   
   // Reset the messages counter
   recordedMessages = new Long(0);
@@ -707,6 +717,14 @@ public void stopRecordingAndSave() {
   }
   MLUInt8 resetML = new MLUInt8("reset", byte_gg, byte_gg.length);
   
+  byte_g = new Byte[loadList.size()];
+  loadList.toArray(byte_g);
+  byte_gg = new byte[loadList.size()];
+  for (int i = 0; i < loadList.size(); i++){
+    byte_gg[i] = (byte)byte_g[i];
+  }
+  MLUInt8 loadML = new MLUInt8("load", byte_gg, byte_gg.length);
+  
   ArrayList matList = new ArrayList();
   matList.add(L2ML);
   matList.add(headingML);
@@ -730,6 +748,7 @@ public void stopRecordingAndSave() {
   matList.add(gpsFixML);
   matList.add(gpsSatellitesML);
   matList.add(resetML);
+  matList.add(loadML);
   
   try {
     Calendar cal = Calendar.getInstance();
