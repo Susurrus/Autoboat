@@ -55,6 +55,7 @@ float gpsHdop = 0;
 byte gpsFix = 0;
 byte gpsSatellites = 0;
 byte reset = 0;
+byte load = 0;
 
 // Boat state data recording
 ArrayList<float[]> L2List = new ArrayList<float[]>(255);
@@ -217,10 +218,14 @@ void draw() {
   text("Waypoint1", 50, 350);
   text("Heading", 400, 290);
   text("Reset", 500, 290);
+  text("Load", 570, 290);
   textFont(regularFont);
   
   // Draw the reset bits
-  text(String.format("0x%02x",reset), 500, 320);
+  text(String.format("0x%02x",reset), 500, 310);
+  
+  // Draw the load %
+  text(String.format("%3d%%",load), 570, 310);
   
   // Draw the L2 vector values
   text(L2.x, 300, 305);
