@@ -133,6 +133,8 @@ void setup() {
   customizeSerialPortsList(serialPortsList);
 }
 
+int lastDrawTime = 0;
+
 void draw() {
   // Redraw the background at every timestep
   // (Necessary for clearing things like the dropdown)
@@ -144,16 +146,17 @@ void draw() {
   // Grab some data from the serial port
   if (myPort != null && myPort.available() > 0 && !playing) {
     fill(0,255,0);
+    int bytesProcessed = 0;
     while(myPort.available() > 0) {
-      byte[] inBuffer = new byte[7];
+      byte[] inBuffer = new byte[127];
       int bytesToRead = myPort.readBytes(inBuffer);
-      for (int i=0;i<bytesToRead;i++) {
+      for (int i = 0; i < bytesToRead; i++) {
         buildAndCheckMessage(inBuffer[i]);
       }
     }
   } else if (playing) {
     if (playbackIndex < headingPlayback.length) {
-      if (millis() - lastPlaybackTime >= 100) { // Assume .2s sampletime
+      if (millis() - lastPlaybackTime >= 10) { // Assume .01s sampletime
         L2.x = (float)L2Playback[playbackIndex][0];
         L2.y = (float)L2Playback[playbackIndex][1];
         L2.z = (float)L2Playback[playbackIndex][2];
