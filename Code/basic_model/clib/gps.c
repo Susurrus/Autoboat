@@ -194,14 +194,14 @@ void getGpsData(unsigned char* data) {
 	data[11] = gpsControlData.alt.chData[3];
 	
 	// Add date info
-	data[12] = gpsControlData.day;
+	data[12] = gpsControlData.year;
 	data[13] = gpsControlData.month;
-	data[14] = gpsControlData.year;
+	data[14] = gpsControlData.day;
 	
 	// Add time info
-	data[15] = gpsControlData.sec;
+	data[15] = gpsControlData.hour;
 	data[16] = gpsControlData.min;
-	data[17] = gpsControlData.hour;
+	data[17] = gpsControlData.sec;
 	
 	data[18] = gpsControlData.cog.chData[0];
 	data[19] = gpsControlData.cog.chData[1];
