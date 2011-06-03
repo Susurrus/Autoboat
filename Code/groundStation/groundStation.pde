@@ -243,8 +243,8 @@ void draw() {
   
   // Add rudder sensor information
   text(rudderPot, 400, 405);
-  text(rudderPortLimit?"true":"false", 400, 420);
-  text(rudderSbLimit?"true":"false", 400, 435);
+  text("Pt: " + (rudderPortLimit?"true":"false"), 400, 420);
+  text("Sb: " + (rudderSbLimit?"true":"false"), 400, 435);
   
   // Add GPS sensor information
   text(gpsLatitude, 500, 405);
