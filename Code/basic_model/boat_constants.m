@@ -73,7 +73,7 @@ m_battery = 108.86;     % Weight of ballast batteries (kg)
 d_battery = .3048;      % Distance of batteries from rotation axis (m)
 disp_vessel = 612.35;   % Vessel displacement:1350 lbs (kg)
 max_batt_angle = 1.309; % Maximum angle for the battery tray: 75 degrees(radians)
-max_sea_state = 12;     % The maxmimum value of the Beaufort Scale
+max_sea_state = 12;     % The maximum value of the Beaufort Scale
 rudder_angle_max = 1;   % Maximum angle of the rudder (radians)
 throttle_max = 1;       % Maximum throttle value (% of maximum amps)
 
