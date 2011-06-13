@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.5"
+    ComputedModelVersion    "1.34"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -25,16 +25,16 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Jun 08 17:19:14 2011"
-  RTWModifiedTimeStamp	  229440033
-  ModelVersionFormat	  "1.%<AutoIncrement:5>"
+  LastModifiedDate	  "Sat Jun 11 16:07:00 2011"
+  RTWModifiedTimeStamp	  229709218
+  ModelVersionFormat	  "1.%<AutoIncrement:34>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
   LibraryLinkDisplay	  "none"
   WideLines		  off
   ShowLineDimensions	  off
-  ShowPortDataTypes	  off
+  ShowPortDataTypes	  on
   ShowLoopsOnError	  on
   IgnoreBidirectionalLines off
   ShowStorageClass	  off
@@ -125,7 +125,7 @@ Model {
 	  MinStep		  "auto"
 	  MaxConsecutiveMinStep	  "1"
 	  RelTol		  "1e-3"
-	  SolverMode		  "Auto"
+	  SolverMode		  "SingleTasking"
 	  Solver		  "FixedStepDiscrete"
 	  SolverName		  "FixedStepDiscrete"
 	  SolverJacobianMethodControl "auto"
@@ -704,10 +704,138 @@ Model {
     FontAngle		    "normal"
   }
   BlockParameterDefaults {
+    Block {
+      BlockType		      Constant
+      Value		      "1"
+      VectorParams1D	      on
+      SamplingMode	      "Sample based"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeMode	      "Inherit from 'Constant value'"
+      OutDataType	      "fixdt(1,16,0)"
+      ConRadixGroup	      "Use specified scaling"
+      OutScaling	      "[]"
+      OutDataTypeStr	      "Inherit: Inherit from 'Constant value'"
+      LockScale		      off
+      SampleTime	      "inf"
+      FramePeriod	      "inf"
+      PreserveConstantTs      off
+    }
+    Block {
+      BlockType		      Demux
+      Outputs		      "4"
+      DisplayOption	      "none"
+      BusSelectionMode	      off
+    }
+    Block {
+      BlockType		      Inport
+      Port		      "1"
+      UseBusObject	      off
+      BusObject		      "BusObject"
+      BusOutputAsStruct	      off
+      PortDimensions	      "-1"
+      VarSizeSig	      "Inherit"
+      SampleTime	      "-1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      DataType		      "auto"
+      OutDataType	      "fixdt(1,16,0)"
+      OutScaling	      "[]"
+      OutDataTypeStr	      "Inherit: auto"
+      LockScale		      off
+      SignalType	      "auto"
+      SamplingMode	      "auto"
+      LatchByDelayingOutsideSignal off
+      LatchInputForFeedbackSignals off
+      Interpolate	      on
+    }
+    Block {
+      BlockType		      Logic
+      Operator		      "AND"
+      Inputs		      "2"
+      IconShape		      "rectangular"
+      AllPortsSameDT	      on
+      OutDataTypeMode	      "Logical (see Configuration Parameters: Optimization)"
+      LogicDataType	      "uint(8)"
+      OutDataTypeStr	      "Inherit: Logical (see Configuration Parameters: Optimization)"
+      SampleTime	      "-1"
+    }
+    Block {
+      BlockType		      Mux
+      Inputs		      "4"
+      DisplayOption	      "none"
+      UseBusObject	      off
+      BusObject		      "BusObject"
+      NonVirtualBus	      off
+    }
+    Block {
+      BlockType		      Outport
+      Port		      "1"
+      UseBusObject	      off
+      BusObject		      "BusObject"
+      BusOutputAsStruct	      off
+      PortDimensions	      "-1"
+      VarSizeSig	      "Inherit"
+      SampleTime	      "-1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      DataType		      "auto"
+      OutDataType	      "fixdt(1,16,0)"
+      OutScaling	      "[]"
+      OutDataTypeStr	      "Inherit: auto"
+      LockScale		      off
+      SignalType	      "auto"
+      SamplingMode	      "auto"
+      SourceOfInitialOutputValue "Dialog"
+      OutputWhenDisabled      "held"
+      InitialOutput	      "[]"
+    }
+    Block {
+      BlockType		      Probe
+      ProbeWidth	      on
+      ProbeSampleTime	      on
+      ProbeComplexSignal      on
+      ProbeSignalDimensions   off
+      ProbeFramedSignal	      off
+      ProbeWidthDataType      "double"
+      ProbeSampleTimeDataType "double"
+      ProbeComplexityDataType "double"
+      ProbeDimensionsDataType "double"
+      ProbeFrameDataType      "double"
+    }
+    Block {
+      BlockType		      "S-Function"
+      FunctionName	      "system"
+      SFunctionModules	      "''"
+      PortCounts	      "[]"
+      SFunctionDeploymentMode off
+    }
+    Block {
+      BlockType		      SubSystem
+      ShowPortLabels	      "FromPortIcon"
+      Permissions	      "ReadWrite"
+      PermitHierarchicalResolution "All"
+      TreatAsAtomicUnit	      off
+      CheckFcnCallInpInsideContextMsg off
+      SystemSampleTime	      "-1"
+      RTWFcnNameOpts	      "Auto"
+      RTWFileNameOpts	      "Auto"
+      RTWMemSecFuncInitTerm   "Inherit from model"
+      RTWMemSecFuncExecute    "Inherit from model"
+      RTWMemSecDataConstants  "Inherit from model"
+      RTWMemSecDataInternal   "Inherit from model"
+      RTWMemSecDataParameters "Inherit from model"
+      SimViewingDevice	      off
+      DataTypeOverride	      "UseLocalSettings"
+      MinMaxOverflowLogging   "UseLocalSettings"
+    }
+    Block {
+      BlockType		      Terminator
+    }
   }
   System {
     Name		    "rudder_sensors"
-    Location		    [427, 136, 1408, 780]
+    Location		    [44, 153, 1542, 797]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -721,14 +849,14 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    47
+    SIDHighWatermark	    73
     Block {
       BlockType		      Reference
       Name		      "ADC Input"
       SID		      43
       Tag		      "dsPIC_ADC"
       Ports		      [0, 1]
-      Position		      [185, 241, 335, 299]
+      Position		      [130, 241, 280, 299]
       Priority		      "5"
       LibraryVersion	      "3.40"
       List {
@@ -761,17 +889,615 @@ Model {
       }
     }
     Block {
+      BlockType		      SubSystem
+      Name		      "Build HIL\nsentence"
+      SID		      60
+      Ports		      [1, 1]
+      Position		      [955, 339, 1025, 411]
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      System {
+	Name			"Build HIL\nsentence"
+	Location		[530, 283, 1084, 658]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Inport
+	  Name			  "data"
+	  SID			  61
+	  Position		  [20, 123, 50, 137]
+	  BackgroundColor	  "darkGreen"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Bitwise\nOperator"
+	  SID			  62
+	  Ports			  [1, 1]
+	  Position		  [240, 225, 280, 245]
+	  ShowName		  off
+	  LibraryVersion	  "1.216"
+	  SourceBlock		  "simulink/Logic and Bit\nOperations/Bitwise\nOperator"
+	  SourceType		  "Bitwise Operator"
+	  logicop		  "XOR"
+	  UseBitMask		  off
+	  NumInputPorts		  "1"
+	  BitMask		  "bin2dec('11011001')"
+	  BitMaskRealWorld	  "Stored Integer"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant"
+	  SID			  63
+	  Position		  [245, 52, 275, 68]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "37"
+	  OutDataTypeMode	  "uint8"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint8"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant1"
+	  SID			  64
+	  Position		  [245, 87, 275, 103]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "38"
+	  OutDataTypeMode	  "uint8"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint8"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant2"
+	  SID			  65
+	  Position		  [245, 157, 275, 173]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "94"
+	  OutDataTypeMode	  "uint8"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint8"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant3"
+	  SID			  66
+	  Position		  [245, 192, 275, 208]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "38"
+	  OutDataTypeMode	  "uint8"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint8"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant4"
+	  SID			  67
+	  Position		  [105, 102, 135, 118]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "3"
+	  OutDataTypeMode	  "uint8"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint8"
+	}
+	Block {
+	  BlockType		  Mux
+	  Name			  "Mux2"
+	  SID			  68
+	  Ports			  [3, 1]
+	  Position		  [200, 100, 205, 160]
+	  ShowName		  off
+	  Inputs		  "3"
+	  DisplayOption		  "bar"
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "Pack"
+	  SID			  69
+	  Ports			  [6, 1]
+	  Position		  [345, 45, 350, 250]
+	  LibraryVersion	  "1.31"
+	  PermitHierarchicalResolution "ExplicitOnly"
+	  TreatAsAtomicUnit	  on
+	  MinAlgLoopOccurrences	  off
+	  PropExecContextOutsideSubsystem off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  Opaque		  off
+	  RequestExecContextInheritance	off
+	  MaskHideContents	  off
+	  MaskType		  "Stateflow"
+	  MaskDescription	  "Embedded MATLAB block"
+	  MaskDisplay		  "disp('fcn');"
+	  MaskSelfModifiable	  on
+	  MaskIconFrame		  on
+	  MaskIconOpaque	  off
+	  MaskIconRotate	  "none"
+	  MaskPortRotate	  "default"
+	  MaskIconUnits		  "autoscale"
+	  System {
+	    Name		    "Pack"
+	    Location		    [257, 457, 812, 717]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    SIDHighWatermark	    22
+	    Block {
+	      BlockType		      Inport
+	      Name		      "a"
+	      SID		      1
+	      Position		      [20, 101, 40, 119]
+	      IconDisplay	      "Port number"
+	      OutDataType	      "sfix(16)"
+	      OutScaling	      "2^0"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "b"
+	      SID		      18
+	      Position		      [20, 136, 40, 154]
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "c"
+	      SID		      19
+	      Position		      [20, 171, 40, 189]
+	      Port		      "3"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "d"
+	      SID		      20
+	      Position		      [20, 206, 40, 224]
+	      Port		      "4"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "e"
+	      SID		      21
+	      Position		      [20, 246, 40, 264]
+	      Port		      "5"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "f"
+	      SID		      22
+	      Position		      [20, 281, 40, 299]
+	      Port		      "6"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Demux
+	      Name		      " Demux "
+	      SID		      15
+	      Ports		      [1, 1]
+	      Position		      [270, 360, 320, 400]
+	      Outputs		      "1"
+	    }
+	    Block {
+	      BlockType		      "S-Function"
+	      Name		      " SFunction "
+	      SID		      14
+	      Tag		      "Stateflow S-Function rudder_sensors 21"
+	      Ports		      [6, 2]
+	      Position		      [180, 118, 230, 362]
+	      FunctionName	      "sf_sfun"
+	      PortCounts	      "[6 2]"
+	      EnableBusSupport	      on
+	      Port {
+		PortNumber		2
+		Name			"y"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	    }
+	    Block {
+	      BlockType		      Terminator
+	      Name		      " Terminator "
+	      SID		      17
+	      Position		      [460, 371, 480, 389]
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "y"
+	      SID		      5
+	      Position		      [460, 101, 480, 119]
+	      IconDisplay	      "Port number"
+	      OutDataType	      "sfix(16)"
+	      OutScaling	      "2^0"
+	    }
+	    Line {
+	      SrcBlock		      " SFunction "
+	      SrcPort		      1
+	      DstBlock		      " Demux "
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "a"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "b"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "c"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "d"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      4
+	    }
+	    Line {
+	      SrcBlock		      "e"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      5
+	    }
+	    Line {
+	      SrcBlock		      "f"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      6
+	    }
+	    Line {
+	      Name		      "y"
+	      Labels		      [0, 0]
+	      SrcBlock		      " SFunction "
+	      SrcPort		      2
+	      DstBlock		      "y"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      " Demux "
+	      SrcPort		      1
+	      DstBlock		      " Terminator "
+	      DstPort		      1
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  Probe
+	  Name			  "Probe"
+	  SID			  70
+	  Ports			  [1, 1]
+	  Position		  [105, 121, 160, 139]
+	  ShowName		  off
+	  ProbeSampleTime	  off
+	  ProbeComplexSignal	  off
+	  ProbeWidthDataType	  "uint8"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "sent"
+	  SID			  71
+	  Position		  [395, 143, 425, 157]
+	  BackgroundColor	  "yellow"
+	  IconDisplay		  "Port number"
+	}
+	Line {
+	  SrcBlock		  "data"
+	  SrcPort		  1
+	  Points		  [20, 0]
+	  Branch {
+	    DstBlock		    "Probe"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, 20]
+	    DstBlock		    "Mux2"
+	    DstPort		    3
+	  }
+	}
+	Line {
+	  SrcBlock		  "Constant"
+	  SrcPort		  1
+	  DstBlock		  "Pack"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Constant1"
+	  SrcPort		  1
+	  DstBlock		  "Pack"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Pack"
+	  SrcPort		  1
+	  DstBlock		  "sent"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Mux2"
+	  SrcPort		  1
+	  Points		  [15, 0]
+	  Branch {
+	    DstBlock		    "Bitwise\nOperator"
+	    DstPort		    1
+	  }
+	  Branch {
+	    DstBlock		    "Pack"
+	    DstPort		    3
+	  }
+	}
+	Line {
+	  SrcBlock		  "Probe"
+	  SrcPort		  1
+	  DstBlock		  "Mux2"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Constant2"
+	  SrcPort		  1
+	  DstBlock		  "Pack"
+	  DstPort		  4
+	}
+	Line {
+	  SrcBlock		  "Constant3"
+	  SrcPort		  1
+	  DstBlock		  "Pack"
+	  DstPort		  5
+	}
+	Line {
+	  SrcBlock		  "Bitwise\nOperator"
+	  SrcPort		  1
+	  DstBlock		  "Pack"
+	  DstPort		  6
+	}
+	Line {
+	  SrcBlock		  "Constant4"
+	  SrcPort		  1
+	  DstBlock		  "Mux2"
+	  DstPort		  1
+	}
+      }
+    }
+    Block {
       BlockType		      Reference
       Name		      "Configure Model \nfor dsPIC"
       SID		      5
       Ports		      []
       Position		      [15, 14, 127, 70]
       ForegroundColor	      "blue"
-      BackgroundColor	      "yellow"
+      BackgroundColor	      "cyan"
       ShowName		      off
       LibraryVersion	      "3.40"
       SourceBlock	      "dsPICdrivers/Simulink Configuration/Configure Model \nfor dsPIC"
       SourceType	      ""
+    }
+    Block {
+      BlockType		      SubSystem
+      Name		      "Convert rudder sensor\nreadings into rudder angle"
+      SID		      53
+      Ports		      [3, 1]
+      Position		      [435, 270, 600, 340]
+      LibraryVersion	      "1.31"
+      PermitHierarchicalResolution "ExplicitOnly"
+      TreatAsAtomicUnit	      on
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      MaskType		      "Stateflow"
+      MaskDescription	      "Embedded MATLAB block"
+      MaskDisplay	      "disp('pot_to_rads');"
+      MaskSelfModifiable      on
+      MaskIconFrame	      on
+      MaskIconOpaque	      off
+      MaskIconRotate	      "none"
+      MaskPortRotate	      "default"
+      MaskIconUnits	      "autoscale"
+      System {
+	Name			"Convert rudder sensor\nreadings into rudder angle"
+	Location		[257, 457, 812, 717]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	SIDHighWatermark	20
+	SIDPrevWatermark	13
+	Block {
+	  BlockType		  Inport
+	  Name			  "in"
+	  SID			  1
+	  Position		  [20, 101, 40, 119]
+	  IconDisplay		  "Port number"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "port_limit"
+	  SID			  18
+	  Position		  [20, 136, 40, 154]
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "starboard_limit"
+	  SID			  19
+	  Position		  [20, 171, 40, 189]
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Demux
+	  Name			  " Demux "
+	  SID			  15
+	  Ports			  [1, 1]
+	  Position		  [270, 205, 320, 245]
+	  Outputs		  "1"
+	}
+	Block {
+	  BlockType		  "S-Function"
+	  Name			  " SFunction "
+	  SID			  14
+	  Tag			  "Stateflow S-Function rudder_sensors 2"
+	  Ports			  [3, 2]
+	  Position		  [180, 104, 230, 206]
+	  FunctionName		  "sf_sfun"
+	  PortCounts		  "[3 2]"
+	  EnableBusSupport	  on
+	  Port {
+	    PortNumber		    2
+	    Name		    "rads"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Terminator
+	  Name			  " Terminator "
+	  SID			  17
+	  Position		  [460, 216, 480, 234]
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "rads"
+	  SID			  5
+	  Position		  [460, 101, 480, 119]
+	  IconDisplay		  "Port number"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	}
+	Line {
+	  SrcBlock		  " SFunction "
+	  SrcPort		  1
+	  DstBlock		  " Demux "
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "in"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "port_limit"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "starboard_limit"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  3
+	}
+	Line {
+	  Name			  "rads"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  2
+	  DstBlock		  "rads"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  " Demux "
+	  SrcPort		  1
+	  DstBlock		  " Terminator "
+	  DstPort		  1
+	}
+      }
+    }
+    Block {
+      BlockType		      Logic
+      Name		      "Logical\nOperator"
+      SID		      49
+      Ports		      [1, 1]
+      Position		      [310, 354, 340, 386]
+      ShowName		      off
+      Operator		      "NOT"
+      Inputs		      "1"
+      AllPortsSameDT	      off
+      OutDataTypeMode	      "boolean"
+      LogicDataType	      "fixdt(0, 8)"
+      OutDataTypeStr	      "boolean"
+      Port {
+	PortNumber		1
+	Name			"limit port"
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
+    }
+    Block {
+      BlockType		      Logic
+      Name		      "Logical\nOperator1"
+      SID		      54
+      Ports		      [1, 1]
+      Position		      [310, 424, 340, 456]
+      ShowName		      off
+      Operator		      "NOT"
+      Inputs		      "1"
+      AllPortsSameDT	      off
+      OutDataTypeMode	      "boolean"
+      LogicDataType	      "fixdt(0, 8)"
+      OutDataTypeStr	      "boolean"
+      Port {
+	PortNumber		1
+	Name			"limit starboard"
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
     }
     Block {
       BlockType		      Reference
@@ -803,11 +1529,11 @@ Model {
       tmr2345cfg	      "[-1 -1 -1 -1 -1 -1 -1 -1]"
       IOautoConf	      on
       typePort		      "[ 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  8  0  0  0  0  0  0  0  0  0  0  0  0  0  0  "
-      "0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0"
-      "  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  4  5  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0 "
+      "0  0  0  9  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0"
+      "  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  4  5  0  0  0  0  0  0  0  0  0  0  0  0  0  9  0  0  0  0  0  0 "
       " 0  0  0  0  0  0 ]"
       TRIS		      "[ 65535  65535  65535  65535  65535  65535  65535 ]"
-      ADPCFG		      "0"
+      ADPCFG		      "131072"
       MasterBusyPort	      "None"
       MasterOverloadPort      "None"
       FOSC		      "Quartz (XT - HS)"
@@ -824,23 +1550,208 @@ Model {
       PR2345		      "[65535  65535  65535  65535  65535  65535  65535  65535]"
     }
     Block {
+      BlockType		      SubSystem
+      Name		      "Pack"
+      SID		      72
+      Ports		      [4, 1]
+      Position		      [850, 220, 925, 525]
+      LibraryVersion	      "1.31"
+      PermitHierarchicalResolution "ExplicitOnly"
+      TreatAsAtomicUnit	      on
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      MaskType		      "Stateflow"
+      MaskDescription	      "Embedded MATLAB block"
+      MaskDisplay	      "disp('fcn');"
+      MaskSelfModifiable      on
+      MaskIconFrame	      on
+      MaskIconOpaque	      off
+      MaskIconRotate	      "none"
+      MaskPortRotate	      "default"
+      MaskIconUnits	      "autoscale"
+      System {
+	Name			"Pack"
+	Location		[257, 457, 812, 717]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	SIDHighWatermark	42
+	SIDPrevWatermark	42
+	Block {
+	  BlockType		  Inport
+	  Name			  "rudder_pot"
+	  SID			  24
+	  Position		  [20, 101, 40, 119]
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "port_limit"
+	  SID			  25
+	  Position		  [20, 136, 40, 154]
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "sb_limit"
+	  SID			  26
+	  Position		  [20, 171, 40, 189]
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "lat"
+	  SID			  27
+	  Position		  [20, 206, 40, 224]
+	  Port			  "4"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Demux
+	  Name			  " Demux "
+	  SID			  15
+	  Ports			  [1, 1]
+	  Position		  [270, 725, 320, 765]
+	  Outputs		  "1"
+	}
+	Block {
+	  BlockType		  "S-Function"
+	  Name			  " SFunction "
+	  SID			  14
+	  Tag			  "Stateflow S-Function rudder_sensors 16"
+	  Ports			  [4, 2]
+	  Position		  [180, 151, 230, 724]
+	  FunctionName		  "sf_sfun"
+	  PortCounts		  "[4 2]"
+	  EnableBusSupport	  on
+	  Port {
+	    PortNumber		    2
+	    Name		    "y"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Terminator
+	  Name			  " Terminator "
+	  SID			  17
+	  Position		  [460, 736, 480, 754]
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "y"
+	  SID			  5
+	  Position		  [460, 101, 480, 119]
+	  IconDisplay		  "Port number"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	}
+	Line {
+	  SrcBlock		  " SFunction "
+	  SrcPort		  1
+	  DstBlock		  " Demux "
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "rudder_pot"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "port_limit"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "sb_limit"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "lat"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  4
+	}
+	Line {
+	  Name			  "y"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  2
+	  DstBlock		  "y"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  " Demux "
+	  SrcPort		  1
+	  DstBlock		  " Terminator "
+	  DstPort		  1
+	}
+      }
+    }
+    Block {
       BlockType		      Reference
-      Name		      "TX Output Multiplexed\nfor Matlab / Labview"
-      SID		      46
-      Tag		      "dsPIC_TX_Multiplexed"
+      Name		      "Port Hall"
+      SID		      51
+      Tag		      "dsPIC_Digital_Input"
+      Ports		      [0, 1]
+      Position		      [145, 350, 260, 390]
+      LibraryVersion	      "3.40"
+      SourceBlock	      "dsPICdrivers/Digital I//O/Digital Input"
+      SourceType	      ""
+      PORT		      "C"
+      Pin		      "[2]"
+      SampleTime	      ".01"
+      OrderingInOutPopup      "None"
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Starboard Hall"
+      SID		      55
+      Tag		      "dsPIC_Digital_Input"
+      Ports		      [0, 1]
+      Position		      [145, 420, 260, 460]
+      LibraryVersion	      "3.40"
+      SourceBlock	      "dsPICdrivers/Digital I//O/Digital Input"
+      SourceType	      ""
+      PORT		      "G"
+      Pin		      "[3]"
+      SampleTime	      ".01"
+      OrderingInOutPopup      "None"
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Tx Output"
+      SID		      73
+      Tag		      "dsPIC_TX"
       Ports		      [1]
-      Position		      [420, 249, 560, 291]
+      Position		      [1055, 359, 1125, 391]
+      ShowName		      off
       Priority		      "5"
       LibraryVersion	      "3.40"
-      SourceBlock	      "dsPICdrivers/Serial PORT/TX Output Multiplexed\nfor Matlab // Labview"
-      SourceType	      "send structured data frame to Matlab / Labview"
+      SourceBlock	      "dsPICdrivers/Serial PORT/Tx Output"
+      SourceType	      "Serial Transmition"
       UART		      "2"
-      CleverSpreadingChk      on
-      CleverSpreading	      "1"
-      CHANNEL		      "[0]"
-      CHANNELBLOCKED	      "[]"
-      CHANNELBLOCKED_BITEWISE "0"
-      Status		      "OK"
+      OrderingInOutPopup      "None"
     }
     Block {
       BlockType		      Reference
@@ -848,7 +1759,7 @@ Model {
       SID		      47
       Tag		      "dsPIC_config_UART"
       Ports		      []
-      Position		      [185, 103, 285, 153]
+      Position		      [155, 103, 255, 153]
       BackgroundColor	      "lightBlue"
       DropShadow	      on
       Priority		      "2"
@@ -864,7 +1775,7 @@ Model {
       UART		      "2"
       proposed_BAUD	      "115200"
       BAUD		      "115200"
-      ALT_TX_RX		      on
+      ALT_TX_RX		      off
       InterruptTxWhen	      "When Transmit Buffer is empty"
       TXInterruptPri	      "1"
       TxBufferSize	      "32"
@@ -880,24 +1791,85 @@ Model {
       ERROR		      "-1.3573"
       BYTES_STEP	      "113.6364"
     }
-    Block {
-      BlockType		      Reference
-      Name		      "dbl-click to open\nGraphical interface"
-      SID		      45
-      Ports		      []
-      Position		      [436, 102, 551, 151]
-      DropShadow	      on
-      LibraryVersion	      "3.40"
-      SourceBlock	      "dsPICdrivers/Serial PORT/dbl-click to open\nGraphical interface"
-      SourceType	      ""
-      Nothing		      "0"
-    }
     Line {
       Name		      "position"
       Labels		      [0, 0]
       SrcBlock		      "ADC Input"
       SrcPort		      1
-      DstBlock		      "TX Output Multiplexed\nfor Matlab / Labview"
+      Points		      [130, 0]
+      Branch {
+	Points			[0, 10]
+	DstBlock		"Convert rudder sensor\nreadings into rudder angle"
+	DstPort			1
+      }
+      Branch {
+	Points			[420, 0]
+	DstBlock		"Pack"
+	DstPort			1
+      }
+    }
+    Line {
+      SrcBlock		      "Port Hall"
+      SrcPort		      1
+      DstBlock		      "Logical\nOperator"
+      DstPort		      1
+    }
+    Line {
+      Name		      "limit port"
+      Labels		      [0, 0]
+      SrcBlock		      "Logical\nOperator"
+      SrcPort		      1
+      Points		      [45, 0]
+      Branch {
+	Points			[0, -65]
+	DstBlock		"Convert rudder sensor\nreadings into rudder angle"
+	DstPort			2
+      }
+      Branch {
+	Points			[445, 0]
+	DstBlock		"Pack"
+	DstPort			2
+      }
+    }
+    Line {
+      SrcBlock		      "Convert rudder sensor\nreadings into rudder angle"
+      SrcPort		      1
+      Points		      [5, 0; 0, 180]
+      DstBlock		      "Pack"
+      DstPort		      4
+    }
+    Line {
+      SrcBlock		      "Starboard Hall"
+      SrcPort		      1
+      DstBlock		      "Logical\nOperator1"
+      DstPort		      1
+    }
+    Line {
+      Name		      "limit starboard"
+      Labels		      [0, 0]
+      SrcBlock		      "Logical\nOperator1"
+      SrcPort		      1
+      Points		      [75, 0]
+      Branch {
+	DstBlock		"Convert rudder sensor\nreadings into rudder angle"
+	DstPort			3
+      }
+      Branch {
+	Points			[415, 0]
+	DstBlock		"Pack"
+	DstPort			3
+      }
+    }
+    Line {
+      SrcBlock		      "Pack"
+      SrcPort		      1
+      DstBlock		      "Build HIL\nsentence"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Build HIL\nsentence"
+      SrcPort		      1
+      DstBlock		      "Tx Output"
       DstPort		      1
     }
   }
@@ -915,20 +1887,616 @@ Stateflow {
     name		    "rudder_sensors"
     created		    "08-Jun-2011 13:18:55"
     isLibrary		    0
-    firstTarget		    2
+    firstTarget		    33
     sfVersion		    75014000
   }
-  target {
+  chart {
     id			    2
+    name		    "Convert rudder sensor\nreadings into rudder angle"
+    windowPosition	    [352.266 353.766 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1600 900 1.333333333333333]
+    treeNode		    [0 3 0 0]
+    firstTransition	    5
+    firstJunction	    4
+    viewObj		    2
+    machine		    1
+    toolbarMode		    LIBRARY_TOOLBAR
+    ssIdHighWaterMark	    8
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    6
+    chartFileNumber	    2
+    disableImplicitCasting  1
+    eml {
+      name		      "pot_to_rads"
+    }
+  }
+  state {
+    id			    3
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    2
+    treeNode		    [2 0 0 0]
+    superState		    SUBCHART
+    subviewer		    2
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function rads = pot_to_rads(in, port_limit, starboard_limit)\n%#eml\n\npersistent low_side high_s"
+      "ide lastInput offset\nif isempty(low_side) || isempty(high_side)\n    low_side = int32(-1);\n    high_side = int"
+      "32(-1);\n    lastInput = int32(-10000);\n    offset = int32(0);\nend\n\n% Here we track transitions. On a high->"
+      "low transition start adding 1023\n% and on a low->high transition don't add anything. It \"centers\" the input\n"
+      "% range around 1023.\ninput = int32(in);\nif lastInput == uint32(-10000)\n    lastInput = input;\nend\njump = in"
+      "put - lastInput;\nif jump > 1000\n    offset = int32(0);\nelseif jump < -1000\n    offset = int32(1023);\nend\n\n"
+      "% We record the last input BEFORE it's offset. This fixes situations where\n% we're comparing data before and af"
+      "ter the very first transition.\nlastInput = input;\n\n% Apply any offset that should be there.\ninput = input + "
+      "offset;\n\n% Update port range limit when the Hall limit switch. Only update to the\n% maximum value obtained du"
+      "ring the limit switch active period.\nif port_limit && (input > high_side || high_side == -1)\n    high_side = i"
+      "nput;\n    \n    % If the high_side limit is less than the low_side one, we add 1023\n    % assuming that it's a"
+      " valid value (ie. ~= -1).\n    if high_side < low_side && high_side ~= -1\n        high_side = high_side + 1023;"
+      "\n    end\nend\n\n% Update starboard ADC value when limit is reached. Only update to the\n% maximum value obtain"
+      "ed during the limit switch active period.\nif starboard_limit && (input < low_side || low_side == -1)\n    low_s"
+      "ide = input;\n    \n    % If the high_side limit is less than the low_side one, we add 1023\n    % assuming that"
+      " it's a valid value (ie. ~= -1).\n    if high_side < low_side && high_side ~= -1\n        high_side = high_side "
+      "+ 1023;\n    end\nend\n\n% Return 0 when we can't actually determine the rudder position\nif high_side == -1 || "
+      "low_side == -1\n    rads = single(0);\n    return;\nend\n\n% Prepare our input. Here we subtract the baseline 'l"
+      "ow_side' value off of\n% the input so we start with a range from [0..high_side-lowside] and map it\n% into the o"
+      "utput range of 45 degrees.\nin_min = 0;\nin_max = high_side - low_side;\nout_min = int32(-45);\nout_max = int32("
+      "45);\nval = input - low_side;\n\n% This is a basic integer implementation of a map() function. It was pulled\n% "
+      "from: http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1289758376, first\n% post.\n% NOTE: There can be integer o"
+      "verflow in the first multiplication, but with\n% the set of inputs we're seeing here the maximum value of the mu"
+      "ltiplication\n% is 90*1023 = 92070, far below intmax32.\nmappedValue = (val - in_min) * (out_max - out_min) / (i"
+      "n_max - in_min) + out_min;\n\n% Finally convert to radians and a double before returning it.\nrads = single(mapp"
+      "edValue) * pi / 180;"
+      editorLayout	      "100 M4x1[566 85 927 694]"
+    }
+  }
+  junction {
+    id			    4
+    position		    [23.5747 49.5747 7]
+    chart		    2
+    linkNode		    [2 0 0]
+    subviewer		    2
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    5
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      4
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    2
+    linkNode		    [2 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    2
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    6
+    ssIdNumber		    4
+    name		    "in"
+    linkNode		    [2 0 7]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_UINT16_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+    }
+    dataType		    "uint16"
+  }
+  data {
+    id			    7
+    ssIdNumber		    5
+    name		    "rads"
+    linkNode		    [2 6 8]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    8
+    ssIdNumber		    6
+    name		    "port_limit"
+    linkNode		    [2 7 9]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_BOOLEAN_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "boolean"
+  }
+  data {
+    id			    9
+    ssIdNumber		    7
+    name		    "starboard_limit"
+    linkNode		    [2 8 0]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_BOOLEAN_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "boolean"
+  }
+  instance {
+    id			    10
+    name		    "Convert rudder sensor\nreadings into rudder angle"
+    machine		    1
+    chart		    2
+  }
+  chart {
+    id			    11
+    name		    "Pack"
+    windowPosition	    [341.813 269.45 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1600 900 1.333333333333333]
+    treeNode		    [0 12 0 0]
+    firstTransition	    14
+    firstJunction	    13
+    viewObj		    11
+    machine		    1
+    toolbarMode		    LIBRARY_TOOLBAR
+    ssIdHighWaterMark	    37
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    15
+    chartFileNumber	    16
+    disableImplicitCasting  1
+    eml {
+      name		      "fcn"
+    }
+  }
+  state {
+    id			    12
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    11
+    treeNode		    [11 0 0 0]
+    superState		    SUBCHART
+    subviewer		    11
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function y = fcn(rudder_pot, port_limit, sb_limit, lat)\n%#eml\n\ny = zeros(90, 1, 'uint8');\ny(5"
+      "3:54) = packUint16BE(rudder_pot);\ny(55) = port_limit;\ny(56) = sb_limit;\ny(57:60) = packUint32BE(typecast(lat,"
+      "'uint32'));\n\nfunction out = packUint32BE(in)\nout = zeros(4, 1, 'uint8');\nout(1) = uint8(bitand(bitshift(in,-"
+      "24),hex2dec('FF')));\nout(2) = uint8(bitand(bitshift(in,-16),hex2dec('FF')));\nout(3) = uint8(bitand(bitshift(in"
+      ",-8),hex2dec('FF')));\nout(4) = uint8(bitand(in,hex2dec('FF')));\n\nfunction out = packUint16BE(in)\nout = zeros"
+      "(2, 1, 'uint8');\nout(1) = uint8(bitand(bitshift(in,-8),hex2dec('FF')));\nout(2) = uint8(bitand(in,hex2dec('FF')"
+      "));"
+      editorLayout	      "100 M4x1[566 85 927 694]"
+    }
+  }
+  junction {
+    id			    13
+    position		    [23.5747 49.5747 7]
+    chart		    11
+    linkNode		    [11 0 0]
+    subviewer		    11
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    14
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      13
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    11
+    linkNode		    [11 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    11
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    15
+    ssIdNumber		    5
+    name		    "y"
+    linkNode		    [11 0 16]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    16
+    ssIdNumber		    18
+    name		    "rudder_pot"
+    linkNode		    [11 15 17]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    17
+    ssIdNumber		    19
+    name		    "port_limit"
+    linkNode		    [11 16 18]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    18
+    ssIdNumber		    20
+    name		    "sb_limit"
+    linkNode		    [11 17 19]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    19
+    ssIdNumber		    21
+    name		    "lat"
+    linkNode		    [11 18 0]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  instance {
+    id			    20
+    name		    "Pack"
+    machine		    1
+    chart		    11
+  }
+  chart {
+    id			    21
+    name		    "Build HIL\nsentence/Pack"
+    windowPosition	    [356.813 254.45 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1600 900 1.333333333333333]
+    treeNode		    [0 22 0 0]
+    firstTransition	    24
+    firstJunction	    23
+    viewObj		    21
+    machine		    1
+    toolbarMode		    LIBRARY_TOOLBAR
+    ssIdHighWaterMark	    16
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    25
+    chartFileNumber	    21
+    disableImplicitCasting  1
+    eml {
+      name		      "fcn"
+    }
+  }
+  state {
+    id			    22
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    21
+    treeNode		    [21 0 0 0]
+    superState		    SUBCHART
+    subviewer		    21
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function y = fcn(a, b, c, d, e, f)\n%#eml\n\ny = zeros(length(a)+length(b)+length(c)+length(d)+le"
+      "ngth(e)+length(f), 1, 'uint8');\ny(1) = a;\ny(2) = b;\ny(3:94) = c;\ny(95) = d;\ny(96) = e;\ny(97) = f;"
+      editorLayout	      "100 M4x1[204 515 1612 743]"
+    }
+  }
+  junction {
+    id			    23
+    position		    [23.5747 49.5747 7]
+    chart		    21
+    linkNode		    [21 0 0]
+    subviewer		    21
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    24
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      23
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    21
+    linkNode		    [21 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    21
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    25
+    ssIdNumber		    4
+    name		    "a"
+    linkNode		    [21 0 26]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    26
+    ssIdNumber		    5
+    name		    "y"
+    linkNode		    [21 25 27]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    27
+    ssIdNumber		    6
+    name		    "b"
+    linkNode		    [21 26 28]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    28
+    ssIdNumber		    7
+    name		    "c"
+    linkNode		    [21 27 29]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    29
+    ssIdNumber		    8
+    name		    "d"
+    linkNode		    [21 28 30]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    30
+    ssIdNumber		    9
+    name		    "e"
+    linkNode		    [21 29 31]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    31
+    ssIdNumber		    10
+    name		    "f"
+    linkNode		    [21 30 0]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  instance {
+    id			    32
+    name		    "Build HIL\nsentence/Pack"
+    machine		    1
+    chart		    21
+  }
+  target {
+    id			    33
     name		    "sfun"
     description		    "Default Simulink S-Function Target."
     machine		    1
-    linkNode		    [1 0 3]
+    linkNode		    [1 0 34]
   }
   target {
-    id			    3
+    id			    34
     name		    "rtw"
     machine		    1
-    linkNode		    [1 2 0]
+    linkNode		    [1 33 0]
   }
 }
