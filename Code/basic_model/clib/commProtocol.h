@@ -126,14 +126,6 @@ typedef struct {
 	unsigned char waypointCount;
 } tStateData;
 
-typedef struct {
-	unsigned char runMode; // 0 for stop, 1 for run, 2 for return-to-base, 3 for manual RC control)
-	unsigned char HILEnable; // 0 to enable normal running, 1 for HIL running)
-	unsigned char waypointMode; // Sets the waypoint navigation modes.
-	unsigned char waypointCount; // Number of waypoints being transmit
-	tShortToChar waypoints[16]; // Store room for 8 north/east pairs of waypoints
-} tCommandData;
-
 /**
  * This function builds a full message internally byte-by-byte,
  * verifies its checksum, and then pushes that data into the
@@ -143,11 +135,15 @@ void buildAndCheckMessage(unsigned char characterIn);
 
 void processNewCommData(unsigned char* message);
 
+/**
+ * The following functions change the UART2 baud rate to allow
+ * for HIL mode (running at 115200baud) and back to the old baud rate.
+ */
 void setHilMode(unsigned char mode);
 
-void enableHil();
+inline void enableHil();
 
-void disableHil();
+inline void disableHil();
 
 /**
  * This function calculates the checksum of some bytes in an
@@ -155,21 +151,27 @@ void disableHil();
  */
 unsigned char calculateChecksum(unsigned char* sentence, unsigned char size);
 
-void getSensorData(unsigned char* data);
-
+/**
+ * Manage the sensor data struct.
+ */
 void setSensorData(unsigned char* data);
 
-/**
- * This function clears the sensor data struct to all zeros.
- */
+void getSensorData(unsigned char* data);
+
 void clearSensorData();
+
+/**
+ * Manage the actuator data struct
+ */
+void setActuatorData(unsigned char* data);
 
 void getActuatorData(unsigned char* data);
 
-void setActuatorData(unsigned char* data);
+inline void uart2EnqueueActuatorData(unsigned char *data);
 
+/**
+ * Manage the state data struct
+ */
 void getStateData(unsigned char* data);
-
-void getCommandData(unsigned char* data);
 
 #endif /* _COMMPROTOCOL_H_ */

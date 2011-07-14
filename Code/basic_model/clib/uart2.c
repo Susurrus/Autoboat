@@ -3,7 +3,6 @@
 #include "circBuffer.h"
 #include "uart2.h"
 #include <p33Fxxxx.h>
-#include <uart.h>
 
 CircBuffer uart2RxBuffer;
 CircBuffer uart2TxBuffer;
@@ -17,11 +16,11 @@ CircBuffer uart2TxBuffer;
  */
 void initUart2() {
 	int i;
-	
+
 	// First initialize the necessary circular buffers.
 	newCircBuffer(&uart2RxBuffer);
 	newCircBuffer(&uart2TxBuffer);
-	
+
 	// Configure and open the port;
 	// U2MODE Register
 	// ==============
@@ -37,12 +36,12 @@ void initUart2() {
 	U2MODEbits.PDSEL	= 0;		// No parity 8 bit
 	U2MODEbits.STSEL	= 0;		// 1 stop bit
 	U2MODEbits.BRGH 	= 0;		// Low speed mode
-	
+
 	// U2STA Register
 	// ==============
 	U2STAbits.URXISEL	= 2;		// RX interrupt when 3 chars are in
 	U2STAbits.OERR		= 0;		// clear overun error
-	
+
 	U2BRG = BAUD4800_BRG_REG;		// Set the baud rate to 4800
 
 	// Finally setup interrupts for proper UART communication.
@@ -50,26 +49,26 @@ void initUart2() {
   	IPC7bits.U2RXIP = 6;    		// Interrupt priority 6 
 	IEC1bits.U2TXIE = 1; 			// Enable transmission interrupt
 	IEC1bits.U2RXIE = 1; 			// Enable reception interrupt
-	
+
 	// Enable the port;
 	U2MODEbits.UARTEN	= 1;		// Enable the port	
 	U2STAbits.UTXEN		= 1;		// Enable TX
-	
+
 }
 
 void changeUart2BaudRate(unsigned short brgReg) {
-	
+
 	unsigned char utxen = U2STAbits.UTXEN;
 
 	// Disable the port;
 	U2MODEbits.UARTEN = 0;
-	
+
 	// Change the BRG register to set the new baud rate
 	U2BRG = brgReg;
-	
-	// Enable the port;
+
+	// Enable the port restoring the previous transmission settings
 	U2MODEbits.UARTEN	= 1;
-	U2STAbits.UTXEN		= utxen;		// Restore TX
+	U2STAbits.UTXEN		= utxen;
 }
 
 /**
@@ -88,48 +87,32 @@ void startUart2Transmission() {
 }
 
 /**
- * This function transmits a complete actuator struct
- * through UART2 using a circular buffer.
- * It works by just feeding each byte into the circular
- * buffer. Only reason it's specific to the actuator data
- * is because of the length of the array passed.
+ * This function enqueues all bytes in the passed data character array according to the passed
+ * length.
  */
-void uart2EnqueueActuatorData(unsigned char *data) {
+void uart2EnqueueData(unsigned char *data, unsigned char length) {
 	unsigned char g;
-	// Add all 22+7 bytes of the actuator struct to the queue.
-	for (g = 0; g < 29;g++) {
-		writeBack(&uart2TxBuffer,data[g]);
-	}
-	startUart2Transmission();
-}
 
-/**
- * This function transmits a complete state struct
- * through UART2 using a circular buffer.
- * It works by just feeding each byte into the circular
- * buffer. Only reason it's specific to the actuator data
- * is because of the length of the array passed.
- */
-void uart2EnqueueStateData(unsigned char *data) {
-	unsigned char g;
-	// Add all 47+6 bytes of the state struct to the queue.
-	for (g = 0; g < 54;g++) {
+	for (g = 0; g < length; g++) {
 		writeBack(&uart2TxBuffer,data[g]);
 	}
+
 	startUart2Transmission();
 }
 
 void __attribute__((__interrupt__, no_auto_psv)) _U2RXInterrupt(void) {
 
+	// Keep receiving new bytes while the buffer has data.
 	while (U2STAbits.URXDA == 1) {
 		writeBack(&uart2RxBuffer, (unsigned char)U2RXREG);
 	}
-	
+
 	// Clear buffer overflow bit if triggered
 	if (U2STAbits.OERR == 1) {
 		U2STAbits.OERR = 0;
 	}
 
+	// Clear the interrupt flag
 	IFS1bits.U2RXIF = 0;
 }
 
@@ -141,6 +124,8 @@ void __attribute__((__interrupt__, no_auto_psv)) _U2RXInterrupt(void) {
  * in the queue.
  */
 void __attribute__((__interrupt__, no_auto_psv)) _U2TXInterrupt(void) {
-	IFS1bits.U2TXIF = 0;
 	startUart2Transmission();
+
+	// Clear the interrupt flag
+	IFS1bits.U2TXIF = 0;
 }
