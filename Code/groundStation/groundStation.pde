@@ -143,15 +143,19 @@ void draw() {
   // Restore the cursor to the regular arrow.
   cursor(ARROW);
   
+  // Reset fill to green (used for drawing the RX status circle)
+  fill(0,100,0);
+  
   // Grab some data from the serial port
   if (myPort != null && myPort.available() > 0 && !playing) {
-    fill(0,255,0);
     int bytesProcessed = 0;
     while(myPort.available() > 0) {
       byte[] inBuffer = new byte[127];
       int bytesToRead = myPort.readBytes(inBuffer);
       for (int i = 0; i < bytesToRead; i++) {
-        buildAndCheckMessage(inBuffer[i]);
+        if (buildAndCheckMessage(inBuffer[i])) {
+              fill(0,255,0);
+        }
       }
     }
   } else if (playing) {
@@ -199,9 +203,6 @@ void draw() {
     } else {
       playing = false;
     }
-    fill(0,100,0);
-  } else {
-    fill(0,100,0);
   }
   // Draw the RX status
   arc(90, 90, 10, 10, 0, TWO_PI);

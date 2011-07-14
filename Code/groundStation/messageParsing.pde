@@ -1,15 +1,17 @@
 
 
 // Used for parsing message data
-byte[] message = new byte[128];
+byte[] message = new byte[256];
 int messageIndex = 0;
 int messageState = 0;
 
 /**
  * Parses another character from the serialport
  */
-void buildAndCheckMessage(byte characterIn) {
+boolean buildAndCheckMessage(byte characterIn) {
 
+        boolean success = false;
+  
 	// This contains the function's state of whether
 	// it is currently building a message.
 	// 0 - Awaiting header byte 0 (%)
@@ -43,25 +45,26 @@ void buildAndCheckMessage(byte characterIn) {
 		message[messageIndex++] = characterIn;
 		if (characterIn == '^') {
 			messageState = 3;
-		} else if (messageIndex == 126) {
+		} else if (messageIndex == 180) {
 			// If we've filled up the buffer, ignore the entire message as we can't store it all
 			messageState = 0;
 			messageIndex = 0;
 		}
 	} else if (messageState == 3) {
-		// If we don't find the necessary ampersand we continue
-		// recording data as we haven't found the footer yet until
-		// we've filled up the entire message (ends at 124 characters
-		// as we need room for the 2 footer chars).
+		// If we find an ampersand, then we've found the footer. If we've run out of space at 127 bytes,
+                // error out, if we've found the first footer char, keep waiting for the second one, otherwise
+                // return to the previous state to read and record characters.
 		message[messageIndex++] = characterIn;
 		if (characterIn == '&') {
 			messageState = 4;
-		} else if (messageIndex == 127) {
+		} else if (messageIndex == 181) {
 			messageState = 0;
 			messageIndex = 0;
-		} else {
+		} else if (characterIn == '^') {
 			messageState = 3;
-		}
+		} else {
+                        messageState = 2;
+                }
 	} else if (messageState == 4) {
 		// Record the second ASCII-hex character of the checksum byte.
 		message[messageIndex] = characterIn;
@@ -70,16 +73,9 @@ void buildAndCheckMessage(byte characterIn) {
 		// is stored in the appropriate struct.
 		if (message[messageIndex] == calculateChecksum(subset(message, 2, messageIndex-4)) && message[3] == messageIndex - 6) {
 			// NOTE: message[2] is used to skip the header & message ID info
-			switch (message[2]) {
-				case 1:
-					break;
-				case 2:
-					break;
-				case 3:
-                                        updateStateData(subset(message, 4, messageIndex-6));
-					break;
-				case 4:
-					break;
+			if (message[2] == 3) {
+                                updateStateData(subset(message, 4, messageIndex-6));
+                                success = true;
 			}
 		}
 		
@@ -87,10 +83,12 @@ void buildAndCheckMessage(byte characterIn) {
 		messageIndex = 0;
 		messageState = 0;
 		int b;
-		for (b = 0;b < 64;b++) {
+		for (b = 0;b < message.length;b++) {
 			message[b] = 0;
 		}
 	}
+
+        return success;
 }
 
 void updateStateData(byte message[]) {
