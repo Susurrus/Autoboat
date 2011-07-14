@@ -14,7 +14,7 @@ CircBuffer uart2TxBuffer;
  * for 4800baud using interrupts and two circular buffers
  * for transmission and reception.
  */
-void initUart2() {
+void initUart2(unsigned int brgRegister) {
 	int i;
 
 	// First initialize the necessary circular buffers.
@@ -42,7 +42,7 @@ void initUart2() {
 	U2STAbits.URXISEL	= 2;		// RX interrupt when 3 chars are in
 	U2STAbits.OERR		= 0;		// clear overun error
 
-	U2BRG = BAUD4800_BRG_REG;		// Set the baud rate to 4800
+	U2BRG = brgRegister;			// Set the baud rate register
 
 	// Finally setup interrupts for proper UART communication.
   	IPC7bits.U2TXIP = 6;    		// Interrupt priority 6  

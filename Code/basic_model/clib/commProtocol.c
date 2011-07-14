@@ -47,6 +47,13 @@ THE SOFTWARE.
 #include "circBuffer.h"
 #include "uart2.h"
 
+// This is the value of the BRG to set the baud rate
+// to 115200 for running HIL.
+#define HIL_BRG_REG 21
+
+// This is the value of the BRG
+#define BAUD4800_BRG_REG 520
+
 // These are local declarations of each of the message structs.
 // They're populated with relevant data by buildAndcheckMessage().
 tSensorData sensorDataMessage;
@@ -54,6 +61,10 @@ tActuatorData actuatorDataMessage;
 tStateData stateDataMessage;
 
 unsigned long receivedMessageCount; // Keep track of how many messages were successfully received.
+
+void cpInitCommunications() {
+	initUart2(BAUD4800_BRG_REG);
+}
 
 /**
  * This function builds a full message internally byte-by-byte,

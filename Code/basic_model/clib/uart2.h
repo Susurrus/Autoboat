@@ -9,12 +9,10 @@
 
 #include "circBuffer.h"
 
-#define BAUD4800_BRG_REG 520
-
 extern CircBuffer uart2RxBuffer;
 extern CircBuffer uart2TxBuffer;
 
-void initUart2();
+void initUart2(unsigned int brgRegister);
 void changeUart2BaudRate(unsigned short brgReg);
 void startUart2Transmission();
 void uart2EnqueueData(unsigned char *data, unsigned char length);
