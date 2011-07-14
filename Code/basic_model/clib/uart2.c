@@ -1,4 +1,3 @@
-
 #include "commProtocol.h"
 #include "circBuffer.h"
 #include "uart2.h"
@@ -6,6 +5,11 @@
 
 CircBuffer uart2RxBuffer;
 CircBuffer uart2TxBuffer;
+
+/*
+ * Private functions.
+ */
+void startUart2Transmission();
 
 /**
  * Initialization function for the UART2 peripheral.
@@ -56,7 +60,7 @@ void initUart2(unsigned int brgRegister) {
 
 }
 
-void changeUart2BaudRate(unsigned short brgReg) {
+void changeUart2BaudRate(unsigned short brgRegister) {
 
 	unsigned char utxen = U2STAbits.UTXEN;
 
@@ -64,7 +68,7 @@ void changeUart2BaudRate(unsigned short brgReg) {
 	U2MODEbits.UARTEN = 0;
 
 	// Change the BRG register to set the new baud rate
-	U2BRG = brgReg;
+	U2BRG = brgRegister;
 
 	// Enable the port restoring the previous transmission settings
 	U2MODEbits.UARTEN	= 1;

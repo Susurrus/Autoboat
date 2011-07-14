@@ -111,17 +111,6 @@ typedef struct {
 	tShortToChar timestamp;
 } tActuatorData;
 
-typedef struct {
-	tFloatToChar L2_Vector[3];
-	tFloatToChar desiredRudder;
-	tFloatToChar actualRudder;
-	tFloatToChar desiredVelocity[3];
-	tFloatToChar actualVelocity[3];
-	unsigned char currentWaypointIndex;
-	unsigned char waypointMode;
-	unsigned char waypointCount;
-} tStateData;
-
 /**
  * This function initializes all onboard UART communications
  */
@@ -170,9 +159,6 @@ void getActuatorData(unsigned char* data);
 
 inline void uart2EnqueueActuatorData(unsigned char *data);
 
-/**
- * Manage the state data struct
- */
-void getStateData(unsigned char* data);
+inline void uart1EnqueueStateData(unsigned char *data);
 
 #endif /* _COMMPROTOCOL_H_ */

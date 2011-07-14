@@ -44,12 +44,12 @@ THE SOFTWARE.
 
 #include "commProtocol.h"
 #include <string.h>
-#include "circBuffer.h"
+#include "uart1.h"
 #include "uart2.h"
 
 // This is the value of the BRG to set the baud rate
 // to 115200 for running HIL.
-#define HIL_BRG_REG 21
+#define BAUD115200_BRG_REG 21
 
 // This is the value of the BRG
 #define BAUD4800_BRG_REG 520
@@ -58,11 +58,11 @@ THE SOFTWARE.
 // They're populated with relevant data by buildAndcheckMessage().
 tSensorData sensorDataMessage;
 tActuatorData actuatorDataMessage;
-tStateData stateDataMessage;
 
 unsigned long receivedMessageCount; // Keep track of how many messages were successfully received.
 
 void cpInitCommunications() {
+	initUart1(BAUD115200_BRG_REG);
 	initUart2(BAUD4800_BRG_REG);
 }
 
@@ -181,7 +181,7 @@ void setHilMode(unsigned char mode) {
 
 	// Detect a change to HIL
 	if (!oldMode && mode) {
-		changeUart2BaudRate(HIL_BRG_REG);
+		changeUart2BaudRate(BAUD115200_BRG_REG);
 		oldMode = mode;
 	} else if (oldMode && !mode) {
 		changeUart2BaudRate(BAUD4800_BRG_REG);
@@ -380,52 +380,9 @@ inline void uart2EnqueueActuatorData(unsigned char *data) {
 	uart2EnqueueData(data, 29);
 }
 
-void getStateData(unsigned char* data) {
-	data[0] = stateDataMessage.L2_Vector[0].chData[0];
-	data[1] = stateDataMessage.L2_Vector[0].chData[1];
-	data[2] = stateDataMessage.L2_Vector[0].chData[2];
-	data[3] = stateDataMessage.L2_Vector[0].chData[3];
-	data[4] = stateDataMessage.L2_Vector[1].chData[0];
-	data[5] = stateDataMessage.L2_Vector[1].chData[1];
-	data[6] = stateDataMessage.L2_Vector[1].chData[2];
-	data[7] = stateDataMessage.L2_Vector[1].chData[3];
-	data[8] = stateDataMessage.L2_Vector[2].chData[0];
-	data[9] = stateDataMessage.L2_Vector[2].chData[1];
-	data[10] = stateDataMessage.L2_Vector[2].chData[2];
-	data[11] = stateDataMessage.L2_Vector[2].chData[3];
-	data[12] = stateDataMessage.desiredRudder.chData[0];
-	data[13] = stateDataMessage.desiredRudder.chData[1];
-	data[14] = stateDataMessage.desiredRudder.chData[2];
-	data[15] = stateDataMessage.desiredRudder.chData[3];
-	data[16] = stateDataMessage.actualRudder.chData[0];
-	data[17] = stateDataMessage.actualRudder.chData[1];
-	data[18] = stateDataMessage.actualRudder.chData[2];
-	data[19] = stateDataMessage.actualRudder.chData[3];
-	data[20] = stateDataMessage.desiredVelocity[0].chData[0];
-	data[21] = stateDataMessage.desiredVelocity[0].chData[1];
-	data[22] = stateDataMessage.desiredVelocity[0].chData[2];
-	data[23] = stateDataMessage.desiredVelocity[0].chData[3];
-	data[24] = stateDataMessage.desiredVelocity[1].chData[0];
-	data[25] = stateDataMessage.desiredVelocity[1].chData[1];
-	data[26] = stateDataMessage.desiredVelocity[1].chData[2];
-	data[27] = stateDataMessage.desiredVelocity[1].chData[3];
-	data[28] = stateDataMessage.desiredVelocity[2].chData[0];
-	data[29] = stateDataMessage.desiredVelocity[2].chData[1];
-	data[30] = stateDataMessage.desiredVelocity[2].chData[2];
-	data[31] = stateDataMessage.desiredVelocity[2].chData[3];
-	data[32] = stateDataMessage.actualVelocity[0].chData[0];
-	data[33] = stateDataMessage.actualVelocity[0].chData[1];
-	data[34] = stateDataMessage.actualVelocity[0].chData[2];
-	data[35] = stateDataMessage.actualVelocity[0].chData[3];
-	data[36] = stateDataMessage.actualVelocity[1].chData[0];
-	data[37] = stateDataMessage.actualVelocity[1].chData[1];
-	data[38] = stateDataMessage.actualVelocity[1].chData[2];
-	data[39] = stateDataMessage.actualVelocity[1].chData[3];
-	data[40] = stateDataMessage.actualVelocity[2].chData[0];
-	data[41] = stateDataMessage.actualVelocity[2].chData[1];
-	data[42] = stateDataMessage.actualVelocity[2].chData[2];
-	data[43] = stateDataMessage.actualVelocity[2].chData[3];
-	data[44] = stateDataMessage.currentWaypointIndex;
-	data[45] = stateDataMessage.waypointMode;
-	data[46] = stateDataMessage.waypointCount;
+/**
+ * Add all 90 data + 7 header/footer bytes of the actuator struct to UART2's transmission queue.
+ */
+inline void uart1EnqueueStateData(unsigned char *data) {
+	uart1EnqueueData(data, 97);
 }

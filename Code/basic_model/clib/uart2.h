@@ -1,4 +1,3 @@
-
 #ifndef _UART2_H_
 #define _UART2_H_
 
@@ -13,8 +12,12 @@ extern CircBuffer uart2RxBuffer;
 extern CircBuffer uart2TxBuffer;
 
 void initUart2(unsigned int brgRegister);
-void changeUart2BaudRate(unsigned short brgReg);
-void startUart2Transmission();
+void changeUart2BaudRate(unsigned short brgRegister);
+
+/**
+ * This starts a transmission sequence. The transmission sent interrupt is called which then
+ * continues this transmission sequence.
+ */
 void uart2EnqueueData(unsigned char *data, unsigned char length);
 
 #endif /* _UART2_H_ */

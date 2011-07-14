@@ -74,22 +74,15 @@ float degMinToDeg(unsigned char degrees, float minutes) {
  * initialized for UART2 for transmission.
  */
 void initGps() {
-	int i;
-	
-	// Configure GPS sentences by:
+	// Configure GPS by:
 	// - Disabling GSA
 	// - Disabling GSV
-	char disableGSASentence[] = "$PSRF103,2,0,0,1*26\r\n\0";
-	char disableGSVSentence[] = "$PSRF103,3,0,0,1*27\r\n\0";
-	
-	for (i = 0; i < strlen(disableGSASentence);i++) {
-		writeBack(&uart2TxBuffer,disableGSASentence[i]);
-	}
-	for (i = 0; i < strlen(disableGSVSentence);i++) {
-		writeBack(&uart2TxBuffer,disableGSVSentence[i]);
-	}
-	startUart2Transmission();
+	unsigned char disableGSASentence[] = "$PSRF103,2,0,0,1*26\r\n";
+	unsigned char disableGSVSentence[] = "$PSRF103,3,0,0,1*27\r\n";
 
+	// Enqueue the size of the sentences - 1 to remove string-terminating null character
+	uart2EnqueueData(disableGSASentence, sizeof(disableGSASentence) - 1);
+	uart2EnqueueData(disableGSVSentence, sizeof(disableGSVSentence) - 1);
 }
 
 void buildAndCheckSentence(unsigned char characterIn) {
