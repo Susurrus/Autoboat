@@ -94,7 +94,7 @@ typedef struct {
 	unsigned char b_SBLimit;
 	unsigned char b_PortLimit;
 	unsigned char newData;
-	tShortToChar timestamp;
+	tUnsignedShortToChar timestamp;
 } tSensorData;
 
 typedef struct {
@@ -108,7 +108,7 @@ typedef struct {
 	unsigned char data[6];
 	unsigned char size;
 	unsigned char trigger;
-	tShortToChar timestamp;
+	tUnsignedShortToChar timestamp;
 } tActuatorData;
 
 /**

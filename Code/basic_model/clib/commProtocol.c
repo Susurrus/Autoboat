@@ -108,12 +108,16 @@ void buildAndCheckMessage(unsigned char characterIn) {
 		}
 	} else if (messageState == 2) {
 		// Record every character that comes in now that we're building a sentence.
-		// Only stop if we run out of room or an asterisk is found.
-		message[messageIndex] = characterIn;
-		messageIndex++;
-		if (characterIn == '^') {
-			messageState = 3;
-		} else if (messageIndex == 62) {
+		// Stop scanning once we've reached the message length of characters.
+		message[messageIndex++] = characterIn;
+		if (messageIndex == message[3] + 5) {
+			if (characterIn == '^') {
+				messageState = 3;
+			} else {
+				messageState = 0;
+				messageIndex = 0;
+			}
+		} else if (messageIndex == sizeof(message) - 3) {
 			// If we've filled up the buffer, ignore the entire message as we can't store it all
 			messageState = 0;
 			messageIndex = 0;
@@ -123,11 +127,10 @@ void buildAndCheckMessage(unsigned char characterIn) {
 		// recording data as we haven't found the footer yet until
 		// we've filled up the entire message (ends at 124 characters
 		// as we need room for the 2 footer chars).
-		message[messageIndex] = characterIn;
-		messageIndex++;
+		message[messageIndex++] = characterIn;
 		if (characterIn == '&') {
 			messageState = 4;
-		} else if (messageIndex == 63) {
+		} else if (messageIndex == sizeof(message) - 2) {
 			messageState = 0;
 			messageIndex = 0;
 		}
@@ -139,10 +142,10 @@ void buildAndCheckMessage(unsigned char characterIn) {
 		// is stored in the appropriate struct.
 		if (message[messageIndex] == calculateChecksum(&message[2], messageIndex - 4)) {
 			// We now memcpy all the data into our global data structs.
-			// NOTE: message[3] is used to skip the header & message ID info
+			// NOTE: message[4] is used to skip the header, message ID, and size chars.
 			receivedMessageCount++;
 			if (message[2] == 1) {
-				setSensorData(&message[3]);
+				setSensorData(&message[4]);
 			}
 		}
 
@@ -319,7 +322,7 @@ void clearSensorData() {
 	sensorDataMessage.b_Position.usData = 0;
 	sensorDataMessage.b_SBLimit = 0;
 	sensorDataMessage.b_PortLimit = 0;
-	sensorDataMessage.timestamp.shData = 0;
+	sensorDataMessage.timestamp.usData = 0;
 	sensorDataMessage.newData = 0;
 }
 
@@ -369,8 +372,8 @@ void getActuatorData(unsigned char* data) {
 	data[17] = actuatorDataMessage.data[5];
 	data[18] = actuatorDataMessage.size;
 	data[19] = actuatorDataMessage.trigger;
-	actuatorDataMessage.timestamp.chData[0] = data[20];
-	actuatorDataMessage.timestamp.chData[1] = data[21];
+	data[20] = actuatorDataMessage.timestamp.chData[0];
+	data[21] = actuatorDataMessage.timestamp.chData[1];
 }
 
 /**
