@@ -56,10 +56,14 @@ THE SOFTWARE.
 
 // These are local declarations of each of the message structs.
 // They're populated with relevant data by buildAndcheckMessage().
-tSensorData sensorDataMessage;
-tActuatorData actuatorDataMessage;
+static tSensorData sensorDataMessage;
+static tActuatorData actuatorDataMessage;
 
-unsigned long receivedMessageCount; // Keep track of how many messages were successfully received.
+// Keep track of how many messages were successfully received.
+static unsigned long receivedMessageCount = 0;
+// Keep track of how many fails we've run into
+static unsigned long failedMessageCount = 0;
+static unsigned char sameFailedMessageFlag = 0;
 
 void cpInitCommunications() {
 	initUart1(BAUD115200_BRG_REG);
@@ -94,6 +98,12 @@ void buildAndCheckMessage(unsigned char characterIn) {
 		} else {
 			messageIndex = 0;
 			messageState = 0;
+			
+			// Here we've failed parsing a message so count another failure.
+			if (!sameFailedMessageFlag) {
+				failedMessageCount++;
+				sameFailedMessageFlag = 1;
+			}
 		}
 	} else if (messageState == 1) {
 		// If we don't find the necessary ampersand we start over
@@ -102,9 +112,16 @@ void buildAndCheckMessage(unsigned char characterIn) {
 			message[messageIndex] = characterIn;
 			messageIndex++;
 			messageState = 2;
-		} else {
+
+		} else if (characterIn != '%'){
 			messageIndex = 0;
 			messageState = 0;
+			
+			// Here we've failed parsing a message so count another failure.
+			if (!sameFailedMessageFlag) {
+				failedMessageCount++;
+				sameFailedMessageFlag = 1;
+			}
 		}
 	} else if (messageState == 2) {
 		// Record every character that comes in now that we're building a sentence.
@@ -116,11 +133,19 @@ void buildAndCheckMessage(unsigned char characterIn) {
 			} else {
 				messageState = 0;
 				messageIndex = 0;
+				
+				// Here we've failed parsing a message.
+				failedMessageCount++;
+				sameFailedMessageFlag = 1;
 			}
 		} else if (messageIndex == sizeof(message) - 3) {
 			// If we've filled up the buffer, ignore the entire message as we can't store it all
 			messageState = 0;
 			messageIndex = 0;
+			
+			// Here we've failed parsing a message.
+			failedMessageCount++;
+			sameFailedMessageFlag = 1;
 		}
 	} else if (messageState == 3) {
 		// If we don't find the necessary ampersand we continue
@@ -135,7 +160,7 @@ void buildAndCheckMessage(unsigned char characterIn) {
 			messageIndex = 0;
 		}
 	} else if (messageState == 4) {
-		// Record the second ASCII-hex character of the checksum byte.
+		// Record the checksum byte.
 		message[messageIndex] = characterIn;
 
 		// The checksum is now verified and if successful the message
@@ -147,6 +172,13 @@ void buildAndCheckMessage(unsigned char characterIn) {
 			if (message[2] == 1) {
 				setSensorData(&message[4]);
 			}
+
+			// Now that we've successfully parsed a message, clear the flag.
+			sameFailedMessageFlag = 0;
+		} else {
+			// Here we've failed parsing a message.
+			failedMessageCount++;
+			sameFailedMessageFlag = 1;
 		}
 
 		// We clear all state variables here regardless of success.
