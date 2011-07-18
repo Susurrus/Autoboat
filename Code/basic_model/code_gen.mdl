@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.1884"
+    ComputedModelVersion    "1.1885"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun Jul 17 19:11:16 2011"
-  RTWModifiedTimeStamp	  232829780
-  ModelVersionFormat	  "1.%<AutoIncrement:1884>"
+  LastModifiedDate	  "Mon Jul 18 14:15:35 2011"
+  RTWModifiedTimeStamp	  232895909
+  ModelVersionFormat	  "1.%<AutoIncrement:1885>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1241,7 +1241,7 @@ Model {
   }
   System {
     Name		    "code_gen"
-    Location		    [275, 82, 1565, 847]
+    Location		    [216, 82, 1573, 831]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -3823,7 +3823,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Autonomous Controller"
-	    Location		    [202, 82, 1598, 847]
+	    Location		    [49, -924, 1491, -106]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -4032,7 +4032,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Rudder\nCommand"
-		Location		[202, 74, 1598, 839]
+		Location		[202, 82, 1598, 847]
 		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
@@ -10015,10 +10015,10 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "RC Inputs"
-	    Location		    [344, 82, 1582, 847]
+	    Location		    [202, 82, 1598, 847]
 	    Open		    off
 	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
+	    ModelBrowserWidth	    316
 	    ScreenColor		    "white"
 	    PaperOrientation	    "landscape"
 	    PaperPositionMode	    "auto"
@@ -10060,10 +10060,10 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Manual Rudder Command"
-		Location		[344, 82, 1582, 847]
+		Location		[202, 82, 1598, 847]
 		Open			off
 		ModelBrowserVisibility	on
-		ModelBrowserWidth	342
+		ModelBrowserWidth	200
 		ScreenColor		"white"
 		PaperOrientation	"landscape"
 		PaperPositionMode	"auto"
@@ -10209,6 +10209,12 @@ Model {
 		  RTWMemSecDataParameters "Inherit from model"
 		  nBitShiftRight	  "1"
 		  nBinPtShiftRight	  "0"
+		  Port {
+		    PortNumber		    1
+		    Name		    "up"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		  }
 		}
 		Block {
 		  BlockType		  Switch
@@ -10284,23 +10290,6 @@ Model {
 		  DstPort		  1
 		}
 		Line {
-		  Name			  "period"
-		  Labels		  [0, 0]
-		  SrcBlock		  "Switch"
-		  SrcPort		  1
-		  Points		  [0, -5]
-		  DstBlock		  "Bus\nCreator"
-		  DstPort		  4
-		}
-		Line {
-		  Name			  "up"
-		  Labels		  [0, 0]
-		  SrcBlock		  "Switch1"
-		  SrcPort		  1
-		  DstBlock		  "Bus\nCreator"
-		  DstPort		  3
-		}
-		Line {
 		  SrcBlock		  "Constant4"
 		  SrcPort		  1
 		  Points		  [100, 0; 0, -15]
@@ -10315,6 +10304,8 @@ Model {
 		  }
 		}
 		Line {
+		  Name			  "up"
+		  Labels		  [0, 0]
 		  SrcBlock		  "Shift\nArithmetic"
 		  SrcPort		  1
 		  DstBlock		  "Switch1"
@@ -10325,12 +10316,12 @@ Model {
 		  SrcPort		  1
 		  Points		  [85, 0]
 		  Branch {
-		    Labels		    [1, 0]
-		    DstBlock		    "Switch"
+		    DstBlock		    "Shift\nArithmetic"
 		    DstPort		    1
 		  }
 		  Branch {
-		    DstBlock		    "Shift\nArithmetic"
+		    Labels		    [1, 0]
+		    DstBlock		    "Switch"
 		    DstPort		    1
 		  }
 		}
@@ -10345,7 +10336,7 @@ Model {
 		Line {
 		  SrcBlock		  "Compare\nTo Constant3"
 		  SrcPort		  1
-		  Points		  [70, 0; 0, -5; 110, 0; 0, -10; 95, 0]
+		  Points		  [180, 0; 0, -15; 95, 0]
 		  Branch {
 		    DstBlock		    "Switch"
 		    DstPort		    2
@@ -10355,6 +10346,23 @@ Model {
 		    DstBlock		    "Switch1"
 		    DstPort		    2
 		  }
+		}
+		Line {
+		  Name			  "up"
+		  Labels		  [0, 0; 0, 0]
+		  SrcBlock		  "Switch1"
+		  SrcPort		  1
+		  DstBlock		  "Bus\nCreator"
+		  DstPort		  3
+		}
+		Line {
+		  Name			  "period"
+		  Labels		  [0, 0]
+		  SrcBlock		  "Switch"
+		  SrcPort		  1
+		  Points		  [15, 0; 0, -5]
+		  DstBlock		  "Bus\nCreator"
+		  DstPort		  4
 		}
 		Annotation {
 		  Name			  "This subsystem verifies that the rudder command is valid by checking the\nrudder position as well as the"
@@ -10473,7 +10481,7 @@ Model {
 		  }
 		  System {
 		    Name		    "Mux Everything"
-		    Location		    [364, 439, 1234, 882]
+		    Location		    [303, 371, 1173, 814]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -22245,6 +22253,7 @@ Model {
 	  }
 	}
 	Line {
+	  Labels		  [0, 0]
 	  SrcBlock		  "Radio Control\nInputs"
 	  SrcPort		  1
 	  Points		  [310, 0; 0, -120]
@@ -23457,7 +23466,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Rudder\nOutputs"
-	Location		[221, 82, 1595, 871]
+	Location		[0, 50, 1600, 868]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
