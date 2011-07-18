@@ -56,6 +56,7 @@ byte gpsFix = 0;
 byte gpsSatellites = 0;
 byte reset = 0;
 byte load = 0;
+float rudderAngle = 0.0;
 
 // Boat state data recording
 ArrayList<float[]> L2List = new ArrayList<float[]>(255);
@@ -226,7 +227,10 @@ void draw() {
   text("Heading", 400, 290);
   text("Reset", 500, 290);
   text("Load", 570, 290);
+  text("Rudder angle (deg)", 630, 290);
   textFont(regularFont);
+  
+  text(String.format("%3.1f", rudderAngle * 180 / 3.14159), 630, 310);
   
   // Draw the reset bits
   text(String.format("0x%02x",reset), 500, 310);
@@ -292,8 +296,8 @@ void draw() {
   rotate(heading);
   pushMatrix();
   translate(0, 49);
-  if (rudderPot > 0) {
-    rotate((rudderPot - 500)/300*PI/3);
+  if (rudderAngle > 0) {
+    rotate(rudderAngle);
   }
   rect(0, 0, 5, 15);
   popMatrix();

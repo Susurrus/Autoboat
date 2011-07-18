@@ -84,7 +84,7 @@ boolean buildAndCheckMessage(byte characterIn) {
 		messageIndex = 0;
 		messageState = 0;
 		int b;
-		for (b = 0;b < message.length;b++) {
+		for (b = 0;b < messageIndex;b++) {
 			message[b] = 0;
 		}
 	}
@@ -160,6 +160,7 @@ void updateStateData(byte message[]) {
     gpsSatellites = din.readByte();
     reset = din.readByte();
     load = din.readByte();
+    rudderAngle = din.readFloat();
   } catch (Exception e) {
     e.printStackTrace();
     println("Crap, failed to extract the data");
