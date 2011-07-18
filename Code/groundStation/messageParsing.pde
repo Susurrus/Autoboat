@@ -1,7 +1,7 @@
 
 
 // Used for parsing message data
-byte[] message = new byte[256];
+byte[] message = new byte[128];
 int messageIndex = 0;
 int messageState = 0;
 
@@ -35,7 +35,7 @@ boolean buildAndCheckMessage(byte characterIn) {
 			message[1] = characterIn;
 			messageIndex = 2;
 			messageState = 2;
-		} else {
+		} else if (characterIn != '%'){
 			messageIndex = 0;
 			messageState = 0;
 		}
@@ -43,9 +43,14 @@ boolean buildAndCheckMessage(byte characterIn) {
 		// Record every character that comes in now that we're building a sentence.
 		// Only stop if we run out of room or an asterisk is found.
 		message[messageIndex++] = characterIn;
-		if (characterIn == '^') {
+		if (messageIndex == message[3] + 5) {
+                  if (characterIn == '^') {
 			messageState = 3;
-		} else if (messageIndex == 180) {
+                  } else {
+                         messageIndex = 0;
+                         messageState = 0;
+                  }
+		} else if (messageIndex == message.length - 3) {
 			// If we've filled up the buffer, ignore the entire message as we can't store it all
 			messageState = 0;
 			messageIndex = 0;
@@ -57,14 +62,10 @@ boolean buildAndCheckMessage(byte characterIn) {
 		message[messageIndex++] = characterIn;
 		if (characterIn == '&') {
 			messageState = 4;
-		} else if (messageIndex == 181) {
+		} else if (messageIndex == message.length - 2) {
 			messageState = 0;
 			messageIndex = 0;
-		} else if (characterIn == '^') {
-			messageState = 3;
-		} else {
-                        messageState = 2;
-                }
+		}
 	} else if (messageState == 4) {
 		// Record the second ASCII-hex character of the checksum byte.
 		message[messageIndex] = characterIn;
@@ -72,7 +73,7 @@ boolean buildAndCheckMessage(byte characterIn) {
 		// The checksum is now verified and if successful the message
 		// is stored in the appropriate struct.
 		if (message[messageIndex] == calculateChecksum(subset(message, 2, messageIndex-4)) && message[3] == messageIndex - 6) {
-			// NOTE: message[2] is used to skip the header & message ID info
+			// NOTE: message[2] is used to skip the header, message ID.
 			if (message[2] == 3) {
                                 updateStateData(subset(message, 4, messageIndex-6));
                                 success = true;
