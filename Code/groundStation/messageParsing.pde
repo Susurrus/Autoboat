@@ -122,6 +122,7 @@ void updateStateData(byte message[]) {
     gpsSatellitesList.add(gpsSatellites);
     resetList.add(reset);
     loadList.add(load);
+    rudderAngleList.add(rudderAngle);
     
     recordedMessages++;
   }

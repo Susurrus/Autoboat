@@ -82,6 +82,7 @@ ArrayList<Byte> gpsFixList = new ArrayList<Byte>(255);
 ArrayList<Byte> gpsSatellitesList = new ArrayList<Byte>(255);
 ArrayList<Byte> resetList = new ArrayList<Byte>(255);
 ArrayList<Byte> loadList = new ArrayList<Byte>(255);
+ArrayList<Float> rudderAngleList = new ArrayList<Float>(255);
 
 // Boat state data playback
 double[][] L2Playback;
@@ -107,6 +108,7 @@ byte[] gpsFixPlayback;
 byte[] gpsSatellitesPlayback;
 byte[] resetPlayback;
 byte[] loadPlayback;
+float[] rudderAnglePlayback;
 
 // Rendering variables
 PFont regularFont;
@@ -197,6 +199,7 @@ void draw() {
         gpsSatellites = gpsSatellitesPlayback[playbackIndex];
         reset = resetPlayback[playbackIndex];
         load = loadPlayback[playbackIndex];
+        rudderAngle = rudderAnglePlayback[playbackIndex];
         
         playbackIndex++;
         lastPlaybackTime = millis();
@@ -473,6 +476,12 @@ void controlEvent(ControlEvent theEvent) {
             loadPlayback[i] = (byte)byteData[i][0];
           }
           
+          doubleData = ((MLDouble)inputMatFileReader.getMLArray("rudderAngle")).getArray();
+          rudderAnglePlayback = new float[doubleData.length];
+          for (int i=0;i<doubleData.length;i++) {
+            rudderAnglePlayback[i] = (float)doubleData[i][0];
+          }
+          
         } catch (IOException e) {
           e.printStackTrace();
           exit();
@@ -534,6 +543,7 @@ public void startRecording() {
   gpsSatellitesList.clear();
   resetList.clear();
   loadList.clear();
+  rudderAngleList.clear();
   
   // Reset the messages counter
   recordedMessages = new Long(0);
@@ -733,6 +743,14 @@ public void stopRecordingAndSave() {
   }
   MLUInt8 loadML = new MLUInt8("load", byte_gg, byte_gg.length);
   
+  float_g = new Float[rudderAngleList.size()];
+  rudderAngleList.toArray(float_g);
+  gg = new double[rudderAngleList.size()];
+  for (int i = 0; i < rudderAngleList.size(); i++){
+    gg[i] = (double)float_g[i];
+  }
+  MLDouble rudderAngleML = new MLDouble("rudderAngle", gg, gg.length);
+  
   ArrayList matList = new ArrayList();
   matList.add(L2ML);
   matList.add(headingML);
@@ -757,6 +775,7 @@ public void stopRecordingAndSave() {
   matList.add(gpsSatellitesML);
   matList.add(resetML);
   matList.add(loadML);
+  matList.add(rudderAngleML);
   
   try {
     Calendar cal = Calendar.getInstance();
