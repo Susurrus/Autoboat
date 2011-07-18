@@ -1,7 +1,11 @@
-#include "code_gen.h"
+#include "DEE.h"
+
+extern unsigned short rudderRange[2];
+extern unsigned short throttleRange[2];
+extern unsigned short trackRange[2];
 
 void initCalibrationRange() {
-	uint16_T tmp;
+	unsigned short tmp;
 	// Initialize rudder range
 	if ((tmp = DataEERead(10)) != 0xFFFF) {
 		rudderRange[0] = tmp;
