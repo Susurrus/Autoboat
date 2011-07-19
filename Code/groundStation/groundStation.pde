@@ -57,6 +57,7 @@ byte gpsSatellites = 0;
 byte reset = 0;
 byte load = 0;
 float rudderAngle = 0.0;
+int propRpm = 0;
 
 // Boat state data recording
 ArrayList<float[]> L2List = new ArrayList<float[]>(255);
@@ -83,6 +84,7 @@ ArrayList<Byte> gpsSatellitesList = new ArrayList<Byte>(255);
 ArrayList<Byte> resetList = new ArrayList<Byte>(255);
 ArrayList<Byte> loadList = new ArrayList<Byte>(255);
 ArrayList<Float> rudderAngleList = new ArrayList<Float>(255);
+ArrayList<Integer> propRpmList = new ArrayList<Integer>(255);
 
 // Boat state data playback
 double[][] L2Playback;
@@ -109,6 +111,7 @@ byte[] gpsSatellitesPlayback;
 byte[] resetPlayback;
 byte[] loadPlayback;
 float[] rudderAnglePlayback;
+int[] propRpmPlayback;
 
 // Rendering variables
 PFont regularFont;
@@ -200,6 +203,7 @@ void draw() {
         reset = resetPlayback[playbackIndex];
         load = loadPlayback[playbackIndex];
         rudderAngle = rudderAnglePlayback[playbackIndex];
+        propRpm = propRpmPlayback[playbackIndex];
         
         playbackIndex++;
         lastPlaybackTime = millis();
@@ -231,9 +235,14 @@ void draw() {
   text("Reset", 500, 290);
   text("Load", 570, 290);
   text("Rudder angle (deg)", 630, 290);
+  text("Prop speed (RPM)", 630, 350);
   textFont(regularFont);
   
+  // Draw the rudder angle in degrees
   text(String.format("%3.1f", rudderAngle * 180 / 3.14159), 630, 310);
+  
+  // Draw the prop speed in RPM
+  text(String.format("%3d", propRpm), 630, 370);
   
   // Draw the reset bits
   text(String.format("0x%02x",reset), 500, 310);
@@ -482,6 +491,12 @@ void controlEvent(ControlEvent theEvent) {
             rudderAnglePlayback[i] = (float)doubleData[i][0];
           }
           
+          longData = ((MLInt64)inputMatFileReader.getMLArray("propRpm")).getArray();
+          propRpmPlayback = new int[longData.length];
+          for (int i=0;i<longData.length;i++) {
+            propRpmPlayback[i] = (int)longData[i][0];
+          }
+          
         } catch (IOException e) {
           e.printStackTrace();
           exit();
@@ -544,6 +559,7 @@ public void startRecording() {
   resetList.clear();
   loadList.clear();
   rudderAngleList.clear();
+  propRpmList.clear();
   
   // Reset the messages counter
   recordedMessages = new Long(0);
@@ -751,6 +767,14 @@ public void stopRecordingAndSave() {
   }
   MLDouble rudderAngleML = new MLDouble("rudderAngle", gg, gg.length);
   
+  int_g = new Integer[propRpmList.size()];
+  propRpmList.toArray(int_g);
+  long_gg = new long[propRpmList.size()];
+  for (int i = 0; i < propRpmList.size(); i++){
+    long_gg[i] = (long)int_g[i];
+  }
+  MLInt64 propRpmML = new MLInt64("propRpm", long_gg, long_gg.length);
+  
   ArrayList matList = new ArrayList();
   matList.add(L2ML);
   matList.add(headingML);
@@ -776,6 +800,7 @@ public void stopRecordingAndSave() {
   matList.add(resetML);
   matList.add(loadML);
   matList.add(rudderAngleML);
+  matList.add(propRpmML);
   
   try {
     Calendar cal = Calendar.getInstance();
