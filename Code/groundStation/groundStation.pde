@@ -59,6 +59,7 @@ byte load = 0;
 float rudderAngle = 0.0;
 int propRpm = 0;
 byte temp = 0;
+byte ordering = 0;
 
 // Boat state data recording
 ArrayList<float[]> L2List = new ArrayList<float[]>(255);
@@ -87,6 +88,7 @@ ArrayList<Byte> loadList = new ArrayList<Byte>(255);
 ArrayList<Float> rudderAngleList = new ArrayList<Float>(255);
 ArrayList<Integer> propRpmList = new ArrayList<Integer>(255);
 ArrayList<Byte> tempList = new ArrayList<Byte>(255);
+ArrayList<Byte> orderingList = new ArrayList<Byte>(255);
 
 // Boat state data playback
 double[][] L2Playback;
@@ -115,6 +117,7 @@ byte[] loadPlayback;
 float[] rudderAnglePlayback;
 int[] propRpmPlayback;
 byte[] tempPlayback;
+byte[] orderingPlayback;
 
 // Rendering variables
 PFont regularFont;
@@ -208,6 +211,7 @@ void draw() {
         rudderAngle = rudderAnglePlayback[playbackIndex];
         propRpm = propRpmPlayback[playbackIndex];
         temp = tempPlayback[playbackIndex];
+        ordering = orderingPlayback[playbackIndex];
         
         playbackIndex++;
         lastPlaybackTime = millis();
@@ -511,6 +515,12 @@ void controlEvent(ControlEvent theEvent) {
             tempPlayback[i] = (byte)byteData[i][0];
           }
           
+          byteData = ((MLInt8)inputMatFileReader.getMLArray("ordering")).getArray();
+          orderingPlayback = new byte[byteData.length];
+          for (int i=0;i<byteData.length;i++) {
+            orderingPlayback[i] = (byte)byteData[i][0];
+          }
+          
         } catch (IOException e) {
           e.printStackTrace();
           exit();
@@ -545,7 +555,7 @@ void customizeSerialPortsList(DropdownList ddl) {
 }
 
 public void startRecording() {
-  recording = true;
+  recording = true; 
   recordTimer.reset();
   
   // Clear all the data structures for new data
@@ -575,6 +585,7 @@ public void startRecording() {
   rudderAngleList.clear();
   propRpmList.clear();
   tempList.clear();
+  orderingList.clear();
   
   // Reset the messages counter
   recordedMessages = new Long(0);
@@ -798,6 +809,14 @@ public void stopRecordingAndSave() {
   }
   MLInt8 tempML = new MLInt8("temp", byte_gg, byte_gg.length);
   
+  byte_g = new Byte[orderingList.size()];
+  orderingList.toArray(byte_g);
+  byte_gg = new byte[orderingList.size()];
+  for (int i = 0; i < orderingList.size(); i++){
+    byte_gg[i] = (byte)byte_g[i];
+  }
+  MLUInt8 orderingML = new MLUInt8("ordering", byte_gg, byte_gg.length);
+  
   ArrayList matList = new ArrayList();
   matList.add(L2ML);
   matList.add(headingML);
@@ -825,6 +844,7 @@ public void stopRecordingAndSave() {
   matList.add(rudderAngleML);
   matList.add(propRpmML);
   matList.add(tempML);
+  matList.add(orderingML);
   
   try {
     Calendar cal = Calendar.getInstance();
