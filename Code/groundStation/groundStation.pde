@@ -272,8 +272,8 @@ void draw() {
   text("Sb: " + (rudderSbLimit?"true":"false"), 400, 435);
   
   // Add GPS sensor information
-  text(gpsLatitude, 500, 405);
-  text(gpsLongitude, 500, 420);
+  text(String.format("%3.8f", gpsLatitude), 500, 405);
+  text(String.format("%3.8f", gpsLongitude), 500, 420);
   text(gpsAltitude, 500, 435);
   text(String.format("%02d/%02d/%04d", gpsDay, gpsMonth, 2000+gpsYear), 500, 450);
   text(String.format("%02d:%02d:%02d", gpsHour, gpsMinute, gpsSecond), 500, 465);
