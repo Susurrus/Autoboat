@@ -140,7 +140,7 @@ void setup() {
   recordTimer.setSpeedOfTime(1);
   recordTimerLabel = controlP5.addTextlabel("recordTimer",recordTimer.toString(),20,100);
   recordedMessagesLabel = controlP5.addTextlabel("recordedMessages",String.format("Messages: %d", recordedMessages),20,120);
-  selectMatFile = controlP5.addButton("Select .mat file",0,400,50,100,20);
+  selectMatFile = controlP5.addButton("Select .mat file",0,350,50,100,20);
   selectMatFile.setId(2);
   customizeSerialPortsList(serialPortsList);
 }
@@ -241,7 +241,7 @@ void draw() {
   text("Waypoint1", 50, 350);
   text("Heading", 400, 290);
   text("Load", 570, 290);
-  text("Reset status", 570, 90);
+  text("Reset status", 500, 70);
   text("Rudder angle (deg)", 630, 290);
   text("Prop speed (RPM)", 630, 350);
   text("Temperature (deg F)", 630, 400);
@@ -257,37 +257,37 @@ void draw() {
   text(temp, 630, 420);
   
   // Draw the reset bits
-  int vertical = 110;
+  int vertical = 90;
   if ((reset & 0x01) != 0) {
-    text("Starting up...", 550, vertical);
+    text("Starting up...", 500, vertical);
     vertical += 20;
   }
   if ((reset & 0x02) != 0) {
-    text("HIL mode changed", 550, vertical);
+    text("HIL mode changed", 500, vertical);
     vertical += 20;
   }
   if ((reset & 0x04) != 0) {
-    text("HIL disconnected", 550, vertical);
+    text("HIL disconnected", 500, vertical);
     vertical += 20;
   }
   if ((reset & 0x08) != 0) {
-    text("GPS unavailable", 550, vertical);
+    text("GPS unavailable", 500, vertical);
     vertical += 20;
   }
   if ((reset & 0x10) != 0) {
-    text("Resetting after switching track", 550, vertical);
+    text("Resetting after switching track", 500, vertical);
     vertical += 20;
   }
   if ((reset & 0x20) != 0) {
-    text("Uncalibrated", 550, vertical);
+    text("Uncalibrated", 500, vertical);
     vertical += 20;
   }
   if ((reset & 0x40) != 0) {
-    text("Undergoing calibration", 550, vertical);
+    text("Undergoing calibration", 500, vertical);
     vertical += 20;
   }
   if ((reset & 0x80) != 0) {
-    text("E-stop activated", 550, vertical);
+    text("E-stop activated", 500, vertical);
   }
   
   // Draw the load %
@@ -352,7 +352,7 @@ void draw() {
   pushMatrix();
   translate(0, 49);
   rotate(rudderAngle);
-  rect(-2.5, 0, 5, 15);
+  rect(-2.5, 0, 5, 18);
   popMatrix();
   rect(-20, -50, 40, 100);
   popMatrix();
