@@ -351,7 +351,7 @@ void draw() {
   rotate(heading);
   pushMatrix();
   translate(0, 49);
-  rotate(rudderAngle);
+  rotate(-rudderAngle);
   rect(-2.5, 0, 5, 18);
   popMatrix();
   rect(-20, -50, 40, 100);
