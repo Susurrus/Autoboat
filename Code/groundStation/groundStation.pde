@@ -320,10 +320,8 @@ void draw() {
   rotate(heading);
   pushMatrix();
   translate(0, 49);
-  if (rudderAngle > 0) {
-    rotate(rudderAngle);
-  }
-  rect(0, 0, 5, 15);
+  rotate(rudderAngle);
+  rect(-2.5, 0, 5, 15);
   popMatrix();
   rect(-20, -50, 40, 100);
   popMatrix();
