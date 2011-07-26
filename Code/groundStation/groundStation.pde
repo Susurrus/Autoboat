@@ -240,8 +240,8 @@ void draw() {
   text("Waypoint0", 50, 290);
   text("Waypoint1", 50, 350);
   text("Heading", 400, 290);
-  text("Reset", 500, 290);
   text("Load", 570, 290);
+  text("Reset status", 570, 90);
   text("Rudder angle (deg)", 630, 290);
   text("Prop speed (RPM)", 630, 350);
   text("Temperature (deg F)", 630, 400);
@@ -257,7 +257,38 @@ void draw() {
   text(temp, 630, 420);
   
   // Draw the reset bits
-  text(String.format("0x%02x",reset), 500, 310);
+  int vertical = 110;
+  if ((reset & 0x01) != 0) {
+    text("Starting up...", 550, vertical);
+    vertical += 20;
+  }
+  if ((reset & 0x02) != 0) {
+    text("HIL mode changed", 550, vertical);
+    vertical += 20;
+  }
+  if ((reset & 0x04) != 0) {
+    text("HIL disconnected", 550, vertical);
+    vertical += 20;
+  }
+  if ((reset & 0x08) != 0) {
+    text("GPS unavailable", 550, vertical);
+    vertical += 20;
+  }
+  if ((reset & 0x10) != 0) {
+    text("Resetting after switching track", 550, vertical);
+    vertical += 20;
+  }
+  if ((reset & 0x20) != 0) {
+    text("Uncalibrated", 550, vertical);
+    vertical += 20;
+  }
+  if ((reset & 0x40) != 0) {
+    text("Undergoing calibration", 550, vertical);
+    vertical += 20;
+  }
+  if ((reset & 0x80) != 0) {
+    text("E-stop activated", 550, vertical);
+  }
   
   // Draw the load %
   text(String.format("%3d%%",load), 570, 310);
