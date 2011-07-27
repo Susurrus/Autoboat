@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.1922"
+    ComputedModelVersion    "1.1924"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Jul 26 16:16:35 2011"
-  RTWModifiedTimeStamp	  233597395
-  ModelVersionFormat	  "1.%<AutoIncrement:1922>"
+  LastModifiedDate	  "Tue Jul 26 20:04:28 2011"
+  RTWModifiedTimeStamp	  233610410
+  ModelVersionFormat	  "1.%<AutoIncrement:1924>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1241,7 +1241,7 @@ Model {
   }
   System {
     Name		    "code_gen"
-    Location		    [202, 82, 1581, 847]
+    Location		    [202, 82, 1565, 847]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -36789,20 +36789,20 @@ Stateflow {
       "23);\nend\n\n% We record the last input BEFORE it's offset. This fixes situations where\n% we're comparing data "
       "before and after the very first transition.\nlastInput = input;\n\n% Apply any offset that should be there.\ninp"
       "ut = input + offset;\n\n% Update port range limit when the Hall limit switch. Only update to the\n% maximum valu"
-      "e obtained during the limit switch active period.\nif port_limit && high_side == -1\n    high_side = input;\n   "
-      " \n    % If the high_side limit is less than the low_side one, we add 1023\n    % assuming that it's a valid val"
-      "ue (ie. ~= -1).\n    if high_side < low_side && high_side ~= -1\n        high_side = high_side + 1023;\n    end\n"
-      "    \n    if low_side ~= -1\n        cal = true;\n    end\nend\n\n% Update starboard ADC value when limit is rea"
-      "ched. Only update to the\n% maximum value obtained during the limit switch active period.\nif starboard_limit &&"
-      " low_side == -1\n    low_side = input;\n    \n    % If the high_side limit is less than the low_side one, we add"
-      " 1023\n    % assuming that it's a valid value (ie. ~= -1).\n    if high_side < low_side && high_side ~= -1\n    "
-      "    high_side = high_side + 1023;\n    end\n    \n    if high_side ~= -1\n        cal = true;\n    end\nend\n\nc"
-      "alibrated = cal;\n\n% Return 0 when we can't actually determine the rudder position\nif ~cal\n    rads = single("
-      "0);\n    return;\nend\n\n% Prepare our input. Here we subtract the baseline 'low_side' value off of\n% the input"
-      " so we start with a range from [0..high_side-lowside] and map it\n% into the output range of 45 degrees.\nin_max"
-      " = high_side - low_side;\nval = input - low_side;\n\n% Do the actual conversion.\nrads = (single(val)/single(in_"
-      "max) - 0.5)*2*0.7854;\n\n% Finally cap the value to +- our range to prevent odd errors later.\nif rads > 0.7854\n"
-      "    rads = single(0.7854);\nelseif rads < -0.7854\n    rads = single(-0.7854);\nend"
+      "e obtained during the limit switch active period.\nif starboard_limit && high_side == -1\n    high_side = input;"
+      "\n    \n    % If the high_side limit is less than the low_side one, we add 1023\n    % assuming that it's a vali"
+      "d value (ie. ~= -1).\n    if high_side < low_side && high_side ~= -1\n        high_side = high_side + 1023;\n   "
+      " end\n    \n    if low_side ~= -1\n        cal = true;\n    end\nend\n\n% Update starboard ADC value when limit "
+      "is reached. Only update to the\n% maximum value obtained during the limit switch active period.\nif port_limit &"
+      "& low_side == -1\n    low_side = input;\n    \n    % If the high_side limit is less than the low_side one, we ad"
+      "d 1023\n    % assuming that it's a valid value (ie. ~= -1).\n    if high_side < low_side && high_side ~= -1\n   "
+      "     high_side = high_side + 1023;\n    end\n    \n    if high_side ~= -1\n        cal = true;\n    end\nend\n\n"
+      "calibrated = cal;\n\n% Return 0 when we can't actually determine the rudder position\nif ~cal\n    rads = single"
+      "(0);\n    return;\nend\n\n% Prepare our input. Here we subtract the baseline 'low_side' value off of\n% the inpu"
+      "t so we start with a range from [0..high_side-lowside] and map it\n% into the output range of 45 degrees.\nin_ma"
+      "x = high_side - low_side;\nval = input - low_side;\n\n% Do the actual conversion.\nrads = (single(val)/single(in"
+      "_max) - 0.5)*2*0.7854;\n\n% Finally cap the value to +- our range to prevent odd errors later.\nif rads > 0.7854"
+      "\n    rads = single(0.7854);\nelseif rads < -0.7854\n    rads = single(-0.7854);\nend"
       editorLayout	      "100 M4x1[79 60 1285 681]"
     }
   }
