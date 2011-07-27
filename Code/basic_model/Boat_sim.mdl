@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2181"
+    ComputedModelVersion    "1.2193"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Jul 26 20:25:07 2011"
-  RTWModifiedTimeStamp	  233612705
-  ModelVersionFormat	  "1.%<AutoIncrement:2181>"
+  LastModifiedDate	  "Wed Jul 27 11:52:17 2011"
+  RTWModifiedTimeStamp	  233667658
+  ModelVersionFormat	  "1.%<AutoIncrement:2193>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -1121,7 +1121,7 @@ Model {
   }
   System {
     Name		    "Boat_sim"
-    Location		    [202, 82, 1565, 847]
+    Location		    [-92, 50, 1508, 868]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1135,7 +1135,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "140"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    5604
+    SIDHighWatermark	    5608
     Block {
       BlockType		      BusSelector
       Name		      "Bus\nSelector"
@@ -1968,7 +1968,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"HIL Interface"
-	Location		[202, -968, 1581, -203]
+	Location		[202, 74, 1581, 839]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -3044,7 +3044,7 @@ Model {
 	  System {
 	    Name		    "Parse HIL\ninput"
 	    Location		    [202, 82, 1598, 847]
-	    Open		    off
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -3201,6 +3201,16 @@ Model {
 	      SID		      3027
 	      Ports		      [1]
 	      Position		      [870, 50, 960, 80]
+	      ShowName		      off
+	      Decimation	      "1"
+	      Lockdown		      off
+	    }
+	    Block {
+	      BlockType		      Display
+	      Name		      "Display2"
+	      SID		      5606
+	      Ports		      [1]
+	      Position		      [870, 165, 960, 195]
 	      ShowName		      off
 	      Decimation	      "1"
 	      Lockdown		      off
@@ -3510,6 +3520,35 @@ Model {
 		  DstPort		  1
 		}
 	      }
+	    }
+	    Block {
+	      BlockType		      Mux
+	      Name		      "Mux"
+	      SID		      5608
+	      Ports		      [2, 1]
+	      Position		      [825, 316, 830, 354]
+	      ShowName		      off
+	      Inputs		      "2"
+	      DisplayOption	      "bar"
+	    }
+	    Block {
+	      BlockType		      Scope
+	      Name		      "Scope"
+	      SID		      5607
+	      Ports		      [1]
+	      Position		      [900, 319, 930, 351]
+	      Floating		      off
+	      Location		      [1, 48, 1601, 859]
+	      Open		      on
+	      NumInputPorts	      "1"
+	      List {
+		ListType		AxesTitles
+		axes1			"%<SignalLabel>"
+	      }
+	      SaveToWorkspace	      on
+	      DataFormat	      "Array"
+	      LimitDataPoints	      off
+	      SampleTime	      "0"
 	    }
 	    Block {
 	      BlockType		      SubSystem
@@ -4031,8 +4070,22 @@ Model {
 	      SrcBlock		      "Embedded\nMATLAB Function"
 	      SrcPort		      1
 	      Points		      [25, 0; 0, -190; 530, 0; 0, 25]
-	      DstBlock		      "Embedded\nMATLAB Function2"
-	      DstPort		      1
+	      Branch {
+		DstBlock		"Embedded\nMATLAB Function2"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, 130; 55, 0]
+		Branch {
+		  DstBlock		  "Display2"
+		  DstPort		  1
+		}
+		Branch {
+		  Points		  [0, 165]
+		  DstBlock		  "Mux"
+		  DstPort		  2
+		}
+	      }
 	    }
 	    Line {
 	      SrcBlock		      "Digital Clock"
@@ -4089,8 +4142,21 @@ Model {
 	    Line {
 	      SrcBlock		      "Embedded\nMATLAB Function"
 	      SrcPort		      2
-	      Points		      [50, 0; 0, -185; 400, 0; 0, 85]
-	      DstBlock		      "Display3"
+	      Points		      [50, 0; 0, -185; 400, 0; 0, 85; 175, 0]
+	      Branch {
+		DstBlock		"Display3"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, 195]
+		DstBlock		"Mux"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "Mux"
+	      SrcPort		      1
+	      DstBlock		      "Scope"
 	      DstPort		      1
 	    }
 	    Annotation {
@@ -4120,8 +4186,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "RS232 Receive"
-	    Location		    [677, 379, 1175, 679]
-	    Open		    off
+	    Location		    [459, 409, 957, 709]
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -4170,6 +4236,17 @@ Model {
 	      ShowName		      off
 	    }
 	    Block {
+	      BlockType		      ToWorkspace
+	      Name		      "To Workspace"
+	      SID		      5605
+	      Ports		      [1]
+	      Position		      [385, 190, 445, 220]
+	      VariableName	      "serialIn"
+	      MaxDataPoints	      "inf"
+	      SampleTime	      "-1"
+	      SaveFormat	      "Array"
+	    }
+	    Block {
 	      BlockType		      Outport
 	      Name		      "Out1"
 	      SID		      3040
@@ -4181,8 +4258,16 @@ Model {
 	    Line {
 	      SrcBlock		      "Serial Receive"
 	      SrcPort		      1
-	      DstBlock		      "Out1"
-	      DstPort		      1
+	      Points		      [50, 0]
+	      Branch {
+		DstBlock		"Out1"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, 90]
+		DstBlock		"To Workspace"
+		DstPort			1
+	      }
 	    }
 	    Line {
 	      SrcBlock		      "Serial Receive"
@@ -4317,8 +4402,8 @@ Model {
 	    ListType		    AxesTitles
 	    axes1		    "%<SignalLabel>"
 	  }
-	  YMin			  "0"
-	  YMax			  "275"
+	  YMin			  "1548"
+	  YMax			  "1548"
 	  SaveToWorkspace	  on
 	  SaveName		  "latency_in"
 	  DataFormat		  "Array"
@@ -10965,8 +11050,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Simulation\nPacing"
-	Location		[202, 82, 1270, 871]
-	Open			off
+	Location		[0, 50, 1272, 892]
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -19584,6 +19669,8 @@ Stateflow {
     created		    "13-Apr-2010 16:50:36"
     isLibrary		    0
     firstTarget		    176
+    debug {
+    }
     sfVersion		    75014000
   }
   chart {
@@ -19597,7 +19684,6 @@ Stateflow {
     firstJunction	    4
     viewObj		    2
     machine		    1
-    toolbarMode		    LIBRARY_TOOLBAR
     ssIdHighWaterMark	    16
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
@@ -20357,42 +20443,49 @@ Stateflow {
     decomposition	    CLUSTER_STATE
     eml {
       isEML		      1
-      script		      "function [successCount, failCount, out] = parseMessage(in)\n    persistent message internalSucces"
-      "sCount internalFailCount;\n    \n    if isempty(message)\n        message = zeros(22, 1, 'uint8');\n        inte"
-      "rnalSuccessCount = uint32(0);\n        internalFailCount = uint32(0);\n    end\n    \n    for i = 1:size(in,1)\n"
-      "        [new fail data] = buildAndCheckMessage(in(i));\n        if new\n            message = data;\n           "
-      " internalSuccessCount = internalSuccessCount + 1;\n        elseif fail\n            internalFailCount = internal"
-      "FailCount + 1;\n        end\n    end\n    successCount = internalSuccessCount;\n    failCount = internalFailCoun"
-      "t;\n    out = message;\nend\n\nfunction [new fail data] = buildAndCheckMessage(characterIn)\n%#eml\n\npersistent"
-      " message messageIndex messageState actuatorData;\n\nif isempty(message)\n    message = zeros(60, 1, 'uint8');\n "
-      "   messageIndex = uint8(0);\n    messageState = uint8(0);\n    actuatorData = zeros(22, 1, 'uint8');\nend\n\n% T"
-      "his contains the function's state of whether\n% it is currently building a message.\n% 0 - Awaiting header byte "
-      "0 (%)\n% 1 - Awaiting header byte 1 (&)\n% 2 - Building message\n% 3 - Awaiting header byte 0 (^)\n% 4 - Awaitin"
-      "g header byte 1 (&)\n% 5 - Reading checksum character\n\nnew = false;\nfail = false;\n\n% We start recording a n"
-      "ew message if we see the header\nif messageState == 0\n    if characterIn == '%'\n        message(1) = character"
-      "In;\n        messageIndex = uint8(2);\n        messageState = uint8(1);\n    else\n        fail = true;\n    end"
-      "\nelseif messageState == 1\n    % If we don't find the necessary ampersand we start over\n    % waiting for a ne"
-      "w sentence\n    if characterIn == '&'\n        message(2) = characterIn;\n        messageIndex = uint8(3);\n    "
-      "    messageState = uint8(2);\n    else\n        messageIndex = uint8(1);\n        messageState = uint8(0);\n    "
-      "    fail = true;\n    end\nelseif messageState == 2\n    % Record every character that comes in now that we're b"
-      "uilding a sentence.\n    % Only stop if we run out of room or an asterisk is found.\n    message(messageIndex) ="
-      " characterIn;\n    messageIndex = messageIndex + 1;\n    if characterIn == '^'\n        messageState = uint8(3);"
-      "\n    elseif messageIndex == 58\n        % If we've filled up the buffer, ignore the entire message as we can't "
-      "store it all\n        messageState = uint8(0);\n        messageIndex = uint8(1);\n        fail = true;\n    end\n"
-      "elseif messageState == 3\n    % If we don't find the necessary ampersand we continue\n    % recording data as we"
-      " haven't found the footer yet until\n    % we've filled up the entire message (ends at 124 characters\n    % as "
-      "we need room for the 2 footer chars).\n    message(messageIndex) = characterIn;\n    messageIndex = messageIndex"
-      " + 1;\n    if characterIn == '&'\n        messageState = uint8(4);\n    elseif messageIndex == 59\n        messa"
-      "geState = uint8(0);\n        fail = true;\n    end\nelseif messageState == 4\n    % Record the checksum byte.\n "
-      "   message(messageIndex) = characterIn;\n\n    % The checksum is now verified and if successful the message\n   "
-      " % is stored in the appropriate struct.\n    checksumCalculated = uint8(0);\n    for i=3:messageIndex-3\n       "
-      " checksumCalculated = bitxor(checksumCalculated, message(i));\n    end\n    \n    if message(messageIndex) == ch"
-      "ecksumCalculated && message(4) == messageIndex - 7\n        % If we've found an actuator message, update our loc"
-      "al data store\n        if message(3) == 2\n            actuatorData = message(5:26);\n            new = true;\n "
-      "       end\n    else\n        fail = true;\n    end\n\n    % We clear all state variables here regardless of suc"
-      "cess.\n    messageIndex = uint8(1);\n    messageState = uint8(0);\n    message = zeros(60,1,'uint8');\nend\n\nda"
-      "ta = actuatorData;\nend"
-      editorLayout	      "100 M4x1[14 97 1616 876]"
+      script		      "function [successCount, failCount, out] = parseMessage(in)\n    persistent actuatorMessage intern"
+      "alSuccessCount internalFailCount;\n    \n    if isempty(actuatorMessage)\n        actuatorMessage = zeros(22, 1,"
+      " 'uint8');\n        internalSuccessCount = uint32(0);\n        internalFailCount = uint32(0);\n    end\n    \n  "
+      "  for i = 1:size(in,1)\n        [new fail data] = buildAndCheckMessage(in(i));\n        if new\n            actu"
+      "atorMessage = data;\n            internalSuccessCount = internalSuccessCount + 1;\n        elseif fail\n        "
+      "    internalFailCount = internalFailCount + 1;\n        end\n    end\n    successCount = internalSuccessCount;\n"
+      "    failCount = internalFailCount;\n    out = actuatorMessage;\nend\n\nfunction [new fail data] = buildAndCheckM"
+      "essage(characterIn)\n%#eml\n\n    persistent message messageIndex messageState actuatorData;\n\n    if isempty(m"
+      "essage)\n        message = zeros(29, 1, 'uint8');\n        messageIndex = uint8(0);\n        messageState = uint"
+      "8(0);\n        actuatorData = zeros(22, 1, 'uint8');\n    end\n\n    % This contains the function's state of whe"
+      "ther\n    % it is currently building a message.\n    % 0 - Awaiting header byte 0 (%)\n    % 1 - Awaiting header"
+      " byte 1 (&)\n    % 2 - Building message\n    % 3 - Awaiting header byte 0 (^)\n    % 4 - Awaiting header byte 1 "
+      "(&)\n    % 5 - Reading checksum character\n\n    new = false;\n    fail = false;\n\n    % We start recording a n"
+      "ew message if we see the header\n    if messageState == 0\n        if characterIn == '%'\n            message(1)"
+      " = characterIn;\n            messageIndex = uint8(2);\n            messageState = uint8(1);\n        else\n     "
+      "       fail = true;\n        end\n    elseif messageState == 1\n        % If we don't find the necessary ampersa"
+      "nd we start over\n        % waiting for a new sentence\n        if characterIn == '&'\n            message(2) = "
+      "characterIn;\n            messageIndex = messageIndex + 1;\n            messageState = uint8(2);\n        elseif"
+      " characterIn ~= '%'\n            messageIndex = uint8(1);\n            messageState = uint8(0);\n            fai"
+      "l = true;\n        end\n    elseif messageState == 2\n        % Record every character that comes in now that we"
+      "'re building a sentence.\n        % Only stop if we run out of room or an asterisk is found.\n        message(me"
+      "ssageIndex) = characterIn;\n        messageIndex = messageIndex + 1;\n        if messageIndex > 4 && message(4) "
+      "< 249 && messageIndex == message(4) + 6\n            if characterIn == '^'\n                messageState = uint8"
+      "(3);\n            else\n                messageState = uint8(0);\n                messageIndex = uint8(1);\n    "
+      "            fail = true;\n            end\n        elseif messageIndex == length(message) - 1\n            % If "
+      "we've filled up the buffer, ignore the entire message as we can't store it all\n            messageIndex = uint8"
+      "(1);\n            messageState = uint8(0);\n            fail = true;\n        end\n    elseif messageState == 3\n"
+      "        % If we don't find the necessary ampersand we continue\n        % recording data as we haven't found the"
+      " footer yet until\n        % we've filled up the entire message (ends at 124 characters\n        % as we need ro"
+      "om for the 2 footer chars).\n        message(messageIndex) = characterIn;\n        messageIndex = messageIndex +"
+      " 1;\n        if characterIn == '&'\n            messageState = uint8(4);\n        elseif messageIndex == length("
+      "message)\n            messageState = uint8(0);\n            messageIndex = uint8(1);\n            fail = true;\n"
+      "        end\n    elseif messageState == 4\n        % Record the checksum byte.\n        message(messageIndex) = "
+      "characterIn;\n\n        % The checksum is now verified and if successful the message\n        % is stored in the"
+      " appropriate struct.\n        checksumCalculated = uint8(0);\n        for i=3:messageIndex-3\n            checks"
+      "umCalculated = bitxor(checksumCalculated, message(i));\n        end\n\n        if message(messageIndex) == check"
+      "sumCalculated\n            % If we've found an actuator message, update our local data store\n            if mes"
+      "sage(3) == 2\n                actuatorData = message(5:26);\n                new = true;\n            end\n     "
+      "   else\n            fail = true;\n        end\n\n        % We clear all state variables here regardless of succ"
+      "ess.\n        messageIndex = uint8(1);\n        messageState = uint8(0);\n        message = zeros(29,1,'uint8');"
+      "\n    end\n\n    data = actuatorData;\nend"
+      editorLayout	      "100 M4x1[108 40 1616 876]"
+      breakpoints	      "100 M[92]"
       saturateOnIntegerOverflow	0
     }
   }

@@ -127,7 +127,7 @@ void buildAndCheckMessage(unsigned char characterIn) {
 		// Record every character that comes in now that we're building a sentence.
 		// Stop scanning once we've reached the message length of characters.
 		message[messageIndex++] = characterIn;
-		if (messageIndex == message[3] + 5) {
+		if (messageIndex > 3 && messageIndex == message[3] + 5) {
 			if (characterIn == '^') {
 				messageState = 3;
 			} else {
@@ -416,7 +416,7 @@ inline void uart2EnqueueActuatorData(unsigned char *data) {
 }
 
 /**
- * Add all 90 data + 7 header/footer bytes of the actuator struct to UART2's transmission queue.
+ * Add all 90 data + 7 header/footer bytes of the actuator struct to UART1's transmission queue.
  */
 inline void uart1EnqueueStateData(unsigned char *data) {
 	uart1EnqueueData(data, 105);
