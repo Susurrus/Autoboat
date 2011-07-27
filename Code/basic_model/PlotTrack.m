@@ -89,13 +89,13 @@ hold off;
 %% Plot the vehicle commands
 figure(2);clf;
 subplot(3,1,1);
-plot(rudder_command);
+plot(commands_rudder_up > 0);
 title('Rudder Commands');
 
 subplot(3,1,2);
-plot(throttle_command);
+plot(commands_throttle_data);
 title('Throttle Commands');
 
 subplot(3,1,3);
-plot(ballast_command);
+plot(commands_ballast_enable);
 title('Ballast Commands');
