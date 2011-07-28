@@ -245,6 +245,7 @@ void draw() {
   text("Rudder angle (deg)", 630, 290);
   text("Prop speed (RPM)", 630, 350);
   text("Mode:", 630, 400);
+  text("Status:", 20, 170);
   textFont(regularFont);
   
   // Draw the rudder angle in degrees
@@ -253,8 +254,8 @@ void draw() {
   // Draw the prop speed in RPM
   text(propRpm, 630, 370);
 
-  // Draw the temperature in Fahrenheit
-  if (statusBits > 0) {
+  // Draw the operational mode of the boat
+  if ((statusBits & 0x01) != 0) {
     fill(0, 200, 0);
     textFont(boldFont);
     text("auto", 680, 400);
@@ -266,6 +267,14 @@ void draw() {
     text("manual", 680, 400);
     textFont(regularFont);
     fill(255);
+  }
+  
+  // Draw the various possible states within the status bit.
+  // First we output the state of the HIL actuator sensor override line
+  int nextStatusLineStart = 190;
+  if ((statusBits & 0x02) != 0) {
+    text("HIL actuator sensor override", 20, nextStatusLineStart);
+    nextStatusLineStart += 20;
   }
   
   // Draw the reset bits
