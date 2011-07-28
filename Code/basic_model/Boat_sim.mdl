@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2194"
+    ComputedModelVersion    "1.2197"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Jul 27 12:13:59 2011"
-  RTWModifiedTimeStamp	  233669632
-  ModelVersionFormat	  "1.%<AutoIncrement:2194>"
+  LastModifiedDate	  "Wed Jul 27 21:57:41 2011"
+  RTWModifiedTimeStamp	  233704658
+  ModelVersionFormat	  "1.%<AutoIncrement:2197>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -1121,10 +1121,10 @@ Model {
   }
   System {
     Name		    "Boat_sim"
-    Location		    [202, 82, 1581, 847]
+    Location		    [285, -976, 1661, -21]
     Open		    on
     ModelBrowserVisibility  on
-    ModelBrowserWidth	    200
+    ModelBrowserWidth	    283
     ScreenColor		    "white"
     PaperOrientation	    "landscape"
     PaperPositionMode	    "auto"
@@ -1135,7 +1135,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "140"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    5608
+    SIDHighWatermark	    5615
     Block {
       BlockType		      BusSelector
       Name		      "Bus\nSelector"
@@ -5140,7 +5140,7 @@ Model {
 	      BlockType		      Constant
 	      Name		      "Constant"
 	      SID		      2627
-	      Position		      [130, 358, 160, 372]
+	      Position		      [130, 348, 160, 362]
 	      BackgroundColor	      "gray"
 	      ShowName		      off
 	      Value		      "0"
@@ -5152,7 +5152,7 @@ Model {
 	      Name		      "Discrete-Time\nIntegrator"
 	      SID		      3369
 	      Ports		      [1, 1]
-	      Position		      [300, 339, 335, 371]
+	      Position		      [300, 329, 335, 361]
 	      ShowName		      off
 	      IntegratorMethod	      "Integration: Forward Euler"
 	      ExternalReset	      "none"
@@ -5335,9 +5335,9 @@ Model {
 	    Block {
 	      BlockType		      SubSystem
 	      Name		      "Enabled\nSubsystem1"
-	      SID		      550
+	      SID		      5609
 	      Ports		      [1, 1]
-	      Position		      [115, 304, 215, 346]
+	      Position		      [115, 302, 215, 328]
 	      ShowName		      off
 	      LibraryVersion	      "1.216"
 	      TreatAsAtomicUnit	      on
@@ -5365,9 +5365,10 @@ Model {
 		ZoomFactor		"100"
 		Block {
 		  BlockType		  Inport
-		  Name			  "In1"
-		  SID			  551
+		  Name			  "dir"
+		  SID			  5610
 		  Position		  [50, 103, 80, 117]
+		  BackgroundColor	  "darkGreen"
 		  IconDisplay		  "Port number"
 		  OutDataType		  "fixdt(1, 16)"
 		  OutScaling		  "2^0"
@@ -5375,7 +5376,7 @@ Model {
 		Block {
 		  BlockType		  Bias
 		  Name			  "Bias"
-		  SID			  553
+		  SID			  5611
 		  Position		  [225, 95, 265, 125]
 		  ShowName		  off
 		  Bias			  "-1"
@@ -5384,7 +5385,7 @@ Model {
 		Block {
 		  BlockType		  DataTypeConversion
 		  Name			  "Data Type Conversion"
-		  SID			  559
+		  SID			  5612
 		  Position		  [105, 103, 140, 117]
 		  ShowName		  off
 		  OutDataTypeMode	  "single"
@@ -5397,7 +5398,7 @@ Model {
 		Block {
 		  BlockType		  Gain
 		  Name			  "Gain"
-		  SID			  554
+		  SID			  5613
 		  Position		  [165, 94, 200, 126]
 		  ShowName		  off
 		  Gain			  "2"
@@ -5414,7 +5415,7 @@ Model {
 		Block {
 		  BlockType		  Reference
 		  Name			  "Shift\nArithmetic"
-		  SID			  1562
+		  SID			  5614
 		  Ports			  [1, 1]
 		  Position		  [295, 103, 375, 117]
 		  ShowName		  off
@@ -5434,15 +5435,16 @@ Model {
 		}
 		Block {
 		  BlockType		  Outport
-		  Name			  "Out1"
-		  SID			  556
+		  Name			  "d_rudder"
+		  SID			  5615
 		  Position		  [430, 103, 460, 117]
+		  BackgroundColor	  "yellow"
 		  IconDisplay		  "Port number"
 		  OutDataType		  "fixdt(1, 16)"
 		  OutScaling		  "2^0"
 		}
 		Line {
-		  SrcBlock		  "In1"
+		  SrcBlock		  "dir"
 		  SrcPort		  1
 		  DstBlock		  "Data Type Conversion"
 		  DstPort		  1
@@ -5462,7 +5464,7 @@ Model {
 		Line {
 		  SrcBlock		  "Shift\nArithmetic"
 		  SrcPort		  1
-		  DstBlock		  "Out1"
+		  DstBlock		  "d_rudder"
 		  DstPort		  1
 		}
 		Line {
@@ -5475,6 +5477,13 @@ Model {
 		  Name			  "Map from 0,1 to -.5,.5"
 		  Position		  [246, 152]
 		}
+		Annotation {
+		  Name			  "The direction line for the rudder motor driver board rotates the motor to port when high\nand rotates th"
+		  "e motor to starboard when low. As rudder angles are positive when towards\nport, the mapping is from [0 1] to [-0."
+		  "5 .5]."
+		  Position		  [25, 186]
+		  HorizontalAlignment	  "left"
+		}
 	      }
 	    }
 	    Block {
@@ -5482,7 +5491,7 @@ Model {
 	      Name		      "Saturation"
 	      SID		      2623
 	      Ports		      [1, 1]
-	      Position		      [535, 340, 565, 370]
+	      Position		      [535, 330, 565, 360]
 	      UpperLimit	      ".7854"
 	      LowerLimit	      "-.7854"
 	      OutDataType	      "fixdt(1, 16)"
@@ -5709,7 +5718,7 @@ Model {
 	      Name		      "Second Order Linear Actuator2"
 	      SID		      4001
 	      Ports		      [1, 1]
-	      Position		      [405, 334, 505, 376]
+	      Position		      [405, 324, 505, 366]
 	      ShowName		      off
 	      AncestorBlock	      "aerolibactuator/Second Order Linear Actuator"
 	      LibraryVersion	      "*1.34"
@@ -6771,7 +6780,7 @@ Model {
 	      BlockType		      Switch
 	      Name		      "Switch"
 	      SID		      2626
-	      Position		      [240, 340, 270, 370]
+	      Position		      [240, 330, 270, 360]
 	      Criteria		      "u2 ~= 0"
 	      InputSameDT	      off
 	      OutDataType	      "fixdt(1, 16)"
@@ -6783,7 +6792,7 @@ Model {
 	      Name		      "To Workspace"
 	      SID		      5330
 	      Ports		      [1]
-	      Position		      [610, 440, 670, 470]
+	      Position		      [610, 430, 670, 460]
 	      VariableName	      "r_angle"
 	      MaxDataPoints	      "inf"
 	      SampleTime	      "-1"
@@ -6814,7 +6823,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "r_d"
 	      SID		      97
-	      Position		      [595, 348, 625, 362]
+	      Position		      [595, 338, 625, 352]
 	      BackgroundColor	      "yellow"
 	      Port		      "3"
 	      IconDisplay	      "Port number"
@@ -6891,7 +6900,7 @@ Model {
 	      Labels		      [0, 0]
 	      SrcBlock		      "Bus\nSelector1"
 	      SrcPort		      4
-	      Points		      [0, 40]
+	      Points		      [0, 30]
 	      DstBlock		      "Enabled\nSubsystem1"
 	      DstPort		      1
 	    }
@@ -6906,7 +6915,7 @@ Model {
 	    Line {
 	      SrcBlock		      "Subsystem1"
 	      SrcPort		      1
-	      Points		      [5, 0; 0, 90]
+	      Points		      [5, 0; 0, 80]
 	      DstBlock		      "Switch"
 	      DstPort		      2
 	    }
@@ -7600,7 +7609,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Generate sensor data\nfrom actuator position"
-	    Location		    [763, 199, 1425, 792]
+	    Location		    [865, 198, 1527, 791]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    283
@@ -7741,8 +7750,8 @@ Model {
 	      RTWMemSecDataConstants  "Inherit from model"
 	      RTWMemSecDataInternal   "Inherit from model"
 	      RTWMemSecDataParameters "Inherit from model"
-	      relop		      ">="
-	      const		      "620"
+	      relop		      "<"
+	      const		      "363"
 	      LogicOutDataTypeMode    "boolean"
 	      ZeroCross		      on
 	      Port {
@@ -7770,8 +7779,8 @@ Model {
 	      RTWMemSecDataConstants  "Inherit from model"
 	      RTWMemSecDataInternal   "Inherit from model"
 	      RTWMemSecDataParameters "Inherit from model"
-	      relop		      "<="
-	      const		      "380"
+	      relop		      ">"
+	      const		      "638"
 	      LogicOutDataTypeMode    "boolean"
 	      ZeroCross		      on
 	      Port {
@@ -7783,7 +7792,7 @@ Model {
 	    }
 	    Block {
 	      BlockType		      SubSystem
-	      Name		      "Map from +-.7854\nto 655..347"
+	      Name		      "Map from +-.7854\nto [347:655]"
 	      SID		      615
 	      Ports		      [1, 1]
 	      Position		      [160, 311, 235, 329]
@@ -7801,7 +7810,7 @@ Model {
 		DataLoggingNameMode	"SignalName"
 	      }
 	      System {
-		Name			"Map from +-.7854\nto 655..347"
+		Name			"Map from +-.7854\nto [347:655]"
 		Location		[855, 226, 1502, 506]
 		Open			off
 		ModelBrowserVisibility	on
@@ -7820,6 +7829,7 @@ Model {
 		  Name			  "In1"
 		  SID			  617
 		  Position		  [25, 33, 55, 47]
+		  BackgroundColor	  "darkGreen"
 		  IconDisplay		  "Port number"
 		}
 		Block {
@@ -7850,7 +7860,7 @@ Model {
 		  SID			  3463
 		  Position		  [100, 16, 185, 64]
 		  ShowName		  off
-		  Gain			  "196"
+		  Gain			  "-196"
 		  ParameterDataTypeMode	  "Inherit via internal rule"
 		  ParameterDataType	  "fixdt(1, 16)"
 		  ParameterScaling	  "2^0"
@@ -7866,6 +7876,7 @@ Model {
 		  Name			  "Out1"
 		  SID			  616
 		  Position		  [395, 33, 425, 47]
+		  BackgroundColor	  "yellow"
 		  IconDisplay		  "Port number"
 		}
 		Line {
@@ -8204,13 +8215,13 @@ Model {
 	    Line {
 	      SrcBlock		      "rudder"
 	      SrcPort		      1
-	      DstBlock		      "Map from +-.7854\nto 655..347"
+	      DstBlock		      "Map from +-.7854\nto [347:655]"
 	      DstPort		      1
 	    }
 	    Line {
 	      Name		      "position"
 	      Labels		      [0, 0]
-	      SrcBlock		      "Map from +-.7854\nto 655..347"
+	      SrcBlock		      "Map from +-.7854\nto [347:655]"
 	      SrcPort		      1
 	      Points		      [30, 0]
 	      Branch {
@@ -11110,7 +11121,7 @@ Model {
 	Location		[533, 82, 1476, 831]
 	Open			off
 	ModelBrowserVisibility	on
-	ModelBrowserWidth	200
+	ModelBrowserWidth	283
 	ScreenColor		"white"
 	PaperOrientation	"landscape"
 	PaperPositionMode	"auto"
@@ -11125,6 +11136,7 @@ Model {
 	  Name			  "GPS"
 	  SID			  2172
 	  Position		  [35, 88, 65, 102]
+	  BackgroundColor	  "darkGreen"
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -11132,6 +11144,7 @@ Model {
 	  Name			  "sensors_t"
 	  SID			  2174
 	  Position		  [35, 118, 65, 132]
+	  BackgroundColor	  "darkGreen"
 	  Port			  "2"
 	  IconDisplay		  "Port number"
 	}
@@ -11140,6 +11153,7 @@ Model {
 	  Name			  "sensors_r"
 	  SID			  2175
 	  Position		  [35, 148, 65, 162]
+	  BackgroundColor	  "darkGreen"
 	  Port			  "3"
 	  IconDisplay		  "Port number"
 	}
@@ -11148,6 +11162,7 @@ Model {
 	  Name			  "sensors_b"
 	  SID			  2177
 	  Position		  [35, 178, 65, 192]
+	  BackgroundColor	  "darkGreen"
 	  Port			  "4"
 	  IconDisplay		  "Port number"
 	}
@@ -11156,6 +11171,7 @@ Model {
 	  Name			  "reset"
 	  SID			  2179
 	  Position		  [35, 208, 65, 222]
+	  BackgroundColor	  "darkGreen"
 	  Port			  "5"
 	  IconDisplay		  "Port number"
 	}
@@ -11164,6 +11180,7 @@ Model {
 	  Name			  "nextTrack"
 	  SID			  3891
 	  Position		  [35, 243, 65, 257]
+	  BackgroundColor	  "darkGreen"
 	  Port			  "6"
 	  IconDisplay		  "Port number"
 	}
@@ -11172,6 +11189,7 @@ Model {
 	  Name			  "resetTrack"
 	  SID			  3892
 	  Position		  [35, 278, 65, 292]
+	  BackgroundColor	  "darkGreen"
 	  Port			  "7"
 	  IconDisplay		  "Port number"
 	}
@@ -18154,10 +18172,10 @@ Model {
 	}
 	Block {
 	  BlockType		  SubSystem
-	  Name			  "Map from to 655..347\nto -.7854..+.7854"
+	  Name			  "Map from [347:655]\nto [0.7854:-0.7854]"
 	  SID			  5323
 	  Ports			  [1, 1]
-	  Position		  [185, 146, 260, 164]
+	  Position		  [195, 136, 270, 154]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -18166,7 +18184,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
 	  System {
-	    Name		    "Map from to 655..347\nto -.7854..+.7854"
+	    Name		    "Map from [347:655]\nto [0.7854:-0.7854]"
 	    Location		    [338, 507, 744, 787]
 	    Open		    off
 	    ModelBrowserVisibility  on
@@ -18216,7 +18234,7 @@ Model {
 	      SID		      5327
 	      Position		      [240, 24, 295, 56]
 	      ShowName		      off
-	      Gain		      "1/196"
+	      Gain		      "-1/196"
 	      ParameterDataTypeMode   "Inherit via internal rule"
 	      ParameterDataType	      "fixdt(1, 16)"
 	      ParameterScaling	      "2^0"
@@ -18444,6 +18462,7 @@ Model {
 	  Name			  "command_r"
 	  SID			  2173
 	  Position		  [755, 113, 785, 127]
+	  BackgroundColor	  "yellow"
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -18451,6 +18470,7 @@ Model {
 	  Name			  "command_t"
 	  SID			  2176
 	  Position		  [755, 158, 785, 172]
+	  BackgroundColor	  "yellow"
 	  Port			  "2"
 	  IconDisplay		  "Port number"
 	}
@@ -18459,6 +18479,7 @@ Model {
 	  Name			  "command_b"
 	  SID			  2178
 	  Position		  [755, 203, 785, 217]
+	  BackgroundColor	  "yellow"
 	  Port			  "3"
 	  IconDisplay		  "Port number"
 	}
@@ -18538,7 +18559,7 @@ Model {
 	  SrcPort		  1
 	  Points		  [110, 0]
 	  Branch {
-	    Points		    [120, 0; 0, -25]
+	    Points		    [185, 0; 0, -25]
 	    DstBlock		    "Logical\nOperator"
 	    DstPort		    1
 	  }
@@ -18617,8 +18638,9 @@ Model {
 	  DstPort		  4
 	}
 	Line {
-	  SrcBlock		  "Map from to 655..347\nto -.7854..+.7854"
+	  SrcBlock		  "Map from [347:655]\nto [0.7854:-0.7854]"
 	  SrcPort		  1
+	  Points		  [0, 10]
 	  DstBlock		  "Autonomous Controller"
 	  DstPort		  3
 	}
@@ -18627,7 +18649,8 @@ Model {
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector"
 	  SrcPort		  1
-	  DstBlock		  "Map from to 655..347\nto -.7854..+.7854"
+	  Points		  [55, 0]
+	  DstBlock		  "Map from [347:655]\nto [0.7854:-0.7854]"
 	  DstPort		  1
 	}
 	Annotation {
@@ -18669,9 +18692,10 @@ Model {
 	ZoomFactor		"100"
 	Block {
 	  BlockType		  Inport
-	  Name			  "In1"
+	  Name			  "GPS"
 	  SID			  3565
 	  Position		  [25, 108, 55, 122]
+	  BackgroundColor	  "darkGreen"
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -18793,9 +18817,10 @@ Model {
 	}
 	Block {
 	  BlockType		  Outport
-	  Name			  "Out1"
+	  Name			  "GPS+newData"
 	  SID			  3570
 	  Position		  [270, 118, 300, 132]
+	  BackgroundColor	  "yellow"
 	  IconDisplay		  "Port number"
 	}
 	Line {
@@ -18902,7 +18927,7 @@ Model {
 	  DstPort		  12
 	}
 	Line {
-	  SrcBlock		  "In1"
+	  SrcBlock		  "GPS"
 	  SrcPort		  1
 	  DstBlock		  "Bus\nSelector"
 	  DstPort		  1
@@ -18910,7 +18935,7 @@ Model {
 	Line {
 	  SrcBlock		  "Bus\nCreator"
 	  SrcPort		  1
-	  DstBlock		  "Out1"
+	  DstBlock		  "GPS+newData"
 	  DstPort		  1
 	}
       }
@@ -19620,8 +19645,6 @@ Stateflow {
     created		    "13-Apr-2010 16:50:36"
     isLibrary		    0
     firstTarget		    176
-    debug {
-    }
     sfVersion		    75014000
   }
   chart {

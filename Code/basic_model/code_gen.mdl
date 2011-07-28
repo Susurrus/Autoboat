@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.1926"
+    ComputedModelVersion    "1.1928"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Jul 27 12:22:04 2011"
-  RTWModifiedTimeStamp	  233668658
-  ModelVersionFormat	  "1.%<AutoIncrement:1926>"
+  LastModifiedDate	  "Wed Jul 27 21:57:25 2011"
+  RTWModifiedTimeStamp	  233704180
+  ModelVersionFormat	  "1.%<AutoIncrement:1928>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1241,7 +1241,7 @@ Model {
   }
   System {
     Name		    "code_gen"
-    Location		    [202, 82, 1565, 847]
+    Location		    [327, 83, 1572, 813]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -20176,7 +20176,7 @@ Model {
 	  Name			  "Rudder sensor\ncalibration"
 	  SID			  14817
 	  Ports			  [2, 2]
-	  Position		  [220, 103, 305, 132]
+	  Position		  [225, 103, 310, 132]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -23495,7 +23495,7 @@ Model {
 	Line {
 	  SrcBlock		  "Rudder sensor\ncalibration"
 	  SrcPort		  1
-	  Points		  [45, 0]
+	  Points		  [40, 0]
 	  Branch {
 	    Points		    [0, 140]
 	    Branch {
@@ -23552,7 +23552,7 @@ Model {
 	Line {
 	  SrcBlock		  "Detect\nChange"
 	  SrcPort		  1
-	  Points		  [30, 0]
+	  Points		  [35, 0]
 	  DstBlock		  "Rudder sensor\ncalibration"
 	  DstPort		  2
 	}
@@ -37011,10 +37011,11 @@ Stateflow {
       "calibrated = cal;\n\n% Return 0 when we can't actually determine the rudder position\nif ~cal\n    rads = single"
       "(0);\n    return;\nend\n\n% Prepare our input. Here we subtract the baseline 'low_side' value off of\n% the inpu"
       "t so we start with a range from [0..high_side-lowside] and map it\n% into the output range of 45 degrees.\nin_ma"
-      "x = high_side - low_side;\nval = input - low_side;\n\n% Do the actual conversion.\nrads = (single(val)/single(in"
-      "_max) - 0.5)*2*0.7854;\n\n% Finally cap the value to +- our range to prevent odd errors later.\nif rads > 0.7854"
-      "\n    rads = single(0.7854);\nelseif rads < -0.7854\n    rads = single(-0.7854);\nend"
-      editorLayout	      "100 M4x1[79 60 1285 681]"
+      "x = high_side - low_side;\nval = input - low_side;\n\n% Do the actual conversion reversing the range and mapping"
+      " it into [.7854:-0.7854]\nrads = (0.5 - single(val)/single(in_max))*2*0.7854;\n\n% Finally cap the value to +- o"
+      "ur range to prevent odd errors later.\nif rads > 0.7854\n    rads = single(0.7854);\nelseif rads < -0.7854\n    "
+      "rads = single(-0.7854);\nend"
+      editorLayout	      "100 M4x1[79 158 716 537]"
     }
   }
   junction {
