@@ -291,11 +291,11 @@ void draw() {
     vertical += 20;
   }
   if ((reset & 0x20) != 0) {
-    text("Uncalibrated", 500, vertical);
+    text("Rudder uncalibrated", 500, vertical);
     vertical += 20;
   }
   if ((reset & 0x40) != 0) {
-    text("Undergoing calibration", 500, vertical);
+    text("Undergoing rudder calibration", 500, vertical);
     vertical += 20;
   }
   if ((reset & 0x80) != 0) {

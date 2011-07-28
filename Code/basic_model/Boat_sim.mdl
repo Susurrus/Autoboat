@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2197"
+    ComputedModelVersion    "1.2199"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Jul 27 21:57:41 2011"
-  RTWModifiedTimeStamp	  233704658
-  ModelVersionFormat	  "1.%<AutoIncrement:2197>"
+  LastModifiedDate	  "Thu Jul 28 01:08:17 2011"
+  RTWModifiedTimeStamp	  233715720
+  ModelVersionFormat	  "1.%<AutoIncrement:2199>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -1121,7 +1121,7 @@ Model {
   }
   System {
     Name		    "Boat_sim"
-    Location		    [285, -976, 1661, -21]
+    Location		    [202, 74, 1581, 839]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    283
@@ -1135,7 +1135,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "140"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    5615
+    SIDHighWatermark	    5617
     Block {
       BlockType		      BusSelector
       Name		      "Bus\nSelector"
@@ -4977,7 +4977,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Plant"
-	Location		[202, 82, 1270, 871]
+	Location		[202, 82, 1582, 847]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -7155,7 +7155,7 @@ Model {
 	      Name		      "Discrete-Time\nIntegrator"
 	      SID		      3368
 	      Ports		      [1, 1]
-	      Position		      [320, 209, 355, 241]
+	      Position		      [455, 209, 490, 241]
 	      ShowName		      off
 	      IntegratorMethod	      "Integration: Forward Euler"
 	      ExternalReset	      "none"
@@ -7186,7 +7186,7 @@ Model {
 	      BlockType		      Gain
 	      Name		      "Divide by\nwheelbase"
 	      SID		      189
-	      Position		      [210, 199, 295, 251]
+	      Position		      [345, 199, 430, 251]
 	      ShowName		      off
 	      Gain		      "1/wheelbase"
 	      ParameterDataTypeMode   "Inherit via internal rule"
@@ -7219,7 +7219,7 @@ Model {
 	      BlockType		      Constant
 	      Name		      "Initial heading"
 	      SID		      192
-	      Position		      [320, 250, 350, 280]
+	      Position		      [455, 250, 485, 280]
 	      BackgroundColor	      "gray"
 	      ShowName		      off
 	      Value		      "phi_0"
@@ -7227,11 +7227,27 @@ Model {
 	      OutScaling	      "2^0"
 	    }
 	    Block {
+	      BlockType		      Gain
+	      Name		      "Negate rudder angle"
+	      SID		      5616
+	      Position		      [105, 215, 140, 245]
+	      Gain		      "-1"
+	      ParameterDataTypeMode   "Inherit via internal rule"
+	      ParameterDataType	      "sfix(16)"
+	      ParameterScaling	      "2^0"
+	      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
+	      OutDataTypeMode	      "Inherit via internal rule"
+	      OutDataType	      "sfix(16)"
+	      OutScaling	      "2^0"
+	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
 	      BlockType		      Product
 	      Name		      "Product3"
 	      SID		      193
 	      Ports		      [2, 1]
-	      Position		      [150, 207, 180, 238]
+	      Position		      [285, 207, 315, 238]
 	      ShowName		      off
 	      InputSameDT	      off
 	      OutDataTypeMode	      "Inherit via internal rule"
@@ -7261,7 +7277,7 @@ Model {
 	      Name		      "Sum2"
 	      SID		      195
 	      Ports		      [2, 1]
-	      Position		      [385, 220, 405, 240]
+	      Position		      [520, 220, 540, 240]
 	      ShowName		      off
 	      InputSameDT	      off
 	      OutDataTypeMode	      "double"
@@ -7292,7 +7308,7 @@ Model {
 	      Name		      "Trigonometric\nFunction2"
 	      SID		      198
 	      Ports		      [1, 1]
-	      Position		      [90, 220, 120, 240]
+	      Position		      [190, 220, 220, 240]
 	      ShowName		      off
 	      Operator		      "tan"
 	      OutputSignalType	      "real"
@@ -7322,7 +7338,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "heading"
 	      SID		      201
-	      Position		      [450, 223, 480, 237]
+	      Position		      [585, 223, 615, 237]
 	      BackgroundColor	      "yellow"
 	      Port		      "3"
 	      IconDisplay	      "Port number"
@@ -7370,7 +7386,7 @@ Model {
 	    Line {
 	      SrcBlock		      "Rudder"
 	      SrcPort		      1
-	      DstBlock		      "Trigonometric\nFunction2"
+	      DstBlock		      "Negate rudder angle"
 	      DstPort		      1
 	    }
 	    Line {
@@ -7463,7 +7479,7 @@ Model {
 	      SrcPort		      1
 	      Points		      [0, 0]
 	      Branch {
-		Points			[0, 80]
+		Points			[0, 50; 140, 0]
 		DstBlock		"Product3"
 		DstPort			1
 	      }
@@ -7478,6 +7494,12 @@ Model {
 	      Points		      [150, 0]
 	      DstBlock		      "Sum1"
 	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Negate rudder angle"
+	      SrcPort		      1
+	      DstBlock		      "Trigonometric\nFunction2"
+	      DstPort		      1
 	    }
 	    Annotation {
 	      Name		      "This subsystem computes the forward force, heading and roll of the boat that \nis to be expected b"
@@ -11118,7 +11140,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Subsystem"
-	Location		[533, 82, 1476, 831]
+	Location		[211, 83, 1572, 830]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	283
@@ -11209,7 +11231,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Autonomous Controller"
-	    Location		    [202, 82, 1270, 871]
+	    Location		    [211, 83, 1589, 830]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -11622,15 +11644,6 @@ Model {
 		  }
 		}
 		Block {
-		  BlockType		  Display
-		  Name			  "Display3"
-		  SID			  5386
-		  Ports			  [1]
-		  Position		  [540, 391, 630, 419]
-		  Decimation		  "1"
-		  Lockdown		  off
-		}
-		Block {
 		  BlockType		  SubSystem
 		  Name			  "Embedded\nMATLAB Function"
 		  SID			  5387
@@ -11765,7 +11778,7 @@ Model {
 		  SID			  5389
 		  Position		  [855, 640, 885, 670]
 		  ShowName		  off
-		  Gain			  "-1/70"
+		  Gain			  "1/70"
 		  ParameterDataTypeMode	  "Inherit via internal rule"
 		  ParameterDataType	  "fixdt(1, 16)"
 		  ParameterScaling	  "2^0"
@@ -12910,16 +12923,8 @@ Model {
 		Line {
 		  SrcBlock		  "Sensors"
 		  SrcPort		  1
-		  Points		  [275, 0]
-		  Branch {
-		    DstBlock		    "Add"
-		    DstPort		    2
-		  }
-		  Branch {
-		    Points		    [0, 55]
-		    DstBlock		    "Display3"
-		    DstPort		    1
-		  }
+		  DstBlock		  "Add"
+		  DstPort		  2
 		}
 		Line {
 		  Name			  "direction"
@@ -13621,6 +13626,23 @@ Model {
 		    Expr		    "abs(u)*u"
 		    }
 		    Block {
+		    BlockType		    Gain
+		    Name		    "Gain"
+		    SID			    5617
+		    Position		    [95, 185, 125, 215]
+		    ShowName		    off
+		    Gain		    "-1"
+		    ParameterDataTypeMode   "Inherit via internal rule"
+		    ParameterDataType	    "fixdt(1, 16)"
+		    ParameterScaling	    "2^0"
+		    ParamDataTypeStr	    "Inherit: Inherit via internal rule"
+		    OutDataTypeMode	    "Inherit via internal rule"
+		    OutDataType		    "fixdt(1, 16)"
+		    OutScaling		    "2^0"
+		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
 		    BlockType		    Constant
 		    Name		    "Initial heading"
 		    SID			    5462
@@ -13777,7 +13799,7 @@ Model {
 		    Line {
 		    SrcBlock		    "Rudder"
 		    SrcPort		    1
-		    DstBlock		    "Trigonometric\nFunction2"
+		    DstBlock		    "Gain"
 		    DstPort		    1
 		    }
 		    Line {
@@ -13815,6 +13837,12 @@ Model {
 		    SrcBlock		    "Sum2"
 		    SrcPort		    1
 		    DstBlock		    "heading"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Gain"
+		    SrcPort		    1
+		    DstBlock		    "Trigonometric\nFunction2"
 		    DstPort		    1
 		    }
 		    Annotation {
