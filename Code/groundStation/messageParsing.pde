@@ -124,7 +124,7 @@ void updateStateData(byte message[]) {
     loadList.add(load);
     rudderAngleList.add(rudderAngle);
     propRpmList.add(propRpm);
-    tempList.add(temp);
+    statusBitsList.add(statusBits);
     orderingList.add(ordering);
     
     recordedMessages++;
@@ -166,7 +166,7 @@ void updateStateData(byte message[]) {
     load = din.readByte();
     rudderAngle = din.readFloat();
     propRpm = din.readUnsignedShort();
-    temp = din.readByte();
+    statusBits = din.readByte();
     ordering = din.readByte();
   } catch (Exception e) {
     e.printStackTrace();

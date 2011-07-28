@@ -58,7 +58,7 @@ byte reset = 0;
 byte load = 0;
 float rudderAngle = 0.0;
 int propRpm = 0;
-byte temp = 0;
+byte statusBits = 0;
 byte ordering = 0;
 
 // Boat state data recording
@@ -87,7 +87,7 @@ ArrayList<Byte> resetList = new ArrayList<Byte>(255);
 ArrayList<Byte> loadList = new ArrayList<Byte>(255);
 ArrayList<Float> rudderAngleList = new ArrayList<Float>(255);
 ArrayList<Integer> propRpmList = new ArrayList<Integer>(255);
-ArrayList<Byte> tempList = new ArrayList<Byte>(255);
+ArrayList<Byte> statusBitsList = new ArrayList<Byte>(255);
 ArrayList<Byte> orderingList = new ArrayList<Byte>(255);
 
 // Boat state data playback
@@ -116,7 +116,7 @@ byte[] resetPlayback;
 byte[] loadPlayback;
 float[] rudderAnglePlayback;
 int[] propRpmPlayback;
-byte[] tempPlayback;
+byte[] statusBitsPlayback;
 byte[] orderingPlayback;
 
 // Rendering variables
@@ -210,7 +210,7 @@ void draw() {
         load = loadPlayback[playbackIndex];
         rudderAngle = rudderAnglePlayback[playbackIndex];
         propRpm = propRpmPlayback[playbackIndex];
-        temp = tempPlayback[playbackIndex];
+        statusBits = statusBitsPlayback[playbackIndex];
         ordering = orderingPlayback[playbackIndex];
         
         playbackIndex++;
@@ -244,7 +244,7 @@ void draw() {
   text("Reset status", 500, 70);
   text("Rudder angle (deg)", 630, 290);
   text("Prop speed (RPM)", 630, 350);
-  text("Temperature (deg F)", 630, 400);
+  text("Mode:", 630, 400);
   textFont(regularFont);
   
   // Draw the rudder angle in degrees
@@ -252,9 +252,21 @@ void draw() {
   
   // Draw the prop speed in RPM
   text(propRpm, 630, 370);
-  
+
   // Draw the temperature in Fahrenheit
-  text(temp, 630, 420);
+  if (statusBits > 0) {
+    fill(0, 200, 0);
+    textFont(boldFont);
+    text("auto", 680, 400);
+    textFont(regularFont);
+    fill(255);
+  } else {
+    fill(200, 0, 0);
+    textFont(boldFont);
+    text("manual", 680, 400);
+    textFont(regularFont);
+    fill(255);
+  }
   
   // Draw the reset bits
   int vertical = 90;
@@ -538,13 +550,13 @@ void controlEvent(ControlEvent theEvent) {
             propRpmPlayback[i] = (int)longData[i][0];
           }
           
-          byteData = ((MLInt8)inputMatFileReader.getMLArray("temp")).getArray();
-          tempPlayback = new byte[byteData.length];
+          byteData = ((MLUInt8)inputMatFileReader.getMLArray("statusBits")).getArray();
+          statusBitsPlayback = new byte[byteData.length];
           for (int i=0;i<byteData.length;i++) {
-            tempPlayback[i] = (byte)byteData[i][0];
+            statusBitsPlayback[i] = (byte)byteData[i][0];
           }
           
-          byteData = ((MLInt8)inputMatFileReader.getMLArray("ordering")).getArray();
+          byteData = ((MLUInt8)inputMatFileReader.getMLArray("ordering")).getArray();
           orderingPlayback = new byte[byteData.length];
           for (int i=0;i<byteData.length;i++) {
             orderingPlayback[i] = (byte)byteData[i][0];
@@ -613,7 +625,7 @@ public void startRecording() {
   loadList.clear();
   rudderAngleList.clear();
   propRpmList.clear();
-  tempList.clear();
+  statusBitsList.clear();
   orderingList.clear();
   
   // Reset the messages counter
@@ -830,13 +842,13 @@ public void stopRecordingAndSave() {
   }
   MLInt64 propRpmML = new MLInt64("propRpm", long_gg, long_gg.length);
   
-  byte_g = new Byte[tempList.size()];
-  tempList.toArray(byte_g);
-  byte_gg = new byte[tempList.size()];
-  for (int i = 0; i < tempList.size(); i++){
+  byte_g = new Byte[statusBitsList.size()];
+  statusBitsList.toArray(byte_g);
+  byte_gg = new byte[statusBitsList.size()];
+  for (int i = 0; i < statusBitsList.size(); i++){
     byte_gg[i] = (byte)byte_g[i];
   }
-  MLInt8 tempML = new MLInt8("temp", byte_gg, byte_gg.length);
+  MLUInt8 statusBitsML = new MLUInt8("statusBits", byte_gg, byte_gg.length);
   
   byte_g = new Byte[orderingList.size()];
   orderingList.toArray(byte_g);
@@ -872,7 +884,7 @@ public void stopRecordingAndSave() {
   matList.add(loadML);
   matList.add(rudderAngleML);
   matList.add(propRpmML);
-  matList.add(tempML);
+  matList.add(statusBitsML);
   matList.add(orderingML);
   
   try {

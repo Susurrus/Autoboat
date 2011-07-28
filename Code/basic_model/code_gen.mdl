@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.1929"
+    ComputedModelVersion    "1.1935"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Jul 27 22:29:56 2011"
-  RTWModifiedTimeStamp	  233706591
-  ModelVersionFormat	  "1.%<AutoIncrement:1929>"
+  LastModifiedDate	  "Wed Jul 27 23:54:55 2011"
+  RTWModifiedTimeStamp	  233711685
+  ModelVersionFormat	  "1.%<AutoIncrement:1935>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1241,7 +1241,7 @@ Model {
   }
   System {
     Name		    "code_gen"
-    Location		    [210, 82, 1573, 831]
+    Location		    [202, 74, 1581, 839]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1255,7 +1255,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "117"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    16193
+    SIDHighWatermark	    16194
     Block {
       BlockType		      SubSystem
       Name		      "Actuator\nOutputs"
@@ -11869,6 +11869,16 @@ Model {
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  GotoTag		  "reset_calibration_mode"
+	  TagVisibility		  "global"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto4"
+	  SID			  16194
+	  Position		  [760, 366, 825, 394]
+	  BackgroundColor	  "cyan"
+	  ShowName		  off
+	  GotoTag		  "autoMode"
 	  TagVisibility		  "global"
 	}
 	Block {
@@ -23848,9 +23858,16 @@ Model {
 	    DstPort		    1
 	  }
 	  Branch {
-	    Points		    [540, 0; 0, -180]
-	    DstBlock		    "Auto/Manual\nSwitch"
-	    DstPort		    1
+	    Points		    [540, 0]
+	    Branch {
+	      Points		      [0, -180]
+	      DstBlock		      "Auto/Manual\nSwitch"
+	      DstPort		      1
+	    }
+	    Branch {
+	      DstBlock		      "Goto4"
+	      DstPort		      1
+	    }
 	  }
 	}
 	Line {
@@ -24127,7 +24144,6 @@ Model {
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "waypoints"
-      TagVisibility	      "global"
     }
     Block {
       BlockType		      From
@@ -24360,7 +24376,7 @@ Model {
       Position		      [715, 1074, 795, 1096]
       BackgroundColor	      "magenta"
       ShowName		      off
-      GotoTag		      "temp_fahr"
+      GotoTag		      "autoMode"
       TagVisibility	      "global"
     }
     Block {
@@ -25670,20 +25686,6 @@ Model {
 	      DstPort		      1
 	    }
 	  }
-	}
-	Block {
-	  BlockType		  Constant
-	  Name			  "Constant2"
-	  SID			  16017
-	  Position		  [200, 430, 235, 450]
-	  BackgroundColor	  "gray"
-	  ShowName		  off
-	  Value			  "0"
-	  OutDataTypeMode	  "int8"
-	  OutDataType		  "fixdt(1, 16)"
-	  OutScaling		  "2^0"
-	  OutDataTypeStr	  "int8"
-	  SampleTime		  "T_step"
 	}
 	Block {
 	  BlockType		  DataTypeConversion
@@ -28051,16 +28053,6 @@ Model {
 	}
 	Block {
 	  BlockType		  Goto
-	  Name			  "Goto5"
-	  SID			  15436
-	  Position		  [265, 429, 360, 451]
-	  BackgroundColor	  "cyan"
-	  ShowName		  off
-	  GotoTag		  "temp_fahr"
-	  TagVisibility		  "global"
-	}
-	Block {
-	  BlockType		  Goto
 	  Name			  "Goto6"
 	  SID			  16010
 	  Position		  [890, 128, 1020, 152]
@@ -30399,12 +30391,6 @@ Model {
 	  }
 	}
 	Line {
-	  SrcBlock		  "Constant2"
-	  SrcPort		  1
-	  DstBlock		  "Goto5"
-	  DstPort		  1
-	}
-	Line {
 	  SrcBlock		  "Estop detection"
 	  SrcPort		  1
 	  DstBlock		  "Logical\nOperator5"
@@ -31871,7 +31857,7 @@ Model {
 	}
 	Block {
 	  BlockType		  Inport
-	  Name			  "temp"
+	  Name			  "status"
 	  SID			  15438
 	  Position		  [40, 638, 70, 652]
 	  BackgroundColor	  "darkGreen"
@@ -32950,7 +32936,7 @@ Model {
 	    }
 	    Block {
 	      BlockType		      Inport
-	      Name		      "temp"
+	      Name		      "status"
 	      SID		      69
 	      Position		      [20, 1106, 40, 1124]
 	      Port		      "29"
@@ -33179,7 +33165,7 @@ Model {
 	      DstPort		      28
 	    }
 	    Line {
-	      SrcBlock		      "temp"
+	      SrcBlock		      "status"
 	      SrcPort		      1
 	      DstBlock		      " SFunction "
 	      DstPort		      29
@@ -33665,7 +33651,7 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "temp"
+	  SrcBlock		  "status"
 	  SrcPort		  1
 	  DstBlock		  "Rate Transition14"
 	  DstPort		  1
@@ -37990,24 +37976,24 @@ Stateflow {
     eml {
       isEML		      1
       script		      "function y = fcn(L2, gPos, head, lPos, vel, wp0, wp1, rudder_pot, port_limit, sb_limit, lat, lon,"
-      " alt, yr, mon, day, hr, min, sec, cog, sog, hdop, fix, sat, reset, load, rudder_angle, v_rpm, temp, ordering)\n%"
-      "#eml\n\ny = zeros(98, 1, 'uint8');\ny(1:4) = packUint32BE(typecast(L2(1),'uint32'));\ny(5:8) = packUint32BE(type"
-      "cast(L2(2),'uint32'));\ny(9:12) = packUint32BE(typecast(gPos(1),'uint32'));\ny(13:16) = packUint32BE(typecast(gP"
-      "os(2),'uint32'));\ny(17:20) = packUint32BE(typecast(head,'uint32'));\ny(21:24) = packUint32BE(typecast(lPos(1),'"
-      "uint32'));\ny(25:28) = packUint32BE(typecast(lPos(2),'uint32'));\ny(29:32) = packUint32BE(typecast(vel(1),'uint3"
-      "2'));\ny(33:36) = packUint32BE(typecast(vel(2),'uint32'));\ny(37:40) = packUint32BE(typecast(wp0(1),'uint32'));\n"
-      "y(41:44) = packUint32BE(typecast(wp0(2),'uint32'));\ny(45:48) = packUint32BE(typecast(wp1(1),'uint32'));\ny(49:5"
-      "2) = packUint32BE(typecast(wp1(2),'uint32'));\ny(53:54) = packUint16BE(rudder_pot);\ny(55) = port_limit;\ny(56) "
-      "= sb_limit;\ny(57:60) = packUint32BE(typecast(lat,'uint32'));\ny(61:64) = packUint32BE(typecast(lon,'uint32'));\n"
-      "y(65:68) = packUint32BE(typecast(alt,'uint32'));\ny(69) = yr;\ny(70) = mon;\ny(71) = day;\ny(72) = hr;\ny(73) = "
-      "min;\ny(74) = sec;\ny(75:78) = packUint32BE(typecast(cog,'uint32'));\ny(79:82) = packUint32BE(typecast(sog,'uint"
-      "32'));\ny(83:86) = packUint32BE(typecast(hdop,'uint32'));\ny(87) = fix;\ny(88) = sat;\ny(89) = reset;\ny(90) = l"
-      "oad;\ny(91:94) = packUint32BE(typecast(rudder_angle,'uint32'));\ny(95:96) = packUint16BE(v_rpm);\ny(97) = temp;\n"
-      "y(98) = ordering;\n\nfunction out = packUint32BE(in)\nout = zeros(4, 1, 'uint8');\nout(1) = uint8(bitand(bitshif"
-      "t(in,-24),hex2dec('FF')));\nout(2) = uint8(bitand(bitshift(in,-16),hex2dec('FF')));\nout(3) = uint8(bitand(bitsh"
-      "ift(in,-8),hex2dec('FF')));\nout(4) = uint8(bitand(in,hex2dec('FF')));\n\nfunction out = packUint16BE(in)\nout ="
-      " zeros(2, 1, 'uint8');\nout(1) = uint8(bitand(bitshift(in,-8),hex2dec('FF')));\nout(2) = uint8(bitand(in,hex2dec"
-      "('FF')));"
+      " alt, yr, mon, day, hr, min, sec, cog, sog, hdop, fix, sat, reset, load, rudder_angle, v_rpm, status, ordering)\n"
+      "%#eml\n\ny = zeros(98, 1, 'uint8');\ny(1:4) = packUint32BE(typecast(L2(1),'uint32'));\ny(5:8) = packUint32BE(typ"
+      "ecast(L2(2),'uint32'));\ny(9:12) = packUint32BE(typecast(gPos(1),'uint32'));\ny(13:16) = packUint32BE(typecast(g"
+      "Pos(2),'uint32'));\ny(17:20) = packUint32BE(typecast(head,'uint32'));\ny(21:24) = packUint32BE(typecast(lPos(1),"
+      "'uint32'));\ny(25:28) = packUint32BE(typecast(lPos(2),'uint32'));\ny(29:32) = packUint32BE(typecast(vel(1),'uint"
+      "32'));\ny(33:36) = packUint32BE(typecast(vel(2),'uint32'));\ny(37:40) = packUint32BE(typecast(wp0(1),'uint32'));"
+      "\ny(41:44) = packUint32BE(typecast(wp0(2),'uint32'));\ny(45:48) = packUint32BE(typecast(wp1(1),'uint32'));\ny(49"
+      ":52) = packUint32BE(typecast(wp1(2),'uint32'));\ny(53:54) = packUint16BE(rudder_pot);\ny(55) = port_limit;\ny(56"
+      ") = sb_limit;\ny(57:60) = packUint32BE(typecast(lat,'uint32'));\ny(61:64) = packUint32BE(typecast(lon,'uint32'))"
+      ";\ny(65:68) = packUint32BE(typecast(alt,'uint32'));\ny(69) = yr;\ny(70) = mon;\ny(71) = day;\ny(72) = hr;\ny(73)"
+      " = min;\ny(74) = sec;\ny(75:78) = packUint32BE(typecast(cog,'uint32'));\ny(79:82) = packUint32BE(typecast(sog,'u"
+      "int32'));\ny(83:86) = packUint32BE(typecast(hdop,'uint32'));\ny(87) = fix;\ny(88) = sat;\ny(89) = reset;\ny(90) "
+      "= load;\ny(91:94) = packUint32BE(typecast(rudder_angle,'uint32'));\ny(95:96) = packUint16BE(v_rpm);\ny(97) = sta"
+      "tus;\ny(98) = ordering;\n\nfunction out = packUint32BE(in)\nout = zeros(4, 1, 'uint8');\nout(1) = uint8(bitand(b"
+      "itshift(in,-24),hex2dec('FF')));\nout(2) = uint8(bitand(bitshift(in,-16),hex2dec('FF')));\nout(3) = uint8(bitand"
+      "(bitshift(in,-8),hex2dec('FF')));\nout(4) = uint8(bitand(in,hex2dec('FF')));\n\nfunction out = packUint16BE(in)\n"
+      "out = zeros(2, 1, 'uint8');\nout(1) = uint8(bitand(bitshift(in,-8),hex2dec('FF')));\nout(2) = uint8(bitand(in,he"
+      "x2dec('FF')));"
       editorLayout	      "100 M4x1[47 111 1378 694]"
     }
   }
@@ -38677,7 +38663,7 @@ Stateflow {
   data {
     id			    223
     ssIdNumber		    64
-    name		    "temp"
+    name		    "status"
     linkNode		    [190 222 224]
     scope		    INPUT_DATA
     machine		    1
