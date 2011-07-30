@@ -231,7 +231,6 @@ void draw() {
   
   // Add text section headers
   textFont(boldFont);
-  text("L2 Vector", 300, 290);
   text("Rudder", 400, 390);
   text("GPS", 500, 390);
   text("Velocity", 200, 290);
@@ -242,17 +241,17 @@ void draw() {
   text("Heading", 400, 290);
   text("Load", 570, 290);
   text("Reset status", 500, 70);
-  text("Rudder angle (deg)", 630, 290);
-  text("Prop speed (RPM)", 630, 350);
+  text("Rudder angle", 630, 290);
+  text("Prop speed", 630, 350);
   text("Mode:", 630, 400);
   text("Status:", 20, 170);
   textFont(regularFont);
   
   // Draw the rudder angle in degrees
-  text(String.format("%3.1f", rudderAngle * 180 / 3.14159), 630, 310);
+  text(String.format("%3.1f\u00B0", rudderAngle * 180 / 3.14159), 630, 310);
   
   // Draw the prop speed in RPM
-  text(propRpm, 630, 370);
+  text(String.format("%3d RPM", propRpm), 630, 370);
 
   // Draw the operational mode of the boat
   if ((statusBits & 0x01) != 0) {
@@ -314,11 +313,6 @@ void draw() {
   // Draw the load %
   text(String.format("%3d%%",load), 570, 310);
   
-  // Draw the L2 vector values
-  text(L2.x, 300, 305);
-  text(L2.y, 300, 320);
-  text(L2.z, 300, 335);
-  
   // Reset fill color to white
   fill(255);
   
@@ -349,7 +343,7 @@ void draw() {
   text(localPosition.y, 200, 420);
   text(localPosition.z, 200, 435);
   
-  // Draw the local position values
+  // Draw the global position values
   text(globalPosition.x, 200, 465);
   text(globalPosition.y, 200, 480);
   text(globalPosition.z, 200, 495);
@@ -362,8 +356,8 @@ void draw() {
   text(waypoint1.y, 50, 380);
   text(waypoint1.z, 50, 395);
   
-  // Display the boat heading
-  text(heading, 400, 305);
+  // Display the boat heading converted to degrees
+  text(String.format("%2.1f\u00B0", heading*57.2958), 400, 305);
   
   // Draw the boat and rudder
   fill(155,155,0);
