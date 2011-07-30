@@ -340,9 +340,9 @@ void draw() {
   text(gpsSatellites, 500, 540);
   
   // Draw the velocity vector values
-  text(velocity.x, 200, 305);
-  text(velocity.y, 200, 320);
-  text(velocity.z, 200, 335);
+  text(String.format("%2.1f m/s", velocity.mag()), 200, 305);
+  text(String.format("%2.1f knots", velocity.mag()*1.944), 200, 320);
+  text(String.format("%2.1f mph", velocity.mag()*2.237), 200, 335);
   
   // Draw the local position values
   text(localPosition.x, 200, 405);
