@@ -21,48 +21,92 @@ OC2max = 49999; % Parameter used for calculating up-time & period for output com
 
 % Waypoint stuff
 % Waypoints are all defined within a local tangent plane in meters North,
-% East, Down.
-test_waypoints = int32([
-             0   0   0;
-             450 100 0;
-             600 600 0;
-             150 300 0;
-             -1  -1  -1;
-             -1  -1  -1;
-             -1  -1  -1;
-             -1  -1  -1;
-             -1  -1  -1;
-             -1  -1  -1;
-             -1  -1  -1;
-            ]);
-% Figure eight
-figure8_waypoints = int32([
-             0   0   0;
-             30  60  0;
-             0   90  0;
-             -30 60  0;
-             0   0   0;
-             30  -60 0;
-             0   -90 0;
-             -30 -60 0;
-             -1  -1  -1;
-             -1  -1  -1;
-             -1  -1  -1;
-            ]);
-% Sampling pattern
-sampling_waypoints = int32([
-             0    0    0;
-             0    210  0;
-             -30  210  0;
-             -30  0    0;
-             -60  0    0;
-             -60  210  0;
-             -90  210  0;
-             -90  0    0;
-             -120 0    0;
-             -120 210  0;
-             -1   -1   -1;
-            ]);
+% East, Down. Three waypoint tracks have been defined below in the
+% test_waypoints, figure8_waypoints, and sampling_waypoints matrices. The
+% commented-out matrices are the original test ones. Overrides are
+% implemented below for the in-harbor boat test.
+
+test_waypoints = int32([0    0    0;
+                        25   -36  0;
+                        145  -44  0;
+                        220  -37  0;
+                        253  -57  0;
+                        312  -56  0;
+                        -1   -1   -1;
+                        -1   -1   -1;
+                        -1   -1   -1;
+                        -1   -1   -1;
+                        -1   -1   -1;
+                       ]);
+
+figure8_waypoints = int32([0    0    0;
+                           -35  19   0;
+                           -93  21   0;
+                           -156 13   0;
+                           -186 33   0;
+                           -244 34   0;
+                           -249 77   0;
+                           -1   -1   -1;
+                           -1   -1   -1;
+                           -1   -1   -1;
+                           -1   -1   -1;
+                          ]);
+
+sampling_waypoints = int32([0    0    0;
+                            2    -45  0;
+                            -1   -1   -1;
+                            -1   -1   -1;
+                            -1   -1   -1;
+                            -1   -1   -1;
+                            -1   -1   -1;
+                            -1   -1   -1;
+                            -1   -1   -1;
+                            -1   -1   -1;
+                            -1   -1   -1;
+                           ]);
+
+% Original waypoints
+% test_waypoints = int32([
+%              0   0   0;
+%              450 100 0;
+%              600 600 0;
+%              150 300 0;
+%              -1  -1  -1;
+%              -1  -1  -1;
+%              -1  -1  -1;
+%              -1  -1  -1;
+%              -1  -1  -1;
+%              -1  -1  -1;
+%              -1  -1  -1;
+%             ]);
+% % Figure eight
+% figure8_waypoints = int32([
+%              0   0   0;
+%              30  60  0;
+%              0   90  0;
+%              -30 60  0;
+%              0   0   0;
+%              30  -60 0;
+%              0   -90 0;
+%              -30 -60 0;
+%              -1  -1  -1;
+%              -1  -1  -1;
+%              -1  -1  -1;
+%             ]);
+% % Sampling pattern
+% sampling_waypoints = int32([
+%              0    0    0;
+%              0    210  0;
+%              -30  210  0;
+%              -30  0    0;
+%              -60  0    0;
+%              -60  210  0;
+%              -90  210  0;
+%              -90  0    0;
+%              -120 0    0;
+%              -120 210  0;
+%              -1   -1   -1;
+%             ]);
 
 % Known constants
 
