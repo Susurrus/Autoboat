@@ -40,18 +40,18 @@ PVector waypoint1 = new PVector(0,0,0);
 int rudderPot = 0;
 boolean rudderPortLimit = false;
 boolean rudderSbLimit = false;
-float gpsLatitude = 0;
-float gpsLongitude = 0;
-float gpsAltitude = 0;
+float gpsLatitude = 0.0;
+float gpsLongitude = 0.0;
+float gpsAltitude = 0.0;
 byte gpsYear = 0;
 byte gpsMonth = 0;
 byte gpsDay = 0;
 byte gpsHour = 0;
 byte gpsMinute = 0;
 byte gpsSecond = 0;
-float gpsCourse = 0;
-float gpsSpeed = 0;
-float gpsHdop = 0;
+float gpsCourse = 0.0;
+float gpsSpeed = 0.0;
+float gpsHdop = 0.0;
 byte gpsFix = 0;
 byte gpsSatellites = 0;
 byte reset = 0;
@@ -60,6 +60,7 @@ float rudderAngle = 0.0;
 int propRpm = 0;
 byte statusBits = 0;
 byte ordering = 0;
+float rudderAngleCommand = 0.0;
 
 // Boat state data recording
 ArrayList<float[]> L2List = new ArrayList<float[]>(255);
@@ -89,6 +90,7 @@ ArrayList<Float> rudderAngleList = new ArrayList<Float>(255);
 ArrayList<Integer> propRpmList = new ArrayList<Integer>(255);
 ArrayList<Byte> statusBitsList = new ArrayList<Byte>(255);
 ArrayList<Byte> orderingList = new ArrayList<Byte>(255);
+ArrayList<Float> rudderAngleCommandList = new ArrayList<Float>(255);
 
 // Boat state data playback
 double[][] L2Playback;
@@ -118,6 +120,7 @@ float[] rudderAnglePlayback;
 int[] propRpmPlayback;
 byte[] statusBitsPlayback;
 byte[] orderingPlayback;
+float[] rudderAngleCommandPlayback;
 
 // Rendering variables
 PFont regularFont;
@@ -212,6 +215,7 @@ void draw() {
         propRpm = propRpmPlayback[playbackIndex];
         statusBits = statusBitsPlayback[playbackIndex];
         ordering = orderingPlayback[playbackIndex];
+        rudderAngleCommand = rudderAngleCommandPlayback[playbackIndex];
         
         playbackIndex++;
         lastPlaybackTime = millis();
@@ -239,6 +243,7 @@ void draw() {
   text("Waypoint0", 50, 290);
   text("Waypoint1", 50, 350);
   text("Heading", 400, 290);
+  text("Rudder angle command", 400, 340);
   text("Load", 570, 290);
   text("Reset status", 500, 70);
   text("Rudder angle", 630, 290);
@@ -362,6 +367,9 @@ void draw() {
   
   // Display the boat heading converted to degrees
   text(String.format("%2.1f\u00B0", heading*57.2958), 400, 305);
+  
+  // Draw the commanded rudder angle in degrees
+  text(String.format("%3.1f\u00B0", rudderAngleCommand * 180 / 3.14159), 400, 360);
   
   // Draw the boat and rudder
   fill(155,155,0);
@@ -569,6 +577,12 @@ void controlEvent(ControlEvent theEvent) {
             orderingPlayback[i] = (byte)byteData[i][0];
           }
           
+          doubleData = ((MLDouble)inputMatFileReader.getMLArray("rudderAngleCommand")).getArray();
+          rudderAngleCommandPlayback = new float[doubleData.length];
+          for (int i=0;i<doubleData.length;i++) {
+            rudderAngleCommandPlayback[i] = (float)doubleData[i][0];
+          }
+          
         } catch (IOException e) {
           e.printStackTrace();
           exit();
@@ -634,6 +648,7 @@ public void startRecording() {
   propRpmList.clear();
   statusBitsList.clear();
   orderingList.clear();
+  rudderAngleCommandList.clear();
   
   // Reset the messages counter
   recordedMessages = new Long(0);
@@ -864,6 +879,14 @@ public void stopRecordingAndSave() {
     byte_gg[i] = (byte)byte_g[i];
   }
   MLUInt8 orderingML = new MLUInt8("ordering", byte_gg, byte_gg.length);
+
+  float_g = new Float[rudderAngleCommandList.size()];
+  rudderAngleCommandList.toArray(float_g);
+  gg = new double[rudderAngleCommandList.size()];
+  for (int i = 0; i < rudderAngleCommandList.size(); i++){
+    gg[i] = (double)float_g[i];
+  }
+  MLDouble rudderAngleCommandML = new MLDouble("rudderAngleCommand", gg, gg.length);
   
   ArrayList matList = new ArrayList();
   matList.add(L2ML);
@@ -893,6 +916,7 @@ public void stopRecordingAndSave() {
   matList.add(propRpmML);
   matList.add(statusBitsML);
   matList.add(orderingML);
+  matList.add(rudderAngleCommandML);
   
   try {
     Calendar cal = Calendar.getInstance();

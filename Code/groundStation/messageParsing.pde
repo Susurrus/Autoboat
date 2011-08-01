@@ -126,6 +126,7 @@ void updateStateData(byte message[]) {
     propRpmList.add(propRpm);
     statusBitsList.add(statusBits);
     orderingList.add(ordering);
+    rudderAngleCommandList.add(rudderAngleCommand);
     
     recordedMessages++;
   }
@@ -168,6 +169,7 @@ void updateStateData(byte message[]) {
     propRpm = din.readUnsignedShort();
     statusBits = din.readByte();
     ordering = din.readByte();
+    rudderAngleCommand = din.readFloat();
   } catch (Exception e) {
     e.printStackTrace();
     println("Crap, failed to extract the data");

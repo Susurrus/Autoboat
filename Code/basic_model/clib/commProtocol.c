@@ -416,8 +416,8 @@ inline void uart2EnqueueActuatorData(unsigned char *data) {
 }
 
 /**
- * Add all 90 data + 7 header/footer bytes of the actuator struct to UART1's transmission queue.
+ * Add all 102 data + 7 header/footer bytes of the actuator struct to UART1's transmission queue.
  */
 inline void uart1EnqueueStateData(unsigned char *data) {
-	uart1EnqueueData(data, 105);
+	uart1EnqueueData(data, 109);
 }
