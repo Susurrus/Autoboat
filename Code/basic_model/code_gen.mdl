@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.1940"
+    ComputedModelVersion    "1.1941"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun Jul 31 15:33:11 2011"
-  RTWModifiedTimeStamp	  234021319
-  ModelVersionFormat	  "1.%<AutoIncrement:1940>"
+  LastModifiedDate	  "Sun Jul 31 17:12:51 2011"
+  RTWModifiedTimeStamp	  234028002
+  ModelVersionFormat	  "1.%<AutoIncrement:1941>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1234,7 +1234,7 @@ Model {
   }
   System {
     Name		    "code_gen"
-    Location		    [202, 74, 1581, 839]
+    Location		    [411, 103, 1522, 722]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1248,7 +1248,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "117"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    16484
+    SIDHighWatermark	    16487
     Block {
       BlockType		      SubSystem
       Name		      "Actuator\nOutputs"
@@ -3094,7 +3094,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Bitwise-combine1"
-	Location		[625, 515, 1057, 786]
+	Location		[267, 500, 699, 771]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -4031,19 +4031,6 @@ Model {
       LibraryVersion	      "3.40"
       SourceBlock	      "dsPICdrivers/Simulink Configuration/Configure Model \nfor dsPIC"
       SourceType	      ""
-    }
-    Block {
-      BlockType		      Constant
-      Name		      "Constant"
-      SID		      16478
-      Position		      [375, 1187, 405, 1203]
-      BackgroundColor	      "gray"
-      ShowName		      off
-      Value		      "0"
-      OutDataTypeMode	      "uint8"
-      OutDataType	      "fixdt(1, 16)"
-      OutScaling	      "2^0"
-      OutDataTypeStr	      "uint8"
     }
     Block {
       BlockType		      Constant
@@ -16676,7 +16663,7 @@ Model {
 	      BlockType		      SubSystem
 	      Name		      "Clear to 0\nif Disconnect"
 	      SID		      15967
-	      Ports		      [8, 4]
+	      Ports		      [8, 5]
 	      Position		      [185, 46, 250, 204]
 	      MinAlgLoopOccurrences   off
 	      PropExecContextOutsideSubsystem off
@@ -17098,6 +17085,17 @@ Model {
 		  OutDataType		  "sfix(16)"
 		  OutScaling		  "2^0"
 		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "discon"
+		  SID			  16485
+		  Position		  [685, 233, 715, 247]
+		  BackgroundColor	  "yellow"
+		  Port			  "5"
+		  IconDisplay		  "Port number"
+		  OutDataType		  "sfix(16)"
+		  OutScaling		  "2^0"
+		}
 		Line {
 		  SrcBlock		  "Switch1"
 		  SrcPort		  1
@@ -17266,8 +17264,15 @@ Model {
 		    }
 		    Branch {
 		    Points		    [0, 45]
+		    Branch {
 		    DstBlock		    "Switch3"
 		    DstPort		    2
+		    }
+		    Branch {
+		    Points		    [0, 55]
+		    DstBlock		    "discon"
+		    DstPort		    1
+		    }
 		    }
 		    }
 		  }
@@ -18365,7 +18370,7 @@ Model {
 	      BlockType		      Goto
 	      Name		      "Goto2"
 	      SID		      15856
-	      Position		      [290, 194, 390, 216]
+	      Position		      [305, 154, 405, 176]
 	      BackgroundColor	      "cyan"
 	      ShowName		      off
 	      GotoTag		      "trackCommand"
@@ -18379,6 +18384,16 @@ Model {
 	      BackgroundColor	      "cyan"
 	      ShowName		      off
 	      GotoTag		      "calibrationState"
+	      TagVisibility	      "global"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto4"
+	      SID		      16486
+	      Position		      [305, 194, 405, 216]
+	      BackgroundColor	      "cyan"
+	      ShowName		      off
+	      GotoTag		      "RC_Disconnected"
 	      TagVisibility	      "global"
 	    }
 	    Block {
@@ -20884,7 +20899,7 @@ Model {
 	    Line {
 	      SrcBlock		      "Clear to 0\nif Disconnect"
 	      SrcPort		      3
-	      Points		      [0, -15; 50, 0]
+	      Points		      [0, 5; 50, 0]
 	      Branch {
 		Points			[0, 60]
 		DstBlock		"Detect calibration\ntrigger"
@@ -20904,13 +20919,14 @@ Model {
 	    Line {
 	      SrcBlock		      "Clear to 0\nif Disconnect"
 	      SrcPort		      2
+	      Points		      [0, 10]
 	      DstBlock		      "Goto"
 	      DstPort		      1
 	    }
 	    Line {
 	      SrcBlock		      "Clear to 0\nif Disconnect"
 	      SrcPort		      4
-	      Points		      [0, 20]
+	      Points		      [0, 10]
 	      DstBlock		      "Goto2"
 	      DstPort		      1
 	    }
@@ -21239,6 +21255,13 @@ Model {
 	      SrcPort		      8
 	      DstBlock		      "Clear to 0\nif Disconnect"
 	      DstPort		      8
+	    }
+	    Line {
+	      SrcBlock		      "Clear to 0\nif Disconnect"
+	      SrcPort		      5
+	      Points		      [15, 0; 0, 20]
+	      DstBlock		      "Goto4"
+	      DstPort		      1
 	    }
 	    Annotation {
 	      Position		      [277, 328]
@@ -24984,6 +25007,16 @@ Model {
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "HILSensorsMode"
+      TagVisibility	      "global"
+    }
+    Block {
+      BlockType		      From
+      Name		      "From36"
+      SID		      16487
+      Position		      [375, 1182, 500, 1208]
+      BackgroundColor	      "magenta"
+      ShowName		      off
+      GotoTag		      "RC_Disconnected"
       TagVisibility	      "global"
     }
     Block {
@@ -34988,7 +35021,7 @@ Model {
       DstPort		      2
     }
     Line {
-      SrcBlock		      "Constant"
+      SrcBlock		      "From36"
       SrcPort		      1
       DstBlock		      "Bitwise-combine1"
       DstPort		      3

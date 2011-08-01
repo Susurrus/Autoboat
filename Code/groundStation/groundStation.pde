@@ -275,6 +275,10 @@ void draw() {
     text("HIL actuator sensor override", 20, nextStatusLineStart);
     nextStatusLineStart += 20;
   }
+  if ((statusBits & 0x04) != 0) {
+    text("RC receiver disconnected", 20, nextStatusLineStart);
+    nextStatusLineStart += 20;
+  }
   
   // Draw the reset bits
   int vertical = 90;
