@@ -166,7 +166,7 @@ void updateStateData(byte message[]) {
     reset = din.readByte();
     load = din.readByte();
     rudderAngle = din.readFloat();
-    propRpm = din.readUnsignedShort();
+    propRpm = din.readShort();
     statusBits = din.readByte();
     ordering = din.readByte();
     rudderAngleCommand = din.readFloat();
