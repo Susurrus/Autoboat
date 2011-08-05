@@ -38,6 +38,7 @@ boolean buildAndCheckMessage(byte characterIn) {
 		} else if (characterIn != '%'){
 			messageIndex = 0;
 			messageState = 0;
+System.out.println("hey");
 		}
 	} else if (messageState == 2) {
 		// Record every character that comes in now that we're building a sentence.
@@ -49,11 +50,13 @@ boolean buildAndCheckMessage(byte characterIn) {
                   } else {
                          messageIndex = 0;
                          messageState = 0;
+System.out.println("2");
                   }
 		} else if (messageIndex == message.length - 3) {
 			// If we've filled up the buffer, ignore the entire message as we can't store it all
 			messageState = 0;
 			messageIndex = 0;
+System.out.println("3");
 		}
 	} else if (messageState == 3) {
 		// If we find an ampersand, then we've found the footer. If we've run out of space at 127 bytes,
@@ -65,6 +68,7 @@ boolean buildAndCheckMessage(byte characterIn) {
 		} else if (messageIndex == message.length - 2) {
 			messageState = 0;
 			messageIndex = 0;
+System.out.println("5");
 		}
 	} else if (messageState == 4) {
 		// Record the second ASCII-hex character of the checksum byte.
@@ -127,6 +131,7 @@ void updateStateData(byte message[]) {
     statusBitsList.add(statusBits);
     orderingList.add(ordering);
     rudderAngleCommandList.add(rudderAngleCommand);
+    throttleCommandList.add(throttleCommand);
     
     recordedMessages++;
   }
@@ -170,6 +175,8 @@ void updateStateData(byte message[]) {
     statusBits = din.readByte();
     ordering = din.readByte();
     rudderAngleCommand = din.readFloat();
+    throttleCommand = din.readShort();
+    
   } catch (Exception e) {
     e.printStackTrace();
     println("Crap, failed to extract the data");

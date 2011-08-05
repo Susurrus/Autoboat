@@ -61,6 +61,7 @@ int propRpm = 0;
 byte statusBits = 0;
 byte ordering = 0;
 float rudderAngleCommand = 0.0;
+int throttleCommand = 0;
 
 // Boat state data recording
 ArrayList<float[]> L2List = new ArrayList<float[]>(255);
@@ -91,6 +92,7 @@ ArrayList<Integer> propRpmList = new ArrayList<Integer>(255);
 ArrayList<Byte> statusBitsList = new ArrayList<Byte>(255);
 ArrayList<Byte> orderingList = new ArrayList<Byte>(255);
 ArrayList<Float> rudderAngleCommandList = new ArrayList<Float>(255);
+ArrayList<Integer> throttleCommandList = new ArrayList<Integer>(255);
 
 // Boat state data playback
 double[][] L2Playback;
@@ -121,6 +123,7 @@ int[] propRpmPlayback;
 byte[] statusBitsPlayback;
 byte[] orderingPlayback;
 float[] rudderAngleCommandPlayback;
+int[] throttleCommandPlayback;
 
 // Rendering variables
 PFont regularFont;
@@ -216,6 +219,7 @@ void draw() {
         statusBits = statusBitsPlayback[playbackIndex];
         ordering = orderingPlayback[playbackIndex];
         rudderAngleCommand = rudderAngleCommandPlayback[playbackIndex];
+        throttleCommand = throttleCommandPlayback[playbackIndex];
         
         playbackIndex++;
         lastPlaybackTime = millis();
@@ -237,7 +241,8 @@ void draw() {
   textFont(boldFont);
   text("Rudder", 400, 390);
   text("GPS", 500, 390);
-  text("Velocity", 200, 290);
+  text("Velocity", 200, 270);
+  text("Throttle command", 200, 340);
   text("Local position", 200, 390);
   text("Global position", 200, 450);
   text("Waypoint0", 50, 290);
@@ -343,9 +348,14 @@ void draw() {
   text(gpsSatellites, 500, 540);
   
   // Draw the velocity vector values
-  text(String.format("%2.1f m/s", velocity.mag()), 200, 305);
-  text(String.format("%2.1f knots", velocity.mag()*1.944), 200, 320);
-  text(String.format("%2.1f mph", velocity.mag()*2.237), 200, 335);
+  text(String.format("%2.1f m/s", velocity.mag()), 200, 285);
+  text(String.format("%2.1f knots", velocity.mag()*1.944), 200, 300);
+  text(String.format("%2.1f mph", velocity.mag()*2.237), 200, 315);
+  
+  // Display the commanded throttle values. Since the throttle is a commanded current
+  // and each step is 1/1024 of the maximum current I map the value into Amperes before
+  // display.
+  text(String.format("%3.1f A", float(throttleCommand)/1024*15), 200, 360);
   
   // Draw the local position values
   text(localPosition.x, 200, 405);
@@ -583,6 +593,12 @@ void controlEvent(ControlEvent theEvent) {
             rudderAngleCommandPlayback[i] = (float)doubleData[i][0];
           }
           
+          longData = ((MLInt64)inputMatFileReader.getMLArray("throttleCommand")).getArray();
+          throttleCommandPlayback = new int[longData.length];
+          for (int i=0;i<longData.length;i++) {
+            throttleCommandPlayback[i] = (int)longData[i][0];
+          }
+          
         } catch (IOException e) {
           e.printStackTrace();
           exit();
@@ -649,6 +665,7 @@ public void startRecording() {
   statusBitsList.clear();
   orderingList.clear();
   rudderAngleCommandList.clear();
+  throttleCommandList.clear();
   
   // Reset the messages counter
   recordedMessages = new Long(0);
@@ -888,6 +905,14 @@ public void stopRecordingAndSave() {
   }
   MLDouble rudderAngleCommandML = new MLDouble("rudderAngleCommand", gg, gg.length);
   
+  int_g = new Integer[throttleCommandList.size()];
+  throttleCommandList.toArray(int_g);
+  long_gg = new long[throttleCommandList.size()];
+  for (int i = 0; i < throttleCommandList.size(); i++){
+    long_gg[i] = (long)int_g[i];
+  }
+  MLInt64 throttleCommandML = new MLInt64("throttleCommand", long_gg, long_gg.length);
+  
   ArrayList matList = new ArrayList();
   matList.add(L2ML);
   matList.add(headingML);
@@ -917,6 +942,7 @@ public void stopRecordingAndSave() {
   matList.add(statusBitsML);
   matList.add(orderingML);
   matList.add(rudderAngleCommandML);
+  matList.add(throttleCommandML);
   
   try {
     Calendar cal = Calendar.getInstance();
