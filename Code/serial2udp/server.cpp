@@ -21,6 +21,7 @@
 #include <boost/asio.hpp>
 
 #include "udp_server.hpp"
+#include "serial_server.hpp"
 
 int main()
 {
@@ -28,20 +29,9 @@ int main()
   {
 	// Start a Boost IO service.
     boost::asio::io_service io_service;
-    
-	// And attach a UDP server/client
-	udp_server server(io_service);
 
-	// And a serial port server/client
-	boost::asio::serial_port port(io_service, "COM1");
-
-	// Configure the options for the serial port
-	boost::asio::serial_port::baud_rate portRate(115200);
-	port.set_option(portRate);
-
-	unsigned char commands[4] = {'h', 'e', 'y', '\0'};
-
-	boost::asio::write(port, boost::asio::buffer(commands, 4));
+	// Create and attach a UDP server/client
+	udp_server udpServ(io_service);
 
 	// Then start everything running
     io_service.run();
