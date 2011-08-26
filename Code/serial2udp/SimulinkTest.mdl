@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2"
+    ComputedModelVersion    "1.3"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -25,9 +25,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Aug 25 21:20:42 2011"
-  RTWModifiedTimeStamp	  236189724
-  ModelVersionFormat	  "1.%<AutoIncrement:2>"
+  LastModifiedDate	  "Fri Aug 26 11:36:54 2011"
+  RTWModifiedTimeStamp	  236259180
+  ModelVersionFormat	  "1.%<AutoIncrement:3>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -627,7 +627,7 @@ Model {
   }
   System {
     Name		    "SimulinkTest"
-    Location		    [847, 162, 1542, 757]
+    Location		    [889, 135, 1584, 730]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -641,12 +641,12 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    10
+    SIDHighWatermark	    13
     Block {
       BlockType		      Constant
       Name		      "Constant"
-      SID		      7
-      Position		      [55, 140, 85, 170]
+      SID		      12
+      Position		      [75, 170, 105, 200]
       Value		      "[65:90 97:122 65:90 97:122 10]"
       OutDataTypeMode	      "uint8"
       OutDataType	      "fixdt(1, 16)"
@@ -659,7 +659,7 @@ Model {
       Name		      "Display"
       SID		      8
       Ports		      [1]
-      Position		      [310, 235, 400, 265]
+      Position		      [220, 335, 310, 365]
       Decimation	      "1"
       Lockdown		      off
     }
@@ -668,7 +668,16 @@ Model {
       Name		      "Display1"
       SID		      10
       Ports		      [1]
-      Position		      [195, 45, 285, 75]
+      Position		      [260, 45, 350, 75]
+      Decimation	      "1"
+      Lockdown		      off
+    }
+    Block {
+      BlockType		      Display
+      Name		      "Display2"
+      SID		      11
+      Ports		      [1]
+      Position		      [260, 105, 350, 135]
       Decimation	      "1"
       Lockdown		      off
     }
@@ -677,7 +686,7 @@ Model {
       Name		      "Simulation Pace"
       SID		      4
       Ports		      [0, 1]
-      Position		      [225, 227, 285, 273]
+      Position		      [135, 327, 195, 373]
       AttributesFormatString  "%<SimulationPace> sec/sec"
       LibraryVersion	      "1.69"
       SourceBlock	      "aerolibanimutils/Simulation Pace"
@@ -699,8 +708,8 @@ Model {
       SourceBlock	      "instrumentlib/UDP Receive"
       SourceType	      "UDP Receive"
       Host		      "127.0.0.1"
-      Port		      "1301"
-      LocalPort		      "-1"
+      Port		      "15000"
+      LocalPort		      "16000"
       DataSize		      "[1 1]"
       EnableBlockingMode      off
       Timeout		      "10"
@@ -711,25 +720,19 @@ Model {
     Block {
       BlockType		      Reference
       Name		      "UDP Send"
-      SID		      3
+      SID		      13
       Ports		      [1]
-      Position		      [205, 132, 315, 178]
+      Position		      [225, 162, 335, 208]
       LibraryVersion	      "1.84"
       DialogController	      "instrumentcreatedialog"
       DialogControllerArgs    "DataTag1"
       SourceBlock	      "instrumentlib/UDP Send"
       SourceType	      "UDP Send"
       Host		      "127.0.0.1"
-      Port		      "1300"
-      LocalPort		      "-1"
+      Port		      "15000"
+      LocalPort		      "16000"
       EnableBlockingMode      off
       ByteOrder		      "BigEndian"
-    }
-    Line {
-      SrcBlock		      "Constant"
-      SrcPort		      1
-      DstBlock		      "UDP Send"
-      DstPort		      1
     }
     Line {
       SrcBlock		      "Simulation Pace"
@@ -741,6 +744,19 @@ Model {
       SrcBlock		      "UDP Receive"
       SrcPort		      1
       DstBlock		      "Display1"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "UDP Receive"
+      SrcPort		      2
+      Points		      [55, 0; 0, 35]
+      DstBlock		      "Display2"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Constant"
+      SrcPort		      1
+      DstBlock		      "UDP Send"
       DstPort		      1
     }
   }

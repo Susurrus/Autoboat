@@ -18,20 +18,23 @@ public:
   void handle_udp_receive(const boost::system::error_code& error,
       std::size_t s/*bytes_transferred*/);
 
+  void handle_udp_send(const boost::system::error_code& error/*error*/,
+      std::size_t /*bytes_transferred*/);
+
   void handle_serial_receive(const boost::system::error_code& error,
       std::size_t s/*bytes_transferred*/);
 
-  void handle_serial_send(const boost::system::error_code& /*error*/,
+  void handle_serial_send(const boost::system::error_code& error/*error*/,
       std::size_t /*bytes_transferred*/);
 
   // Initialized internal variables
-  boost::asio::ip::udp::socket socket_;
+  boost::asio::ip::udp::socket socket;
   boost::asio::serial_port port;
 
   // Intermediate internal variables
   boost::asio::ip::udp::endpoint remote_endpoint;
-  boost::array<char, 128> udp_receive_buffer;
-  boost::array<char, 1> serial_receive_buffer;
+  boost::array<unsigned char, 46> udp_receive_buffer;
+  boost::array<unsigned char, 29> serial_receive_buffer;
 };
 
 #endif // __UDP_SERVER_HPP__
