@@ -21,8 +21,8 @@ boost::asio::serial_port *serialPort;
 
 // Intermediate internal variables
 boost::asio::ip::udp::endpoint remote_endpoint;
-boost::array<unsigned char, 46> udp_receive_buffer; // TODO: Change this to a large value like 128 or something. Then check that the specified command-line options don't exceed it.
-boost::array<unsigned char, 29> serial_receive_buffer; // TODO: Same as above
+boost::array<unsigned char, 128> udp_receive_buffer;
+boost::array<unsigned char, 128> serial_receive_buffer;
 
 // Function prototypes
 void start_udp_receive();
