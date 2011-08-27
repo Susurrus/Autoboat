@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2199"
+    ComputedModelVersion    "1.2200"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Jul 28 01:08:17 2011"
-  RTWModifiedTimeStamp	  233715720
-  ModelVersionFormat	  "1.%<AutoIncrement:2199>"
+  LastModifiedDate	  "Fri Aug 26 16:58:24 2011"
+  RTWModifiedTimeStamp	  236276236
+  ModelVersionFormat	  "1.%<AutoIncrement:2200>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -549,6 +549,13 @@ Model {
 	  Version		  "1.10.0"
 	  Description		  "HDL Coder custom configuration component"
 	  Name			  "HDL Coder"
+	  Array {
+	    Type		    "Cell"
+	    Dimension		    1
+	    Cell		    ""
+	    PropName		    "HDLConfigFile"
+	  }
+	  HDLCActiveTab		  "0"
 	}
 	PropName		"Components"
       }
@@ -1121,10 +1128,10 @@ Model {
   }
   System {
     Name		    "Boat_sim"
-    Location		    [202, 74, 1581, 839]
+    Location		    [202, -976, 1661, -21]
     Open		    on
     ModelBrowserVisibility  on
-    ModelBrowserWidth	    283
+    ModelBrowserWidth	    200
     ScreenColor		    "white"
     PaperOrientation	    "landscape"
     PaperPositionMode	    "auto"
@@ -1135,7 +1142,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "140"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    5617
+    SIDHighWatermark	    5619
     Block {
       BlockType		      BusSelector
       Name		      "Bus\nSelector"
@@ -1674,30 +1681,6 @@ Model {
 	  Ports			  []
 	  Position		  [235, 20, 255, 40]
 	}
-	Block {
-	  BlockType		  Reference
-	  Name			  "Serial Configuration"
-	  SID			  3056
-	  Ports			  []
-	  Position		  [175, 137, 285, 183]
-	  ShowName		  off
-	  Priority		  "-200000"
-	  LibraryVersion	  "1.84"
-	  DialogController	  "instrumentcreatedialog"
-	  DialogControllerArgs	  "DataTag0"
-	  SourceBlock		  "instrumentlib/Serial Configuration"
-	  SourceType		  "Serial Configuration"
-	  ComPortMenu		  "COM1"
-	  ComPort		  "COM1"
-	  ObjConstructor	  "serial('COM1');"
-	  BaudRate		  "115200"
-	  DataBits		  "8"
-	  Parity		  "none"
-	  StopBits		  "1"
-	  FlowControl		  "none"
-	  Timeout		  "10"
-	  ByteOrder		  "LittleEndian"
-	}
       }
     }
     Block {
@@ -1957,7 +1940,7 @@ Model {
       Name		      "HIL Interface"
       SID		      2995
       Ports		      [4, 3]
-      Position		      [410, 455, 605, 560]
+      Position		      [410, 460, 605, 565]
       LibraryVersion	      "1.216"
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
@@ -1969,7 +1952,7 @@ Model {
       System {
 	Name			"HIL Interface"
 	Location		[202, 82, 1581, 847]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -4137,7 +4120,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "RS232 Receive"
-	    Location		    [459, 409, 957, 709]
+	    Location		    [1077, 331, 1575, 631]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -4158,28 +4141,6 @@ Model {
 	      Position		      [235, 20, 255, 40]
 	    }
 	    Block {
-	      BlockType		      Reference
-	      Name		      "Serial Receive"
-	      SID		      3038
-	      Ports		      [0, 2]
-	      Position		      [115, 100, 225, 155]
-	      LibraryVersion	      "1.84"
-	      DialogController	      "instrumentcreatedialog"
-	      DialogControllerArgs    "DataTag1"
-	      SourceBlock	      "instrumentlib/Serial Receive"
-	      SourceType	      "Serial Receive"
-	      ComPortMenu	      "COM1"
-	      ComPort		      "COM1"
-	      ObjConstructor	      "serial('COM1');"
-	      Terminator	      "<none>"
-	      DataSize		      "[29   1]"
-	      DataType		      "uint8"
-	      EnableBlockingMode      off
-	      ActionDataUnavailable   "Output custom value"
-	      CustomValue	      "0"
-	      SampleTime	      "0.01"
-	    }
-	    Block {
 	      BlockType		      Terminator
 	      Name		      "Terminator"
 	      SID		      3039
@@ -4198,6 +4159,27 @@ Model {
 	      SaveFormat	      "Array"
 	    }
 	    Block {
+	      BlockType		      Reference
+	      Name		      "UDP Receive"
+	      SID		      5618
+	      Ports		      [0, 2]
+	      Position		      [115, 104, 225, 151]
+	      LibraryVersion	      "1.84"
+	      DialogController	      "instrumentcreatedialog"
+	      DialogControllerArgs    "DataTag0"
+	      SourceBlock	      "instrumentlib/UDP Receive"
+	      SourceType	      "UDP Receive"
+	      Host		      "127.0.0.1"
+	      Port		      "15000"
+	      LocalPort		      "16000"
+	      DataSize		      "29"
+	      EnableBlockingMode      off
+	      Timeout		      "10"
+	      SampleTime	      "0.01"
+	      DataType		      "uint8"
+	      ByteOrder		      "BigEndian"
+	    }
+	    Block {
 	      BlockType		      Outport
 	      Name		      "Out1"
 	      SID		      3040
@@ -4207,7 +4189,7 @@ Model {
 	      OutScaling	      "2^0"
 	    }
 	    Line {
-	      SrcBlock		      "Serial Receive"
+	      SrcBlock		      "UDP Receive"
 	      SrcPort		      1
 	      Points		      [50, 0]
 	      Branch {
@@ -4221,7 +4203,7 @@ Model {
 	      }
 	    }
 	    Line {
-	      SrcBlock		      "Serial Receive"
+	      SrcBlock		      "UDP Receive"
 	      SrcPort		      2
 	      DstBlock		      "Terminator"
 	      DstPort		      1
@@ -4245,7 +4227,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "RS232 Transmit"
-	    Location		    [325, 468, 874, 769]
+	    Location		    [1077, 331, 1575, 631]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -4276,25 +4258,25 @@ Model {
 	    }
 	    Block {
 	      BlockType		      Reference
-	      Name		      "Serial Send"
-	      SID		      3044
+	      Name		      "UDP Send"
+	      SID		      5619
 	      Ports		      [1]
-	      Position		      [250, 122, 360, 168]
+	      Position		      [245, 122, 355, 168]
 	      LibraryVersion	      "1.84"
 	      DialogController	      "instrumentcreatedialog"
-	      DialogControllerArgs    "DataTag2"
-	      SourceBlock	      "instrumentlib/Serial Send"
-	      SourceType	      "Serial Send"
-	      ComPortMenu	      "COM1"
-	      ComPort		      "COM1"
-	      ObjConstructor	      "serial('COM1');"
-	      Terminator	      "<none>"
+	      DialogControllerArgs    "DataTag1"
+	      SourceBlock	      "instrumentlib/UDP Send"
+	      SourceType	      "UDP Send"
+	      Host		      "127.0.0.1"
+	      Port		      "15000"
+	      LocalPort		      "16000"
 	      EnableBlockingMode      on
+	      ByteOrder		      "BigEndian"
 	    }
 	    Line {
 	      SrcBlock		      "In1"
 	      SrcPort		      1
-	      DstBlock		      "Serial Send"
+	      DstBlock		      "UDP Send"
 	      DstPort		      1
 	    }
 	    Annotation {
@@ -4353,8 +4335,8 @@ Model {
 	    ListType		    AxesTitles
 	    axes1		    "%<SignalLabel>"
 	  }
-	  YMin			  "1548"
-	  YMax			  "1548"
+	  YMin			  "1470.6"
+	  YMax			  "1625.4"
 	  SaveToWorkspace	  on
 	  SaveName		  "latency_in"
 	  DataFormat		  "Array"
@@ -8311,7 +8293,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Get GPS"
-	    Location		    [294, 89, 1362, 839]
+	    Location		    [570, 71, 1638, 821]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -19311,18 +19293,21 @@ Model {
     Line {
       SrcBlock		      "HIL Interface"
       SrcPort		      1
+      Points		      [0, -5]
       DstBlock		      "HIL Demux"
       DstPort		      4
     }
     Line {
       SrcBlock		      "HIL Interface"
       SrcPort		      2
+      Points		      [0, -5]
       DstBlock		      "HIL Demux"
       DstPort		      5
     }
     Line {
       SrcBlock		      "HIL Interface"
       SrcPort		      3
+      Points		      [0, -5]
       DstBlock		      "HIL Demux"
       DstPort		      6
     }
@@ -19347,18 +19332,21 @@ Model {
     Line {
       SrcBlock		      "From17"
       SrcPort		      1
+      Points		      [15, 0]
       DstBlock		      "HIL Interface"
       DstPort		      4
     }
     Line {
       SrcBlock		      "From16"
       SrcPort		      1
+      Points		      [15, 0]
       DstBlock		      "HIL Interface"
       DstPort		      3
     }
     Line {
       SrcBlock		      "From15"
       SrcPort		      1
+      Points		      [15, 0]
       DstBlock		      "HIL Interface"
       DstPort		      2
     }
@@ -19478,6 +19466,7 @@ Model {
 	Branch {
 	  Points		  [0, 85]
 	  Branch {
+	    Points		    [95, 0]
 	    DstBlock		    "HIL Interface"
 	    DstPort		    1
 	  }
@@ -19642,26 +19631,21 @@ Model {
   }
 }
 MatData {
-  NumRecords		  3
-  DataRecord {
-    Tag			    DataTag2
-    Data		    "  %)30     .    :     8    (     0         %    \"     $    !     0         .    .     8    (    !     "
-    "     %    \"     $    (     0         0    \"    '-E<FEA;'-B"
-  }
+  NumRecords		  2
   DataRecord {
     Tag			    DataTag1
     Data		    "  %)30     .    :     8    (     0         %    \"     $    !     0         .    .     8    (    !     "
-    "     %    \"     $    (     0         0    \"    '-E<FEA;')B"
+    "     %    \"     $    %     0         0    !0   '5D<'-B    "
   }
   DataRecord {
     Tag			    DataTag0
     Data		    "  %)30     .    :     8    (     0         %    \"     $    !     0         .    .     8    (    !     "
-    "     %    \"     $    (     0         0    \"    '-E<FEA;&-B"
+    "     %    \"     $    %     0         0    !0   '5D<')B    "
   }
 }
 # Finite State Machines
 #
-#    Stateflow Version 7.5 (R2010a) dated Jan 19 2010, 18:40:00
+#    Stateflow Version 7.5 (R2010a) dated Jan 19 2010, 19:48:30
 #
 #
 
