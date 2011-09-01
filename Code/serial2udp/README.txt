@@ -7,6 +7,8 @@ This project converts a serial port into a UDP port in software. It is used for 
 == Usage ==
 
 This program is run on the command line and all CLI options are enumerated when the program is run without options. Specifying -h or --help at the command line will also list all options.
+Be sure to specify a packet size for both the serial and UDP lines. This size will specify how many bytes the program waits for before triggering and interrupt on the serial side. On the UDP
+side it must be larger than the largest UDP datagram size or the program may not work properly.
 
 == Building ==
 

@@ -50,13 +50,13 @@ int main(int ac, char* av[])
 		po::options_description desc("Allowed options");
 		desc.add_options()
 			("help", "produce help message")
-			("baud_rate", po::value<int>(&opt_baud_rate)->default_value(115200), "set compression level")
 			("port", po::value<string>(&opt_port)->default_value("COM1"), "serial port to use")
+			("baud_rate", po::value<int>(&opt_baud_rate)->default_value(115200), "set the serial port baud rate")
+			("serial_packet_size", po::value<int>(&opt_serial_packet_size)->default_value(29), "size of the serial packets to be expected")
+			("local_socket", po::value<int>(&opt_local_socket)->default_value(15000), "local UDP socket to use")
 			("remote_socket", po::value<int>(&opt_remote_socket)->default_value(16000), "remote UDP socket to use")
 			("remote_addr", po::value<string>(&opt_remote_addr)->default_value("127.0.0.1"), "remote IP address")
-			("local_socket", po::value<int>(&opt_local_socket)->default_value(15000), "local UDP socket to use")
 			("udp_packet_size", po::value<int>(&opt_udp_packet_size)->default_value(46), "size of a UDP datagram in bytes")
-			("serial_packet_size", po::value<int>(&opt_serial_packet_size)->default_value(29), "size of the serial packets to be expected")
 		;
 
 		// Now parse the user-specified options
