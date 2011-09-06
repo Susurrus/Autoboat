@@ -23,6 +23,7 @@ boost::asio::serial_port *serialPort;
 boost::asio::ip::udp::endpoint remote_endpoint;
 boost::array<unsigned char, 128> udp_receive_buffer;
 boost::array<unsigned char, 128> serial_receive_buffer;
+bool connectionState = false;
 
 // Function prototypes
 void start_udp_receive();
@@ -101,6 +102,9 @@ int main(int ac, char* av[])
 	return 0;
 }
 
+/**
+ * This is a convenience function for starting an asynchronous receive operation over UDP.
+ */
 void start_udp_receive()
 {
 	udpSocket->async_receive_from(
@@ -110,6 +114,9 @@ void start_udp_receive()
 	);
 }
 
+/**
+ * This is a convenience function for starting an asynchronous receive operation over serial.
+ */
 void start_serial_receive()
 {
 	boost::asio::async_read(
@@ -119,6 +126,10 @@ void start_serial_receive()
 	);
 }
 
+/**
+ * This function is called asynchronously after a UDP datagram is received. It just packages up that
+ * same data for an asynchronous transmit out the serial port. Any errors are printed to the screen.
+ */
 void handle_udp_receive(const boost::system::error_code& error, size_t bytes_transferred)
 {
 	// Once a UDP datagram is received, send it out. If the reception was unsuccessful,
@@ -137,6 +148,10 @@ void handle_udp_receive(const boost::system::error_code& error, size_t bytes_tra
 	start_udp_receive();
 }
 
+/**
+ * This function is called asynchronously after each UDP packet is sent. Since the packet has already been sent or errored out,
+ * the only thing to do is print any errors.
+ */
 void handle_udp_send(const boost::system::error_code& error, size_t bytes_transferred)
 {
 	if (error) {
@@ -144,6 +159,10 @@ void handle_udp_send(const boost::system::error_code& error, size_t bytes_transf
 	}
 }
 
+/**
+ * This function deals with a buffer full of serial data. More specifically it sends the buffer off in a UDP
+ * datagram if there isn't an error and resumes waiting.
+ */
 void handle_serial_receive(const boost::system::error_code& error, size_t bytes_transferred)
 {
 	// If there isn't an error or the error is just one about message size
@@ -162,6 +181,10 @@ void handle_serial_receive(const boost::system::error_code& error, size_t bytes_
 	start_serial_receive();
 }
 
+/**
+ * This function is called asynchronously after each serial message buffer is transmit. Since the buffer has already been sent or errored out,
+ * the only thing to do is print any errors.
+ */
 void handle_serial_send(const boost::system::error_code& error, size_t bytes_transferred)
 {
 	if (error) {
@@ -169,6 +192,9 @@ void handle_serial_send(const boost::system::error_code& error, size_t bytes_tra
 	}
 }
 
+/**
+ * This is a convenience function for printing an error with a timestamp at the start of it.
+ */
 void print_error(const string message)
 {
 	ostringstream msg;
