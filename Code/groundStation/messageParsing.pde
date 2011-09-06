@@ -38,7 +38,6 @@ boolean buildAndCheckMessage(byte characterIn) {
 		} else if (characterIn != '%'){
 			messageIndex = 0;
 			messageState = 0;
-System.out.println("hey");
 		}
 	} else if (messageState == 2) {
 		// Record every character that comes in now that we're building a sentence.
@@ -50,7 +49,6 @@ System.out.println("hey");
                   } else {
                          messageIndex = 0;
                          messageState = 0;
-System.out.println("2");
                   }
 		} else if (messageIndex == message.length - 3) {
 			// If we've filled up the buffer, ignore the entire message as we can't store it all
