@@ -52,7 +52,7 @@ int main(int ac, char* av[])
 			("help", "produce help message")
 			("port", po::value<string>(&opt_port)->default_value("COM1"), "serial port to use")
 			("baud_rate", po::value<int>(&opt_baud_rate)->default_value(115200), "set the serial port baud rate")
-			("serial_packet_size", po::value<int>(&opt_serial_packet_size)->default_value(29), "size of the serial packets to be expected")
+			("serial_packet_size", po::value<int>(&opt_serial_packet_size)->default_value(34), "size of the serial packets to be expected")
 			("local_socket", po::value<int>(&opt_local_socket)->default_value(15000), "local UDP socket to use")
 			("remote_socket", po::value<int>(&opt_remote_socket)->default_value(16000), "remote UDP socket to use")
 			("remote_addr", po::value<string>(&opt_remote_addr)->default_value("127.0.0.1"), "remote IP address")
@@ -62,7 +62,7 @@ int main(int ac, char* av[])
 		// Now parse the user-specified options
 		po::variables_map vm;
 		po::store(po::parse_command_line(ac, av, desc), vm);
-		po::notify(vm);    
+		po::notify(vm);
 
 		// If the help menu was specified, spit out the help text and quit.
 		if (vm.count("help")) {
@@ -129,12 +129,12 @@ void handle_udp_receive(const boost::system::error_code& error, size_t bytes_tra
 			boost::asio::buffer(udp_receive_buffer, bytes_transferred),
 			&handle_serial_send
 		);
-		
-		// Resume the waiting for UDP datagrams
-		start_udp_receive();
-	} else {
+	} else if (error != boost::asio::error::connection_refused) {
 		print_error(error.message());
 	}
+		
+	// Resume the waiting for UDP datagrams
+	start_udp_receive();
 }
 
 void handle_udp_send(const boost::system::error_code& error, size_t bytes_transferred)
@@ -148,17 +148,18 @@ void handle_serial_receive(const boost::system::error_code& error, size_t bytes_
 {
 	// If there isn't an error or the error is just one about message size
 	if (!error || error == boost::asio::error::message_size) {
+
 		udpSocket->async_send_to(
 			boost::asio::buffer(serial_receive_buffer, bytes_transferred),
 			remote_endpoint,
 			&handle_udp_send
 		);
-
-		// Resume waiting for more serial data
-		start_serial_receive();
-	} else {
+	} else if (error != boost::asio::error::connection_refused) {
 		print_error(error.message());
 	}
+
+	// Resume waiting for more serial data
+	start_serial_receive();
 }
 
 void handle_serial_send(const boost::system::error_code& error, size_t bytes_transferred)
