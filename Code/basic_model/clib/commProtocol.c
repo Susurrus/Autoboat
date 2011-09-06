@@ -381,6 +381,11 @@ void setActuatorData(unsigned char* data) {
 	actuatorDataMessage.trigger = data[19];
 	actuatorDataMessage.timestamp.chData[0] = data[20];
 	actuatorDataMessage.timestamp.chData[1] = data[21];
+	actuatorDataMessage.rudderAngle.chData[0] = data[22];
+	actuatorDataMessage.rudderAngle.chData[1] = data[23];
+	actuatorDataMessage.rudderAngle.chData[2] = data[24];
+	actuatorDataMessage.rudderAngle.chData[3] = data[25];
+	actuatorDataMessage.sensorOverride = data[26];
 }
 
 void getActuatorData(unsigned char* data) {
@@ -406,17 +411,22 @@ void getActuatorData(unsigned char* data) {
 	data[19] = actuatorDataMessage.trigger;
 	data[20] = actuatorDataMessage.timestamp.chData[0];
 	data[21] = actuatorDataMessage.timestamp.chData[1];
+	data[22] = actuatorDataMessage.rudderAngle.chData[0];
+	data[23] = actuatorDataMessage.rudderAngle.chData[1];
+	data[24] = actuatorDataMessage.rudderAngle.chData[2];
+	data[25] = actuatorDataMessage.rudderAngle.chData[3];
+	data[26] = actuatorDataMessage.sensorOverride;
 }
 
 /**
- * Add all 22 data + 7 header/footer bytes of the actuator struct to UART2's transmission queue.
+ * Add all 27 data + 7 header/footer bytes of the actuator struct to UART2's transmission queue.
  */
 inline void uart2EnqueueActuatorData(unsigned char *data) {
-	uart2EnqueueData(data, 29);
+	uart2EnqueueData(data, 34);
 }
 
 /**
- * Add all 102 data + 7 header/footer bytes of the actuator struct to UART1's transmission queue.
+ * Add all 104 data + 7 header/footer bytes of the actuator struct to UART1's transmission queue.
  */
 inline void uart1EnqueueStateData(unsigned char *data) {
 	uart1EnqueueData(data, 111);

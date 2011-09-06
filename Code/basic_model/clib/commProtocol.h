@@ -109,6 +109,8 @@ typedef struct {
 	unsigned char size;
 	unsigned char trigger;
 	tUnsignedShortToChar timestamp;
+	tFloatToChar rudderAngle;
+	unsigned char sensorOverride;
 } tActuatorData;
 
 /**
