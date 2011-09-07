@@ -23,7 +23,6 @@ boost::asio::serial_port *serialPort;
 boost::asio::ip::udp::endpoint remote_endpoint;
 boost::array<unsigned char, 128> udp_receive_buffer;
 boost::array<unsigned char, 128> serial_receive_buffer;
-bool connectionState = false;
 
 // Function prototypes
 void start_udp_receive();
@@ -53,11 +52,11 @@ int main(int ac, char* av[])
 			("help", "produce help message")
 			("port", po::value<string>(&opt_port)->default_value("COM1"), "serial port to use")
 			("baud_rate", po::value<int>(&opt_baud_rate)->default_value(115200), "set the serial port baud rate")
-			("serial_packet_size", po::value<int>(&opt_serial_packet_size)->default_value(34), "size of the serial packets to be expected")
+			("serial_packet_size", po::value<int>(&opt_serial_packet_size)->default_value(34), "size of the serial packets to be expected (<= 128)")
 			("local_socket", po::value<int>(&opt_local_socket)->default_value(15000), "local UDP socket to use")
 			("remote_socket", po::value<int>(&opt_remote_socket)->default_value(16000), "remote UDP socket to use")
 			("remote_addr", po::value<string>(&opt_remote_addr)->default_value("127.0.0.1"), "remote IP address")
-			("udp_packet_size", po::value<int>(&opt_udp_packet_size)->default_value(46), "size of a UDP datagram in bytes")
+			("udp_packet_size", po::value<int>(&opt_udp_packet_size)->default_value(46), "size of a UDP datagram in bytes (<= 128)")
 		;
 
 		// Now parse the user-specified options
@@ -68,6 +67,21 @@ int main(int ac, char* av[])
 		// If the help menu was specified, spit out the help text and quit.
 		if (vm.count("help")) {
 			cout << desc << "\n";
+			return 1;
+		}
+
+		// If the range of the serial/UDP message size is too big, error out.
+		bool errorOut = false;
+		if (opt_serial_packet_size > 128) {
+			cout << "ERROR: The serial_packet_size specified is too big. Must be less than or equal to 128." << endl;
+			errorOut = true;
+		}
+		if (opt_udp_packet_size > 128) {
+			cout << "ERROR: The serial_udp_size specified is too big. Must be less than or equal to 128." << endl;
+			errorOut = true;
+		}
+
+		if (errorOut) {
 			return 1;
 		}
 
@@ -140,10 +154,11 @@ void handle_udp_receive(const boost::system::error_code& error, size_t bytes_tra
 			boost::asio::buffer(udp_receive_buffer, bytes_transferred),
 			&handle_serial_send
 		);
+
 	} else if (error != boost::asio::error::connection_refused) {
 		print_error(error.message());
 	}
-		
+
 	// Resume the waiting for UDP datagrams
 	start_udp_receive();
 }
