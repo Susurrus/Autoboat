@@ -21,8 +21,8 @@ boost::asio::serial_port *serialPort;
 
 // Intermediate internal variables
 boost::asio::ip::udp::endpoint remote_endpoint;
-boost::array<unsigned char, 128> udp_receive_buffer;
-boost::array<unsigned char, 128> serial_receive_buffer;
+char *udp_receive_buffer;
+char *serial_receive_buffer;
 
 // Function prototypes
 void start_udp_receive();
@@ -70,19 +70,14 @@ int main(int ac, char* av[])
 			return 1;
 		}
 
-		// If the range of the serial/UDP message size is too big, error out.
-		bool errorOut = false;
-		if (opt_serial_packet_size > 128) {
-			cout << "ERROR: The serial_packet_size specified is too big. Must be less than or equal to 128." << endl;
-			errorOut = true;
+		udp_receive_buffer = new char[opt_udp_packet_size];
+		if (udp_receive_buffer == NULL) {
+			cout << "ERROR: Could not allocate enough space for a UDP receive buffer of that size." << endl;
 		}
-		if (opt_udp_packet_size > 128) {
-			cout << "ERROR: The serial_udp_size specified is too big. Must be less than or equal to 128." << endl;
-			errorOut = true;
-		}
-
-		if (errorOut) {
-			return 1;
+		
+		serial_receive_buffer = new char[opt_serial_packet_size];
+		if (serial_receive_buffer == NULL) {
+			cout << "ERROR: Could not allocate enough space for a UDP receive buffer of that size." << endl;
 		}
 
 		// Set up the endpoints. These are the local and remote server definitions (IP + socket)
