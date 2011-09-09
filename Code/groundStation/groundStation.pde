@@ -289,6 +289,14 @@ void draw() {
     text("RC receiver disconnected", 20, nextStatusLineStart);
     nextStatusLineStart += 20;
   }
+  if ((statusBits & 0x08) != 0) {
+    text("CAN transmission error", 20, nextStatusLineStart);
+    nextStatusLineStart += 20;
+  }
+  if ((statusBits & 0x10) != 0) {
+    text("CAN reception error", 20, nextStatusLineStart);
+    nextStatusLineStart += 20;
+  }
   
   // Draw the reset bits
   int vertical = 90;
