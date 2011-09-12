@@ -1,4 +1,3 @@
-#include "commProtocol.h"
 #include "circBuffer.h"
 #include "uart1.h"
 #include <p33Fxxxx.h>

@@ -3,8 +3,7 @@
 
 // USAGE:
 // Add initUart2() to an initialization sequence called once on startup.
-// Use uart2Enqueue*Data() to push appropriately-sized data chunks into the queue.
-// Call startUart2Transmission() every so often to initiate transmission of the data.
+// Use uart2Enqueue*Data() to push appropriately-sized data chunks into the queue and begin transmission.
 
 #include "circBuffer.h"
 
