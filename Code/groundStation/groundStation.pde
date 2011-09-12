@@ -62,6 +62,8 @@ byte statusBits = 0;
 byte ordering = 0;
 float rudderAngleCommand = 0.0;
 int throttleCommand = 0;
+float batteryVoltage = 0.0;
+float batteryAmperage = 0.0;
 
 // Boat state data recording
 ArrayList<float[]> L2List = new ArrayList<float[]>(255);
@@ -93,6 +95,8 @@ ArrayList<Byte> statusBitsList = new ArrayList<Byte>(255);
 ArrayList<Byte> orderingList = new ArrayList<Byte>(255);
 ArrayList<Float> rudderAngleCommandList = new ArrayList<Float>(255);
 ArrayList<Integer> throttleCommandList = new ArrayList<Integer>(255);
+ArrayList<Float> batteryVoltageList = new ArrayList<Float>(255);
+ArrayList<Float> batteryAmperageList = new ArrayList<Float>(255);
 
 // Boat state data playback
 double[][] L2Playback;
@@ -124,6 +128,8 @@ byte[] statusBitsPlayback;
 byte[] orderingPlayback;
 float[] rudderAngleCommandPlayback;
 int[] throttleCommandPlayback;
+float[] batteryVoltagePlayback;
+float[] batteryAmperagePlayback;
 
 // Rendering variables
 PFont regularFont;
@@ -178,7 +184,7 @@ void draw() {
     }
   } else if (playing) {
     if (playbackIndex < headingPlayback.length) {
-      if (millis() - lastPlaybackTime >= 10) { // Assume .01s sampletime
+      if (millis() - lastPlaybackTime >= 20) { // Assume .02s sampletime
         L2.x = (float)L2Playback[playbackIndex][0];
         L2.y = (float)L2Playback[playbackIndex][1];
         L2.z = (float)L2Playback[playbackIndex][2];
@@ -220,6 +226,8 @@ void draw() {
         ordering = orderingPlayback[playbackIndex];
         rudderAngleCommand = rudderAngleCommandPlayback[playbackIndex];
         throttleCommand = throttleCommandPlayback[playbackIndex];
+        batteryVoltage = batteryVoltagePlayback[playbackIndex];
+        batteryAmperage = batteryAmperagePlayback[playbackIndex];
         
         playbackIndex++;
         lastPlaybackTime = millis();
@@ -247,6 +255,7 @@ void draw() {
   text("Global position", 200, 450);
   text("Waypoint0", 50, 290);
   text("Waypoint1", 50, 350);
+  text("Power", 50, 420);
   text("Heading", 400, 290);
   text("Rudder angle command", 400, 340);
   text("Load", 570, 290);
@@ -331,6 +340,10 @@ void draw() {
   if ((reset & 0x80) != 0) {
     text("E-stop activated", 500, vertical);
   }
+  
+  // Draw the battery voltage and power draw in amps
+  text(String.format("%2.1f V", batteryVoltage), 50, 440);
+  text(String.format("%2.1f A", batteryAmperage), 50, 460);
   
   // Draw the load %
   text(String.format("%3d%%",load), 570, 310);
@@ -607,6 +620,18 @@ void controlEvent(ControlEvent theEvent) {
             throttleCommandPlayback[i] = (int)longData[i][0];
           }
           
+          doubleData = ((MLDouble)inputMatFileReader.getMLArray("batteryVoltage")).getArray();
+          batteryVoltagePlayback = new float[doubleData.length];
+          for (int i=0;i<doubleData.length;i++) {
+            batteryVoltagePlayback[i] = (float)doubleData[i][0];
+          }
+          
+          doubleData = ((MLDouble)inputMatFileReader.getMLArray("batteryAmperage")).getArray();
+          batteryAmperagePlayback = new float[doubleData.length];
+          for (int i=0;i<doubleData.length;i++) {
+            batteryAmperagePlayback[i] = (float)doubleData[i][0];
+          }
+          
         } catch (IOException e) {
           e.printStackTrace();
           exit();
@@ -674,6 +699,8 @@ public void startRecording() {
   orderingList.clear();
   rudderAngleCommandList.clear();
   throttleCommandList.clear();
+  batteryVoltageList.clear();
+  batteryAmperageList.clear();
   
   // Reset the messages counter
   recordedMessages = new Long(0);
@@ -920,6 +947,22 @@ public void stopRecordingAndSave() {
     long_gg[i] = (long)int_g[i];
   }
   MLInt64 throttleCommandML = new MLInt64("throttleCommand", long_gg, long_gg.length);
+
+  float_g = new Float[batteryVoltageList.size()];
+  batteryVoltageList.toArray(float_g);
+  gg = new double[batteryVoltageList.size()];
+  for (int i = 0; i < batteryVoltageList.size(); i++){
+    gg[i] = (double)float_g[i];
+  }
+  MLDouble batteryVoltageML = new MLDouble("batteryVoltage", gg, gg.length);
+
+  float_g = new Float[batteryAmperageList.size()];
+  batteryAmperageList.toArray(float_g);
+  gg = new double[batteryAmperageList.size()];
+  for (int i = 0; i < batteryAmperageList.size(); i++){
+    gg[i] = (double)float_g[i];
+  }
+  MLDouble batteryAmperageML = new MLDouble("batteryAmperage", gg, gg.length);
   
   ArrayList matList = new ArrayList();
   matList.add(L2ML);
@@ -951,6 +994,8 @@ public void stopRecordingAndSave() {
   matList.add(orderingML);
   matList.add(rudderAngleCommandML);
   matList.add(throttleCommandML);
+  matList.add(batteryVoltageML);
+  matList.add(batteryAmperageML);
   
   try {
     Calendar cal = Calendar.getInstance();

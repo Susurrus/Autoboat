@@ -54,7 +54,6 @@ boolean buildAndCheckMessage(byte characterIn) {
 			// If we've filled up the buffer, ignore the entire message as we can't store it all
 			messageState = 0;
 			messageIndex = 0;
-System.out.println("3");
 		}
 	} else if (messageState == 3) {
 		// If we find an ampersand, then we've found the footer. If we've run out of space at 127 bytes,
@@ -66,12 +65,10 @@ System.out.println("3");
 		} else if (messageIndex == message.length - 2) {
 			messageState = 0;
 			messageIndex = 0;
-System.out.println("5");
 		}
 	} else if (messageState == 4) {
 		// Record the second ASCII-hex character of the checksum byte.
 		message[messageIndex] = characterIn;
-
 		// The checksum is now verified and if successful the message
 		// is stored in the appropriate struct.
 		if (message[messageIndex] == calculateChecksum(subset(message, 2, messageIndex-4)) && message[3] == messageIndex - 6) {
@@ -130,6 +127,8 @@ void updateStateData(byte message[]) {
     orderingList.add(ordering);
     rudderAngleCommandList.add(rudderAngleCommand);
     throttleCommandList.add(throttleCommand);
+    batteryVoltageList.add(batteryVoltage);
+    batteryAmperageList.add(batteryAmperage);
     
     recordedMessages++;
   }
@@ -174,6 +173,8 @@ void updateStateData(byte message[]) {
     ordering = din.readByte();
     rudderAngleCommand = din.readFloat();
     throttleCommand = din.readShort();
+    batteryVoltage = din.readFloat();
+    batteryAmperage = din.readFloat();
     
   } catch (Exception e) {
     e.printStackTrace();
