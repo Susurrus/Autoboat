@@ -265,6 +265,7 @@ void draw() {
   text("Mode:", 630, 400);
   text("Status:", 20, 170);
   textFont(regularFont);
+  text("(press SPACE to toggle)", 100, 150);
   
   // Draw the rudder angle in degrees
   text(String.format("%3.1f\u00B0", rudderAngle * 180 / 3.14159), 630, 310);
@@ -437,6 +438,24 @@ void draw() {
   }
 }
 
+/**
+ * Implements the built-in callback keyReleased() that is provided by Processing
+ * for handling keyboard events. This function is used to check for the spacebar
+ * being pressed. If it was we toggle the recording state.
+ */
+void keyReleased() {
+  if (key == ' ') {
+      if (recording) {
+        recording = false;
+        stopRecordingAndSave();
+      } else {
+        recording = true;
+        startRecording();
+      }
+      recordToggle.setState(recording);
+  }
+}
+
 void controlEvent(ControlEvent theEvent) {
   // PulldownMenu is of type ControlGroup.
   // A controlEvent will be triggered from within the ControlGroup.
@@ -463,8 +482,10 @@ void controlEvent(ControlEvent theEvent) {
       break;
     case(1):
       if (theEvent.value() == 0) {
+        recording = false;
         stopRecordingAndSave();
       } else if (theEvent.value() == 1) {
+        recording = true;
         startRecording();
       } 
       break;
@@ -666,7 +687,6 @@ void customizeSerialPortsList(DropdownList ddl) {
 }
 
 public void startRecording() {
-  recording = true; 
   recordTimer.reset();
   
   // Clear all the data structures for new data
@@ -707,303 +727,305 @@ public void startRecording() {
 }
 
 public void stopRecordingAndSave() {
-  recording = false;
-  float[][] t = new float[L2List.size()][3];
+  if (recordedMessages > 0) {
   
-  L2List.toArray(t);
-  double[][] output = new double[L2List.size()][3];
-  for (int i = 0; i < L2List.size(); i++){
-    for (int j=0;j<3;j++) {
-      output[i][j] = (double)t[i][j];
+    float[][] t = new float[L2List.size()][3];
+    
+    L2List.toArray(t);
+    double[][] output = new double[L2List.size()][3];
+    for (int i = 0; i < L2List.size(); i++){
+      for (int j=0;j<3;j++) {
+        output[i][j] = (double)t[i][j];
+      }
     }
-  }
-  MLDouble L2ML = new MLDouble("L2", output);
-  
-  globalPositionList.toArray(t);
-  output = new double[globalPositionList.size()][3];
-  for (int i = 0; i < globalPositionList.size(); i++){
-    for (int j=0;j<3;j++) {
-      output[i][j] = (double)t[i][j];
+    MLDouble L2ML = new MLDouble("L2", output);
+    
+    globalPositionList.toArray(t);
+    output = new double[globalPositionList.size()][3];
+    for (int i = 0; i < globalPositionList.size(); i++){
+      for (int j=0;j<3;j++) {
+        output[i][j] = (double)t[i][j];
+      }
     }
-  }
-  MLDouble globalPositionML = new MLDouble("globalPosition", output);
-  
-  localPositionList.toArray(t);
-  output = new double[localPositionList.size()][3];
-  for (int i = 0; i < localPositionList.size(); i++){
-    for (int j=0;j<3;j++) {
-      output[i][j] = (double)t[i][j];
+    MLDouble globalPositionML = new MLDouble("globalPosition", output);
+    
+    localPositionList.toArray(t);
+    output = new double[localPositionList.size()][3];
+    for (int i = 0; i < localPositionList.size(); i++){
+      for (int j=0;j<3;j++) {
+        output[i][j] = (double)t[i][j];
+      }
     }
-  }
-  MLDouble localPositionML = new MLDouble("localPosition", output);
-  
-  Float[] float_g = new Float[headingList.size()];
-  headingList.toArray(float_g);
-  double[] gg = new double[headingList.size()];
-  for (int i = 0; i < headingList.size(); i++){
-    gg[i] = (double)float_g[i];
-  }
-  MLDouble headingML = new MLDouble("heading", gg, gg.length);
-  
-  velocityList.toArray(t);
-  output = new double[velocityList.size()][3];
-  for (int i = 0; i < velocityList.size(); i++){
-    for (int j=0;j<3;j++) {
-      output[i][j] = (double)t[i][j];
+    MLDouble localPositionML = new MLDouble("localPosition", output);
+    
+    Float[] float_g = new Float[headingList.size()];
+    headingList.toArray(float_g);
+    double[] gg = new double[headingList.size()];
+    for (int i = 0; i < headingList.size(); i++){
+      gg[i] = (double)float_g[i];
     }
-  }
-  MLDouble velocityML = new MLDouble("velocity", output);
-  
-  waypoint0List.toArray(t);
-  output = new double[waypoint0List.size()][3];
-  for (int i = 0; i < waypoint0List.size(); i++){
-    for (int j=0;j<3;j++) {
-      output[i][j] = (double)t[i][j];
+    MLDouble headingML = new MLDouble("heading", gg, gg.length);
+    
+    velocityList.toArray(t);
+    output = new double[velocityList.size()][3];
+    for (int i = 0; i < velocityList.size(); i++){
+      for (int j=0;j<3;j++) {
+        output[i][j] = (double)t[i][j];
+      }
     }
-  }
-  MLDouble waypoint0ML = new MLDouble("waypoint0", output);
-  
-  waypoint1List.toArray(t);
-  output = new double[waypoint1List.size()][3];
-  for (int i = 0; i < waypoint1List.size(); i++){
-    for (int j=0;j<3;j++) {
-      output[i][j] = (double)t[i][j];
+    MLDouble velocityML = new MLDouble("velocity", output);
+    
+    waypoint0List.toArray(t);
+    output = new double[waypoint0List.size()][3];
+    for (int i = 0; i < waypoint0List.size(); i++){
+      for (int j=0;j<3;j++) {
+        output[i][j] = (double)t[i][j];
+      }
     }
-  }
-  MLDouble waypoint1ML = new MLDouble("waypoint1", output);
+    MLDouble waypoint0ML = new MLDouble("waypoint0", output);
+    
+    waypoint1List.toArray(t);
+    output = new double[waypoint1List.size()][3];
+    for (int i = 0; i < waypoint1List.size(); i++){
+      for (int j=0;j<3;j++) {
+        output[i][j] = (double)t[i][j];
+      }
+    }
+    MLDouble waypoint1ML = new MLDouble("waypoint1", output);
+    
+    Integer[] int_g = new Integer[rudderPotList.size()];
+    rudderPotList.toArray(int_g);
+    long[] long_gg = new long[rudderPotList.size()];
+    for (int i = 0; i < rudderPotList.size(); i++){
+      long_gg[i] = (long)int_g[i];
+    }
+    MLInt64 rudderPotML = new MLInt64("rudderPot", long_gg, long_gg.length);
+    
+    Byte[] byte_g = new Byte[rudderPortLimitList.size()];
+    rudderPortLimitList.toArray(byte_g);
+    byte[] byte_gg = new byte[rudderPortLimitList.size()];
+    for (int i = 0; i < rudderPortLimitList.size(); i++){
+      byte_gg[i] = (byte)byte_g[i];
+    }
+    MLInt8 rudderPortML = new MLInt8("rudderPortLimit", byte_gg, byte_gg.length);
+    
+    byte_g = new Byte[rudderSbLimitList.size()];
+    rudderSbLimitList.toArray(byte_g);
+    byte_gg = new byte[rudderSbLimitList.size()];
+    for (int i = 0; i < rudderSbLimitList.size(); i++){
+      byte_gg[i] = (byte)byte_g[i];
+    }
+    MLInt8 rudderSbML = new MLInt8("rudderSbLimit", byte_gg, byte_gg.length);
+    
+    byte_g = new Byte[gpsYearList.size()];
+    gpsYearList.toArray(byte_g);
+    byte_gg = new byte[gpsYearList.size()];
+    for (int i = 0; i < gpsYearList.size(); i++){
+      byte_gg[i] = (byte)byte_g[i];
+    }
+    MLInt8 gpsYearML = new MLInt8("gpsYear", byte_gg, byte_gg.length);
+    
+    byte_g = new Byte[gpsMonthList.size()];
+    gpsMonthList.toArray(byte_g);
+    byte_gg = new byte[gpsMonthList.size()];
+    for (int i = 0; i < gpsMonthList.size(); i++){
+      byte_gg[i] = (byte)byte_g[i];
+    }
+    MLInt8 gpsMonthML = new MLInt8("gpsMonth", byte_gg, byte_gg.length);
+    
+    byte_g = new Byte[gpsDayList.size()];
+    gpsDayList.toArray(byte_g);
+    byte_gg = new byte[gpsDayList.size()];
+    for (int i = 0; i < gpsDayList.size(); i++){
+      byte_gg[i] = (byte)byte_g[i];
+    }
+    MLInt8 gpsDayML = new MLInt8("gpsDay", byte_gg, byte_gg.length);
+    
+    byte_g = new Byte[gpsHourList.size()];
+    gpsHourList.toArray(byte_g);
+    byte_gg = new byte[gpsHourList.size()];
+    for (int i = 0; i < gpsHourList.size(); i++){
+      byte_gg[i] = (byte)byte_g[i];
+    }
+    MLInt8 gpsHourML = new MLInt8("gpsHour", byte_gg, byte_gg.length);
+    
+    byte_g = new Byte[gpsMinuteList.size()];
+    gpsMinuteList.toArray(byte_g);
+    byte_gg = new byte[gpsMinuteList.size()];
+    for (int i = 0; i < gpsMinuteList.size(); i++){
+      byte_gg[i] = (byte)byte_g[i];
+    }
+    MLInt8 gpsMinuteML = new MLInt8("gpsMinute", byte_gg, byte_gg.length);
+    
+    byte_g = new Byte[gpsSecondList.size()];
+    gpsSecondList.toArray(byte_g);
+    byte_gg = new byte[gpsSecondList.size()];
+    for (int i = 0; i < gpsSecondList.size(); i++){
+      byte_gg[i] = (byte)byte_g[i];
+    }
+    MLInt8 gpsSecondML = new MLInt8("gpsSecond", byte_gg, byte_gg.length);
+    
+    float_g = new Float[gpsCourseList.size()];
+    gpsCourseList.toArray(float_g);
+    gg = new double[gpsCourseList.size()];
+    for (int i = 0; i < gpsCourseList.size(); i++){
+      gg[i] = (double)float_g[i];
+    }
+    MLDouble gpsCourseML = new MLDouble("gpsCourse", gg, gg.length);
+    
+    float_g = new Float[gpsSpeedList.size()];
+    gpsSpeedList.toArray(float_g);
+    gg = new double[gpsSpeedList.size()];
+    for (int i = 0; i < gpsSpeedList.size(); i++){
+      gg[i] = (double)float_g[i];
+    }
+    MLDouble gpsSpeedML = new MLDouble("gpsSpeed", gg, gg.length);
+    
+    float_g = new Float[gpsHdopList.size()];
+    gpsHdopList.toArray(float_g);
+    gg = new double[gpsHdopList.size()];
+    for (int i = 0; i < gpsHdopList.size(); i++){
+      gg[i] = (double)float_g[i];
+    }
+    MLDouble gpsHdopML = new MLDouble("gpsHdop", gg, gg.length);
+    
+    byte_g = new Byte[gpsFixList.size()];
+    gpsFixList.toArray(byte_g);
+    byte_gg = new byte[gpsFixList.size()];
+    for (int i = 0; i < gpsFixList.size(); i++){
+      byte_gg[i] = (byte)byte_g[i];
+    }
+    MLInt8 gpsFixML = new MLInt8("gpsFix", byte_gg, byte_gg.length);
+    
+    byte_g = new Byte[gpsSatellitesList.size()];
+    gpsSatellitesList.toArray(byte_g);
+    byte_gg = new byte[gpsSatellitesList.size()];
+    for (int i = 0; i < gpsSatellitesList.size(); i++){
+      byte_gg[i] = (byte)byte_g[i];
+    }
+    MLInt8 gpsSatellitesML = new MLInt8("gpsSatellites", byte_gg, byte_gg.length);
+    
+    byte_g = new Byte[resetList.size()];
+    resetList.toArray(byte_g);
+    byte_gg = new byte[resetList.size()];
+    for (int i = 0; i < resetList.size(); i++){
+      byte_gg[i] = (byte)byte_g[i];
+    }
+    MLUInt8 resetML = new MLUInt8("reset", byte_gg, byte_gg.length);
+    
+    byte_g = new Byte[loadList.size()];
+    loadList.toArray(byte_g);
+    byte_gg = new byte[loadList.size()];
+    for (int i = 0; i < loadList.size(); i++){
+      byte_gg[i] = (byte)byte_g[i];
+    }
+    MLUInt8 loadML = new MLUInt8("load", byte_gg, byte_gg.length);
+    
+    float_g = new Float[rudderAngleList.size()];
+    rudderAngleList.toArray(float_g);
+    gg = new double[rudderAngleList.size()];
+    for (int i = 0; i < rudderAngleList.size(); i++){
+      gg[i] = (double)float_g[i];
+    }
+    MLDouble rudderAngleML = new MLDouble("rudderAngle", gg, gg.length);
+    
+    int_g = new Integer[propRpmList.size()];
+    propRpmList.toArray(int_g);
+    long_gg = new long[propRpmList.size()];
+    for (int i = 0; i < propRpmList.size(); i++){
+      long_gg[i] = (long)int_g[i];
+    }
+    MLInt64 propRpmML = new MLInt64("propRpm", long_gg, long_gg.length);
+    
+    byte_g = new Byte[statusBitsList.size()];
+    statusBitsList.toArray(byte_g);
+    byte_gg = new byte[statusBitsList.size()];
+    for (int i = 0; i < statusBitsList.size(); i++){
+      byte_gg[i] = (byte)byte_g[i];
+    }
+    MLUInt8 statusBitsML = new MLUInt8("statusBits", byte_gg, byte_gg.length);
+    
+    byte_g = new Byte[orderingList.size()];
+    orderingList.toArray(byte_g);
+    byte_gg = new byte[orderingList.size()];
+    for (int i = 0; i < orderingList.size(); i++){
+      byte_gg[i] = (byte)byte_g[i];
+    }
+    MLUInt8 orderingML = new MLUInt8("ordering", byte_gg, byte_gg.length);
   
-  Integer[] int_g = new Integer[rudderPotList.size()];
-  rudderPotList.toArray(int_g);
-  long[] long_gg = new long[rudderPotList.size()];
-  for (int i = 0; i < rudderPotList.size(); i++){
-    long_gg[i] = (long)int_g[i];
-  }
-  MLInt64 rudderPotML = new MLInt64("rudderPot", long_gg, long_gg.length);
+    float_g = new Float[rudderAngleCommandList.size()];
+    rudderAngleCommandList.toArray(float_g);
+    gg = new double[rudderAngleCommandList.size()];
+    for (int i = 0; i < rudderAngleCommandList.size(); i++){
+      gg[i] = (double)float_g[i];
+    }
+    MLDouble rudderAngleCommandML = new MLDouble("rudderAngleCommand", gg, gg.length);
+    
+    int_g = new Integer[throttleCommandList.size()];
+    throttleCommandList.toArray(int_g);
+    long_gg = new long[throttleCommandList.size()];
+    for (int i = 0; i < throttleCommandList.size(); i++){
+      long_gg[i] = (long)int_g[i];
+    }
+    MLInt64 throttleCommandML = new MLInt64("throttleCommand", long_gg, long_gg.length);
   
-  Byte[] byte_g = new Byte[rudderPortLimitList.size()];
-  rudderPortLimitList.toArray(byte_g);
-  byte[] byte_gg = new byte[rudderPortLimitList.size()];
-  for (int i = 0; i < rudderPortLimitList.size(); i++){
-    byte_gg[i] = (byte)byte_g[i];
-  }
-  MLInt8 rudderPortML = new MLInt8("rudderPortLimit", byte_gg, byte_gg.length);
+    float_g = new Float[batteryVoltageList.size()];
+    batteryVoltageList.toArray(float_g);
+    gg = new double[batteryVoltageList.size()];
+    for (int i = 0; i < batteryVoltageList.size(); i++){
+      gg[i] = (double)float_g[i];
+    }
+    MLDouble batteryVoltageML = new MLDouble("batteryVoltage", gg, gg.length);
   
-  byte_g = new Byte[rudderSbLimitList.size()];
-  rudderSbLimitList.toArray(byte_g);
-  byte_gg = new byte[rudderSbLimitList.size()];
-  for (int i = 0; i < rudderSbLimitList.size(); i++){
-    byte_gg[i] = (byte)byte_g[i];
-  }
-  MLInt8 rudderSbML = new MLInt8("rudderSbLimit", byte_gg, byte_gg.length);
-  
-  byte_g = new Byte[gpsYearList.size()];
-  gpsYearList.toArray(byte_g);
-  byte_gg = new byte[gpsYearList.size()];
-  for (int i = 0; i < gpsYearList.size(); i++){
-    byte_gg[i] = (byte)byte_g[i];
-  }
-  MLInt8 gpsYearML = new MLInt8("gpsYear", byte_gg, byte_gg.length);
-  
-  byte_g = new Byte[gpsMonthList.size()];
-  gpsMonthList.toArray(byte_g);
-  byte_gg = new byte[gpsMonthList.size()];
-  for (int i = 0; i < gpsMonthList.size(); i++){
-    byte_gg[i] = (byte)byte_g[i];
-  }
-  MLInt8 gpsMonthML = new MLInt8("gpsMonth", byte_gg, byte_gg.length);
-  
-  byte_g = new Byte[gpsDayList.size()];
-  gpsDayList.toArray(byte_g);
-  byte_gg = new byte[gpsDayList.size()];
-  for (int i = 0; i < gpsDayList.size(); i++){
-    byte_gg[i] = (byte)byte_g[i];
-  }
-  MLInt8 gpsDayML = new MLInt8("gpsDay", byte_gg, byte_gg.length);
-  
-  byte_g = new Byte[gpsHourList.size()];
-  gpsHourList.toArray(byte_g);
-  byte_gg = new byte[gpsHourList.size()];
-  for (int i = 0; i < gpsHourList.size(); i++){
-    byte_gg[i] = (byte)byte_g[i];
-  }
-  MLInt8 gpsHourML = new MLInt8("gpsHour", byte_gg, byte_gg.length);
-  
-  byte_g = new Byte[gpsMinuteList.size()];
-  gpsMinuteList.toArray(byte_g);
-  byte_gg = new byte[gpsMinuteList.size()];
-  for (int i = 0; i < gpsMinuteList.size(); i++){
-    byte_gg[i] = (byte)byte_g[i];
-  }
-  MLInt8 gpsMinuteML = new MLInt8("gpsMinute", byte_gg, byte_gg.length);
-  
-  byte_g = new Byte[gpsSecondList.size()];
-  gpsSecondList.toArray(byte_g);
-  byte_gg = new byte[gpsSecondList.size()];
-  for (int i = 0; i < gpsSecondList.size(); i++){
-    byte_gg[i] = (byte)byte_g[i];
-  }
-  MLInt8 gpsSecondML = new MLInt8("gpsSecond", byte_gg, byte_gg.length);
-  
-  float_g = new Float[gpsCourseList.size()];
-  gpsCourseList.toArray(float_g);
-  gg = new double[gpsCourseList.size()];
-  for (int i = 0; i < gpsCourseList.size(); i++){
-    gg[i] = (double)float_g[i];
-  }
-  MLDouble gpsCourseML = new MLDouble("gpsCourse", gg, gg.length);
-  
-  float_g = new Float[gpsSpeedList.size()];
-  gpsSpeedList.toArray(float_g);
-  gg = new double[gpsSpeedList.size()];
-  for (int i = 0; i < gpsSpeedList.size(); i++){
-    gg[i] = (double)float_g[i];
-  }
-  MLDouble gpsSpeedML = new MLDouble("gpsSpeed", gg, gg.length);
-  
-  float_g = new Float[gpsHdopList.size()];
-  gpsHdopList.toArray(float_g);
-  gg = new double[gpsHdopList.size()];
-  for (int i = 0; i < gpsHdopList.size(); i++){
-    gg[i] = (double)float_g[i];
-  }
-  MLDouble gpsHdopML = new MLDouble("gpsHdop", gg, gg.length);
-  
-  byte_g = new Byte[gpsFixList.size()];
-  gpsFixList.toArray(byte_g);
-  byte_gg = new byte[gpsFixList.size()];
-  for (int i = 0; i < gpsFixList.size(); i++){
-    byte_gg[i] = (byte)byte_g[i];
-  }
-  MLInt8 gpsFixML = new MLInt8("gpsFix", byte_gg, byte_gg.length);
-  
-  byte_g = new Byte[gpsSatellitesList.size()];
-  gpsSatellitesList.toArray(byte_g);
-  byte_gg = new byte[gpsSatellitesList.size()];
-  for (int i = 0; i < gpsSatellitesList.size(); i++){
-    byte_gg[i] = (byte)byte_g[i];
-  }
-  MLInt8 gpsSatellitesML = new MLInt8("gpsSatellites", byte_gg, byte_gg.length);
-  
-  byte_g = new Byte[resetList.size()];
-  resetList.toArray(byte_g);
-  byte_gg = new byte[resetList.size()];
-  for (int i = 0; i < resetList.size(); i++){
-    byte_gg[i] = (byte)byte_g[i];
-  }
-  MLUInt8 resetML = new MLUInt8("reset", byte_gg, byte_gg.length);
-  
-  byte_g = new Byte[loadList.size()];
-  loadList.toArray(byte_g);
-  byte_gg = new byte[loadList.size()];
-  for (int i = 0; i < loadList.size(); i++){
-    byte_gg[i] = (byte)byte_g[i];
-  }
-  MLUInt8 loadML = new MLUInt8("load", byte_gg, byte_gg.length);
-  
-  float_g = new Float[rudderAngleList.size()];
-  rudderAngleList.toArray(float_g);
-  gg = new double[rudderAngleList.size()];
-  for (int i = 0; i < rudderAngleList.size(); i++){
-    gg[i] = (double)float_g[i];
-  }
-  MLDouble rudderAngleML = new MLDouble("rudderAngle", gg, gg.length);
-  
-  int_g = new Integer[propRpmList.size()];
-  propRpmList.toArray(int_g);
-  long_gg = new long[propRpmList.size()];
-  for (int i = 0; i < propRpmList.size(); i++){
-    long_gg[i] = (long)int_g[i];
-  }
-  MLInt64 propRpmML = new MLInt64("propRpm", long_gg, long_gg.length);
-  
-  byte_g = new Byte[statusBitsList.size()];
-  statusBitsList.toArray(byte_g);
-  byte_gg = new byte[statusBitsList.size()];
-  for (int i = 0; i < statusBitsList.size(); i++){
-    byte_gg[i] = (byte)byte_g[i];
-  }
-  MLUInt8 statusBitsML = new MLUInt8("statusBits", byte_gg, byte_gg.length);
-  
-  byte_g = new Byte[orderingList.size()];
-  orderingList.toArray(byte_g);
-  byte_gg = new byte[orderingList.size()];
-  for (int i = 0; i < orderingList.size(); i++){
-    byte_gg[i] = (byte)byte_g[i];
-  }
-  MLUInt8 orderingML = new MLUInt8("ordering", byte_gg, byte_gg.length);
-
-  float_g = new Float[rudderAngleCommandList.size()];
-  rudderAngleCommandList.toArray(float_g);
-  gg = new double[rudderAngleCommandList.size()];
-  for (int i = 0; i < rudderAngleCommandList.size(); i++){
-    gg[i] = (double)float_g[i];
-  }
-  MLDouble rudderAngleCommandML = new MLDouble("rudderAngleCommand", gg, gg.length);
-  
-  int_g = new Integer[throttleCommandList.size()];
-  throttleCommandList.toArray(int_g);
-  long_gg = new long[throttleCommandList.size()];
-  for (int i = 0; i < throttleCommandList.size(); i++){
-    long_gg[i] = (long)int_g[i];
-  }
-  MLInt64 throttleCommandML = new MLInt64("throttleCommand", long_gg, long_gg.length);
-
-  float_g = new Float[batteryVoltageList.size()];
-  batteryVoltageList.toArray(float_g);
-  gg = new double[batteryVoltageList.size()];
-  for (int i = 0; i < batteryVoltageList.size(); i++){
-    gg[i] = (double)float_g[i];
-  }
-  MLDouble batteryVoltageML = new MLDouble("batteryVoltage", gg, gg.length);
-
-  float_g = new Float[batteryAmperageList.size()];
-  batteryAmperageList.toArray(float_g);
-  gg = new double[batteryAmperageList.size()];
-  for (int i = 0; i < batteryAmperageList.size(); i++){
-    gg[i] = (double)float_g[i];
-  }
-  MLDouble batteryAmperageML = new MLDouble("batteryAmperage", gg, gg.length);
-  
-  ArrayList matList = new ArrayList();
-  matList.add(L2ML);
-  matList.add(headingML);
-  matList.add(globalPositionML);
-  matList.add(localPositionML);
-  matList.add(velocityML);
-  matList.add(waypoint0ML);
-  matList.add(waypoint1ML);
-  matList.add(rudderPotML);
-  matList.add(rudderPortML);
-  matList.add(rudderSbML);
-  matList.add(gpsYearML);
-  matList.add(gpsMonthML);
-  matList.add(gpsDayML);
-  matList.add(gpsHourML);
-  matList.add(gpsMinuteML);
-  matList.add(gpsSecondML);
-  matList.add(gpsCourseML);
-  matList.add(gpsSpeedML);
-  matList.add(gpsHdopML);
-  matList.add(gpsFixML);
-  matList.add(gpsSatellitesML);
-  matList.add(resetML);
-  matList.add(loadML);
-  matList.add(rudderAngleML);
-  matList.add(propRpmML);
-  matList.add(statusBitsML);
-  matList.add(orderingML);
-  matList.add(rudderAngleCommandML);
-  matList.add(throttleCommandML);
-  matList.add(batteryVoltageML);
-  matList.add(batteryAmperageML);
-  
-  try {
-    Calendar cal = Calendar.getInstance();
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-hhmmss");
-    new MatFileWriter(sketchPath(sdf.format(cal.getTime())+".mat"), matList);
-  }
-  catch (Exception e){
-    println("Failed to write output to a .mat file");
+    float_g = new Float[batteryAmperageList.size()];
+    batteryAmperageList.toArray(float_g);
+    gg = new double[batteryAmperageList.size()];
+    for (int i = 0; i < batteryAmperageList.size(); i++){
+      gg[i] = (double)float_g[i];
+    }
+    MLDouble batteryAmperageML = new MLDouble("batteryAmperage", gg, gg.length);
+    
+    ArrayList matList = new ArrayList();
+    matList.add(L2ML);
+    matList.add(headingML);
+    matList.add(globalPositionML);
+    matList.add(localPositionML);
+    matList.add(velocityML);
+    matList.add(waypoint0ML);
+    matList.add(waypoint1ML);
+    matList.add(rudderPotML);
+    matList.add(rudderPortML);
+    matList.add(rudderSbML);
+    matList.add(gpsYearML);
+    matList.add(gpsMonthML);
+    matList.add(gpsDayML);
+    matList.add(gpsHourML);
+    matList.add(gpsMinuteML);
+    matList.add(gpsSecondML);
+    matList.add(gpsCourseML);
+    matList.add(gpsSpeedML);
+    matList.add(gpsHdopML);
+    matList.add(gpsFixML);
+    matList.add(gpsSatellitesML);
+    matList.add(resetML);
+    matList.add(loadML);
+    matList.add(rudderAngleML);
+    matList.add(propRpmML);
+    matList.add(statusBitsML);
+    matList.add(orderingML);
+    matList.add(rudderAngleCommandML);
+    matList.add(throttleCommandML);
+    matList.add(batteryVoltageML);
+    matList.add(batteryAmperageML);
+    
+    try {
+      Calendar cal = Calendar.getInstance();
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-hhmmss");
+      new MatFileWriter(sketchPath(sdf.format(cal.getTime())+".mat"), matList);
+    }
+    catch (Exception e){
+      println("Failed to write output to a .mat file");
+    }
   }
 }
 
