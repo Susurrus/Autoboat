@@ -90,6 +90,15 @@ void startUart1Transmission() {
 }
 
 /**
+ * This function supplements the uart1EnqueueData() function by also
+ * providing an interface that only enqueues a single byte.
+ */
+void uart1EnqueueByte(unsigned char datum) {
+	writeBack(uart1TxBuffer, datum);
+	startUart1Transmission();
+}
+
+/**
  * This function enqueues all bytes in the passed data character array according to the passed
  * length.
  */

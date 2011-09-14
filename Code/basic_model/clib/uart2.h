@@ -14,8 +14,14 @@ void initUart2(unsigned int brgRegister);
 void changeUart2BaudRate(unsigned short brgRegister);
 
 /**
- * This starts a transmission sequence. The transmission sent interrupt is called which then
- * continues this transmission sequence.
+ * This function starts a transmission sequence after enqueuing a single byte into
+ * the buffer.
+ */
+void uart2EnqueueByte(unsigned char datum);
+
+/**
+ * This function augments the uart2EnqueueByte() function by providing an interface
+ * that enqueues multiple bytes.
  */
 void uart2EnqueueData(unsigned char *data, unsigned char length);
 

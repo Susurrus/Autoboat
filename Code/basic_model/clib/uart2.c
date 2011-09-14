@@ -90,6 +90,15 @@ void startUart2Transmission() {
 }
 
 /**
+ * This function supplements the uart2EnqueueData() function by also
+ * providing an interface that only enqueues a single byte.
+ */
+void uart2EnqueueByte(unsigned char datum) {
+	writeBack(uart2TxBuffer, datum);
+	startUart2Transmission();
+}
+
+/**
  * This function enqueues all bytes in the passed data character array according to the passed
  * length.
  */
