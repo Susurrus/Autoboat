@@ -14,7 +14,7 @@ void startUart1Transmission();
  * Initialization function for the UART1 peripheral.
  * Should be called in initialization code for the
  * model. This function configures the UART
- * for 4800baud using interrupts and two circular buffers
+ * for whatever baud rate is specified. It also configures two circular buffers
  * for transmission and reception.
  */
 void initUart1(unsigned int brgRegister) {
