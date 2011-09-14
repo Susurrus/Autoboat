@@ -137,7 +137,7 @@ PFont boldFont;
 
 void setup() {
   size(800, 600);
-  frameRate(30);
+  frameRate(50);
   
   regularFont = loadFont("DejaVuSansMono-15.vlw");
   textFont(regularFont);
