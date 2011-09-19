@@ -98,40 +98,30 @@ void updateStateData(byte message[]) {
   
   // Save the last set of data into an array list
   if (recording) {
-    L2List.add(L2.array().clone());
-    globalPositionList.add(globalPosition.array().clone());
-    headingList.add(heading);
-    localPositionList.add(localPosition.array().clone());
-    velocityList.add(velocity.array().clone());
-    waypoint0List.add(waypoint0.array().clone());
-    waypoint1List.add(waypoint1.array().clone());
-    rudderPotList.add(rudderPot);
-    rudderPortLimitList.add((byte)(rudderPortLimit?1:0));
-    rudderSbLimitList.add((byte)(rudderSbLimit?1:0));
-    gpsYearList.add(gpsYear);
-    gpsMonthList.add(gpsMonth);
-    gpsDayList.add(gpsDay);
-    gpsHourList.add(gpsHour);
-    gpsMinuteList.add(gpsMinute);
-    gpsSecondList.add(gpsSecond);
-    gpsCourseList.add(gpsCourse);
-    gpsSpeedList.add(gpsSpeed);
-    gpsHdopList.add(gpsHdop);
-    gpsFixList.add(gpsFix);
-    gpsSatellitesList.add(gpsSatellites);
-    resetList.add(reset);
-    loadList.add(load);
-    rudderAngleList.add(rudderAngle);
-    propRpmList.add(propRpm);
-    statusBitsList.add(statusBits);
-    orderingList.add(ordering);
-    rudderAngleCommandList.add(rudderAngleCommand);
-    throttleCommandList.add(throttleCommand);
-    batteryVoltageList.add(batteryVoltage);
-    batteryAmperageList.add(batteryAmperage);
-    lowRudderCalLimitList.add(lowRudderCalLimit);
-    highRudderCalLimitList.add(highRudderCalLimit);
-    
+    csvOutput.format("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d,%f,%f,%f,%d,%d,%d,%d,%d,%d,%f,%f,%f,%d,%d,%d,%d,%f,%d,%d,%d,%f,%d,%f,%f,%d,%d\n",
+                     L2.x, L2.y,
+                     globalPosition.x, globalPosition.y,
+                     heading,
+                     localPosition.x, localPosition.y,
+                     velocity.x, velocity.y,
+                     waypoint0.x, waypoint0.y,
+                     waypoint1.x, waypoint1.y,
+                     rudderPot, rudderPortLimit?1:0, rudderSbLimit?1:0,
+                     gpsLatitude, gpsLongitude, gpsAltitude,
+                     gpsYear, gpsMonth, gpsDay, gpsHour, gpsMinute, gpsSecond, gpsCourse, gpsSpeed, gpsHdop, gpsFix, gpsSatellites,
+                     reset,
+                     load,
+                     rudderAngle,
+                     propRpm,
+                     statusBits,
+                     ordering,
+                     rudderAngleCommand,
+                     throttleCommand,
+                     batteryVoltage,
+                     batteryAmperage,
+                     lowRudderCalLimit,
+                     highRudderCalLimit);
+    csvOutput.flush();
     recordedMessages++;
   }
   
