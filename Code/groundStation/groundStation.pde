@@ -64,6 +64,8 @@ float rudderAngleCommand = 0.0;
 int throttleCommand = 0;
 float batteryVoltage = 0.0;
 float batteryAmperage = 0.0;
+int lowRudderCalLimit;
+int highRudderCalLimit;
 
 // Boat state data recording
 ArrayList<float[]> L2List = new ArrayList<float[]>(255);
@@ -97,6 +99,8 @@ ArrayList<Float> rudderAngleCommandList = new ArrayList<Float>(255);
 ArrayList<Integer> throttleCommandList = new ArrayList<Integer>(255);
 ArrayList<Float> batteryVoltageList = new ArrayList<Float>(255);
 ArrayList<Float> batteryAmperageList = new ArrayList<Float>(255);
+ArrayList<Integer> lowRudderCalLimitList = new ArrayList<Integer>(255);
+ArrayList<Integer> highRudderCalLimitList = new ArrayList<Integer>(255);
 
 // Boat state data playback
 double[][] L2Playback;
@@ -130,6 +134,8 @@ float[] rudderAngleCommandPlayback;
 int[] throttleCommandPlayback;
 float[] batteryVoltagePlayback;
 float[] batteryAmperagePlayback;
+int[] lowRudderCalLimitPlayback;
+int[] highRudderCalLimitPlayback;
 
 // Rendering variables
 PFont regularFont;
@@ -228,6 +234,8 @@ void draw() {
         throttleCommand = throttleCommandPlayback[playbackIndex];
         batteryVoltage = batteryVoltagePlayback[playbackIndex];
         batteryAmperage = batteryAmperagePlayback[playbackIndex];
+        lowRudderCalLimit = lowRudderCalLimitPlayback[playbackIndex];
+        highRudderCalLimit = highRudderCalLimitPlayback[playbackIndex];
         
         playbackIndex++;
         lastPlaybackTime = millis();
@@ -356,6 +364,8 @@ void draw() {
   text(rudderPot, 400, 405);
   text("Pt: " + (rudderPortLimit?"true":"false"), 400, 420);
   text("Sb: " + (rudderSbLimit?"true":"false"), 400, 435);
+  text("LoLim: " + lowRudderCalLimit, 400, 450);
+  text("HiLim: " + highRudderCalLimit, 400, 465);
   
   // Add GPS sensor information
   text(String.format("%3.8f", gpsLatitude), 500, 405);
@@ -653,6 +663,18 @@ void controlEvent(ControlEvent theEvent) {
             batteryAmperagePlayback[i] = (float)doubleData[i][0];
           }
           
+          longData = ((MLInt64)inputMatFileReader.getMLArray("lowRudderCalLimit")).getArray();
+          lowRudderCalLimitPlayback = new int[longData.length];
+          for (int i=0;i<longData.length;i++) {
+            lowRudderCalLimitPlayback[i] = (int)longData[i][0];
+          }
+          
+          longData = ((MLInt64)inputMatFileReader.getMLArray("highRudderCalLimit")).getArray();
+          highRudderCalLimitPlayback = new int[longData.length];
+          for (int i=0;i<longData.length;i++) {
+            highRudderCalLimitPlayback[i] = (int)longData[i][0];
+          }
+          
         } catch (IOException e) {
           e.printStackTrace();
           exit();
@@ -721,6 +743,8 @@ public void startRecording() {
   throttleCommandList.clear();
   batteryVoltageList.clear();
   batteryAmperageList.clear();
+  lowRudderCalLimitList.clear();
+  highRudderCalLimitList.clear();
   
   // Reset the messages counter
   recordedMessages = new Long(0);
@@ -985,6 +1009,22 @@ public void stopRecordingAndSave() {
     }
     MLDouble batteryAmperageML = new MLDouble("batteryAmperage", gg, gg.length);
     
+    int_g = new Integer[lowRudderCalLimitList.size()];
+    lowRudderCalLimitList.toArray(int_g);
+    long_gg = new long[lowRudderCalLimitList.size()];
+    for (int i = 0; i < lowRudderCalLimitList.size(); i++){
+      long_gg[i] = (long)int_g[i];
+    }
+    MLInt64 lowRudderCalLimitML = new MLInt64("lowRudderCalLimit", long_gg, long_gg.length);
+    
+    int_g = new Integer[highRudderCalLimitList.size()];
+    highRudderCalLimitList.toArray(int_g);
+    long_gg = new long[highRudderCalLimitList.size()];
+    for (int i = 0; i < highRudderCalLimitList.size(); i++){
+      long_gg[i] = (long)int_g[i];
+    }
+    MLInt64 highRudderCalLimitML = new MLInt64("highRudderCalLimit", long_gg, long_gg.length);
+    
     ArrayList matList = new ArrayList();
     matList.add(L2ML);
     matList.add(headingML);
@@ -1017,6 +1057,8 @@ public void stopRecordingAndSave() {
     matList.add(throttleCommandML);
     matList.add(batteryVoltageML);
     matList.add(batteryAmperageML);
+    matList.add(lowRudderCalLimitML);
+    matList.add(highRudderCalLimitML);
     
     try {
       Calendar cal = Calendar.getInstance();

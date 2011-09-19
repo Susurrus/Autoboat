@@ -94,7 +94,7 @@ void startUart1Transmission() {
  * providing an interface that only enqueues a single byte.
  */
 void uart1EnqueueByte(unsigned char datum) {
-	writeBack(uart1TxBuffer, datum);
+	writeBack(&uart1TxBuffer, datum);
 	startUart1Transmission();
 }
 

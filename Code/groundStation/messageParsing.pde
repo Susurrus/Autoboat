@@ -129,6 +129,8 @@ void updateStateData(byte message[]) {
     throttleCommandList.add(throttleCommand);
     batteryVoltageList.add(batteryVoltage);
     batteryAmperageList.add(batteryAmperage);
+    lowRudderCalLimitList.add(lowRudderCalLimit);
+    highRudderCalLimitList.add(highRudderCalLimit);
     
     recordedMessages++;
   }
@@ -175,6 +177,8 @@ void updateStateData(byte message[]) {
     throttleCommand = din.readShort();
     batteryVoltage = din.readFloat();
     batteryAmperage = din.readFloat();
+    lowRudderCalLimit = din.readShort();
+    highRudderCalLimit = din.readShort();
     
   } catch (Exception e) {
     e.printStackTrace();
