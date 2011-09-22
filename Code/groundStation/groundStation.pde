@@ -123,8 +123,8 @@ void draw() {
   
   // Add text section headers
   textFont(boldFont);
-  text("Rudder", 400, 390);
-  text("GPS", 500, 390);
+  text("Rudder", 50, 490);
+  text("GPS", 400, 390);
   text("Velocity", 200, 270);
   text("Throttle command", 200, 340);
   text("Local position", 200, 390);
@@ -164,6 +164,100 @@ void draw() {
     fill(255);
   }
   
+  // Plot the relative position of the boat and the current waypoints.
+  // First draw the field
+  noFill();
+  stroke(255);
+  strokeWeight(1);
+  rect(550, 410, 180, 180);
+  noStroke();
+
+  PVector origin = new PVector(0, 0);
+  
+  // Create a bounding box around the four points.
+  float minX = origin.x; // Start with the origin.
+  float minY = origin.y;
+  float maxX = origin.x;
+  float maxY = origin.y;
+  if (localPosition.x < minX) {
+    minX = localPosition.x;
+  } else if (localPosition.x > maxX) {
+    maxX = localPosition.x;
+  }
+  if (localPosition.y < minY) {
+    minY = localPosition.y;
+  } else if (localPosition.y > maxY) {
+    maxY = localPosition.y;
+  }
+  if (waypoint0.x < minX) {
+    minX = waypoint0.x;
+  } else if (waypoint0.x > maxX) {
+    maxX = waypoint0.x;
+  }
+  if (waypoint0.y < minY) {
+    minY = waypoint0.y;
+  } else if (waypoint0.y > maxY) {
+    maxY = waypoint0.y;
+  }
+  if (waypoint1.x < minX) {
+    minX = waypoint1.x;
+  } else if (waypoint1.x > maxX) {
+    maxX = waypoint1.x;
+  }
+  if (waypoint1.y < minY) {
+    minY = waypoint1.y;
+  } else if (waypoint1.y > maxY) {
+    maxY = waypoint1.y;
+  }
+  
+  // And then add a 5% buffer.
+  minX *= 1.05;
+  maxX *= 1.05;
+  minY *= 1.05;
+  maxY *= 1.05;
+  
+  // Generate an X- and Y- scaling factor, and use the biggest one for both axes to keep a square aspect ratio
+  float plotScale = max((maxX - minX), (maxY - minY));
+  text(String.format("Scale\n%2.1fm", plotScale), 550 + 185, 410 + 155);
+  plotScale = 180/plotScale;
+  
+  // Determine the center of the bounding box
+  float centerX = (maxX - minX)/2 + minX;
+  float centerY = (maxY - minY)/2 + minY;
+  
+  // Remap points relative to this center, scale them into the new coordinate system and plot them.
+  float waypoint0XRemapped = -plotScale * (waypoint0.x - centerX) + (410+180/2);
+  float waypoint0YRemapped = plotScale * (waypoint0.y - centerY) + (550+180/2);
+  float waypoint1XRemapped = -plotScale * (waypoint1.x - centerX) + (410+180/2);
+  float waypoint1YRemapped = plotScale * (waypoint1.y - centerY) + (550+180/2);
+  float localPositionXRemapped = -plotScale * (localPosition.x - centerX) + (410+180/2);
+  float localPositionYRemapped = plotScale * (localPosition.y - centerY) + (550+180/2);
+  float originXRemapped = -plotScale * (origin.x - centerX) + (410+180/2);
+  float originYRemapped = plotScale * (origin.y - centerY) + (550+180/2);
+  
+  // Plot all the points within the alloted 180x180 square and display the scaling.
+  // First scale the points appropriately and then subtract the position of the lower-left point from their position in essence creating a new origin.
+  noStroke();
+  rectMode(CENTER);
+  fill(0, 128, 0);
+  rect(waypoint0YRemapped, waypoint0XRemapped, 5, 5);
+  
+  fill(128, 0, 0);
+  rect(waypoint1YRemapped, waypoint1XRemapped, 5, 5);
+  
+  stroke(128);
+  line(waypoint0YRemapped, waypoint0XRemapped, waypoint1YRemapped, waypoint1XRemapped);
+  
+  noStroke();
+  fill(128, 128, 0);
+  rect(localPositionYRemapped, localPositionXRemapped, 5, 5);
+  
+  fill(128);
+  rect(originYRemapped, originXRemapped, 5, 5);
+  
+  rectMode(CORNER);
+
+  fill(255);
   // Draw the various possible states within the status bit.
   // First we output the state of the HIL actuator sensor override line
   int nextStatusLineStart = 190;
@@ -229,23 +323,23 @@ void draw() {
   fill(255);
   
   // Add rudder sensor information
-  text(rudderPot, 400, 405);
-  text("Pt: " + (rudderPortLimit?"true":"false"), 400, 420);
-  text("Sb: " + (rudderSbLimit?"true":"false"), 400, 435);
-  text("LoLim: " + lowRudderCalLimit, 400, 450);
-  text("HiLim: " + highRudderCalLimit, 400, 465);
+  text(rudderPot, 50, 505);
+  text("Pt: " + (rudderPortLimit?"true":"false"), 50, 520);
+  text("Sb: " + (rudderSbLimit?"true":"false"), 50, 535);
+  text("LoLim: " + lowRudderCalLimit, 50, 550);
+  text("HiLim: " + highRudderCalLimit, 50, 565);
   
   // Add GPS sensor information
-  text(String.format("%3.8f", gpsLatitude), 500, 405);
-  text(String.format("%3.8f", gpsLongitude), 500, 420);
-  text(gpsAltitude, 500, 435);
-  text(String.format("%02d/%02d/%04d", gpsDay, gpsMonth, 2000+gpsYear), 500, 450);
-  text(String.format("%02d:%02d:%02d", gpsHour, gpsMinute, gpsSecond), 500, 465);
-  text(gpsCourse, 500, 480);
-  text(gpsSpeed, 500, 495);
-  text(gpsHdop, 500, 510);
-  text(gpsFix, 500, 525);
-  text(gpsSatellites, 500, 540);
+  text(String.format("%3.8f", gpsLatitude), 400, 405);
+  text(String.format("%3.8f", gpsLongitude), 400, 420);
+  text(gpsAltitude, 400, 435);
+  text(String.format("%02d/%02d/%04d", gpsDay, gpsMonth, 2000+gpsYear), 400, 450);
+  text(String.format("%02d:%02d:%02d", gpsHour, gpsMinute, gpsSecond), 400, 465);
+  text(gpsCourse, 400, 480);
+  text(gpsSpeed, 400, 495);
+  text(gpsHdop, 400, 510);
+  text(gpsFix, 400, 525);
+  text(gpsSatellites, 400, 540);
   
   // Draw the velocity vector values
   text(String.format("%2.1f m/s", velocity.mag()), 200, 285);
