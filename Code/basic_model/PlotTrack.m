@@ -74,7 +74,7 @@ decoration_steps = 1:1000:length(position);
 
 % Display the L2 vectors if we have them. Generally we won't have them for
 % HIL runs.
-if ~isempty(L2)
+if exist('L2', 'var') && ~isempty(L2)
     quiver(position(decoration_steps,2),position(decoration_steps,1),L2(decoration_steps,2),L2(decoration_steps,1), 0, 'm-');
     myLegend{end + 1} = 'L2 Vectors';
 end

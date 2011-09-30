@@ -5,8 +5,8 @@
 % Initial latitude & longitude. This provides the baseline for the plant
 % to generate GPS data.
 initial_LL = [36.80611 -121.79639];
-phi_0 = 0;              % Initial heading (eastward positive from north)
-v_0 = 0;                % Initial speed
+phi_0 = 0;              % Initial heading (radians, eastward positive from north)
+v_0 = 0;                % Initial speed (m/s)
 battery_tray_angle = 0; % Initial battery tray angle
 T_step = 0.01;          % Simulation timestep
 telemetryDataRate = 0.02;    % Set the transmission rate for the telemetry sent via UART1
