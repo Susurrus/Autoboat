@@ -490,7 +490,7 @@ public void startRecording() {
     Calendar cal = Calendar.getInstance();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-hhmmss");
     csvOutput = createWriter(sketchPath(sdf.format(cal.getTime())+".csv"));
-    csvOutput.print("L2.x, L2.y, globalPosition.x, globalPosition.y, heading, localPosition.x, localPosition.y, velocity.x, velocity.y, waypoint0.x, waypoint0.y, waypoint1.x, waypoint1.y, rudderPot, rudderPortLimit, rudderSbLimit, gpsLatitude, gpsLongitude, gpsAltitude, gpsYear, gpsMonth, gpsDay, gpsHour, gpsMinute, gpsSecond, gpsCourse, gpsSpeed, gpsHdop, gpsFix, gpsSatellites, reset, load, rudderAngle, propRpm, statusBits, ordering, rudderAngleCommand, throttleCommand, batteryVoltage, batteryAmperage, lowRudderCalLimit, highRudderCalLimit\n");
+    csvOutput.print("L2.north, L2.east, globalPosition.lat, globalPosition.lon, heading, localPosition.north, localPosition.east, velocity.north, velocity.east, waypoint0.north, waypoint0.east, waypoint1.north, waypoint1.east, rudderPot, rudderPortLimit, rudderSbLimit, gpsLatitude, gpsLongitude, gpsAltitude, gpsYear, gpsMonth, gpsDay, gpsHour, gpsMinute, gpsSecond, gpsCourse, gpsSpeed, gpsHdop, gpsFix, gpsSatellites, reset, load, rudderAngle, propRpm, statusBits, ordering, rudderAngleCommand, throttleCommand, batteryVoltage, batteryAmperage, lowRudderCalLimit, highRudderCalLimit\n");
   }
   catch (Exception e){
     println("Failed to write output to a .csv file");
