@@ -4,22 +4,45 @@ figure(1);clf;
 hold on;
 axis equal;
 
+% Clean up some variables that may have singleton dimensions:
+position = squeeze(position);
+velocity = squeeze(velocity);
+
+% Fix velocity + position orientation
+if size(velocity, 1) == 3
+    velocity = velocity';
+end
+if size(position, 1) == 3
+    position = position';
+end
+
+% Keep track of what's on the plot for a legend() call
+myLegend = {};
+
 % Plot waypoints (red, green, and blue)
-plot(test_waypoints(:,2)', test_waypoints(:,1)', 'r^', 'MarkerSize', 10);
-text(test_waypoints(:,2)'+10, test_waypoints(:,1)'-10, cellstr({int2str((1:size(test_waypoints,1))')}), 'Color', 'r');
+% Here we do some predicate indexing to ignore the -1 values at the end
+tmp1 = double(test_waypoints(:,1));
+tmp1 = tmp1(tmp1 ~= -1)';
+tmp2 = double(test_waypoints(:,2));
+tmp2 = tmp2(tmp2 ~= -1)';
+plot(tmp2, tmp1, 'r^', 'MarkerSize', 10);
+text(tmp2+10, tmp1-10, cellstr({int2str((1:size(tmp1,2))')}), 'Color', 'r');
+myLegend{end + 1} = 'Test waypoints';
 
 % The extra two tracks are offset by the current boat position when it
 % reset to properly illustrate where the boat thought the waypoints were.
 offsets = position(nextTrack > 0,:);
 if size(offsets,1) > 0
-    figure8_waypoints_offset = figure8_waypoints + repmat(offsets(1,:),size(figure8_waypoints,1),1);
+    figure8_waypoints_offset = double(figure8_waypoints) + repmat(offsets(1,:),size(figure8_waypoints,1),1);
     plot(figure8_waypoints_offset(:,2)', figure8_waypoints_offset(:,1)', 'g^', 'MarkerSize', 10);
     text(figure8_waypoints_offset(:,2)'+10, figure8_waypoints_offset(:,1)'-10, cellstr({int2str((1:size(figure8_waypoints_offset,1))')}), 'Color', 'g');
+    myLegend{end + 1} = 'Figure-8 waypoints';
 end
 if size(offsets,1) > 1
-    sampling_waypoints_offset = sampling_waypoints + repmat(offsets(2,:),size(sampling_waypoints,1),1);
+    sampling_waypoints_offset = double(sampling_waypoints) + repmat(offsets(2,:),size(sampling_waypoints,1),1);
     plot(sampling_waypoints_offset(:,2)', sampling_waypoints_offset(:,1)', 'b^', 'MarkerSize', 10);
     text(sampling_waypoints_offset(:,2)'+10, sampling_waypoints_offset(:,1)'-10, cellstr({int2str((1:size(sampling_waypoints_offset,1))')}), 'Color', 'b');
+    myLegend{end + 1} = 'Search waypoints';
 end
 
 % Add the boat path
@@ -42,31 +65,37 @@ switch size(transitions,1)
         plot(position(transitions(3)+1:end,2),position(transitions(3)+1:end,1), 'r');
     otherwise
         plot(position(:,2),position(:,1), 'k');
+        myLegend{end + 1} = 'Position';
 end
 grid on;
 %% Add additional decorations
 
 decoration_steps = 1:1000:length(position);
 
-% Display the L2 vectors
-quiver(position(decoration_steps,2),position(decoration_steps,1),L2(decoration_steps,2),L2(decoration_steps,1), 0, 'm-');
+% Display the L2 vectors if we have them. Generally we won't have them for
+% HIL runs.
+if exist('L2', 'var') && ~isempty(L2)
+    quiver(position(decoration_steps,2),position(decoration_steps,1),L2(decoration_steps,2),L2(decoration_steps,1), 0, 'm-');
+    myLegend{end + 1} = 'L2 Vectors';
+end
 
-% Plot velocity vector
+% Plot velocity vectors
 quiver(position(decoration_steps,2),position(decoration_steps,1),velocity(decoration_steps,2), velocity(decoration_steps,1), 0);
+myLegend{end + 1} = 'Velocity Vectors';
 
-legend('Test waypoints', 'Figure 8 waypoints', 'Search waypoints', 'Boat position', 'L2 vectors', 'Velocity vectors');
+legend(myLegend);
 
 hold off;
 %% Plot the vehicle commands
 figure(2);clf;
 subplot(3,1,1);
-plot(rudder_command);
+plot(commands_rudder_up > 0);
 title('Rudder Commands');
 
 subplot(3,1,2);
-plot(throttle_command);
+plot(commands_throttle_data);
 title('Throttle Commands');
 
 subplot(3,1,3);
-plot(ballast_command);
+plot(commands_ballast_enable);
 title('Ballast Commands');

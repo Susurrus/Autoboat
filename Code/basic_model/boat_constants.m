@@ -5,10 +5,11 @@
 % Initial latitude & longitude. This provides the baseline for the plant
 % to generate GPS data.
 initial_LL = [36.80611 -121.79639];
-phi_0 = 0;              % Initial heading (eastward positive from north)
-v_0 = 0;                % Initial speed
+phi_0 = 0;              % Initial heading (radians, eastward positive from north)
+v_0 = 0;                % Initial speed (m/s)
 battery_tray_angle = 0; % Initial battery tray angle
 T_step = 0.01;          % Simulation timestep
+telemetryDataRate = 0.02;    % Set the transmission rate for the telemetry sent via UART1
 initial_charge = 2851200;    % Initial boat charge, 60% of 6V battery rail (J)
 start_time = clock;
 %start_time =   1279069200; % 6/13/2010 @ 20:00pm UTC (12pm pacific)
@@ -20,48 +21,92 @@ OC2max = 49999; % Parameter used for calculating up-time & period for output com
 
 % Waypoint stuff
 % Waypoints are all defined within a local tangent plane in meters North,
-% East, Down.
-test_waypoints = [
-             0   0   0;
-             450 100 0;
-             600 600 0;
-             150 300 0;
-             0   0   0;
-             -1  -1  -1;
-             -1  -1  -1;
-             -1  -1  -1;
-             -1  -1  -1;
-             -1  -1  -1;
-             -1  -1  -1;
-            ];
-% Figure eight
-figure8_waypoints = [
-             0   0   0;
-             30  60  0;
-             0   90  0;
-             -30 60  0;
-             0   0   0;
-             30  -60 0;
-             0   -90 0;
-             -30 -60 0;
-             0   0   0;
-             -1  -1  -1;
-             -1  -1  -1;
-            ];
-% Sampling pattern
-sampling_waypoints = [
-             0    0    0;
-             0    210  0;
-             -30  210  0;
-             -30  0    0;
-             -60  0    0;
-             -60  210  0;
-             -90  210  0;
-             -90  0    0;
-             -120 0    0;
-             -120 210  0;
-             0    0    0;
-            ];
+% East, Down. Three waypoint tracks have been defined below in the
+% test_waypoints, figure8_waypoints, and sampling_waypoints matrices. The
+% commented-out matrices are the original test ones. Overrides are
+% implemented below for the in-harbor boat test.
+
+test_waypoints = int32([0    0    0;
+                        25   -36  0;
+                        145  -44  0;
+                        220  -37  0;
+                        253  -57  0;
+                        312  -56  0;
+                        -1   -1   -1;
+                        -1   -1   -1;
+                        -1   -1   -1;
+                        -1   -1   -1;
+                        -1   -1   -1;
+                       ]);
+
+figure8_waypoints = int32([0    0    0;
+                           -35  19   0;
+                           -93  21   0;
+                           -156 13   0;
+                           -186 33   0;
+                           -244 34   0;
+                           -249 77   0;
+                           -1   -1   -1;
+                           -1   -1   -1;
+                           -1   -1   -1;
+                           -1   -1   -1;
+                          ]);
+
+sampling_waypoints = int32([0    0    0;
+                            2    -45  0;
+                            -1   -1   -1;
+                            -1   -1   -1;
+                            -1   -1   -1;
+                            -1   -1   -1;
+                            -1   -1   -1;
+                            -1   -1   -1;
+                            -1   -1   -1;
+                            -1   -1   -1;
+                            -1   -1   -1;
+                           ]);
+
+% Original waypoints
+% test_waypoints = int32([
+%              0   0   0;
+%              450 100 0;
+%              600 600 0;
+%              150 300 0;
+%              -1  -1  -1;
+%              -1  -1  -1;
+%              -1  -1  -1;
+%              -1  -1  -1;
+%              -1  -1  -1;
+%              -1  -1  -1;
+%              -1  -1  -1;
+%             ]);
+% % Figure eight
+% figure8_waypoints = int32([
+%              0   0   0;
+%              30  60  0;
+%              0   90  0;
+%              -30 60  0;
+%              0   0   0;
+%              30  -60 0;
+%              0   -90 0;
+%              -30 -60 0;
+%              -1  -1  -1;
+%              -1  -1  -1;
+%              -1  -1  -1;
+%             ]);
+% % Sampling pattern
+% sampling_waypoints = int32([
+%              0    0    0;
+%              0    210  0;
+%              -30  210  0;
+%              -30  0    0;
+%              -60  0    0;
+%              -60  210  0;
+%              -90  210  0;
+%              -90  0    0;
+%              -120 0    0;
+%              -120 210  0;
+%              -1   -1   -1;
+%             ]);
 
 % Known constants
 
@@ -73,7 +118,7 @@ m_battery = 108.86;     % Weight of ballast batteries (kg)
 d_battery = .3048;      % Distance of batteries from rotation axis (m)
 disp_vessel = 612.35;   % Vessel displacement:1350 lbs (kg)
 max_batt_angle = 1.309; % Maximum angle for the battery tray: 75 degrees(radians)
-max_sea_state = 12;     % The maxmimum value of the Beaufort Scale
+max_sea_state = 12;     % The maximum value of the Beaufort Scale
 rudder_angle_max = 1;   % Maximum angle of the rudder (radians)
 throttle_max = 1;       % Maximum throttle value (% of maximum amps)
 

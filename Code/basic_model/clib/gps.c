@@ -66,6 +66,25 @@ float degMinToDeg(unsigned char degrees, float minutes) {
 	return ((float)degrees + minutes/60.0);
 }
 
+/**
+ * This function initializes the GPS by reconfiguring it to NOT output
+ * GSA or GSV messages. This should leave just GGA and RMC messages,
+ * which are the only two we care about.
+ * It assumes that it is using UART2 and relies on the circular buffer
+ * initialized for UART2 for transmission.
+ */
+void initGps() {
+	// Configure GPS by:
+	// - Disabling GSA
+	// - Disabling GSV
+	unsigned char disableGSASentence[] = "$PSRF103,2,0,0,1*26\r\n";
+	unsigned char disableGSVSentence[] = "$PSRF103,3,0,0,1*27\r\n";
+
+	// Enqueue the size of the sentences - 1 to remove string-terminating null character
+	uart2EnqueueData(disableGSASentence, sizeof(disableGSASentence) - 1);
+	uart2EnqueueData(disableGSVSentence, sizeof(disableGSVSentence) - 1);
+}
+
 void buildAndCheckSentence(unsigned char characterIn) {
 	// Full specification for NMEA0138 specifies a maximum sentence length
 	// of 255 characters. We're going to ignore this for half the length as
@@ -153,31 +172,66 @@ unsigned char getChecksum(char* sentence, unsigned char size) {
     return checkSum;
 }
 
-void getGpsMainData(float* data) {
-	data[0] = gpsControlData.lat.flData;
-	data[1] = gpsControlData.lon.flData;
-	data[2] = gpsControlData.height.flData;
+void getGpsData(unsigned char* data) {
+	data[0] = gpsControlData.lat.chData[0];
+	data[1] = gpsControlData.lat.chData[1];
+	data[2] = gpsControlData.lat.chData[2];
+	data[3] = gpsControlData.lat.chData[3];
+	data[4] = gpsControlData.lon.chData[0];
+	data[5] = gpsControlData.lon.chData[1];
+	data[6] = gpsControlData.lon.chData[2];
+	data[7] = gpsControlData.lon.chData[3];
+	data[8] = gpsControlData.alt.chData[0];
+	data[9] = gpsControlData.alt.chData[1];
+	data[10] = gpsControlData.alt.chData[2];
+	data[11] = gpsControlData.alt.chData[3];
 	
 	// Add date info
-	tFloatToChar tmp;
-	tmp.chData[0] = gpsControlData.day;
-	tmp.chData[1] = gpsControlData.month;
-	tmp.chData[2] = gpsControlData.year;
-	tmp.chData[3] = 0;
-	data[3] = tmp.flData;
+	data[12] = gpsControlData.year;
+	data[13] = gpsControlData.month;
+	data[14] = gpsControlData.day;
 	
 	// Add time info
-	tmp.chData[0] = gpsControlData.sec;
-	tmp.chData[1] = gpsControlData.min;
-	tmp.chData[2] = gpsControlData.hour;
-	tmp.chData[3] = 0;
-	data[4] = tmp.flData;
+	data[15] = gpsControlData.hour;
+	data[16] = gpsControlData.min;
+	data[17] = gpsControlData.sec;
 	
-	data[5] = (float)gpsControlData.cog.usData;
-	data[6] = (float)gpsControlData.sog.usData/100.0;
-	data[7] = (float)gpsControlData.newData;
+	data[18] = gpsControlData.cog.chData[0];
+	data[19] = gpsControlData.cog.chData[1];
+	data[20] = gpsControlData.cog.chData[2];
+	data[21] = gpsControlData.cog.chData[3];
+	data[22] = gpsControlData.sog.chData[0];
+	data[23] = gpsControlData.sog.chData[1];
+	data[24] = gpsControlData.sog.chData[2];
+	data[25] = gpsControlData.sog.chData[3];
+	data[26] = gpsControlData.hdop.chData[0];
+	data[27] = gpsControlData.hdop.chData[1];
+	data[28] = gpsControlData.hdop.chData[2];
+	data[29] = gpsControlData.hdop.chData[3];
+	
+	data[30] = gpsControlData.fix;
+	data[31] = gpsControlData.sats;
+	data[32] = gpsControlData.newData;
 	
 	// Mark this data as old now
+	gpsControlData.newData = 0;
+}
+
+void clearGpsData() {
+	gpsControlData.year = 0;
+	gpsControlData.month = 0;
+	gpsControlData.day = 0;
+	gpsControlData.hour = 0;
+	gpsControlData.min = 0;
+	gpsControlData.sec = 0;
+	gpsControlData.lat.flData = 0.0;
+	gpsControlData.lon.flData = 0.0;
+	gpsControlData.alt.flData = 0.0;
+	gpsControlData.cog.flData = 0.0;
+	gpsControlData.sog.flData = 0.0;
+	gpsControlData.hdop.flData = 0.0;
+	gpsControlData.fix = 0;
+	gpsControlData.sats = 0;
 	gpsControlData.newData = 0;
 }
 
@@ -297,14 +351,14 @@ void parseRMC(char* stream) {
 	// xx.xx
 	myTokenizer(NULL, ',', token);	
 	if (strlen(token) > 0) {
-		gpsControlData.sog.usData = (unsigned short) (atof(token)*KTS2MPS*100.0);	
+		gpsControlData.sog.flData = atof(token)*KTS2MPS;
 	}
 	
 	// 8.- COG in degrees
 	// xxx.xxx
 	myTokenizer(NULL, ',', token);	
 	if (strlen(token) > 0) {
-		gpsControlData.cog.usData = (unsigned short) atof(token);	
+		gpsControlData.cog.flData = atof(token);	
 	}
 	
 	// 9.- UTC Date
@@ -397,7 +451,7 @@ void parseGGA(char* stream) {
 	
 	// 6.- Quality Indicator
 	myTokenizer(NULL, ',', token);
-	if (strlen(token)== 1) {
+	if (strlen(token) == 1) {
 		gpsControlData.fix = (char)atoi(token);
 	}
 
@@ -408,20 +462,18 @@ void parseGGA(char* stream) {
 		gpsControlData.sats = (unsigned char) atoi(token);	
 	}
 	
-	// 8.- Horizontal dilution of solution given from 0 to 99.99 but 
-	// stored from 0 - 990 
-	//in integers, i.e HDOP = HDOP_stored/100 CAUTION
+	// 8.- Horizontal dilution of solution given from 0 to 99.99
 	// xx.xx
 	myTokenizer(NULL, ',', token);	
 	if (strlen(token)>0) {
-		gpsControlData.hdop.usData = (unsigned short) (atof(token)*10.0);	
+		gpsControlData.hdop.flData = atof(token);	
 	}
 	
 	// 9.- Altitude above mean sea level given in meters
 	// xxx.xxx
 	myTokenizer(NULL, ',', token);	
 	if (strlen(token)>0) {
-		gpsControlData.height.flData = atof(token);	
+		gpsControlData.alt.flData = atof(token);	
 	}
 	
 	// turn the flag on of new data

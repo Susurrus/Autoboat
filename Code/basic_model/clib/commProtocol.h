@@ -45,10 +45,6 @@ THE SOFTWARE.
 #ifndef _COMMPROTOCOL_H_
 #define _COMMPROTOCOL_H_
 
-// This is the value of the BRG to set the baud rate
-// to 115200 for running HIL.
-#define HILBRG 21
-
 // Definitions of unions useful in transmitting data serially
 typedef union {
 	unsigned char    chData[2];
@@ -98,7 +94,7 @@ typedef struct {
 	unsigned char b_SBLimit;
 	unsigned char b_PortLimit;
 	unsigned char newData;
-	tShortToChar timestamp;
+	tUnsignedShortToChar timestamp;
 } tSensorData;
 
 typedef struct {
@@ -112,27 +108,15 @@ typedef struct {
 	unsigned char data[6];
 	unsigned char size;
 	unsigned char trigger;
-	tShortToChar timestamp;
+	tUnsignedShortToChar timestamp;
+	tFloatToChar rudderAngle;
+	unsigned char sensorOverride;
 } tActuatorData;
 
-typedef struct {
-	tFloatToChar L2_Vector[3];
-	tFloatToChar desiredRudder;
-	tFloatToChar actualRudder;
-	tFloatToChar desiredVelocity[3];
-	tFloatToChar actualVelocity[3];
-	unsigned char currentWaypointIndex;
-	unsigned char waypointMode;
-	unsigned char waypointCount;
-} tStateData;
-
-typedef struct {
-	unsigned char runMode; // 0 for stop, 1 for run, 2 for return-to-base, 3 for manual RC control)
-	unsigned char HILEnable; // 0 to enable normal running, 1 for HIL running)
-	unsigned char waypointMode; // Sets the waypoint navigation modes.
-	unsigned char waypointCount; // Number of waypoints being transmit
-	tShortToChar waypoints[16]; // Store room for 8 north/east pairs of waypoints
-} tCommandData;
+/**
+ * This function initializes all onboard UART communications
+ */
+void cpInitCommunications();
 
 /**
  * This function builds a full message internally byte-by-byte,
@@ -144,21 +128,39 @@ void buildAndCheckMessage(unsigned char characterIn);
 void processNewCommData(unsigned char* message);
 
 /**
+ * The following functions change the UART2 baud rate to allow
+ * for HIL mode (running at 115200baud) and back to the old baud rate.
+ */
+void setHilMode(unsigned char mode);
+
+inline void enableHil();
+
+inline void disableHil();
+
+/**
  * This function calculates the checksum of some bytes in an
  * array by XORing all of them.
  */
 unsigned char calculateChecksum(unsigned char* sentence, unsigned char size);
 
+/**
+ * Manage the sensor data struct.
+ */
+void setSensorData(unsigned char* data);
+
 void getSensorData(unsigned char* data);
 
-void setSensorData(unsigned char* data);
+void clearSensorData();
+
+/**
+ * Manage the actuator data struct
+ */
+void setActuatorData(unsigned char* data);
 
 void getActuatorData(unsigned char* data);
 
-void setActuatorData(unsigned char* data);
+inline void uart2EnqueueActuatorData(unsigned char *data);
 
-void getStateData(unsigned char* data);
-
-void getCommandData(unsigned char* data);
+inline void uart1EnqueueStateData(unsigned char *data);
 
 #endif /* _COMMPROTOCOL_H_ */
