@@ -1,6 +1,6 @@
 %% Plot waypoints and the vehicle track
 
-figure(1);clf;
+figure;
 hold on;
 axis equal;
 
@@ -87,7 +87,7 @@ legend(myLegend);
 
 hold off;
 %% Plot the vehicle commands
-figure(2);clf;
+figure;
 subplot(3,1,1);
 plot(commands_rudder_up > 0);
 title('Rudder Commands');
