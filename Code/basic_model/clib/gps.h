@@ -77,8 +77,6 @@ typedef struct tGpsData{
 	unsigned char			newData; // Flag for whether this struct stores new data
 }tGpsData;
 
-#define KTS2MPS 		0.514444444
-
 // GPS Circular Buffers
 // ====================
 #define MSIZE			150

@@ -347,14 +347,14 @@ void parseRMC(char* stream) {
 		}
 	}
 	
-	// 7.- SOG in knots but gets stored in cm/s CAUTION
+	// 7.- Speed over ground in knots
 	// xx.xx
 	myTokenizer(NULL, ',', token);	
 	if (strlen(token) > 0) {
-		gpsControlData.sog.flData = atof(token)*KTS2MPS;
+		gpsControlData.sog.flData = atof(token);
 	}
 	
-	// 8.- COG in degrees
+	// 8.- Course over ground in degrees
 	// xxx.xxx
 	myTokenizer(NULL, ',', token);	
 	if (strlen(token) > 0) {
@@ -391,69 +391,69 @@ void parseGGA(char* stream) {
 	
 	// 1.- hhmmss.ssss
 	myTokenizer(NULL, ',', token);
-	if (strlen(token)>5) {
-		tmp[0] = token[0]; tmp[1] = token[1];
-		gpsControlData.hour = (unsigned char) atoi(tmp);
-		tmp[0] = token[2]; tmp[1] = token[3];
-		gpsControlData.min = (unsigned char) atoi(tmp);
-		tmp[0] = token[4]; tmp[1] = token[5];
-		gpsControlData.sec = (unsigned char) atoi(tmp);		
-	}
+	// if (strlen(token)>5) {
+		// tmp[0] = token[0]; tmp[1] = token[1];
+		// gpsControlData.hour = (unsigned char) atoi(tmp);
+		// tmp[0] = token[2]; tmp[1] = token[3];
+		// gpsControlData.min = (unsigned char) atoi(tmp);
+		// tmp[0] = token[4]; tmp[1] = token[5];
+		// gpsControlData.sec = (unsigned char) atoi(tmp);		
+	// }
 	
 	// 2.- Latitude
 	// ddmm.mmmmmm
 	myTokenizer(NULL, ',', token);
 	if (strlen(token)>0) {
-		// get the first two values
-		tmp[0] = token[0]; tmp[1] = token[1];
-		// get the degrees
-		chTmp = (unsigned char)atoi(tmp);
-		// make the degrees zero for minutes conversion
-		token[0]='0'; token[1]='0';
-		// get the float
-		gpsControlData.lat.flData = degMinToDeg(chTmp,atof(token));		
-		// 3.- Latitude Sector
+		// // get the first two values
+		// tmp[0] = token[0]; tmp[1] = token[1];
+		// // get the degrees
+		// chTmp = (unsigned char)atoi(tmp);
+		// // make the degrees zero for minutes conversion
+		// token[0]='0'; token[1]='0';
+		// // get the float
+		// gpsControlData.lat.flData = degMinToDeg(chTmp,atof(token));		
+		// // 3.- Latitude Sector
 		myTokenizer(NULL, ',', token);
-		if (strlen(token)==1) {
-			// Set the sign of the float value.
-			// South & west are negative, so we invert the sign in
-			// those cases. North/East don't change the value so no
-			// need to check those.
-			if (token[0] == 'S' || token[1] == 'W') {
-				gpsControlData.lat.flData = -gpsControlData.lat.flData;
-			}
-		}
+		// if (strlen(token)==1) {
+			// // Set the sign of the float value.
+			// // South & west are negative, so we invert the sign in
+			// // those cases. North/East don't change the value so no
+			// // need to check those.
+			// if (token[0] == 'S' || token[1] == 'W') {
+				// gpsControlData.lat.flData = -gpsControlData.lat.flData;
+			// }
+		// }
 	}
 	
 	// 4.- Longitude
 	// ddmm.mmmmmm
 	myTokenizer(NULL, ',', token);	
 	if (strlen(token)>0) {
-		// get the first two values
-		tmp3[0] = token[0]; tmp3[1] = token[1]; tmp3[2] = token[2];
-		// get the degrees
-		chTmp = (unsigned char)atoi(tmp3);
-		// make the degrees zero for minutes conversion
-		token[0]='0'; token[1]='0'; token [2] = '0';
-		// get the float
-		gpsControlData.lon.flData = degMinToDeg(chTmp,atof(token));
+		// // get the first two values
+		// tmp3[0] = token[0]; tmp3[1] = token[1]; tmp3[2] = token[2];
+		// // get the degrees
+		// chTmp = (unsigned char)atoi(tmp3);
+		// // make the degrees zero for minutes conversion
+		// token[0]='0'; token[1]='0'; token [2] = '0';
+		// // get the float
+		// gpsControlData.lon.flData = degMinToDeg(chTmp,atof(token));
 		
-		// 5.- Longitude Sector
+		// // 5.- Longitude Sector
 		myTokenizer(NULL, ',', token);
 		
-		if (strlen(token)>0) {
-			// set the sign of the float value
-			if (token[0] == 'S' || token[0] == 'W') {
-				gpsControlData.lon.flData = -gpsControlData.lon.flData;
-			}
-		}
+		// if (strlen(token)>0) {
+			// // set the sign of the float value
+			// if (token[0] == 'S' || token[0] == 'W') {
+				// gpsControlData.lon.flData = -gpsControlData.lon.flData;
+			// }
+		// }
 	}
 	
 	// 6.- Quality Indicator
 	myTokenizer(NULL, ',', token);
-	if (strlen(token) == 1) {
-		gpsControlData.fix = (char)atoi(token);
-	}
+	// if (strlen(token) == 1) {
+		// gpsControlData.fix = (char)atoi(token);
+	// }
 
 	// 7.- Sats used in solution
 	// xx
@@ -477,5 +477,5 @@ void parseGGA(char* stream) {
 	}
 	
 	// turn the flag on of new data
-	gpsControlData.newData = 1;
+	// gpsControlData.newData = 1;
 }
