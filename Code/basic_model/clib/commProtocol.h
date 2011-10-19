@@ -45,32 +45,7 @@ THE SOFTWARE.
 #ifndef _COMMPROTOCOL_H_
 #define _COMMPROTOCOL_H_
 
-// Definitions of unions useful in transmitting data serially
-typedef union {
-	unsigned char    chData[2];
-	unsigned short   usData;
-} tUnsignedShortToChar; 
-
-typedef union {
-	unsigned char    chData[2];
- 	short   		 shData;
-} tShortToChar; 
-
-typedef union {
-	unsigned char   chData[4];
- 	unsigned int   	uiData;
-} tUnsignedIntToChar; 
-
-typedef union {
-	unsigned char   chData[4];
- 	int   			inData;
-} tIntToChar; 
-
-typedef union {
-	unsigned char   chData[4];
- 	float   		flData;
-	unsigned short	shData[2];
-} tFloatToChar;
+#include "types.h"
 
 // Declaration of the relevant message structs used.
 typedef struct {

@@ -47,12 +47,11 @@ THE SOFTWARE.
 #include "uart1.h"
 #include "uart2.h"
 
-// This is the value of the BRG to set the baud rate
-// to 115200 for running HIL.
-#define BAUD115200_BRG_REG 21
-
-// This is the value of the BRG
+// This is the value of the BRG register for configuring different baud
+// rates.
 #define BAUD4800_BRG_REG 520
+#define BAUD57600_BRG_REG 42
+#define BAUD115200_BRG_REG 21
 
 // These are local declarations of each of the message structs.
 // They're populated with relevant data by buildAndcheckMessage().
@@ -66,7 +65,7 @@ static unsigned long failedMessageCount = 0;
 static unsigned char sameFailedMessageFlag = 0;
 
 void cpInitCommunications() {
-	initUart1(BAUD115200_BRG_REG);
+	initUart1(BAUD57600_BRG_REG);
 	initUart2(BAUD4800_BRG_REG);
 }
 
@@ -426,8 +425,8 @@ inline void uart2EnqueueActuatorData(unsigned char *data) {
 }
 
 /**
- * Add all 116 data + 7 header/footer bytes of the actuator struct to UART1's transmission queue.
+ * Add all 137 data + 7 header/footer bytes of the actuator struct to UART1's transmission queue.
  */
 inline void uart1EnqueueStateData(unsigned char *data) {
-	uart1EnqueueData(data, 123);
+	uart1EnqueueData(data, 144);
 }

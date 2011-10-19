@@ -60,6 +60,14 @@ float batteryVoltage = 0.0;
 float batteryAmperage = 0.0;
 int lowRudderCalLimit;
 int highRudderCalLimit;
+float revoHeading;
+byte revoMagStatus;
+float revoPitch;
+byte revoPitchStatus;
+float revoRoll;
+byte revoRollStatus;
+float revoDip;
+int revoMagneticMagnitude;
 
 // Rendering variables
 PFont regularFont;
@@ -341,6 +349,16 @@ void draw() {
   text(gpsFix, 400, 525);
   text(gpsSatellites, 400, 540);
   
+  // Add Revolution GS sensor information
+  text(String.format("Psi: %3.2f", revoHeading), 30, 50);
+  text(String.format("Status: %c", revoMagStatus), 30, 65);
+  text(String.format("Theta: %3.2f", revoPitch), 130, 50);
+  text(String.format("Status: %c", revoPitchStatus), 130, 65);
+  text(String.format("Phi: %3.2f", revoRoll), 230, 50);
+  text(String.format("Status: %c", revoRollStatus), 230, 65);
+  text(String.format("Dip: %3.2f", revoDip), 330, 50);
+  text(String.format("MM: %d", revoMagneticMagnitude), 330, 65);
+  
   // Draw the velocity vector values
   text(String.format("%2.1f m/s", velocity.mag()), 200, 285);
   text(String.format("%2.1f knots", velocity.mag()*1.944), 200, 300);
@@ -446,7 +464,7 @@ void controlEvent(ControlEvent theEvent) {
       // TODO: This try/catch statement needs to be fixed to properly suppress the error
       // warning from gnu.io.PortInUseException and inform the user.
       try {
-        myPort = new Serial(this, theEvent.group().stringValue(), 115200);
+        myPort = new Serial(this, theEvent.group().stringValue(), 57600);
       }
       catch (Exception e) {
         println("Port in use or otherwise unavailable. Please select another.");
@@ -490,7 +508,7 @@ public void startRecording() {
     Calendar cal = Calendar.getInstance();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-hhmmss");
     csvOutput = createWriter(sketchPath(sdf.format(cal.getTime())+".csv"));
-    csvOutput.print("L2.north, L2.east, globalPosition.lat, globalPosition.lon, heading, localPosition.north, localPosition.east, velocity.north, velocity.east, waypoint0.north, waypoint0.east, waypoint1.north, waypoint1.east, rudderPot, rudderPortLimit, rudderSbLimit, gpsLatitude, gpsLongitude, gpsAltitude, gpsYear, gpsMonth, gpsDay, gpsHour, gpsMinute, gpsSecond, gpsCourse, gpsSpeed, gpsHdop, gpsFix, gpsSatellites, reset, load, rudderAngle, propRpm, statusBits, ordering, rudderAngleCommand, throttleCommand, batteryVoltage, batteryAmperage, lowRudderCalLimit, highRudderCalLimit\n");
+    csvOutput.print("L2.north, L2.east, globalPosition.lat, globalPosition.lon, heading, localPosition.north, localPosition.east, velocity.north, velocity.east, waypoint0.north, waypoint0.east, waypoint1.north, waypoint1.east, rudderPot, rudderPortLimit, rudderSbLimit, gpsLatitude, gpsLongitude, gpsAltitude, gpsYear, gpsMonth, gpsDay, gpsHour, gpsMinute, gpsSecond, gpsCourse, gpsSpeed, gpsHdop, gpsFix, gpsSatellites, reset, load, rudderAngle, propRpm, statusBits, ordering, rudderAngleCommand, throttleCommand, batteryVoltage, batteryAmperage, lowRudderCalLimit, highRudderCalLimit, revoHeading, revoMagStatus, revoPitch, revoPitchStatus, revoRoll, revoRollStatus, revoDip, revoMagneticMagnitude\n");
   }
   catch (Exception e){
     println("Failed to write output to a .csv file");

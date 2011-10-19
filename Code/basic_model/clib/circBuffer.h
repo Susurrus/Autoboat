@@ -38,7 +38,7 @@ THE SOFTWARE.
 #ifndef _CIRCBUFFER_H_
 #define _CIRCBUFFER_H_
 
-#define BSIZE 128
+#define BSIZE 192
 #ifndef NULL
 	#define NULL 0
 #endif

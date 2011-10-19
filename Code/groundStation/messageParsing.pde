@@ -1,7 +1,7 @@
 
 
 // Used for parsing message data
-byte[] message = new byte[128];
+byte[] message = new byte[255];
 int messageIndex = 0;
 int messageState = 0;
 
@@ -10,121 +10,134 @@ int messageState = 0;
  */
 boolean buildAndCheckMessage(byte characterIn) {
 
-        boolean success = false;
-  
-	// This contains the function's state of whether
-	// it is currently building a message.
-	// 0 - Awaiting header byte 0 (%)
-	// 1 - Awaiting header byte 1 (&)
-	// 2 - Building message
-	// 3 - Awaiting header byte 0 (^)
-	// 4 - Awaiting header byte 1 (&)
-	// 5 - Reading checksum character
-	
-	// We start recording a new message if we see the header
-	if (messageState == 0) {
-		if (characterIn == '%') {
-			message[0] = characterIn;
-			messageIndex = 1;
-			messageState = 1;
-		}
-	} else if (messageState == 1) {
-		// If we don't find the necessary ampersand we start over
-		// waiting for a new sentence
-		if (characterIn == '&') {
-			message[1] = characterIn;
-			messageIndex = 2;
-			messageState = 2;
-		} else if (characterIn != '%'){
-			messageIndex = 0;
-			messageState = 0;
-		}
-	} else if (messageState == 2) {
-		// Record every character that comes in now that we're building a sentence.
-		// Only stop if we run out of room or an asterisk is found.
-		message[messageIndex++] = characterIn;
-		if (messageIndex == message[3] + 5) {
-                  if (characterIn == '^') {
-			messageState = 3;
-                  } else {
-                         messageIndex = 0;
-                         messageState = 0;
-                  }
-		} else if (messageIndex == message.length - 3) {
-			// If we've filled up the buffer, ignore the entire message as we can't store it all
-			messageState = 0;
-			messageIndex = 0;
-		}
-	} else if (messageState == 3) {
-		// If we find an ampersand, then we've found the footer. If we've run out of space at 127 bytes,
-                // error out, if we've found the first footer char, keep waiting for the second one, otherwise
-                // return to the previous state to read and record characters.
-		message[messageIndex++] = characterIn;
-		if (characterIn == '&') {
-			messageState = 4;
-		} else if (messageIndex == message.length - 2) {
-			messageState = 0;
-			messageIndex = 0;
-		}
-	} else if (messageState == 4) {
-		// Record the second ASCII-hex character of the checksum byte.
-		message[messageIndex] = characterIn;
-		// The checksum is now verified and if successful the message
-		// is stored in the appropriate struct.
-		if (message[messageIndex] == calculateChecksum(subset(message, 2, messageIndex-4)) && message[3] == messageIndex - 6) {
-			// NOTE: message[2] is used to skip the header, message ID.
-			if (message[2] == 3) {
-                                updateStateData(subset(message, 4, messageIndex-6));
-                                success = true;
-			}
-		}
-		
-		// We clear all state variables here regardless of success.
-		messageIndex = 0;
-		messageState = 0;
-		int b;
-		for (b = 0;b < messageIndex;b++) {
-			message[b] = 0;
-		}
-	}
+  boolean success = false;
 
-        return success;
+  // This contains the function's state of whether
+  // it is currently building a message.
+  // 0 - Awaiting header byte 0 (%)
+  // 1 - Awaiting header byte 1 (&)
+  // 2 - Building message
+  // 3 - Awaiting header byte 0 (^)
+  // 4 - Awaiting header byte 1 (&)
+  // 5 - Reading checksum character
+
+  // We start recording a new message if we see the header
+  if (messageState == 0) {
+    if (characterIn == '%') {
+      message[0] = characterIn;
+      messageIndex = 1;
+      messageState = 1;
+    }
+  } 
+  else if (messageState == 1) {
+    // If we don't find the necessary ampersand we start over
+    // waiting for a new sentence
+    if (characterIn == '&') {
+      message[1] = characterIn;
+      messageIndex = 2;
+      messageState = 2;
+    } 
+    else if (characterIn != '%') {
+      messageIndex = 0;
+      messageState = 0;
+    }
+  } 
+  else if (messageState == 2) {
+    // Record every character that comes in now that we're building a sentence.
+    // Only stop if we run out of room or an asterisk is found.
+    message[messageIndex++] = characterIn;
+    // Here we need to convert from Java's shitty signed-everything datatype to an int, which effectively makes it unsigned.
+    if (messageIndex == ((int)message[3] & 0xFF) + 5) {
+      if (characterIn == '^') {
+        messageState = 3;
+      } 
+      else {
+        messageIndex = 0;
+        messageState = 0;
+      }
+    } 
+    else if (messageIndex == message.length - 3) {
+      // If we've filled up the buffer, ignore the entire message as we can't store it all
+      for (int i=0;i<messageIndex;i++) {
+        System.out.print(String.format("(%d, %c, %d),", i, (char)message[i], (int)message[i]));
+      }
+      System.out.println("]\n\n");
+      messageState = 0;
+      messageIndex = 0;
+    }
+  } 
+  else if (messageState == 3) {
+    // If we find an ampersand, then we've found the footer. If we've run out of space at 127 bytes,
+    // error out, if we've found the first footer char, keep waiting for the second one, otherwise
+    // return to the previous state to read and record characters.
+    message[messageIndex++] = characterIn;
+    if (characterIn == '&') {
+      messageState = 4;
+    } 
+    else if (messageIndex == message.length - 2) {
+      messageState = 0;
+      messageIndex = 0;
+    }
+  } 
+  else if (messageState == 4) {
+    // Record the second ASCII-hex character of the checksum byte.
+    message[messageIndex] = characterIn;
+    // The checksum is now verified and if successful the message
+    // is stored in the appropriate struct.
+    if (message[messageIndex] == calculateChecksum(subset(message, 2, messageIndex-4)) && ((int)message[3] & 0xFF) == messageIndex - 6) {
+      // NOTE: message[2] is used to skip the header, message ID.
+      if (message[2] == 3) {
+        updateStateData(subset(message, 4, messageIndex-6));
+        success = true;
+      }
+    }
+
+    // We clear all state variables here regardless of success.
+    messageIndex = 0;
+    messageState = 0;
+    int b;
+    for (b = 0;b < messageIndex;b++) {
+      message[b] = 0;
+    }
+  }
+
+  return success;
 }
 
 void updateStateData(byte message[]) {
   // Wrap the message in a DataInputStream so that readFloat() can be used
   InputStream in = new ByteArrayInputStream(message);
   DataInputStream din = new DataInputStream(in);
-  
+
   // Save the last set of data into an array list
   if (recording) {
-    csvOutput.format("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d,%f,%f,%f,%d,%d,%d,%d,%d,%d,%f,%f,%f,%d,%d,%d,%d,%f,%d,%d,%d,%f,%d,%f,%f,%d,%d\n",
-                     L2.x, L2.y,
-                     globalPosition.x, globalPosition.y,
-                     heading,
-                     localPosition.x, localPosition.y,
-                     velocity.x, velocity.y,
-                     waypoint0.x, waypoint0.y,
-                     waypoint1.x, waypoint1.y,
-                     rudderPot, rudderPortLimit?1:0, rudderSbLimit?1:0,
-                     gpsLatitude, gpsLongitude, gpsAltitude,
-                     gpsYear, gpsMonth, gpsDay, gpsHour, gpsMinute, gpsSecond, gpsCourse, gpsSpeed, gpsHdop, gpsFix, gpsSatellites,
-                     reset,
-                     load,
-                     rudderAngle,
-                     propRpm,
-                     statusBits,
-                     ordering,
-                     rudderAngleCommand,
-                     throttleCommand,
-                     batteryVoltage,
-                     batteryAmperage,
-                     lowRudderCalLimit,
-                     highRudderCalLimit);
+    csvOutput.format("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d,%f,%f,%f,%d,%d,%d,%d,%d,%d,%f,%f,%f,%d,%d,%d,%d,%f,%d,%d,%d,%f,%d,%f,%f,%d,%d,%f,%d,%f,%d,%f,%d,%f,%d\n", 
+    L2.x, L2.y, 
+    globalPosition.x, globalPosition.y, 
+    heading, 
+    localPosition.x, localPosition.y, 
+    velocity.x, velocity.y, 
+    waypoint0.x, waypoint0.y, 
+    waypoint1.x, waypoint1.y, 
+    rudderPot, rudderPortLimit?1:0, rudderSbLimit?1:0, 
+    gpsLatitude, gpsLongitude, gpsAltitude, 
+    gpsYear, gpsMonth, gpsDay, gpsHour, gpsMinute, gpsSecond, gpsCourse, gpsSpeed, gpsHdop, gpsFix, gpsSatellites, 
+    reset, 
+    load, 
+    rudderAngle, 
+    propRpm, 
+    statusBits, 
+    ordering, 
+    rudderAngleCommand, 
+    throttleCommand, 
+    batteryVoltage, 
+    batteryAmperage, 
+    lowRudderCalLimit, highRudderCalLimit,
+    revoHeading, revoMagStatus, revoPitch, revoPitchStatus, revoRoll, revoRollStatus, revoDip, revoMagneticMagnitude);
     csvOutput.flush();
     recordedMessages++;
   }
-  
+
   // Import new data from a complete StateData message
   try {
     L2.x = din.readFloat();
@@ -169,8 +182,16 @@ void updateStateData(byte message[]) {
     batteryAmperage = din.readFloat();
     lowRudderCalLimit = din.readShort();
     highRudderCalLimit = din.readShort();
-    
-  } catch (Exception e) {
+    revoHeading = din.readFloat();
+    revoMagStatus = din.readByte();
+    revoPitch = din.readFloat();
+    revoPitchStatus = din.readByte();
+    revoRoll = din.readFloat();
+    revoRollStatus = din.readByte();
+    revoDip = din.readFloat();
+    revoMagneticMagnitude = din.readShort();
+  } 
+  catch (Exception e) {
     e.printStackTrace();
     println("Crap, failed to extract the data");
     exit();
@@ -187,6 +208,7 @@ byte calculateChecksum(byte sentence[]) {
   for (int i = 0; i < sentence.length; i++) {
     checkSum ^= sentence[i];
   }
-	
+
   return checkSum;
 }
+

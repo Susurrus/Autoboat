@@ -43,10 +43,6 @@ static unsigned char sentenceIndex;
 static unsigned char checksum;
 static unsigned char sentenceState;
 
-void initUart1ForRevo() {
-	initUart1(42);
-}
-
 void processRevoSentence(char sentence[]) {
 	if (sentence[5] == 'H' && sentence[6] == 'T' && sentence[7] == 'M') {
 		parseHTM(sentence);
@@ -115,7 +111,7 @@ void parseHTM(char* stream) {
 	// 1.- True heading (x.x)
 	myTokenizer(NULL, ',', token);
 	if (strlen(token) > 0) {
-		receivedData.heading.flData = atof("288.9");	
+		receivedData.heading.flData = atof(token);	
 	}
 	
 	// 2.- Magnetometer status (C,L,M,N,O,P,H)
