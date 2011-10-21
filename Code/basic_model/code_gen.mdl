@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2026"
+    ComputedModelVersion    "1.2029"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Oct 20 13:58:48 2011"
-  RTWModifiedTimeStamp	  241019189
-  ModelVersionFormat	  "1.%<AutoIncrement:2026>"
+  LastModifiedDate	  "Thu Oct 20 18:09:58 2011"
+  RTWModifiedTimeStamp	  241034995
+  ModelVersionFormat	  "1.%<AutoIncrement:2029>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -4085,8 +4085,8 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Controller"
-	Location		[202, 74, 1598, 839]
-	Open			off
+	Location		[202, 82, 1598, 847]
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -19387,8 +19387,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Rudder sensor\ncalibration"
-	    Location		    [371, 310, 1461, 903]
-	    Open		    off
+	    Location		    [434, 184, 1524, 777]
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -42562,8 +42562,6 @@ Stateflow {
     viewObj		    315
     machine		    1
     toolbarMode		    LIBRARY_TOOLBAR
-    subviewS {
-    }
     ssIdHighWaterMark	    17
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
@@ -42620,43 +42618,44 @@ Stateflow {
       "t state.\n    highLimit = int16(high_side);\n    lowLimit = int16(low_side);\n    if calibrated\n        rudderA"
       "ngle = pot_to_rads(rudderPot, high_side, low_side);\n    else\n        % Return 0 when we can't actually determi"
       "ne the rudder position\n        rudderAngle = single(0);\n    end\n\n    if cal_state == 0 % Waiting for calibra"
-      "tion trigger\n        if trigger\n            cal_state = uint8(6);\n            drive = false;\n        end\n  "
-      "  elseif cal_state == 6 % Initial calibration mode\n        if ~calibrating % Reset if calibration is disabled\n"
-      "            cal_state = uint8(0);\n            run = false;\n            drive = true;\n        elseif rudderSbL"
-      "imit % If the starboard limit is active, go to port first\n            cal_state = uint8(5);\n            run = "
-      "true;\n            direction = true;\n        else % Default to running to starboard first\n            cal_stat"
-      "e = uint8(4);\n            run = true;\n            direction = false;\n        end\n    elseif cal_state == 5 %"
-      " Calibrating the first limit (port)\n        if ~calibrating % Reset if calibration is disabled\n            cal"
-      "_state = uint8(0);\n            run = false;\n            drive = true;\n        elseif rudderPortLimit % If we'"
-      "ve hit the limit, we're done here\n            cal_state = uint8(2);\n            direction = false;\n        en"
-      "d\n    elseif cal_state == 4 % Calibrating the first limit (starboard)\n        if ~calibrating % Reset if calib"
-      "ration is disabled\n            cal_state = uint8(0);\n            run = false;\n            drive = true;\n    "
-      "    elseif rudderSbLimit % If we've hit the limit, we're done here\n            cal_state = uint8(3);\n         "
-      "   direction = true;\n        end\n    elseif cal_state == 3 % Last limit calibration (port)\n        if ~calibr"
-      "ating % Reset if calibration is disabled\n            cal_state = uint8(0);\n            run = false;\n         "
-      "   drive = true;\n        elseif rudderPortLimit % If we've hit the port limit then we're done calibrating, so w"
-      "e recenter the rudder.\n            cal_state = uint8(1);\n            direction = false;\n        end\n    else"
-      "if cal_state == 2 % Last limit calibration (starboard)\n        if ~calibrating % Reset if calibration is disabl"
-      "ed\n            cal_state = uint8(0);\n            run = false;\n            drive = true;\n        elseif rudde"
-      "rSbLimit % If we've hit the starboard limit then we're done calibrating, so we recenter the rudder.\n           "
-      " cal_state = uint8(1);\n            direction = true;\n        end\n    elseif cal_state == 1 % Center the rudde"
-      "r\n        if ~calibrating % Reset if calibration is disabled\n            cal_state = uint8(0);\n            ru"
-      "n = false;\n            drive = true;\n        elseif abs(rudderAngle) < 0.1 % If we're close to the center, sto"
-      "p commanding the rudder. Set to 0.1 to account for delay\n            cal_state = uint8(0);\n            run = f"
-      "alse;\n            drive = true;\n            calibrating = false;\n        end\n    end\n    \n    % Specify th"
-      "e calibration mode using a bitmask:\n    % Bit 0: Calibrating\n    % Bit 1: Calibrated\n    mode = bitor(uint8(c"
-      "alibrating), bitshift(uint8(calibrated), 1));\n    \n    % Set the rest of the outputs\n    step = run;\n    dir"
-      " = direction;\n    throttle = drive;\nend\n\nfunction [rads] = pot_to_rads(input, high_side, low_side)\n    %#em"
-      "l\n    % This function converts the potentiometer reading from the boat's rudder sensors\n    % to a value in de"
-      "grees. It relies on each limit being hit to set the bounds on\n    % the rudder sensor value and then maps that "
-      "value from that range into the new\n    % range of -.07854 to .07854 (+-45 deg). It is loosely based off of the "
-      "integer\n    % mapping function at: http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1289758376\n\n    % Prepare "
-      "our input. Here we subtract the baseline 'low_side' value off of\n    % the input so we start with a range from "
-      "[0..high_side-lowside] and map it\n    % into the output range of 45 degrees.\n    in_max = high_side - low_side"
-      ";\n    val = int32(input) - low_side;\n\n    % Do the actual conversion reversing the range and mapping it into "
-      "[.7854:-0.7854]\n    rads = (0.5 - single(val)/single(in_max))*2*0.7854;\n\n    % Finally cap the value to +- ou"
-      "r range to prevent odd errors later.\n    if rads > 0.7854\n        rads = single(0.7854);\n    elseif rads < -0"
-      ".7854\n        rads = single(-0.7854);\n    end\nend"
+      "tion trigger\n        if trigger\n            cal_state = uint8(6);\n            low_side = int32(-1);\n        "
+      "    high_side = int32(-1);\n            calibrated = false;\n            drive = false;\n        end\n    elseif"
+      " cal_state == 6 % Initial calibration mode\n        if ~calibrating % Reset if calibration is disabled\n        "
+      "    cal_state = uint8(0);\n            run = false;\n            drive = true;\n        elseif rudderSbLimit % I"
+      "f the starboard limit is active, go to port first\n            cal_state = uint8(5);\n            run = true;\n "
+      "           direction = true;\n        else % Default to running to starboard first\n            cal_state = uint"
+      "8(4);\n            run = true;\n            direction = false;\n        end\n    elseif cal_state == 5 % Calibra"
+      "ting the first limit (port)\n        if ~calibrating % Reset if calibration is disabled\n            cal_state ="
+      " uint8(0);\n            run = false;\n            drive = true;\n        elseif rudderPortLimit % If we've hit t"
+      "he limit, we're done here\n            cal_state = uint8(2);\n            direction = false;\n        end\n    e"
+      "lseif cal_state == 4 % Calibrating the first limit (starboard)\n        if ~calibrating % Reset if calibration i"
+      "s disabled\n            cal_state = uint8(0);\n            run = false;\n            drive = true;\n        else"
+      "if rudderSbLimit % If we've hit the limit, we're done here\n            cal_state = uint8(3);\n            direc"
+      "tion = true;\n        end\n    elseif cal_state == 3 % Last limit calibration (port)\n        if ~calibrating % "
+      "Reset if calibration is disabled\n            cal_state = uint8(0);\n            run = false;\n            drive"
+      " = true;\n        elseif rudderPortLimit % If we've hit the port limit then we're done calibrating, so we recent"
+      "er the rudder.\n            cal_state = uint8(1);\n            direction = false;\n        end\n    elseif cal_s"
+      "tate == 2 % Last limit calibration (starboard)\n        if ~calibrating % Reset if calibration is disabled\n    "
+      "        cal_state = uint8(0);\n            run = false;\n            drive = true;\n        elseif rudderSbLimit"
+      " % If we've hit the starboard limit then we're done calibrating, so we recenter the rudder.\n            cal_sta"
+      "te = uint8(1);\n            direction = true;\n        end\n    elseif cal_state == 1 % Center the rudder\n     "
+      "   if ~calibrating % Reset if calibration is disabled\n            cal_state = uint8(0);\n            run = fals"
+      "e;\n            drive = true;\n        elseif abs(rudderAngle) < 0.1 % If we're close to the center, stop comman"
+      "ding the rudder. Set to 0.1 to account for delay\n            cal_state = uint8(0);\n            run = false;\n "
+      "           drive = true;\n            calibrating = false;\n        end\n    end\n    \n    % Specify the calibr"
+      "ation mode using a bitmask:\n    % Bit 0: Calibrating\n    % Bit 1: Calibrated\n    mode = bitor(uint8(calibrati"
+      "ng), bitshift(uint8(calibrated), 1));\n    \n    % Set the rest of the outputs\n    step = run;\n    dir = direc"
+      "tion;\n    throttle = drive;\nend\n\nfunction [rads] = pot_to_rads(input, high_side, low_side)\n    %#eml\n    %"
+      " This function converts the potentiometer reading from the boat's rudder sensors\n    % to a value in degrees. I"
+      "t relies on each limit being hit to set the bounds on\n    % the rudder sensor value and then maps that value fr"
+      "om that range into the new\n    % range of -.07854 to .07854 (+-45 deg). It is loosely based off of the integer\n"
+      "    % mapping function at: http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1289758376\n\n    % Prepare our input"
+      ". Here we subtract the baseline 'low_side' value off of\n    % the input so we start with a range from [0..high_"
+      "side-lowside] and map it\n    % into the output range of 45 degrees.\n    in_max = high_side - low_side;\n    va"
+      "l = int32(input) - low_side;\n\n    % Do the actual conversion reversing the range and mapping it into [.7854:-0"
+      ".7854]\n    rads = (0.5 - single(val)/single(in_max))*2*0.7854;\n\n    % Finally cap the value to +- our range t"
+      "o prevent odd errors later.\n    if rads > 0.7854\n        rads = single(0.7854);\n    elseif rads < -0.7854\n  "
+      "      rads = single(-0.7854);\n    end\nend"
       editorLayout	      "100 M4x1[25 52 1616 876]"
     }
   }
