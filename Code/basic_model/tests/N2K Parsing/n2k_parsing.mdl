@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.70"
+    ComputedModelVersion    "1.72"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -25,9 +25,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Nov 04 16:11:52 2011"
-  RTWModifiedTimeStamp	  242323295
-  ModelVersionFormat	  "1.%<AutoIncrement:70>"
+  LastModifiedDate	  "Fri Nov 04 16:49:13 2011"
+  RTWModifiedTimeStamp	  242325523
+  ModelVersionFormat	  "1.%<AutoIncrement:72>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -721,6 +721,70 @@ Model {
       SampleTime	      "-1"
     }
     Block {
+      BlockType		      Demux
+      Outputs		      "4"
+      DisplayOption	      "none"
+      BusSelectionMode	      off
+    }
+    Block {
+      BlockType		      EnablePort
+      StatesWhenEnabling      "held"
+      PropagateVarSize	      "Only when enabling"
+      ShowOutputPort	      off
+      ZeroCross		      on
+    }
+    Block {
+      BlockType		      Inport
+      Port		      "1"
+      UseBusObject	      off
+      BusObject		      "BusObject"
+      BusOutputAsStruct	      off
+      PortDimensions	      "-1"
+      VarSizeSig	      "Inherit"
+      SampleTime	      "-1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      DataType		      "auto"
+      OutDataType	      "fixdt(1,16,0)"
+      OutScaling	      "[]"
+      OutDataTypeStr	      "Inherit: auto"
+      LockScale		      off
+      SignalType	      "auto"
+      SamplingMode	      "auto"
+      LatchByDelayingOutsideSignal off
+      LatchInputForFeedbackSignals off
+      Interpolate	      on
+    }
+    Block {
+      BlockType		      Outport
+      Port		      "1"
+      UseBusObject	      off
+      BusObject		      "BusObject"
+      BusOutputAsStruct	      off
+      PortDimensions	      "-1"
+      VarSizeSig	      "Inherit"
+      SampleTime	      "-1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      DataType		      "auto"
+      OutDataType	      "fixdt(1,16,0)"
+      OutScaling	      "[]"
+      OutDataTypeStr	      "Inherit: auto"
+      LockScale		      off
+      SignalType	      "auto"
+      SamplingMode	      "auto"
+      SourceOfInitialOutputValue "Dialog"
+      OutputWhenDisabled      "held"
+      InitialOutput	      "[]"
+    }
+    Block {
+      BlockType		      "S-Function"
+      FunctionName	      "system"
+      SFunctionModules	      "''"
+      PortCounts	      "[]"
+      SFunctionDeploymentMode off
+    }
+    Block {
       BlockType		      SubSystem
       ShowPortLabels	      "FromPortIcon"
       Permissions	      "ReadWrite"
@@ -739,10 +803,13 @@ Model {
       DataTypeOverride	      "UseLocalSettings"
       MinMaxOverflowLogging   "UseLocalSettings"
     }
+    Block {
+      BlockType		      Terminator
+    }
   }
   System {
     Name		    "n2k_parsing"
-    Location		    [365, 138, 1259, 775]
+    Location		    [548, 93, 1442, 784]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -756,7 +823,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    266
+    SIDHighWatermark	    290
     Block {
       BlockType		      SubSystem
       Name		      "Blink LED D10 a 1Hz"
@@ -1021,172 +1088,425 @@ Model {
       SourceType	      ""
     }
     Block {
-      BlockType		      Reference
-      Name		      "Display any airData if available\n[extra.c]"
-      SID		      265
-      Tag		      "dsPIC_dsPIC_CFunctionCall"
-      Ports		      []
-      Position		      [180, 452, 330, 498]
-      BackgroundColor	      "orange"
-      LibraryVersion	      "3.75"
-      List {
-	ListType		RTWdata
-	isFctUpdate		"1"
-	FctDeclaration		"extern void DisplayAirData();"
-	FctCall			"DisplayAirData();"
-	fctName			"DisplayAirData"
-	INPUT_SIZE		"1"
-	OUTPUT_SIZE		"1"
-	NBR_INPUT		"0"
-	NBR_OUTPUT		"0"
-	isFctStart		"0"
-	FctStart_Declaration	"inline extern void Init_onlyOnce();"
-	FctStart_Call		"Init_onlyOnce();"
-	FctStart_Name		"Init_onlyOnce"
-	isFctInit		"0"
-	FctInit_Declaration	"inline extern void Init_Reset();"
-	FctInit_Call		"Init_Reset();"
-	FctInit_Name		"Init_Reset"
+      BlockType		      SubSystem
+      Name		      "Display air\ndata"
+      SID		      275
+      Ports		      [3, 0, 1]
+      Position		      [505, 479, 605, 521]
+      LibraryVersion	      "1.216"
+      TreatAsAtomicUnit	      on
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      System {
+	Name			"Display air\ndata"
+	Location		[244, 322, 742, 622]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Inport
+	  Name			  "t"
+	  SID			  276
+	  Position		  [115, 173, 145, 187]
+	  BackgroundColor	  "darkGreen"
+	  IconDisplay		  "Port number"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "p"
+	  SID			  277
+	  Position		  [50, 193, 80, 207]
+	  BackgroundColor	  "darkGreen"
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "h"
+	  SID			  282
+	  Position		  [115, 203, 145, 217]
+	  BackgroundColor	  "darkGreen"
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  EnablePort
+	  Name			  "Enable"
+	  SID			  278
+	  Ports			  []
+	  Position		  [235, 20, 255, 40]
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Display any airData if available\n[extra.c]"
+	  SID			  279
+	  Tag			  "dsPIC_dsPIC_CFunctionCall"
+	  Ports			  [3]
+	  Position		  [275, 181, 425, 219]
+	  BackgroundColor	  "orange"
+	  LibraryVersion	  "3.75"
+	  List {
+	    ListType		    RTWdata
+	    isFctUpdate		    "1"
+	    FctDeclaration	    "extern void DisplayAirData(real32_T u1, real32_T u2, real32_T u3);"
+	    FctCall		    "DisplayAirData(%u1, %u2, %u3);"
+	    fctName		    "DisplayAirData"
+	    INPUT_SIZE		    "1"
+	    OUTPUT_SIZE		    "1"
+	    NBR_INPUT		    "3"
+	    NBR_OUTPUT		    "0"
+	    isFctStart		    "0"
+	    FctStart_Declaration    "inline extern void Init_onlyOnce();"
+	    FctStart_Call	    "Init_onlyOnce();"
+	    FctStart_Name	    "Init_onlyOnce"
+	    isFctInit		    "0"
+	    FctInit_Declaration	    "inline extern void Init_Reset();"
+	    FctInit_Call	    "Init_Reset();"
+	    FctInit_Name	    "Init_Reset"
+	  }
+	  SourceBlock		  "dsPICdrivers/OTHERS/C Function Call"
+	  SourceType		  "C Function Call"
+	  FctUpdate		  "Output Function"
+	  fctName		  "DisplayAirData"
+	  INPUT_SIZE		  "1"
+	  INPUT1		  "real32"
+	  INPUT2		  "real32"
+	  INPUT3		  "real32"
+	  OUTPUT_SIZE		  "1"
+	  OUTPUT1		  "--"
+	  SampleTime		  ".01"
+	  InputType		  "[ 7 7 7 ]"
+	  OutputType		  "[ ]"
+	  FctDeclaration	  "extern void DisplayAirData(real32_T u1, real32_T u2, real32_T u3);"
+	  FctCall		  "DisplayAirData(%u1, %u2, %u3);"
+	  OrderingInOutPopup	  "None"
+	  FctStart		  "None"
+	  FctStart_Name		  "Init_onlyOnce"
+	  FctStart_Declaration	  "inline extern void Init_onlyOnce();"
+	  FctStart_Call		  "Init_onlyOnce();"
+	  FctInit		  "None"
+	  FctInit_Name		  "Init_Reset"
+	  FctInit_Declaration	  "inline extern void Init_Reset();"
+	  FctInit_Call		  "Init_Reset();"
+	  PinDigitalInput	  "[]"
+	  PinDigitalOutput	  "[]"
+	  AnalogueInput		  "[]"
+	}
+	Line {
+	  SrcBlock		  "t"
+	  SrcPort		  1
+	  Points		  [0, 10]
+	  DstBlock		  "Display any airData if available\n[extra.c]"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "p"
+	  SrcPort		  1
+	  DstBlock		  "Display any airData if available\n[extra.c]"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "h"
+	  SrcPort		  1
+	  DstBlock		  "Display any airData if available\n[extra.c]"
+	  DstPort		  3
+	}
       }
-      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
-      SourceType	      "C Function Call"
-      FctUpdate		      "Output Function"
-      fctName		      "DisplayAirData"
-      INPUT_SIZE	      "1"
-      INPUT1		      "--"
-      INPUT2		      "--"
-      INPUT3		      "--"
-      OUTPUT_SIZE	      "1"
-      OUTPUT1		      "--"
-      SampleTime	      ".01"
-      InputType		      "[ ]"
-      OutputType	      "[ ]"
-      FctDeclaration	      "extern void DisplayAirData();"
-      FctCall		      "DisplayAirData();"
-      OrderingInOutPopup      "None"
-      FctStart		      "None"
-      FctStart_Name	      "Init_onlyOnce"
-      FctStart_Declaration    "inline extern void Init_onlyOnce();"
-      FctStart_Call	      "Init_onlyOnce();"
-      FctInit		      "None"
-      FctInit_Name	      "Init_Reset"
-      FctInit_Declaration     "inline extern void Init_Reset();"
-      FctInit_Call	      "Init_Reset();"
-      PinDigitalInput	      "[]"
-      PinDigitalOutput	      "[]"
-      AnalogueInput	      "[]"
     }
     Block {
-      BlockType		      Reference
-      Name		      "Display any waterData if available\n[extra.c]"
-      SID		      266
-      Tag		      "dsPIC_dsPIC_CFunctionCall"
-      Ports		      []
-      Position		      [180, 537, 330, 583]
-      BackgroundColor	      "orange"
-      LibraryVersion	      "3.75"
-      List {
-	ListType		RTWdata
-	isFctUpdate		"1"
-	FctDeclaration		"extern void DisplayWaterData();"
-	FctCall			"DisplayWaterData();"
-	fctName			"DisplayWaterData"
-	INPUT_SIZE		"1"
-	OUTPUT_SIZE		"1"
-	NBR_INPUT		"0"
-	NBR_OUTPUT		"0"
-	isFctStart		"0"
-	FctStart_Declaration	"inline extern void Init_onlyOnce();"
-	FctStart_Call		"Init_onlyOnce();"
-	FctStart_Name		"Init_onlyOnce"
-	isFctInit		"0"
-	FctInit_Declaration	"inline extern void Init_Reset();"
-	FctInit_Call		"Init_Reset();"
-	FctInit_Name		"Init_Reset"
+      BlockType		      SubSystem
+      Name		      "Display water\ndata"
+      SID		      283
+      Ports		      [3, 0, 1]
+      Position		      [505, 584, 605, 626]
+      LibraryVersion	      "1.216"
+      TreatAsAtomicUnit	      on
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      System {
+	Name			"Display water\ndata"
+	Location		[244, 322, 742, 622]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Inport
+	  Name			  "s"
+	  SID			  284
+	  Position		  [115, 173, 145, 187]
+	  BackgroundColor	  "darkGreen"
+	  IconDisplay		  "Port number"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "t"
+	  SID			  285
+	  Position		  [50, 193, 80, 207]
+	  BackgroundColor	  "darkGreen"
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "d"
+	  SID			  286
+	  Position		  [115, 203, 145, 217]
+	  BackgroundColor	  "darkGreen"
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  EnablePort
+	  Name			  "Enable"
+	  SID			  287
+	  Ports			  []
+	  Position		  [235, 20, 255, 40]
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Display any airData if available\n[extra.c]"
+	  SID			  288
+	  Tag			  "dsPIC_dsPIC_CFunctionCall"
+	  Ports			  [3]
+	  Position		  [275, 181, 425, 219]
+	  BackgroundColor	  "orange"
+	  LibraryVersion	  "3.75"
+	  List {
+	    ListType		    RTWdata
+	    isFctUpdate		    "1"
+	    FctDeclaration	    "extern void DisplayWaterData(real32_T u1, real32_T u2, real32_T u3);"
+	    FctCall		    "DisplayWaterData(%u1, %u2, %u3);"
+	    fctName		    "DisplayWaterData"
+	    INPUT_SIZE		    "1"
+	    OUTPUT_SIZE		    "1"
+	    NBR_INPUT		    "3"
+	    NBR_OUTPUT		    "0"
+	    isFctStart		    "0"
+	    FctStart_Declaration    "inline extern void Init_onlyOnce();"
+	    FctStart_Call	    "Init_onlyOnce();"
+	    FctStart_Name	    "Init_onlyOnce"
+	    isFctInit		    "0"
+	    FctInit_Declaration	    "inline extern void Init_Reset();"
+	    FctInit_Call	    "Init_Reset();"
+	    FctInit_Name	    "Init_Reset"
+	  }
+	  SourceBlock		  "dsPICdrivers/OTHERS/C Function Call"
+	  SourceType		  "C Function Call"
+	  FctUpdate		  "Output Function"
+	  fctName		  "DisplayWaterData"
+	  INPUT_SIZE		  "1"
+	  INPUT1		  "real32"
+	  INPUT2		  "real32"
+	  INPUT3		  "real32"
+	  OUTPUT_SIZE		  "1"
+	  OUTPUT1		  "--"
+	  SampleTime		  ".01"
+	  InputType		  "[ 7 7 7 ]"
+	  OutputType		  "[ ]"
+	  FctDeclaration	  "extern void DisplayWaterData(real32_T u1, real32_T u2, real32_T u3);"
+	  FctCall		  "DisplayWaterData(%u1, %u2, %u3);"
+	  OrderingInOutPopup	  "None"
+	  FctStart		  "None"
+	  FctStart_Name		  "Init_onlyOnce"
+	  FctStart_Declaration	  "inline extern void Init_onlyOnce();"
+	  FctStart_Call		  "Init_onlyOnce();"
+	  FctInit		  "None"
+	  FctInit_Name		  "Init_Reset"
+	  FctInit_Declaration	  "inline extern void Init_Reset();"
+	  FctInit_Call		  "Init_Reset();"
+	  PinDigitalInput	  "[]"
+	  PinDigitalOutput	  "[]"
+	  AnalogueInput		  "[]"
+	}
+	Line {
+	  SrcBlock		  "s"
+	  SrcPort		  1
+	  Points		  [0, 10]
+	  DstBlock		  "Display any airData if available\n[extra.c]"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "t"
+	  SrcPort		  1
+	  DstBlock		  "Display any airData if available\n[extra.c]"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "d"
+	  SrcPort		  1
+	  DstBlock		  "Display any airData if available\n[extra.c]"
+	  DstPort		  3
+	}
       }
-      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
-      SourceType	      "C Function Call"
-      FctUpdate		      "Output Function"
-      fctName		      "DisplayWaterData"
-      INPUT_SIZE	      "1"
-      INPUT1		      "--"
-      INPUT2		      "--"
-      INPUT3		      "--"
-      OUTPUT_SIZE	      "1"
-      OUTPUT1		      "--"
-      SampleTime	      ".01"
-      InputType		      "[ ]"
-      OutputType	      "[ ]"
-      FctDeclaration	      "extern void DisplayWaterData();"
-      FctCall		      "DisplayWaterData();"
-      OrderingInOutPopup      "None"
-      FctStart		      "None"
-      FctStart_Name	      "Init_onlyOnce"
-      FctStart_Declaration    "inline extern void Init_onlyOnce();"
-      FctStart_Call	      "Init_onlyOnce();"
-      FctInit		      "None"
-      FctInit_Name	      "Init_Reset"
-      FctInit_Declaration     "inline extern void Init_Reset();"
-      FctInit_Call	      "Init_Reset();"
-      PinDigitalInput	      "[]"
-      PinDigitalOutput	      "[]"
-      AnalogueInput	      "[]"
     }
     Block {
-      BlockType		      Reference
-      Name		      "Display any windData if available\n[extra.c]"
-      SID		      264
-      Tag		      "dsPIC_dsPIC_CFunctionCall"
-      Ports		      []
-      Position		      [180, 367, 330, 413]
-      BackgroundColor	      "orange"
-      LibraryVersion	      "3.75"
-      List {
-	ListType		RTWdata
-	isFctUpdate		"1"
-	FctDeclaration		"extern void DisplayWindData();"
-	FctCall			"DisplayWindData();"
-	fctName			"DisplayWindData"
-	INPUT_SIZE		"1"
-	OUTPUT_SIZE		"1"
-	NBR_INPUT		"0"
-	NBR_OUTPUT		"0"
-	isFctStart		"0"
-	FctStart_Declaration	"inline extern void Init_onlyOnce();"
-	FctStart_Call		"Init_onlyOnce();"
-	FctStart_Name		"Init_onlyOnce"
-	isFctInit		"0"
-	FctInit_Declaration	"inline extern void Init_Reset();"
-	FctInit_Call		"Init_Reset();"
-	FctInit_Name		"Init_Reset"
+      BlockType		      SubSystem
+      Name		      "Display wind\ndata"
+      SID		      269
+      Ports		      [2, 0, 1]
+      Position		      [505, 379, 605, 421]
+      LibraryVersion	      "1.216"
+      TreatAsAtomicUnit	      on
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      System {
+	Name			"Display wind\ndata"
+	Location		[244, 322, 742, 622]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Inport
+	  Name			  "sp"
+	  SID			  270
+	  Position		  [115, 173, 145, 187]
+	  BackgroundColor	  "darkGreen"
+	  IconDisplay		  "Port number"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "dir"
+	  SID			  274
+	  Position		  [115, 203, 145, 217]
+	  BackgroundColor	  "darkGreen"
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  EnablePort
+	  Name			  "Enable"
+	  SID			  271
+	  Ports			  []
+	  Position		  [235, 20, 255, 40]
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Display any windData if available\n[extra.c]"
+	  SID			  273
+	  Tag			  "dsPIC_dsPIC_CFunctionCall"
+	  Ports			  [2]
+	  Position		  [260, 181, 410, 219]
+	  BackgroundColor	  "orange"
+	  LibraryVersion	  "3.75"
+	  List {
+	    ListType		    RTWdata
+	    isFctUpdate		    "1"
+	    FctDeclaration	    "extern void DisplayWindData(real32_T u1, real32_T u2);"
+	    FctCall		    "DisplayWindData(%u1, %u2);"
+	    fctName		    "DisplayWindData"
+	    INPUT_SIZE		    "1"
+	    OUTPUT_SIZE		    "1"
+	    NBR_INPUT		    "2"
+	    NBR_OUTPUT		    "0"
+	    isFctStart		    "0"
+	    FctStart_Declaration    "inline extern void Init_onlyOnce();"
+	    FctStart_Call	    "Init_onlyOnce();"
+	    FctStart_Name	    "Init_onlyOnce"
+	    isFctInit		    "0"
+	    FctInit_Declaration	    "inline extern void Init_Reset();"
+	    FctInit_Call	    "Init_Reset();"
+	    FctInit_Name	    "Init_Reset"
+	  }
+	  SourceBlock		  "dsPICdrivers/OTHERS/C Function Call"
+	  SourceType		  "C Function Call"
+	  FctUpdate		  "Output Function"
+	  fctName		  "DisplayWindData"
+	  INPUT_SIZE		  "1"
+	  INPUT1		  "real32"
+	  INPUT2		  "real32"
+	  INPUT3		  "--"
+	  OUTPUT_SIZE		  "1"
+	  OUTPUT1		  "--"
+	  SampleTime		  ".01"
+	  InputType		  "[ 7 7 ]"
+	  OutputType		  "[ ]"
+	  FctDeclaration	  "extern void DisplayWindData(real32_T u1, real32_T u2);"
+	  FctCall		  "DisplayWindData(%u1, %u2);"
+	  OrderingInOutPopup	  "None"
+	  FctStart		  "None"
+	  FctStart_Name		  "Init_onlyOnce"
+	  FctStart_Declaration	  "inline extern void Init_onlyOnce();"
+	  FctStart_Call		  "Init_onlyOnce();"
+	  FctInit		  "None"
+	  FctInit_Name		  "Init_Reset"
+	  FctInit_Declaration	  "inline extern void Init_Reset();"
+	  FctInit_Call		  "Init_Reset();"
+	  PinDigitalInput	  "[]"
+	  PinDigitalOutput	  "[]"
+	  AnalogueInput		  "[]"
+	}
+	Line {
+	  SrcBlock		  "sp"
+	  SrcPort		  1
+	  Points		  [0, 10]
+	  DstBlock		  "Display any windData if available\n[extra.c]"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "dir"
+	  SrcPort		  1
+	  DstBlock		  "Display any windData if available\n[extra.c]"
+	  DstPort		  2
+	}
       }
-      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
-      SourceType	      "C Function Call"
-      FctUpdate		      "Output Function"
-      fctName		      "DisplayWindData"
-      INPUT_SIZE	      "1"
-      INPUT1		      "--"
-      INPUT2		      "--"
-      INPUT3		      "--"
-      OUTPUT_SIZE	      "1"
-      OUTPUT1		      "--"
-      SampleTime	      ".01"
-      InputType		      "[ ]"
-      OutputType	      "[ ]"
-      FctDeclaration	      "extern void DisplayWindData();"
-      FctCall		      "DisplayWindData();"
-      OrderingInOutPopup      "None"
-      FctStart		      "None"
-      FctStart_Name	      "Init_onlyOnce"
-      FctStart_Declaration    "inline extern void Init_onlyOnce();"
-      FctStart_Call	      "Init_onlyOnce();"
-      FctInit		      "None"
-      FctInit_Name	      "Init_Reset"
-      FctInit_Declaration     "inline extern void Init_Reset();"
-      FctInit_Call	      "Init_Reset();"
-      PinDigitalInput	      "[]"
-      PinDigitalOutput	      "[]"
-      AnalogueInput	      "[]"
     }
     Block {
       BlockType		      Reference
@@ -1367,6 +1687,707 @@ Model {
       PinDigitalOutput	      "[]"
       AnalogueInput	      "[]"
     }
+    Block {
+      BlockType		      Reference
+      Name		      "Retrieve any air data\n[extra.c]"
+      SID		      280
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      [0, 1]
+      Position		      [120, 472, 270, 518]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.75"
+      List {
+	ListType		RTWdata
+	isFctUpdate		"1"
+	FctDeclaration		"extern void GetAirData(uint8_T* y1);"
+	FctCall			"GetAirData(*%y1);"
+	fctName			"GetAirData"
+	INPUT_SIZE		"1"
+	OUTPUT_SIZE		"13"
+	NBR_INPUT		"0"
+	NBR_OUTPUT		"1"
+	isFctStart		"0"
+	FctStart_Declaration	"inline extern void Init_onlyOnce();"
+	FctStart_Call		"Init_onlyOnce();"
+	FctStart_Name		"Init_onlyOnce"
+	isFctInit		"0"
+	FctInit_Declaration	"inline extern void Init_Reset();"
+	FctInit_Call		"Init_Reset();"
+	FctInit_Name		"Init_Reset"
+      }
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "Output Function"
+      fctName		      "GetAirData"
+      INPUT_SIZE	      "1"
+      INPUT1		      "--"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "13"
+      OUTPUT1		      "uint8"
+      SampleTime	      ".01"
+      InputType		      "[ ]"
+      OutputType	      "[ 2 ]"
+      FctDeclaration	      "extern void GetAirData(uint8_T* y1);"
+      FctCall		      "GetAirData(*%y1);"
+      OrderingInOutPopup      "None"
+      FctStart		      "None"
+      FctStart_Name	      "Init_onlyOnce"
+      FctStart_Declaration    "inline extern void Init_onlyOnce();"
+      FctStart_Call	      "Init_onlyOnce();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Retrieve any water data\n[extra.c]"
+      SID		      289
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      [0, 1]
+      Position		      [120, 577, 270, 623]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.75"
+      List {
+	ListType		RTWdata
+	isFctUpdate		"1"
+	FctDeclaration		"extern void GetWaterData(uint8_T* y1);"
+	FctCall			"GetWaterData(*%y1);"
+	fctName			"GetWaterData"
+	INPUT_SIZE		"1"
+	OUTPUT_SIZE		"13"
+	NBR_INPUT		"0"
+	NBR_OUTPUT		"1"
+	isFctStart		"0"
+	FctStart_Declaration	"inline extern void Init_onlyOnce();"
+	FctStart_Call		"Init_onlyOnce();"
+	FctStart_Name		"Init_onlyOnce"
+	isFctInit		"0"
+	FctInit_Declaration	"inline extern void Init_Reset();"
+	FctInit_Call		"Init_Reset();"
+	FctInit_Name		"Init_Reset"
+      }
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "Output Function"
+      fctName		      "GetWaterData"
+      INPUT_SIZE	      "1"
+      INPUT1		      "--"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "13"
+      OUTPUT1		      "uint8"
+      SampleTime	      ".01"
+      InputType		      "[ ]"
+      OutputType	      "[ 2 ]"
+      FctDeclaration	      "extern void GetWaterData(uint8_T* y1);"
+      FctCall		      "GetWaterData(*%y1);"
+      OrderingInOutPopup      "None"
+      FctStart		      "None"
+      FctStart_Name	      "Init_onlyOnce"
+      FctStart_Declaration    "inline extern void Init_onlyOnce();"
+      FctStart_Call	      "Init_onlyOnce();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Retrieve any wind data\n[extra.c]"
+      SID		      267
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      [0, 1]
+      Position		      [120, 367, 270, 413]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.75"
+      List {
+	ListType		RTWdata
+	isFctUpdate		"1"
+	FctDeclaration		"extern void GetWindData(uint8_T* y1);"
+	FctCall			"GetWindData(*%y1);"
+	fctName			"GetWindData"
+	INPUT_SIZE		"1"
+	OUTPUT_SIZE		"9"
+	NBR_INPUT		"0"
+	NBR_OUTPUT		"1"
+	isFctStart		"0"
+	FctStart_Declaration	"inline extern void Init_onlyOnce();"
+	FctStart_Call		"Init_onlyOnce();"
+	FctStart_Name		"Init_onlyOnce"
+	isFctInit		"0"
+	FctInit_Declaration	"inline extern void Init_Reset();"
+	FctInit_Call		"Init_Reset();"
+	FctInit_Name		"Init_Reset"
+      }
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "Output Function"
+      fctName		      "GetWindData"
+      INPUT_SIZE	      "1"
+      INPUT1		      "--"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "9"
+      OUTPUT1		      "uint8"
+      SampleTime	      ".01"
+      InputType		      "[ ]"
+      OutputType	      "[ 2 ]"
+      FctDeclaration	      "extern void GetWindData(uint8_T* y1);"
+      FctCall		      "GetWindData(*%y1);"
+      OrderingInOutPopup      "None"
+      FctStart		      "None"
+      FctStart_Name	      "Init_onlyOnce"
+      FctStart_Declaration    "inline extern void Init_onlyOnce();"
+      FctStart_Call	      "Init_onlyOnce();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
+    }
+    Block {
+      BlockType		      SubSystem
+      Name		      "Unpack air\ndata"
+      SID		      281
+      Ports		      [1, 4]
+      Position		      [320, 460, 430, 525]
+      LibraryVersion	      "1.31"
+      PermitHierarchicalResolution "ExplicitOnly"
+      TreatAsAtomicUnit	      on
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      MaskType		      "Stateflow"
+      MaskDescription	      "Embedded MATLAB block"
+      MaskDisplay	      "disp('unpack');"
+      MaskSelfModifiable      on
+      MaskIconFrame	      on
+      MaskIconOpaque	      off
+      MaskIconRotate	      "none"
+      MaskPortRotate	      "default"
+      MaskIconUnits	      "autoscale"
+      System {
+	Name			"Unpack air\ndata"
+	Location		[257, 457, 812, 717]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	SIDHighWatermark	30
+	SIDPrevWatermark	29
+	Block {
+	  BlockType		  Inport
+	  Name			  "u"
+	  SID			  1
+	  Position		  [20, 101, 40, 119]
+	  IconDisplay		  "Port number"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  Demux
+	  Name			  " Demux "
+	  SID			  15
+	  Ports			  [1, 1]
+	  Position		  [270, 610, 320, 650]
+	  Outputs		  "1"
+	}
+	Block {
+	  BlockType		  "S-Function"
+	  Name			  " SFunction "
+	  SID			  14
+	  Tag			  "Stateflow S-Function n2k_parsing 1"
+	  Ports			  [1, 5]
+	  Position		  [180, 140, 230, 610]
+	  FunctionName		  "sf_sfun"
+	  PortCounts		  "[1 5]"
+	  EnableBusSupport	  on
+	  Port {
+	    PortNumber		    2
+	    Name		    "newData"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    3
+	    Name		    "temp"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    4
+	    Name		    "pressure"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    5
+	    Name		    "humidity"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Terminator
+	  Name			  " Terminator "
+	  SID			  17
+	  Position		  [460, 621, 480, 639]
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "newData"
+	  SID			  29
+	  Position		  [460, 101, 480, 119]
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "temp"
+	  SID			  5
+	  Position		  [460, 136, 480, 154]
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "pressure"
+	  SID			  18
+	  Position		  [460, 171, 480, 189]
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "humidity"
+	  SID			  30
+	  Position		  [460, 206, 480, 224]
+	  Port			  "4"
+	  IconDisplay		  "Port number"
+	}
+	Line {
+	  SrcBlock		  " SFunction "
+	  SrcPort		  1
+	  DstBlock		  " Demux "
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "u"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "newData"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  2
+	  DstBlock		  "newData"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "temp"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  3
+	  DstBlock		  "temp"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "pressure"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  4
+	  DstBlock		  "pressure"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "humidity"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  5
+	  DstBlock		  "humidity"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  " Demux "
+	  SrcPort		  1
+	  DstBlock		  " Terminator "
+	  DstPort		  1
+	}
+      }
+    }
+    Block {
+      BlockType		      SubSystem
+      Name		      "Unpack air\ndata1"
+      SID		      290
+      Ports		      [1, 4]
+      Position		      [320, 565, 430, 630]
+      LibraryVersion	      "1.31"
+      PermitHierarchicalResolution "ExplicitOnly"
+      TreatAsAtomicUnit	      on
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      MaskType		      "Stateflow"
+      MaskDescription	      "Embedded MATLAB block"
+      MaskDisplay	      "disp('unpack');"
+      MaskSelfModifiable      on
+      MaskIconFrame	      on
+      MaskIconOpaque	      off
+      MaskIconRotate	      "none"
+      MaskPortRotate	      "default"
+      MaskIconUnits	      "autoscale"
+      System {
+	Name			"Unpack air\ndata1"
+	Location		[257, 457, 812, 717]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	SIDHighWatermark	30
+	SIDPrevWatermark	30
+	Block {
+	  BlockType		  Inport
+	  Name			  "u"
+	  SID			  1
+	  Position		  [20, 101, 40, 119]
+	  IconDisplay		  "Port number"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  Demux
+	  Name			  " Demux "
+	  SID			  15
+	  Ports			  [1, 1]
+	  Position		  [270, 610, 320, 650]
+	  Outputs		  "1"
+	}
+	Block {
+	  BlockType		  "S-Function"
+	  Name			  " SFunction "
+	  SID			  14
+	  Tag			  "Stateflow S-Function n2k_parsing 2"
+	  Ports			  [1, 5]
+	  Position		  [180, 140, 230, 610]
+	  FunctionName		  "sf_sfun"
+	  PortCounts		  "[1 5]"
+	  EnableBusSupport	  on
+	  Port {
+	    PortNumber		    2
+	    Name		    "newData"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    3
+	    Name		    "speed"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    4
+	    Name		    "temp"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    5
+	    Name		    "depth"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Terminator
+	  Name			  " Terminator "
+	  SID			  17
+	  Position		  [460, 621, 480, 639]
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "newData"
+	  SID			  29
+	  Position		  [460, 101, 480, 119]
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "speed"
+	  SID			  18
+	  Position		  [460, 136, 480, 154]
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "temp"
+	  SID			  5
+	  Position		  [460, 171, 480, 189]
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "depth"
+	  SID			  30
+	  Position		  [460, 206, 480, 224]
+	  Port			  "4"
+	  IconDisplay		  "Port number"
+	}
+	Line {
+	  SrcBlock		  " SFunction "
+	  SrcPort		  1
+	  DstBlock		  " Demux "
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "u"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "newData"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  2
+	  DstBlock		  "newData"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "speed"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  3
+	  DstBlock		  "speed"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "temp"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  4
+	  DstBlock		  "temp"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "depth"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  5
+	  DstBlock		  "depth"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  " Demux "
+	  SrcPort		  1
+	  DstBlock		  " Terminator "
+	  DstPort		  1
+	}
+      }
+    }
+    Block {
+      BlockType		      SubSystem
+      Name		      "Unpack wind\ndata"
+      SID		      268
+      Ports		      [1, 3]
+      Position		      [320, 358, 430, 422]
+      LibraryVersion	      "1.31"
+      PermitHierarchicalResolution "ExplicitOnly"
+      TreatAsAtomicUnit	      on
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      MaskType		      "Stateflow"
+      MaskDescription	      "Embedded MATLAB block"
+      MaskDisplay	      "disp('unpack');"
+      MaskSelfModifiable      on
+      MaskIconFrame	      on
+      MaskIconOpaque	      off
+      MaskIconRotate	      "none"
+      MaskPortRotate	      "default"
+      MaskIconUnits	      "autoscale"
+      System {
+	Name			"Unpack wind\ndata"
+	Location		[257, 457, 812, 717]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	SIDHighWatermark	37
+	SIDPrevWatermark	37
+	Block {
+	  BlockType		  Inport
+	  Name			  "u"
+	  SID			  1
+	  Position		  [20, 101, 40, 119]
+	  IconDisplay		  "Port number"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  Demux
+	  Name			  " Demux "
+	  SID			  15
+	  Ports			  [1, 1]
+	  Position		  [270, 605, 320, 645]
+	  Outputs		  "1"
+	}
+	Block {
+	  BlockType		  "S-Function"
+	  Name			  " SFunction "
+	  SID			  14
+	  Tag			  "Stateflow S-Function n2k_parsing 6"
+	  Ports			  [1, 4]
+	  Position		  [180, 138, 230, 607]
+	  FunctionName		  "sf_sfun"
+	  PortCounts		  "[1 4]"
+	  EnableBusSupport	  on
+	  Port {
+	    PortNumber		    2
+	    Name		    "newData"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    3
+	    Name		    "speed"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    4
+	    Name		    "direction"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Terminator
+	  Name			  " Terminator "
+	  SID			  17
+	  Position		  [460, 616, 480, 634]
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "newData"
+	  SID			  29
+	  Position		  [460, 101, 480, 119]
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "speed"
+	  SID			  5
+	  Position		  [460, 136, 480, 154]
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "direction"
+	  SID			  18
+	  Position		  [460, 171, 480, 189]
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	}
+	Line {
+	  SrcBlock		  " SFunction "
+	  SrcPort		  1
+	  DstBlock		  " Demux "
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "u"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "newData"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  2
+	  DstBlock		  "newData"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "speed"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  3
+	  DstBlock		  "speed"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "direction"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  4
+	  DstBlock		  "direction"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  " Demux "
+	  SrcPort		  1
+	  DstBlock		  " Terminator "
+	  DstPort		  1
+	}
+      }
+    }
     Line {
       SrcBlock		      "Process all ECAN messages\nfor this timestep\n[extra.c]"
       SrcPort		      1
@@ -1377,6 +2398,93 @@ Model {
       SrcBlock		      "Compare\nTo Constant"
       SrcPort		      1
       DstBlock		      "Message handling status\n(LED D9)"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Retrieve any wind data\n[extra.c]"
+      SrcPort		      1
+      DstBlock		      "Unpack wind\ndata"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Unpack wind\ndata"
+      SrcPort		      1
+      Points		      [60, 0; 0, -6]
+      DstBlock		      "Display wind\ndata"
+      DstPort		      enable
+    }
+    Line {
+      SrcBlock		      "Unpack wind\ndata"
+      SrcPort		      3
+      DstBlock		      "Display wind\ndata"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Unpack wind\ndata"
+      SrcPort		      2
+      DstBlock		      "Display wind\ndata"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Retrieve any air data\n[extra.c]"
+      SrcPort		      1
+      DstBlock		      "Unpack air\ndata"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Unpack air\ndata"
+      SrcPort		      1
+      Points		      [60, 0; 0, -6]
+      DstBlock		      "Display air\ndata"
+      DstPort		      enable
+    }
+    Line {
+      SrcBlock		      "Unpack air\ndata"
+      SrcPort		      3
+      DstBlock		      "Display air\ndata"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Unpack air\ndata"
+      SrcPort		      2
+      DstBlock		      "Display air\ndata"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Unpack air\ndata"
+      SrcPort		      4
+      DstBlock		      "Display air\ndata"
+      DstPort		      3
+    }
+    Line {
+      SrcBlock		      "Retrieve any water data\n[extra.c]"
+      SrcPort		      1
+      DstBlock		      "Unpack air\ndata1"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Unpack air\ndata1"
+      SrcPort		      1
+      Points		      [60, 0; 0, -6]
+      DstBlock		      "Display water\ndata"
+      DstPort		      enable
+    }
+    Line {
+      SrcBlock		      "Unpack air\ndata1"
+      SrcPort		      3
+      DstBlock		      "Display water\ndata"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Unpack air\ndata1"
+      SrcPort		      4
+      DstBlock		      "Display water\ndata"
+      DstPort		      3
+    }
+    Line {
+      SrcBlock		      "Unpack air\ndata1"
+      SrcPort		      2
+      DstBlock		      "Display water\ndata"
       DstPort		      1
     }
     Annotation {
@@ -1401,20 +2509,547 @@ Stateflow {
     name		    "n2k_parsing"
     created		    "18-Jul-2011 17:05:30"
     isLibrary		    0
-    firstTarget		    2
+    firstTarget		    31
     sfVersion		    75014000
   }
-  target {
+  chart {
     id			    2
+    name		    "Unpack air\ndata"
+    windowPosition	    [412.266 293.766 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1600 900 1.333333333333333]
+    treeNode		    [0 3 0 0]
+    firstTransition	    5
+    firstJunction	    4
+    viewObj		    2
+    machine		    1
+    toolbarMode		    LIBRARY_TOOLBAR
+    subviewS {
+    }
+    ssIdHighWaterMark	    26
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    6
+    chartFileNumber	    1
+    disableImplicitCasting  1
+    eml {
+      name		      "unpack"
+    }
+  }
+  state {
+    id			    3
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    2
+    treeNode		    [2 0 0 0]
+    superState		    SUBCHART
+    subviewer		    2
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function [newData, temp, pressure, humidity] = unpack(u)\n%#eml\n\ntemp = typecast(u(1:4), 'singl"
+      "e');\npressure = typecast(u(5:8), 'single');\nhumidity = typecast(u(9:12), 'single');\nnewData = u(13);"
+      editorLayout	      "100 M4x1[652 87 800 743]"
+    }
+  }
+  junction {
+    id			    4
+    position		    [23.5747 49.5747 7]
+    chart		    2
+    linkNode		    [2 0 0]
+    subviewer		    2
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    5
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      4
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    2
+    linkNode		    [2 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    2
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    6
+    ssIdNumber		    17
+    name		    "newData"
+    linkNode		    [2 0 7]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    7
+    ssIdNumber		    4
+    name		    "u"
+    linkNode		    [2 6 8]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_UINT8_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+    }
+    dataType		    "uint8"
+  }
+  data {
+    id			    8
+    ssIdNumber		    5
+    name		    "temp"
+    linkNode		    [2 7 9]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    9
+    ssIdNumber		    6
+    name		    "pressure"
+    linkNode		    [2 8 10]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    10
+    ssIdNumber		    26
+    name		    "humidity"
+    linkNode		    [2 9 0]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  instance {
+    id			    11
+    name		    "Unpack air\ndata"
+    machine		    1
+    chart		    2
+  }
+  chart {
+    id			    12
+    name		    "Unpack air\ndata1"
+    windowPosition	    [427.266 278.766 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1600 900 1.333333333333333]
+    treeNode		    [0 13 0 0]
+    firstTransition	    15
+    firstJunction	    14
+    viewObj		    12
+    machine		    1
+    toolbarMode		    LIBRARY_TOOLBAR
+    subviewS {
+    }
+    ssIdHighWaterMark	    26
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    16
+    chartFileNumber	    2
+    disableImplicitCasting  1
+    eml {
+      name		      "unpack"
+    }
+  }
+  state {
+    id			    13
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    12
+    treeNode		    [12 0 0 0]
+    superState		    SUBCHART
+    subviewer		    12
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function [newData, speed, temp, depth] = unpack(u)\n%#eml\n\nspeed = typecast(u(1:4), 'single');\n"
+      "temp = typecast(u(5:8), 'single');\ndepth = typecast(u(9:12), 'single');\nnewData = u(13);"
+      editorLayout	      "100 M4x1[652 87 800 743]"
+    }
+  }
+  junction {
+    id			    14
+    position		    [23.5747 49.5747 7]
+    chart		    12
+    linkNode		    [12 0 0]
+    subviewer		    12
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    15
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      14
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    12
+    linkNode		    [12 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    12
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    16
+    ssIdNumber		    17
+    name		    "newData"
+    linkNode		    [12 0 17]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    17
+    ssIdNumber		    6
+    name		    "speed"
+    linkNode		    [12 16 18]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    18
+    ssIdNumber		    4
+    name		    "u"
+    linkNode		    [12 17 19]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_UINT8_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+    }
+    dataType		    "uint8"
+  }
+  data {
+    id			    19
+    ssIdNumber		    5
+    name		    "temp"
+    linkNode		    [12 18 20]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    20
+    ssIdNumber		    26
+    name		    "depth"
+    linkNode		    [12 19 0]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  instance {
+    id			    21
+    name		    "Unpack air\ndata1"
+    machine		    1
+    chart		    12
+  }
+  chart {
+    id			    22
+    name		    "Unpack wind\ndata"
+    windowPosition	    [397.266 308.766 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1600 900 1.333333333333333]
+    treeNode		    [0 23 0 0]
+    firstTransition	    25
+    firstJunction	    24
+    viewObj		    22
+    machine		    1
+    toolbarMode		    LIBRARY_TOOLBAR
+    subviewS {
+    }
+    ssIdHighWaterMark	    25
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    26
+    chartFileNumber	    6
+    disableImplicitCasting  1
+    eml {
+      name		      "unpack"
+    }
+  }
+  state {
+    id			    23
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    22
+    treeNode		    [22 0 0 0]
+    superState		    SUBCHART
+    subviewer		    22
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function [newData, speed, direction] = unpack(u)\n%#eml\n\nspeed = typecast(u(1:4), 'single');\nd"
+      "irection = typecast(u(5:8), 'single');\nnewData = u(9);"
+      editorLayout	      "100 M4x1[652 87 800 743]"
+    }
+  }
+  junction {
+    id			    24
+    position		    [23.5747 49.5747 7]
+    chart		    22
+    linkNode		    [22 0 0]
+    subviewer		    22
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    25
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      24
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    22
+    linkNode		    [22 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    22
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    26
+    ssIdNumber		    17
+    name		    "newData"
+    linkNode		    [22 0 27]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    27
+    ssIdNumber		    4
+    name		    "u"
+    linkNode		    [22 26 28]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_UINT8_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+    }
+    dataType		    "uint8"
+  }
+  data {
+    id			    28
+    ssIdNumber		    5
+    name		    "speed"
+    linkNode		    [22 27 29]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    29
+    ssIdNumber		    6
+    name		    "direction"
+    linkNode		    [22 28 0]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  instance {
+    id			    30
+    name		    "Unpack wind\ndata"
+    machine		    1
+    chart		    22
+  }
+  target {
+    id			    31
     name		    "sfun"
     description		    "Default Simulink S-Function Target."
     machine		    1
-    linkNode		    [1 0 3]
+    linkNode		    [1 0 32]
   }
   target {
-    id			    3
+    id			    32
     name		    "rtw"
     machine		    1
-    linkNode		    [1 2 0]
+    linkNode		    [1 31 0]
   }
 }
