@@ -143,27 +143,42 @@ unsigned char ParsePgn130310(unsigned char data[8], unsigned char *seqId, float 
 	}
 	
 	// Water temperature data. Read in as centiKelvin and converted to Celsius.
+	// A value of 0xFFFF implies invalid data.
 	if (waterTemp) {
 		unsigned int unpacked = data[1];
 		unpacked |= ((unsigned int)data[2]) << 8;
-		*waterTemp = ((float)unpacked) / 100.0 - 273.15;
-		fieldStatus |= 0x02;
+		if (unpacked != 0xFFFF) {
+			*waterTemp = ((float)unpacked) / 100.0 - 273.15;
+			fieldStatus |= 0x02;
+		} else {
+			*waterTemp = 0;
+		}
 	}
 	
 	// Air temperature data. Read in as centiKelvin and converted to Celsius.
+	// A value of 0xFFFF implies invalid data.
 	if (airTemp) {
 		unsigned int unpacked = data[3];
 		unpacked |= ((unsigned int)data[4]) << 8;
-		*airTemp = ((float)unpacked) / 100.0 - 273.15;
-		fieldStatus |= 0x04;
+		if (unpacked != 0xFFFF) {
+			*airTemp = ((float)unpacked) / 100.0 - 273.15;
+			fieldStatus |= 0x04;
+		} else {
+			*airTemp = 0;
+		}
 	}
 
 	// Air pressure data. Read in as hectoPascals and converted to kiloPascals.
+	// A value of 0xFFFF implies invalid data.
 	if (airPressure) {
 		unsigned int unpacked = data[5];
 		unpacked |= ((unsigned int)data[6]) << 8;
-		*airPressure = ((float)unpacked) * 0.1;
-		fieldStatus |= 0x08;
+		if (unpacked != 0xFFFF) {
+			*airPressure = ((float)unpacked) * 0.1;
+			fieldStatus |= 0x08;
+		} else {
+			*airPressure = 0;
+		}
 	}
 	
 	return fieldStatus;

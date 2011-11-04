@@ -1,75 +1,68 @@
 #include <stdio.h>
 #include <string.h>
 #include <stddef.h>
+#include <stdbool.h>
+
 #include "uart2.h"
 #include "ecanDefinitions.h"
 #include "nmea2000.h"
 
-#define TRUE 1
-#define FALSE 0
+struct {
+	float speed;
+	float direction;
+	bool newData;
+} windData;
+
+struct {
+	float temp;
+	float pressure;
+	float humidity;
+	bool newData;
+} airData;
+
+struct {
+	float speed;
+	float temp;
+	float depth;
+	bool newData;
+} waterData;
+
 
 void initCommunications() {
 	initUart2(42); // Initialize UART2 for 57600 baud.
 }
 
-void displayWindData(unsigned char data[8]) {
-	
-	float airSpeed, direction;
-	
-	unsigned char result = ParsePgn130306(data, NULL, &airSpeed, &direction);
-	
-	char text[120];
-	sprintf(text, "Wind data - speed: %2.1f %c (m/s), dir: %2.1f %c (rads)\n", airSpeed, (result & 0x02)?'V':'I', direction, (result & 0x04)?'V':'I');
-	
-	uart2EnqueueData((unsigned char *)text, strlen(text));
+void DisplayWindData(unsigned char data[8]) {
+	if (windData.newData) {
+		char text[120];
+		sprintf(text, "Wind data - speed: %2.1f (m/s), dir: %2.1f (rads)\n", windData.speed, windData.direction);
+		
+		uart2EnqueueData((unsigned char *)text, strlen(text));
+		windData.newData = false;
+	}
 }
 
-void displayAirData(unsigned char data[8]) {
-	
-	float temp, humidity, pressure;
-	ParsePgn130311(data, NULL, &temp, &humidity, &pressure);
-	
-	char text[120];
-	sprintf(text, "Air data - temp: %2.1f (deg C), humid: %2.1f (%%), press: %2.1f (kPa)\n", temp, humidity, pressure);
+void DisplayAirData(unsigned char data[8]) {
+	if (airData.newData) {		
+		char text[120];
+		sprintf(text, "Air data - temp: %2.1f (deg C), humid: %2.1f (%%), press: %2.1f (kPa)\n", airData.temp, airData.humidity, airData.pressure);
 
-	uart2EnqueueData((unsigned char *)text, strlen(text));
+		uart2EnqueueData((unsigned char *)text, strlen(text));
+		airData.newData = false;
+	}
 }
 
-void displayWaterSpeed(unsigned char data[8]){
-	
-	// Add water speed. Units from the message are cm/s
-	float speed;
-	ParsePgn128259(data, NULL, &speed);
-	
-	char text[120];
-	sprintf(text, "Water speed data - speed: %2.1f (m/s)\n", speed);
-	
-	uart2EnqueueData((unsigned char *)text, strlen(text));
+void DisplayWaterData(unsigned char data[8]){
+	if (waterData.newData) {
+		char text[120];
+		sprintf(text, "Water data - speed: %2.1f (m/s), temp: %2.1f (deg C), depth: %2.1f (m)\n", waterData.speed, waterData.temp, waterData.depth);
+		
+		uart2EnqueueData((unsigned char *)text, strlen(text));
+		waterData.newData = false;
+	}
 }
 
-void displayWaterTemp(unsigned char data[8]){
-	
-	float waterTemp;
-	ParsePgn130310(data, NULL, &waterTemp, NULL, NULL);
-	
-	char text[120];
-	sprintf(text, "Water temp data - temp: %2.1f (deg C)\n", waterTemp);
-	
-	uart2EnqueueData((unsigned char *)text, strlen(text));
-}
-
-unsigned char displayWaterDepth(unsigned char data[8]){
-	
-	float depth, offset;
-	ParsePgn128267(data, NULL, &depth, &offset);
-
-	char text[120];
-	sprintf(text, "Water depth data - depth: %2.1f (m), offset: %2.1f (m)\n", depth, offset);
-	
-	uart2EnqueueData((unsigned char *)text, strlen(text));
-}
-
-void displayUnhandledId(unsigned long pgn, unsigned char data[8]) {
+void DisplayUnhandledId(unsigned long pgn, unsigned char data[8]) {
 	char text[120];
 
 	sprintf(text, "PGN %lu (%02x %02x %02x %02x %02x %02x %02x %02x) - Unprocessed\n", data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], pgn);
@@ -89,22 +82,28 @@ unsigned char processAllMessages() {
 			pgn = ISO11783Decode(msg.id, 0, 0, 0);
 			switch (pgn) {
 			case 130306:
-				displayWindData(msg.payload);
+				ParsePgn130306(msg.payload, NULL, &windData.speed, &windData.direction);
+				windData.newData = true;
 				break;
 			case 130311:
-				displayAirData(msg.payload);
+				ParsePgn130311(msg.payload, NULL, &airData.temp, &airData.humidity, &airData.pressure);
+				airData.newData = true;
 				break;
 			case 128259:
-				displayWaterSpeed(msg.payload);
+				ParsePgn128259(msg.payload, NULL, &waterData.speed);
+				waterData.newData = true;
 				break;
 			case 130310:
-				displayWaterTemp(msg.payload);
+				ParsePgn130310(msg.payload, NULL, &waterData.temp, NULL, NULL);
+				waterData.newData = true;
 				break;
 			case 128267:
-				displayWaterDepth(msg.payload);
+				if (ParsePgn128267(msg.payload, NULL, &waterData.depth, NULL) & 0x02) {
+					waterData.newData = true;
+				}
 				break;
 			default:
-				//displayUnhandledId(pgn, msg.payload);
+				//DisplayUnhandledId(pgn, msg.payload);
 				break;
 			}
 
