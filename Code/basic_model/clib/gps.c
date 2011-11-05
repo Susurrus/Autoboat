@@ -46,7 +46,7 @@ THE SOFTWARE.
 
 #include "gps.h"
 #include "uart2.h"
-#include "nmea.h"
+#include "nmea0183.h"
 #include "types.h"
 #include "conversions.h"
 

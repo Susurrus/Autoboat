@@ -1,4 +1,4 @@
-#include "nmea.h"
+#include "nmea0183.h"
 
 #include <string.h>
 
