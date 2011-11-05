@@ -111,29 +111,33 @@ void updateStateData(byte message[]) {
 
   // Save the last set of data into an array list
   if (recording) {
-    csvOutput.format("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d,%f,%f,%f,%d,%d,%d,%d,%d,%d,%f,%f,%f,%d,%d,%d,%d,%f,%d,%d,%d,%f,%d,%f,%f,%d,%d,%f,%d,%f,%d,%f,%d,%f,%d\n", 
-    L2.x, L2.y, 
-    globalPosition.x, globalPosition.y, 
-    heading, 
-    localPosition.x, localPosition.y, 
-    velocity.x, velocity.y, 
-    waypoint0.x, waypoint0.y, 
-    waypoint1.x, waypoint1.y, 
-    rudderPot, rudderPortLimit?1:0, rudderSbLimit?1:0, 
-    gpsLatitude, gpsLongitude, gpsAltitude, 
-    gpsYear, gpsMonth, gpsDay, gpsHour, gpsMinute, gpsSecond, gpsCourse, gpsSpeed, gpsHdop, gpsFix, gpsSatellites, 
-    reset, 
-    load, 
-    rudderAngle, 
-    propRpm, 
-    statusBits, 
-    ordering, 
-    rudderAngleCommand, 
-    throttleCommand, 
-    batteryVoltage, 
-    batteryAmperage, 
-    lowRudderCalLimit, highRudderCalLimit,
-    revoHeading, revoMagStatus, revoPitch, revoPitchStatus, revoRoll, revoRollStatus, revoDip, revoMagneticMagnitude);
+    csvOutput.format(
+      "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d,%f,%f,%f,%d,%d,%d,%d,%d,%d,%f,%f,%f,%d,%d,%d,%d,%f,%d,%d,%d,%f,%d,%f,%f,%d,%d,%f,%d,%f,%d,%f,%d,%f,%d,%f,%f,%f,%f,%f,%f,%f,%f\n", 
+      L2.x, L2.y, 
+      globalPosition.x, globalPosition.y, 
+      heading, 
+      localPosition.x, localPosition.y, 
+      velocity.x, velocity.y, 
+      waypoint0.x, waypoint0.y, 
+      waypoint1.x, waypoint1.y, 
+      rudderPot, rudderPortLimit?1:0, rudderSbLimit?1:0, 
+      gpsLatitude, gpsLongitude, gpsAltitude, 
+      gpsYear, gpsMonth, gpsDay, gpsHour, gpsMinute, gpsSecond, gpsCourse, gpsSpeed, gpsHdop, gpsFix, gpsSatellites, 
+      reset, 
+      load, 
+      rudderAngle, 
+      propRpm, 
+      statusBits, 
+      ordering, 
+      rudderAngleCommand, 
+      throttleCommand, 
+      batteryVoltage, 
+      batteryAmperage, 
+      lowRudderCalLimit, highRudderCalLimit,
+      revoHeading, revoMagStatus, revoPitch, revoPitchStatus, revoRoll, revoRollStatus, revoDip, revoMagneticMagnitude,
+      windSpeed, windDirection, airTemp, airPressure, airHumidity,
+      waterSpeed, waterTemp, waterDepth
+    );
     csvOutput.flush();
     recordedMessages++;
   }
@@ -190,6 +194,14 @@ void updateStateData(byte message[]) {
     revoRollStatus = din.readByte();
     revoDip = din.readFloat();
     revoMagneticMagnitude = din.readShort();
+    windSpeed = ((float)din.readShort()) / 100;
+    windDirection = ((float)din.readShort()) / 100;
+    airTemp = ((float)din.readShort()) / 100;
+    airPressure = ((float)din.readShort()) / 100;
+    airHumidity = ((float)din.readShort()) / 100;
+    waterSpeed = ((float)din.readShort()) / 100;
+    waterTemp = ((float)din.readShort()) / 100;
+    waterDepth = ((float)din.readShort()) / 100;
   } 
   catch (Exception e) {
     e.printStackTrace();

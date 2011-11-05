@@ -68,13 +68,21 @@ float revoRoll;
 byte revoRollStatus;
 float revoDip;
 int revoMagneticMagnitude;
+float windSpeed;
+float windDirection;
+float airTemp;
+float airPressure;
+float airHumidity;
+float waterSpeed;
+float waterTemp;
+float waterDepth;
 
 // Rendering variables
 PFont regularFont;
 PFont boldFont;
 
 void setup() {
-  size(800, 600);
+  size(1000, 600);
   frameRate(50);
   
   regularFont = loadFont("DejaVuSansMono-15.vlw");
@@ -359,6 +367,16 @@ void draw() {
   text(String.format("Dip: %3.2f", revoDip), 330, 50);
   text(String.format("MM: %d", revoMagneticMagnitude), 330, 65);
   
+  // Add WSO100 air/wind data
+  text(String.format("Wind speed: %2.2f m/s", windSpeed, 780, 50);
+  text(String.format("Wind dir: %2.2f \u00B0", windDirection * 180 / Math.PI), 780, 80);
+  text(String.format("Air temp: %2.2f \u00B0C", airTemp, 780, 110);
+  text(String.format("Air pressure: %2.2f kPa", airPressure, 780, 140);
+  text(String.format("Air humidity: %2.2f %%", airHumidity, 780, 170);
+  text(String.format("Water speed: %2.2f m/s", waterSpeed, 780, 200);
+  text(String.format("Water temp: %2.2f \u00B0C", waterTemp, 780, 230);
+  text(String.format("Water depth: %2.2f m", waterDepth, 780, 260);
+  
   // Draw the velocity vector values
   text(String.format("%2.1f m/s", velocity.mag()), 200, 285);
   text(String.format("%2.1f knots", velocity.mag()*1.944), 200, 300);
@@ -508,7 +526,8 @@ public void startRecording() {
     Calendar cal = Calendar.getInstance();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-hhmmss");
     csvOutput = createWriter(sketchPath(sdf.format(cal.getTime())+".csv"));
-    csvOutput.print("L2.north, L2.east, globalPosition.lat, globalPosition.lon, heading, localPosition.north, localPosition.east, velocity.north, velocity.east, waypoint0.north, waypoint0.east, waypoint1.north, waypoint1.east, rudderPot, rudderPortLimit, rudderSbLimit, gpsLatitude, gpsLongitude, gpsAltitude, gpsYear, gpsMonth, gpsDay, gpsHour, gpsMinute, gpsSecond, gpsCourse, gpsSpeed, gpsHdop, gpsFix, gpsSatellites, reset, load, rudderAngle, propRpm, statusBits, ordering, rudderAngleCommand, throttleCommand, batteryVoltage, batteryAmperage, lowRudderCalLimit, highRudderCalLimit, revoHeading, revoMagStatus, revoPitch, revoPitchStatus, revoRoll, revoRollStatus, revoDip, revoMagneticMagnitude\n");
+    csvOutput.print("% Units: m, m, m, m, rad east from north, m, m, m, m, m, m, m, m, none, none, none, rad, rad, m, none, none, none, none, none, none, rad, m/s, none, none, none, none, none, rads, RPM, none, none, rad, rpm, V, A, none, none, rad, none, rad, none, rad, none, none, none, m/s, rad east from north, deg C, kPa, %, m/s, deg C, m\n");
+    csvOutput.print("L2.north, L2.east, globalPosition.lat, globalPosition.lon, heading, localPosition.north, localPosition.east, velocity.north, velocity.east, waypoint0.north, waypoint0.east, waypoint1.north, waypoint1.east, rudderPot, rudderPortLimit, rudderSbLimit, gpsLatitude, gpsLongitude, gpsAltitude, gpsYear, gpsMonth, gpsDay, gpsHour, gpsMinute, gpsSecond, gpsCourse, gpsSpeed, gpsHdop, gpsFix, gpsSatellites, reset, load, rudderAngle, propRpm, statusBits, ordering, rudderAngleCommand, throttleCommand, batteryVoltage, batteryAmperage, lowRudderCalLimit, highRudderCalLimit, revoHeading, revoMagStatus, revoPitch, revoPitchStatus, revoRoll, revoRollStatus, revoDip, revoMagneticMagnitude, windSpeed, windDirection, airTemp, airPressure, airHumidity, waterSpeed, waterTemp, waterDepth\n");
   }
   catch (Exception e){
     println("Failed to write output to a .csv file");
