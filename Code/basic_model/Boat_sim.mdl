@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2236"
+    ComputedModelVersion    "1.2237"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,9 +26,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Oct 26 14:21:18 2011"
-  RTWModifiedTimeStamp	  241539678
-  ModelVersionFormat	  "1.%<AutoIncrement:2236>"
+  LastModifiedDate	  "Tue Nov 08 18:14:47 2011"
+  RTWModifiedTimeStamp	  242676886
+  ModelVersionFormat	  "1.%<AutoIncrement:2237>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -936,6 +936,14 @@ Model {
       SampleTime	      "-1"
     }
     Block {
+      BlockType		      RateLimiter
+      RisingSlewLimit	      "1"
+      FallingSlewLimit	      "-1"
+      SampleTimeMode	      "continuous"
+      InitialCondition	      "0"
+      LinearizeAsGain	      on
+    }
+    Block {
       BlockType		      RateTransition
       Integrity		      on
       Deterministic	      on
@@ -1084,7 +1092,7 @@ Model {
   }
   System {
     Name		    "Boat_sim"
-    Location		    [298, 82, 1581, 830]
+    Location		    [202, 74, 1581, 822]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1098,7 +1106,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "141"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    6192
+    SIDHighWatermark	    6197
     Block {
       BlockType		      BusSelector
       Name		      "Bus\nSelector"
@@ -5363,7 +5371,7 @@ Model {
       System {
 	Name			"Plant"
 	Location		[298, 82, 1598, 847]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -5422,8 +5430,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Actuator\nDynamics"
-	    Location		    [202, 74, 1598, 822]
-	    Open		    off
+	    Location		    [202, 74, 1598, 839]
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -5879,6 +5887,20 @@ Model {
 	      TagVisibility	      "global"
 	    }
 	    Block {
+	      BlockType		      Reference
+	      Name		      "Integer Delay"
+	      SID		      6193
+	      Ports		      [1, 1]
+	      Position		      [365, 328, 400, 362]
+	      ShowName		      off
+	      LibraryVersion	      "1.216"
+	      SourceBlock	      "simulink/Discrete/Integer Delay"
+	      SourceType	      "Integer Delay"
+	      vinit		      "0.0"
+	      samptime		      ".01"
+	      NumDelays		      "10"
+	    }
+	    Block {
 	      BlockType		      Logic
 	      Name		      "Logical\nOperator1"
 	      SID		      5896
@@ -5889,6 +5911,16 @@ Model {
 	      OutDataTypeMode	      "boolean"
 	      LogicDataType	      "fixdt(0, 8)"
 	      OutDataTypeStr	      "boolean"
+	    }
+	    Block {
+	      BlockType		      RateLimiter
+	      Name		      "Rate Limiter"
+	      SID		      6194
+	      Position		      [455, 330, 485, 360]
+	      ShowName		      off
+	      RisingSlewLimit	      ".45"
+	      FallingSlewLimit	      "-.45"
+	      SampleTimeMode	      "inherited"
 	    }
 	    Block {
 	      BlockType		      Saturate
@@ -5939,222 +5971,6 @@ Model {
 	      MaskValueString	      "15|0.8|0"
 	      System {
 		Name			"Second Order Linear Actuator1"
-		Location		[203, 180, 994, 397]
-		Open			off
-		ModelBrowserVisibility	on
-		ModelBrowserWidth	200
-		ScreenColor		"white"
-		PaperOrientation	"landscape"
-		PaperPositionMode	"auto"
-		PaperType		"usletter"
-		PaperUnits		"inches"
-		TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
-		TiledPageScale		1
-		ShowPageBoundaries	off
-		ZoomFactor		"100"
-		SIDHighWatermark	12
-		SIDPrevWatermark	12
-		Block {
-		  BlockType		  Inport
-		  Name			  "Ac_dem"
-		  SID			  2
-		  Position		  [75, 53, 105, 67]
-		  IconDisplay		  "Port number"
-		  OutDataType		  "sfix(16)"
-		  OutScaling		  "2^0"
-		}
-		Block {
-		  BlockType		  Gain
-		  Name			  "2*zeta * wn"
-		  SID			  3
-		  Position		  [390, 117, 450, 143]
-		  BlockMirror		  on
-		  Gain			  "2.0 * z_fin* wn_fin"
-		  ParameterDataType	  "sfix(16)"
-		  ParameterScaling	  "2^0"
-		  OutDataType		  "sfix(16)"
-		  OutScaling		  "2^0"
-		}
-		Block {
-		  BlockType		  DiscreteIntegrator
-		  Name			  "Discrete-Time\nIntegrator1"
-		  SID			  11
-		  Ports			  [1, 1]
-		  Position		  [505, 44, 540, 76]
-		  ShowName		  off
-		  IntegratorMethod	  "Integration: Forward Euler"
-		  ExternalReset		  "none"
-		  InitialConditionSource  "internal"
-		  SampleTime		  "-1"
-		  OutDataType		  "fixdt(1, 16)"
-		  OutScaling		  "2^0"
-		  UpperSaturationLimit	  "1"
-		  LowerSaturationLimit	  "-1"
-		  ICPrevOutput		  "DiscIntNeverNeededParam"
-		  ICPrevScaledInput	  "DiscIntNeverNeededParam"
-		}
-		Block {
-		  BlockType		  DiscreteIntegrator
-		  Name			  "Discrete-Time\nIntegrator2"
-		  SID			  12
-		  Ports			  [1, 1]
-		  Position		  [400, 44, 435, 76]
-		  ShowName		  off
-		  IntegratorMethod	  "Integration: Forward Euler"
-		  ExternalReset		  "none"
-		  InitialConditionSource  "internal"
-		  SampleTime		  "-1"
-		  OutDataType		  "fixdt(1, 16)"
-		  OutScaling		  "2^0"
-		  UpperSaturationLimit	  "1"
-		  LowerSaturationLimit	  "-1"
-		  ICPrevOutput		  "DiscIntNeverNeededParam"
-		  ICPrevScaledInput	  "DiscIntNeverNeededParam"
-		}
-		Block {
-		  BlockType		  Sum
-		  Name			  "Sum2"
-		  SID			  6
-		  Ports			  [2, 1]
-		  Position		  [330, 40, 360, 80]
-		  ShowName		  off
-		  IconShape		  "round"
-		  Inputs		  "|+-"
-		  OutDataType		  "sfix(16)"
-		  OutScaling		  "2^0"
-		}
-		Block {
-		  BlockType		  Sum
-		  Name			  "Sum3"
-		  SID			  7
-		  Ports			  [2, 1]
-		  Position		  [145, 40, 175, 80]
-		  ShowName		  off
-		  IconShape		  "round"
-		  Inputs		  "|+-"
-		  OutDataType		  "sfix(16)"
-		  OutScaling		  "2^0"
-		}
-		Block {
-		  BlockType		  Gain
-		  Name			  "wn^2"
-		  SID			  8
-		  Position		  [190, 40, 250, 80]
-		  Gain			  "wn_fin* wn_fin"
-		  ParameterDataType	  "sfix(16)"
-		  ParameterScaling	  "2^0"
-		  OutDataType		  "sfix(16)"
-		  OutScaling		  "2^0"
-		}
-		Block {
-		  BlockType		  Outport
-		  Name			  "Ac_ac"
-		  SID			  9
-		  Position		  [655, 53, 685, 67]
-		  IconDisplay		  "Port number"
-		  OutDataType		  "sfix(16)"
-		  OutScaling		  "2^0"
-		  InitialOutput		  "0"
-		}
-		Line {
-		  SrcBlock		  "Discrete-Time\nIntegrator1"
-		  SrcPort		  1
-		  Points		  [80, 0]
-		  Branch {
-		    DstBlock		    "Ac_ac"
-		    DstPort		    1
-		  }
-		  Branch {
-		    Points		    [0, 120; -465, 0]
-		    DstBlock		    "Sum3"
-		    DstPort		    2
-		  }
-		}
-		Line {
-		  SrcBlock		  "wn^2"
-		  SrcPort		  1
-		  DstBlock		  "Sum2"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Sum2"
-		  SrcPort		  1
-		  DstBlock		  "Discrete-Time\nIntegrator2"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Discrete-Time\nIntegrator2"
-		  SrcPort		  1
-		  Points		  [35, 0]
-		  Branch {
-		    Points		    [0, 70]
-		    DstBlock		    "2*zeta * wn"
-		    DstPort		    1
-		  }
-		  Branch {
-		    DstBlock		    "Discrete-Time\nIntegrator1"
-		    DstPort		    1
-		  }
-		}
-		Line {
-		  SrcBlock		  "2*zeta * wn"
-		  SrcPort		  1
-		  Points		  [-40, 0]
-		  DstBlock		  "Sum2"
-		  DstPort		  2
-		}
-		Line {
-		  SrcBlock		  "Ac_dem"
-		  SrcPort		  1
-		  DstBlock		  "Sum3"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Sum3"
-		  SrcPort		  1
-		  DstBlock		  "wn^2"
-		  DstPort		  1
-		}
-	      }
-	    }
-	    Block {
-	      BlockType		      SubSystem
-	      Name		      "Second Order Linear Actuator2"
-	      SID		      4001
-	      Ports		      [1, 1]
-	      Position		      [405, 324, 505, 366]
-	      ShowName		      off
-	      AncestorBlock	      "aerolibactuator/Second Order Linear Actuator"
-	      LibraryVersion	      "*1.34"
-	      MinAlgLoopOccurrences   off
-	      PropExecContextOutsideSubsystem off
-	      RTWSystemCode	      "Auto"
-	      FunctionWithSeparateData off
-	      Opaque		      off
-	      RequestExecContextInheritance off
-	      MaskHideContents	      off
-	      MaskType		      "Second Order Linear Actuator"
-	      MaskDescription	      "Implement a second-order actuator model"
-	      MaskHelp		      "eval('asbhelp');"
-	      MaskPromptString	      "Natural frequency:|Damping ratio:|Initial position:"
-	      MaskStyleString	      "edit,edit,edit"
-	      MaskTunableValueString  "on,on,on"
-	      MaskCallbackString      "||"
-	      MaskEnableString	      "on,on,on"
-	      MaskVisibilityString    "on,on,on"
-	      MaskToolTipString	      "on,on,on"
-	      MaskVariables	      "wn_fin=@1;z_fin=@2;fin_act_0=@3;"
-	      MaskInitialization      "aeroicon('aeroblk');"
-	      MaskDisplay	      "port_label('input',1,'A_{demand}','texmode','on');\nport_label('output',1,'A_{actual}','texm"
-	      "ode','on');"
-	      MaskIconFrame	      on
-	      MaskIconOpaque	      on
-	      MaskIconRotate	      "none"
-	      MaskPortRotate	      "default"
-	      MaskIconUnits	      "autoscale"
-	      MaskValueString	      "15|0.8|0"
-	      System {
-		Name			"Second Order Linear Actuator2"
 		Location		[203, 180, 994, 397]
 		Open			off
 		ModelBrowserVisibility	on
@@ -7227,7 +7043,7 @@ Model {
 	    Line {
 	      SrcBlock		      "Embedded\nMATLAB Function"
 	      SrcPort		      1
-	      DstBlock		      "Second Order Linear Actuator2"
+	      DstBlock		      "Integer Delay"
 	      DstPort		      1
 	    }
 	    Line {
@@ -7289,7 +7105,7 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "Second Order Linear Actuator2"
+	      SrcBlock		      "Rate Limiter"
 	      SrcPort		      1
 	      DstBlock		      "Saturation"
 	      DstPort		      1
@@ -7363,11 +7179,17 @@ Model {
 	      DstBlock		      "r_d"
 	      DstPort		      1
 	    }
+	    Line {
+	      SrcBlock		      "Integer Delay"
+	      SrcPort		      1
+	      DstBlock		      "Rate Limiter"
+	      DstPort		      1
+	    }
 	    Annotation {
 	      Name		      "This subsystem adds 2nd-order dynamics to the actuator systems.\nThis includes the propeller, ball"
 	      "ast, and rudder.\n\nNOTE: The parameters of each system is uncalibrated, these are\npurely here to provide a ba"
 	      "seline estimate of dynamics."
-	      Position		      [651, 43]
+	      Position		      [506, 103]
 	      HorizontalAlignment     "left"
 	    }
 	    Annotation {
