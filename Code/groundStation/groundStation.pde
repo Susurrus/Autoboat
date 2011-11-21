@@ -156,6 +156,10 @@ void draw() {
   text("Prop speed", 630, 350);
   text("Mode:", 630, 400);
   text("Status:", 20, 170);
+  text("WSO100", 780, 20);
+  text("DST800", 780, 200);
+  text("Revo GS", 780, 320);
+  
   textFont(regularFont);
   text("(press SPACE to toggle)", 100, 150);
   
@@ -357,25 +361,24 @@ void draw() {
   text(gpsFix, 400, 525);
   text(gpsSatellites, 400, 540);
   
-  // Add Revolution GS sensor information
-  text(String.format("Psi: %3.2f", revoHeading), 30, 50);
-  text(String.format("Status: %c", revoMagStatus), 30, 65);
-  text(String.format("Theta: %3.2f", revoPitch), 130, 50);
-  text(String.format("Status: %c", revoPitchStatus), 130, 65);
-  text(String.format("Phi: %3.2f", revoRoll), 230, 50);
-  text(String.format("Status: %c", revoRollStatus), 230, 65);
-  text(String.format("Dip: %3.2f", revoDip), 330, 50);
-  text(String.format("MM: %d", revoMagneticMagnitude), 330, 65);
-  
   // Add WSO100 air/wind data
   text(String.format("Wind speed: %2.2f m/s", windSpeed), 780, 50);
   text(String.format("Wind dir: %2.2f \u00B0", windDirection * 180 / Math.PI), 780, 80);
   text(String.format("Air temp: %2.2f \u00B0C", airTemp), 780, 110);
   text(String.format("Air pressure: %2.2f kPa", airPressure), 780, 140);
   text(String.format("Air humidity: %2.2f %%", airHumidity), 780, 170);
-  text(String.format("Water speed: %2.2f m/s", waterSpeed), 780, 200);
-  text(String.format("Water temp: %2.2f \u00B0C", waterTemp), 780, 230);
-  text(String.format("Water depth: %2.2f m", waterDepth), 780, 260);
+  
+  // Add DST800 water data
+  text(String.format("Water speed: %2.2f m/s", waterSpeed), 780, 230);
+  text(String.format("Water temp: %2.2f \u00B0C", waterTemp), 780, 260);
+  text(String.format("Water depth: %2.2f m", waterDepth), 780, 290);
+  
+  // Add Revolution GS sensor information
+  text(String.format("Heading: %3.2f \u00B0 (%c)", revoHeading, revoMagStatus > 0?revoMagStatus:'_'), 780, 350);
+  text(String.format("Pitch: %3.2f \u00B0 (%c)", revoPitch, revoPitchStatus > 0?revoPitchStatus:'_'), 780, 380);
+  text(String.format("Roll: %3.2f \u00B0 (%c)", revoRoll, revoRollStatus > 0?revoRollStatus:'_'), 780, 410);
+  text(String.format("Dip: %3.2f \u00B0", revoDip), 780, 440);
+  text(String.format("MM: %d", revoMagneticMagnitude), 780, 470);
   
   // Draw the velocity vector values
   text(String.format("%2.1f m/s", velocity.mag()), 200, 285);
