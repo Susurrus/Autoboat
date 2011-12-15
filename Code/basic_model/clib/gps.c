@@ -43,6 +43,7 @@ THE SOFTWARE.
 // ==============================================================
 
 #include <string.h>
+#include <stdlib.h>
 
 #include "gps.h"
 #include "uart2.h"

@@ -529,7 +529,7 @@ public void startRecording() {
     Calendar cal = Calendar.getInstance();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-hhmmss");
     csvOutput = createWriter(sketchPath(sdf.format(cal.getTime())+".csv"));
-    csvOutput.print("% Units: m, m, m, m, rad east from north, m, m, m, m, m, m, m, m, none, none, none, rad, rad, m, none, none, none, none, none, none, rad, m/s, none, none, none, none, none, rads, RPM, none, none, rad, rpm, V, A, none, none, rad, none, rad, none, rad, none, none, none, m/s, rad east from north, deg C, kPa, %, m/s, deg C, m\n");
+    csvOutput.print("% Units: m, m, deg, deg, rad east from north, m, m, m, m, m, m, m, m, none, none, none, rad, rad, m, none, none, none, none, none, none, rad, m/s, none, none, none, none, none, rads, RPM, none, none, rad, rpm, V, A, none, none, rad, none, rad, none, rad, none, none, none, m/s, rad east from north, deg C, kPa, %, m/s, deg C, m\n");
     csvOutput.print("L2.north, L2.east, globalPosition.lat, globalPosition.lon, heading, localPosition.north, localPosition.east, velocity.north, velocity.east, waypoint0.north, waypoint0.east, waypoint1.north, waypoint1.east, rudderPot, rudderPortLimit, rudderSbLimit, gpsLatitude, gpsLongitude, gpsAltitude, gpsYear, gpsMonth, gpsDay, gpsHour, gpsMinute, gpsSecond, gpsCourse, gpsSpeed, gpsHdop, gpsFix, gpsSatellites, reset, load, rudderAngle, propRpm, statusBits, ordering, rudderAngleCommand, throttleCommand, batteryVoltage, batteryAmperage, lowRudderCalLimit, highRudderCalLimit, revoHeading, revoMagStatus, revoPitch, revoPitchStatus, revoRoll, revoRollStatus, revoDip, revoMagneticMagnitude, windSpeed, windDirection, airTemp, airPressure, airHumidity, waterSpeed, waterTemp, waterDepth\n");
   }
   catch (Exception e){

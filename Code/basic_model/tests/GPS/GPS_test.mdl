@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.38"
+    ComputedModelVersion    "1.42"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -19,21 +19,22 @@ Model {
   MinMaxOverflowLogging	  "UseLocalSettings"
   MinMaxOverflowArchiveMode "Overwrite"
   MaxMDLFileLineLength	  120
+  InitFcn		  "boat_constants"
   Created		  "Tue Feb 22 11:59:47 2011"
   Creator		  "Bryant Mairs"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "Bryant Mairs"
+  LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Mar 09 12:52:08 2011"
-  RTWModifiedTimeStamp	  221491393
-  ModelVersionFormat	  "1.%<AutoIncrement:38>"
+  LastModifiedDate	  "Thu Dec 15 14:36:53 2011"
+  RTWModifiedTimeStamp	  245855022
+  ModelVersionFormat	  "1.%<AutoIncrement:42>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
   LibraryLinkDisplay	  "none"
   WideLines		  off
-  ShowLineDimensions	  off
+  ShowLineDimensions	  on
   ShowPortDataTypes	  off
   ShowLoopsOnError	  on
   IgnoreBidirectionalLines off
@@ -125,7 +126,7 @@ Model {
 	  MinStep		  "auto"
 	  MaxConsecutiveMinStep	  "1"
 	  RelTol		  "1e-3"
-	  SolverMode		  "Auto"
+	  SolverMode		  "SingleTasking"
 	  Solver		  "FixedStepDiscrete"
 	  SolverName		  "FixedStepDiscrete"
 	  SolverJacobianMethodControl "auto"
@@ -379,7 +380,8 @@ Model {
 	  ConfigAtBuild		  off
 	  RTWUseLocalCustomCode	  off
 	  RTWUseSimCustomCode	  off
-	  CustomSource		  "../../../../../ecan/circBuffer.c\n../clib/gps.c\n../clib/uart2.c"
+	  CustomSource		  "circBuffer.c\n../../clib/conversions.c\n../../clib/gps.c\n../../clib/uart1.c\n../../clib/uart2.c\n"
+	  "../../clib/nmea0183.c\n../../clib/commProtocol.c"
 	  IncludeHyperlinkInReport off
 	  LaunchReport		  off
 	  TargetLang		  "C"
@@ -617,12 +619,12 @@ Model {
 	      CustomProperty {
 		DataType		"string"
 		Name			"GMAKE_PLACE"
-		Value			"E:\\PROGRA~1\\MATLAB\\R2010a\\bin\\win32\\gmake"
+		Value			"C:\\PROGRA~1\\MATLAB\\R2010a\\bin\\win64\\gmake"
 	      }
 	      CustomProperty {
 		DataType		"string"
 		Name			"OPTIM_GCC"
-		Value			"-mcpu=33fJ256GP710 -O3 -fschedule-insns -fschedule-insns2"
+		Value			"-mcpu=33fJ256GP710A -O3 -fschedule-insns -fschedule-insns2"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -632,24 +634,24 @@ Model {
 	      CustomProperty {
 		DataType		"string"
 		Name			"LDPICTYPE"
-		Value			" -Xlinker --script=C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\support\\dsPIC33F\\gld\\p33fJ256GP710.gld"
+		Value			" -Xlinker --script=C:\\PROGRA~2\\MICROC~1\\mplabc30\\v3.30c\\support\\dsPIC33F\\gld\\p33fJ256GP710A.gld"
 	      }
 	      CustomProperty {
 		DataType		"string"
 		Name			"LDLIBPIC"
-		Value			" C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\libpic30-coff.a C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\dsPIC33F\\li"
-		"bp33fJ256GP710-coff.a C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\libc-coff.a C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\lib\\libm"
-		"-coff.a"
+		Value			" C:\\PROGRA~2\\MICROC~1\\mplabc30\\v3.30c\\lib\\libpic30-coff.a C:\\PROGRA~2\\MICROC~1\\mplabc30\\v3.30c\\l"
+		"ib\\dsPIC33F\\libp33fJ256GP710A-coff.a C:\\PROGRA~2\\MICROC~1\\mplabc30\\v3.30c\\lib\\libc-coff.a C:\\PROGRA~2\\MICR"
+		"OC~1\\mplabc30\\v3.30c\\lib\\libm-coff.a"
 	      }
 	      CustomProperty {
 		DataType		"string"
 		Name			"PIC_INCLUDES"
-		Value			" -I C:\\PROGRA~1\\MICROC~1\\MPLABC~1\\include"
+		Value			" -I C:\\PROGRA~2\\MICROC~1\\mplabc30\\v3.30c\\include"
 	      }
 	      CustomProperty {
 		DataType		"string"
 		Name			"PIC_REF"
-		Value			"33fJ256GP710"
+		Value			"33fJ256GP710A"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -665,7 +667,7 @@ Model {
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=0 "
       CurrentDlgPage	      "Real-Time Workshop/Custom Code"
-      ConfigPrmDlgPosition    " [ 249, 80, 1322, 889 ] "
+      ConfigPrmDlgPosition    " [ 352, 100, 1249, 840 ] "
     }
     PropName		    "ConfigurationSets"
   }
@@ -706,30 +708,146 @@ Model {
   }
   BlockParameterDefaults {
     Block {
-      BlockType		      DataTypeConversion
+      BlockType		      Constant
+      Value		      "1"
+      VectorParams1D	      on
+      SamplingMode	      "Sample based"
       OutMin		      "[]"
       OutMax		      "[]"
-      OutDataTypeMode	      "Inherit via back propagation"
+      OutDataTypeMode	      "Inherit from 'Constant value'"
+      OutDataType	      "fixdt(1,16,0)"
+      ConRadixGroup	      "Use specified scaling"
+      OutScaling	      "[]"
+      OutDataTypeStr	      "Inherit: Inherit from 'Constant value'"
+      LockScale		      off
+      SampleTime	      "inf"
+      FramePeriod	      "inf"
+      PreserveConstantTs      off
+    }
+    Block {
+      BlockType		      Demux
+      Outputs		      "4"
+      DisplayOption	      "none"
+      BusSelectionMode	      off
+    }
+    Block {
+      BlockType		      Inport
+      Port		      "1"
+      UseBusObject	      off
+      BusObject		      "BusObject"
+      BusOutputAsStruct	      off
+      PortDimensions	      "-1"
+      VarSizeSig	      "Inherit"
+      SampleTime	      "-1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      DataType		      "auto"
       OutDataType	      "fixdt(1,16,0)"
       OutScaling	      "[]"
-      OutDataTypeStr	      "Inherit: Inherit via back propagation"
+      OutDataTypeStr	      "Inherit: auto"
       LockScale		      off
-      ConvertRealWorld	      "Real World Value (RWV)"
-      RndMeth		      "Zero"
-      SaturateOnIntegerOverflow	on
+      SignalType	      "auto"
+      SamplingMode	      "auto"
+      LatchByDelayingOutsideSignal off
+      LatchInputForFeedbackSignals off
+      Interpolate	      on
+    }
+    Block {
+      BlockType		      Logic
+      Operator		      "AND"
+      Inputs		      "2"
+      IconShape		      "rectangular"
+      AllPortsSameDT	      on
+      OutDataTypeMode	      "Logical (see Configuration Parameters: Optimization)"
+      LogicDataType	      "uint(8)"
+      OutDataTypeStr	      "Inherit: Logical (see Configuration Parameters: Optimization)"
       SampleTime	      "-1"
     }
     Block {
-      BlockType		      Selector
-      NumberOfDimensions      "1"
-      IndexMode		      "One-based"
-      InputPortWidth	      "-1"
+      BlockType		      Mux
+      Inputs		      "4"
+      DisplayOption	      "none"
+      UseBusObject	      off
+      BusObject		      "BusObject"
+      NonVirtualBus	      off
+    }
+    Block {
+      BlockType		      Outport
+      Port		      "1"
+      UseBusObject	      off
+      BusObject		      "BusObject"
+      BusOutputAsStruct	      off
+      PortDimensions	      "-1"
+      VarSizeSig	      "Inherit"
       SampleTime	      "-1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      DataType		      "auto"
+      OutDataType	      "fixdt(1,16,0)"
+      OutScaling	      "[]"
+      OutDataTypeStr	      "Inherit: auto"
+      LockScale		      off
+      SignalType	      "auto"
+      SamplingMode	      "auto"
+      SourceOfInitialOutputValue "Dialog"
+      OutputWhenDisabled      "held"
+      InitialOutput	      "[]"
+    }
+    Block {
+      BlockType		      Probe
+      ProbeWidth	      on
+      ProbeSampleTime	      on
+      ProbeComplexSignal      on
+      ProbeSignalDimensions   off
+      ProbeFramedSignal	      off
+      ProbeWidthDataType      "double"
+      ProbeSampleTimeDataType "double"
+      ProbeComplexityDataType "double"
+      ProbeDimensionsDataType "double"
+      ProbeFrameDataType      "double"
+    }
+    Block {
+      BlockType		      RateTransition
+      Integrity		      on
+      Deterministic	      on
+      X0		      "0"
+      OutPortSampleTimeOpt    "Specify"
+      OutPortSampleTimeMultiple	"1"
+      OutPortSampleTime	      "-1"
+    }
+    Block {
+      BlockType		      "S-Function"
+      FunctionName	      "system"
+      SFunctionModules	      "''"
+      PortCounts	      "[]"
+      SFunctionDeploymentMode off
+    }
+    Block {
+      BlockType		      SubSystem
+      ShowPortLabels	      "FromPortIcon"
+      Permissions	      "ReadWrite"
+      PermitHierarchicalResolution "All"
+      TreatAsAtomicUnit	      off
+      CheckFcnCallInpInsideContextMsg off
+      SystemSampleTime	      "-1"
+      RTWFcnNameOpts	      "Auto"
+      RTWFileNameOpts	      "Auto"
+      RTWMemSecFuncInitTerm   "Inherit from model"
+      RTWMemSecFuncExecute    "Inherit from model"
+      RTWMemSecDataConstants  "Inherit from model"
+      RTWMemSecDataInternal   "Inherit from model"
+      RTWMemSecDataParameters "Inherit from model"
+      SimViewingDevice	      off
+      DataTypeOverride	      "UseLocalSettings"
+      MinMaxOverflowLogging   "UseLocalSettings"
+    }
+    Block {
+      BlockType		      Terminator
     }
   }
   System {
     Name		    "GPS_test"
-    Location		    [319, 283, 920, 690]
+    Location		    [118, 103, 1121, 876]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -743,7 +861,474 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    54
+    SIDHighWatermark	    77
+    Block {
+      BlockType		      Reference
+      Name		      "Add actuator commands\nto transmission FIFO\n[commProtocol.c]"
+      SID		      60
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      [1]
+      Position		      [775, 359, 955, 401]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.75"
+      List {
+	ListType		RTWdata
+	isFctUpdate		"1"
+	FctDeclaration		"extern void uart1EnqueueStateData(uint8_T* u1);"
+	FctCall			"uart1EnqueueStateData(*%u1);"
+	fctName			"uart1EnqueueStateData"
+	INPUT_SIZE		"160"
+	OUTPUT_SIZE		"1"
+	NBR_INPUT		"1"
+	NBR_OUTPUT		"0"
+	isFctStart		"0"
+	FctStart_Declaration	"inline extern void Init_onlyOnce();"
+	FctStart_Call		"Init_onlyOnce();"
+	FctStart_Name		"Init_onlyOnce"
+	isFctInit		"0"
+	FctInit_Declaration	"inline extern void Init_Reset();"
+	FctInit_Call		"Init_Reset();"
+	FctInit_Name		"Init_Reset"
+      }
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "Output Function"
+      fctName		      "'uart1EnqueueStateData'"
+      INPUT_SIZE	      "160"
+      INPUT1		      "uint8"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "--"
+      SampleTime	      "-1"
+      InputType		      "[ 2 ]"
+      OutputType	      "[ ]"
+      FctDeclaration	      "extern void uart1EnqueueStateData(uint8_T* u1);"
+      FctCall		      "uart1EnqueueStateData(*%u1);"
+      OrderingInOutPopup      "None"
+      FctStart		      "None"
+      FctStart_Name	      "Init_onlyOnce"
+      FctStart_Declaration    "inline extern void Init_onlyOnce();"
+      FctStart_Call	      "Init_onlyOnce();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
+    }
+    Block {
+      BlockType		      SubSystem
+      Name		      "Build HIL\nsentence"
+      SID		      61
+      Ports		      [1, 1]
+      Position		      [570, 344, 640, 416]
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      System {
+	Name			"Build HIL\nsentence"
+	Location		[661, 301, 1215, 676]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Inport
+	  Name			  "data"
+	  SID			  62
+	  Position		  [20, 123, 50, 137]
+	  BackgroundColor	  "darkGreen"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Bitwise\nOperator"
+	  SID			  63
+	  Ports			  [1, 1]
+	  Position		  [240, 225, 280, 245]
+	  ShowName		  off
+	  LibraryVersion	  "1.216"
+	  SourceBlock		  "simulink/Logic and Bit\nOperations/Bitwise\nOperator"
+	  SourceType		  "Bitwise Operator"
+	  logicop		  "XOR"
+	  UseBitMask		  off
+	  NumInputPorts		  "1"
+	  BitMask		  "bin2dec('11011001')"
+	  BitMaskRealWorld	  "Stored Integer"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant"
+	  SID			  64
+	  Position		  [245, 52, 275, 68]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "37"
+	  OutDataTypeMode	  "uint8"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint8"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant1"
+	  SID			  65
+	  Position		  [245, 87, 275, 103]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "38"
+	  OutDataTypeMode	  "uint8"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint8"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant2"
+	  SID			  66
+	  Position		  [245, 157, 275, 173]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "94"
+	  OutDataTypeMode	  "uint8"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint8"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant3"
+	  SID			  67
+	  Position		  [245, 192, 275, 208]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "38"
+	  OutDataTypeMode	  "uint8"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint8"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant4"
+	  SID			  68
+	  Position		  [105, 102, 135, 118]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "3"
+	  OutDataTypeMode	  "uint8"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint8"
+	}
+	Block {
+	  BlockType		  Mux
+	  Name			  "Mux2"
+	  SID			  69
+	  Ports			  [3, 1]
+	  Position		  [200, 100, 205, 160]
+	  ShowName		  off
+	  Inputs		  "3"
+	  DisplayOption		  "bar"
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "Pack"
+	  SID			  70
+	  Ports			  [6, 1]
+	  Position		  [345, 45, 350, 250]
+	  LibraryVersion	  "1.31"
+	  PermitHierarchicalResolution "ExplicitOnly"
+	  TreatAsAtomicUnit	  on
+	  MinAlgLoopOccurrences	  off
+	  PropExecContextOutsideSubsystem off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  Opaque		  off
+	  RequestExecContextInheritance	off
+	  MaskHideContents	  off
+	  MaskType		  "Stateflow"
+	  MaskDescription	  "Embedded MATLAB block"
+	  MaskDisplay		  "disp('fcn');"
+	  MaskSelfModifiable	  on
+	  MaskIconFrame		  on
+	  MaskIconOpaque	  off
+	  MaskIconRotate	  "none"
+	  MaskPortRotate	  "default"
+	  MaskIconUnits		  "autoscale"
+	  System {
+	    Name		    "Pack"
+	    Location		    [257, 457, 812, 717]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    SIDHighWatermark	    22
+	    Block {
+	      BlockType		      Inport
+	      Name		      "a"
+	      SID		      1
+	      Position		      [20, 101, 40, 119]
+	      IconDisplay	      "Port number"
+	      OutDataType	      "sfix(16)"
+	      OutScaling	      "2^0"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "b"
+	      SID		      18
+	      Position		      [20, 136, 40, 154]
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "c"
+	      SID		      19
+	      Position		      [20, 171, 40, 189]
+	      Port		      "3"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "d"
+	      SID		      20
+	      Position		      [20, 206, 40, 224]
+	      Port		      "4"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "e"
+	      SID		      21
+	      Position		      [20, 246, 40, 264]
+	      Port		      "5"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "f"
+	      SID		      22
+	      Position		      [20, 281, 40, 299]
+	      Port		      "6"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Demux
+	      Name		      " Demux "
+	      SID		      15
+	      Ports		      [1, 1]
+	      Position		      [270, 360, 320, 400]
+	      Outputs		      "1"
+	    }
+	    Block {
+	      BlockType		      "S-Function"
+	      Name		      " SFunction "
+	      SID		      14
+	      Tag		      "Stateflow S-Function GPS_test 21"
+	      Ports		      [6, 2]
+	      Position		      [180, 118, 230, 362]
+	      FunctionName	      "sf_sfun"
+	      PortCounts	      "[6 2]"
+	      EnableBusSupport	      on
+	      Port {
+		PortNumber		2
+		Name			"y"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	    }
+	    Block {
+	      BlockType		      Terminator
+	      Name		      " Terminator "
+	      SID		      17
+	      Position		      [460, 371, 480, 389]
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "y"
+	      SID		      5
+	      Position		      [460, 101, 480, 119]
+	      IconDisplay	      "Port number"
+	      OutDataType	      "sfix(16)"
+	      OutScaling	      "2^0"
+	    }
+	    Line {
+	      SrcBlock		      " SFunction "
+	      SrcPort		      1
+	      DstBlock		      " Demux "
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "a"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "b"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "c"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "d"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      4
+	    }
+	    Line {
+	      SrcBlock		      "e"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      5
+	    }
+	    Line {
+	      SrcBlock		      "f"
+	      SrcPort		      1
+	      DstBlock		      " SFunction "
+	      DstPort		      6
+	    }
+	    Line {
+	      Name		      "y"
+	      Labels		      [0, 0]
+	      SrcBlock		      " SFunction "
+	      SrcPort		      2
+	      DstBlock		      "y"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      " Demux "
+	      SrcPort		      1
+	      DstBlock		      " Terminator "
+	      DstPort		      1
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  Probe
+	  Name			  "Probe"
+	  SID			  71
+	  Ports			  [1, 1]
+	  Position		  [105, 121, 160, 139]
+	  ShowName		  off
+	  ProbeSampleTime	  off
+	  ProbeComplexSignal	  off
+	  ProbeWidthDataType	  "uint8"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "sent"
+	  SID			  72
+	  Position		  [395, 143, 425, 157]
+	  BackgroundColor	  "yellow"
+	  IconDisplay		  "Port number"
+	}
+	Line {
+	  SrcBlock		  "data"
+	  SrcPort		  1
+	  Points		  [20, 0]
+	  Branch {
+	    DstBlock		    "Probe"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, 20]
+	    DstBlock		    "Mux2"
+	    DstPort		    3
+	  }
+	}
+	Line {
+	  SrcBlock		  "Constant"
+	  SrcPort		  1
+	  DstBlock		  "Pack"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Constant1"
+	  SrcPort		  1
+	  DstBlock		  "Pack"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Pack"
+	  SrcPort		  1
+	  DstBlock		  "sent"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Mux2"
+	  SrcPort		  1
+	  Points		  [15, 0]
+	  Branch {
+	    DstBlock		    "Bitwise\nOperator"
+	    DstPort		    1
+	  }
+	  Branch {
+	    DstBlock		    "Pack"
+	    DstPort		    3
+	  }
+	}
+	Line {
+	  SrcBlock		  "Probe"
+	  SrcPort		  1
+	  DstBlock		  "Mux2"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Constant2"
+	  SrcPort		  1
+	  DstBlock		  "Pack"
+	  DstPort		  4
+	}
+	Line {
+	  SrcBlock		  "Constant3"
+	  SrcPort		  1
+	  DstBlock		  "Pack"
+	  DstPort		  5
+	}
+	Line {
+	  SrcBlock		  "Bitwise\nOperator"
+	  SrcPort		  1
+	  DstBlock		  "Pack"
+	  DstPort		  6
+	}
+	Line {
+	  SrcBlock		  "Constant4"
+	  SrcPort		  1
+	  DstBlock		  "Mux2"
+	  DstPort		  1
+	}
+      }
+    }
     Block {
       BlockType		      Reference
       Name		      "Configure Model \nfor dsPIC"
@@ -752,35 +1337,38 @@ Model {
       Position		      [30, 99, 142, 155]
       ForegroundColor	      "blue"
       BackgroundColor	      "yellow"
-      LibraryVersion	      "3.21"
+      LibraryVersion	      "3.75"
       SourceBlock	      "dsPICdrivers/Simulink Configuration/Configure Model \nfor dsPIC"
       SourceType	      ""
     }
     Block {
-      BlockType		      DataTypeConversion
-      Name		      "Data Type Conversion"
-      SID		      43
-      Position		      [280, 337, 325, 353]
-      ShowName		      off
-      OutDataTypeMode	      "boolean"
-      OutDataType	      "fixdt(1, 16)"
-      OutScaling	      "2^0"
-      OutDataTypeStr	      "boolean"
-      RndMeth		      "Simplest"
-      SaturateOnIntegerOverflow	off
+      BlockType		      Reference
+      Name		      "GPS Reception\nStatus\n(LED D9)"
+      SID		      75
+      Tag		      "dsPIC_Digital_Output"
+      Ports		      [1]
+      Position		      [545, 553, 650, 587]
+      Priority		      "5"
+      LibraryVersion	      "3.75"
+      SourceBlock	      "dsPICdrivers/Digital I//O/Digital Output Write"
+      SourceType	      ""
+      PORT		      "A"
+      Pin		      "[6]"
+      Simultaneous	      off
+      OrderingInOutPopup      "None"
     }
     Block {
       BlockType		      Reference
       Name		      "Initialize GPS\n[gps.c]"
-      SID		      52
+      SID		      58
       Tag		      "dsPIC_dsPIC_CFunctionCall"
-      Ports		      []
-      Position		      [195, 109, 305, 151]
+      Ports		      [1]
+      Position		      [340, 109, 450, 151]
       BackgroundColor	      "orange"
-      Priority		      "4"
-      LibraryVersion	      "3.21"
+      LibraryVersion	      "3.75"
       List {
 	ListType		RTWdata
+	isFctUpdate		"0"
 	FctDeclaration		"extern void initGps();"
 	FctCall			"initGps();"
 	fctName			"initGps"
@@ -788,9 +1376,18 @@ Model {
 	OUTPUT_SIZE		"1"
 	NBR_INPUT		"0"
 	NBR_OUTPUT		"0"
+	isFctStart		"1"
+	FctStart_Declaration	"inline extern void initGps();"
+	FctStart_Call		"initGps();"
+	FctStart_Name		"initGps"
+	isFctInit		"0"
+	FctInit_Declaration	"inline extern void Init_Reset();"
+	FctInit_Call		"Init_Reset();"
+	FctInit_Name		"Init_Reset"
       }
       SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
       SourceType	      "C Function Call"
+      FctUpdate		      "None"
       fctName		      "'initGps'"
       INPUT_SIZE	      "1"
       INPUT1		      "--"
@@ -799,35 +1396,55 @@ Model {
       OUTPUT_SIZE	      "1"
       OUTPUT1		      "--"
       SampleTime	      "Inf"
-      InputType		      "[ ]"
-      OutputType	      "[ ]"
+      InputType		      "[]"
+      OutputType	      "[]"
       FctDeclaration	      "extern void initGps();"
       FctCall		      "initGps();"
-      OrderingInOutPopup      "None"
+      OrderingInOutPopup      "Input"
+      FctStart		      "Start Function (Call once and only once)"
+      FctStart_Name	      "initGps"
+      FctStart_Declaration    "inline extern void initGps();"
+      FctStart_Call	      "initGps();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
     }
     Block {
       BlockType		      Reference
-      Name		      "Initialize UART2\n[uart2.c]"
-      SID		      33
+      Name		      "Initialize UARTs\n[commProtocol.c]"
+      SID		      59
       Tag		      "dsPIC_dsPIC_CFunctionCall"
-      Ports		      []
-      Position		      [195, 19, 305, 61]
+      Ports		      [0, 1]
+      Position		      [190, 109, 320, 151]
       BackgroundColor	      "orange"
-      Priority		      "3"
-      LibraryVersion	      "3.21"
+      LibraryVersion	      "3.75"
       List {
 	ListType		RTWdata
-	FctDeclaration		"extern void initUart2();"
-	FctCall			"initUart2();"
-	fctName			"initUart2"
+	isFctUpdate		"0"
+	FctDeclaration		"extern void cpInitCommunications();"
+	FctCall			"cpInitCommunications();"
+	fctName			"cpInitCommunications"
 	INPUT_SIZE		"1"
 	OUTPUT_SIZE		"1"
 	NBR_INPUT		"0"
 	NBR_OUTPUT		"0"
+	isFctStart		"1"
+	FctStart_Declaration	"inline extern void cpInitCommunications();"
+	FctStart_Call		"cpInitCommunications();"
+	FctStart_Name		"cpInitCommunications"
+	isFctInit		"0"
+	FctInit_Declaration	"inline extern void Init_Reset();"
+	FctInit_Call		"Init_Reset();"
+	FctInit_Name		"Init_Reset"
       }
       SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
       SourceType	      "C Function Call"
-      fctName		      "'initUart2'"
+      FctUpdate		      "None"
+      fctName		      "cpInitCommunications"
       INPUT_SIZE	      "1"
       INPUT1		      "--"
       INPUT2		      "--"
@@ -835,11 +1452,34 @@ Model {
       OUTPUT_SIZE	      "1"
       OUTPUT1		      "--"
       SampleTime	      "Inf"
-      InputType		      "[ ]"
-      OutputType	      "[ ]"
-      FctDeclaration	      "extern void initUart2();"
-      FctCall		      "initUart2();"
-      OrderingInOutPopup      "None"
+      InputType		      "[]"
+      OutputType	      "[]"
+      FctDeclaration	      "extern void cpInitCommunications();"
+      FctCall		      "cpInitCommunications();"
+      OrderingInOutPopup      "Output"
+      FctStart		      "Start Function (Call once and only once)"
+      FctStart_Name	      "cpInitCommunications"
+      FctStart_Declaration    "inline extern void cpInitCommunications();"
+      FctStart_Call	      "cpInitCommunications();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
+    }
+    Block {
+      BlockType		      Logic
+      Name		      "Logical\nOperator4"
+      SID		      76
+      Ports		      [2, 1]
+      Position		      [415, 551, 445, 584]
+      ShowName		      off
+      AllPortsSameDT	      off
+      OutDataTypeMode	      "boolean"
+      LogicDataType	      "fixdt(0, 8)"
+      OutDataTypeStr	      "boolean"
     }
     Block {
       BlockType		      Reference
@@ -851,7 +1491,7 @@ Model {
       BackgroundColor	      "lightBlue"
       DropShadow	      on
       Priority		      "1"
-      LibraryVersion	      "3.21"
+      LibraryVersion	      "3.75"
       List {
 	ListType		RTWdata
 	NumBusyPort		"-1"
@@ -859,7 +1499,7 @@ Model {
       SourceBlock	      "dsPICdrivers/Master"
       SourceType	      "Master"
       TimeStepType	      "Timer1"
-      picType		      "33fJ256GP710"
+      picType		      "33fJ256GP710A"
       fcy		      "40000000"
       Quartz_33f	      "8e6"
       PLLActive_33f	      on
@@ -869,13 +1509,13 @@ Model {
       tmr2345		      "[0  0  0  0  0  0  0  0]"
       tmr2345cfg	      "[-1 -1 -1 -1 -1 -1 -1 -1]"
       IOautoConf	      on
-      typePort		      "[ 0   0   0   0   0   0   0  10   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
+      typePort		      "[ 0   0   0   0   0   0  10   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
       "   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
       "   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
       "   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
       "   0   0   0   0 ]"
-      TRIS		      "[ 65407  65535  65535  65535  65535  65535  65535 ]"
-      ADPCFG		      "8388608"
+      TRIS		      "[ 65471  65535  65535  65535  65535  65535  65535 ]"
+      ADPCFG		      "4194304"
       MasterBusyPort	      "None"
       MasterOverloadPort      "None"
       FOSC		      "Quartz (XT - HS)"
@@ -892,16 +1532,316 @@ Model {
       PR2345		      "[65535  65535  65535  65535  65535  65535  65535  65535]"
     }
     Block {
+      BlockType		      SubSystem
+      Name		      "Pack1"
+      SID		      73
+      Ports		      [14, 1]
+      Position		      [435, 224, 515, 536]
+      LibraryVersion	      "1.31"
+      PermitHierarchicalResolution "ExplicitOnly"
+      TreatAsAtomicUnit	      on
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      MaskType		      "Stateflow"
+      MaskDescription	      "Embedded MATLAB block"
+      MaskDisplay	      "disp('fcn');"
+      MaskSelfModifiable      on
+      MaskIconFrame	      on
+      MaskIconOpaque	      off
+      MaskIconRotate	      "none"
+      MaskPortRotate	      "default"
+      MaskIconUnits	      "autoscale"
+      System {
+	Name			"Pack1"
+	Location		[257, 457, 812, 717]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	SIDHighWatermark	92
+	SIDPrevWatermark	92
+	Block {
+	  BlockType		  Inport
+	  Name			  "lat"
+	  SID			  49
+	  Position		  [20, 101, 40, 119]
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "lon"
+	  SID			  50
+	  Position		  [20, 136, 40, 154]
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "alt"
+	  SID			  51
+	  Position		  [20, 171, 40, 189]
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "yr"
+	  SID			  52
+	  Position		  [20, 206, 40, 224]
+	  Port			  "4"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "mon"
+	  SID			  53
+	  Position		  [20, 246, 40, 264]
+	  Port			  "5"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "day"
+	  SID			  54
+	  Position		  [20, 281, 40, 299]
+	  Port			  "6"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "hr"
+	  SID			  55
+	  Position		  [20, 316, 40, 334]
+	  Port			  "7"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "min"
+	  SID			  56
+	  Position		  [20, 351, 40, 369]
+	  Port			  "8"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "sec"
+	  SID			  57
+	  Position		  [20, 386, 40, 404]
+	  Port			  "9"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "cog"
+	  SID			  58
+	  Position		  [20, 426, 40, 444]
+	  Port			  "10"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "sog"
+	  SID			  59
+	  Position		  [20, 461, 40, 479]
+	  Port			  "11"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "hdop"
+	  SID			  60
+	  Position		  [20, 496, 40, 514]
+	  Port			  "12"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "fix"
+	  SID			  61
+	  Position		  [20, 531, 40, 549]
+	  Port			  "13"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "sat"
+	  SID			  62
+	  Position		  [20, 566, 40, 584]
+	  Port			  "14"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Demux
+	  Name			  " Demux "
+	  SID			  15
+	  Ports			  [1, 1]
+	  Position		  [270, 1285, 320, 1325]
+	  Outputs		  "1"
+	}
+	Block {
+	  BlockType		  "S-Function"
+	  Name			  " SFunction "
+	  SID			  14
+	  Tag			  "Stateflow S-Function GPS_test 15"
+	  Ports			  [14, 2]
+	  Position		  [180, 209, 230, 1286]
+	  FunctionName		  "sf_sfun"
+	  PortCounts		  "[14 2]"
+	  EnableBusSupport	  on
+	  Port {
+	    PortNumber		    2
+	    Name		    "y"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Terminator
+	  Name			  " Terminator "
+	  SID			  17
+	  Position		  [460, 1296, 480, 1314]
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "y"
+	  SID			  5
+	  Position		  [460, 101, 480, 119]
+	  IconDisplay		  "Port number"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	}
+	Line {
+	  SrcBlock		  " SFunction "
+	  SrcPort		  1
+	  DstBlock		  " Demux "
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "lat"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "lon"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "alt"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "yr"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  4
+	}
+	Line {
+	  SrcBlock		  "mon"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  5
+	}
+	Line {
+	  SrcBlock		  "day"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  6
+	}
+	Line {
+	  SrcBlock		  "hr"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  7
+	}
+	Line {
+	  SrcBlock		  "min"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  8
+	}
+	Line {
+	  SrcBlock		  "sec"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  9
+	}
+	Line {
+	  SrcBlock		  "cog"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  10
+	}
+	Line {
+	  SrcBlock		  "sog"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  11
+	}
+	Line {
+	  SrcBlock		  "hdop"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  12
+	}
+	Line {
+	  SrcBlock		  "fix"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  13
+	}
+	Line {
+	  SrcBlock		  "sat"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  14
+	}
+	Line {
+	  Name			  "y"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  2
+	  DstBlock		  "y"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  " Demux "
+	  SrcPort		  1
+	  DstBlock		  " Terminator "
+	  DstPort		  1
+	}
+      }
+    }
+    Block {
       BlockType		      Reference
       Name		      "Parse out new data since the last\ntimestep\n[gps.c]"
-      SID		      47
+      SID		      55
       Tag		      "dsPIC_dsPIC_CFunctionCall"
       Ports		      [0, 1]
-      Position		      [35, 216, 175, 264]
+      Position		      [35, 261, 175, 309]
       BackgroundColor	      "orange"
-      LibraryVersion	      "3.21"
+      LibraryVersion	      "3.75"
       List {
 	ListType		RTWdata
+	isFctUpdate		"1"
 	FctDeclaration		"extern void processNewGpsData();"
 	FctCall			"processNewGpsData();"
 	fctName			"processNewGpsData"
@@ -909,9 +1849,18 @@ Model {
 	OUTPUT_SIZE		"1"
 	NBR_INPUT		"0"
 	NBR_OUTPUT		"0"
+	isFctStart		"0"
+	FctStart_Declaration	"inline extern void Init_onlyOnce();"
+	FctStart_Call		"Init_onlyOnce();"
+	FctStart_Name		"Init_onlyOnce"
+	isFctInit		"0"
+	FctInit_Declaration	"inline extern void Init_Reset();"
+	FctInit_Call		"Init_Reset();"
+	FctInit_Name		"Init_Reset"
       }
       SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
       SourceType	      "C Function Call"
+      FctUpdate		      "Output Function"
       fctName		      "'processNewGpsData'"
       INPUT_SIZE	      "1"
       INPUT1		      "--"
@@ -919,80 +1868,521 @@ Model {
       INPUT3		      "--"
       OUTPUT_SIZE	      "1"
       OUTPUT1		      "--"
-      SampleTime	      ".01"
+      SampleTime	      "T_step"
       InputType		      "[ ]"
       OutputType	      "[ ]"
       FctDeclaration	      "extern void processNewGpsData();"
       FctCall		      "processNewGpsData();"
       OrderingInOutPopup      "Output"
+      FctStart		      "None"
+      FctStart_Name	      "Init_onlyOnce"
+      FctStart_Declaration    "inline extern void Init_onlyOnce();"
+      FctStart_Call	      "Init_onlyOnce();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
+    }
+    Block {
+      BlockType		      RateTransition
+      Name		      "Rate Transition13"
+      SID		      77
+      Position		      [690, 359, 730, 401]
+      ShowName		      off
+      OutPortSampleTime	      "telemetryDataRate"
     }
     Block {
       BlockType		      Reference
       Name		      "Retrieve last GPS data\n[gps.c]"
-      SID		      48
+      SID		      56
       Tag		      "dsPIC_dsPIC_CFunctionCall"
       Ports		      [1, 1]
-      Position		      [35, 322, 175, 368]
+      Position		      [35, 367, 175, 413]
       BackgroundColor	      "orange"
-      LibraryVersion	      "3.21"
+      LibraryVersion	      "3.75"
       List {
 	ListType		RTWdata
-	FctDeclaration		"extern void getGpsMainData(real32_T* y1);"
-	FctCall			"getGpsMainData(*%y1);"
-	fctName			"getGpsMainData"
+	isFctUpdate		"1"
+	FctDeclaration		"extern void getGpsData(uint8_T* y1);"
+	FctCall			"getGpsData(*%y1);"
+	fctName			"getGpsData"
 	INPUT_SIZE		"1"
-	OUTPUT_SIZE		"8"
+	OUTPUT_SIZE		"33"
 	NBR_INPUT		"0"
 	NBR_OUTPUT		"1"
+	isFctStart		"0"
+	FctStart_Declaration	"inline extern void Init_onlyOnce();"
+	FctStart_Call		"Init_onlyOnce();"
+	FctStart_Name		"Init_onlyOnce"
+	isFctInit		"0"
+	FctInit_Declaration	"inline extern void Init_Reset();"
+	FctInit_Call		"Init_Reset();"
+	FctInit_Name		"Init_Reset"
       }
       SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
       SourceType	      "C Function Call"
-      fctName		      "'getGpsMainData'"
+      FctUpdate		      "Output Function"
+      fctName		      "'getGpsData'"
       INPUT_SIZE	      "1"
       INPUT1		      "--"
       INPUT2		      "--"
       INPUT3		      "--"
-      OUTPUT_SIZE	      "8"
-      OUTPUT1		      "real32"
-      SampleTime	      ".01"
+      OUTPUT_SIZE	      "33"
+      OUTPUT1		      "uint8"
+      SampleTime	      "T_step"
       InputType		      "[ ]"
-      OutputType	      "[ 7 ]"
-      FctDeclaration	      "extern void getGpsMainData(real32_T* y1);"
-      FctCall		      "getGpsMainData(*%y1);"
+      OutputType	      "[ 2 ]"
+      FctDeclaration	      "extern void getGpsData(uint8_T* y1);"
+      FctCall		      "getGpsData(*%y1);"
       OrderingInOutPopup      "Input"
+      FctStart		      "None"
+      FctStart_Name	      "Init_onlyOnce"
+      FctStart_Declaration    "inline extern void Init_onlyOnce();"
+      FctStart_Call	      "Init_onlyOnce();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
     }
     Block {
-      BlockType		      Reference
-      Name		      "Running status\n(LED D10)"
-      SID		      50
-      Tag		      "dsPIC_Digital_Output"
-      Ports		      [1]
-      Position		      [360, 328, 465, 362]
-      Priority		      "5"
-      LibraryVersion	      "3.21"
-      SourceBlock	      "dsPICdrivers/Digital I//O/Digital Output Write"
-      SourceType	      ""
-      PORT		      "A"
-      Pin		      "[7]"
-      Simultaneous	      off
-      OrderingInOutPopup      "None"
-    }
-    Block {
-      BlockType		      Selector
-      Name		      "Selector"
-      SID		      54
-      Ports		      [1, 1]
-      Position		      [215, 326, 255, 364]
-      InputPortWidth	      "8"
-      IndexOptions	      "Index vector (dialog)"
-      Indices		      "[8]"
-      OutputSizes	      "1"
-    }
-    Line {
-      SrcBlock		      "Retrieve last GPS data\n[gps.c]"
-      SrcPort		      1
-      DstBlock		      "Selector"
-      DstPort		      1
+      BlockType		      SubSystem
+      Name		      "Unpack sensor\ndata"
+      SID		      57
+      Ports		      [1, 15]
+      Position		      [225, 232, 340, 548]
+      LibraryVersion	      "1.31"
+      PermitHierarchicalResolution "ExplicitOnly"
+      TreatAsAtomicUnit	      on
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      MaskType		      "Stateflow"
+      MaskDescription	      "Embedded MATLAB block"
+      MaskDisplay	      "disp('unpack');"
+      MaskSelfModifiable      on
+      MaskIconFrame	      on
+      MaskIconOpaque	      off
+      MaskIconRotate	      "none"
+      MaskPortRotate	      "default"
+      MaskIconUnits	      "autoscale"
+      Port {
+	PortNumber		14
+	Name			"satellites"
+	PropagatedSignals	"satellites"
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
+      System {
+	Name			"Unpack sensor\ndata"
+	Location		[257, 457, 812, 717]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	SIDHighWatermark	38
+	SIDPrevWatermark	38
+	Block {
+	  BlockType		  Inport
+	  Name			  "u"
+	  SID			  1
+	  Position		  [20, 101, 40, 119]
+	  IconDisplay		  "Port number"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  Demux
+	  Name			  " Demux "
+	  SID			  15
+	  Ports			  [1, 1]
+	  Position		  [270, 605, 320, 645]
+	  Outputs		  "1"
+	}
+	Block {
+	  BlockType		  "S-Function"
+	  Name			  " SFunction "
+	  SID			  14
+	  Tag			  "Stateflow S-Function GPS_test 9"
+	  Ports			  [1, 16]
+	  Position		  [180, 124, 230, 586]
+	  FunctionName		  "sf_sfun"
+	  PortCounts		  "[1 16]"
+	  EnableBusSupport	  on
+	  Port {
+	    PortNumber		    2
+	    Name		    "latitude"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    3
+	    Name		    "longitude"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    4
+	    Name		    "altitude"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    5
+	    Name		    "year"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    6
+	    Name		    "month"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    7
+	    Name		    "day"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    8
+	    Name		    "hour"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    9
+	    Name		    "minute"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    10
+	    Name		    "second"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    11
+	    Name		    "cog"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    12
+	    Name		    "sog"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    13
+	    Name		    "hdop"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    14
+	    Name		    "fix"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    15
+	    Name		    "satellites"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	  Port {
+	    PortNumber		    16
+	    Name		    "newGpsData"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Terminator
+	  Name			  " Terminator "
+	  SID			  17
+	  Position		  [460, 616, 480, 634]
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "latitude"
+	  SID			  18
+	  Position		  [460, 101, 480, 119]
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "longitude"
+	  SID			  19
+	  Position		  [460, 136, 480, 154]
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "altitude"
+	  SID			  20
+	  Position		  [460, 171, 480, 189]
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "year"
+	  SID			  21
+	  Position		  [460, 206, 480, 224]
+	  Port			  "4"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "month"
+	  SID			  22
+	  Position		  [460, 246, 480, 264]
+	  Port			  "5"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "day"
+	  SID			  23
+	  Position		  [460, 281, 480, 299]
+	  Port			  "6"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "hour"
+	  SID			  24
+	  Position		  [460, 316, 480, 334]
+	  Port			  "7"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "minute"
+	  SID			  25
+	  Position		  [460, 351, 480, 369]
+	  Port			  "8"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "second"
+	  SID			  26
+	  Position		  [460, 386, 480, 404]
+	  Port			  "9"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "cog"
+	  SID			  27
+	  Position		  [460, 426, 480, 444]
+	  Port			  "10"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "sog"
+	  SID			  28
+	  Position		  [460, 461, 480, 479]
+	  Port			  "11"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "hdop"
+	  SID			  5
+	  Position		  [460, 496, 480, 514]
+	  Port			  "12"
+	  IconDisplay		  "Port number"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "fix"
+	  SID			  38
+	  Position		  [460, 531, 480, 549]
+	  Port			  "13"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "satellites"
+	  SID			  30
+	  Position		  [460, 566, 480, 584]
+	  Port			  "14"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "newGpsData"
+	  SID			  37
+	  Position		  [460, 606, 480, 624]
+	  Port			  "15"
+	  IconDisplay		  "Port number"
+	}
+	Line {
+	  SrcBlock		  " SFunction "
+	  SrcPort		  1
+	  DstBlock		  " Demux "
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "u"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "latitude"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  2
+	  DstBlock		  "latitude"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "longitude"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  3
+	  DstBlock		  "longitude"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "altitude"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  4
+	  DstBlock		  "altitude"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "year"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  5
+	  DstBlock		  "year"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "month"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  6
+	  DstBlock		  "month"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "day"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  7
+	  DstBlock		  "day"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "hour"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  8
+	  DstBlock		  "hour"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "minute"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  9
+	  DstBlock		  "minute"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "second"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  10
+	  DstBlock		  "second"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "cog"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  11
+	  DstBlock		  "cog"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "sog"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  12
+	  DstBlock		  "sog"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "hdop"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  13
+	  DstBlock		  "hdop"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "fix"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  14
+	  DstBlock		  "fix"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "satellites"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  15
+	  DstBlock		  "satellites"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "newGpsData"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  16
+	  DstBlock		  "newGpsData"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  " Demux "
+	  SrcPort		  1
+	  DstBlock		  " Terminator "
+	  DstPort		  1
+	}
+      }
     }
     Line {
       SrcBlock		      "Parse out new data since the last\ntimestep\n[gps.c]"
@@ -1002,29 +2392,157 @@ Model {
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Selector"
+      SrcBlock		      "Retrieve last GPS data\n[gps.c]"
       SrcPort		      1
-      DstBlock		      "Data Type Conversion"
+      DstBlock		      "Unpack sensor\ndata"
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Data Type Conversion"
+      SrcBlock		      "Initialize UARTs\n[commProtocol.c]"
       SrcPort		      1
-      DstBlock		      "Running status\n(LED D10)"
+      DstBlock		      "Initialize GPS\n[gps.c]"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Pack1"
+      SrcPort		      1
+      DstBlock		      "Build HIL\nsentence"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Build HIL\nsentence"
+      SrcPort		      1
+      DstBlock		      "Rate Transition13"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Unpack sensor\ndata"
+      SrcPort		      1
+      DstBlock		      "Pack1"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Unpack sensor\ndata"
+      SrcPort		      2
+      DstBlock		      "Pack1"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Unpack sensor\ndata"
+      SrcPort		      3
+      DstBlock		      "Pack1"
+      DstPort		      3
+    }
+    Line {
+      SrcBlock		      "Unpack sensor\ndata"
+      SrcPort		      4
+      DstBlock		      "Pack1"
+      DstPort		      4
+    }
+    Line {
+      SrcBlock		      "Unpack sensor\ndata"
+      SrcPort		      5
+      DstBlock		      "Pack1"
+      DstPort		      5
+    }
+    Line {
+      SrcBlock		      "Unpack sensor\ndata"
+      SrcPort		      6
+      DstBlock		      "Pack1"
+      DstPort		      6
+    }
+    Line {
+      SrcBlock		      "Unpack sensor\ndata"
+      SrcPort		      7
+      DstBlock		      "Pack1"
+      DstPort		      7
+    }
+    Line {
+      SrcBlock		      "Unpack sensor\ndata"
+      SrcPort		      8
+      DstBlock		      "Pack1"
+      DstPort		      8
+    }
+    Line {
+      SrcBlock		      "Unpack sensor\ndata"
+      SrcPort		      9
+      DstBlock		      "Pack1"
+      DstPort		      9
+    }
+    Line {
+      SrcBlock		      "Unpack sensor\ndata"
+      SrcPort		      10
+      DstBlock		      "Pack1"
+      DstPort		      10
+    }
+    Line {
+      SrcBlock		      "Unpack sensor\ndata"
+      SrcPort		      11
+      DstBlock		      "Pack1"
+      DstPort		      11
+    }
+    Line {
+      SrcBlock		      "Unpack sensor\ndata"
+      SrcPort		      12
+      DstBlock		      "Pack1"
+      DstPort		      12
+    }
+    Line {
+      SrcBlock		      "Unpack sensor\ndata"
+      SrcPort		      13
+      DstBlock		      "Pack1"
+      DstPort		      13
+    }
+    Line {
+      Name		      "satellites"
+      Labels		      [0, 0]
+      SrcBlock		      "Unpack sensor\ndata"
+      SrcPort		      14
+      Points		      [30, 0]
+      Branch {
+	DstBlock		"Pack1"
+	DstPort			14
+      }
+      Branch {
+	Points			[0, 50]
+	DstBlock		"Logical\nOperator4"
+	DstPort			1
+      }
+    }
+    Line {
+      SrcBlock		      "Unpack sensor\ndata"
+      SrcPort		      15
+      Points		      [0, 45]
+      DstBlock		      "Logical\nOperator4"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Logical\nOperator4"
+      SrcPort		      1
+      DstBlock		      "GPS Reception\nStatus\n(LED D9)"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Rate Transition13"
+      SrcPort		      1
+      DstBlock		      "Add actuator commands\nto transmission FIFO\n[commProtocol.c]"
       DstPort		      1
     }
     Annotation {
       Name		      "This model tests the GPS unit. It is effectively\na model that only implements the GPS-based\nporti"
-      "ons of the Autoboat code. It blinks LED D10\nwhenever it receives and successfully parses a \nGPS sentence over "
-      "UART2."
-      Position		      [325, 54]
+      "ons of the Autoboat code. It receives GPS \ndata via UART2 and outputs sentences for the\nProcessing Groundstati"
+      "on for only this GPS data."
+      Position		      [195, 49]
       HorizontalAlignment     "left"
+    }
+    Annotation {
+      Position		      [51, 710]
     }
   }
 }
 # Finite State Machines
 #
-#    Stateflow Version 7.5 (R2010a) dated Jan 19 2010, 19:48:30
+#    Stateflow Version 7.5 (R2010a) dated Jan 19 2010, 18:40:00
 #
 #
 
@@ -1035,20 +2553,1089 @@ Stateflow {
     name		    "GPS_test"
     created		    "09-Mar-2011 12:08:45"
     isLibrary		    0
-    firstTarget		    2
+    firstTarget		    55
     sfVersion		    75014000
   }
-  target {
+  chart {
     id			    2
+    name		    "Unpack sensor\ndata"
+    windowPosition	    [397.266 308.766 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1600 900 1.333333333333333]
+    treeNode		    [0 3 0 0]
+    firstTransition	    5
+    firstJunction	    4
+    viewObj		    2
+    machine		    1
+    toolbarMode		    LIBRARY_TOOLBAR
+    subviewS {
+    }
+    ssIdHighWaterMark	    26
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    6
+    chartFileNumber	    9
+    disableImplicitCasting  1
+    eml {
+      name		      "unpack"
+    }
+  }
+  state {
+    id			    3
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    2
+    treeNode		    [2 0 0 0]
+    superState		    SUBCHART
+    subviewer		    2
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function [latitude, longitude, altitude, year, month, day, hour, minute, second, cog, sog, hdop, "
+      "fix, satellites, newGpsData] = unpack(u)\n%#eml\n\nlatitude = typecast(u(1:4), 'single');\nlongitude = typecast("
+      "u(5:8), 'single');\naltitude = typecast(u(9:12), 'single');\nyear = u(13);\nmonth = u(14);\nday = u(15);\nhour ="
+      " u(16);\nminute = u(17);\nsecond = u(18);\ncog = typecast(u(19:22), 'single');\nsog = typecast(u(23:26), 'single"
+      "');\nhdop = typecast(u(27:30), 'single');\nfix = u(31);\nsatellites = u(32);\nnewGpsData = u(33);"
+      editorLayout	      "100 M4x1[135 43 800 860]"
+    }
+  }
+  junction {
+    id			    4
+    position		    [23.5747 49.5747 7]
+    chart		    2
+    linkNode		    [2 0 0]
+    subviewer		    2
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    5
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      4
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    2
+    linkNode		    [2 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    2
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    6
+    ssIdNumber		    6
+    name		    "latitude"
+    linkNode		    [2 0 7]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    7
+    ssIdNumber		    7
+    name		    "longitude"
+    linkNode		    [2 6 8]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    8
+    ssIdNumber		    8
+    name		    "altitude"
+    linkNode		    [2 7 9]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    9
+    ssIdNumber		    9
+    name		    "year"
+    linkNode		    [2 8 10]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    10
+    ssIdNumber		    10
+    name		    "month"
+    linkNode		    [2 9 11]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    11
+    ssIdNumber		    11
+    name		    "day"
+    linkNode		    [2 10 12]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    12
+    ssIdNumber		    12
+    name		    "hour"
+    linkNode		    [2 11 13]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    13
+    ssIdNumber		    13
+    name		    "minute"
+    linkNode		    [2 12 14]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    14
+    ssIdNumber		    14
+    name		    "second"
+    linkNode		    [2 13 15]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    15
+    ssIdNumber		    15
+    name		    "cog"
+    linkNode		    [2 14 16]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    16
+    ssIdNumber		    16
+    name		    "sog"
+    linkNode		    [2 15 17]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    17
+    ssIdNumber		    4
+    name		    "u"
+    linkNode		    [2 16 18]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_UINT8_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+    }
+    dataType		    "uint8"
+  }
+  data {
+    id			    18
+    ssIdNumber		    5
+    name		    "hdop"
+    linkNode		    [2 17 19]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    19
+    ssIdNumber		    26
+    name		    "fix"
+    linkNode		    [2 18 20]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    20
+    ssIdNumber		    18
+    name		    "satellites"
+    linkNode		    [2 19 21]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    21
+    ssIdNumber		    25
+    name		    "newGpsData"
+    linkNode		    [2 20 0]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  instance {
+    id			    22
+    name		    "Unpack sensor\ndata"
+    machine		    1
+    chart		    2
+  }
+  chart {
+    id			    23
+    name		    "Pack1"
+    windowPosition	    [401.813 209.45 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1600 900 1.333333333333333]
+    treeNode		    [0 24 0 0]
+    firstTransition	    26
+    firstJunction	    25
+    viewObj		    23
+    machine		    1
+    toolbarMode		    LIBRARY_TOOLBAR
+    subviewS {
+    }
+    ssIdHighWaterMark	    87
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    27
+    chartFileNumber	    15
+    disableImplicitCasting  1
+    eml {
+      name		      "fcn"
+    }
+  }
+  state {
+    id			    24
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    23
+    treeNode		    [23 0 0 0]
+    superState		    SUBCHART
+    subviewer		    23
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function y = fcn(lat, lon, alt, yr, mon, day, hr, min, sec, cog, sog, hdop, fix, sat)\n%#eml\n\ny"
+      " = zeros(153, 1, 'uint8');\ny(57:60) = packUint32BE(typecast(lat,'uint32'));\ny(61:64) = packUint32BE(typecast(l"
+      "on,'uint32'));\ny(65:68) = packUint32BE(typecast(alt,'uint32'));\ny(69) = yr;\ny(70) = mon;\ny(71) = day;\ny(72)"
+      " = hr;\ny(73) = min;\ny(74) = sec;\ny(75:78) = packUint32BE(typecast(cog,'uint32'));\ny(79:82) = packUint32BE(ty"
+      "pecast(sog,'uint32'));\ny(83:86) = packUint32BE(typecast(hdop,'uint32'));\ny(87) = fix;\ny(88) = sat;\n\nfunctio"
+      "n out = packUint32BE(in)\nout = zeros(4, 1, 'uint8');\nout(1) = uint8(bitand(bitshift(in,-24),hex2dec('FF')));\n"
+      "out(2) = uint8(bitand(bitshift(in,-16),hex2dec('FF')));\nout(3) = uint8(bitand(bitshift(in,-8),hex2dec('FF')));\n"
+      "out(4) = uint8(bitand(in,hex2dec('FF')));"
+      editorLayout	      "100 M4x1[15 18 1616 876]"
+    }
+  }
+  junction {
+    id			    25
+    position		    [23.5747 49.5747 7]
+    chart		    23
+    linkNode		    [23 0 0]
+    subviewer		    23
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    26
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      25
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    23
+    linkNode		    [23 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    23
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    27
+    ssIdNumber		    5
+    name		    "y"
+    linkNode		    [23 0 28]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    28
+    ssIdNumber		    44
+    name		    "lat"
+    linkNode		    [23 27 29]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    29
+    ssIdNumber		    45
+    name		    "lon"
+    linkNode		    [23 28 30]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    30
+    ssIdNumber		    46
+    name		    "alt"
+    linkNode		    [23 29 31]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    31
+    ssIdNumber		    47
+    name		    "yr"
+    linkNode		    [23 30 32]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    32
+    ssIdNumber		    48
+    name		    "mon"
+    linkNode		    [23 31 33]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    33
+    ssIdNumber		    49
+    name		    "day"
+    linkNode		    [23 32 34]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    34
+    ssIdNumber		    50
+    name		    "hr"
+    linkNode		    [23 33 35]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    35
+    ssIdNumber		    51
+    name		    "min"
+    linkNode		    [23 34 36]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    36
+    ssIdNumber		    52
+    name		    "sec"
+    linkNode		    [23 35 37]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    37
+    ssIdNumber		    53
+    name		    "cog"
+    linkNode		    [23 36 38]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    38
+    ssIdNumber		    54
+    name		    "sog"
+    linkNode		    [23 37 39]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    39
+    ssIdNumber		    55
+    name		    "hdop"
+    linkNode		    [23 38 40]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    40
+    ssIdNumber		    56
+    name		    "fix"
+    linkNode		    [23 39 41]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    41
+    ssIdNumber		    57
+    name		    "sat"
+    linkNode		    [23 40 0]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  instance {
+    id			    42
+    name		    "Pack1"
+    machine		    1
+    chart		    23
+  }
+  chart {
+    id			    43
+    name		    "Build HIL\nsentence/Pack"
+    windowPosition	    [386.813 224.45 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1600 900 1.333333333333333]
+    treeNode		    [0 44 0 0]
+    firstTransition	    46
+    firstJunction	    45
+    viewObj		    43
+    machine		    1
+    toolbarMode		    LIBRARY_TOOLBAR
+    subviewS {
+    }
+    ssIdHighWaterMark	    16
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    47
+    chartFileNumber	    21
+    disableImplicitCasting  1
+    eml {
+      name		      "fcn"
+    }
+  }
+  state {
+    id			    44
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    43
+    treeNode		    [43 0 0 0]
+    superState		    SUBCHART
+    subviewer		    43
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function y = fcn(a, b, c, d, e, f)\n%#eml\n\ny = zeros(length(a)+length(b)+length(c)+length(d)+le"
+      "ngth(e)+length(f), 1, 'uint8');\ny(1) = a;\ny(2) = b;\ny(3:157) = c;\ny(158) = d;\ny(159) = e;\ny(160) = f;"
+      editorLayout	      "100 M4x1[90 171 764 417]"
+    }
+  }
+  junction {
+    id			    45
+    position		    [23.5747 49.5747 7]
+    chart		    43
+    linkNode		    [43 0 0]
+    subviewer		    43
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    46
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      45
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    43
+    linkNode		    [43 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    43
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    47
+    ssIdNumber		    4
+    name		    "a"
+    linkNode		    [43 0 48]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    48
+    ssIdNumber		    5
+    name		    "y"
+    linkNode		    [43 47 49]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    49
+    ssIdNumber		    6
+    name		    "b"
+    linkNode		    [43 48 50]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    50
+    ssIdNumber		    7
+    name		    "c"
+    linkNode		    [43 49 51]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    51
+    ssIdNumber		    8
+    name		    "d"
+    linkNode		    [43 50 52]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    52
+    ssIdNumber		    9
+    name		    "e"
+    linkNode		    [43 51 53]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    53
+    ssIdNumber		    10
+    name		    "f"
+    linkNode		    [43 52 0]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  instance {
+    id			    54
+    name		    "Build HIL\nsentence/Pack"
+    machine		    1
+    chart		    43
+  }
+  target {
+    id			    55
     name		    "sfun"
     description		    "Default Simulink S-Function Target."
     machine		    1
-    linkNode		    [1 0 3]
+    linkNode		    [1 0 56]
   }
   target {
-    id			    3
+    id			    56
     name		    "rtw"
     machine		    1
-    linkNode		    [1 2 0]
+    linkNode		    [1 55 0]
   }
 }
