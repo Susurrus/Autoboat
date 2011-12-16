@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2095"
+    ComputedModelVersion    "1.2097"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Dec 01 18:27:15 2011"
-  RTWModifiedTimeStamp	  244664606
-  ModelVersionFormat	  "1.%<AutoIncrement:2095>"
+  LastModifiedDate	  "Thu Dec 15 16:56:24 2011"
+  RTWModifiedTimeStamp	  245868228
+  ModelVersionFormat	  "1.%<AutoIncrement:2097>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -633,7 +633,7 @@ Model {
 	      CustomProperty {
 		DataType		"string"
 		Name			"OPTIM_GCC"
-		Value			"-mcpu=33fJ256GP710 -O3 -fschedule-insns -fschedule-insns2"
+		Value			"-mcpu=33fJ256GP710A -O3 -fschedule-insns -fschedule-insns2"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -643,14 +643,14 @@ Model {
 	      CustomProperty {
 		DataType		"string"
 		Name			"LDPICTYPE"
-		Value			" -Xlinker --script=C:\\PROGRA~2\\MICROC~1\\mplabc30\\v3.30c\\support\\dsPIC33F\\gld\\p33fJ256GP710.gld"
+		Value			" -Xlinker --script=C:\\PROGRA~2\\MICROC~1\\mplabc30\\v3.30c\\support\\dsPIC33F\\gld\\p33fJ256GP710A.gld"
 	      }
 	      CustomProperty {
 		DataType		"string"
 		Name			"LDLIBPIC"
 		Value			" C:\\PROGRA~2\\MICROC~1\\mplabc30\\v3.30c\\lib\\libpic30-coff.a C:\\PROGRA~2\\MICROC~1\\mplabc30\\v3.30c\\l"
-		"ib\\dsPIC33F\\libp33fJ256GP710-coff.a C:\\PROGRA~2\\MICROC~1\\mplabc30\\v3.30c\\lib\\libc-coff.a C:\\PROGRA~2\\MICRO"
-		"C~1\\mplabc30\\v3.30c\\lib\\libm-coff.a"
+		"ib\\dsPIC33F\\libp33fJ256GP710A-coff.a C:\\PROGRA~2\\MICROC~1\\mplabc30\\v3.30c\\lib\\libc-coff.a C:\\PROGRA~2\\MICR"
+		"OC~1\\mplabc30\\v3.30c\\lib\\libm-coff.a"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -660,7 +660,7 @@ Model {
 	      CustomProperty {
 		DataType		"string"
 		Name			"PIC_REF"
-		Value			"33fJ256GP710"
+		Value			"33fJ256GP710A"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -1206,7 +1206,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "117"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    17730
+    SIDHighWatermark	    17733
     Block {
       BlockType		      SubSystem
       Name		      "Actuator\nOutputs"
@@ -9892,7 +9892,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Map PWM values\nto Actuator Signals"
-		Location		[202, 82, 1598, 847]
+		Location		[202, 82, 1569, 847]
 		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	293
@@ -10383,14 +10383,36 @@ Model {
 		    }
 		    Block {
 		    BlockType		    Reference
-		    Name		    "Detect Rise\nPositive"
-		    SID			    12385
+		    Name		    "Compare\nTo Zero"
+		    SID			    17731
 		    Ports		    [1, 1]
-		    Position		    [355, 118, 415, 162]
+		    Position		    [290, 155, 320, 185]
 		    ShowName		    off
 		    LibraryVersion	    "1.216"
-		    SourceBlock		    "simulink/Logic and Bit\nOperations/Detect Rise\nPositive"
-		    SourceType		    "Detect Rise Positive"
+		    SourceBlock		    "simulink/Logic and Bit\nOperations/Compare\nTo Zero"
+		    SourceType		    "Compare To Zero"
+		    ShowPortLabels	    "FromPortIcon"
+		    SystemSampleTime	    "-1"
+		    FunctionWithSeparateData off
+		    RTWMemSecFuncInitTerm   "Inherit from model"
+		    RTWMemSecFuncExecute    "Inherit from model"
+		    RTWMemSecDataConstants  "Inherit from model"
+		    RTWMemSecDataInternal   "Inherit from model"
+		    RTWMemSecDataParameters "Inherit from model"
+		    relop		    "~="
+		    LogicOutDataTypeMode    "boolean"
+		    ZeroCross		    on
+		    }
+		    Block {
+		    BlockType		    Reference
+		    Name		    "Detect\nChange"
+		    SID			    17732
+		    Ports		    [1, 1]
+		    Position		    [260, 210, 320, 240]
+		    ShowName		    off
+		    LibraryVersion	    "1.216"
+		    SourceBlock		    "simulink/Logic and Bit\nOperations/Detect\nChange"
+		    SourceType		    "Detect Change"
 		    ShowPortLabels	    "FromPortIcon"
 		    SystemSampleTime	    "-1"
 		    FunctionWithSeparateData off
@@ -10400,6 +10422,18 @@ Model {
 		    RTWMemSecDataInternal   "Inherit from model"
 		    RTWMemSecDataParameters "Inherit from model"
 		    vinit		    "0"
+		    }
+		    Block {
+		    BlockType		    Logic
+		    Name		    "Logical\nOperator"
+		    SID			    17733
+		    Ports		    [2, 1]
+		    Position		    [370, 177, 400, 208]
+		    ShowName		    off
+		    AllPortsSameDT	    off
+		    OutDataTypeMode	    "boolean"
+		    LogicDataType	    "fixdt(0, 8)"
+		    OutDataTypeStr	    "boolean"
 		    }
 		    Block {
 		    BlockType		    SubSystem
@@ -11323,21 +11357,28 @@ Model {
 		    SrcPort		    1
 		    Points		    [100, 0]
 		    Branch {
-		    Points		    [0, 0]
-		    Branch {
 		    Points		    [0, -30]
 		    DstBlock		    "Trigger Events"
 		    DstPort		    1
 		    }
 		    Branch {
-		    DstBlock		    "Detect Rise\nPositive"
+		    Points		    [0, 30]
+		    Branch {
+		    DstBlock		    "Compare\nTo Zero"
+		    DstPort		    1
+		    }
+		    Branch {
+		    Points		    [0, 55]
+		    Branch {
+		    Points		    [0, 25; 285, 0]
+		    DstBlock		    "Mux Everything"
+		    DstPort		    3
+		    }
+		    Branch {
+		    DstBlock		    "Detect\nChange"
 		    DstPort		    1
 		    }
 		    }
-		    Branch {
-		    Points		    [0, 30]
-		    DstBlock		    "Mux Everything"
-		    DstPort		    3
 		    }
 		    }
 		    Line {
@@ -11380,9 +11421,24 @@ Model {
 		    }
 		    Line {
 		    Labels		    [0, 0]
-		    SrcBlock		    "Detect Rise\nPositive"
+		    SrcBlock		    "Logical\nOperator"
 		    SrcPort		    1
+		    Points		    [20, 0; 0, -55]
 		    DstBlock		    "Mux Everything"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "Compare\nTo Zero"
+		    SrcPort		    1
+		    Points		    [0, 15]
+		    DstBlock		    "Logical\nOperator"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Detect\nChange"
+		    SrcPort		    1
+		    Points		    [0, -25]
+		    DstBlock		    "Logical\nOperator"
 		    DstPort		    2
 		    }
 		    Annotation {
@@ -25043,7 +25099,7 @@ Model {
       SourceBlock	      "dsPICdrivers/Master"
       SourceType	      "Master"
       TimeStepType	      "Timer1"
-      picType		      "33fJ256GP710"
+      picType		      "33fJ256GP710A"
       fcy		      "40000000"
       Quartz_33f	      "8e6"
       PLLActive_33f	      on
@@ -44186,8 +44242,6 @@ Stateflow {
     viewObj		    370
     machine		    1
     toolbarMode		    LIBRARY_TOOLBAR
-    subviewS {
-    }
     ssIdHighWaterMark	    5
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
