@@ -18,7 +18,6 @@ void startUart2Transmission();
  * for transmission and reception.
  */
 void initUart2(unsigned int brgRegister) {
-	int i;
 
 	// First initialize the necessary circular buffers.
 	newCircBuffer(&uart2RxBuffer);
