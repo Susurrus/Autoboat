@@ -1,12 +1,12 @@
 Model {
-  Name			  "mavlink_heartbeat"
+  Name			  "mavlink_gps"
   Version		  7.5
   MdlSubVersion		  0
   GraphicalInterface {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.6"
+    ComputedModelVersion    "1.7"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -25,9 +25,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Dec 28 14:46:49 2011"
-  RTWModifiedTimeStamp	  246980085
-  ModelVersionFormat	  "1.%<AutoIncrement:6>"
+  LastModifiedDate	  "Thu Dec 29 11:49:21 2011"
+  RTWModifiedTimeStamp	  247059254
+  ModelVersionFormat	  "1.%<AutoIncrement:7>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -708,6 +708,31 @@ Model {
   }
   BlockParameterDefaults {
     Block {
+      BlockType		      BusCreator
+      Inputs		      "4"
+      DisplayOption	      "none"
+      UseBusObject	      off
+      BusObject		      "BusObject"
+      NonVirtualBus	      off
+    }
+    Block {
+      BlockType		      Constant
+      Value		      "1"
+      VectorParams1D	      on
+      SamplingMode	      "Sample based"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeMode	      "Inherit from 'Constant value'"
+      OutDataType	      "fixdt(1,16,0)"
+      ConRadixGroup	      "Use specified scaling"
+      OutScaling	      "[]"
+      OutDataTypeStr	      "Inherit: Inherit from 'Constant value'"
+      LockScale		      off
+      SampleTime	      "inf"
+      FramePeriod	      "inf"
+      PreserveConstantTs      off
+    }
+    Block {
       BlockType		      DataTypeConversion
       OutMin		      "[]"
       OutMax		      "[]"
@@ -717,6 +742,92 @@ Model {
       OutDataTypeStr	      "Inherit: Inherit via back propagation"
       LockScale		      off
       ConvertRealWorld	      "Real World Value (RWV)"
+      RndMeth		      "Zero"
+      SaturateOnIntegerOverflow	on
+      SampleTime	      "-1"
+    }
+    Block {
+      BlockType		      DiscretePulseGenerator
+      PulseType		      "Sample based"
+      TimeSource	      "Use simulation time"
+      VectorParams1D	      on
+    }
+    Block {
+      BlockType		      Gain
+      Gain		      "1"
+      Multiplication	      "Element-wise(K.*u)"
+      ParamMin		      "[]"
+      ParamMax		      "[]"
+      ParameterDataTypeMode   "Same as input"
+      ParameterDataType	      "fixdt(1,16,0)"
+      ParameterScalingMode    "Best Precision: Matrix-wise"
+      ParameterScaling	      "[]"
+      ParamDataTypeStr	      "Inherit: Same as input"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeMode	      "Same as input"
+      OutDataType	      "fixdt(1,16,0)"
+      OutScaling	      "[]"
+      OutDataTypeStr	      "Inherit: Same as input"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      SampleTime	      "-1"
+    }
+    Block {
+      BlockType		      Math
+      Operator		      "exp"
+      OutputSignalType	      "auto"
+      SampleTime	      "-1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeMode	      "Same as first input"
+      OutDataType	      "fixdt(1,16,0)"
+      OutScaling	      "[]"
+      OutDataTypeStr	      "Inherit: Same as first input"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      IntermediateResultsDataTypeStr "Inherit: Inherit via internal rule"
+      AlgorithmType	      "Newton-Raphson"
+      Iterations	      "3"
+    }
+    Block {
+      BlockType		      Outport
+      Port		      "1"
+      UseBusObject	      off
+      BusObject		      "BusObject"
+      BusOutputAsStruct	      off
+      PortDimensions	      "-1"
+      VarSizeSig	      "Inherit"
+      SampleTime	      "-1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      DataType		      "auto"
+      OutDataType	      "fixdt(1,16,0)"
+      OutScaling	      "[]"
+      OutDataTypeStr	      "Inherit: auto"
+      LockScale		      off
+      SignalType	      "auto"
+      SamplingMode	      "auto"
+      SourceOfInitialOutputValue "Dialog"
+      OutputWhenDisabled      "held"
+      InitialOutput	      "[]"
+    }
+    Block {
+      BlockType		      Product
+      Inputs		      "2"
+      Multiplication	      "Element-wise(.*)"
+      CollapseMode	      "All dimensions"
+      CollapseDim	      "1"
+      InputSameDT	      on
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeMode	      "Same as first input"
+      OutDataType	      "fixdt(1,16,0)"
+      OutScaling	      "[]"
+      OutDataTypeStr	      "Inherit: Same as first input"
+      LockScale		      off
       RndMeth		      "Zero"
       SaturateOnIntegerOverflow	on
       SampleTime	      "-1"
@@ -742,8 +853,8 @@ Model {
     }
   }
   System {
-    Name		    "mavlink_heartbeat"
-    Location		    [814, 195, 1503, 706]
+    Name		    "mavlink_gps"
+    Location		    [810, 82, 1590, 831]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -757,7 +868,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    11
+    SIDHighWatermark	    74
     Block {
       BlockType		      SubSystem
       Name		      "Blink LED D10 at 1Hz"
@@ -878,6 +989,846 @@ Model {
       SourceType	      ""
     }
     Block {
+      BlockType		      SubSystem
+      Name		      "GPS Generator"
+      SID		      47
+      Ports		      [0, 1]
+      Position		      [435, 515, 475, 575]
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      System {
+	Name			"GPS Generator"
+	Location		[810, 82, 1590, 814]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  BusCreator
+	  Name			  "Bus\nCreator2"
+	  SID			  49
+	  Ports			  [15, 1]
+	  Position		  [655, 70, 660, 570]
+	  ShowName		  off
+	  Inputs		  "15"
+	  DisplayOption		  "bar"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant"
+	  SID			  16
+	  Position		  [355, 160, 385, 190]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "2000"
+	  OutDataTypeMode	  "uint16"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint16"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant1"
+	  SID			  50
+	  Position		  [490, 452, 535, 468]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "0"
+	  OutDataTypeMode	  "single"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "single"
+	  Port {
+	    PortNumber		    1
+	    Name		    "hdop"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant2"
+	  SID			  51
+	  Position		  [490, 487, 535, 503]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  OutDataTypeMode	  "uint8"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint8"
+	  Port {
+	    PortNumber		    1
+	    Name		    "fix"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant3"
+	  SID			  52
+	  Position		  [490, 522, 535, 538]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "4"
+	  OutDataTypeMode	  "uint8"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint8"
+	  Port {
+	    PortNumber		    1
+	    Name		    "satellites"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant4"
+	  SID			  57
+	  Position		  [355, 190, 385, 220]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "12"
+	  OutDataTypeMode	  "uint16"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint16"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant5"
+	  SID			  58
+	  Position		  [355, 220, 385, 250]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "29"
+	  OutDataTypeMode	  "uint16"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint16"
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Counter\nFree-Running"
+	  SID			  62
+	  Ports			  [0, 1]
+	  Position		  [25, 195, 55, 225]
+	  ShowName		  off
+	  LibraryVersion	  "1.216"
+	  SourceBlock		  "simulink/Sources/Counter\nFree-Running"
+	  SourceType		  "Counter Free-Running"
+	  ShowPortLabels	  "FromPortIcon"
+	  SystemSampleTime	  "-1"
+	  FunctionWithSeparateData off
+	  RTWMemSecFuncInitTerm	  "Inherit from model"
+	  RTWMemSecFuncExecute	  "Inherit from model"
+	  RTWMemSecDataConstants  "Inherit from model"
+	  RTWMemSecDataInternal	  "Inherit from model"
+	  RTWMemSecDataParameters "Inherit from model"
+	  NumBits		  "16"
+	  tsamp			  "-1"
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion"
+	  SID			  17
+	  Position		  [450, 383, 505, 397]
+	  ShowName		  off
+	  OutDataTypeMode	  "single"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "single"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	  Port {
+	    PortNumber		    1
+	    Name		    "cog"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion1"
+	  SID			  18
+	  Position		  [315, 418, 370, 432]
+	  ShowName		  off
+	  OutDataTypeMode	  "single"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "single"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion10"
+	  SID			  19
+	  Position		  [420, 83, 475, 97]
+	  ShowName		  off
+	  OutDataTypeMode	  "single"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "single"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	  Port {
+	    PortNumber		    1
+	    Name		    "altitude"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion11"
+	  SID			  53
+	  Position		  [550, 563, 595, 577]
+	  ShowName		  off
+	  OutDataTypeMode	  "boolean"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "boolean"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	  Port {
+	    PortNumber		    1
+	    Name		    "newData"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion12"
+	  SID			  73
+	  Position		  [75, 203, 130, 217]
+	  ShowName		  off
+	  OutDataTypeMode	  "single"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "single"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion2"
+	  SID			  20
+	  Position		  [440, 318, 495, 332]
+	  ShowName		  off
+	  OutDataTypeMode	  "uint8"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint8"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	  Port {
+	    PortNumber		    1
+	    Name		    "second"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion3"
+	  SID			  21
+	  Position		  [440, 283, 495, 297]
+	  ShowName		  off
+	  OutDataTypeMode	  "uint8"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint8"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	  Port {
+	    PortNumber		    1
+	    Name		    "minute"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion4"
+	  SID			  22
+	  Position		  [440, 168, 495, 182]
+	  ShowName		  off
+	  OutDataTypeMode	  "uint8"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint8"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	  Port {
+	    PortNumber		    1
+	    Name		    "year"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion5"
+	  SID			  23
+	  Position		  [440, 198, 495, 212]
+	  ShowName		  off
+	  OutDataTypeMode	  "uint8"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint8"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	  Port {
+	    PortNumber		    1
+	    Name		    "month"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion6"
+	  SID			  24
+	  Position		  [440, 228, 495, 242]
+	  ShowName		  off
+	  OutDataTypeMode	  "uint8"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint8"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	  Port {
+	    PortNumber		    1
+	    Name		    "day"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion7"
+	  SID			  25
+	  Position		  [440, 258, 495, 272]
+	  ShowName		  off
+	  OutDataTypeMode	  "uint8"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "uint8"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	  Port {
+	    PortNumber		    1
+	    Name		    "hour"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion8"
+	  SID			  26
+	  Position		  [420, 53, 475, 67]
+	  ShowName		  off
+	  OutDataTypeMode	  "single"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "single"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	  Port {
+	    PortNumber		    1
+	    Name		    "longitude"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion9"
+	  SID			  27
+	  Position		  [420, 33, 475, 47]
+	  ShowName		  off
+	  OutDataTypeMode	  "single"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "single"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	  Port {
+	    PortNumber		    1
+	    Name		    "latitude"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Product
+	  Name			  "Divide"
+	  SID			  68
+	  Ports			  [2, 1]
+	  Position		  [210, 202, 240, 233]
+	  ShowName		  off
+	  Inputs		  "*/"
+	  InputSameDT		  off
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^-10"
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Product
+	  Name			  "Divide1"
+	  SID			  69
+	  Ports			  [2, 1]
+	  Position		  [310, 247, 340, 278]
+	  ShowName		  off
+	  Inputs		  "*/"
+	  InputSameDT		  off
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^-10"
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Gain
+	  Name			  "Gain"
+	  SID			  34
+	  Position		  [415, 410, 445, 440]
+	  ShowName		  off
+	  Gain			  "1.94384449"
+	  ParameterDataTypeMode	  "Inherit via internal rule"
+	  ParameterDataType	  "fixdt(1, 16)"
+	  ParameterScaling	  "2^0"
+	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
+	  OutDataTypeMode	  "Inherit via internal rule"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	  Port {
+	    PortNumber		    1
+	    Name		    "sog"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Math
+	  Name			  "Math\nFunction"
+	  SID			  71
+	  Ports			  [2, 1]
+	  Position		  [350, 307, 380, 338]
+	  ShowName		  off
+	  Operator		  "mod"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  DiscretePulseGenerator
+	  Name			  "Pulse\nGenerator"
+	  SID			  54
+	  Ports			  [0, 1]
+	  Position		  [495, 554, 525, 586]
+	  ShowName		  off
+	  Amplitude		  "1"
+	  Period		  "100"
+	  PulseWidth		  "1"
+	  PhaseDelay		  "100"
+	  SampleTime		  ".01"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Zero level trust1"
+	  SID			  65
+	  Position		  [150, 215, 180, 235]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "60"
+	  OutDataTypeMode	  "single"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "single"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Zero level trust2"
+	  SID			  42
+	  Position		  [390, 380, 420, 400]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "7"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Zero level trust3"
+	  SID			  43
+	  Position		  [245, 415, 275, 435]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "2"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Zero level trust4"
+	  SID			  44
+	  Position		  [355, 80, 385, 100]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "0"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Zero level trust5"
+	  SID			  45
+	  Position		  [310, 52, 385, 78]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "-78.131"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Zero level trust6"
+	  SID			  46
+	  Position		  [310, 28, 385, 52]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "35.722"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Zero level trust7"
+	  SID			  70
+	  Position		  [255, 260, 285, 280]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "60"
+	  OutDataTypeMode	  "single"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "single"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Zero level trust8"
+	  SID			  72
+	  Position		  [275, 320, 305, 340]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "60"
+	  OutDataTypeMode	  "single"
+	  OutDataType		  "sfix(16)"
+	  OutScaling		  "2^0"
+	  OutDataTypeStr	  "single"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "Out1"
+	  SID			  48
+	  Position		  [750, 313, 780, 327]
+	  IconDisplay		  "Port number"
+	}
+	Line {
+	  SrcBlock		  "Zero level trust6"
+	  SrcPort		  1
+	  DstBlock		  "Data Type Conversion9"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Zero level trust5"
+	  SrcPort		  1
+	  Points		  [0, -5]
+	  DstBlock		  "Data Type Conversion8"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Zero level trust3"
+	  SrcPort		  1
+	  DstBlock		  "Data Type Conversion1"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Zero level trust2"
+	  SrcPort		  1
+	  DstBlock		  "Data Type Conversion"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Constant"
+	  SrcPort		  1
+	  DstBlock		  "Data Type Conversion4"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "cog"
+	  Labels		  [1, 0]
+	  SrcBlock		  "Data Type Conversion"
+	  SrcPort		  1
+	  DstBlock		  "Bus\nCreator2"
+	  DstPort		  10
+	}
+	Line {
+	  SrcBlock		  "Data Type Conversion1"
+	  SrcPort		  1
+	  DstBlock		  "Gain"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "second"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Data Type Conversion2"
+	  SrcPort		  1
+	  Points		  [140, 0]
+	  DstBlock		  "Bus\nCreator2"
+	  DstPort		  9
+	}
+	Line {
+	  Name			  "minute"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Data Type Conversion3"
+	  SrcPort		  1
+	  Points		  [140, 0]
+	  DstBlock		  "Bus\nCreator2"
+	  DstPort		  8
+	}
+	Line {
+	  Name			  "year"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Data Type Conversion4"
+	  SrcPort		  1
+	  Points		  [140, 0]
+	  DstBlock		  "Bus\nCreator2"
+	  DstPort		  4
+	}
+	Line {
+	  Name			  "month"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Data Type Conversion5"
+	  SrcPort		  1
+	  Points		  [140, 0]
+	  DstBlock		  "Bus\nCreator2"
+	  DstPort		  5
+	}
+	Line {
+	  Name			  "day"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Data Type Conversion6"
+	  SrcPort		  1
+	  Points		  [140, 0]
+	  DstBlock		  "Bus\nCreator2"
+	  DstPort		  6
+	}
+	Line {
+	  Name			  "hour"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Data Type Conversion7"
+	  SrcPort		  1
+	  Points		  [140, 0]
+	  DstBlock		  "Bus\nCreator2"
+	  DstPort		  7
+	}
+	Line {
+	  Name			  "sog"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Gain"
+	  SrcPort		  1
+	  DstBlock		  "Bus\nCreator2"
+	  DstPort		  11
+	}
+	Line {
+	  Name			  "longitude"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Data Type Conversion8"
+	  SrcPort		  1
+	  Points		  [135, 0; 0, 50]
+	  DstBlock		  "Bus\nCreator2"
+	  DstPort		  2
+	}
+	Line {
+	  Name			  "latitude"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Data Type Conversion9"
+	  SrcPort		  1
+	  Points		  [160, 0]
+	  DstBlock		  "Bus\nCreator2"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "altitude"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Data Type Conversion10"
+	  SrcPort		  1
+	  Points		  [120, 0; 0, 55]
+	  DstBlock		  "Bus\nCreator2"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Zero level trust4"
+	  SrcPort		  1
+	  DstBlock		  "Data Type Conversion10"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "hdop"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Constant1"
+	  SrcPort		  1
+	  DstBlock		  "Bus\nCreator2"
+	  DstPort		  12
+	}
+	Line {
+	  Name			  "fix"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Constant2"
+	  SrcPort		  1
+	  DstBlock		  "Bus\nCreator2"
+	  DstPort		  13
+	}
+	Line {
+	  Name			  "satellites"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Constant3"
+	  SrcPort		  1
+	  DstBlock		  "Bus\nCreator2"
+	  DstPort		  14
+	}
+	Line {
+	  SrcBlock		  "Pulse\nGenerator"
+	  SrcPort		  1
+	  DstBlock		  "Data Type Conversion11"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "newData"
+	  Labels		  [2, 0]
+	  SrcBlock		  "Data Type Conversion11"
+	  SrcPort		  1
+	  Points		  [0, -5]
+	  DstBlock		  "Bus\nCreator2"
+	  DstPort		  15
+	}
+	Line {
+	  SrcBlock		  "Bus\nCreator2"
+	  SrcPort		  1
+	  DstBlock		  "Out1"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Zero level trust1"
+	  SrcPort		  1
+	  DstBlock		  "Divide"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Constant4"
+	  SrcPort		  1
+	  DstBlock		  "Data Type Conversion5"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Constant5"
+	  SrcPort		  1
+	  DstBlock		  "Data Type Conversion6"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Counter\nFree-Running"
+	  SrcPort		  1
+	  DstBlock		  "Data Type Conversion12"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Divide"
+	  SrcPort		  1
+	  Points		  [0, 35]
+	  Branch {
+	    Points		    [0, 35]
+	    DstBlock		    "Data Type Conversion3"
+	    DstPort		    1
+	  }
+	  Branch {
+	    DstBlock		    "Divide1"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  SrcBlock		  "Divide1"
+	  SrcPort		  1
+	  DstBlock		  "Data Type Conversion7"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Zero level trust7"
+	  SrcPort		  1
+	  DstBlock		  "Divide1"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Math\nFunction"
+	  SrcPort		  1
+	  DstBlock		  "Data Type Conversion2"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Zero level trust8"
+	  SrcPort		  1
+	  DstBlock		  "Math\nFunction"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Data Type Conversion12"
+	  SrcPort		  1
+	  Points		  [5, 0]
+	  Branch {
+	    DstBlock		    "Divide"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, 105]
+	    DstBlock		    "Math\nFunction"
+	    DstPort		    1
+	  }
+	}
+	Annotation {
+	  Name			  "Convert velocity vector in m/s to a scalar in knots"
+	  Position		  [256, 396]
+	}
+	Annotation {
+	  Name			  "Convert velocity vector in m/s to a scalar heading in degrees from North, increasing eastward."
+	  Position		  [297, 355]
+	}
+      }
+    }
+    Block {
       BlockType		      Reference
       Name		      "Initialize UARTs\n[commProtocol.c]"
       SID		      8
@@ -935,7 +1886,7 @@ Model {
     }
     Block {
       BlockType		      Reference
-      Name		      "Initialize heartbeat message\n[mavlink.c]"
+      Name		      "Initialize some MAVLink data\nstructures\n[mavlink.c]"
       SID		      10
       Tag		      "dsPIC_dsPIC_CFunctionCall"
       Ports		      []
@@ -953,9 +1904,9 @@ Model {
 	NBR_INPUT		"0"
 	NBR_OUTPUT		"0"
 	isFctStart		"1"
-	FctStart_Declaration	"inline extern void MavLinkInitHeartbeat();"
-	FctStart_Call		"MavLinkInitHeartbeat();"
-	FctStart_Name		"MavLinkInitHeartbeat"
+	FctStart_Declaration	"inline extern void MavLinkInit();"
+	FctStart_Call		"MavLinkInit();"
+	FctStart_Name		"MavLinkInit"
 	isFctInit		"0"
 	FctInit_Declaration	"inline extern void Init_Reset();"
 	FctInit_Call		"Init_Reset();"
@@ -978,9 +1929,9 @@ Model {
       FctCall		      "MavLinkSendHeartbeat();"
       OrderingInOutPopup      "None"
       FctStart		      "Start Function (Call once and only once)"
-      FctStart_Name	      "MavLinkInitHeartbeat"
-      FctStart_Declaration    "inline extern void MavLinkInitHeartbeat();"
-      FctStart_Call	      "MavLinkInitHeartbeat();"
+      FctStart_Name	      "MavLinkInit"
+      FctStart_Declaration    "inline extern void MavLinkInit();"
+      FctStart_Call	      "MavLinkInit();"
       FctInit		      "None"
       FctInit_Name	      "Init_Reset"
       FctInit_Declaration     "inline extern void Init_Reset();"
@@ -1046,7 +1997,7 @@ Model {
       SID		      9
       Tag		      "dsPIC_dsPIC_CFunctionCall"
       Ports		      []
-      Position		      [115, 339, 287, 377]
+      Position		      [100, 234, 272, 272]
       BackgroundColor	      "orange"
       LibraryVersion	      "3.75"
       List {
@@ -1098,11 +2049,67 @@ Model {
     }
     Block {
       BlockType		      Reference
+      Name		      "Transmit raw GPS data\n[mavlink.c]"
+      SID		      55
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      []
+      Position		      [100, 409, 272, 447]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.75"
+      List {
+	ListType		RTWdata
+	isFctUpdate		"1"
+	FctDeclaration		"extern void MavLinkSendRawGps();"
+	FctCall			"MavLinkSendRawGps();"
+	fctName			"MavLinkSendRawGps"
+	INPUT_SIZE		"1"
+	OUTPUT_SIZE		"1"
+	NBR_INPUT		"0"
+	NBR_OUTPUT		"0"
+	isFctStart		"0"
+	FctStart_Declaration	"inline extern void cpInitCommunications();"
+	FctStart_Call		"cpInitCommunications();"
+	FctStart_Name		"cpInitCommunications"
+	isFctInit		"0"
+	FctInit_Declaration	"inline extern void Init_Reset();"
+	FctInit_Call		"Init_Reset();"
+	FctInit_Name		"Init_Reset"
+      }
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "Output Function"
+      fctName		      "MavLinkSendRawGps"
+      INPUT_SIZE	      "1"
+      INPUT1		      "--"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "--"
+      SampleTime	      "1"
+      InputType		      "[ ]"
+      OutputType	      "[ ]"
+      FctDeclaration	      "extern void MavLinkSendRawGps();"
+      FctCall		      "MavLinkSendRawGps();"
+      OrderingInOutPopup      "None"
+      FctStart		      "None"
+      FctStart_Name	      "cpInitCommunications"
+      FctStart_Declaration    "inline extern void cpInitCommunications();"
+      FctStart_Call	      "cpInitCommunications();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
+    }
+    Block {
+      BlockType		      Reference
       Name		      "Transmit status message\n[mavlink.c]"
       SID		      11
       Tag		      "dsPIC_dsPIC_CFunctionCall"
       Ports		      []
-      Position		      [115, 419, 287, 457]
+      Position		      [100, 314, 272, 352]
       BackgroundColor	      "orange"
       LibraryVersion	      "3.75"
       List {
@@ -1152,5 +2159,35 @@ Model {
       PinDigitalOutput	      "[]"
       AnalogueInput	      "[]"
     }
+  }
+}
+# Finite State Machines
+#
+#    Stateflow Version 7.5 (R2010a) dated Jan 19 2010, 18:40:00
+#
+#
+
+
+Stateflow {
+  machine {
+    id			    1
+    name		    "mavlink_gps"
+    created		    "29-Dec-2011 10:26:56"
+    isLibrary		    0
+    firstTarget		    2
+    sfVersion		    75014000
+  }
+  target {
+    id			    2
+    name		    "sfun"
+    description		    "Default Simulink S-Function Target."
+    machine		    1
+    linkNode		    [1 0 3]
+  }
+  target {
+    id			    3
+    name		    "rtw"
+    machine		    1
+    linkNode		    [1 2 0]
   }
 }
