@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.7"
+    ComputedModelVersion    "1.10"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -25,16 +25,16 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Dec 29 11:49:21 2011"
-  RTWModifiedTimeStamp	  247059254
-  ModelVersionFormat	  "1.%<AutoIncrement:7>"
+  LastModifiedDate	  "Fri Dec 30 15:12:13 2011"
+  RTWModifiedTimeStamp	  247155699
+  ModelVersionFormat	  "1.%<AutoIncrement:10>"
   ConfigurationManager	  "None"
-  SampleTimeColors	  off
+  SampleTimeColors	  on
   SampleTimeAnnotations	  off
   LibraryLinkDisplay	  "none"
   WideLines		  off
   ShowLineDimensions	  off
-  ShowPortDataTypes	  off
+  ShowPortDataTypes	  on
   ShowLoopsOnError	  on
   IgnoreBidirectionalLines off
   ShowStorageClass	  off
@@ -112,7 +112,7 @@ Model {
 	  StartTime		  "0.0"
 	  StopTime		  "10.0"
 	  AbsTol		  "auto"
-	  FixedStep		  "0.001"
+	  FixedStep		  "0.01"
 	  InitialStep		  "auto"
 	  MaxNumMinSteps	  "-1"
 	  MaxOrder		  5
@@ -666,7 +666,7 @@ Model {
       }
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=0 "
-      CurrentDlgPage	      "Real-Time Workshop/Custom Code"
+      CurrentDlgPage	      "Solver"
       ConfigPrmDlgPosition    " [ 159, 33, 1039, 753 ] "
     }
     PropName		    "ConfigurationSets"
@@ -775,6 +775,28 @@ Model {
       SampleTime	      "-1"
     }
     Block {
+      BlockType		      Inport
+      Port		      "1"
+      UseBusObject	      off
+      BusObject		      "BusObject"
+      BusOutputAsStruct	      off
+      PortDimensions	      "-1"
+      VarSizeSig	      "Inherit"
+      SampleTime	      "-1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      DataType		      "auto"
+      OutDataType	      "fixdt(1,16,0)"
+      OutScaling	      "[]"
+      OutDataTypeStr	      "Inherit: auto"
+      LockScale		      off
+      SignalType	      "auto"
+      SamplingMode	      "auto"
+      LatchByDelayingOutsideSignal off
+      LatchInputForFeedbackSignals off
+      Interpolate	      on
+    }
+    Block {
       BlockType		      Math
       Operator		      "exp"
       OutputSignalType	      "auto"
@@ -833,6 +855,15 @@ Model {
       SampleTime	      "-1"
     }
     Block {
+      BlockType		      RateTransition
+      Integrity		      on
+      Deterministic	      on
+      X0		      "0"
+      OutPortSampleTimeOpt    "Specify"
+      OutPortSampleTimeMultiple	"1"
+      OutPortSampleTime	      "-1"
+    }
+    Block {
       BlockType		      SubSystem
       ShowPortLabels	      "FromPortIcon"
       Permissions	      "ReadWrite"
@@ -854,7 +885,7 @@ Model {
   }
   System {
     Name		    "mavlink_gps"
-    Location		    [810, 82, 1590, 831]
+    Location		    [810, 82, 1573, 831]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -868,7 +899,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    74
+    SIDHighWatermark	    84
     Block {
       BlockType		      SubSystem
       Name		      "Blink LED D10 at 1Hz"
@@ -989,11 +1020,32 @@ Model {
       SourceType	      ""
     }
     Block {
+      BlockType		      Reference
+      Name		      "Counter\nFree-Running"
+      SID		      75
+      Ports		      [0, 1]
+      Position		      [30, 655, 60, 685]
+      ShowName		      off
+      LibraryVersion	      "1.216"
+      SourceBlock	      "simulink/Sources/Counter\nFree-Running"
+      SourceType	      "Counter Free-Running"
+      ShowPortLabels	      "FromPortIcon"
+      SystemSampleTime	      "-1"
+      FunctionWithSeparateData off
+      RTWMemSecFuncInitTerm   "Inherit from model"
+      RTWMemSecFuncExecute    "Inherit from model"
+      RTWMemSecDataConstants  "Inherit from model"
+      RTWMemSecDataInternal   "Inherit from model"
+      RTWMemSecDataParameters "Inherit from model"
+      NumBits		      "32"
+      tsamp		      "-1"
+    }
+    Block {
       BlockType		      SubSystem
       Name		      "GPS Generator"
       SID		      47
-      Ports		      [0, 1]
-      Position		      [435, 515, 475, 575]
+      Ports		      [1, 1]
+      Position		      [590, 330, 630, 390]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -1003,7 +1055,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"GPS Generator"
-	Location		[810, 82, 1590, 814]
+	Location		[651, 97, 1431, 829]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -1016,6 +1068,15 @@ Model {
 	TiledPageScale		1
 	ShowPageBoundaries	off
 	ZoomFactor		"100"
+	Block {
+	  BlockType		  Inport
+	  Name			  "In1"
+	  SID			  76
+	  Position		  [20, 203, 50, 217]
+	  IconDisplay		  "Port number"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	}
 	Block {
 	  BlockType		  BusCreator
 	  Name			  "Bus\nCreator2"
@@ -1120,27 +1181,6 @@ Model {
 	  OutDataType		  "sfix(16)"
 	  OutScaling		  "2^0"
 	  OutDataTypeStr	  "uint16"
-	}
-	Block {
-	  BlockType		  Reference
-	  Name			  "Counter\nFree-Running"
-	  SID			  62
-	  Ports			  [0, 1]
-	  Position		  [25, 195, 55, 225]
-	  ShowName		  off
-	  LibraryVersion	  "1.216"
-	  SourceBlock		  "simulink/Sources/Counter\nFree-Running"
-	  SourceType		  "Counter Free-Running"
-	  ShowPortLabels	  "FromPortIcon"
-	  SystemSampleTime	  "-1"
-	  FunctionWithSeparateData off
-	  RTWMemSecFuncInitTerm	  "Inherit from model"
-	  RTWMemSecFuncExecute	  "Inherit from model"
-	  RTWMemSecDataConstants  "Inherit from model"
-	  RTWMemSecDataInternal	  "Inherit from model"
-	  RTWMemSecDataParameters "Inherit from model"
-	  NumBits		  "16"
-	  tsamp			  "-1"
 	}
 	Block {
 	  BlockType		  DataTypeConversion
@@ -1761,7 +1801,7 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Counter\nFree-Running"
+	  SrcBlock		  "In1"
 	  SrcPort		  1
 	  DstBlock		  "Data Type Conversion12"
 	  DstPort		  1
@@ -1964,8 +2004,8 @@ Model {
       Quartz_33f	      "8e6"
       PLLActive_33f	      on
       fcyDesired_33f	      "40000000"
-      tmr1		      "[1  39999  0]"
-      tmr1Info		      "Time Step : 0.001  ;   Error : 0%  PR1=39999"
+      tmr1		      "[8  49999  0]"
+      tmr1Info		      "Time Step : 0.01  ;   Error : 0%  PR1=49999"
       tmr2345		      "[0  0  0  0  0  0  0  0]"
       tmr2345cfg	      "[-1 -1 -1 -1 -1 -1 -1 -1]"
       IOautoConf	      on
@@ -1990,6 +2030,139 @@ Model {
       OverrideFcy	      off
       NewFcy		      "1e6"
       PR2345		      "[65535  65535  65535  65535  65535  65535  65535  65535]"
+    }
+    Block {
+      BlockType		      RateTransition
+      Name		      "Rate Transition"
+      SID		      78
+      Position		      [195, 469, 235, 511]
+      ShowName		      off
+    }
+    Block {
+      BlockType		      RateTransition
+      Name		      "Rate Transition1"
+      SID		      80
+      Position		      [195, 559, 235, 601]
+      ShowName		      off
+    }
+    Block {
+      BlockType		      RateTransition
+      Name		      "Rate Transition2"
+      SID		      82
+      Position		      [195, 629, 235, 671]
+      ShowName		      off
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Transmit GPS global origin\n[mavlink.c]"
+      SID		      84
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      []
+      Position		      [310, 701, 480, 739]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.75"
+      List {
+	ListType		RTWdata
+	isFctUpdate		"1"
+	FctDeclaration		"extern void MavLinkSendGpsGlobalOrigin();"
+	FctCall			"MavLinkSendGpsGlobalOrigin();"
+	fctName			"MavLinkSendGpsGlobalOrigin"
+	INPUT_SIZE		"1"
+	OUTPUT_SIZE		"1"
+	NBR_INPUT		"0"
+	NBR_OUTPUT		"0"
+	isFctStart		"0"
+	FctStart_Declaration	"inline extern void cpInitCommunications();"
+	FctStart_Call		"cpInitCommunications();"
+	FctStart_Name		"cpInitCommunications"
+	isFctInit		"0"
+	FctInit_Declaration	"inline extern void Init_Reset();"
+	FctInit_Call		"Init_Reset();"
+	FctInit_Name		"Init_Reset"
+      }
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "Output Function"
+      fctName		      "MavLinkSendGpsGlobalOrigin"
+      INPUT_SIZE	      "1"
+      INPUT1		      "--"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "--"
+      SampleTime	      "10"
+      InputType		      "[ ]"
+      OutputType	      "[ ]"
+      FctDeclaration	      "extern void MavLinkSendGpsGlobalOrigin();"
+      FctCall		      "MavLinkSendGpsGlobalOrigin();"
+      OrderingInOutPopup      "None"
+      FctStart		      "None"
+      FctStart_Name	      "cpInitCommunications"
+      FctStart_Declaration    "inline extern void cpInitCommunications();"
+      FctStart_Call	      "cpInitCommunications();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Transmit filtered GPS data\n[mavlink.c]"
+      SID		      77
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      [1]
+      Position		      [310, 471, 480, 509]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.75"
+      List {
+	ListType		RTWdata
+	isFctUpdate		"1"
+	FctDeclaration		"extern void MavLinkSendFiltGps(uint32_T u1);"
+	FctCall			"MavLinkSendFiltGps(%u1);"
+	fctName			"MavLinkSendFiltGps"
+	INPUT_SIZE		"1"
+	OUTPUT_SIZE		"1"
+	NBR_INPUT		"1"
+	NBR_OUTPUT		"0"
+	isFctStart		"0"
+	FctStart_Declaration	"inline extern void cpInitCommunications();"
+	FctStart_Call		"cpInitCommunications();"
+	FctStart_Name		"cpInitCommunications"
+	isFctInit		"0"
+	FctInit_Declaration	"inline extern void Init_Reset();"
+	FctInit_Call		"Init_Reset();"
+	FctInit_Name		"Init_Reset"
+      }
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "Output Function"
+      fctName		      "MavLinkSendFiltGps"
+      INPUT_SIZE	      "1"
+      INPUT1		      "uint32"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "--"
+      SampleTime	      ".5"
+      InputType		      "[ 6 ]"
+      OutputType	      "[ ]"
+      FctDeclaration	      "extern void MavLinkSendFiltGps(uint32_T u1);"
+      FctCall		      "MavLinkSendFiltGps(%u1);"
+      OrderingInOutPopup      "None"
+      FctStart		      "None"
+      FctStart_Name	      "cpInitCommunications"
+      FctStart_Declaration    "inline extern void cpInitCommunications();"
+      FctStart_Call	      "cpInitCommunications();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
     }
     Block {
       BlockType		      Reference
@@ -2049,22 +2222,78 @@ Model {
     }
     Block {
       BlockType		      Reference
-      Name		      "Transmit raw GPS data\n[mavlink.c]"
-      SID		      55
+      Name		      "Transmit local position\n[mavlink.c]"
+      SID		      81
       Tag		      "dsPIC_dsPIC_CFunctionCall"
-      Ports		      []
-      Position		      [100, 409, 272, 447]
+      Ports		      [1]
+      Position		      [310, 631, 480, 669]
       BackgroundColor	      "orange"
       LibraryVersion	      "3.75"
       List {
 	ListType		RTWdata
 	isFctUpdate		"1"
-	FctDeclaration		"extern void MavLinkSendRawGps();"
-	FctCall			"MavLinkSendRawGps();"
+	FctDeclaration		"extern void MavLinkSendLocalPosition(uint32_T u1);"
+	FctCall			"MavLinkSendLocalPosition(%u1);"
+	fctName			"MavLinkSendLocalPosition"
+	INPUT_SIZE		"1"
+	OUTPUT_SIZE		"1"
+	NBR_INPUT		"1"
+	NBR_OUTPUT		"0"
+	isFctStart		"0"
+	FctStart_Declaration	"inline extern void cpInitCommunications();"
+	FctStart_Call		"cpInitCommunications();"
+	FctStart_Name		"cpInitCommunications"
+	isFctInit		"0"
+	FctInit_Declaration	"inline extern void Init_Reset();"
+	FctInit_Call		"Init_Reset();"
+	FctInit_Name		"Init_Reset"
+      }
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "Output Function"
+      fctName		      "MavLinkSendLocalPosition"
+      INPUT_SIZE	      "1"
+      INPUT1		      "uint32"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "--"
+      SampleTime	      ".25"
+      InputType		      "[ 6 ]"
+      OutputType	      "[ ]"
+      FctDeclaration	      "extern void MavLinkSendLocalPosition(uint32_T u1);"
+      FctCall		      "MavLinkSendLocalPosition(%u1);"
+      OrderingInOutPopup      "None"
+      FctStart		      "None"
+      FctStart_Name	      "cpInitCommunications"
+      FctStart_Declaration    "inline extern void cpInitCommunications();"
+      FctStart_Call	      "cpInitCommunications();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Transmit raw GPS data\n[mavlink.c]"
+      SID		      55
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      [1]
+      Position		      [310, 396, 480, 434]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.75"
+      List {
+	ListType		RTWdata
+	isFctUpdate		"1"
+	FctDeclaration		"extern void MavLinkSendRawGps(uint32_T u1);"
+	FctCall			"MavLinkSendRawGps(%u1);"
 	fctName			"MavLinkSendRawGps"
 	INPUT_SIZE		"1"
 	OUTPUT_SIZE		"1"
-	NBR_INPUT		"0"
+	NBR_INPUT		"1"
 	NBR_OUTPUT		"0"
 	isFctStart		"0"
 	FctStart_Declaration	"inline extern void cpInitCommunications();"
@@ -2080,16 +2309,16 @@ Model {
       FctUpdate		      "Output Function"
       fctName		      "MavLinkSendRawGps"
       INPUT_SIZE	      "1"
-      INPUT1		      "--"
+      INPUT1		      "uint32"
       INPUT2		      "--"
       INPUT3		      "--"
       OUTPUT_SIZE	      "1"
       OUTPUT1		      "--"
       SampleTime	      "1"
-      InputType		      "[ ]"
+      InputType		      "[ 6 ]"
       OutputType	      "[ ]"
-      FctDeclaration	      "extern void MavLinkSendRawGps();"
-      FctCall		      "MavLinkSendRawGps();"
+      FctDeclaration	      "extern void MavLinkSendRawGps(uint32_T u1);"
+      FctCall		      "MavLinkSendRawGps(%u1);"
       OrderingInOutPopup      "None"
       FctStart		      "None"
       FctStart_Name	      "cpInitCommunications"
@@ -2158,6 +2387,115 @@ Model {
       PinDigitalInput	      "[]"
       PinDigitalOutput	      "[]"
       AnalogueInput	      "[]"
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Transmit vehicle attitude\n[mavlink.c]"
+      SID		      79
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      [1]
+      Position		      [310, 561, 480, 599]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.75"
+      List {
+	ListType		RTWdata
+	isFctUpdate		"1"
+	FctDeclaration		"extern void MavLinkSendAttitude(uint32_T u1);"
+	FctCall			"MavLinkSendAttitude(%u1);"
+	fctName			"MavLinkSendAttitude"
+	INPUT_SIZE		"1"
+	OUTPUT_SIZE		"1"
+	NBR_INPUT		"1"
+	NBR_OUTPUT		"0"
+	isFctStart		"0"
+	FctStart_Declaration	"inline extern void cpInitCommunications();"
+	FctStart_Call		"cpInitCommunications();"
+	FctStart_Name		"cpInitCommunications"
+	isFctInit		"0"
+	FctInit_Declaration	"inline extern void Init_Reset();"
+	FctInit_Call		"Init_Reset();"
+	FctInit_Name		"Init_Reset"
+      }
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "Output Function"
+      fctName		      "MavLinkSendAttitude"
+      INPUT_SIZE	      "1"
+      INPUT1		      "uint32"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "--"
+      SampleTime	      ".1"
+      InputType		      "[ 6 ]"
+      OutputType	      "[ ]"
+      FctDeclaration	      "extern void MavLinkSendAttitude(uint32_T u1);"
+      FctCall		      "MavLinkSendAttitude(%u1);"
+      OrderingInOutPopup      "None"
+      FctStart		      "None"
+      FctStart_Name	      "cpInitCommunications"
+      FctStart_Declaration    "inline extern void cpInitCommunications();"
+      FctStart_Call	      "cpInitCommunications();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
+    }
+    Line {
+      SrcBlock		      "Counter\nFree-Running"
+      SrcPort		      1
+      Points		      [65, 0; 0, -20]
+      Branch {
+	Points			[0, -70]
+	Branch {
+	  Points		  [0, -90]
+	  Branch {
+	    DstBlock		    "Rate Transition"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, -75; 150, 0]
+	    Branch {
+	      DstBlock		      "Transmit raw GPS data\n[mavlink.c]"
+	      DstPort		      1
+	    }
+	    Branch {
+	      Points		      [0, -55]
+	      DstBlock		      "GPS Generator"
+	      DstPort		      1
+	    }
+	  }
+	}
+	Branch {
+	  DstBlock		  "Rate Transition1"
+	  DstPort		  1
+	}
+      }
+      Branch {
+	DstBlock		"Rate Transition2"
+	DstPort			1
+      }
+    }
+    Line {
+      SrcBlock		      "Rate Transition"
+      SrcPort		      1
+      DstBlock		      "Transmit filtered GPS data\n[mavlink.c]"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Rate Transition1"
+      SrcPort		      1
+      DstBlock		      "Transmit vehicle attitude\n[mavlink.c]"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Rate Transition2"
+      SrcPort		      1
+      DstBlock		      "Transmit local position\n[mavlink.c]"
+      DstPort		      1
     }
   }
 }
