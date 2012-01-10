@@ -58,7 +58,7 @@ void MavLinkSendStatus(void) {
 void MavLinkSendRawGps(uint32_t systemTime) {
 	mavlink_message_t msg;
 	
-	mavlink_msg_gps_raw_int_pack(mavlink_system.sysid, mavlink_system.compid, &msg, ((uint64_t)systemTime)*1000, 3, 35722, -78131, 0, 65535, 65535, 200, 1000, 4);
+	mavlink_msg_gps_raw_int_pack(mavlink_system.sysid, mavlink_system.compid, &msg, ((uint64_t)systemTime)*1000, 3, 357220000, -781310000, 0, 65535, 65535, 200, 1000, 4);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
@@ -68,8 +68,7 @@ void MavLinkSendRawGps(uint32_t systemTime) {
 void MavLinkSendFiltGps(uint32_t systemTime) {
 	mavlink_message_t msg;
 
-	//mavlink_msg_global_position_int_pack(mavlink_system.sysid, mavlink_system.compid, &msg, systemTime, 35722, -78131, 0, 0, 1000, 1000, 0, 319);
-	mavlink_msg_global_position_int_pack(mavlink_system.sysid, mavlink_system.compid, &msg, systemTime, 0, 0, 0, 0, 0, 0, 0, 0);
+	mavlink_msg_global_position_int_pack(mavlink_system.sysid, mavlink_system.compid, &msg, systemTime, 357220000, -781310000, 0, 0, 1000, 1000, 0, 319);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
@@ -84,7 +83,7 @@ void MavLinkSendAttitude(uint32_t systemTime) {
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
-	uart1EnqueueData(buf, (uint8_t)len);
+	//uart1EnqueueData(buf, (uint8_t)len);
 }
 
 void MavLinkSendLocalPosition(uint32_t systemTime) {
@@ -95,7 +94,7 @@ void MavLinkSendLocalPosition(uint32_t systemTime) {
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
-	uart1EnqueueData(buf, (uint8_t)len);
+	//uart1EnqueueData(buf, (uint8_t)len);
 }
 
 void MavLinkSendGpsGlobalOrigin(void) {
@@ -106,7 +105,7 @@ void MavLinkSendGpsGlobalOrigin(void) {
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
-	uart1EnqueueData(buf, (uint8_t)len);
+	//uart1EnqueueData(buf, (uint8_t)len);
 }
 
 /**
