@@ -5,10 +5,10 @@
 // Add initUart2() to an initialization sequence called once on startup.
 // Use uart2Enqueue*Data() to push appropriately-sized data chunks into the queue and begin transmission.
 
-#include "circBuffer.h"
+#include "CircularBuffer.h"
 
-extern CircBuffer uart2RxBuffer;
-extern CircBuffer uart2TxBuffer;
+extern CircularBuffer uart2RxBuffer;
+extern CircularBuffer uart2TxBuffer;
 
 void initUart2(unsigned int brgRegister);
 void changeUart2BaudRate(unsigned short brgRegister);

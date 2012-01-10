@@ -5,10 +5,10 @@
 // Add initUart1() to an initialization sequence called once on startup.
 // Use uart1Enqueue*Data() to push appropriately-sized data chunks into the queue and begin transmission.
 
-#include "circBuffer.h"
+#include "CircularBuffer.h"
 
-extern CircBuffer uart1RxBuffer;
-extern CircBuffer uart1TxBuffer;
+extern CircularBuffer uart1RxBuffer;
+extern CircularBuffer uart1TxBuffer;
 
 void initUart1(unsigned int brgRegister);
 void changeUart1BaudRate(unsigned short brgRegister);

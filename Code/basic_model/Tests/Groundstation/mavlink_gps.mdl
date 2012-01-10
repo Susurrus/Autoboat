@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.10"
+    ComputedModelVersion    "1.12"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -25,9 +25,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Dec 30 15:12:13 2011"
-  RTWModifiedTimeStamp	  247155699
-  ModelVersionFormat	  "1.%<AutoIncrement:10>"
+  LastModifiedDate	  "Tue Jan 10 12:23:09 2012"
+  RTWModifiedTimeStamp	  248098988
+  ModelVersionFormat	  "1.%<AutoIncrement:12>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -381,7 +381,7 @@ Model {
 	  RTWUseSimCustomCode	  off
 	  CustomInclude		  "../../mavlink/include\n../../clib"
 	  CustomSource		  "../../clib/mavlink.c\n../../clib/uart1.c\n../../clib/uart2.c\n../../clib/commProtocol.c\n../../cli"
-	  "b/circBuffer.c"
+	  "b/CircularBuffer.c"
 	  IncludeHyperlinkInReport off
 	  LaunchReport		  off
 	  TargetLang		  "C"
@@ -666,7 +666,7 @@ Model {
       }
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=0 "
-      CurrentDlgPage	      "Solver"
+      CurrentDlgPage	      "Real-Time Workshop/Custom Code"
       ConfigPrmDlgPosition    " [ 159, 33, 1039, 753 ] "
     }
     PropName		    "ConfigurationSets"
@@ -899,7 +899,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    84
+    SIDHighWatermark	    85
     Block {
       BlockType		      SubSystem
       Name		      "Blink LED D10 at 1Hz"
@@ -2263,6 +2263,62 @@ Model {
       OutputType	      "[ ]"
       FctDeclaration	      "extern void MavLinkSendLocalPosition(uint32_T u1);"
       FctCall		      "MavLinkSendLocalPosition(%u1);"
+      OrderingInOutPopup      "None"
+      FctStart		      "None"
+      FctStart_Name	      "cpInitCommunications"
+      FctStart_Declaration    "inline extern void cpInitCommunications();"
+      FctStart_Call	      "cpInitCommunications();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Transmit mission count\n[mavlink.c]"
+      SID		      85
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      []
+      Position		      [440, 191, 610, 229]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.75"
+      List {
+	ListType		RTWdata
+	isFctUpdate		"1"
+	FctDeclaration		"extern void MavLinkReceive();"
+	FctCall			"MavLinkReceive();"
+	fctName			"MavLinkReceive"
+	INPUT_SIZE		"1"
+	OUTPUT_SIZE		"1"
+	NBR_INPUT		"0"
+	NBR_OUTPUT		"0"
+	isFctStart		"0"
+	FctStart_Declaration	"inline extern void cpInitCommunications();"
+	FctStart_Call		"cpInitCommunications();"
+	FctStart_Name		"cpInitCommunications"
+	isFctInit		"0"
+	FctInit_Declaration	"inline extern void Init_Reset();"
+	FctInit_Call		"Init_Reset();"
+	FctInit_Name		"Init_Reset"
+      }
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "Output Function"
+      fctName		      "MavLinkReceive"
+      INPUT_SIZE	      "1"
+      INPUT1		      "--"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "--"
+      SampleTime	      ".01"
+      InputType		      "[ ]"
+      OutputType	      "[ ]"
+      FctDeclaration	      "extern void MavLinkReceive();"
+      FctCall		      "MavLinkReceive();"
       OrderingInOutPopup      "None"
       FctStart		      "None"
       FctStart_Name	      "cpInitCommunications"

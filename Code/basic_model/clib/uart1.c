@@ -1,9 +1,9 @@
-#include "circBuffer.h"
+#include "CircularBuffer.h"
 #include "uart1.h"
 #include <p33Fxxxx.h>
 
-CircBuffer uart1RxBuffer;
-CircBuffer uart1TxBuffer;
+CircularBuffer uart1RxBuffer;
+CircularBuffer uart1TxBuffer;
 
 /*
  * Private functions.
@@ -20,8 +20,8 @@ void startUart1Transmission();
 void initUart1(unsigned int brgRegister) {
 
 	// First initialize the necessary circular buffers.
-	newCircBuffer(&uart1RxBuffer);
-	newCircBuffer(&uart1TxBuffer);
+	InitCircularBuffer(&uart1RxBuffer);
+	InitCircularBuffer(&uart1TxBuffer);
 
 	// Configure and open the port;
 	// U1MODE Register
@@ -83,8 +83,11 @@ void changeUart1BaudRate(unsigned short brgRegister) {
  * it has room for new data before attempting to transmit.
  */
 void startUart1Transmission() {
-	if (getLength(&uart1TxBuffer) > 0 && !U1STAbits.UTXBF) {
-		U1TXREG = readFront(&uart1TxBuffer);
+	if (!IsEmpty(&uart1TxBuffer) && !U1STAbits.UTXBF) {
+		// A temporary variable is used here because writing directly into U1TXREG causes some weird issues.
+		unsigned char c;
+		Read(&uart1TxBuffer, &c);
+		U1TXREG = c;
 	}
 }
 
@@ -93,7 +96,7 @@ void startUart1Transmission() {
  * providing an interface that only enqueues a single byte.
  */
 void uart1EnqueueByte(unsigned char datum) {
-	writeBack(&uart1TxBuffer, datum);
+	Write(&uart1TxBuffer, datum);
 	startUart1Transmission();
 }
 
@@ -105,7 +108,7 @@ void uart1EnqueueData(unsigned char *data, unsigned char length) {
 	unsigned char g;
 
 	for (g = 0; g < length; g++) {
-		writeBack(&uart1TxBuffer,data[g]);
+		Write(&uart1TxBuffer,data[g]);
 	}
 
 	startUart1Transmission();
@@ -115,7 +118,7 @@ void __attribute__((__interrupt__, no_auto_psv)) _U1RXInterrupt(void) {
 
 	// Keep receiving new bytes while the buffer has data.
 	while (U1STAbits.URXDA == 1) {
-		writeBack(&uart1RxBuffer, (unsigned char)U1RXREG);
+		Write(&uart1RxBuffer, (unsigned char)U1RXREG);
 	}
 
 	// Clear buffer overflow bit if triggered

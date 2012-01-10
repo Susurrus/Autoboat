@@ -1,4 +1,5 @@
 #include "CircularBuffer.h"
+#include <stddef.h>
 
 #ifdef UNIT_TEST
 #include <string.h>

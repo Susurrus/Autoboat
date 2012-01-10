@@ -1,7 +1,7 @@
 #ifndef _CIRCULAR_BUFFER_H_
 #define _CIRCULAR_BUFFER_H_
 
-#define BUFFER_SIZE 1000
+#define BUFFER_SIZE 256
 
 #define SUCCESS 1
 #define STANDARD_ERROR 0

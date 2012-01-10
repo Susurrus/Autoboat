@@ -65,7 +65,8 @@ static unsigned long failedMessageCount = 0;
 static unsigned char sameFailedMessageFlag = 0;
 
 void cpInitCommunications() {
-	initUart1(BAUD57600_BRG_REG);
+	//initUart1(BAUD57600_BRG_REG);
+	initUart1(BAUD115200_BRG_REG);
 	initUart2(BAUD4800_BRG_REG);
 }
 
@@ -198,8 +199,10 @@ void buildAndCheckMessage(unsigned char characterIn) {
  * array.
  */
 void processNewCommData(unsigned char* message) {
-	while (getLength(&uart2RxBuffer) > 0) {
-		buildAndCheckMessage(readFront(&uart2RxBuffer));
+	while (GetLength(&uart2RxBuffer) > 0) {
+		unsigned char c;
+		Read(&uart2RxBuffer, &c);
+		buildAndCheckMessage(c);
 	}
 }
 
