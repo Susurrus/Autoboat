@@ -75,6 +75,12 @@ inline void disableHil();
  */
 unsigned char calculateChecksum(unsigned char* sentence, unsigned char size);
 
+/**
+ * This function takes the byte array of GPS data received during HIL and
+ * writes it into the GPS storage struct. It does some necessary conversions.
+ */
+void UpdateGpsDataFromHil(unsigned char* data);
+
 void SetHilData(unsigned char *data);
 
 unsigned short GetCurrentTimestamp();
@@ -82,7 +88,5 @@ unsigned short GetCurrentTimestamp();
 unsigned char IsNewHilData();
 
 inline void uart2EnqueueActuatorData(unsigned char *data);
-
-inline void uart1EnqueueStateData(unsigned char *data);
 
 #endif /* _COMMPROTOCOL_H_ */

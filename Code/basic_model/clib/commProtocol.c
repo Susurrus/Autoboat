@@ -48,6 +48,7 @@ THE SOFTWARE.
 #include "uart2.h"
 #include "Rudder.h"
 #include "types.h"
+#include "gps.h"
 
 // Declaration of the relevant message structs used.
 static struct {
@@ -176,8 +177,8 @@ void buildAndCheckMessage(unsigned char characterIn) {
 			// NOTE: message[4] is used to skip the header, message ID, and size chars.
 			receivedMessageCount++;
 			if (message[2] == 1) {
-				// FIXME: We skip data 4 & 5 as it's unnecessary thorttle data.
-				SetGpsData(&message[6]);
+				// FIXME: We skip data 4 & 5 as it's unnecessary throttle data.
+				UpdateGpsDataFromHil(&message[6]);
 				SetRudderData(&message[33]);
 				SetHilData(&message[41]);
 			}
@@ -258,6 +259,49 @@ unsigned char calculateChecksum(unsigned char* sentence, unsigned char size) {
 	return checkSum;
 }
 
+void UpdateGpsDataFromHil(unsigned char* data) {
+	if (data[26]) {
+		tGpsData gpsSensorData;
+		gpsSensorData.lat.chData[0] = data[0];
+		gpsSensorData.lat.chData[1] = data[1];
+		gpsSensorData.lat.chData[2] = data[2];
+		gpsSensorData.lat.chData[3] = data[3];
+		
+		gpsSensorData.lon.chData[0] = data[4];
+		gpsSensorData.lon.chData[1] = data[5];
+		gpsSensorData.lon.chData[2] = data[6];
+		gpsSensorData.lon.chData[3] = data[7];
+		
+		gpsSensorData.alt.chData[0] = data[8];
+		gpsSensorData.alt.chData[1] = data[9];
+		gpsSensorData.alt.chData[2] = data[10];
+		gpsSensorData.alt.chData[3] = data[11];
+		
+		gpsSensorData.year = data[12];
+		gpsSensorData.month = data[13];
+		gpsSensorData.day = data[14];
+		gpsSensorData.hour = data[15];
+		gpsSensorData.min = data[16];
+		gpsSensorData.sec = data[17];
+		
+		gpsSensorData.cog.chData[0] = data[18];
+		gpsSensorData.cog.chData[1] = data[19];
+		gpsSensorData.cog.chData[2] = data[20];
+		gpsSensorData.cog.chData[3] = data[21];
+		gpsSensorData.sog.chData[0] = data[22];
+		gpsSensorData.sog.chData[1] = data[23];
+		gpsSensorData.sog.chData[2] = data[24];
+		gpsSensorData.sog.chData[3] = data[25];
+		gpsSensorData.sog.flData *= .5144444; // Convert SoG from knots to m/s
+		
+		gpsSensorData.fix = 3;
+		gpsSensorData.sats = 7;
+		gpsSensorData.newData = 1;
+		
+		SetGpsData(&gpsSensorData);
+	}
+}
+
 void SetHilData(unsigned char *data) {
 	tHilData.timestamp.chData[0] = data[0];
 	tHilData.timestamp.chData[1] = data[1];
@@ -277,11 +321,4 @@ unsigned char IsNewHilData() {
  */
 inline void uart2EnqueueActuatorData(unsigned char *data) {
 	uart2EnqueueData(data, 34);
-}
-
-/**
- * Add all 137 data + 7 header/footer bytes of the actuator struct to UART1's transmission queue.
- */
-inline void uart1EnqueueStateData(unsigned char *data) {
-	uart1EnqueueData(data, 160);
 }

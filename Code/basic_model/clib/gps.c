@@ -51,7 +51,7 @@ THE SOFTWARE.
 #include "types.h"
 #include "conversions.h"
 
-static tGpsData gpsControlData;
+static tGpsData gpsSensorData;
 static char sentence[127];
 static unsigned char sentenceIndex;
 static unsigned char checksum;
@@ -64,7 +64,7 @@ static unsigned char sentenceState;
  * It assumes that it is using UART2 and relies on the circular buffer
  * initialized for UART2 for transmission.
  */
-void initGps() {
+void initGps(void) {
 	// Configure GPS by:
 	// - Disabling GSA
 	// - Disabling GSV
@@ -88,7 +88,7 @@ void processGpsSentence(char *sentence) {
 	}
 }
 
-void processNewGpsData() {
+void processNewGpsData(void) {
 	while (GetLength(&uart2RxBuffer) > 0) {
 		unsigned char c;
 		Read(&uart2RxBuffer, &c);
@@ -96,105 +96,75 @@ void processNewGpsData() {
 	}
 }
 
-void getGpsData(unsigned char* data) {
-	data[0] = gpsControlData.lat.chData[0];
-	data[1] = gpsControlData.lat.chData[1];
-	data[2] = gpsControlData.lat.chData[2];
-	data[3] = gpsControlData.lat.chData[3];
-	data[4] = gpsControlData.lon.chData[0];
-	data[5] = gpsControlData.lon.chData[1];
-	data[6] = gpsControlData.lon.chData[2];
-	data[7] = gpsControlData.lon.chData[3];
-	data[8] = gpsControlData.alt.chData[0];
-	data[9] = gpsControlData.alt.chData[1];
-	data[10] = gpsControlData.alt.chData[2];
-	data[11] = gpsControlData.alt.chData[3];
+void GetGpsData(tGpsData *gpsData) {
+	memcpy(gpsData, &gpsSensorData, sizeof(tGpsData));
+}
+
+void GetGpsDataMatlab(unsigned char* data) {
+	data[0] = gpsSensorData.lat.chData[0];
+	data[1] = gpsSensorData.lat.chData[1];
+	data[2] = gpsSensorData.lat.chData[2];
+	data[3] = gpsSensorData.lat.chData[3];
+	data[4] = gpsSensorData.lon.chData[0];
+	data[5] = gpsSensorData.lon.chData[1];
+	data[6] = gpsSensorData.lon.chData[2];
+	data[7] = gpsSensorData.lon.chData[3];
+	data[8] = gpsSensorData.alt.chData[0];
+	data[9] = gpsSensorData.alt.chData[1];
+	data[10] = gpsSensorData.alt.chData[2];
+	data[11] = gpsSensorData.alt.chData[3];
 	
 	// Add date info
-	data[12] = gpsControlData.year;
-	data[13] = gpsControlData.month;
-	data[14] = gpsControlData.day;
+	data[12] = gpsSensorData.year;
+	data[13] = gpsSensorData.month;
+	data[14] = gpsSensorData.day;
 	
 	// Add time info
-	data[15] = gpsControlData.hour;
-	data[16] = gpsControlData.min;
-	data[17] = gpsControlData.sec;
+	data[15] = gpsSensorData.hour;
+	data[16] = gpsSensorData.min;
+	data[17] = gpsSensorData.sec;
 	
-	data[18] = gpsControlData.cog.chData[0];
-	data[19] = gpsControlData.cog.chData[1];
-	data[20] = gpsControlData.cog.chData[2];
-	data[21] = gpsControlData.cog.chData[3];
-	data[22] = gpsControlData.sog.chData[0];
-	data[23] = gpsControlData.sog.chData[1];
-	data[24] = gpsControlData.sog.chData[2];
-	data[25] = gpsControlData.sog.chData[3];
-	data[26] = gpsControlData.hdop.chData[0];
-	data[27] = gpsControlData.hdop.chData[1];
-	data[28] = gpsControlData.hdop.chData[2];
-	data[29] = gpsControlData.hdop.chData[3];
+	data[18] = gpsSensorData.cog.chData[0];
+	data[19] = gpsSensorData.cog.chData[1];
+	data[20] = gpsSensorData.cog.chData[2];
+	data[21] = gpsSensorData.cog.chData[3];
+	data[22] = gpsSensorData.sog.chData[0];
+	data[23] = gpsSensorData.sog.chData[1];
+	data[24] = gpsSensorData.sog.chData[2];
+	data[25] = gpsSensorData.sog.chData[3];
+	data[26] = gpsSensorData.hdop.chData[0];
+	data[27] = gpsSensorData.hdop.chData[1];
+	data[28] = gpsSensorData.hdop.chData[2];
+	data[29] = gpsSensorData.hdop.chData[3];
 	
-	data[30] = gpsControlData.fix;
-	data[31] = gpsControlData.sats;
-	data[32] = gpsControlData.newData;
+	data[30] = gpsSensorData.fix;
+	data[31] = gpsSensorData.sats;
+	data[32] = gpsSensorData.newData;
 	
 	// Mark this data as old now
-	gpsControlData.newData = 0;
+	gpsSensorData.newData = 0;
 }
 
-void SetGpsData(unsigned char* data) {
-	gpsControlData.lat.chData[0] = data[0];
-	gpsControlData.lat.chData[1] = data[1];
-	gpsControlData.lat.chData[2] = data[2];
-	gpsControlData.lat.chData[3] = data[3];
-	
-	gpsControlData.lon.chData[0] = data[4];
-	gpsControlData.lon.chData[1] = data[5];
-	gpsControlData.lon.chData[2] = data[6];
-	gpsControlData.lon.chData[3] = data[7];
-	
-	gpsControlData.alt.chData[0] = data[8];
-	gpsControlData.alt.chData[1] = data[9];
-	gpsControlData.alt.chData[2] = data[10];
-	gpsControlData.alt.chData[3] = data[11];
-	
-	gpsControlData.year = data[12];
-	gpsControlData.month = data[13];
-	gpsControlData.day = data[14];
-	gpsControlData.hour = data[15];
-	gpsControlData.min = data[16];
-	gpsControlData.sec = data[17];
-	
-	gpsControlData.cog.chData[0] = data[18];
-	gpsControlData.cog.chData[1] = data[19];
-	gpsControlData.cog.chData[2] = data[20];
-	gpsControlData.cog.chData[3] = data[21];
-	gpsControlData.sog.chData[0] = data[22];
-	gpsControlData.sog.chData[1] = data[23];
-	gpsControlData.sog.chData[2] = data[24];
-	gpsControlData.sog.chData[3] = data[25];
-	
-	gpsControlData.fix = 3;
-	gpsControlData.sats = 7;
-	
-	gpsControlData.newData = data[26];
+void SetGpsData(tGpsData *gpsData) {
+	memcpy(&gpsSensorData, gpsData, sizeof(tGpsData));
 }
 
-void clearGpsData() {
-	gpsControlData.year = 0;
-	gpsControlData.month = 0;
-	gpsControlData.day = 0;
-	gpsControlData.hour = 0;
-	gpsControlData.min = 0;
-	gpsControlData.sec = 0;
-	gpsControlData.lat.flData = 0.0;
-	gpsControlData.lon.flData = 0.0;
-	gpsControlData.alt.flData = 0.0;
-	gpsControlData.cog.flData = 0.0;
-	gpsControlData.sog.flData = 0.0;
-	gpsControlData.hdop.flData = 0.0;
-	gpsControlData.fix = 0;
-	gpsControlData.sats = 0;
-	gpsControlData.newData = 0;
+void clearGpsData(void) {
+	gpsSensorData.year = 0;
+	gpsSensorData.month = 0;
+	gpsSensorData.day = 0;
+	gpsSensorData.hour = 0;
+	gpsSensorData.min = 0;
+	gpsSensorData.sec = 0;
+	gpsSensorData.lat.flData = 0.0;
+	gpsSensorData.lon.flData = 0.0;
+	gpsSensorData.alt.flData = 0.0;
+	gpsSensorData.cog.flData = 0.0;
+	gpsSensorData.sog.flData = 0.0;
+	gpsSensorData.hdop.flData = 0.0;
+	gpsSensorData.fix = 0;
+	gpsSensorData.sats = 0;
+	gpsSensorData.newData = 0;
 }
 
 void parseRMC(char* stream) {
@@ -212,20 +182,20 @@ void parseRMC(char* stream) {
 	myTokenizer(NULL, ',', token);
 	if (strlen(token)>5) {
 		tmp[0] = token[0]; tmp[1] = token[1];
-		gpsControlData.hour = (unsigned char) atoi(tmp);
+		gpsSensorData.hour = (unsigned char) atoi(tmp);
 		tmp[0] = token[2]; tmp[1] = token[3];
-		gpsControlData.min = (unsigned char) atoi(tmp);
+		gpsSensorData.min = (unsigned char) atoi(tmp);
 		tmp[0] = token[4]; tmp[1] = token[5];
-		gpsControlData.sec = (unsigned char) atoi(tmp);		
+		gpsSensorData.sec = (unsigned char) atoi(tmp);		
 	}
 	
 	// 2.- Status of position Fix
 	myTokenizer(NULL, ',', token);
 	if (strlen(token)== 1) {
 		if (token[0] == 'A' || token[0] == 'D') {
-			gpsControlData.fix = 1;
+			gpsSensorData.fix = 1;
 		} else {
-			gpsControlData.fix = 0;
+			gpsSensorData.fix = 0;
 		}
 	}
 	
@@ -240,14 +210,14 @@ void parseRMC(char* stream) {
 		// make the degrees zero for minutes conversion
 		token[0]='0'; token[1]='0';
 		// get the float
-		gpsControlData.lat.flData = degMinToDeg(chTmp,atof(token));
+		gpsSensorData.lat.flData = degMinToDeg(chTmp,atof(token));
 		
 		// 4.- Latitude Sector
 		myTokenizer(NULL, ',', token);
 		if (strlen(token)==1) {
 			// set the sign of the float value
 			if (token[0] == 'S' || token[0] == 'W') {
-				gpsControlData.lat.flData = -gpsControlData.lat.flData;
+				gpsSensorData.lat.flData = -gpsSensorData.lat.flData;
 			}
 		}
 	}
@@ -263,30 +233,30 @@ void parseRMC(char* stream) {
 		// make the degrees zero for minutes conversion
 		token[0]='0'; token[1]='0'; token [2] = '0';
 		// get the float
-		gpsControlData.lon.flData = degMinToDeg(chTmp,atof(token));
+		gpsSensorData.lon.flData = degMinToDeg(chTmp,atof(token));
 		
 		// 6.- Longitude Sector
 		myTokenizer(NULL, ',', token);
 		if (strlen(token) == 1) {
 			// set the sign of the float value
 			if (token[0] == 'S' || token[0] == 'W') {
-				gpsControlData.lon.flData = -gpsControlData.lon.flData;
+				gpsSensorData.lon.flData = -gpsSensorData.lon.flData;
 			}
 		}
 	}
 	
-	// 7.- Speed over ground in knots
+	// 7.- Speed over ground in meters (converted from knots)
 	// xx.xx
 	myTokenizer(NULL, ',', token);	
 	if (strlen(token) > 0) {
-		gpsControlData.sog.flData = atof(token);
+		gpsSensorData.sog.flData = .5144444*atof(token);
 	}
 	
 	// 8.- Course over ground in degrees
 	// xxx.xxx
 	myTokenizer(NULL, ',', token);	
 	if (strlen(token) > 0) {
-		gpsControlData.cog.flData = atof(token);	
+		gpsSensorData.cog.flData = atof(token);	
 	}
 	
 	// 9.- UTC Date
@@ -295,17 +265,17 @@ void parseRMC(char* stream) {
 	if (strlen(token) > 5) {
 		// get day
 		tmp[0]= token[0]; tmp[1]=token[1];
-		gpsControlData.day = (unsigned char) atoi(tmp);	
+		gpsSensorData.day = (unsigned char) atoi(tmp);	
 		// get month
 		tmp[0]= token[2]; tmp[1]=token[3];
-		gpsControlData.month = (unsigned char) atoi(tmp);	
+		gpsSensorData.month = (unsigned char) atoi(tmp);	
 		// get year
 		tmp[0]= token[4]; tmp[1]=token[5];
-		gpsControlData.year = (unsigned char) atoi(tmp);	
+		gpsSensorData.year = (unsigned char) atoi(tmp);	
 	}
 	
 	// turn the flag on of new data
-	gpsControlData.newData = 1;
+	gpsSensorData.newData = 1;
 }
 
 void parseGGA(char* stream) {
@@ -321,11 +291,11 @@ void parseGGA(char* stream) {
 	myTokenizer(NULL, ',', token);
 	// if (strlen(token)>5) {
 		// tmp[0] = token[0]; tmp[1] = token[1];
-		// gpsControlData.hour = (unsigned char) atoi(tmp);
+		// gpsSensorData.hour = (unsigned char) atoi(tmp);
 		// tmp[0] = token[2]; tmp[1] = token[3];
-		// gpsControlData.min = (unsigned char) atoi(tmp);
+		// gpsSensorData.min = (unsigned char) atoi(tmp);
 		// tmp[0] = token[4]; tmp[1] = token[5];
-		// gpsControlData.sec = (unsigned char) atoi(tmp);		
+		// gpsSensorData.sec = (unsigned char) atoi(tmp);		
 	// }
 	
 	// 2.- Latitude
@@ -339,7 +309,7 @@ void parseGGA(char* stream) {
 		// // make the degrees zero for minutes conversion
 		// token[0]='0'; token[1]='0';
 		// // get the float
-		// gpsControlData.lat.flData = degMinToDeg(chTmp,atof(token));		
+		// gpsSensorData.lat.flData = degMinToDeg(chTmp,atof(token));		
 		// // 3.- Latitude Sector
 		myTokenizer(NULL, ',', token);
 		// if (strlen(token)==1) {
@@ -348,7 +318,7 @@ void parseGGA(char* stream) {
 			// // those cases. North/East don't change the value so no
 			// // need to check those.
 			// if (token[0] == 'S' || token[1] == 'W') {
-				// gpsControlData.lat.flData = -gpsControlData.lat.flData;
+				// gpsSensorData.lat.flData = -gpsSensorData.lat.flData;
 			// }
 		// }
 	}
@@ -364,7 +334,7 @@ void parseGGA(char* stream) {
 		// // make the degrees zero for minutes conversion
 		// token[0]='0'; token[1]='0'; token [2] = '0';
 		// // get the float
-		// gpsControlData.lon.flData = degMinToDeg(chTmp,atof(token));
+		// gpsSensorData.lon.flData = degMinToDeg(chTmp,atof(token));
 		
 		// // 5.- Longitude Sector
 		myTokenizer(NULL, ',', token);
@@ -372,7 +342,7 @@ void parseGGA(char* stream) {
 		// if (strlen(token)>0) {
 			// // set the sign of the float value
 			// if (token[0] == 'S' || token[0] == 'W') {
-				// gpsControlData.lon.flData = -gpsControlData.lon.flData;
+				// gpsSensorData.lon.flData = -gpsSensorData.lon.flData;
 			// }
 		// }
 	}
@@ -380,30 +350,33 @@ void parseGGA(char* stream) {
 	// 6.- Quality Indicator
 	myTokenizer(NULL, ',', token);
 	// if (strlen(token) == 1) {
-		// gpsControlData.fix = (char)atoi(token);
+		// gpsSensorData.fix = (char)atoi(token);
 	// }
 
 	// 7.- Sats used in solution
 	// xx
 	myTokenizer(NULL, ',', token);	
-	if (strlen(token)>0) {
-		gpsControlData.sats = (unsigned char) atoi(token);	
+	if (strlen(token) > 0) {
+		gpsSensorData.sats = (unsigned char) atoi(token);	
 	}
 	
-	// 8.- Horizontal dilution of solution given from 0 to 99.99
+	// 8.- Horizontal dilution of solution in meters
 	// xx.xx
 	myTokenizer(NULL, ',', token);	
-	if (strlen(token)>0) {
-		gpsControlData.hdop.flData = atof(token);	
+	if (strlen(token) > 0) {
+		gpsSensorData.hdop.flData = atof(token);	
 	}
 	
 	// 9.- Altitude above mean sea level given in meters
 	// xxx.xxx
 	myTokenizer(NULL, ',', token);	
-	if (strlen(token)>0) {
-		gpsControlData.alt.flData = atof(token);	
+	if (strlen(token) > 0) {
+		gpsSensorData.alt.flData = atof(token);	
 	}
 	
-	// turn the flag on of new data
-	// gpsControlData.newData = 1;
+	// Here we don't enable the newData flag as this GGA message only
+	// gives us status information, not position information. If we 
+	// set the newData flag the controller thinks there's new position
+	// data when this is really just a status update.
+	// gpsSensorData.newData = 1;
 }

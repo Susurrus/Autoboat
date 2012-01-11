@@ -1,4 +1,6 @@
 #include "uart1.h"
+#include "gps.h"
+
 #include <stdint.h>
 #include <common/mavlink.h>
  
@@ -55,10 +57,22 @@ void MavLinkSendStatus(void) {
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
+/**
+ * Pull the raw GPS sensor data from the gpsSensorData struct within the GPS module and
+ * transmit it via MAVLink over UART1. This function should only be called when the GPS
+ * data has been updated.
+ */
 void MavLinkSendRawGps(uint32_t systemTime) {
 	mavlink_message_t msg;
 	
-	mavlink_msg_gps_raw_int_pack(mavlink_system.sysid, mavlink_system.compid, &msg, ((uint64_t)systemTime)*1000, 3, 357220000, -781310000, 0, 65535, 65535, 200, 1000, 4);
+	tGpsData gpsSensorData;
+	GetGpsData(&gpsSensorData);
+ 
+	mavlink_msg_gps_raw_int_pack(mavlink_system.sysid, mavlink_system.compid, &msg, ((uint64_t)systemTime)*10000,
+								 gpsSensorData.fix, (int32_t)(gpsSensorData.lat.flData*1e7), (int32_t)(gpsSensorData.lon.flData*1e7), (int32_t)(gpsSensorData.alt.flData*1e7),
+								 (uint16_t)gpsSensorData.hdop.flData*100, 0xFFFF,
+								 (uint16_t)gpsSensorData.sog.flData*100, (uint16_t)gpsSensorData.cog.flData * 100,
+								 gpsSensorData.sats);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
@@ -83,7 +97,7 @@ void MavLinkSendAttitude(uint32_t systemTime) {
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
-	//uart1EnqueueData(buf, (uint8_t)len);
+	uart1EnqueueData(buf, (uint8_t)len);
 }
 
 void MavLinkSendLocalPosition(uint32_t systemTime) {
@@ -94,7 +108,7 @@ void MavLinkSendLocalPosition(uint32_t systemTime) {
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
-	//uart1EnqueueData(buf, (uint8_t)len);
+	uart1EnqueueData(buf, (uint8_t)len);
 }
 
 void MavLinkSendGpsGlobalOrigin(void) {
@@ -104,6 +118,16 @@ void MavLinkSendGpsGlobalOrigin(void) {
                                        35722, -78131, 0);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
+	
+	uart1EnqueueData(buf, (uint8_t)len);
+}
+
+void MavLinkSendErrorsAndStatus(uint16_t status, uint16_t errors) {
+	//mavlink_message_t msg;
+
+	//mavlink_msg_status_and_errors_pack(mavlink_system.sysid, mavlink_system.compid, &msg, status, errors);
+
+	//len = mavlink_msg_to_send_buffer(buf, &msg);
 	
 	//uart1EnqueueData(buf, (uint8_t)len);
 }

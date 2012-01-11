@@ -32,28 +32,28 @@ THE SOFTWARE.
 
 #include "types.h"
 
-typedef struct tGpsData {
+typedef struct {
 	unsigned char	 		year;
 	unsigned char			month;
 	unsigned char			day;
 	unsigned char			hour;
 	unsigned char			min;
 	unsigned char			sec;
-	tFloatToChar 			lat;
-	tFloatToChar 			lon;
-	tFloatToChar 			alt;
-	tFloatToChar			cog;
-	tFloatToChar			sog;
-	tFloatToChar			hdop;
-	unsigned char			fix;
-	unsigned char 			sats;
+	tFloatToChar 			lat; // Latitude in degrees
+	tFloatToChar 			lon; // Longitude in degrees
+	tFloatToChar 			alt; // Altitude in meters
+	tFloatToChar			cog; // Course over ground in degrees eastward from north.
+	tFloatToChar			sog; // Speed over ground in m/s
+	tFloatToChar			hdop; // Horizontal dilution of position in m
+	unsigned char			fix; // GPS fix status
+	unsigned char 			sats; // Number of satellites in view
 	unsigned char			newData; // Flag for whether this struct stores new data
 } tGpsData;
 
 /**
  * Initializes the GPS to only return RMC and GGA data
  */
-void initGps();
+void initGps(void);
 
 void processGpsSentence(char *sentence);
 
@@ -61,25 +61,23 @@ void processGpsSentence(char *sentence);
  * Pull new bytes from the UART2 receive buffer and
  * calls buildAndCheckSentence on each of them.
  */
-void processNewGpsData();
+void processNewGpsData(void);
 
 /**
  * This is a Matlab helper function that returns the most recent 
  * GPS data in a large array that Matlab can handle.
  * @param data A pointer to a float array for storing the GPS data that was requested.
  */
-void getGpsData(unsigned char* data);
+void GetGpsDataMatlab(unsigned char* data);
 
-/**
- * This is a Matlab helper function that stores the provided GPS
- * data into the tGpsData struct.
- */
-void SetGpsData(unsigned char* data);
+void GetGpsData(tGpsData *gpsData);
+
+void SetGpsData(tGpsData *gpsData);
 
 /**
  * This function resets the entire GPS data struct to zeros.
  */
-void clearGpsData();
+void clearGpsData(void);
 
 /**
  * Parses NMEA0183 RMC sentences. Results are stored in the
