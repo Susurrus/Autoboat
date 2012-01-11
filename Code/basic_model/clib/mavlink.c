@@ -2,7 +2,7 @@
 #include "gps.h"
 
 #include <stdint.h>
-#include <common/mavlink.h>
+#include <sealion/mavlink.h>
  
 static mavlink_system_t mavlink_system;
 static int packet_drops = 0;
@@ -151,13 +151,13 @@ void MavLinkSendGpsGlobalOrigin(void) {
 }
 
 void MavLinkSendErrorsAndStatus(uint16_t status, uint16_t errors) {
-	//mavlink_message_t msg;
+	mavlink_message_t msg;
 
-	//mavlink_msg_status_and_errors_pack(mavlink_system.sysid, mavlink_system.compid, &msg, status, errors);
+	mavlink_msg_status_and_errors_pack(mavlink_system.sysid, mavlink_system.compid, &msg, status, errors);
 
-	//len = mavlink_msg_to_send_buffer(buf, &msg);
+	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
-	//uart1EnqueueData(buf, (uint8_t)len);
+	uart1EnqueueData(buf, (uint8_t)len);
 }
 
 /**
