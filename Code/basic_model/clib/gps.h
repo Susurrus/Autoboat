@@ -71,6 +71,12 @@ void processNewGpsData();
 void getGpsData(unsigned char* data);
 
 /**
+ * This is a Matlab helper function that stores the provided GPS
+ * data into the tGpsData struct.
+ */
+void SetGpsData(unsigned char* data);
+
+/**
  * This function resets the entire GPS data struct to zeros.
  */
 void clearGpsData();

@@ -50,8 +50,10 @@ void processRevoSentence(char sentence[]) {
 }
 
 void processNewRevoData() {
-	while (getLength(&uart1RxBuffer) > 0) {
-		buildAndCheckSentence(readFront(&uart1RxBuffer), sentence, &sentenceIndex, &sentenceState, &checksum, processRevoSentence);
+	while (GetLength(&uart1RxBuffer) > 0) {
+		unsigned char c;
+		Read(&uart1RxBuffer, &c);
+		buildAndCheckSentence((char)c, sentence, &sentenceIndex, &sentenceState, &checksum, processRevoSentence);
 	}
 }
 

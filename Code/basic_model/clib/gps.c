@@ -89,8 +89,10 @@ void processGpsSentence(char *sentence) {
 }
 
 void processNewGpsData() {
-	while (getLength(&uart2RxBuffer) > 0) {
-		buildAndCheckSentence(readFront(&uart2RxBuffer), sentence, &sentenceIndex, &sentenceState, &checksum, processGpsSentence);
+	while (GetLength(&uart2RxBuffer) > 0) {
+		unsigned char c;
+		Read(&uart2RxBuffer, &c);
+		buildAndCheckSentence((char)c, sentence, &sentenceIndex, &sentenceState, &checksum, processGpsSentence);
 	}
 }
 
@@ -137,6 +139,44 @@ void getGpsData(unsigned char* data) {
 	
 	// Mark this data as old now
 	gpsControlData.newData = 0;
+}
+
+void SetGpsData(unsigned char* data) {
+	gpsControlData.lat.chData[0] = data[0];
+	gpsControlData.lat.chData[1] = data[1];
+	gpsControlData.lat.chData[2] = data[2];
+	gpsControlData.lat.chData[3] = data[3];
+	
+	gpsControlData.lon.chData[0] = data[4];
+	gpsControlData.lon.chData[1] = data[5];
+	gpsControlData.lon.chData[2] = data[6];
+	gpsControlData.lon.chData[3] = data[7];
+	
+	gpsControlData.alt.chData[0] = data[8];
+	gpsControlData.alt.chData[1] = data[9];
+	gpsControlData.alt.chData[2] = data[10];
+	gpsControlData.alt.chData[3] = data[11];
+	
+	gpsControlData.year = data[12];
+	gpsControlData.month = data[13];
+	gpsControlData.day = data[14];
+	gpsControlData.hour = data[15];
+	gpsControlData.min = data[16];
+	gpsControlData.sec = data[17];
+	
+	gpsControlData.cog.chData[0] = data[18];
+	gpsControlData.cog.chData[1] = data[19];
+	gpsControlData.cog.chData[2] = data[20];
+	gpsControlData.cog.chData[3] = data[21];
+	gpsControlData.sog.chData[0] = data[22];
+	gpsControlData.sog.chData[1] = data[23];
+	gpsControlData.sog.chData[2] = data[24];
+	gpsControlData.sog.chData[3] = data[25];
+	
+	gpsControlData.fix = 3;
+	gpsControlData.sats = 7;
+	
+	gpsControlData.newData = data[26];
 }
 
 void clearGpsData() {

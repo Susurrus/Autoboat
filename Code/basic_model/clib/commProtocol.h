@@ -45,49 +45,6 @@ THE SOFTWARE.
 #ifndef _COMMPROTOCOL_H_
 #define _COMMPROTOCOL_H_
 
-#include "types.h"
-
-// Declaration of the relevant message structs used.
-typedef struct {
-	tShortToChar speed;
-	tFloatToChar lat;
-	tFloatToChar lon;
-	tFloatToChar alt;
-	unsigned char year;
-	unsigned char month;
-	unsigned char day;
-	unsigned char hour;
-	unsigned char minute;
-	unsigned char second;
-	tFloatToChar cog;
-	tFloatToChar sog;
-	unsigned char newGpsData;
-	tUnsignedShortToChar r_Position;
-	unsigned char r_SBLimit;
-	unsigned char r_PortLimit;
-	tUnsignedShortToChar b_Position;
-	unsigned char b_SBLimit;
-	unsigned char b_PortLimit;
-	unsigned char newData;
-	tUnsignedShortToChar timestamp;
-} tSensorData;
-
-typedef struct {
-	unsigned char r_enable;
-	unsigned char r_direction;
-	tUnsignedShortToChar r_up;
-	tUnsignedShortToChar r_period;
-	unsigned char b_enable;
-	unsigned char b_direction;
-	tUnsignedIntToChar t_identifier;
-	unsigned char data[6];
-	unsigned char size;
-	unsigned char trigger;
-	tUnsignedShortToChar timestamp;
-	tFloatToChar rudderAngle;
-	unsigned char sensorOverride;
-} tActuatorData;
-
 /**
  * This function initializes all onboard UART communications
  */
@@ -118,21 +75,11 @@ inline void disableHil();
  */
 unsigned char calculateChecksum(unsigned char* sentence, unsigned char size);
 
-/**
- * Manage the sensor data struct.
- */
-void setSensorData(unsigned char* data);
+void SetHilData(unsigned char *data);
 
-void getSensorData(unsigned char* data);
+unsigned short GetCurrentTimestamp();
 
-void clearSensorData();
-
-/**
- * Manage the actuator data struct
- */
-void setActuatorData(unsigned char* data);
-
-void getActuatorData(unsigned char* data);
+unsigned char IsNewHilData();
 
 inline void uart2EnqueueActuatorData(unsigned char *data);
 

@@ -46,6 +46,14 @@ THE SOFTWARE.
 #include <string.h>
 #include "uart1.h"
 #include "uart2.h"
+#include "Rudder.h"
+#include "types.h"
+
+// Declaration of the relevant message structs used.
+static struct {
+	unsigned char newData;
+	tUnsignedShortToChar timestamp;
+} tHilData;
 
 // This is the value of the BRG register for configuring different baud
 // rates.
@@ -55,8 +63,6 @@ THE SOFTWARE.
 
 // These are local declarations of each of the message structs.
 // They're populated with relevant data by buildAndcheckMessage().
-static tSensorData sensorDataMessage;
-static tActuatorData actuatorDataMessage;
 
 // Keep track of how many messages were successfully received.
 static unsigned long receivedMessageCount = 0;
@@ -170,7 +176,10 @@ void buildAndCheckMessage(unsigned char characterIn) {
 			// NOTE: message[4] is used to skip the header, message ID, and size chars.
 			receivedMessageCount++;
 			if (message[2] == 1) {
-				setSensorData(&message[4]);
+				// FIXME: We skip data 4 & 5 as it's unnecessary thorttle data.
+				SetGpsData(&message[6]);
+				SetRudderData(&message[33]);
+				SetHilData(&message[41]);
 			}
 
 			// Now that we've successfully parsed a message, clear the flag.
@@ -249,175 +258,18 @@ unsigned char calculateChecksum(unsigned char* sentence, unsigned char size) {
 	return checkSum;
 }
 
-void setSensorData(unsigned char* data) {
-	sensorDataMessage.speed.chData[0] = data[0];
-	sensorDataMessage.speed.chData[1] = data[1];
-	sensorDataMessage.lat.chData[0] = data[2];
-	sensorDataMessage.lat.chData[1] = data[3];
-	sensorDataMessage.lat.chData[2] = data[4];
-	sensorDataMessage.lat.chData[3] = data[5];
-	sensorDataMessage.lon.chData[0] = data[6];
-	sensorDataMessage.lon.chData[1] = data[7];
-	sensorDataMessage.lon.chData[2] = data[8];
-	sensorDataMessage.lon.chData[3] = data[9];
-	sensorDataMessage.alt.chData[0] = data[10];
-	sensorDataMessage.alt.chData[1] = data[11];
-	sensorDataMessage.alt.chData[2] = data[12];
-	sensorDataMessage.alt.chData[3] = data[13];
-	sensorDataMessage.year = data[14];
-	sensorDataMessage.month = data[15];
-	sensorDataMessage.day = data[16];
-	sensorDataMessage.hour = data[17];
-	sensorDataMessage.minute = data[18];
-	sensorDataMessage.second = data[19];
-	sensorDataMessage.cog.chData[0] = data[20];
-	sensorDataMessage.cog.chData[1] = data[21];
-	sensorDataMessage.cog.chData[2] = data[22];
-	sensorDataMessage.cog.chData[3] = data[23];
-	sensorDataMessage.sog.chData[0] = data[24];
-	sensorDataMessage.sog.chData[1] = data[25];
-	sensorDataMessage.sog.chData[2] = data[26];
-	sensorDataMessage.sog.chData[3] = data[27];
-	sensorDataMessage.newGpsData = data[28];
-	sensorDataMessage.r_Position.chData[0] = data[29];
-	sensorDataMessage.r_Position.chData[1] = data[30];
-	sensorDataMessage.r_SBLimit = data[31];
-	sensorDataMessage.r_PortLimit = data[32];
-	sensorDataMessage.b_Position.chData[0] = data[33];
-	sensorDataMessage.b_Position.chData[1] = data[34];
-	sensorDataMessage.b_SBLimit = data[35];
-	sensorDataMessage.b_PortLimit = data[36];
-	sensorDataMessage.timestamp.chData[0] = data[37];
-	sensorDataMessage.timestamp.chData[1] = data[38];
-	sensorDataMessage.newData = 1;
+void SetHilData(unsigned char *data) {
+	tHilData.timestamp.chData[0] = data[0];
+	tHilData.timestamp.chData[1] = data[1];
+	tHilData.newData = 1;
 }
 
-void getSensorData(unsigned char* data) {
-	data[0] = sensorDataMessage.speed.chData[0];
-	data[1] = sensorDataMessage.speed.chData[1];
-	data[2] = sensorDataMessage.lat.chData[0];
-	data[3] = sensorDataMessage.lat.chData[1];
-	data[4] = sensorDataMessage.lat.chData[2];
-	data[5] = sensorDataMessage.lat.chData[3];
-	data[6] = sensorDataMessage.lon.chData[0];
-	data[7] = sensorDataMessage.lon.chData[1];
-	data[8] = sensorDataMessage.lon.chData[2];
-	data[9] = sensorDataMessage.lon.chData[3];
-	data[10] = sensorDataMessage.alt.chData[0];
-	data[11] = sensorDataMessage.alt.chData[1];
-	data[12] = sensorDataMessage.alt.chData[2];
-	data[13] = sensorDataMessage.alt.chData[3];
-	data[14] = sensorDataMessage.year;
-	data[15] = sensorDataMessage.month;
-	data[16] = sensorDataMessage.day;
-	data[17] = sensorDataMessage.hour;
-	data[18] = sensorDataMessage.minute;
-	data[19] = sensorDataMessage.second;
-	data[20] = sensorDataMessage.cog.chData[0];
-	data[21] = sensorDataMessage.cog.chData[1];
-	data[22] = sensorDataMessage.cog.chData[2];
-	data[23] = sensorDataMessage.cog.chData[3];
-	data[24] = sensorDataMessage.sog.chData[0];
-	data[25] = sensorDataMessage.sog.chData[1];
-	data[26] = sensorDataMessage.sog.chData[2];
-	data[27] = sensorDataMessage.sog.chData[3];
-	data[28] = sensorDataMessage.newGpsData;
-	data[29] = sensorDataMessage.r_Position.chData[0];
-	data[30] = sensorDataMessage.r_Position.chData[1];
-	data[31] = sensorDataMessage.r_SBLimit;
-	data[32] = sensorDataMessage.r_PortLimit;
-	data[33] = sensorDataMessage.b_Position.chData[0];
-	data[34] = sensorDataMessage.b_Position.chData[1];
-	data[35] = sensorDataMessage.b_SBLimit;
-	data[36] = sensorDataMessage.b_PortLimit;
-	data[37] = sensorDataMessage.timestamp.chData[0];
-	data[38] = sensorDataMessage.timestamp.chData[1];
-	data[39] = sensorDataMessage.newData;
-	sensorDataMessage.newData = 0;
+unsigned short GetCurrentTimestamp() {
+	return tHilData.timestamp.usData;
 }
 
-void clearSensorData() {
-	sensorDataMessage.speed.shData = 0;
-	sensorDataMessage.lat.flData = 0.0;
-	sensorDataMessage.lon.flData = 0.0;
-	sensorDataMessage.alt.flData = 0.0;
-	sensorDataMessage.year = 0;
-	sensorDataMessage.month = 0;
-	sensorDataMessage.day = 0;
-	sensorDataMessage.hour = 0;
-	sensorDataMessage.minute = 0;
-	sensorDataMessage.second = 0;
-	sensorDataMessage.cog.flData = 0.0;
-	sensorDataMessage.sog.flData = 0.0;
-	sensorDataMessage.newGpsData = 0;
-	sensorDataMessage.r_Position.usData = 0;
-	sensorDataMessage.r_SBLimit = 0;
-	sensorDataMessage.r_PortLimit = 0;
-	sensorDataMessage.b_Position.usData = 0;
-	sensorDataMessage.b_SBLimit = 0;
-	sensorDataMessage.b_PortLimit = 0;
-	sensorDataMessage.timestamp.usData = 0;
-	sensorDataMessage.newData = 0;
-}
-
-void setActuatorData(unsigned char* data) {
-	actuatorDataMessage.r_enable = data[0];
-	actuatorDataMessage.r_direction = data[1];
-	actuatorDataMessage.r_up.chData[0] = data[2];
-	actuatorDataMessage.r_up.chData[1] = data[3];
-	actuatorDataMessage.r_period.chData[0] = data[4];
-	actuatorDataMessage.r_period.chData[1] = data[5];
-	actuatorDataMessage.b_enable = data[6];
-	actuatorDataMessage.b_direction = data[7];
-	actuatorDataMessage.t_identifier.chData[0] = data[8];
-	actuatorDataMessage.t_identifier.chData[1] = data[9];
-	actuatorDataMessage.t_identifier.chData[2] = data[10];
-	actuatorDataMessage.t_identifier.chData[3] = data[11];
-	actuatorDataMessage.data[0] = data[12];
-	actuatorDataMessage.data[1] = data[13];
-	actuatorDataMessage.data[2] = data[14];
-	actuatorDataMessage.data[3] = data[15];
-	actuatorDataMessage.data[4] = data[16];
-	actuatorDataMessage.data[5] = data[17];
-	actuatorDataMessage.size = data[18];
-	actuatorDataMessage.trigger = data[19];
-	actuatorDataMessage.timestamp.chData[0] = data[20];
-	actuatorDataMessage.timestamp.chData[1] = data[21];
-	actuatorDataMessage.rudderAngle.chData[0] = data[22];
-	actuatorDataMessage.rudderAngle.chData[1] = data[23];
-	actuatorDataMessage.rudderAngle.chData[2] = data[24];
-	actuatorDataMessage.rudderAngle.chData[3] = data[25];
-	actuatorDataMessage.sensorOverride = data[26];
-}
-
-void getActuatorData(unsigned char* data) {
-	data[0] = actuatorDataMessage.r_enable;
-	data[1] = actuatorDataMessage.r_direction;
-	data[2] = actuatorDataMessage.r_up.chData[0];
-	data[3] = actuatorDataMessage.r_up.chData[1];
-	data[4] = actuatorDataMessage.r_period.chData[0];
-	data[5] = actuatorDataMessage.r_period.chData[1];
-	data[6] = actuatorDataMessage.b_enable;
-	data[7] = actuatorDataMessage.b_direction;
-	data[8] = actuatorDataMessage.t_identifier.chData[0];
-	data[9] = actuatorDataMessage.t_identifier.chData[1];
-	data[10] = actuatorDataMessage.t_identifier.chData[2];
-	data[11] = actuatorDataMessage.t_identifier.chData[3];
-	data[12] = actuatorDataMessage.data[0];
-	data[13] = actuatorDataMessage.data[1];
-	data[14] = actuatorDataMessage.data[2];
-	data[15] = actuatorDataMessage.data[3];
-	data[16] = actuatorDataMessage.data[4];
-	data[17] = actuatorDataMessage.data[5];
-	data[18] = actuatorDataMessage.size;
-	data[19] = actuatorDataMessage.trigger;
-	data[20] = actuatorDataMessage.timestamp.chData[0];
-	data[21] = actuatorDataMessage.timestamp.chData[1];
-	data[22] = actuatorDataMessage.rudderAngle.chData[0];
-	data[23] = actuatorDataMessage.rudderAngle.chData[1];
-	data[24] = actuatorDataMessage.rudderAngle.chData[2];
-	data[25] = actuatorDataMessage.rudderAngle.chData[3];
-	data[26] = actuatorDataMessage.sensorOverride;
+unsigned char IsNewHilData() {
+	return tHilData.newData;
 }
 
 /**

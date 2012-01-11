@@ -485,7 +485,7 @@ void controlEvent(ControlEvent theEvent) {
       // TODO: This try/catch statement needs to be fixed to properly suppress the error
       // warning from gnu.io.PortInUseException and inform the user.
       try {
-        myPort = new Serial(this, theEvent.group().stringValue(), 57600);
+        myPort = new Serial(this, theEvent.group().stringValue(), 115200);//57600);
       }
       catch (Exception e) {
         println("Port in use or otherwise unavailable. Please select another.");
