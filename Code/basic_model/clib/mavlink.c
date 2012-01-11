@@ -47,10 +47,15 @@ void MavLinkSendHeartbeat(void) {
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
-void MavLinkSendStatus(void) {
+/**
+ * This function transmits a MAVLink status message.
+ * It takes in a single argument for the computation load on the system. It should be between 0 and 100 and be in % of usage of the mainloop time.
+ * TODO: Add info on the GPS sensor.
+ */
+void MavLinkSendStatus(uint8_t load) {
 	mavlink_message_t msg;
 	
-	mavlink_msg_sys_status_pack(mavlink_system.sysid, mavlink_system.compid, &msg, 0xFFFF, 0xFFFF, 0xFFFF, 500, 14000, 20000, 75, 20, 0, 0, 0, 0, 0);
+	mavlink_msg_sys_status_pack(mavlink_system.sysid, mavlink_system.compid, &msg, 0, 0, 0, ((uint16_t)load)*10, 14000, 20000, 75, 20, 0, 0, 0, 0, 0);
 	
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
