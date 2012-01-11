@@ -14,12 +14,22 @@ typedef union {
 typedef union {
 	unsigned char   chData[4];
 	unsigned int   	uiData;
-} tUnsignedIntToChar; 
+} tUnsignedIntToChar;
 
 typedef union {
 	unsigned char   chData[4];
 	int   			inData;
-} tIntToChar; 
+} tIntToChar;
+
+typedef union {
+	unsigned char   chData[4];
+	unsigned long  	ulData;
+} tUnsignedLongToChar;
+
+typedef union {
+	unsigned char   chData[4];
+	unsigned long  	lData;
+} tLongToChar;
 
 typedef union {
 	unsigned char   chData[4];

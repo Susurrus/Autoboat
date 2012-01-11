@@ -79,16 +79,6 @@ void MavLinkSendRawGps(uint32_t systemTime) {
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
-void MavLinkSendFiltGps(uint32_t systemTime) {
-	mavlink_message_t msg;
-
-	mavlink_msg_global_position_int_pack(mavlink_system.sysid, mavlink_system.compid, &msg, systemTime, 357220000, -781310000, 0, 0, 1000, 1000, 0, 319);
-
-	len = mavlink_msg_to_send_buffer(buf, &msg);
-	
-	uart1EnqueueData(buf, (uint8_t)len);
-}
-
 void MavLinkSendAttitude(uint32_t systemTime) {
 	mavlink_message_t msg;
 
@@ -100,11 +90,44 @@ void MavLinkSendAttitude(uint32_t systemTime) {
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
-void MavLinkSendLocalPosition(uint32_t systemTime) {
+/**
+ * This function takes in the system time, local position, and local velocity from
+ * Matlab, unpacks it, and ships it off over a MAVLink MAVLINK_MSG_ID_LOCAL_POSITION_NED
+ * message.
+ */
+void MavLinkSendLocalPosition(uint8_t *data) {
+	tUnsignedLongToChar systemTime;
+	tFloatToChar localPosX, localPosY, localVelX, localVelY;
+	
+	systemTime.chData[0] = data[0];
+	systemTime.chData[1] = data[1];
+	systemTime.chData[2] = data[2];
+	systemTime.chData[3] = data[3];
+	
+	localPosX.chData[0] = data[4];
+	localPosX.chData[1] = data[5];
+	localPosX.chData[2] = data[6];
+	localPosX.chData[3] = data[7];
+	
+	localPosY.chData[0] = data[8];
+	localPosY.chData[1] = data[9];
+	localPosY.chData[2] = data[10];
+	localPosY.chData[3] = data[11];
+	
+	localVelX.chData[0] = data[12];
+	localVelX.chData[1] = data[13];
+	localVelX.chData[2] = data[14];
+	localVelX.chData[3] = data[15];
+	
+	localVelY.chData[0] = data[16];
+	localVelY.chData[1] = data[17];
+	localVelY.chData[2] = data[18];
+	localVelY.chData[3] = data[19];
+
 	mavlink_message_t msg;
 
 	mavlink_msg_local_position_ned_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-                                        systemTime, 1.5, 2.5, 3.5, .1, .2, .3);
+                                        systemTime.ulData, localPosX.flData, localPosY.flData, 0.0, localVelX.flData, localVelY.flData, 0.0);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	

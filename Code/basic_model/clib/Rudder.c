@@ -27,4 +27,3 @@ void ClearRudderData() {
 	tRudderData.StarboardLimit = 0;
 	tRudderData.PortLimit = 0;
 }
-
