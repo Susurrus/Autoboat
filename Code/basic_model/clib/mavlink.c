@@ -23,9 +23,9 @@ static uint16_t len;
  */
 void MavLinkInit(void) {
  
-	mavlink_system.sysid = 20;                              // ID 20 for this vehicle
-	mavlink_system.compid = MAV_COMP_ID_SYSTEM_CONTROL;     // The component sending the message is the IMU, it could be also a Linux process
-	mavlink_system.type = MAV_TYPE_SURFACE_BOAT;            // This system is a surface vessel
+	mavlink_system.sysid = 20;
+	mavlink_system.compid = MAV_COMP_ID_SYSTEM_CONTROL;
+	mavlink_system.type = MAV_TYPE_SURFACE_BOAT;
 
 }
 
