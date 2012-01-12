@@ -84,11 +84,16 @@ void MavLinkSendRawGps(uint32_t systemTime) {
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
-void MavLinkSendAttitude(uint32_t systemTime) {
+/**
+ * Transmits the vehicle attitude. Right now just the yaw value.
+ * Expects systemTime to be in centiseconds which are then converted
+ * to ms for transmission.
+ */
+void MavLinkSendAttitude(uint32_t systemTime, float yaw) {
 	mavlink_message_t msg;
 
 	mavlink_msg_attitude_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-                                  systemTime, .5, .5, .5, .01, .01, .01);
+                                  systemTime*10, 0.0, 0.0, yaw, 0.0, 0.0, 0.0);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
