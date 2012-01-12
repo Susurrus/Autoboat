@@ -88,6 +88,7 @@ void MavLinkSendRawGps(uint32_t systemTime) {
  * Transmits the vehicle attitude. Right now just the yaw value.
  * Expects systemTime to be in centiseconds which are then converted
  * to ms for transmission.
+ * Yaw should be in radians where positive is eastward from north.
  */
 void MavLinkSendAttitude(uint32_t systemTime, float yaw) {
 	mavlink_message_t msg;
@@ -144,11 +145,15 @@ void MavLinkSendLocalPosition(uint8_t *data) {
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
-void MavLinkSendGpsGlobalOrigin(void) {
+/**
+ * Transmits the current GPS position of the origin of the local coordinate frame that the North-East-Down
+ * coordinates are all relative too. They should be in units of 1e-7 degrees.
+ */
+void MavLinkSendGpsGlobalOrigin(int32_t latitude, int32_t longitude, int32_t altitude) {
 	mavlink_message_t msg;
 
 	mavlink_msg_gps_global_origin_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-                                       35722, -78131, 0);
+                                       latitude, longitude, altitude);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
