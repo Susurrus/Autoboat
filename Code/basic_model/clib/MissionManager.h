@@ -19,7 +19,7 @@
 #include <stdbool.h>
 
 // Define some boolean values for us if necessary
-#ifndef __bool_true_false_are_defined
+#ifndef __bool_true_and_false_are_defined
 #warning Boolean types not enabled. You should recompile with c99 enabled.
 #define bool uint8_t
 #define true 1
@@ -44,19 +44,16 @@ typedef struct {
 	uint8_t autocontinue; // Boolean for whether upon reaching this waypoint the vessel should switch to the next one.
 } Mission;
 
-// Mission list struct. This holds a complete track of missions.
-typedef struct {
-	uint8_t size;
-	uint8_t currentMissionIndex;
-	Mission missionList[MAX_MISSIONS]; // The storage array of missions
-} MissionList;
-
 /// Mission list management functions.
 
 // Update a single mission within the list.
 bool UpdateMission(uint8_t index, Mission *m);
 
-// Insert a mission into the list. Valid indices are 0 through the current number of missions and using other indices will result in false being returned from this.
+/**
+ * Appends a mission to the list. If the list is full,
+ * a -1 will be returned. Otherwise this function returns
+ * the new mission list length.
+ */
 int8_t AppendMission(Mission *m);
 
 // Clear all missions. Follow standard error reporting where true is success and false is failure.

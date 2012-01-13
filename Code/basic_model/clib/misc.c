@@ -1,4 +1,7 @@
 #include "DEE.h"
+#include "MissionManager.h"
+#include <common/mavlink.h>
+//#include <sealion/mavlink.h>
 
 extern unsigned short rudderRange[2];
 extern unsigned short throttleRange[2];
@@ -43,4 +46,31 @@ void initCalibrationRange() {
 	if ((tmp = DataEERead(15)) != 0xFFFF) {
 		trackRange[1] = tmp;
 	}
+}
+
+/**
+ * Initialies the MissionManager with a specific mission.
+ */
+void InitMissionInterface(void) {
+	Mission m = {
+		0, 0, 0,
+		MAV_FRAME_LOCAL_NED, MAV_CMD_NAV_WAYPOINT,
+		0, 0, 0, 0, 1
+	};
+	AppendMission(&m);
+	m.coord1 = 25;
+	m.coord2 = -36;
+	AppendMission(&m);
+	m.coord1 = 145;
+	m.coord2 = -44;
+	AppendMission(&m);
+	m.coord1 = 220;
+	m.coord2 = -37;
+	AppendMission(&m);
+	m.coord1 = 253;
+	m.coord2 = -57;
+	AppendMission(&m);
+	m.coord1 = 312;
+	m.coord2 = -56;
+	AppendMission(&m);
 }

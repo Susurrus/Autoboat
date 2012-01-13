@@ -1,14 +1,21 @@
 #include "uart1.h"
+#include "uart2.h"
 #include "gps.h"
+#include "MissionManager.h"
 
 #include <stdint.h>
-#include <sealion/mavlink.h>
+#include <common/mavlink.h>
+//#include <sealion/mavlink.h>
  
 static mavlink_system_t mavlink_system;
 static int packet_drops = 0;
 
 // These variables are only used locally but are declared here module wise as all uses are orthogonal.
 static mavlink_status_t status;
+
+// Store the new size of the mission list. Used when receiving a new mission list to determine when
+// we're at the end.
+static mavlinkNewMissionListSize = -1;
 
 static uint8_t system_state = MAV_STATE_STANDBY;
 
@@ -55,7 +62,7 @@ void MavLinkSendHeartbeat(void) {
 void MavLinkSendStatus(uint8_t load) {
 	mavlink_message_t msg;
 	
-	mavlink_msg_sys_status_pack(mavlink_system.sysid, mavlink_system.compid, &msg, 0, 0, 0, ((uint16_t)load)*10, 14000, 20000, 75, 20, 0, 0, 0, 0, 0);
+	mavlink_msg_sys_status_pack(mavlink_system.sysid, mavlink_system.compid, &msg, 0xFFFF, 0xFFFF, 0xFFFF, ((uint16_t)load)*10, 14000, 20000, 75, 20, 0, 0, 0, 0, 0);
 	
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
@@ -81,7 +88,7 @@ void MavLinkSendRawGps(uint32_t systemTime) {
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
-	uart1EnqueueData(buf, (uint8_t)len);
+	//uart1EnqueueData(buf, (uint8_t)len);
 }
 
 /**
@@ -98,7 +105,7 @@ void MavLinkSendAttitude(uint32_t systemTime, float yaw) {
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
-	uart1EnqueueData(buf, (uint8_t)len);
+	//uart1EnqueueData(buf, (uint8_t)len);
 }
 
 /**
@@ -142,7 +149,7 @@ void MavLinkSendLocalPosition(uint8_t *data) {
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
-	uart1EnqueueData(buf, (uint8_t)len);
+	//uart1EnqueueData(buf, (uint8_t)len);
 }
 
 /**
@@ -157,17 +164,17 @@ void MavLinkSendGpsGlobalOrigin(int32_t latitude, int32_t longitude, int32_t alt
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
-	uart1EnqueueData(buf, (uint8_t)len);
+	//uart1EnqueueData(buf, (uint8_t)len);
 }
 
 void MavLinkSendErrorsAndStatus(uint16_t status, uint16_t errors) {
-	mavlink_message_t msg;
+	//mavlink_message_t msg;
 
-	mavlink_msg_status_and_errors_pack(mavlink_system.sysid, mavlink_system.compid, &msg, status, errors);
+	//mavlink_msg_status_and_errors_pack(mavlink_system.sysid, mavlink_system.compid, &msg, status, errors);
 
-	len = mavlink_msg_to_send_buffer(buf, &msg);
+	//len = mavlink_msg_to_send_buffer(buf, &msg);
 	
-	uart1EnqueueData(buf, (uint8_t)len);
+	//uart1EnqueueData(buf, (uint8_t)len);
 }
 
 /**
@@ -189,54 +196,125 @@ void MavLinkReceive(void) {
  
 			switch(msg.msgid) {
 
-			// Processing reception of a new mission
+			// Begin reception of a new mission list. We first clear the mission list in preparation for new items and then
+			// request the first waypoint.
 			case MAVLINK_MSG_ID_MISSION_COUNT:
-				mavlink_msg_mission_request_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &out_msg,
-					msg.sysid, msg.compid, 0);
-				len = mavlink_msg_to_send_buffer(buf, &out_msg);
-				uart1EnqueueData(buf, (uint8_t)len);
+				if (ClearMissionList()) {
+					// Record the number of incoming missions.
+					mavlinkNewMissionListSize = mavlink_msg_mission_count_get_count(&msg);
+					
+					mavlink_msg_mission_request_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &out_msg,
+						msg.sysid, msg.compid, 0);
+					len = mavlink_msg_to_send_buffer(buf, &out_msg);
+					uart1EnqueueData(buf, (uint8_t)len);
+				}
 				break;
+
+			// Handle receiving a mission. Once
 			case MAVLINK_MSG_ID_MISSION_ITEM:
-				mavlink_msg_mission_ack_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &out_msg, msg.sysid, msg.compid, 0);
-				len = mavlink_msg_to_send_buffer(buf, &out_msg);
-				uart1EnqueueData(buf, (uint8_t)len);
+			{
+				mavlink_mission_item_t newMission;
+				mavlink_msg_mission_item_decode(&msg, &newMission);
+				
+				// Make sure that they're coming in in the right order, and if they don't return an error in
+				// the acknowledgment response. This works because the mission list was cleared when we received
+				// the MISSION_COUNT message.
+				if (newMission.seq == GetMissionCount()) {
+				
+					Mission m = {
+						newMission.x, newMission.y, newMission.z,
+						newMission.frame, newMission.command,
+						newMission.param1, newMission.param2, newMission.param3, newMission.param4, 
+						newMission.autocontinue
+					};
+					
+					// Attempt to record this mission to the list, recording the result. The result should be -1 if
+					// we ran out of space or the new size of the mission list.
+					int8_t missionAddStatus = AppendMission(&m);
+					
+					// If we've run out of space before the last message, respond saying so.
+					if (missionAddStatus == -1) {
+						mavlink_msg_mission_ack_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &out_msg, msg.sysid, msg.compid, MAV_MISSION_NO_SPACE);
+						len = mavlink_msg_to_send_buffer(buf, &out_msg);
+						uart1EnqueueData(buf, (uint8_t)len);
+					} else {
+						// If this is going to be the new current mission, then we should set it as such.
+						if (newMission.current) {
+							SetCurrentMission(newMission.seq);
+						}
+					
+						// If this was the last mission we were expecting, respond with an ACK confirming that we've successfully
+						// received the entire mission list.
+						if (missionAddStatus == mavlinkNewMissionListSize) {
+						mavlink_msg_mission_ack_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &out_msg, msg.sysid, msg.compid, MAV_MISSION_ACCEPTED);
+						len = mavlink_msg_to_send_buffer(buf, &out_msg);
+						uart1EnqueueData(buf, (uint8_t)len);
+					
+						// Otherwise we just continue requesting for the subsequent missions.
+						} else {
+							mavlink_msg_mission_request_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &out_msg,
+								msg.sysid, msg.compid, newMission.seq + 1);
+							len = mavlink_msg_to_send_buffer(buf, &out_msg);
+							uart1EnqueueData(buf, (uint8_t)len);
+						}
+					}
+				} else {
+					mavlink_msg_mission_ack_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &out_msg, msg.sysid, msg.compid, MAV_MISSION_INVALID_SEQUENCE);
+					len = mavlink_msg_to_send_buffer(buf, &out_msg);
+					uart1EnqueueData(buf, (uint8_t)len);
+				}
+			}
 				break;
 
 			// Processing sending of mission waypoint list to QGC.
 			case MAVLINK_MSG_ID_MISSION_REQUEST_LIST:
 				mavlink_msg_mission_count_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &out_msg,
-					msg.sysid, msg.compid, 1);
-				len = mavlink_msg_to_send_buffer(buf, &out_msg);
-				uart1EnqueueData(buf, (uint8_t)len);
-				break;
-			case MAVLINK_MSG_ID_MISSION_REQUEST:
-				mavlink_msg_mission_item_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &out_msg,
-					msg.sysid, msg.compid, mavlink_msg_mission_request_get_seq(&msg),
-					MAV_FRAME_LOCAL_NED, MAV_CMD_NAV_LOITER_TIME, 1,
-					1, 0, 0, 0, 0, 44, 55, 0);
+					msg.sysid, msg.compid, GetMissionCount());
 				len = mavlink_msg_to_send_buffer(buf, &out_msg);
 				uart1EnqueueData(buf, (uint8_t)len);
 				break;
 
-			// Allow for clearing waypoints. Here we respond simply with an ACK message signifying no error.
+			// When a mission request message is received, respond with that mission information from the MissionManager
+			case MAVLINK_MSG_ID_MISSION_REQUEST:
+			{
+				uint8_t requestedMission = mavlink_msg_mission_request_get_seq(&msg);
+				Mission m;
+				if (GetMission(requestedMission, &m)) {
+					uint8_t currMissionIndex = GetCurrentMission();
+					mavlink_msg_mission_item_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &out_msg,
+						msg.sysid, msg.compid, mavlink_msg_mission_request_get_seq(&msg),
+						m.refFrame, m.action, (requestedMission == currMissionIndex),
+						m.autocontinue, m.param1, m.param2, m.param3, m.param4, m.coord1, m.coord2, m.coord3);
+					len = mavlink_msg_to_send_buffer(buf, &out_msg);
+					uart1EnqueueData(buf, (uint8_t)len);
+				}
+			}
+				break;
+			// Allow for clearing waypoints. Here we respond simply with an ACK message if we successfully
+			// cleared the mission list.
 			case MAVLINK_MSG_ID_MISSION_CLEAR_ALL:
-				mavlink_msg_mission_ack_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &out_msg,
-					msg.sysid, msg.compid, 0);
-				len = mavlink_msg_to_send_buffer(buf, &out_msg);
-				uart1EnqueueData(buf, (uint8_t)len);
+				if (ClearMissionList()) {
+					mavlink_msg_mission_ack_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &out_msg,
+						msg.sysid, msg.compid, MAV_MISSION_ACCEPTED);
+					len = mavlink_msg_to_send_buffer(buf, &out_msg);
+					uart1EnqueueData(buf, (uint8_t)len);
+				}
 				break;
 
 			// Allow for the groundstation to set the current mission. This requires a WAYPOINT_CURRENT response message agreeing with the received current message index.
 			case MAVLINK_MSG_ID_MISSION_SET_CURRENT:
-				mavlink_msg_mission_current_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &out_msg,
-					mavlink_msg_mission_set_current_get_seq(&msg));
-				len = mavlink_msg_to_send_buffer(buf, &out_msg);
-				uart1EnqueueData(buf, (uint8_t)len);
+				if (SetCurrentMission(mavlink_msg_mission_set_current_get_seq(&msg))) {
+					mavlink_msg_mission_current_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &out_msg,
+						mavlink_msg_mission_set_current_get_seq(&msg));
+					len = mavlink_msg_to_send_buffer(buf, &out_msg);
+					uart1EnqueueData(buf, (uint8_t)len);
+				}
 				break;
 
-			// Catch the rest and do nothing in that case.
+			// Ignore incoming ACK messages for now.
+			case MAVLINK_MSG_ID_MISSION_ACK:
+				break;
 			default:
-				c = '0';
 				break;
 			}
 		}

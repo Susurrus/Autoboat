@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2112"
+    ComputedModelVersion    "1.2115"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Jan 11 19:14:39 2012"
-  RTWModifiedTimeStamp	  248209149
-  ModelVersionFormat	  "1.%<AutoIncrement:2112>"
+  LastModifiedDate	  "Thu Jan 12 18:58:40 2012"
+  RTWModifiedTimeStamp	  248295507
+  ModelVersionFormat	  "1.%<AutoIncrement:2115>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -383,8 +383,8 @@ Model {
 	  RTWUseSimCustomCode	  off
 	  CustomInclude		  "mavlink\nclib"
 	  CustomSource		  "clib/conversions.c\nclib/nmea0183.c\nclib/nmea2000.c\nclib/ecanSensors.c\nclib/gps.c\nclib/revo.c\n"
-	  "clib/Rudder.c\nclib/commProtocol.c\nclib/uart1.c\nclib/uart2.c\nclib/DEE.c\nclib/DEES.s\nclib/misc.c\nclib/mavlink."
-	  "c\n../../../ECAN_dspic/CircularBuffer.c\n../../../ECAN_dspic/ecanFunctions.c"
+	  "clib/Rudder.c\nclib/MissionManager.c\nclib/commProtocol.c\nclib/uart1.c\nclib/uart2.c\nclib/DEE.c\nclib/DEES.s\ncli"
+	  "b/misc.c\nclib/mavlink.c\n../../../ECAN_dspic/CircularBuffer.c\n../../../ECAN_dspic/ecanFunctions.c"
 	  IncludeHyperlinkInReport off
 	  LaunchReport		  off
 	  TargetLang		  "C"
@@ -1193,7 +1193,7 @@ Model {
   }
   System {
     Name		    "code_gen"
-    Location		    [214, 82, 1172, 854]
+    Location		    [202, 82, 1565, 847]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1207,7 +1207,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "117"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    17907
+    SIDHighWatermark	    17909
     Block {
       BlockType		      SubSystem
       Name		      "Actuator\nOutputs"
@@ -22792,41 +22792,12 @@ Model {
     }
     Block {
       BlockType		      From
-      Name		      "From12"
-      SID		      16181
-      Position		      [715, 849, 800, 871]
-      BackgroundColor	      "magenta"
-      ShowName		      off
-      GotoTag		      "waypoints"
-    }
-    Block {
-      BlockType		      From
       Name		      "From13"
       SID		      16168
       Position		      [715, 724, 755, 746]
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "L2"
-      TagVisibility	      "global"
-    }
-    Block {
-      BlockType		      From
-      Name		      "From18"
-      SID		      16173
-      Position		      [715, 899, 795, 921]
-      BackgroundColor	      "magenta"
-      ShowName		      off
-      GotoTag		      "i1"
-      TagVisibility	      "global"
-    }
-    Block {
-      BlockType		      From
-      Name		      "From19"
-      SID		      16174
-      Position		      [715, 874, 795, 896]
-      BackgroundColor	      "magenta"
-      ShowName		      off
-      GotoTag		      "i0"
       TagVisibility	      "global"
     }
     Block {
@@ -23549,6 +23520,62 @@ Model {
       FctStart_Name	      "cpInitCommunications"
       FctStart_Declaration    "inline extern void cpInitCommunications();"
       FctStart_Call	      "cpInitCommunications();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Initialize the mission\nmanagement interface\n[mavlink.c]"
+      SID		      17909
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      []
+      Position		      [310, 274, 420, 316]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.79"
+      List {
+	ListType		RTWdata
+	isFctUpdate		"0"
+	FctDeclaration		"extern void initGps();"
+	FctCall			"initGps();"
+	fctName			"initGps"
+	INPUT_SIZE		"1"
+	OUTPUT_SIZE		"1"
+	NBR_INPUT		"0"
+	NBR_OUTPUT		"0"
+	isFctStart		"1"
+	FctStart_Declaration	"inline extern void InitMissionInterface();"
+	FctStart_Call		"InitMissionInterface();"
+	FctStart_Name		"InitMissionInterface"
+	isFctInit		"0"
+	FctInit_Declaration	"inline extern void Init_Reset();"
+	FctInit_Call		"Init_Reset();"
+	FctInit_Name		"Init_Reset"
+      }
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "None"
+      fctName		      "'initGps'"
+      INPUT_SIZE	      "1"
+      INPUT1		      "--"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "--"
+      SampleTime	      "Inf"
+      InputType		      "[]"
+      OutputType	      "[]"
+      FctDeclaration	      "extern void initGps();"
+      FctCall		      "initGps();"
+      OrderingInOutPopup      "None"
+      FctStart		      "Start Function (Call once and only once)"
+      FctStart_Name	      "InitMissionInterface"
+      FctStart_Declaration    "inline extern void InitMissionInterface();"
+      FctStart_Call	      "InitMissionInterface();"
       FctInit		      "None"
       FctInit_Name	      "Init_Reset"
       FctInit_Declaration     "inline extern void Init_Reset();"
@@ -25625,6 +25652,62 @@ Model {
 	      DstPort		      1
 	    }
 	  }
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Parse incoming MAVLink\nmessages.\n[mavlink.c]"
+	  SID			  17908
+	  Tag			  "dsPIC_dsPIC_CFunctionCall"
+	  Ports			  []
+	  Position		  [750, 460, 935, 510]
+	  BackgroundColor	  "orange"
+	  LibraryVersion	  "3.79"
+	  List {
+	    ListType		    RTWdata
+	    isFctUpdate		    "1"
+	    FctDeclaration	    "extern void MavLinkReceive();"
+	    FctCall		    "MavLinkReceive();"
+	    fctName		    "MavLinkReceive"
+	    INPUT_SIZE		    "1"
+	    OUTPUT_SIZE		    "1"
+	    NBR_INPUT		    "0"
+	    NBR_OUTPUT		    "0"
+	    isFctStart		    "0"
+	    FctStart_Declaration    "inline extern void Init_onlyOnce();"
+	    FctStart_Call	    "Init_onlyOnce();"
+	    FctStart_Name	    "Init_onlyOnce"
+	    isFctInit		    "0"
+	    FctInit_Declaration	    "inline extern void Init_Reset();"
+	    FctInit_Call	    "Init_Reset();"
+	    FctInit_Name	    "Init_Reset"
+	  }
+	  SourceBlock		  "dsPICdrivers/OTHERS/C Function Call"
+	  SourceType		  "C Function Call"
+	  FctUpdate		  "Output Function"
+	  fctName		  "MavLinkReceive"
+	  INPUT_SIZE		  "1"
+	  INPUT1		  "--"
+	  INPUT2		  "--"
+	  INPUT3		  "--"
+	  OUTPUT_SIZE		  "1"
+	  OUTPUT1		  "--"
+	  SampleTime		  "T_step"
+	  InputType		  "[ ]"
+	  OutputType		  "[ ]"
+	  FctDeclaration	  "extern void MavLinkReceive();"
+	  FctCall		  "MavLinkReceive();"
+	  OrderingInOutPopup	  "None"
+	  FctStart		  "None"
+	  FctStart_Name		  "Init_onlyOnce"
+	  FctStart_Declaration	  "inline extern void Init_onlyOnce();"
+	  FctStart_Call		  "Init_onlyOnce();"
+	  FctInit		  "None"
+	  FctInit_Name		  "Init_Reset"
+	  FctInit_Declaration	  "inline extern void Init_Reset();"
+	  FctInit_Call		  "Init_Reset();"
+	  PinDigitalInput	  "[]"
+	  PinDigitalOutput	  "[]"
+	  AnalogueInput		  "[]"
 	}
 	Block {
 	  BlockType		  RateTransition
@@ -34352,16 +34435,6 @@ Model {
       DstPort		      1
     }
     Line {
-      SrcBlock		      "From19"
-      SrcPort		      1
-      Points		      [155, 0; 0, -40; 10, 0]
-    }
-    Line {
-      SrcBlock		      "From18"
-      SrcPort		      1
-      Points		      [155, 0; 0, -100; 10, 0]
-    }
-    Line {
       SrcBlock		      "From20"
       SrcPort		      1
       Points		      [155, 0]
@@ -34381,11 +34454,6 @@ Model {
       Points		      [155, 0]
       DstBlock		      "Transmit state data\nvia UART1"
       DstPort		      4
-    }
-    Line {
-      SrcBlock		      "From12"
-      SrcPort		      1
-      Points		      [150, 0; 0, -25; 10, 0]
     }
     Line {
       SrcBlock		      "From39"
@@ -37932,8 +38000,6 @@ Stateflow {
     viewObj		    169
     machine		    1
     toolbarMode		    LIBRARY_TOOLBAR
-    subviewS {
-    }
     ssIdHighWaterMark	    20
     decomposition	    CLUSTER_CHART
     type		    EML_CHART

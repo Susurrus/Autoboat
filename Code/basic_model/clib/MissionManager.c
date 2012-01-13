@@ -8,8 +8,12 @@
 #include <assert.h>
 #endif // UNIT_TEST
 
-// Store the mission list globally.
-static MissionList mList;
+// Mission list struct. This holds the complete track of missions.
+struct {
+	uint8_t size;
+	uint8_t currentMissionIndex;
+	Mission missionList[MAX_MISSIONS]; // The storage array of missions
+} mList;
 
 // Update a single mission within the list.
 bool UpdateMission(uint8_t index, Mission *m) {
@@ -21,11 +25,13 @@ bool UpdateMission(uint8_t index, Mission *m) {
 	}
 }
 
-// Insert a mission into the list. Valid indices are 0 through the current number of missions and using other indices will result in false being returned from this.
+// Appends a mission to the list. If the list is full,
+// a -1 will be returned. Otherwise this function returns
+// the new mission list length.
 int8_t AppendMission(Mission *m) {
 	if (mList.size < MAX_MISSIONS) {
 		memcpy(&mList.missionList[mList.size], m, sizeof(Mission));
-		return mList.size++;
+		return ++mList.size;
 	} else {
 		return -1;
 	}
