@@ -8,25 +8,48 @@
 #include "nmea2000.h"
 #include "types.h"
 
-struct {
+static struct {
 	tFloatToChar speed;
 	tFloatToChar direction;
 	bool newData;
 } windData;
 
-struct {
+static struct {
 	tFloatToChar temp;
 	tFloatToChar pressure;
 	tFloatToChar humidity;
 	bool newData;
 } airData;
 
-struct {
+static struct {
 	tFloatToChar speed;
 	tFloatToChar temp;
 	tFloatToChar depth;
 	bool newData;
 } waterData;
+
+static struct {
+	unsigned char day;
+	unsigned char month;
+	unsigned char year;
+	unsigned char hour;
+	unsigned char minute;
+	unsigned char second;
+	bool newData;
+} timeAndDateData;
+
+static struct {
+	tFloatToChar latitude;
+	tFloatToChar longitude;
+	bool newData;
+} locationData;
+
+static struct {
+	tFloatToChar courseOverGround;
+	unsigned char courseReference;
+	tFloatToChar speedOverGround;
+	bool newData;
+} courseAndSpeedData;
 
 void GetWindData(unsigned char *data) {
 	data[0] = windData.speed.chData[0];
@@ -75,6 +98,44 @@ void GetWaterData(unsigned char *data) {
 	waterData.newData = false;
 }
 
+void GetLocationData(unsigned char *data) {
+	data[0] = locationData.latitude.chData[0];
+	data[1] = locationData.latitude.chData[1];
+	data[2] = locationData.latitude.chData[2];
+	data[3] = locationData.latitude.chData[3];
+	data[4] = locationData.longitude.chData[0];
+	data[5] = locationData.longitude.chData[1];
+	data[6] = locationData.longitude.chData[2];
+	data[7] = locationData.longitude.chData[3];
+	data[8] = locationData.newData;
+	locationData.newData = false;
+}
+
+void GetCourseAndSpeedData(unsigned char *data) {
+	data[0] = courseAndSpeedData.courseOverGround.chData[0];
+	data[1] = courseAndSpeedData.courseOverGround.chData[1];
+	data[2] = courseAndSpeedData.courseOverGround.chData[2];
+	data[3] = courseAndSpeedData.courseOverGround.chData[3];
+	data[4] = courseAndSpeedData.courseReference;
+	data[5] = courseAndSpeedData.speedOverGround.chData[0];
+	data[6] = courseAndSpeedData.speedOverGround.chData[1];
+	data[7] = courseAndSpeedData.speedOverGround.chData[2];
+	data[8] = courseAndSpeedData.speedOverGround.chData[3];
+	data[9] = courseAndSpeedData.newData;
+	courseAndSpeedData.newData = false;
+}
+
+void GetTimeAndDateData(unsigned char *data) {
+	data[0] = timeAndDateData.day;
+	data[1] = timeAndDateData.month;
+	data[2] = timeAndDateData.year;
+	data[3] = timeAndDateData.hour;
+	data[4] = timeAndDateData.minute;
+	data[5] = timeAndDateData.second;
+	data[6] = timeAndDateData.newData;
+	timeAndDateData.newData = false;
+}
+
 void initCommunications() {
 	initUart2(42); // Initialize UART2 for 57600 baud.
 }
@@ -97,6 +158,30 @@ void DisplayWaterData(float speed, float temp, float depth){
 	uart2EnqueueData((unsigned char *)text, strlen(text));
 }
 
+void DisplayLocationData(float latitude, float longitude){
+	char text[120];
+	sprintf(text, "Location data - latitude: %2.1f (deg), longitude: %2.1f (deg)\n", latitude, longitude);
+	uart2EnqueueData((unsigned char *)text, strlen(text));
+}
+
+void DisplayTimeData(unsigned char hour, unsigned char minute, unsigned char second){
+	char text[120];
+	sprintf(text, "Time data - hour: %d, minute: %d, second: %d\n", hour, minute, second);
+	uart2EnqueueData((unsigned char *)text, strlen(text));
+}
+
+void DisplayDateData(unsigned char day, unsigned char month, unsigned char year){
+	char text[120];
+	sprintf(text, "Date data - day: %d, month: %d, year: %d\n", day, month, year);
+	uart2EnqueueData((unsigned char *)text, strlen(text));
+}
+
+void DisplayCourseAndSpeedData(float courseOverGround, unsigned char courseReference, float speedOverGround){
+	char text[120];
+	sprintf(text, "Course/speed data - Course (over ground): %2.1f (deg), Course reference: %s, Speed (over ground): %2.1f (m/s)\n", courseOverGround, courseReference?"Mag":"True", speedOverGround);
+	uart2EnqueueData((unsigned char *)text, strlen(text));
+}
+
 void DisplayUnhandledId(unsigned long pgn, unsigned char data[8]) {
 	char text[120];
 
@@ -116,27 +201,39 @@ unsigned char processAllMessages() {
 		if (foundOne) {
 			pgn = ISO11783Decode(msg.id, 0, 0, 0);
 			switch (pgn) {
-			case 130306:
-				ParsePgn130306(msg.payload, NULL, &windData.speed.flData, &windData.direction.flData);
-				windData.newData = true;
-				break;
-			case 130311:
-				ParsePgn130311(msg.payload, NULL, &airData.temp.flData, &airData.humidity.flData, &airData.pressure.flData);
-				airData.newData = true;
-				break;
 			case 128259:
 				ParsePgn128259(msg.payload, NULL, &waterData.speed.flData);
 				waterData.newData = true;
+				break;
+			case 128267:	
+				// Only update the data in waterData if an actual depth was returned. This is only true when it's in the water.
+				if (ParsePgn128267(msg.payload, NULL, &waterData.depth.flData, NULL) & 0x02) {
+					waterData.newData = true;
+				}
+				break;
+			case 129025:
+				ParsePgn129025(msg.payload, &locationData.latitude.flData, &locationData.longitude.flData);
+				locationData.newData = true;
+				break;
+			case 129026:
+				ParsePgn129026(msg.payload, NULL, &courseAndSpeedData.courseReference, &courseAndSpeedData.courseOverGround.flData, &courseAndSpeedData.speedOverGround.flData);
+				courseAndSpeedData.newData = true;
+				break;
+			case 129033:
+				ParsePgn129033(msg.payload, &timeAndDateData.day, &timeAndDateData.month, &timeAndDateData.year, &timeAndDateData.hour, &timeAndDateData.minute, &timeAndDateData.second);
+				timeAndDateData.newData = true;
+				break;
+			case 130306:
+				ParsePgn130306(msg.payload, NULL, &windData.speed.flData, &windData.direction.flData);
+				windData.newData = true;
 				break;
 			case 130310:
 				ParsePgn130310(msg.payload, NULL, &waterData.temp.flData, NULL, NULL);
 				waterData.newData = true;
 				break;
-			case 128267:
-				// Only update the data in waterData if an actual depth was returned.
-				if (ParsePgn128267(msg.payload, NULL, &waterData.depth.flData, NULL) & 0x02) {
-					waterData.newData = true;
-				}
+			case 130311:
+				ParsePgn130311(msg.payload, NULL, &airData.temp.flData, &airData.humidity.flData, &airData.pressure.flData);
+				airData.newData = true;
 				break;
 			default:
 				//DisplayUnhandledId(pgn, msg.payload);

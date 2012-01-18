@@ -28,13 +28,13 @@ typedef union {
 
 typedef union {
 	unsigned char   chData[4];
-	unsigned long  	lData;
+	long  	lData;
 } tLongToChar;
 
 typedef union {
 	unsigned char   chData[4];
 	float   		flData;
-	unsigned short	shData[2];
+	unsigned short	usData[2];
 } tFloatToChar;
 
 #ifndef NULL

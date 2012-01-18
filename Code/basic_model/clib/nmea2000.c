@@ -1,6 +1,10 @@
 #include "nmea2000.h"
+#include "types.h"
 
-unsigned long ISO11783Decode(unsigned long id, unsigned char *src, unsigned char *dest, unsigned char *pri) {
+#define M_PI 3.1415926535
+
+unsigned long ISO11783Decode(unsigned long id, unsigned char *src, unsigned char *dest, unsigned char *pri)
+{
 
 	unsigned long pgn;
 
@@ -40,13 +44,14 @@ unsigned long ISO11783Decode(unsigned long id, unsigned char *src, unsigned char
 	return pgn;
 }
 
-unsigned char ParsePgn128259(unsigned char data[8], unsigned char *seqId, float *waterSpeed) {
+unsigned char ParsePgn128259(unsigned char data[8], unsigned char *seqId, float *waterSpeed)
+{
 
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each field.
 	unsigned char fieldStatus = 0;
 	
-	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep.
-	if (seqId) {
+	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep. If the sequence ID is 255, it's invalid.
+	if (seqId && data[0] != 0xFF) {
 		*seqId = data[0];
 		fieldStatus |= 0x01;
 	}
@@ -62,13 +67,14 @@ unsigned char ParsePgn128259(unsigned char data[8], unsigned char *seqId, float 
 	return fieldStatus;
 }
 
-unsigned char ParsePgn128267(unsigned char data[8], unsigned char *seqId, float *waterDepth, float *offset) {
+unsigned char ParsePgn128267(unsigned char data[8], unsigned char *seqId, float *waterDepth, float *offset)
+{
 
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each field.
 	unsigned char fieldStatus = 0;
 	
-	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep.
-	if (seqId) {
+	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep. If the sequence ID is 255, it's invalid.
+	if (seqId && data[0] != 0xFF) {
 		*seqId = data[0];
 		fieldStatus |= 0x01;
 	}
@@ -96,18 +102,155 @@ unsigned char ParsePgn128267(unsigned char data[8], unsigned char *seqId, float 
 	return fieldStatus;
 }
 
-unsigned char ParsePgn130306(unsigned char data[8], unsigned char *seqId, float *airSpeed, float *direction) {
+unsigned char ParsePgn129025(unsigned char data[8], float *latitude, float *longitude)
+{
+
+	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each field.
+	unsigned char fieldStatus = 0;
+
+	// Make conversions between long and chars easy
+	tLongToChar unpacked;
+		
+	// Field 0: Latitude. Raw units are 1e-7 degrees, but they're converted to raw radians on output.
+	if (latitude) {
+		unpacked.chData[0] = data[0];
+		unpacked.chData[1] = data[1];
+		unpacked.chData[2] = data[2];
+		unpacked.chData[3] = data[3];
+		*latitude = ((float)unpacked.lData) / 1e7 * M_PI / 180;
+		fieldStatus |= 0x01;
+	}
+	
+	// Field 1: Longitude. Raw units are 1e-7 degrees, but they're converted to raw radians on output.
+	if (longitude) {
+		unpacked.chData[0] = data[4];
+		unpacked.chData[1] = data[5];
+		unpacked.chData[2] = data[6];
+		unpacked.chData[3] = data[7];
+		*longitude = ((float)unpacked.lData) / 1e7 * M_PI / 180;
+		fieldStatus |= 0x02;
+	}
+	
+	return fieldStatus;
+}
+
+unsigned char ParsePgn129026(unsigned char data[8], unsigned char *seqId, unsigned char *cogRef, float *cog, float *sog)
+{
 
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each field.
 	unsigned char fieldStatus = 0;
 	
-	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep.
-	if (seqId) {
+	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep. If the sequence ID is 255, it's invalid.
+	if (seqId && data[0] != 0xFF) {
 		*seqId = data[0];
 		fieldStatus |= 0x01;
-	}	
+	}
 	
-	// Field 1: Wind speed. Message units are cm/s. Here we convert to m/s.
+	// Field 1: Course over ground reference. A 0 for True reference and a 1 for a magnetic field reference.
+	if (cogRef) {
+		*cogRef = data[1] & 0x03;
+		fieldStatus |= 0x02;
+	}
+	
+	// Field 2: Course over ground. Raw units are .0001 degrees eastward from north but are converted to plain radians for output.
+	if (cog) {
+		tUnsignedShortToChar unpacked;
+		unpacked.chData[0] = data[2];
+		unpacked.chData[1] = data[3];
+		*cog = ((float)unpacked.usData) / 1e4;
+		fieldStatus |= 0x04;
+	}
+	
+	// Field 3: Speed over ground. Raw units are .01 m/s but are converted to straight m/s on output.
+	if (sog) {
+		tUnsignedShortToChar unpacked;
+		unpacked.chData[0] = data[4];
+		unpacked.chData[1] = data[5];
+		*sog = ((float)unpacked.usData) / 1e2;
+		fieldStatus |= 0x08;
+	}
+	
+	return fieldStatus;
+}
+
+unsigned char ParsePgn129033(unsigned char data[8], unsigned char *day, unsigned char *month, unsigned char *year, unsigned char *hour, unsigned char *minute, unsigned char *second)
+{
+
+	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each field.
+	unsigned char fieldStatus = 0;
+	
+	// Field 2: Local offset. Units in minutes. We fetch this field first as it affects the other two fields
+	// Figure out proper algorithm and fill in the code below.
+//	{
+//		tShortToChar unpacked;
+//		unpacked.chData[0] = data[6];
+//		unpacked.chData[1] = data[7];
+//		fieldStatus != 0x04;
+//	}
+	
+	// Field 0: Date in days since Jan 1 1970.
+	// This field can be invalid if all 1's.
+	if (data[0] != 0xFF && data[1] != 0xFF) {
+		tUnsignedShortToChar unpacked;
+		unpacked.chData[0] = data[0];
+		unpacked.chData[1] = data[1];
+		fieldStatus |= 0x01;
+		
+		if (day) {
+			*day = 0;
+		}
+		
+		if (month) {
+			*month = 0;
+		}
+		
+		if (year) {
+			*year = 0;
+		}
+	}
+	
+	// Field 1: Seconds since midnight in units of 1e-4 second.
+	{
+		tUnsignedLongToChar unpacked;
+		unpacked.chData[0] = data[2];
+		unpacked.chData[1] = data[3];
+		unpacked.chData[2] = data[4];
+		unpacked.chData[3] = data[5];
+		unpacked.ulData /= 1e4;
+		fieldStatus |= 0x02;
+
+		unsigned long seconds = unpacked.ulData;
+		if (hour) {
+			*hour = seconds / 3600;
+		}
+		seconds %= 3600;
+		
+		if (minute) {
+			*minute = seconds / 60;
+		}
+		seconds %= 60;
+		
+		if (second) {
+			*second = seconds;
+		}
+	}
+	
+	return fieldStatus;
+}
+
+unsigned char ParsePgn130306(unsigned char data[8], unsigned char *seqId, float *airSpeed, float *direction)
+{
+
+	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each field.
+	unsigned char fieldStatus = 0;
+	
+	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep. If the sequence ID is 255, it's invalid.
+	if (seqId && data[0] != 0xFF) {
+		*seqId = data[0];
+		fieldStatus |= 0x01;
+	}
+	
+	// Field 1: Wind speed. Message units are cm/s but are converted to m/s on output.
 	if (airSpeed) {
 		unsigned int unpacked = data[1];
 		unpacked |= ((unsigned int)data[2]) << 8;
@@ -115,7 +258,7 @@ unsigned char ParsePgn130306(unsigned char data[8], unsigned char *seqId, float 
 		fieldStatus |= 0x02;
 	}
 	
-	// Field 2: Wind direction. Message units at e-4 rads
+	// Field 2: Wind direction. Message units are e-4 rads but are converted to raw radians on output.
 	if (direction) {
 		unsigned int unpacked = data[3];
 		unpacked |= ((unsigned int)data[4]) << 8;
@@ -131,13 +274,14 @@ unsigned char ParsePgn130306(unsigned char data[8], unsigned char *seqId, float 
 	return fieldStatus;
 }
 
-unsigned char ParsePgn130310(unsigned char data[8], unsigned char *seqId, float *waterTemp, float *airTemp, float *airPressure) {
+unsigned char ParsePgn130310(unsigned char data[8], unsigned char *seqId, float *waterTemp, float *airTemp, float *airPressure)
+{
 
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each field.
 	unsigned char fieldStatus = 0;
 	
-	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep.
-	if (seqId) {
+	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep. If the sequence ID is 255, it's invalid.
+	if (seqId && data[0] != 0xFF) {
 		*seqId = data[0];
 		fieldStatus |= 0x01;
 	}
@@ -185,13 +329,14 @@ unsigned char ParsePgn130310(unsigned char data[8], unsigned char *seqId, float 
 }
 
 // TODO: Add code for processing the instance ID and instance fields (2nd byte)
-unsigned char ParsePgn130311(unsigned char data[8], unsigned char *seqId, float *temp, float *humidity, float *pressure) {
+unsigned char ParsePgn130311(unsigned char data[8], unsigned char *seqId, float *temp, float *humidity, float *pressure)
+{
 
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each field.
 	unsigned char fieldStatus = 0;
 	
-	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep.
-	if (seqId) {
+	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep. If the sequence ID is 255, it's invalid.
+	if (seqId && data[0] != 0xFF) {
 		*seqId = data[0];
 		fieldStatus |= 0x01;
 	}
