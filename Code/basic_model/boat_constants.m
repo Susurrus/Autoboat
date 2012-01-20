@@ -1,6 +1,21 @@
 %% Declare boat constants
 
+% First import all necessary Bus objects
+Busses;
+
 % Initial conditions
+rudderCommandIC = struct(...
+    'enable', true,...
+    'direction', true,...
+    'up', uint16(0),...
+    'period', uint16(0)...
+);
+throttleCommandIC = struct(...
+    'identifier', true,...
+    'data', uint8([0 0 0 0 0 0]),...
+    'size', uint8(0),...
+    'trigger', false...
+);
 
 % Initial latitude & longitude. This provides the baseline for the plant
 % to generate GPS data.
@@ -22,44 +37,87 @@ OC2max = 49999; % Parameter used for calculating up-time & period for output com
 % commented-out matrices are the original test ones. Overrides are
 % implemented below for the in-harbor boat test.
 
-test_waypoints = int32([0    0    0;
-                        25   -36  0;
-                        145  -44  0;
-                        220  -37  0;
-                        253  -57  0;
-                        312  -56  0;
-                        -1   -1   -1;
-                        -1   -1   -1;
-                        -1   -1   -1;
-                        -1   -1   -1;
-                        -1   -1   -1;
-                       ]);
+m1 = Simulink.Bus.createMATLABStruct('Mission');
+m1.coordinates = single([0 0 0]);
+m1.refFrame = uint8(1); % Set Local-NED
+m1.action = uint8(16); % MAV_CMD_NAV_WAYPOINT
+m1.autocontinue = true;
 
-figure8_waypoints = int32([0    0    0;
-                           -35  19   0;
-                           -93  21   0;
-                           -156 13   0;
-                           -186 33   0;
-                           -244 34   0;
-                           -249 77   0;
-                           -1   -1   -1;
-                           -1   -1   -1;
-                           -1   -1   -1;
-                           -1   -1   -1;
-                          ]);
+m2 = Simulink.Bus.createMATLABStruct('Mission');
+m2.coordinates = single([25 -36 0]);
+m2.refFrame = uint8(1); % Set Local-NED
+m2.action = uint8(16); % MAV_CMD_NAV_WAYPOINT
+m2.autocontinue = true;
 
-sampling_waypoints = int32([0    0    0;
-                            2    -45  0;
-                            -1   -1   -1;
-                            -1   -1   -1;
-                            -1   -1   -1;
-                            -1   -1   -1;
-                            -1   -1   -1;
-                            -1   -1   -1;
-                            -1   -1   -1;
-                            -1   -1   -1;
-                            -1   -1   -1;
-                           ]);
+m3 = Simulink.Bus.createMATLABStruct('Mission');
+m3.coordinates = single([145 -44 0]);
+m3.refFrame = uint8(1); % Set Local-NED
+m3.action = uint8(16); % MAV_CMD_NAV_WAYPOINT
+m3.autocontinue = true;
+
+m4 = Simulink.Bus.createMATLABStruct('Mission');
+m4.coordinates = single([220 -37 0]);
+m4.refFrame = uint8(1); % Set Local-NED
+m4.action = uint8(16); % MAV_CMD_NAV_WAYPOINT
+m4.autocontinue = true;
+
+m5 = Simulink.Bus.createMATLABStruct('Mission');
+m5.coordinates = single([253 -57 0]);
+m5.refFrame = uint8(1); % Set Local-NED
+m5.action = uint8(16); % MAV_CMD_NAV_WAYPOINT
+m5.autocontinue = true;
+
+m6 = Simulink.Bus.createMATLABStruct('Mission');
+m6.coordinates = single([312 -56 0]);
+m6.refFrame = uint8(1); % Set Local-NED
+m6.action = uint8(16); % MAV_CMD_NAV_WAYPOINT
+m6.autocontinue = true;
+
+test_waypoints = [m1 m2 m3 m4 m5 m6];
+
+figure8_waypoints = [m1 m2 m3 m4 m5 m6];
+
+sampling_waypoints = [m1 m2 m3 m4 m5 m6];
+
+
+% test_waypoints = int32([0    0    0;
+%                         25   -36  0;
+%                         145  -44  0;
+%                         220  -37  0;
+%                         253  -57  0;
+%                         312  -56  0;
+%                         -1   -1   -1;
+%                         -1   -1   -1;
+%                         -1   -1   -1;
+%                         -1   -1   -1;
+%                         -1   -1   -1;
+%                        ]);
+% 
+% figure8_waypoints = int32([0    0    0;
+%                            -35  19   0;
+%                            -93  21   0;
+%                            -156 13   0;
+%                            -186 33   0;
+%                            -244 34   0;
+%                            -249 77   0;
+%                            -1   -1   -1;
+%                            -1   -1   -1;
+%                            -1   -1   -1;
+%                            -1   -1   -1;
+%                           ]);
+% 
+% sampling_waypoints = int32([0    0    0;
+%                             2    -45  0;
+%                             -1   -1   -1;
+%                             -1   -1   -1;
+%                             -1   -1   -1;
+%                             -1   -1   -1;
+%                             -1   -1   -1;
+%                             -1   -1   -1;
+%                             -1   -1   -1;
+%                             -1   -1   -1;
+%                             -1   -1   -1;
+%                            ]);
 
 % Original waypoints
 % test_waypoints = int32([
