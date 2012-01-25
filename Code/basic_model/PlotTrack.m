@@ -1,4 +1,5 @@
 %% Plot waypoints and the vehicle track
+Busses;
 
 figure;
 hold on;
@@ -21,27 +22,38 @@ myLegend = {};
 
 % Plot waypoints (red, green, and blue)
 % Here we do some predicate indexing to ignore the -1 values at the end
-tmp1 = double(test_waypoints(:,1));
-tmp1 = tmp1(tmp1 ~= -1)';
-tmp2 = double(test_waypoints(:,2));
-tmp2 = tmp2(tmp2 ~= -1)';
-plot(tmp2, tmp1, 'r^', 'MarkerSize', 10);
-text(tmp2+10, tmp1-10, cellstr({int2str((1:size(tmp1,2))')}), 'Color', 'r');
+wp_length = length(test_waypoints);
+tmp = zeros(wp_length, 3);
+for i=1:wp_length
+    tmp(i,:) = double(test_waypoints(i).coordinates(:));
+end
+plot(tmp(:,2), tmp(:,1), 'r^', 'MarkerSize', 10);
+text(tmp(:,2)+10, tmp(:,1)-10, cellstr({int2str((1:wp_length)')}), 'Color', 'r');
 myLegend{end + 1} = 'Test waypoints';
 
 % The extra two tracks are offset by the current boat position when it
 % reset to properly illustrate where the boat thought the waypoints were.
 offsets = position(nextTrack > 0,:);
 if size(offsets,1) > 0
-    figure8_waypoints_offset = double(figure8_waypoints) + repmat(offsets(1,:),size(figure8_waypoints,1),1);
+    wp_length = length(figure8_waypoints);
+    tmp = zeros(wp_length, 3);
+    for i=1:wp_length
+        tmp(i,:) = double(figure8_waypoints(i).coordinates(:));
+    end
+    figure8_waypoints_offset = double(tmp) + repmat(offsets(1,:),wp_length,1);
     plot(figure8_waypoints_offset(:,2)', figure8_waypoints_offset(:,1)', 'g^', 'MarkerSize', 10);
-    text(figure8_waypoints_offset(:,2)'+10, figure8_waypoints_offset(:,1)'-10, cellstr({int2str((1:size(figure8_waypoints_offset,1))')}), 'Color', 'g');
+    text(figure8_waypoints_offset(:,2)'+10, figure8_waypoints_offset(:,1)'-10, cellstr({int2str((1:wp_length)')}), 'Color', 'g');
     myLegend{end + 1} = 'Figure-8 waypoints';
 end
 if size(offsets,1) > 1
-    sampling_waypoints_offset = double(sampling_waypoints) + repmat(offsets(2,:),size(sampling_waypoints,1),1);
+    wp_length = length(sampling_waypoints);
+    tmp = zeros(wp_length, 3);
+    for i=1:wp_length
+        tmp(i,:) = double(sampling_waypoints(i).coordinates(:));
+    end
+    sampling_waypoints_offset = double(tmp) + repmat(offsets(2,:),wp_length,1);
     plot(sampling_waypoints_offset(:,2)', sampling_waypoints_offset(:,1)', 'b^', 'MarkerSize', 10);
-    text(sampling_waypoints_offset(:,2)'+10, sampling_waypoints_offset(:,1)'-10, cellstr({int2str((1:size(sampling_waypoints_offset,1))')}), 'Color', 'b');
+    text(sampling_waypoints_offset(:,2)'+10, sampling_waypoints_offset(:,1)'-10, cellstr({int2str((1:wp_length)')}), 'Color', 'b');
     myLegend{end + 1} = 'Search waypoints';
 end
 
