@@ -1,7 +1,7 @@
 function Busses() 
-% BUSSES initializes a set of bus objects in the MATLAB base workspace 
+% BUSSES initializes a set of bus objects in the MATLAB base workspace
 
-% Bus object: Mission 
+% Bus object: Mission
 clear elems;
 elems(1) = Simulink.BusElement;
 elems(1).Name = 'coordinates';
@@ -66,7 +66,7 @@ Mission.Alignment = -1;
 Mission.Elements = elems;
 assignin('base', 'Mission', Mission)
 
-% Bus object: MissionList 
+% Bus object: MissionList
 clear elems;
 elems(1) = Simulink.BusElement;
 elems(1).Name = 'currentIndex';
