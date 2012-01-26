@@ -1,5 +1,6 @@
-%% This file compiles the simulation file for use on a dsPIC
-%% microcontroller.
+%% This is a build file for generating a compiled executable.
+% The primary reason for its existance is to copy the controller from
+% Boat_sim.mdl into code_gen.mdl.
 
 % This compilation flow follows the following steps:
 %  1) Copy the controller from Boat_sim.mdl into existing codegen.mdl
