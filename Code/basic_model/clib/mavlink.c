@@ -100,7 +100,23 @@ void MavLinkSendAttitude(uint32_t systemTime, float yaw)
 	mavlink_message_t msg;
 
 	mavlink_msg_attitude_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-                                  systemTime*10, 0.0, 0.0, yaw, 0.0, 0.0, 0.0);
+                              systemTime*10, 0.0, 0.0, yaw, 0.0, 0.0, 0.0);
+
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	
+	uart1EnqueueData(buf, (uint8_t)len);
+}
+
+/**
+ * Transmits some information necessary for the HUD. Specifically unique to this packet
+ * is airspeed, throttle, and climb rate of which I only care about the throttle value.
+ */
+void MavLinkSendVfrHud(float groundSpeed, int16_t heading, uint16_t throttle)
+{
+	mavlink_message_t msg;
+
+	mavlink_msg_vfr_hud_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+                              0.0, groundSpeed, heading, throttle, 0.0, 0.0);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
@@ -194,10 +210,10 @@ void MavLinkUpdateAndSendStatusErrors(uint16_t status, uint16_t errors)
 	// Set manual/autonomous mode. Note that they're not mutually exclusive within the MAVLink protocol,
 	// though I treat them as such for my autopilot.
 	if (status & (1 << 0)) {
-		mavlink_system.mode |= (MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_AUTO_ENABLED);
+		mavlink_system.mode |= (MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
 		mavlink_system.mode &= ~MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
 	} else {
-		mavlink_system.mode &= ~(MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_AUTO_ENABLED);
+		mavlink_system.mode &= ~(MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
 		mavlink_system.mode |= MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
 	}	
 	// Set HIL status
