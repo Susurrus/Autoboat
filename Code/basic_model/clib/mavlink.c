@@ -2,8 +2,9 @@
 #include "uart2.h"
 #include "gps.h"
 
-/* Include generated header file */
+/* Include generated header files */
 #include "MissionManager.h"
+#include "code_gen.h"
 
 #include <stdint.h>
 #include <common/mavlink.h>
@@ -71,14 +72,14 @@ void MavLinkSendStatus(uint8_t load)
  * transmit it via MAVLink over UART1. This function should only be called when the GPS
  * data has been updated.
  */
-void MavLinkSendRawGps(uint32_t systemTime)
+void MavLinkSendRawGps(void)
 {
 	mavlink_message_t msg;
 	
 	tGpsData gpsSensorData;
 	GetGpsData(&gpsSensorData);
  
-	mavlink_msg_gps_raw_int_pack(mavlink_system.sysid, mavlink_system.compid, &msg, ((uint64_t)systemTime)*10000,
+	mavlink_msg_gps_raw_int_pack(mavlink_system.sysid, mavlink_system.compid, &msg, ((uint64_t)systemStatus.time)*10000,
 								 gpsSensorData.fix, (int32_t)(gpsSensorData.lat.flData*1e7), (int32_t)(gpsSensorData.lon.flData*1e7), (int32_t)(gpsSensorData.alt.flData*1e7),
 								 (uint16_t)gpsSensorData.hdop.flData*100, 0xFFFF,
 								 (uint16_t)gpsSensorData.sog.flData*100, (uint16_t)gpsSensorData.cog.flData * 100,
@@ -91,16 +92,16 @@ void MavLinkSendRawGps(uint32_t systemTime)
 
 /**
  * Transmits the vehicle attitude. Right now just the yaw value.
- * Expects systemTime to be in centiseconds which are then converted
+ * Expects systemStatus.time to be in centiseconds which are then converted
  * to ms for transmission.
  * Yaw should be in radians where positive is eastward from north.
  */
-void MavLinkSendAttitude(uint32_t systemTime, float yaw)
+void MavLinkSendAttitude(float yaw)
 {
 	mavlink_message_t msg;
 
 	mavlink_msg_attitude_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-                              systemTime*10, 0.0, 0.0, yaw, 0.0, 0.0, 0.0);
+                              systemStatus.time*10, 0.0, 0.0, yaw, 0.0, 0.0, 0.0);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
@@ -124,43 +125,18 @@ void MavLinkSendVfrHud(float groundSpeed, int16_t heading, uint16_t throttle)
 }
 
 /**
- * This function takes in the system time, local position, and local velocity from
- * Matlab, unpacks it, and ships it off over a MAVLink MAVLINK_MSG_ID_LOCAL_POSITION_NED
+ * This function takes in the local position and local velocity (as 3-tuples) from
+ * Matlab as real32s and ships them off over a MAVLink MAVLINK_MSG_ID_LOCAL_POSITION_NED
  * message.
+ * It also expects a systemStatus struct with a uint32_t time element that holds the
+ * current system time in centiseconds.
  */
-void MavLinkSendLocalPosition(uint8_t *data)
+void MavLinkSendLocalPosition(float *data)
 {
 	mavlink_message_t msg;
-	tUnsignedLongToChar systemTime;
-	tFloatToChar localPosX, localPosY, localVelX, localVelY;
-	
-	systemTime.chData[0] = data[0];
-	systemTime.chData[1] = data[1];
-	systemTime.chData[2] = data[2];
-	systemTime.chData[3] = data[3];
-	
-	localPosX.chData[0] = data[4];
-	localPosX.chData[1] = data[5];
-	localPosX.chData[2] = data[6];
-	localPosX.chData[3] = data[7];
-	
-	localPosY.chData[0] = data[8];
-	localPosY.chData[1] = data[9];
-	localPosY.chData[2] = data[10];
-	localPosY.chData[3] = data[11];
-	
-	localVelX.chData[0] = data[12];
-	localVelX.chData[1] = data[13];
-	localVelX.chData[2] = data[14];
-	localVelX.chData[3] = data[15];
-	
-	localVelY.chData[0] = data[16];
-	localVelY.chData[1] = data[17];
-	localVelY.chData[2] = data[18];
-	localVelY.chData[3] = data[19];
 
 	mavlink_msg_local_position_ned_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-                                        systemTime.ulData, localPosX.flData, localPosY.flData, 0.0, localVelX.flData, localVelY.flData, 0.0);
+                                        systemStatus.time*10, data[0], data[1], data[2], data[3], data[4], data[5]);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
@@ -232,18 +208,21 @@ void MavLinkUpdateAndSendStatusErrors(uint16_t status, uint16_t errors)
 }
 
 /**
- * Transmit the current mission index via UART1.
+ * Transmit the current mission index via UART1. GetCurrentMission returns a -1 if there're no missions,
+ * so we check and only transmit valid current missions.
  */
 void MavLinkSendCurrentMission(void)
 {
-	mavlink_message_t msg;
-	uint8_t currentMission;
+	int8_t currentMission;
 	
 	GetCurrentMission(&currentMission);
 	
-	mavlink_msg_mission_current_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &msg, currentMission);
-	len = mavlink_msg_to_send_buffer(buf, &msg);
-	uart1EnqueueData(buf, (uint8_t)len);
+	if (currentMission != -1) {
+		mavlink_message_t msg;
+		mavlink_msg_mission_current_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &msg, (uint16_t)currentMission);
+		len = mavlink_msg_to_send_buffer(buf, &msg);
+		uart1EnqueueData(buf, (uint8_t)len);
+	}
 }
 
 /**
