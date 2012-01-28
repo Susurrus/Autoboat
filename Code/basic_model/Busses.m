@@ -66,7 +66,7 @@ Mission.Alignment = -1;
 Mission.Elements = elems;
 assignin('base', 'Mission', Mission)
 
-% Bus object: MissionList
+% Bus object: MissionList 
 clear elems;
 elems(1) = Simulink.BusElement;
 elems(1).Name = 'currentIndex';
@@ -91,10 +91,10 @@ elems(2).Min = [];
 elems(2).Max = [];
 
 elems(3) = Simulink.BusElement;
-elems(3).Name = 'maxSize';
+elems(3).Name = 'updated';
 elems(3).Dimensions = 1;
 elems(3).DimensionsMode = 'Fixed';
-elems(3).DataType = 'uint8';
+elems(3).DataType = 'boolean';
 elems(3).SampleTime = -1;
 elems(3).Complexity = 'real';
 elems(3).SamplingMode = 'Sample based';
@@ -102,10 +102,10 @@ elems(3).Min = [];
 elems(3).Max = [];
 
 elems(4) = Simulink.BusElement;
-elems(4).Name = 'startingPoint';
+elems(4).Name = 'maxSize';
 elems(4).Dimensions = 1;
 elems(4).DimensionsMode = 'Fixed';
-elems(4).DataType = 'Bus: Mission';
+elems(4).DataType = 'uint8';
 elems(4).SampleTime = -1;
 elems(4).Complexity = 'real';
 elems(4).SamplingMode = 'Sample based';
@@ -113,8 +113,8 @@ elems(4).Min = [];
 elems(4).Max = [];
 
 elems(5) = Simulink.BusElement;
-elems(5).Name = 'missions';
-elems(5).Dimensions = 15;
+elems(5).Name = 'startingPoint';
+elems(5).Dimensions = 1;
 elems(5).DimensionsMode = 'Fixed';
 elems(5).DataType = 'Bus: Mission';
 elems(5).SampleTime = -1;
@@ -122,6 +122,17 @@ elems(5).Complexity = 'real';
 elems(5).SamplingMode = 'Sample based';
 elems(5).Min = [];
 elems(5).Max = [];
+
+elems(6) = Simulink.BusElement;
+elems(6).Name = 'missions';
+elems(6).Dimensions = 16;
+elems(6).DimensionsMode = 'Fixed';
+elems(6).DataType = 'Bus: Mission';
+elems(6).SampleTime = -1;
+elems(6).Complexity = 'real';
+elems(6).SamplingMode = 'Sample based';
+elems(6).Min = [];
+elems(6).Max = [];
 
 MissionList = Simulink.Bus;
 MissionList.HeaderFile = '';
