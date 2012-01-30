@@ -23,6 +23,10 @@ static mavlink_system_t mavlink_system = {
 // Store the MAVLink communication status
 static mavlink_status_t status;
 
+// Globally declare here how many parameters we have. Should be dealt with better later.
+static uint16_t parameterCount = 4;
+
+
 // Declare a character buffer here to prevent continual allocation/deallocation of MAVLink buffers.
 static uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 static uint16_t len;
@@ -226,6 +230,50 @@ void MavLinkSendCurrentMission(void)
 }
 
 /**
+ * The following functions are helper functions for reading the various parameters aboard the boat.
+ */
+void _transmitParameter0(void)
+{
+	mavlink_message_t msg;
+	mavlink_param_union_t x;
+	x.param_uint32 = (systemStatus.status & (1 << 0))?1:0;
+	mavlink_msg_param_value_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+								 "MODE_AUTO", x.param_float, MAV_VAR_UINT32, parameterCount, 0);
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	uart1EnqueueData(buf, (uint8_t)len);
+}
+void _transmitParameter1(void)
+{
+	mavlink_message_t msg;
+	mavlink_param_union_t x;
+	x.param_uint32 = (systemStatus.status & (1 << 1))?1:0;
+	mavlink_msg_param_value_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+								 "MODE_HIL", x.param_float, MAV_VAR_UINT32, parameterCount, 1);
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	uart1EnqueueData(buf, (uint8_t)len);
+}
+void _transmitParameter2(void)
+{
+	mavlink_message_t msg;
+	mavlink_param_union_t x;
+	x.param_uint32 = (systemStatus.status & (1 << 2))?1:0;
+	mavlink_msg_param_value_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+								 "MODE_HILSENSE", x.param_float, MAV_VAR_UINT32, parameterCount, 2);
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	uart1EnqueueData(buf, (uint8_t)len);
+}
+void _transmitParameter3(void)
+{
+	mavlink_message_t msg;
+	mavlink_param_union_t x;
+	x.param_uint32 = (systemStatus.status & (1 << 3))?1:0;
+	mavlink_msg_param_value_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+								 "MODE_RCDISCON", x.param_float, MAV_VAR_UINT32, parameterCount, 3);
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	uart1EnqueueData(buf, (uint8_t)len);
+}
+
+/**
  * This function transmits all the configurable parameters of the vessel once it is passed true. Repeated calls with false as the argument
  * will have it continue to transmit parameters, once per call, until it finishes. Then another call with true as the value will start it
  * again.
@@ -234,8 +282,6 @@ void MavLinkParameterSender(uint8_t start)
 {
 	static uint8_t running = 0;
 	static uint16_t currentParameter = 0;
-	static uint16_t parameterCount = 4;
-
 	// Start  transmission sequence if requested.
 	// Note that this won't interrupt the current request if another request is received.
 	if (!running && start) {
@@ -244,38 +290,17 @@ void MavLinkParameterSender(uint8_t start)
 	}
 	
 	if (running) {
-		mavlink_message_t msg;
 		if (currentParameter == 0) {
-			mavlink_param_union_t x;
-			x.param_uint32 = (systemStatus.status & (1 << 0))?1:0;
-			mavlink_msg_param_value_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-			                             "MODE_AUTO", x.param_float, MAV_VAR_UINT32, parameterCount, currentParameter);
-			len = mavlink_msg_to_send_buffer(buf, &msg);
-			uart1EnqueueData(buf, (uint8_t)len);
+			_transmitParameter0();
 			++currentParameter;
 		} else if (currentParameter == 1) {
-			mavlink_param_union_t x;
-			x.param_uint32 = (systemStatus.status & (1 << 1))?1:0;
-			mavlink_msg_param_value_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-			                             "MODE_HIL", x.param_float, MAV_VAR_UINT32, parameterCount, currentParameter);
-			len = mavlink_msg_to_send_buffer(buf, &msg);
-			uart1EnqueueData(buf, (uint8_t)len);
+			_transmitParameter1();
 			++currentParameter;
 		} else if (currentParameter == 2) {
-			mavlink_param_union_t x;
-			x.param_uint32 = (systemStatus.status & (1 << 2))?1:0;
-			mavlink_msg_param_value_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-			                             "MODE_HILSENSOR", x.param_float, MAV_VAR_UINT32, parameterCount, currentParameter);
-			len = mavlink_msg_to_send_buffer(buf, &msg);
-			uart1EnqueueData(buf, (uint8_t)len);
+			_transmitParameter2();
 			++currentParameter;
 		} else if (currentParameter == 3) {
-			mavlink_param_union_t x;
-			x.param_uint32 = (systemStatus.status & (1 << 3))?1:0;
-			mavlink_msg_param_value_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-			                             "MODE_RCDISCON", x.param_float, MAV_VAR_UINT32, parameterCount, currentParameter);
-			len = mavlink_msg_to_send_buffer(buf, &msg);
-			uart1EnqueueData(buf, (uint8_t)len);
+			_transmitParameter3();
 			++currentParameter;
 		} else {
 			running = 0;
@@ -471,6 +496,44 @@ void MavLinkReceive(void)
 				// This reason that this is an external function is so that it can be run separately at 20Hz.
 				case MAVLINK_MSG_ID_PARAM_REQUEST_LIST: {
 					MavLinkParameterSender(1);
+				} break;
+				
+				// Handle receiving a parameter setting message. Here we check the string of the .param_id element of the message as the param_index value	
+				// isn't transmit for some reason. This should be abstracted and be more automatic, but for now everything's carefully hardcoded.
+				case MAVLINK_MSG_ID_PARAM_SET: {
+					mavlink_param_set_t x;
+					mavlink_msg_param_set_decode(&msg, &x);
+					mavlink_param_union_t data;
+					data.param_float = x.param_value;
+					if (strcmp(x.param_id, "MODE_AUTO") == 0) {
+						if (data.param_uint32) {
+							systemStatus.status |= (1 << 0);
+						} else {
+							systemStatus.status &= ~(1 << 0);
+						}
+						_transmitParameter0();
+					} else if (strcmp(x.param_id, "MODE_HIL") == 0) {
+						if (data.param_uint32) {
+							systemStatus.status |= (1 << 1);
+						} else {
+							systemStatus.status &= ~(1 << 1);
+						}
+						_transmitParameter1();
+					} else if (strcmp(x.param_id, "MODE_HILSENSE") == 0) {
+						if (data.param_uint32) {
+							systemStatus.status |= (1 << 2);
+						} else {
+							systemStatus.status &= ~(1 << 2);
+						}
+						_transmitParameter2();
+					} else if (strcmp(x.param_id, "MODE_RCDISCON") == 0) {
+						if (data.param_uint32) {
+							systemStatus.status |= (1 << 3);
+						} else {
+							systemStatus.status &= ~(1 << 3);
+						}
+						_transmitParameter3();
+					}
 				} break;
 				
 				default: {
