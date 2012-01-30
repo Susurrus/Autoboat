@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2215"
+    ComputedModelVersion    "1.2216"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -29,9 +29,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun Jan 29 09:40:38 2012"
+  LastModifiedDate	  "Sun Jan 29 16:30:05 2012"
   RTWModifiedTimeStamp	  249730800
-  ModelVersionFormat	  "1.%<AutoIncrement:2215>"
+  ModelVersionFormat	  "1.%<AutoIncrement:2216>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -1220,7 +1220,7 @@ Model {
   }
   System {
     Name		    "code_gen"
-    Location		    [202, 82, 1565, 847]
+    Location		    [202, 82, 1581, 847]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1234,7 +1234,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "20101"
+    SIDHighWatermark	    "20177"
     Block {
       BlockType		      SubSystem
       Name		      "Actuator\nOutputs"
@@ -1444,7 +1444,7 @@ Model {
 	  SafeMarge		  "[0]"
 	  PortLetter		  "[68]"
 	  PortNumber		  "[1]"
-	  MaxValues		  "[]"
+	  MaxValues		  "[49999]"
 	}
 	Block {
 	  BlockType		  Switch
@@ -14249,7 +14249,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Clear to 0\nif Disconnect"
-		Location		[141, 283, 1521, 657]
+		Location		[420, 172, 1338, 546]
 		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
@@ -15936,7 +15936,7 @@ Model {
 	      BlockType		      Goto
 	      Name		      "Goto4"
 	      SID		      "16486"
-	      Position		      [270, 174, 370, 196]
+	      Position		      [400, 199, 500, 221]
 	      BackgroundColor	      "cyan"
 	      ShowName		      off
 	      GotoTag		      "RC_Disconnected"
@@ -18390,6 +18390,409 @@ Model {
 	    }
 	    Block {
 	      BlockType		      SubSystem
+	      Name		      "Toggle RC\ndisconnected mode"
+	      SID		      "20131"
+	      Ports		      [1, 1]
+	      Position		      [285, 170, 355, 200]
+	      MinAlgLoopOccurrences   off
+	      PropExecContextOutsideSubsystem off
+	      RTWSystemCode	      "Auto"
+	      FunctionWithSeparateData off
+	      Opaque		      off
+	      RequestExecContextInheritance off
+	      MaskHideContents	      off
+	      System {
+		Name			"Toggle RC\ndisconnected mode"
+		Location		[480, 430, 1450, 803]
+		Open			off
+		ModelBrowserVisibility	on
+		ModelBrowserWidth	200
+		ScreenColor		"white"
+		PaperOrientation	"landscape"
+		PaperPositionMode	"auto"
+		PaperType		"usletter"
+		PaperUnits		"inches"
+		TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+		TiledPageScale		1
+		ShowPageBoundaries	off
+		ZoomFactor		"100"
+		Block {
+		  BlockType		  Inport
+		  Name			  "RC_d"
+		  SID			  "20132"
+		  Position		  [20, 88, 50, 102]
+		  BackgroundColor	  "darkGreen"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Reference
+		  Name			  "Bitwise\nOperator"
+		  SID			  "20134"
+		  Ports			  [1, 1]
+		  Position		  [330, 73, 395, 117]
+		  ZOrder		  -3
+		  ShowName		  off
+		  LibraryVersion	  "1.256"
+		  SourceBlock		  "simulink/Logic and Bit\nOperations/Bitwise\nOperator"
+		  SourceType		  "Bitwise Operator"
+		  logicop		  "AND"
+		  UseBitMask		  on
+		  NumInputPorts		  "1"
+		  BitMask		  "hex2dec('8')"
+		  BitMaskRealWorld	  "Stored Integer"
+		}
+		Block {
+		  BlockType		  Reference
+		  Name			  "Compare\nTo Zero1"
+		  SID			  "20137"
+		  Ports			  [1, 1]
+		  Position		  [425, 86, 470, 104]
+		  ZOrder		  -6
+		  ShowName		  off
+		  LibraryVersion	  "1.256"
+		  SourceBlock		  "simulink/Logic and Bit\nOperations/Compare\nTo Zero"
+		  SourceType		  "Compare To Zero"
+		  relop			  "~="
+		  OutDataTypeStr	  "boolean"
+		  ZeroCross		  on
+		}
+		Block {
+		  BlockType		  DataStoreRead
+		  Name			  "Data Store\nRead"
+		  SID			  "20138"
+		  Ports			  [0, 1]
+		  Position		  [220, 82, 300, 108]
+		  ZOrder		  -5
+		  ShowName		  off
+		  DataStoreName		  "systemStatus"
+		  DataStoreElements	  "systemStatus.status"
+		}
+		Block {
+		  BlockType		  Reference
+		  Name			  "Detect\nChange"
+		  SID			  "20167"
+		  Ports			  [1, 1]
+		  Position		  [105, 186, 165, 204]
+		  ZOrder		  -7
+		  ShowName		  off
+		  LibraryVersion	  "1.256"
+		  SourceBlock		  "simulink/Logic and Bit\nOperations/Detect\nChange"
+		  SourceType		  "Detect Change"
+		  vinit			  "0"
+		  InputProcessing	  "Inherited"
+		  OutDataTypeStr	  "boolean"
+		}
+		Block {
+		  BlockType		  If
+		  Name			  "If"
+		  SID			  "20156"
+		  Ports			  [2, 2]
+		  Position		  [215, 189, 300, 216]
+		  ZOrder		  -15
+		  ShowName		  off
+		  NumInputs		  "2"
+		  IfExpression		  "u1 & u2"
+		  ElseIfExpressions	  "u1 & ~u2"
+		  ShowElse		  off
+		}
+		Block {
+		  BlockType		  SubSystem
+		  Name			  "Set autonomous mode"
+		  SID			  "20157"
+		  Ports			  [0, 0, 0, 0, 0, 0, 0, 1]
+		  Position		  [410, 142, 480, 178]
+		  ZOrder		  -16
+		  BlockMirror		  on
+		  NamePlacement		  "alternate"
+		  TreatAsAtomicUnit	  on
+		  MinAlgLoopOccurrences	  off
+		  PropExecContextOutsideSubsystem off
+		  RTWSystemCode		  "Auto"
+		  FunctionWithSeparateData off
+		  Opaque		  off
+		  RequestExecContextInheritance	off
+		  MaskHideContents	  off
+		  System {
+		    Name		    "Set autonomous mode"
+		    Location		    [666, 159, 1164, 459]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    ActionPort
+		    Name		    "Action Port"
+		    SID			    "20158"
+		    Position		    [170, 15, 229, 43]
+		    ZOrder		    -2
+		    ShowName		    off
+		    ActionType		    "then"
+		    }
+		    Block {
+		    BlockType		    Reference
+		    Name		    "Bitwise\nOperator"
+		    SID			    "20159"
+		    Ports		    [1, 1]
+		    Position		    [180, 66, 220, 104]
+		    ZOrder		    -3
+		    ShowName		    off
+		    LibraryVersion	    "1.256"
+		    SourceBlock		    "simulink/Logic and Bit\nOperations/Bitwise\nOperator"
+		    SourceType		    "Bitwise Operator"
+		    logicop		    "OR"
+		    UseBitMask		    on
+		    NumInputPorts	    "1"
+		    BitMask		    "hex2dec('8')"
+		    BitMaskRealWorld	    "Stored Integer"
+		    }
+		    Block {
+		    BlockType		    DataStoreRead
+		    Name		    "Data Store\nRead"
+		    SID			    "20160"
+		    Ports		    [0, 1]
+		    Position		    [40, 72, 120, 98]
+		    ZOrder		    -5
+		    ShowName		    off
+		    DataStoreName	    "systemStatus"
+		    DataStoreElements	    "systemStatus.status"
+		    }
+		    Block {
+		    BlockType		    DataStoreWrite
+		    Name		    "Data Store\nWrite"
+		    SID			    "20161"
+		    Ports		    [1]
+		    Position		    [275, 72, 355, 98]
+		    ZOrder		    -6
+		    ShowName		    off
+		    DataStoreName	    "systemStatus"
+		    DataStoreElements	    "systemStatus.status"
+		    }
+		    Line {
+		    SrcBlock		    "Data Store\nRead"
+		    SrcPort		    1
+		    DstBlock		    "Bitwise\nOperator"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Bitwise\nOperator"
+		    SrcPort		    1
+		    DstBlock		    "Data Store\nWrite"
+		    DstPort		    1
+		    }
+		  }
+		}
+		Block {
+		  BlockType		  SubSystem
+		  Name			  "Set autonomous mode1"
+		  SID			  "20168"
+		  Ports			  [0, 0, 0, 0, 0, 0, 0, 1]
+		  Position		  [410, 232, 480, 268]
+		  ZOrder		  -16
+		  TreatAsAtomicUnit	  on
+		  MinAlgLoopOccurrences	  off
+		  PropExecContextOutsideSubsystem off
+		  RTWSystemCode		  "Auto"
+		  FunctionWithSeparateData off
+		  Opaque		  off
+		  RequestExecContextInheritance	off
+		  MaskHideContents	  off
+		  System {
+		    Name		    "Set autonomous mode1"
+		    Location		    [978, 420, 1476, 720]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    ActionPort
+		    Name		    "Action Port"
+		    SID			    "20169"
+		    Position		    [170, 15, 229, 43]
+		    ZOrder		    -2
+		    ShowName		    off
+		    ActionType		    "elseif"
+		    }
+		    Block {
+		    BlockType		    Reference
+		    Name		    "Bitwise\nOperator"
+		    SID			    "20170"
+		    Ports		    [2, 1]
+		    Position		    [245, 81, 285, 119]
+		    ZOrder		    -3
+		    ShowName		    off
+		    LibraryVersion	    "1.256"
+		    SourceBlock		    "simulink/Logic and Bit\nOperations/Bitwise\nOperator"
+		    SourceType		    "Bitwise Operator"
+		    logicop		    "AND"
+		    UseBitMask		    off
+		    NumInputPorts	    "2"
+		    BitMask		    "~hex2dec('8')"
+		    BitMaskRealWorld	    "Stored Integer"
+		    }
+		    Block {
+		    BlockType		    Reference
+		    Name		    "Bitwise\nOperator1"
+		    SID			    "20174"
+		    Ports		    [1, 1]
+		    Position		    [145, 104, 185, 146]
+		    ZOrder		    -3
+		    ShowName		    off
+		    LibraryVersion	    "1.256"
+		    SourceBlock		    "simulink/Logic and Bit\nOperations/Bitwise\nOperator"
+		    SourceType		    "Bitwise Operator"
+		    logicop		    "NOT"
+		    UseBitMask		    off
+		    NumInputPorts	    "1"
+		    BitMask		    "~hex2dec('8')"
+		    BitMaskRealWorld	    "Stored Integer"
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "Constant"
+		    SID			    "20173"
+		    Position		    [45, 112, 120, 138]
+		    ZOrder		    -5
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    Value		    "hex2dec('8')"
+		    OutDataTypeStr	    "Inherit: Inherit via back propagation"
+		    }
+		    Block {
+		    BlockType		    DataStoreRead
+		    Name		    "Data Store\nRead"
+		    SID			    "20171"
+		    Ports		    [0, 1]
+		    Position		    [40, 77, 120, 103]
+		    ZOrder		    -5
+		    ShowName		    off
+		    DataStoreName	    "systemStatus"
+		    DataStoreElements	    "systemStatus.status"
+		    }
+		    Block {
+		    BlockType		    DataStoreWrite
+		    Name		    "Data Store\nWrite"
+		    SID			    "20172"
+		    Ports		    [1]
+		    Position		    [330, 87, 410, 113]
+		    ZOrder		    -6
+		    ShowName		    off
+		    DataStoreName	    "systemStatus"
+		    DataStoreElements	    "systemStatus.status"
+		    }
+		    Line {
+		    SrcBlock		    "Bitwise\nOperator"
+		    SrcPort		    1
+		    DstBlock		    "Data Store\nWrite"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Data Store\nRead"
+		    SrcPort		    1
+		    DstBlock		    "Bitwise\nOperator"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Constant"
+		    SrcPort		    1
+		    DstBlock		    "Bitwise\nOperator1"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Bitwise\nOperator1"
+		    SrcPort		    1
+		    Points		    [5, 0; 0, -15]
+		    DstBlock		    "Bitwise\nOperator"
+		    DstPort		    2
+		    }
+		  }
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "out"
+		  SID			  "20153"
+		  Position		  [500, 88, 530, 102]
+		  BackgroundColor	  "yellow"
+		  ShowName		  off
+		  IconDisplay		  "Port number"
+		}
+		Line {
+		  SrcBlock		  "Compare\nTo Zero1"
+		  SrcPort		  1
+		  DstBlock		  "out"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Bitwise\nOperator"
+		  SrcPort		  1
+		  DstBlock		  "Compare\nTo Zero1"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Data Store\nRead"
+		  SrcPort		  1
+		  DstBlock		  "Bitwise\nOperator"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "RC_d"
+		  SrcPort		  1
+		  Points		  [35, 0; 0, 100]
+		  Branch {
+		    DstBlock		    "Detect\nChange"
+		    DstPort		    1
+		  }
+		  Branch {
+		    Points		    [0, 15]
+		    DstBlock		    "If"
+		    DstPort		    2
+		  }
+		}
+		Line {
+		  SrcBlock		  "If"
+		  SrcPort		  1
+		  Points		  [140, 0]
+		  DstBlock		  "Set autonomous mode"
+		  DstPort		  ifaction
+		}
+		Line {
+		  SrcBlock		  "Detect\nChange"
+		  SrcPort		  1
+		  DstBlock		  "If"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "If"
+		  SrcPort		  2
+		  Points		  [140, 0]
+		  DstBlock		  "Set autonomous mode1"
+		  DstPort		  ifaction
+		}
+		Annotation {
+		  Name			  "This block implements event checking on the RC disconnected line.\nWhenever it changes this will update "
+		  "the system status accordingly."
+		  Position		  [24, 48]
+		  HorizontalAlignment	  "left"
+		}
+	      }
+	    }
+	    Block {
+	      BlockType		      SubSystem
 	      Name		      "Toggle autonomous/\nmanual mode"
 	      SID		      "20020"
 	      Ports		      [2, 1]
@@ -18676,7 +19079,7 @@ Model {
 		  MaskHideContents	  off
 		  System {
 		    Name		    "Set manual mode"
-		    Location		    [978, 420, 1476, 720]
+		    Location		    [375, 303, 873, 603]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -18700,20 +19103,48 @@ Model {
 		    }
 		    Block {
 		    BlockType		    Reference
-		    Name		    "Bitwise\nOperator"
-		    SID			    "20049"
-		    Ports		    [1, 1]
-		    Position		    [170, 63, 235, 107]
+		    Name		    "Bitwise\nOperator1"
+		    SID			    "20175"
+		    Ports		    [2, 1]
+		    Position		    [240, 76, 280, 114]
 		    ZOrder		    -3
 		    ShowName		    off
 		    LibraryVersion	    "1.256"
 		    SourceBlock		    "simulink/Logic and Bit\nOperations/Bitwise\nOperator"
 		    SourceType		    "Bitwise Operator"
 		    logicop		    "AND"
-		    UseBitMask		    on
-		    NumInputPorts	    "1"
-		    BitMask		    "hex2dec('FFFE')"
+		    UseBitMask		    off
+		    NumInputPorts	    "2"
+		    BitMask		    "~hex2dec('8')"
 		    BitMaskRealWorld	    "Stored Integer"
+		    }
+		    Block {
+		    BlockType		    Reference
+		    Name		    "Bitwise\nOperator2"
+		    SID			    "20176"
+		    Ports		    [1, 1]
+		    Position		    [145, 104, 185, 146]
+		    ZOrder		    -3
+		    ShowName		    off
+		    LibraryVersion	    "1.256"
+		    SourceBlock		    "simulink/Logic and Bit\nOperations/Bitwise\nOperator"
+		    SourceType		    "Bitwise Operator"
+		    logicop		    "NOT"
+		    UseBitMask		    off
+		    NumInputPorts	    "1"
+		    BitMask		    "~hex2dec('8')"
+		    BitMaskRealWorld	    "Stored Integer"
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "Constant"
+		    SID			    "20177"
+		    Position		    [45, 112, 120, 138]
+		    ZOrder		    -5
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    Value		    "hex2dec('1')"
+		    OutDataTypeStr	    "Inherit: Inherit via back propagation"
 		    }
 		    Block {
 		    BlockType		    DataStoreRead
@@ -18731,7 +19162,7 @@ Model {
 		    Name		    "Data Store\nWrite"
 		    SID			    "20051"
 		    Ports		    [1]
-		    Position		    [275, 72, 355, 98]
+		    Position		    [325, 82, 405, 108]
 		    ZOrder		    -6
 		    ShowName		    off
 		    DataStoreName	    "systemStatus"
@@ -18740,14 +19171,27 @@ Model {
 		    Line {
 		    SrcBlock		    "Data Store\nRead"
 		    SrcPort		    1
-		    DstBlock		    "Bitwise\nOperator"
+		    DstBlock		    "Bitwise\nOperator1"
 		    DstPort		    1
 		    }
 		    Line {
-		    SrcBlock		    "Bitwise\nOperator"
+		    SrcBlock		    "Bitwise\nOperator1"
 		    SrcPort		    1
 		    DstBlock		    "Data Store\nWrite"
 		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Constant"
+		    SrcPort		    1
+		    DstBlock		    "Bitwise\nOperator2"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Bitwise\nOperator2"
+		    SrcPort		    1
+		    Points		    [5, 0; 0, -20]
+		    DstBlock		    "Bitwise\nOperator1"
+		    DstPort		    2
 		    }
 		  }
 		}
@@ -19109,7 +19553,7 @@ Model {
 		  DstPort		  1
 		}
 		Branch {
-		  Points		  [0, 105]
+		  Points		  [35, 0; 0, 105]
 		  DstBlock		  "Switch"
 		  DstPort		  2
 		}
@@ -19261,7 +19705,7 @@ Model {
 	    Line {
 	      SrcBlock		      "Clear to 0\nif Disconnect"
 	      SrcPort		      5
-	      DstBlock		      "Goto4"
+	      DstBlock		      "Toggle RC\ndisconnected mode"
 	      DstPort		      1
 	    }
 	    Line {
@@ -19277,6 +19721,13 @@ Model {
 		DstBlock		"Goto5"
 		DstPort			1
 	      }
+	    }
+	    Line {
+	      SrcBlock		      "Toggle RC\ndisconnected mode"
+	      SrcPort		      1
+	      Points		      [25, 0]
+	      DstBlock		      "Goto4"
+	      DstPort		      1
 	    }
 	    Annotation {
 	      Position		      [277, 328]
@@ -25287,6 +25738,16 @@ Model {
 	}
 	Block {
 	  BlockType		  Constant
+	  Name			  "Constant1"
+	  SID			  "20104"
+	  Position		  [605, 522, 635, 538]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "0"
+	  OutDataTypeStr	  "uint8"
+	}
+	Block {
+	  BlockType		  Constant
 	  Name			  "Constant4"
 	  SID			  "17833"
 	  Position		  [105, 167, 135, 183]
@@ -25702,7 +26163,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From35"
 	  SID			  "17843"
-	  Position		  [105, 84, 230, 106]
+	  Position		  [105, 85, 220, 105]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "HILSensorsMode"
@@ -25712,7 +26173,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From36"
 	  SID			  "17844"
-	  Position		  [105, 102, 230, 128]
+	  Position		  [105, 105, 230, 125]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "RC_Disconnected"
@@ -25812,6 +26273,43 @@ Model {
 	  SourceBlock		  "uSimLib/Mission Manager/GetCurrentMission"
 	  SourceType		  ""
 	  sampleTime		  "T_step"
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Handle the parameter protocol\n[mavlink.c]"
+	  SID			  "20103"
+	  Tag			  "dsPIC_dsPIC_CFunctionCall"
+	  Ports			  [1]
+	  Position		  [670, 505, 855, 555]
+	  BackgroundColor	  "orange"
+	  LibraryVersion	  "3.79"
+	  SourceBlock		  "dsPICdrivers/OTHERS/C Function Call"
+	  SourceType		  "C Function Call"
+	  FctUpdate		  "Output Function"
+	  fctName		  "MavLinkParameterSender"
+	  INPUT_SIZE		  "1"
+	  INPUT1		  "uint8"
+	  INPUT2		  "--"
+	  INPUT3		  "--"
+	  OUTPUT_SIZE		  "1"
+	  OUTPUT1		  "--"
+	  SampleTime		  "5*T_step"
+	  InputType		  "[ 2 ]"
+	  OutputType		  "[ ]"
+	  FctDeclaration	  "extern void MavLinkParameterSender(uint8_T u1);"
+	  FctCall		  "MavLinkParameterSender(%u1);"
+	  OrderingInOutPopup	  "None"
+	  FctStart		  "None"
+	  FctStart_Name		  "Init_onlyOnce"
+	  FctStart_Declaration	  "inline extern void Init_onlyOnce();"
+	  FctStart_Call		  "Init_onlyOnce();"
+	  FctInit		  "None"
+	  FctInit_Name		  "Init_Reset"
+	  FctInit_Declaration	  "inline extern void Init_Reset();"
+	  FctInit_Call		  "Init_Reset();"
+	  PinDigitalInput	  "[]"
+	  PinDigitalOutput	  "[]"
+	  AnalogueInput		  "[]"
 	}
 	Block {
 	  BlockType		  Mux
@@ -26310,12 +26808,6 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Constant4"
-	  SrcPort		  1
-	  DstBlock		  "Bitwise-combine1"
-	  DstPort		  7
-	}
-	Line {
 	  SrcBlock		  "Constant5"
 	  SrcPort		  1
 	  DstBlock		  "Bitwise-combine1"
@@ -26442,12 +26934,6 @@ Model {
 	  DstPort		  6
 	}
 	Line {
-	  SrcBlock		  "Data Type Conversion1"
-	  SrcPort		  1
-	  DstBlock		  "Bitwise-combine1"
-	  DstPort		  5
-	}
-	Line {
 	  SrcBlock		  "From36"
 	  SrcPort		  1
 	  DstBlock		  "Bitwise-combine1"
@@ -26545,6 +27031,24 @@ Model {
 	  SrcBlock		  "Gain"
 	  SrcPort		  1
 	  DstBlock		  "Data Type Conversion5"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Data Type Conversion1"
+	  SrcPort		  1
+	  DstBlock		  "Bitwise-combine1"
+	  DstPort		  5
+	}
+	Line {
+	  SrcBlock		  "Constant4"
+	  SrcPort		  1
+	  DstBlock		  "Bitwise-combine1"
+	  DstPort		  7
+	}
+	Line {
+	  SrcBlock		  "Constant1"
+	  SrcPort		  1
+	  DstBlock		  "Handle the parameter protocol\n[mavlink.c]"
 	  DstPort		  1
 	}
       }
