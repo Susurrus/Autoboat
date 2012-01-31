@@ -7,8 +7,7 @@
 #include "code_gen.h"
 
 #include <stdint.h>
-#include <common/mavlink.h>
-//#include <sealion/mavlink.h>
+#include <sealion/mavlink.h>
 
 // Store a module-wide variable for common MAVLink system variables.
 static mavlink_system_t mavlink_system = {
@@ -147,6 +146,18 @@ void MavLinkSendLocalPosition(float *data)
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
+void MavLinkSendL2Vector(float *l2_vector)
+{
+	mavlink_message_t msg;
+
+	mavlink_msg_l2_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+                        l2_vector[0], l2_vector[1]);
+
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	
+	uart1EnqueueData(buf, (uint8_t)len);
+}
+
 /**
  * Transmits the current GPS position of the origin of the local coordinate frame that the North-East-Down
  * coordinates are all relative too. They should be in units of 1e-7 degrees.
@@ -205,10 +216,10 @@ void MavLinkUpdateAndSendStatusErrors(uint16_t status, uint16_t errors)
 	
 	// Then the status_and_errors message is transmit
 
-	//mavlink_message_t msg;
-	//mavlink_msg_status_and_errors_pack(mavlink_system.sysid, mavlink_system.compid, &msg, status, errors);
-	//len = mavlink_msg_to_send_buffer(buf, &msg);
-	//uart1EnqueueData(buf, (uint8_t)len);
+	mavlink_message_t msg;
+	mavlink_msg_status_and_errors_pack(mavlink_system.sysid, mavlink_system.compid, &msg, status, errors);
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	uart1EnqueueData(buf, (uint8_t)len);
 }
 
 /**

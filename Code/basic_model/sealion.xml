@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<mavlink>
+	<include>common.xml</include>
+     <messages>
+		<!-- 15x messages are actuator related -->
+          <message id="150" name="RUDDER_RAW">
+               <description>This message encodes all of the raw rudder sensor data from the USV.</description>
+               <field type="uint16_t" name="position">The raw data from the position sensor, generally a potentiometer.</field>
+               <field type="uint8_t" name="port_limit">Status of the rudder limit sensor, port side. 0 indicates off and 1 indicates that the limit is hit. If this sensor is inactive set to 0xFF.</field>
+               <field type="uint8_t" name="center_limit">Status of the rudder limit sensor, port side. 0 indicates off and 1 indicates that the limit is hit. If this sensor is inactive set to 0xFF.</field>
+               <field type="uint8_t" name="starboard_limit">Status of the rudder limit sensor, starboard side. 0 indicates off and 1 indicates that the limit is hit. If this sensor is inactive set to 0xFF.</field>
+          </message>
+		  <message id="151" name="RUDDER_INT">
+				<description>Gives rudder angle in real-world units</description>
+				<field type="uint16_t" name="port_limit_val">Holds the raw value that indicates the port limit. Used for mapping the raw ADC values into real units.</field>
+				<field type="uint16_t" name="starboat_limit_val">Holds the raw value that indicates the starboard limit. Used for mapping the raw ADC values into real units.</field>
+				<field type="uint16_t" name="rudder_angle">The interpreted rudder angle in milliradians.</field>
+		  </message>
+		  <message id="152" name="PROP_RAW">
+				<description>Returns the raw rudder speed.</description>
+				<field type="int16_t" name="speed">Propeller speed, positive values mean the vessel will be propelled forward. Units are in RPM.</field>
+		  </message>
+		<!-- 16x messages are environment/physical sensor related -->
+		  <message id="160" name="WIND_RAW">
+				<description>Returns the raw wind sensor values.</description>
+				<field type="uint16_t" name="speed">Wind speed in cm/s.</field>
+				<field type="uint16_t" name="direction">Wind direction in e-4 rads east from north.</field>
+		  </message>
+		  <message id="161" name="AIR_RAW">
+				<description>Returns the raw air sensor values.</description>
+				<field type="int16_t" name="temperature">Air temperature in cdegrees Celsius.</field>
+				<field type="uint16_t" name="pressure">Air pressure in hectorPascals.</field>
+				<field type="uint16_t" name="humidity">Air humidity in units of .0004%.</field>
+		  </message>
+		  <message id="162" name="WATER_RAW">
+				<description>Water-related measurements from the DST800.</description>
+				<field type="int16_t" name="speed">Water speed in mm/s.</field>
+				<field type="int16_t" name="temperature">Water temperature in centidegrees Celsius.</field>
+				<field type="uint16_t" name="depth">Water depth in centimeters (DST800 range is 100m). Invalid measurements are 0xFFFF.</field>
+		  </message>
+		<!-- 17x messages are system/status messages -->
+		  <message id="170" name="STATUS_AND_ERRORS">
+				<description>Status and error bits from operation.</description>
+				<field type="uint16" name="status">Status bitfield. Bits are active-high and ordered as: 0-reset/startup, 1-reset_hil_toggle, 2-reset_HIL_discon, 3-reset_GPS-discon, 4-reset_track, 5-reset_calibrating, 6-reset_uncalibrated, 7-reset_estrop, 8-auto_mode, 9-hil_sensors_mode, 10-rc_disconnected.</field>
+				<field type="uint16" name="errors">Errors bitfield. Bits are active-high and ordered as: 0-ECAN_TX_err, 1-ECAN_RX_err.</field>
+		  </message>
+		  <message id="171" name="ACTUATOR_COMMANDS">
+				<description>The commands from the controller (either autopilot or user) for both actuators.</description>
+				<field type="int16_t" name="rudder_angle">Commanded rudder angle in milliradians where positive indicates port-side.</field>
+				<field type="int16_t" name="throttle">Commanded throttle speed in units of 1/1023*100% of max current and positive values propel the vehicle forward.</field>
+		  </message>
+		  <message id="172" name="L2">
+				<description>This message packages the L2 vector used by the L2+ controller. It's provided in a North-East-Down coordinate system.</description>
+				<field type="float" name="north">North-coordinate of the L2 vector in mm.</field>
+				<field type="float" name="east">East-coordinate of the L2 vector in mm.</field>
+			</message>
+     </messages>
+</mavlink>

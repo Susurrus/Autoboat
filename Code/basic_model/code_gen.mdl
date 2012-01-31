@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2216"
+    ComputedModelVersion    "1.2217"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -29,9 +29,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun Jan 29 16:30:05 2012"
-  RTWModifiedTimeStamp	  249730800
-  ModelVersionFormat	  "1.%<AutoIncrement:2216>"
+  LastModifiedDate	  "Mon Jan 30 18:06:25 2012"
+  RTWModifiedTimeStamp	  249845307
+  ModelVersionFormat	  "1.%<AutoIncrement:2217>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -412,7 +412,7 @@ Model {
 	  ConfigAtBuild		  off
 	  RTWUseLocalCustomCode	  off
 	  RTWUseSimCustomCode	  off
-	  CustomInclude		  "mavlink\nclib"
+	  CustomInclude		  "../../../mavlink/include\nclib"
 	  CustomSource		  "clib/conversions.c\nclib/nmea0183.c\nclib/nmea2000.c\nclib/ecanSensors.c\nclib/gps.c\nclib/revo.c\n"
 	  "clib/Rudder.c\nclib/commProtocol.c\nclib/uart1.c\nclib/uart2.c\nclib/DEE.c\nclib/DEES.s\nclib/misc.c\nclib/mavlink."
 	  "c\n../../../ECAN_dspic/CircularBuffer.c\n../../../ECAN_dspic/ecanFunctions.c"
@@ -716,8 +716,8 @@ Model {
       }
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=1 "
-      CurrentDlgPage	      "Code Generation/Code Style"
-      ConfigPrmDlgPosition     [ 110, 19, 1346, 835 ] 
+      CurrentDlgPage	      "Code Generation/Custom Code"
+      ConfigPrmDlgPosition     [ 92, 64, 1115, 874 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -1220,7 +1220,7 @@ Model {
   }
   System {
     Name		    "code_gen"
-    Location		    [202, 82, 1581, 847]
+    Location		    [202, 82, 1565, 847]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1234,7 +1234,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "20177"
+    SIDHighWatermark	    "20178"
     Block {
       BlockType		      SubSystem
       Name		      "Actuator\nOutputs"
@@ -24092,16 +24092,6 @@ Model {
     }
     Block {
       BlockType		      From
-      Name		      "From13"
-      SID		      "16168"
-      Position		      [790, 774, 830, 796]
-      BackgroundColor	      "magenta"
-      ShowName		      off
-      GotoTag		      "L2"
-      TagVisibility	      "global"
-    }
-    Block {
-      BlockType		      From
       Name		      "From2"
       SID		      "12788"
       Position		      [715, 504, 795, 526]
@@ -24663,7 +24653,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"MAVLink Interface"
-	Location		[202, 82, 1581, 847]
+	Location		[202, 82, 1565, 847]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -26031,6 +26021,16 @@ Model {
 	}
 	Block {
 	  BlockType		  From
+	  Name			  "From13"
+	  SID			  "16168"
+	  Position		  [895, 594, 935, 616]
+	  BackgroundColor	  "magenta"
+	  ShowName		  off
+	  GotoTag		  "L2"
+	  TagVisibility		  "global"
+	}
+	Block {
+	  BlockType		  From
 	  Name			  "From15"
 	  SID			  "17891"
 	  Position		  [90, 614, 210, 636]
@@ -26424,6 +26424,18 @@ Model {
 	  ShowName		  off
 	}
 	Block {
+	  BlockType		  Selector
+	  Name			  "Selector4"
+	  SID			  "16129"
+	  Ports			  [1, 1]
+	  Position		  [965, 589, 1005, 621]
+	  ShowName		  off
+	  InputPortWidth	  "3"
+	  IndexOptions		  "Index vector (dialog)"
+	  Indices		  "[1 2]"
+	  OutputSizes		  "1"
+	}
+	Block {
 	  BlockType		  Switch
 	  Name			  "Switch1"
 	  SID			  "16528"
@@ -26457,6 +26469,43 @@ Model {
 	  OutputType		  "[ ]"
 	  FctDeclaration	  "extern void MavLinkSendVfrHud(real32_T u1, int16_T u2, uint16_T u3);"
 	  FctCall		  "MavLinkSendVfrHud(%u1, %u2, %u3);"
+	  OrderingInOutPopup	  "None"
+	  FctStart		  "None"
+	  FctStart_Name		  "Init_onlyOnce"
+	  FctStart_Declaration	  "inline extern void Init_onlyOnce();"
+	  FctStart_Call		  "Init_onlyOnce();"
+	  FctInit		  "None"
+	  FctInit_Name		  "Init_Reset"
+	  FctInit_Declaration	  "inline extern void Init_Reset();"
+	  FctInit_Call		  "Init_Reset();"
+	  PinDigitalInput	  "[]"
+	  PinDigitalOutput	  "[]"
+	  AnalogueInput		  "[]"
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Transmit an L2 vector to the\ngroundstation\n[mavlink.c]"
+	  SID			  "20178"
+	  Tag			  "dsPIC_dsPIC_CFunctionCall"
+	  Ports			  [1]
+	  Position		  [1030, 578, 1160, 632]
+	  BackgroundColor	  "orange"
+	  LibraryVersion	  "3.79"
+	  SourceBlock		  "dsPICdrivers/OTHERS/C Function Call"
+	  SourceType		  "C Function Call"
+	  FctUpdate		  "Output Function"
+	  fctName		  "MavLinkSendL2Vector"
+	  INPUT_SIZE		  "2"
+	  INPUT1		  "real32"
+	  INPUT2		  "--"
+	  INPUT3		  "--"
+	  OUTPUT_SIZE		  "1"
+	  OUTPUT1		  "--"
+	  SampleTime		  ".1"
+	  InputType		  "[ 7 ]"
+	  OutputType		  "[ ]"
+	  FctDeclaration	  "extern void MavLinkSendL2Vector(real32_T* u1);"
+	  FctCall		  "MavLinkSendL2Vector(*%u1);"
 	  OrderingInOutPopup	  "None"
 	  FctStart		  "None"
 	  FctStart_Name		  "Init_onlyOnce"
@@ -27049,6 +27098,18 @@ Model {
 	  SrcBlock		  "Constant1"
 	  SrcPort		  1
 	  DstBlock		  "Handle the parameter protocol\n[mavlink.c]"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Selector4"
+	  SrcPort		  1
+	  DstBlock		  "Transmit an L2 vector to the\ngroundstation\n[mavlink.c]"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "From13"
+	  SrcPort		  1
+	  DstBlock		  "Selector4"
 	  DstPort		  1
 	}
       }
@@ -34045,8 +34106,8 @@ Model {
       BlockType		      SubSystem
       Name		      "Transmit state data\nvia UART1"
       SID		      "15068"
-      Ports		      [18]
-      Position		      [970, 783, 1090, 1382]
+      Ports		      [17]
+      Position		      [970, 785, 1090, 1385]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -34071,19 +34132,10 @@ Model {
 	ZoomFactor		"125"
 	Block {
 	  BlockType		  Inport
-	  Name			  "L2"
-	  SID			  "15069"
-	  Position		  [40, 23, 70, 37]
-	  BackgroundColor	  "darkGreen"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Inport
 	  Name			  "rudder"
 	  SID			  "15077"
 	  Position		  [30, 88, 60, 102]
 	  BackgroundColor	  "darkGreen"
-	  Port			  "2"
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -34092,7 +34144,7 @@ Model {
 	  SID			  "15192"
 	  Position		  [55, 138, 85, 152]
 	  BackgroundColor	  "darkGreen"
-	  Port			  "3"
+	  Port			  "2"
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -34101,7 +34153,7 @@ Model {
 	  SID			  "15425"
 	  Position		  [55, 168, 85, 182]
 	  BackgroundColor	  "darkGreen"
-	  Port			  "4"
+	  Port			  "3"
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -34110,124 +34162,124 @@ Model {
 	  SID			  "16516"
 	  Position		  [55, 238, 85, 252]
 	  BackgroundColor	  "darkGreen"
-	  Port			  "5"
+	  Port			  "4"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "batteryVoltage"
 	  SID			  "16828"
-	  Position		  [270, 33, 300, 47]
+	  Position		  [410, 43, 440, 57]
 	  BackgroundColor	  "darkGreen"
-	  Port			  "6"
+	  Port			  "5"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "batteryAmperage"
 	  SID			  "16829"
-	  Position		  [270, 68, 300, 82]
+	  Position		  [410, 78, 440, 92]
 	  BackgroundColor	  "darkGreen"
-	  Port			  "7"
+	  Port			  "6"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "lowRudderCalLimit"
 	  SID			  "16835"
-	  Position		  [270, 103, 300, 117]
+	  Position		  [410, 113, 440, 127]
 	  BackgroundColor	  "darkGreen"
-	  Port			  "8"
+	  Port			  "7"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "highRudderCalLimit"
 	  SID			  "16836"
-	  Position		  [270, 133, 300, 147]
+	  Position		  [410, 143, 440, 157]
 	  BackgroundColor	  "darkGreen"
-	  Port			  "9"
+	  Port			  "8"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "RevoGS"
 	  SID			  "17320"
-	  Position		  [265, 178, 295, 192]
+	  Position		  [405, 188, 435, 202]
 	  BackgroundColor	  "darkGreen"
-	  Port			  "10"
+	  Port			  "9"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "WindSpeed"
 	  SID			  "17657"
-	  Position		  [270, 218, 300, 232]
+	  Position		  [410, 228, 440, 242]
 	  BackgroundColor	  "darkGreen"
-	  Port			  "11"
+	  Port			  "10"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "WindDirection"
 	  SID			  "17658"
-	  Position		  [270, 248, 300, 262]
+	  Position		  [410, 258, 440, 272]
 	  BackgroundColor	  "darkGreen"
-	  Port			  "12"
+	  Port			  "11"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "AirTemp"
 	  SID			  "17659"
-	  Position		  [270, 278, 300, 292]
+	  Position		  [410, 288, 440, 302]
 	  BackgroundColor	  "darkGreen"
-	  Port			  "13"
+	  Port			  "12"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "AirPressure"
 	  SID			  "17660"
-	  Position		  [270, 308, 300, 322]
+	  Position		  [410, 318, 440, 332]
 	  BackgroundColor	  "darkGreen"
-	  Port			  "14"
+	  Port			  "13"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "AirHumidity"
 	  SID			  "17661"
-	  Position		  [530, 53, 560, 67]
+	  Position		  [670, 63, 700, 77]
 	  BackgroundColor	  "darkGreen"
-	  Port			  "15"
+	  Port			  "14"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "WaterSpeed"
 	  SID			  "17662"
-	  Position		  [530, 83, 560, 97]
+	  Position		  [670, 93, 700, 107]
 	  BackgroundColor	  "darkGreen"
-	  Port			  "16"
+	  Port			  "15"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "WaterTemp"
 	  SID			  "17663"
-	  Position		  [530, 113, 560, 127]
+	  Position		  [670, 123, 700, 137]
 	  BackgroundColor	  "darkGreen"
-	  Port			  "17"
+	  Port			  "16"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "WaterDepth"
 	  SID			  "17664"
-	  Position		  [530, 143, 560, 157]
+	  Position		  [670, 153, 700, 167]
 	  BackgroundColor	  "darkGreen"
-	  Port			  "18"
+	  Port			  "17"
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -34258,27 +34310,6 @@ Model {
 	  }
 	}
 	Block {
-	  BlockType		  Selector
-	  Name			  "Selector4"
-	  SID			  "16129"
-	  Ports			  [1, 1]
-	  Position		  [90, 14, 130, 46]
-	  ShowName		  off
-	  InputPortWidth	  "3"
-	  IndexOptions		  "Index vector (dialog)"
-	  Indices		  "[1 2]"
-	  OutputSizes		  "1"
-	}
-	Block {
-	  BlockType		  Terminator
-	  Name			  "Terminator"
-	  SID			  "18664"
-	  Position		  [185, 20, 205, 40]
-	  ZOrder		  -5
-	  BackgroundColor	  "red"
-	  ShowName		  off
-	}
-	Block {
 	  BlockType		  Terminator
 	  Name			  "Terminator1"
 	  SID			  "18665"
@@ -34291,7 +34322,7 @@ Model {
 	  BlockType		  Terminator
 	  Name			  "Terminator10"
 	  SID			  "18674"
-	  Position		  [410, 100, 430, 120]
+	  Position		  [550, 110, 570, 130]
 	  ZOrder		  -5
 	  BackgroundColor	  "red"
 	  ShowName		  off
@@ -34300,7 +34331,7 @@ Model {
 	  BlockType		  Terminator
 	  Name			  "Terminator11"
 	  SID			  "18675"
-	  Position		  [410, 130, 430, 150]
+	  Position		  [550, 140, 570, 160]
 	  ZOrder		  -5
 	  BackgroundColor	  "red"
 	  ShowName		  off
@@ -34309,7 +34340,7 @@ Model {
 	  BlockType		  Terminator
 	  Name			  "Terminator12"
 	  SID			  "18676"
-	  Position		  [410, 215, 430, 235]
+	  Position		  [550, 225, 570, 245]
 	  ZOrder		  -5
 	  BackgroundColor	  "red"
 	  ShowName		  off
@@ -34318,7 +34349,7 @@ Model {
 	  BlockType		  Terminator
 	  Name			  "Terminator13"
 	  SID			  "18677"
-	  Position		  [410, 245, 430, 265]
+	  Position		  [550, 255, 570, 275]
 	  ZOrder		  -5
 	  BackgroundColor	  "red"
 	  ShowName		  off
@@ -34327,7 +34358,7 @@ Model {
 	  BlockType		  Terminator
 	  Name			  "Terminator14"
 	  SID			  "18678"
-	  Position		  [410, 275, 430, 295]
+	  Position		  [550, 285, 570, 305]
 	  ZOrder		  -5
 	  BackgroundColor	  "red"
 	  ShowName		  off
@@ -34336,7 +34367,7 @@ Model {
 	  BlockType		  Terminator
 	  Name			  "Terminator15"
 	  SID			  "18679"
-	  Position		  [410, 305, 430, 325]
+	  Position		  [550, 315, 570, 335]
 	  ZOrder		  -5
 	  BackgroundColor	  "red"
 	  ShowName		  off
@@ -34345,7 +34376,7 @@ Model {
 	  BlockType		  Terminator
 	  Name			  "Terminator16"
 	  SID			  "18680"
-	  Position		  [670, 50, 690, 70]
+	  Position		  [810, 60, 830, 80]
 	  ZOrder		  -5
 	  BackgroundColor	  "red"
 	  ShowName		  off
@@ -34354,7 +34385,7 @@ Model {
 	  BlockType		  Terminator
 	  Name			  "Terminator17"
 	  SID			  "18681"
-	  Position		  [670, 80, 690, 100]
+	  Position		  [810, 90, 830, 110]
 	  ZOrder		  -5
 	  BackgroundColor	  "red"
 	  ShowName		  off
@@ -34363,7 +34394,7 @@ Model {
 	  BlockType		  Terminator
 	  Name			  "Terminator18"
 	  SID			  "18682"
-	  Position		  [670, 110, 690, 130]
+	  Position		  [810, 120, 830, 140]
 	  ZOrder		  -5
 	  BackgroundColor	  "red"
 	  ShowName		  off
@@ -34372,7 +34403,7 @@ Model {
 	  BlockType		  Terminator
 	  Name			  "Terminator19"
 	  SID			  "18683"
-	  Position		  [670, 140, 690, 160]
+	  Position		  [810, 150, 830, 170]
 	  ZOrder		  -5
 	  BackgroundColor	  "red"
 	  ShowName		  off
@@ -34390,7 +34421,7 @@ Model {
 	  BlockType		  Terminator
 	  Name			  "Terminator20"
 	  SID			  "18684"
-	  Position		  [405, 175, 425, 195]
+	  Position		  [545, 185, 565, 205]
 	  ZOrder		  -5
 	  BackgroundColor	  "red"
 	  ShowName		  off
@@ -34435,7 +34466,7 @@ Model {
 	  BlockType		  Terminator
 	  Name			  "Terminator8"
 	  SID			  "18672"
-	  Position		  [410, 30, 430, 50]
+	  Position		  [550, 40, 570, 60]
 	  ZOrder		  -5
 	  BackgroundColor	  "red"
 	  ShowName		  off
@@ -34444,7 +34475,7 @@ Model {
 	  BlockType		  Terminator
 	  Name			  "Terminator9"
 	  SID			  "18673"
-	  Position		  [410, 65, 430, 85]
+	  Position		  [550, 75, 570, 95]
 	  ZOrder		  -5
 	  BackgroundColor	  "red"
 	  ShowName		  off
@@ -34453,12 +34484,6 @@ Model {
 	  SrcBlock		  "rudder"
 	  SrcPort		  1
 	  DstBlock		  "Bus\nSelector"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "L2"
-	  SrcPort		  1
-	  DstBlock		  "Selector4"
 	  DstPort		  1
 	}
 	Line {
@@ -34495,12 +34520,6 @@ Model {
 	  SrcBlock		  "v_rpm"
 	  SrcPort		  1
 	  DstBlock		  "Terminator5"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Selector4"
-	  SrcPort		  1
-	  DstBlock		  "Terminator"
 	  DstPort		  1
 	}
 	Line {
@@ -34588,7 +34607,7 @@ Model {
 	  DstPort		  1
 	}
 	Annotation {
-	  Position		  [358, 170]
+	  Position		  [498, 180]
 	}
       }
     }
@@ -34732,28 +34751,25 @@ Model {
       DstPort		      3
     }
     Line {
-      SrcBlock		      "From13"
+      SrcBlock		      "From20"
       SrcPort		      1
+      Points		      [100, 0]
       DstBlock		      "Transmit state data\nvia UART1"
       DstPort		      1
     }
     Line {
-      SrcBlock		      "From20"
+      SrcBlock		      "From32"
       SrcPort		      1
+      Points		      [100, 0]
       DstBlock		      "Transmit state data\nvia UART1"
       DstPort		      2
     }
     Line {
-      SrcBlock		      "From32"
-      SrcPort		      1
-      DstBlock		      "Transmit state data\nvia UART1"
-      DstPort		      3
-    }
-    Line {
       SrcBlock		      "From33"
       SrcPort		      1
+      Points		      [100, 0]
       DstBlock		      "Transmit state data\nvia UART1"
-      DstPort		      4
+      DstPort		      3
     }
     Line {
       SrcBlock		      "From39"
@@ -34796,90 +34812,100 @@ Model {
     Line {
       SrcBlock		      "Switch"
       SrcPort		      1
+      Points		      [215, 0]
       DstBlock		      "Transmit state data\nvia UART1"
-      DstPort		      5
+      DstPort		      4
     }
     Line {
       SrcBlock		      "From45"
       SrcPort		      1
-      Points		      [215, 0; 0, -20]
+      Points		      [215, 0; 0, -35]
       DstBlock		      "Transmit state data\nvia UART1"
-      DstPort		      6
+      DstPort		      5
     }
     Line {
       SrcBlock		      "From46"
       SrcPort		      1
-      Points		      [220, 0; 0, -15]
+      Points		      [220, 0; 0, -30]
       DstBlock		      "Transmit state data\nvia UART1"
-      DstPort		      7
+      DstPort		      6
     }
     Line {
       SrcBlock		      "From47"
       SrcPort		      1
-      Points		      [285, 0; 0, -10]
+      Points		      [285, 0; 0, -25]
       DstBlock		      "Transmit state data\nvia UART1"
-      DstPort		      8
+      DstPort		      7
     }
     Line {
       SrcBlock		      "From48"
       SrcPort		      1
-      Points		      [280, 0; 0, -5]
+      Points		      [280, 0; 0, -20]
       DstBlock		      "Transmit state data\nvia UART1"
-      DstPort		      9
+      DstPort		      8
     }
     Line {
       SrcBlock		      "From49"
       SrcPort		      1
+      Points		      [330, 0]
       DstBlock		      "Transmit state data\nvia UART1"
-      DstPort		      10
+      DstPort		      9
     }
     Line {
       SrcBlock		      "From50"
       SrcPort		      1
+      Points		      [330, 0]
       DstBlock		      "Transmit state data\nvia UART1"
-      DstPort		      11
+      DstPort		      10
     }
     Line {
       SrcBlock		      "From51"
       SrcPort		      1
+      Points		      [330, 0]
       DstBlock		      "Transmit state data\nvia UART1"
-      DstPort		      12
+      DstPort		      11
     }
     Line {
       SrcBlock		      "From52"
       SrcPort		      1
+      Points		      [330, 0]
       DstBlock		      "Transmit state data\nvia UART1"
-      DstPort		      13
+      DstPort		      12
     }
     Line {
       SrcBlock		      "From53"
       SrcPort		      1
+      Points		      [330, 0]
       DstBlock		      "Transmit state data\nvia UART1"
-      DstPort		      14
+      DstPort		      13
     }
     Line {
       SrcBlock		      "From54"
       SrcPort		      1
+      Points		      [335, 0]
       DstBlock		      "Transmit state data\nvia UART1"
-      DstPort		      15
+      DstPort		      14
     }
     Line {
       SrcBlock		      "From55"
       SrcPort		      1
+      Points		      [335, 0]
       DstBlock		      "Transmit state data\nvia UART1"
-      DstPort		      16
+      DstPort		      15
     }
     Line {
       SrcBlock		      "From56"
       SrcPort		      1
+      Points		      [330, 0]
       DstBlock		      "Transmit state data\nvia UART1"
-      DstPort		      17
+      DstPort		      16
     }
     Line {
       SrcBlock		      "From57"
       SrcPort		      1
+      Points		      [335, 0]
       DstBlock		      "Transmit state data\nvia UART1"
-      DstPort		      18
+      DstPort		      17
     }
     Line {
       SrcBlock		      "Counter\nFree-Running"
