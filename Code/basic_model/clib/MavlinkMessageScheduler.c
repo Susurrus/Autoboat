@@ -4,9 +4,9 @@
  */
 
 // Include user headers
-#include "MavlinkMessageDispatch.h"
+#include "MavlinkMessageScheduler.h"
 #ifndef UNIT_TEST
-#include "sealion/mavlink.h"
+#include "mavlink.h"
 #endif
 
 // Include system libraries

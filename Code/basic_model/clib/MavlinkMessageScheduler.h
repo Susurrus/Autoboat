@@ -10,8 +10,7 @@
  * This reduces bursting and minimizes problems with buffer overflow.
  *
  * REQUIREMENTS:
- * This library requires Sealion's MAVLink to be included so that "sealion/mavlink.h" is
- * accessible.
+ * This library requires MAVLink's primary 'mavlink.h' to be accessible.
  *
  * USAGE:
  * 1) Set your code to call IncrementTimestep() at 100Hz and to process the list of message IDs.

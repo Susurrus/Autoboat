@@ -1,6 +1,7 @@
 #include "uart1.h"
 #include "uart2.h"
 #include "gps.h"
+#include "MavlinkMessageScheduler.h"
 
 /* Include generated header files */
 #include "MissionManager.h"
@@ -31,6 +32,16 @@ static uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 static uint16_t len;
 
 /**
+ * Initialize MAVLink transmission. This just sets up the MAVLink scheduler with the basic
+ * repeatedly-transmit messages.
+ */
+void MavLinkInit(void)
+{
+	AddMessage(MAVLINK_MSG_ID_HEARTBEAT, 1);
+	AddMessage(MAVLINK_MSG_ID_SYS_STATUS, 1);
+}
+
+/**
  * This function creates a MAVLink heartbeat message with some basic parameters and
  * caches that message (along with its size) in the module-level variables declared
  * above. This buffer should be transmit at 1Hz back to the groundstation.
@@ -52,7 +63,7 @@ void MavLinkSendHeartbeat(void)
  * It takes in a single argument for the computation load on the system. It should be between 0 and 100 and be in % of usage of the mainloop time.
  * TODO: Add info on the GPS sensor.
  */
-void MavLinkSendStatus(uint8_t load)
+void MavLinkSendStatus(void)
 {
 	mavlink_message_t msg;
 
@@ -63,7 +74,9 @@ void MavLinkSendStatus(uint8_t load)
 	uint32_t systemsPresent = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 5) |
 	                          (1 << 12) | (1 << 14) | (1 << 15);
 	
-	mavlink_msg_sys_status_pack(mavlink_system.sysid, mavlink_system.compid, &msg, systemsPresent, systemsPresent, systemsPresent, ((uint16_t)load)*10, 14000, 20000, 75, 20, 0, 0, 0, 0, 0);
+	mavlink_msg_sys_status_pack(mavlink_system.sysid, mavlink_system.compid, &msg, 
+	                            systemsPresent, systemsPresent, systemsPresent, 
+								((uint16_t)systemStatus.cpu_load)*10, 14000, 20000, 75, 20, 0, 0, 0, 0, 0);
 	
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
@@ -146,18 +159,6 @@ void MavLinkSendLocalPosition(float *data)
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
-void MavLinkSendL2Vector(float *l2_vector)
-{
-	mavlink_message_t msg;
-
-	mavlink_msg_l2_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-                        l2_vector[0], l2_vector[1]);
-
-	len = mavlink_msg_to_send_buffer(buf, &msg);
-	
-	uart1EnqueueData(buf, (uint8_t)len);
-}
-
 /**
  * Transmits the current GPS position of the origin of the local coordinate frame that the North-East-Down
  * coordinates are all relative too. They should be in units of 1e-7 degrees.
@@ -171,54 +172,6 @@ void MavLinkSendGpsGlobalOrigin(int32_t latitude, int32_t longitude, int32_t alt
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
-	uart1EnqueueData(buf, (uint8_t)len);
-}
-
-void MavLinkUpdateAndSendStatusErrors(uint16_t status, uint16_t errors)
-{
-	/// First we update the system state
-	
-	// If the startup reset line is triggered, indicate we're booting up. This is the only unarmed state
-	// although that's not technically true with this controller.
-	if (errors & (1 << 0)) {
-		mavlink_system.state = MAV_STATE_BOOT;
-		mavlink_system.mode &= ~MAV_MODE_FLAG_SAFETY_ARMED;
-	// Otherwise if we're undergoing calibration indicate that
-	} else if (errors & (1 << 5)) {
-		mavlink_system.state = MAV_STATE_CALIBRATING;
-		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
-	// Otherwise if there're any other errors we're in standby
-	} else if (errors > 0) {
-		mavlink_system.state = MAV_STATE_STANDBY;
-		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
-	// Finally we're active if there're no errors. Also indicate within the mode that we're armed.
-	} else {
-		mavlink_system.state = MAV_STATE_ACTIVE;
-		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
-	}
-	
-	/// Then we update the system mode using MAV_MODE_FLAGs
-	// Set manual/autonomous mode. Note that they're not mutually exclusive within the MAVLink protocol,
-	// though I treat them as such for my autopilot.
-	if (status & (1 << 0)) {
-		mavlink_system.mode |= (MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
-		mavlink_system.mode &= ~MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
-	} else {
-		mavlink_system.mode &= ~(MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
-		mavlink_system.mode |= MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
-	}	
-	// Set HIL status
-	if (status & (1 << 1)) {
-		mavlink_system.mode |= MAV_MODE_FLAG_HIL_ENABLED;
-	} else {
-		mavlink_system.mode &= ~MAV_MODE_FLAG_HIL_ENABLED;
-	}
-	
-	// Then the status_and_errors message is transmit
-
-	mavlink_message_t msg;
-	mavlink_msg_status_and_errors_pack(mavlink_system.sysid, mavlink_system.compid, &msg, status, errors);
-	len = mavlink_msg_to_send_buffer(buf, &msg);
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
@@ -315,6 +268,93 @@ void MavLinkParameterSender(uint8_t start)
 			++currentParameter;
 		} else {
 			running = 0;
+		}
+	}
+}
+
+/** Custom Sealion Messages **/
+
+void MavLinkSendRudderRaw(uint16_t position, uint8_t port_limit, uint8_t starboard_limit)
+{
+//	mavlink_message_t msg;
+//
+//	mavlink_msg_rudder_raw_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+//                                position, port_limit, 0, starboard_limit);
+//
+//	len = mavlink_msg_to_send_buffer(buf, &msg);
+//	
+//	uart1EnqueueData(buf, (uint8_t)len);
+}
+
+void MavLinkSendStatusAndErrors(void)
+{
+	mavlink_message_t msg;
+	mavlink_msg_status_and_errors_pack(mavlink_system.sysid, mavlink_system.compid, &msg, systemStatus.status, systemStatus.reset);
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	uart1EnqueueData(buf, (uint8_t)len);
+
+	// And finally update the MAVLink state based on the system state.
+	
+	// If the startup reset line is triggered, indicate we're booting up. This is the only unarmed state
+	// although that's not technically true with this controller.
+	if (systemStatus.reset & (1 << 0)) {
+		mavlink_system.state = MAV_STATE_BOOT;
+		mavlink_system.mode &= ~MAV_MODE_FLAG_SAFETY_ARMED;
+	// Otherwise if we're undergoing calibration indicate that
+	} else if (systemStatus.reset & (1 << 5)) {
+		mavlink_system.state = MAV_STATE_CALIBRATING;
+		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
+	// Otherwise if there're any other errors we're in standby
+	} else if (systemStatus.reset > 0) {
+		mavlink_system.state = MAV_STATE_STANDBY;
+		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
+	// Finally we're active if there're no errors. Also indicate within the mode that we're armed.
+	} else {
+		mavlink_system.state = MAV_STATE_ACTIVE;
+		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
+	}
+	
+	/// Then we update the system mode using MAV_MODE_FLAGs
+	// Set manual/autonomous mode. Note that they're not mutually exclusive within the MAVLink protocol,
+	// though I treat them as such for my autopilot.
+	if (systemStatus.status & (1 << 0)) {
+		mavlink_system.mode |= (MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
+		mavlink_system.mode &= ~MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
+	} else {
+		mavlink_system.mode &= ~(MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
+		mavlink_system.mode |= MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
+	}	
+	// Set HIL status
+	if (systemStatus.status & (1 << 1)) {
+		mavlink_system.mode |= MAV_MODE_FLAG_HIL_ENABLED;
+	} else {
+		mavlink_system.mode &= ~MAV_MODE_FLAG_HIL_ENABLED;
+	}
+}
+
+/** Core tranmit/receive MAVLink helper functions **/
+
+/**
+ * This function handles transmission of MavLink messages taking into account transmission
+ * speed, message size, and desired transmission rate.
+ */
+void MavLinkTransmit(void)
+{
+	SListItem *messagesToSend = IncrementTimestep();
+	SListItem *j;
+	for (j = messagesToSend; j; j = j->sibling) {
+		switch(j->id) {
+			case MAVLINK_MSG_ID_HEARTBEAT:{
+				MavLinkSendHeartbeat();
+			} break;
+			
+			case MAVLINK_MSG_ID_SYS_STATUS:{
+				MavLinkSendStatus();
+			} break;
+			
+			default: {
+			
+			} break;
 		}
 	}
 }

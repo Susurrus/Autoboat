@@ -177,6 +177,17 @@ elems(3).SamplingMode = 'Sample based';
 elems(3).Min = [];
 elems(3).Max = [];
 
+elems(4) = Simulink.BusElement;
+elems(4).Name = 'cpu_load';
+elems(4).Dimensions = 1;
+elems(4).DimensionsMode = 'Fixed';
+elems(4).DataType = 'uint8';
+elems(4).SampleTime = -1;
+elems(4).Complexity = 'real';
+elems(4).SamplingMode = 'Sample based';
+elems(4).Min = [];
+elems(4).Max = [];
+
 SystemStatus = Simulink.Bus;
 SystemStatus.HeaderFile = '';
 SystemStatus.Description = sprintf('');
