@@ -1,13 +1,12 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
 // Include user headers
 #include "MavlinkMessageDispatch.h"
 #ifndef UNIT_TEST
 #include "sealion/mavlink.h"
-#endif
-
-// Now if we're unit testing just use our own generated test data. This removes the algorithm testing from the intricacies of changes to MAVLink messages & message sizes.
-#ifdef UNIT_TEST
-#define MAVLINK_MESSAGE_LENGTHS {9, 31, 12, 0, 14, 28, 3, 32, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 20, 2, 25, 23, 30, 101, 22, 26, 16, 14, 28, 32, 28, 28, 22, 22, 21, 6, 6, 37, 4, 4, 2, 2, 4, 2, 2, 3, 13, 12, 19, 17, 15, 15, 27, 25, 18, 18, 20, 20, 9, 54, 26, 0, 36, 0, 6, 4, 0, 21, 18, 0, 0, 0, 20, 0, 33, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 56, 42, 33, 0, 0, 0, 0, 0, 0, 0, 18, 32, 32, 20, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 6, 21, 0, 0, 0, 0, 0, 0, 0, 4, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36, 30, 18, 18, 51, 9, 0}
-#define MAVLINK_NUM_NON_PAYLOAD_BYTES 5
 #endif
 
 // Include system libraries
@@ -15,22 +14,22 @@
 #include <limits.h>
 #include <math.h>
 
-// Store how fast we're assuming our pipe is (bytes/s)
-#define MESSAGE_TRANSMISSION_RATE 115200
+// Now if we're unit testing just use our own generated test data. This removes the algorithm testing from the intricacies of changes to MAVLink messages & message sizes.
+#ifdef UNIT_TEST
+#define MAVLINK_MESSAGE_LENGTHS {9, 31, 12, 0, 14, 28, 3, 32, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 20, 2, 25, 23, 30, 101, 22, 26, 16, 14, 28, 32, 28, 28, 22, 22, 21, 6, 6, 37, 4, 4, 2, 2, 4, 2, 2, 3, 13, 12, 19, 17, 15, 15, 27, 25, 18, 18, 20, 20, 9, 54, 26, 0, 36, 0, 6, 4, 0, 21, 18, 0, 0, 0, 20, 0, 33, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 56, 42, 33, 0, 0, 0, 0, 0, 0, 0, 18, 32, 32, 20, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 6, 21, 0, 0, 0, 0, 0, 0, 0, 4, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36, 30, 18, 18, 51, 9, 0}
+#define MAVLINK_NUM_NON_PAYLOAD_BYTES 5
+#endif
 
 // Store a linked list of messages to send at every timestep
 static SListItem *timesteps[100];
 
-// And keep track of whic timestep we're currently on
+// And keep track of which timestep we're currently on
 static uint8_t currentTimestep = 0;
 
 // Keep a data store of how big each message is.
 static uint8_t messageSizes[256] = MAVLINK_MESSAGE_LENGTHS;
 
-// FIXME: remove all calls to assert and this include
-#include <assert.h>
-
-uint8_t AddMessage(uint8_t id, uint8_t rate)
+bool AddMessage(uint8_t id, uint8_t rate)
 {
 	// Be sure that we only process messages are reasonable rates
 	if (rate < 1 || rate > 100) {
@@ -81,6 +80,7 @@ uint8_t AddMessage(uint8_t id, uint8_t rate)
 		// If we were able to malloc the item, populate it and continue.
 		if (newMessages[i]) {
 			newMessages[i]->id = id;
+			newMessages[i]->_transient = false;
 		}
 		// Otherwise if malloc() failed, back up through the array andfree any ones that
 		// were allocated and return failure.
@@ -88,7 +88,7 @@ uint8_t AddMessage(uint8_t id, uint8_t rate)
 			for (uint8_t j = i; j > 0; --j) {
 				free(newMessages[j]);
 			}
-			return 0;
+			return false;
 		}
 	}
 	
@@ -103,7 +103,47 @@ uint8_t AddMessage(uint8_t id, uint8_t rate)
 		timesteps[roundedTimestep] = newMessages[i];
 	}
 	
-	return 1;
+	return true;
+}
+
+bool AddTransientMessage(uint8_t id)
+{
+	// Find the smallest bracket in the next second to transmit this message
+	uint16_t lastCost = USHRT_MAX;
+	uint8_t bestTimestep;
+	for (uint8_t i = 0; i < 100; ++i) {
+		uint8_t testTimestep = (currentTimestep + i) % 100;
+		// If there's already messages at this timestep, add up their cost.
+		if (timesteps[testTimestep]) {
+			uint16_t currentCost = 0;
+			for	(SListItem *j = timesteps[testTimestep]; j; j = j->sibling) {
+				currentCost += messageSizes[j->id] + MAVLINK_NUM_NON_PAYLOAD_BYTES;
+			}
+			if (currentCost < lastCost) {
+				bestTimestep = testTimestep;
+				lastCost = currentCost;
+			}
+		}
+		// But if this is an empty timestep it's optimal and it's chosen and the
+		// search ends.
+		else {
+			bestTimestep = testTimestep;
+			break;
+		}
+	}
+	
+	// Now that we have the best timestep to add this in, do it.
+	SListItem *x = malloc(sizeof(SListItem));
+	if (!x) {
+		return false;
+	}
+	
+	x->_transient = true;
+	x->id = id;
+	x->sibling = timesteps[bestTimestep];
+	timesteps[bestTimestep] = x;
+	
+	return true;
 }
 
 void RemoveMessage(uint8_t id)
@@ -160,15 +200,46 @@ void ClearAllMessages(void)
 
 SListItem *IncrementTimestep(void)
 {
+	/// First clean up any non-recurring messages from the previous timestep.
+	// Determine what the previous timestep was
+	uint8_t cleanupTimestep;
+	if (currentTimestep == 0) {
+		cleanupTimestep = 99;
+	} else {
+		cleanupTimestep = currentTimestep - 1;
+	}
+	
+	// And then iterate through the list finding all transient messages and removing
+	// them.
+	SListItem *previousItem = NULL;
+	for	(SListItem *j = timesteps[cleanupTimestep]; j; j = j->sibling) {
+		if (j->_transient) {
+			// If we aren't at the start of the list, just cut this element out of the middle
+			if (previousItem) {
+				previousItem->sibling = j->sibling;
+			}
+			// Otherwise just move where the start of the list is.
+			else {
+				timesteps[cleanupTimestep] = j->sibling;
+			}
+			// And then clean up the transient messages
+			free(j);
+		} else {
+			previousItem = j;
+		}
+	}
 
+	// Then log the data from the current timestep
 	uint8_t tmp = currentTimestep;
 
+	// And then increment the timestep
 	if (currentTimestep == 99) {
 		currentTimestep = 0;
 	} else {
 		++currentTimestep;
 	}
 
+	// Finally return the logged data for this current timestep
 	return timesteps[tmp];
 }
 
@@ -301,7 +372,8 @@ int main(void)
 		}
 	}
 	
-	// Test that all acceptable rates are handled correctly
+	// Test that all acceptable rates are handled correctly.
+	// NOTE: All tests until now used fairly safe transmission rates.
 	{
 		for (uint8_t i = 1; i < 100; i++) {
 			assert(AddMessage(97, i));
@@ -318,6 +390,32 @@ int main(void)
 			RemoveMessage(97);
 			ResetCurrentTimestep();
 		}
+	}
+	
+	// Check transient message handling.
+	{
+		// First add a 100Hz message, change the current timestep, and then check that the message
+		// is added to the next timestep.
+		assert(AddMessage(111, 100));
+		
+		for (uint8_t i = 0; i < 23; i++) {
+			IncrementTimestep();
+		}
+		
+		assert(AddTransientMessage(143));
+		
+		SListItem *x = IncrementTimestep();
+		assert(x);
+		assert(x->id == 143);
+		
+		// Now that this transient message has been handled if we loop around again it should be gone.
+		for (uint8_t i = 0; i < 99; i++) {
+			IncrementTimestep();
+		}
+		
+		x = IncrementTimestep();
+		assert(x);
+		assert(x->id == 111);
 	}
 	
 	// Now attempt a realistic message dispatch scenario.
