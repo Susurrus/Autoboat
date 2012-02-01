@@ -439,7 +439,7 @@ int main(void)
 		assert(x->id == 111);
 	}
 	
-	// Now attempt a realistic message dispatch scenario.
+	// Now attempt a realistic message scheduling scenario.
 	// I don't actually do any automated checking here, but this can
 	// be useful to confirm things by hand.
 	{

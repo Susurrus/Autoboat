@@ -22,7 +22,7 @@
  * TESTING:
  * A unit-testing framework is built-in to this library and available by running with the UNIT_TEST
  * preprocessor macro defined. For example: 
- *   `gcc MavlinkMessageDispatch.c -DUNIT_TEST -g -lm`
+ *   `gcc MavlinkMessageScheduler.c -DUNIT_TEST -g -lm`
  */
 
 #include <inttypes.h>
