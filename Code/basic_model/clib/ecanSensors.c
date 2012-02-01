@@ -1,34 +1,8 @@
-#include <stddef.h>
-#include <stdbool.h>
+#include "ecanSensors.h"
 
 #include "ecanDefinitions.h"
 #include "nmea2000.h"
 #include "types.h"
-
-static struct {
-	tFloatToChar speed;
-	tFloatToChar direction;
-	bool newData;
-} windData;
-
-static struct {
-	tFloatToChar temp;
-	tFloatToChar pressure;
-	tFloatToChar humidity;
-	bool newData;
-} airData;
-
-static struct {
-	tFloatToChar speed;
-	tFloatToChar temp;
-	tFloatToChar depth;
-	bool newData;
-} waterData;
-
-static struct {
-	tIntToChar rpm;
-	bool newData;
-} throttleData;
 
 void GetWindData(unsigned char *data) {
 	data[0] = windData.speed.chData[0];

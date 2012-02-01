@@ -2,13 +2,14 @@
 #include "uart2.h"
 #include "gps.h"
 #include "MavlinkMessageScheduler.h"
+#include "ecanSensors.h"
 
 /* Include generated header files */
 #include "MissionManager.h"
 #include "code_gen.h"
 
 #include <stdint.h>
-#include <sealion/mavlink.h>
+#include "mavlink.h"
 
 // Store a module-wide variable for common MAVLink system variables.
 static mavlink_system_t mavlink_system = {
@@ -39,6 +40,9 @@ void MavLinkInit(void)
 {
 	AddMessage(MAVLINK_MSG_ID_HEARTBEAT, 1);
 	AddMessage(MAVLINK_MSG_ID_SYS_STATUS, 1);
+	AddMessage(MAVLINK_MSG_ID_GPS_RAW_INT, 1);
+	AddMessage(MAVLINK_MSG_ID_STATUS_AND_ERRORS, 4);
+	AddMessage(MAVLINK_MSG_ID_WSO100, 2);
 }
 
 /**
@@ -332,6 +336,15 @@ void MavLinkSendStatusAndErrors(void)
 	}
 }
 
+void MavLinkSendWindAirData(void)
+{
+	mavlink_message_t msg;
+	mavlink_msg_wso100_pack(mavlink_system.sysid, mavlink_system.compid, &msg, 
+	                        windData.speed.flData, windData.direction.flData, airData.temp.flData, airData.pressure.flData, airData.humidity.flData);
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	uart1EnqueueData(buf, (uint8_t)len);
+}
+
 /** Core tranmit/receive MAVLink helper functions **/
 
 /**
@@ -344,12 +357,24 @@ void MavLinkTransmit(void)
 	SListItem *j;
 	for (j = messagesToSend; j; j = j->sibling) {
 		switch(j->id) {
-			case MAVLINK_MSG_ID_HEARTBEAT:{
+			case MAVLINK_MSG_ID_HEARTBEAT: {
 				MavLinkSendHeartbeat();
 			} break;
 			
-			case MAVLINK_MSG_ID_SYS_STATUS:{
+			case MAVLINK_MSG_ID_SYS_STATUS: {
 				MavLinkSendStatus();
+			} break;
+			
+			case MAVLINK_MSG_ID_GPS_RAW_INT: {
+				MavLinkSendRawGps();
+			} break;
+			
+			case MAVLINK_MSG_ID_STATUS_AND_ERRORS: {
+				MavLinkSendStatusAndErrors();
+			} break;
+			
+			case MAVLINK_MSG_ID_WSO100: {
+				MavLinkSendWindAirData();
 			} break;
 			
 			default: {
