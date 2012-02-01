@@ -16,12 +16,13 @@
  * USAGE:
  * 1) Set your code to call IncrementTimestep() at 100Hz and to process the list of message IDs.
  * 2) Add an initialization function to add all desired repeating messages using AddMessage().
- * 3) That's it! If you'd like to change the dispatched messages you may at any time.
+ * 3) Add support for a heap (probably at least 512). This library relies on malloc() and free(). 
+ * 4) That's it! If you'd like to change the dispatched messages you may at any time.
  *
  * TESTING:
  * A unit-testing framework is built-in to this library and available by running with the UNIT_TEST
  * preprocessor macro defined. For example: 
- *   `gcc MavlinkMessageDispatch.c -std=c99 -DUNIT_TEST -g -lm`
+ *   `gcc MavlinkMessageDispatch.c -DUNIT_TEST -g -lm`
  */
 
 #include <inttypes.h>

@@ -51,12 +51,15 @@ bool AddMessage(uint8_t id, uint8_t rate)
 	// transmission window.
 	uint8_t bestOffset;
 	uint16_t lastCost = USHRT_MAX;
-	for (uint8_t offset = 0; offset < (uint8_t)period; offset++) {
+	uint8_t offset;
+	for (offset = 0; offset < (uint8_t)period; offset++) {
 		uint16_t currentCost = 0;
 		float timestep = offset;
-		for (uint8_t i = 0; i < rate && timestep < 100; timestep += period, i++) {
+		uint8_t i;
+		for (i = 0; i < rate && timestep < 100; timestep += period, i++) {
 			uint8_t roundedTimestep = floorf(timestep);
-			for	(SListItem *j = timesteps[roundedTimestep]; j; j = j->sibling) {
+			SListItem *j;
+			for	(j = timesteps[roundedTimestep]; j; j = j->sibling) {
 				currentCost += messageSizes[j->id] + MAVLINK_NUM_NON_PAYLOAD_BYTES;
 			}
 		}
@@ -75,7 +78,8 @@ bool AddMessage(uint8_t id, uint8_t rate)
 	// and deallocate successful ones easily. We assume that if one malloc failure
 	// occurs, then all the rest will also.
 	SListItem *newMessages[rate];
-	for (uint8_t i = 0; i < rate; i++) {
+	uint8_t i;
+	for (i = 0; i < rate; i++) {
 		newMessages[i] = malloc(sizeof(SListItem));
 		// If we were able to malloc the item, populate it and continue.
 		if (newMessages[i]) {
@@ -85,7 +89,8 @@ bool AddMessage(uint8_t id, uint8_t rate)
 		// Otherwise if malloc() failed, back up through the array andfree any ones that
 		// were allocated and return failure.
 		else {
-			for (uint8_t j = i; j > 0; --j) {
+			uint8_t j;
+			for (j = i; j > 0; --j) {
 				free(newMessages[j]);
 			}
 			return false;
@@ -95,7 +100,7 @@ bool AddMessage(uint8_t id, uint8_t rate)
 	// Now if we're here we have all the new messages ready to be inserted into our list,
 	// so let's go ahead and insert them.
 	float timestep = bestOffset;
-	for (uint8_t i = 0; i < rate && timestep < 100; timestep += period, i++) {
+	for (i = 0; i < rate && timestep < 100; timestep += period, i++) {
 		uint8_t roundedTimestep = floorf(timestep);
 		
 		// Either add as a new head to an existing list or as a new list.
@@ -111,12 +116,14 @@ bool AddTransientMessage(uint8_t id)
 	// Find the smallest bracket in the next second to transmit this message
 	uint16_t lastCost = USHRT_MAX;
 	uint8_t bestTimestep;
-	for (uint8_t i = 0; i < 100; ++i) {
+	uint8_t i;
+	for (i = 0; i < 100; ++i) {
 		uint8_t testTimestep = (currentTimestep + i) % 100;
 		// If there's already messages at this timestep, add up their cost.
 		if (timesteps[testTimestep]) {
 			uint16_t currentCost = 0;
-			for	(SListItem *j = timesteps[testTimestep]; j; j = j->sibling) {
+			SListItem *j;
+			for	(j = timesteps[testTimestep]; j; j = j->sibling) {
 				currentCost += messageSizes[j->id] + MAVLINK_NUM_NON_PAYLOAD_BYTES;
 			}
 			if (currentCost < lastCost) {
@@ -152,7 +159,8 @@ void RemoveMessage(uint8_t id)
 	// for the for-loop. As j has already been freed we cannot safely use it again and so
 	// must use lastGoodItem->sibling instead. We do make the assumption, however, that there
 	// exists a single message ID per timestep.
-	for (uint8_t i = 0; i < 100; i++) {
+	uint8_t i;
+	for (i = 0; i < 100; i++) {
 	
 		// Handle the 0-length list case
 		if (!timesteps[i]) {
@@ -173,7 +181,8 @@ void RemoveMessage(uint8_t id)
 			
 			// And then loop through the rest removing our specific message and short-circuiting
 			// if that's the case.
-			for	(SListItem *j = lastGoodItem->sibling; j; j = j->sibling) {
+			SListItem *j;
+			for	(j = lastGoodItem->sibling; j; j = j->sibling) {
 				if (j->id == id) {
 					lastGoodItem->sibling = j->sibling;
 					free(j);
@@ -189,8 +198,10 @@ void RemoveMessage(uint8_t id)
 void ClearAllMessages(void)
 {
 	SListItem *tmp;
-	for (uint8_t i = 0; i < 100; i++) {
-		for	(SListItem *j = timesteps[i]; j; j = tmp) {
+	uint8_t i;
+	for (i = 0; i < 100; i++) {
+		SListItem *j;
+		for	(j = timesteps[i]; j; j = tmp) {
 			tmp = j->sibling;
 			free(j);
 		}
@@ -212,7 +223,8 @@ SListItem *IncrementTimestep(void)
 	// And then iterate through the list finding all transient messages and removing
 	// them.
 	SListItem *previousItem = NULL;
-	for	(SListItem *j = timesteps[cleanupTimestep]; j; j = j->sibling) {
+	SListItem *j;
+	for	(j = timesteps[cleanupTimestep]; j; j = j->sibling) {
 		if (j->_transient) {
 			// If we aren't at the start of the list, just cut this element out of the middle
 			if (previousItem) {
@@ -260,13 +272,15 @@ void ResetCurrentTimestep(void)
 void PrintAllTimesteps(void)
 {
 	puts("Timesteps:\n");
-	for (uint8_t i = 0; i < 100; i++) {
+	uint8_t i;
+	for (i = 0; i < 100; i++) {
 		uint16_t timestepSize = 0;
-		for	(SListItem *j = timesteps[i]; j; j = j->sibling) {
+		SListItem *j;
+		for	(j = timesteps[i]; j; j = j->sibling) {
 			timestepSize += messageSizes[j->id] + MAVLINK_NUM_NON_PAYLOAD_BYTES;
 		}
 		printf(" [%d](size=%d): ", i, timestepSize);
-		for	(SListItem *j = timesteps[i]; j; j = j->sibling) {
+		for	(j = timesteps[i]; j; j = j->sibling) {
 			printf("%d, ", j->id);
 		}
 		puts("\n");
@@ -278,7 +292,8 @@ int main(void)
 	// First perform a basic functionality test by inserting a single 100Hz message that should occupy all timesteps.
 	{
 		assert(AddMessage(33, 100));
-		for (uint8_t i = 0; i < 100; i++) {
+		uint8_t i;
+		for (i = 0; i < 100; i++) {
 			SListItem *x = IncrementTimestep();
 			assert(x); // Check that a message ended up here.
 			assert(x->id == 33); // Check that it's the right message
@@ -287,7 +302,7 @@ int main(void)
 		
 		// Then remove that message and confirm that every timestep is clear.
 		RemoveMessage(33);
-		for (uint8_t i = 0; i < 100; i++) {
+		for (i = 0; i < 100; i++) {
 			SListItem *x = IncrementTimestep();
 			assert(!x);
 		}
@@ -299,7 +314,8 @@ int main(void)
 		assert(!AddMessage(66, 101));
 		
 		// And check that messages weren't actually added also.
-		for (uint8_t i = 0; i < 100; i++) {
+		uint8_t i;
+		for (i = 0; i < 100; i++) {
 			SListItem *x = IncrementTimestep();
 			assert(!x);
 		}
@@ -313,7 +329,8 @@ int main(void)
 		assert(x);
 		assert(x->id == 55);
 		assert(!x->sibling);
-		for (uint8_t i = 1; i < 50; i++) {
+		uint8_t i;
+		for (i = 1; i < 50; i++) {
 			SListItem *x = IncrementTimestep();
 			assert(!x); // Check that a message ended up here.
 		}
@@ -326,7 +343,7 @@ int main(void)
 		assert(x);
 		assert(x->id == 55);
 		assert(!x->sibling);
-		for (uint8_t i = 1; i < 50; i++) {
+		for (i = 1; i < 50; i++) {
 			SListItem *x = IncrementTimestep();
 			assert(!x); // Check that a message ended up here.
 		}
@@ -339,10 +356,11 @@ int main(void)
 	// Now test handling of a bunch of different types of messages.
 	{
 		// Then include 100 1Hz messages and confirm that the different messages all end up by themselves in a single timestep.
-		for (uint8_t i = 0; i < 100; i++) {
+		uint8_t i;
+		for (i = 0; i < 100; i++) {
 			assert(AddMessage(i, 1));
 		}
-		for (uint8_t i = 0; i < 100; i++) {
+		for (i = 0; i < 100; i++) {
 			SListItem *x = IncrementTimestep();
 			assert(!(x->sibling)); // Check that there's only one message
 			assert(x->id == i); // Check that it's the correct message
@@ -356,7 +374,7 @@ int main(void)
 		// We confirm that this was correct by finding where our message ended up
 		// and then check that this bucket was occupied by a 0-length message (and
 		// so was the first of the smallest timesteps, which is what's chosen).
-		for (uint8_t i = 0; i < 100; i++) {
+		for (i = 0; i < 100; i++) {
 			SListItem *x = IncrementTimestep();
 			if (x && x->id == 100) {
 				assert(messageSizes[x->sibling->id] == 0);
@@ -366,7 +384,7 @@ int main(void)
 		
 		// Now clear the list and confirm that it's empty.
 		ClearAllMessages();
-		for (uint8_t i = 0; i < 100; i++) {
+		for (i = 0; i < 100; i++) {
 			SListItem *x = IncrementTimestep();
 			assert(!x);
 		}
@@ -375,11 +393,13 @@ int main(void)
 	// Test that all acceptable rates are handled correctly.
 	// NOTE: All tests until now used fairly safe transmission rates.
 	{
-		for (uint8_t i = 1; i < 100; i++) {
+		uint8_t i;
+		for (i = 1; i < 100; i++) {
 			assert(AddMessage(97, i));
 			
 			uint8_t counter = 0;
-			for (uint8_t j = 0; j < 100; j++) {
+			uint8_t j;
+			for (j = 0; j < 100; j++) {
 				SListItem *x = IncrementTimestep();
 				if (x && x->id == 97) {
 					++counter;
@@ -398,7 +418,8 @@ int main(void)
 		// is added to the next timestep.
 		assert(AddMessage(111, 100));
 		
-		for (uint8_t i = 0; i < 23; i++) {
+		uint8_t i;
+		for (i = 0; i < 23; i++) {
 			IncrementTimestep();
 		}
 		
@@ -409,7 +430,7 @@ int main(void)
 		assert(x->id == 143);
 		
 		// Now that this transient message has been handled if we loop around again it should be gone.
-		for (uint8_t i = 0; i < 99; i++) {
+		for (i = 0; i < 99; i++) {
 			IncrementTimestep();
 		}
 		
