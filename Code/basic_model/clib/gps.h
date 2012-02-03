@@ -70,6 +70,8 @@ void processNewGpsData(void);
  */
 void GetGpsDataMatlab(unsigned char* data);
 
+unsigned char GpsNewData(void);
+
 void GetGpsData(tGpsData *gpsData);
 
 void SetGpsData(tGpsData *gpsData);

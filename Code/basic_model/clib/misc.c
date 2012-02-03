@@ -1,7 +1,4 @@
 #include "DEE.h"
-#include "MissionManager.h"
-#include <common/mavlink.h>
-//#include <sealion/mavlink.h>
 
 extern unsigned short rudderRange[2];
 extern unsigned short throttleRange[2];

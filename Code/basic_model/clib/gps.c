@@ -96,8 +96,16 @@ void processNewGpsData(void) {
 	}
 }
 
+unsigned char GpsNewData(void)
+{
+	return gpsSensorData.newData;
+}
+
 void GetGpsData(tGpsData *gpsData) {
 	memcpy(gpsData, &gpsSensorData, sizeof(tGpsData));
+	
+	// Mark this data as old now
+	gpsSensorData.newData = 0;
 }
 
 void GetGpsDataMatlab(unsigned char* data) {
