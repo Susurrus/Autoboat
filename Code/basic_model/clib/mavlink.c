@@ -21,12 +21,23 @@ static mavlink_system_t mavlink_system = {
 	0 // Unused and unsure of expected usage
 };
 
-// Store the MAVLink communication status
+// Store the MAVLink communication status. This struct is used by various MAVLink functions
+// to track the MAVLink decoding state among some other parameters.
 static mavlink_status_t status;
 
 // Globally declare here how many parameters we have. Should be dealt with better later.
 static uint16_t parameterCount = 4;
 
+// Set up some state machine variables for the parameter protocol
+typedef enum {
+	PARAM_STATE_INACTIVE = 0,
+	PARAM_STATE_TRANSMIT_SINGLETON,
+	PARAM_STATE_STREAM_TRANSMIT_START,
+	PARAM_STATE_STREAM_TRANSMIT_DELAY,
+	PARAM_STATE_STREAM_TRANSMIT_PARAM,
+	PARAM_STATE_UPDATE_PARAM
+} ParameterState;
+static uint8_t parameterProtocolState = PARAM_STATE_INACTIVE;
 
 // Declare a character buffer here to prevent continual allocation/deallocation of MAVLink buffers.
 static uint8_t buf[MAVLINK_MAX_PACKET_LEN];
@@ -241,41 +252,6 @@ void _transmitParameter3(void)
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
-/**
- * This function transmits all the configurable parameters of the vessel once it is passed true. Repeated calls with false as the argument
- * will have it continue to transmit parameters, once per call, until it finishes. Then another call with true as the value will start it
- * again.
- */
-void MavLinkParameterSender(uint8_t start)
-{
-	static uint8_t running = 0;
-	static uint16_t currentParameter = 0;
-	// Start  transmission sequence if requested.
-	// Note that this won't interrupt the current request if another request is received.
-	if (!running && start) {
-		running = true;
-		currentParameter = 0;
-	}
-	
-	if (running) {
-		if (currentParameter == 0) {
-			_transmitParameter0();
-			++currentParameter;
-		} else if (currentParameter == 1) {
-			_transmitParameter1();
-			++currentParameter;
-		} else if (currentParameter == 2) {
-			_transmitParameter2();
-			++currentParameter;
-		} else if (currentParameter == 3) {
-			_transmitParameter3();
-			++currentParameter;
-		} else {
-			running = 0;
-		}
-	}
-}
-
 /** Custom Sealion Messages **/
 
 void MavLinkSendRudderRaw(uint16_t position, uint8_t port_limit, uint8_t starboard_limit)
@@ -353,6 +329,40 @@ void MavLinkSendWindAirData(void)
  */
 void MavLinkTransmit(void)
 {
+	// First check the parameter protocol state
+	static uint8_t currentParameter;
+	static uint8_t delayCountdown = 0;
+	switch (parameterProtocolState) {
+		// Initialize variables for strarting a parameter transmission stream
+		case PARAM_STATE_STREAM_TRANSMIT_START: {
+			currentParameter = 0;
+			parameterProtocolState = PARAM_STATE_STREAM_TRANSMIT_PARAM;
+		} break;
+
+		// Now transmit the current parameter
+		case PARAM_STATE_STREAM_TRANSMIT_PARAM: {
+			if (currentParameter < parameterCount) {
+				AddTransientMessage(MAVLINK_MSG_ID_PARAM_VALUE);
+				parameterProtocolState = PARAM_STATE_STREAM_TRANSMIT_DELAY;
+			} else {
+				parameterProtocolState = PARAM_STATE_INACTIVE;
+			}
+		} break;
+		
+		// Add a delay of 10 timesteps before attempting to schedule another one
+		case PARAM_STATE_STREAM_TRANSMIT_DELAY: {
+			if (delayCountdown++ == 9) {
+				delayCountdown = 0;
+				parameterProtocolState = PARAM_STATE_STREAM_TRANSMIT_PARAM;
+			}
+		} break;
+		
+		default: break;
+	}
+
+	// TODO: Then check the mission protocol state
+	
+	// And now transmit all messages for this timestep
 	SListItem *messagesToSend = IncrementTimestep();
 	SListItem *j;
 	for (j = messagesToSend; j; j = j->sibling) {
@@ -375,6 +385,26 @@ void MavLinkTransmit(void)
 			
 			case MAVLINK_MSG_ID_WSO100: {
 				MavLinkSendWindAirData();
+			} break;
+			
+			case MAVLINK_MSG_ID_PARAM_VALUE: {
+				switch (currentParameter) {
+					case 0:
+						_transmitParameter0();
+					break;
+					case 1:
+						_transmitParameter1();
+					break;
+					case 2:
+						_transmitParameter2();
+					break;
+					case 3:
+						_transmitParameter3();
+					break;
+					default:
+					break;
+				}
+				++currentParameter;
 			} break;
 			
 			default: {
@@ -571,7 +601,9 @@ void MavLinkReceive(void)
 				// If they're requesting a list of all parameters, call a separate function that'll track the state and transmit the necessary messages.
 				// This reason that this is an external function is so that it can be run separately at 20Hz.
 				case MAVLINK_MSG_ID_PARAM_REQUEST_LIST: {
-					MavLinkParameterSender(1);
+					if (parameterProtocolState == PARAM_STATE_INACTIVE) {
+						parameterProtocolState = PARAM_STATE_STREAM_TRANSMIT_START;
+					}
 				} break;
 				
 				// Handle receiving a parameter setting message. Here we check the string of the .param_id element of the message as the param_index value	
