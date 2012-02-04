@@ -21,6 +21,10 @@ static mavlink_system_t mavlink_system = {
 	0 // Unused and unsure of expected usage
 };
 
+// Latch onto the first groundstation unit and only receive and transmit to it.
+static uint8_t groundStationSystemId = 0;
+static uint8_t groundStationComponentId = 0;
+
 // Store the MAVLink communication status. This struct is used by various MAVLink functions
 // to track the MAVLink decoding state among some other parameters.
 static mavlink_status_t status;
@@ -40,6 +44,17 @@ enum {
 };
 static uint8_t currentParameter;
 static uint8_t parameterProtocolState = PARAM_STATE_INACTIVE;
+
+// Set up state machine variables for the mission protocol
+enum {
+	MISSION_STATE_INACTIVE = 0,
+	MISSION_STATE_REQUEST_LIST_START,
+	MISSION_STATE_REQUEST_LIST_COUNTDOWN,
+	MISSION_STATE_REQUEST_LIST_RESPONSE,
+	MISSION_STATE_REQUEST_LIST_WAITING
+};
+static uint8_t currentMission;
+static uint8_t missionProtocolState = MISSION_STATE_INACTIVE;
 
 // Declare a character buffer here to prevent continual allocation/deallocation of MAVLink buffers.
 static uint8_t buf[MAVLINK_MAX_PACKET_LEN];
@@ -121,6 +136,36 @@ void MavLinkSendRawGps(void)
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
 	uart1EnqueueData(buf, (uint8_t)len);
+}
+
+void MavLinkMissionProtocolSend(void)
+{
+	uint8_t missionCount;
+	mavlink_message_t msg;
+	GetMissionCount(&missionCount);
+	mavlink_msg_mission_count_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &msg,
+	                               groundStationSystemId, groundStationComponentId, missionCount);
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	uart1EnqueueData(buf, (uint8_t)len);
+}
+
+void MavLinkMissionItemSend(void)
+{
+	Mission m;
+	uint8_t result;
+	GetMission(currentMission, &m, &result);
+	if (result) {
+		mavlink_message_t msg;
+		int8_t currMissionIndex;
+		GetCurrentMission(&currMissionIndex);
+		mavlink_msg_mission_item_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &msg,
+		                              groundStationSystemId, groundStationComponentId, currentMission,
+		                              m.refFrame, m.action, (currentMission == (uint8_t)currMissionIndex),
+		                              m.autocontinue, m.parameters[0], m.parameters[1], m.parameters[2], m.parameters[3],
+		                              m.coordinates[0], m.coordinates[1], m.coordinates[2]);
+		len = mavlink_msg_to_send_buffer(buf, &msg);
+		uart1EnqueueData(buf, (uint8_t)len);
+	}
 }
 
 /**
@@ -333,6 +378,7 @@ void MavLinkTransmit(void)
 {
 	// First check the parameter protocol state
 	static uint8_t delayCountdown = 0;
+	static uint8_t missionProtocolRequestCounter = 0;
 	switch (parameterProtocolState) {	
 		// Initialize variables for starting a a single parameter transmission
 		case PARAM_STATE_SINGLETON_TRANSMIT_START: {
@@ -376,7 +422,31 @@ void MavLinkTransmit(void)
 		default: break;
 	}
 
-	// TODO: Then check the mission protocol state
+	// Then check the mission protocol state
+	switch (missionProtocolState) {
+		case MISSION_STATE_REQUEST_LIST_START:
+			AddTransientMessage(MAVLINK_MSG_ID_MISSION_COUNT);
+			missionProtocolRequestCounter = 0;
+			currentMission = 0;
+			missionProtocolState = MISSION_STATE_REQUEST_LIST_COUNTDOWN;
+		break;
+		
+		case MISSION_STATE_REQUEST_LIST_COUNTDOWN:
+			if (missionProtocolRequestCounter++ > 20) {
+				missionProtocolRequestCounter = 0;
+				missionProtocolState = MISSION_STATE_INACTIVE;
+			}
+		break;
+		
+		case MISSION_STATE_REQUEST_LIST_RESPONSE:
+			AddTransientMessage(MAVLINK_MSG_ID_MISSION_ITEM);
+			missionProtocolState = MISSION_STATE_REQUEST_LIST_WAITING;
+		break;
+		
+		case MISSION_STATE_REQUEST_LIST_WAITING:
+			// Do nothing and just wait
+		break;
+	}
 	
 	// And now transmit all messages for this timestep
 	SListItem *messagesToSend = IncrementTimestep();
@@ -428,6 +498,18 @@ void MavLinkTransmit(void)
 				}
 			} break;
 			
+			case MAVLINK_MSG_ID_MISSION_COUNT: {
+				MavLinkMissionProtocolSend();
+				missionProtocolState = MISSION_STATE_REQUEST_LIST_COUNTDOWN;
+			} break;
+			
+			case MAVLINK_MSG_ID_MISSION_ITEM: {
+				MavLinkMissionItemSend();
+				++currentMission;
+				missionProtocolRequestCounter = 0;
+				missionProtocolState = MISSION_STATE_REQUEST_LIST_COUNTDOWN;
+			} break;
+			
 			default: {
 			
 			} break;
@@ -440,7 +522,6 @@ void MavLinkTransmit(void)
 *
 * This function decodes packets on the protocol level and also handles
 * their value by calling the appropriate functions.
-* TODO: Add a state machine for processing mission reception.
 */
 void MavLinkReceive(void)
 {
@@ -456,13 +537,21 @@ void MavLinkReceive(void)
 		Read(&uart1RxBuffer, &c);
 		// Parse another byte and if there's a message found process it.
 		if(mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) {
+			// Latch the groundstation system and component ID if we haven't yet.
+			if (!groundStationSystemId && !groundStationComponentId) {
+				groundStationSystemId = msg.sysid;
+				groundStationComponentId = msg.compid;
+			}
+		
 			// Handle message
 			mavlink_message_t out_msg;
  
 			switch(msg.msgid) {
 
 				// Begin reception of a new mission list if we're in manual mode. We first clear the mission list in preparation for new items and then
-				// request the first waypoint. T
+				// request the first waypoint.
+				// TODO: Switch to using a state machine
+				// TODO: Switch message transmission to use AddTransientMessage()
 				case MAVLINK_MSG_ID_MISSION_COUNT: {
 				
 					// Don't allow for writing of new missions if we're in autonomous mode.
@@ -500,7 +589,9 @@ void MavLinkReceive(void)
 					
 				} break;
 
-				// Handle receiving a mission. Once
+				// Handle receiving a mission.
+				// TODO: Switch to using a state machine
+				// TODO: Switch message transmission to use AddTransientMessage()
 				case MAVLINK_MSG_ID_MISSION_ITEM: {
 				
 					mavlink_mission_item_t newMission;
@@ -559,34 +650,18 @@ void MavLinkReceive(void)
 				
 				} break;
 
-				// Processing sending of mission waypoint list to QGC.
+				// Responding to a mission request entails moving into the first active state and scheduling a MISSION_COUNT message
 				case MAVLINK_MSG_ID_MISSION_REQUEST_LIST: {
-				
-					uint8_t missionCount;
-					GetMissionCount(&missionCount);
-					mavlink_msg_mission_count_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &out_msg,
-						msg.sysid, msg.compid, missionCount);
-					len = mavlink_msg_to_send_buffer(buf, &out_msg);
-					uart1EnqueueData(buf, (uint8_t)len);
-				
+					if (missionProtocolState == MISSION_STATE_INACTIVE) {
+						missionProtocolState = MISSION_STATE_REQUEST_LIST_START;
+					}
 				}break;
 
 				// When a mission request message is received, respond with that mission information from the MissionManager
 				case MAVLINK_MSG_ID_MISSION_REQUEST: {
-
 					uint8_t requestedMission = mavlink_msg_mission_request_get_seq(&msg);
-					Mission m;
-					uint8_t result;
-					GetMission(requestedMission, &m, &result);
-					if (result) {
-						int8_t currMissionIndex;
-						GetCurrentMission(&currMissionIndex);
-						mavlink_msg_mission_item_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &out_msg,
-							msg.sysid, msg.compid, mavlink_msg_mission_request_get_seq(&msg),
-							m.refFrame, m.action, (requestedMission == (uint8_t)currMissionIndex),
-							m.autocontinue, m.parameters[0], m.parameters[1], m.parameters[2], m.parameters[3], m.coordinates[0], m.coordinates[1], m.coordinates[2]);
-						len = mavlink_msg_to_send_buffer(buf, &out_msg);
-						uart1EnqueueData(buf, (uint8_t)len);
+					if (currentMission == requestedMission) {
+						missionProtocolState = MISSION_STATE_REQUEST_LIST_RESPONSE;
 					}
 
 				} break;
@@ -596,6 +671,7 @@ void MavLinkReceive(void)
 				case MAVLINK_MSG_ID_MISSION_CLEAR_ALL: {
 				
 					ClearMissionList();
+					// TODO: Switch to using AddTransientMessage()
 					mavlink_msg_mission_ack_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &out_msg,
 						msg.sysid, msg.compid, MAV_MISSION_ACCEPTED);
 					len = mavlink_msg_to_send_buffer(buf, &out_msg);
@@ -610,6 +686,7 @@ void MavLinkReceive(void)
 					SetCurrentMission(newCurrentMission);
 					
 					// Here we respond with the mission pulled via GetCurrentMission() so that we're sure we're sending the right mission #
+					// TODO: Switch to using AddTransientMessage()
 					MavLinkSendCurrentMission();
 					
 				} break;
@@ -627,6 +704,7 @@ void MavLinkReceive(void)
 					}
 				} break;
 				
+				// If a request comes for a single parameter then set that to be the current parameter and move into the proper state.
 				case MAVLINK_MSG_ID_PARAM_REQUEST_READ: {
 					if (parameterProtocolState == PARAM_STATE_INACTIVE) {
 						currentParameter = (uint8_t)mavlink_msg_param_request_read_get_param_index(&msg);
