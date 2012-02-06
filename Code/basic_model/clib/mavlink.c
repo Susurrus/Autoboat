@@ -510,6 +510,10 @@ void MavLinkTransmit(void)
 				missionProtocolState = MISSION_STATE_REQUEST_LIST_COUNTDOWN;
 			} break;
 			
+			case MAVLINK_MSG_ID_MISSION_CURRENT: {
+				MavLinkSendCurrentMission();
+			} break;
+			
 			default: {
 			
 			} break;
@@ -686,8 +690,7 @@ void MavLinkReceive(void)
 					SetCurrentMission(newCurrentMission);
 					
 					// Here we respond with the mission pulled via GetCurrentMission() so that we're sure we're sending the right mission #
-					// TODO: Switch to using AddTransientMessage()
-					MavLinkSendCurrentMission();
+					AddTransientMessage(MAVLINK_MSG_ID_MISSION_CURRENT);
 					
 				} break;
 
