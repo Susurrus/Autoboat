@@ -126,7 +126,10 @@ void MavLinkInit(void)
 {
 	AddMessage(MAVLINK_MSG_ID_HEARTBEAT, 1);
 	AddMessage(MAVLINK_MSG_ID_SYS_STATUS, 1);
+
+	AddMessage(MAVLINK_MSG_ID_LOCAL_POSITION_NED, 10);
 	AddMessage(MAVLINK_MSG_ID_GPS_RAW_INT, 1);
+
 	AddMessage(MAVLINK_MSG_ID_STATUS_AND_ERRORS, 4);
 	AddMessage(MAVLINK_MSG_ID_WSO100, 2);
 }
@@ -237,12 +240,14 @@ void MavLinkSendVfrHud(float groundSpeed, int16_t heading, uint16_t throttle)
  * It also expects a systemStatus struct with a uint32_t time element that holds the
  * current system time in centiseconds.
  */
-void MavLinkSendLocalPosition(float *data)
+void MavLinkSendLocalPosition(void)
 {
 	mavlink_message_t msg;
 
 	mavlink_msg_local_position_ned_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-                                            systemStatus.time*10, data[0], data[1], data[2], data[3], data[4], data[5]);
+                                        systemStatus.time*10,
+										internalVariables.LocalPosition[0], internalVariables.LocalPosition[1], internalVariables.LocalPosition[2], 
+										internalVariables.Velocity[0], internalVariables.Velocity[1], internalVariables.Velocity[2]);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
@@ -773,18 +778,32 @@ void MavLinkReceive(void)
 {
 	mavlink_message_t msg;
  
-	while(GetLength(&uart1RxBuffer) > 0) {
+	while (GetLength(&uart1RxBuffer) > 0) {
 		uint8_t c;
 		Read(&uart1RxBuffer, &c);
 		// Parse another byte and if there's a message found process it.
-		if(mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) {
+		if (mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) {
 
 			// Latch the groundstation system and component ID if we haven't yet.
 			if (!groundStationSystemId && !groundStationComponentId) {
 				groundStationSystemId = msg.sysid;
 				groundStationComponentId = msg.compid;
 			}
-		
+
+			if (msg.msgid == MAVLINK_MSG_ID_MISSION_ACK) {
+				char x[30];
+				sprintf(x, "ACK: %d\r\n", mavlink_msg_mission_ack_get_type(&msg));
+				uart2EnqueueData(x, strlen(x));
+			} else if (msg.msgid == MAVLINK_MSG_ID_MISSION_REQUEST) {
+				char x[30];
+				sprintf(x, "MIS_REQ: %d\r\n", mavlink_msg_mission_request_get_seq(&msg));
+				uart2EnqueueData(x, strlen(x));
+			} else {
+				char x[30];
+				sprintf(x, "Rx: %d\r\n", msg.msgid);
+				uart2EnqueueData(x, strlen(x));
+			}
+
 			// Handle message
 			mavlink_message_t out_msg;
  
@@ -828,6 +847,7 @@ void MavLinkReceive(void)
 				} break;
 
 				case MAVLINK_MSG_ID_MISSION_ACK: {
+					uint8_t ackType = mavlink_msg_mission_ack_get_type(&msg);
 					MavLinkEvaluateMissionState(MISSION_EVENT_ACK_RECEIVED, NULL);
 				} break;
 					
@@ -849,14 +869,10 @@ void MavLinkReceive(void)
 					MavLinkEvaluateParameterState(PARAM_EVENT_SET_RECEIVED, &x);
 				} break;
 				
-				default: {
-					c = '\0';
-				} break;
+				default: break;
 			}
 		}
 	}
- 
-	status.packet_rx_drop_count;
 }
 
 /**
@@ -872,12 +888,19 @@ void MavLinkTransmit(void)
 	for (j = messagesToSend; j; j = j->sibling) {
 			
 		switch(j->id) {
+			
+			/** Common Messages **/
+
 			case MAVLINK_MSG_ID_HEARTBEAT: {
 				MavLinkSendHeartbeat();
 			} break;
 			
 			case MAVLINK_MSG_ID_SYS_STATUS: {
 				MavLinkSendStatus();
+			} break;
+			
+			case MAVLINK_MSG_ID_LOCAL_POSITION_NED: {
+				MavLinkSendLocalPosition();
 			} break;
 			
 			case MAVLINK_MSG_ID_GPS_RAW_INT: {
@@ -892,9 +915,13 @@ void MavLinkTransmit(void)
 				MavLinkSendWindAirData();
 			} break;
 			
+			/** Parameter Protocol Messages **/
+			
 			case MAVLINK_MSG_ID_PARAM_VALUE: {
 				MavLinkEvaluateParameterState(PARAM_EVENT_VALUE_DISPATCHED, NULL);
 			} break;
+			
+			/** Mission Protocol Messages **/
 
 			case MAVLINK_MSG_ID_MISSION_COUNT: {
 				MavLinkEvaluateMissionState(MISSION_EVENT_COUNT_DISPATCHED, NULL);
@@ -915,6 +942,8 @@ void MavLinkTransmit(void)
 			case MAVLINK_MSG_ID_MISSION_ACK: {
 				MavLinkEvaluateMissionState(MISSION_EVENT_ACK_DISPATCHED, NULL);
 			} break;
+			
+			/** Sealion Messages **/
 			
 			default: {
 			
