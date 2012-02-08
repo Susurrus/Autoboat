@@ -1,3 +1,22 @@
+/**
+ * This file contains all of the MAVLink interfacing necessary by Sealion.
+ * It relies heavily on the MavlinkMessageScheduler for scheduling transmission
+ * of MAVLink messages such as to not overload the interface.
+ *
+ * The main functions are at the bottom: MavLinkTransmit() and MavLinkReceive()
+ * handle the dispatching of messages (and sending of non-FSM reliant ones) and
+ * the reception of messages and forwarding of reception events to the relevent
+ * FSMs. The two state machine functions (MavLinkEvaluateMissionState and 
+ * MavLinkEvaluateParameterState) both contain all of the state logic for the
+ * MAVLink mission and parameter protocols. As the specifications for those two
+ * protocols are not fully defined they have been tested with QGroundControl to
+ * work correctly.
+ *
+ * This code was written to be as generic as possible. If you remove all of the
+ * custom messages and switch the transmission from uart1EnqueueData() it should
+ * be almost exclusively relient on modules like MissionManager and the scheduler.
+ */
+
 #include "uart1.h"
 #include "gps.h"
 #include "MavlinkMessageScheduler.h"
@@ -622,6 +641,7 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 		
 		case MISSION_STATE_SEND_MISSION_COUNT:
 			if (event == MISSION_EVENT_COUNT_DISPATCHED) {
+				MavLinkSendMissionCount();
 				nextState = MISSION_STATE_COUNTDOWN;
 			}
 		break;
@@ -694,6 +714,7 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 		
 		case MISSION_STATE_SEND_CURRENT:
 			if (event == MISSION_EVENT_CURRENT_DISPATCHED) {
+				MavLinkSendCurrentMission();
 				nextState = MISSION_STATE_INACTIVE;
 			}
 		break;
@@ -876,7 +897,6 @@ void MavLinkTransmit(void)
 			} break;
 
 			case MAVLINK_MSG_ID_MISSION_COUNT: {
-				MavLinkSendMissionCount();
 				MavLinkEvaluateMissionState(MISSION_EVENT_COUNT_DISPATCHED, NULL);
 			} break;
 
@@ -889,7 +909,6 @@ void MavLinkTransmit(void)
 			} break;
 			
 			case MAVLINK_MSG_ID_MISSION_CURRENT: {
-				MavLinkSendCurrentMission();
 				MavLinkEvaluateMissionState(MISSION_EVENT_CURRENT_DISPATCHED, NULL);
 			} break;
 			
