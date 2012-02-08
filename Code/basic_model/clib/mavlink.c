@@ -36,16 +36,23 @@ static uint16_t parameterCount = 4;
 // Set up some state machine variables for the parameter protocol
 enum {
 	PARAM_STATE_INACTIVE = 0,
-	PARAM_STATE_SINGLETON_TRANSMIT_START,
-	PARAM_STATE_SINGLETON_TRANSMIT_WAITING,
-	PARAM_STATE_STREAM_TRANSMIT_START,
-	PARAM_STATE_STREAM_TRANSMIT_PARAM,
-	PARAM_STATE_STREAM_TRANSMIT_WAITING,
-	PARAM_STATE_STREAM_TRANSMIT_DELAY
+	
+	PARAM_STATE_SINGLETON_SEND_VALUE,
+	
+	PARAM_STATE_STREAM_SEND_VALUE,
+	PARAM_STATE_STREAM_DELAY
 };
-static uint8_t currentParameter;
-static uint8_t delayCountdown = 0;
-static uint8_t parameterProtocolState = PARAM_STATE_INACTIVE;
+
+enum {
+	PARAM_EVENT_NONE,
+	PARAM_EVENT_ENTER_STATE,
+	PARAM_EVENT_EXIT_STATE,
+	
+	PARAM_EVENT_REQUEST_LIST_RECEIVED,
+	PARAM_EVENT_REQUEST_READ_RECEIVED,
+	PARAM_EVENT_SET_RECEIVED,
+	PARAM_EVENT_VALUE_DISPATCHED
+};
 
 // Set up state machine variables for the mission protocol
 enum {
@@ -68,9 +75,9 @@ enum {
 };
 // Set up the events necessary for the mission protocol state machine
 enum {
-	MISSION_EVENT_NO_EVENT = 0,
-	MISSION_EVENT_STATE_ENTRY,
-	MISSION_EVENT_STATE_EXIT,
+	MISSION_EVENT_NONE = 0,
+	MISSION_EVENT_ENTER_STATE,
+	MISSION_EVENT_EXIT_STATE,
 	
 	// Message reception events
 	MISSION_EVENT_COUNT_RECEIVED,
@@ -313,43 +320,53 @@ void MavLinkSendMissionRequest(uint8_t currentMissionIndex)
 /**
  * The following functions are helper functions for reading the various parameters aboard the boat.
  */
-void _transmitParameter0(void)
+void _transmitParameter(uint16_t id)
 {
 	mavlink_message_t msg;
 	mavlink_param_union_t x;
-	x.param_uint32 = (systemStatus.status & (1 << 0))?1:0;
-	mavlink_msg_param_value_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-	                             "MODE_AUTO", x.param_float, MAV_VAR_UINT32, parameterCount, 0);
-	len = mavlink_msg_to_send_buffer(buf, &msg);
-	uart1EnqueueData(buf, (uint8_t)len);
-}
-void _transmitParameter1(void)
-{
-	mavlink_message_t msg;
-	mavlink_param_union_t x;
-	x.param_uint32 = (systemStatus.status & (1 << 1))?1:0;
-	mavlink_msg_param_value_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-								 "MODE_HIL", x.param_float, MAV_VAR_UINT32, parameterCount, 1);
-	len = mavlink_msg_to_send_buffer(buf, &msg);
-	uart1EnqueueData(buf, (uint8_t)len);
-}
-void _transmitParameter2(void)
-{
-	mavlink_message_t msg;
-	mavlink_param_union_t x;
-	x.param_uint32 = (systemStatus.status & (1 << 2))?1:0;
-	mavlink_msg_param_value_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-								 "MODE_HILSENSE", x.param_float, MAV_VAR_UINT32, parameterCount, 2);
-	len = mavlink_msg_to_send_buffer(buf, &msg);
-	uart1EnqueueData(buf, (uint8_t)len);
-}
-void _transmitParameter3(void)
-{
-	mavlink_message_t msg;
-	mavlink_param_union_t x;
-	x.param_uint32 = (systemStatus.status & (1 << 3))?1:0;
-	mavlink_msg_param_value_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-								 "MODE_RCDISCON", x.param_float, MAV_VAR_UINT32, parameterCount, 3);
+	mavlink_param_value_t valueMsg = {
+		0.0,
+		parameterCount,
+		0,
+		"",
+		MAV_VAR_UINT32
+	};
+	
+	switch (id) {
+		case 0:
+			x.param_uint32 = (systemStatus.status & (1 << 0))?1:0;
+			valueMsg.param_value = x.param_float;
+			valueMsg.param_index = 0;
+			strncpy(valueMsg.param_id, "MODE_AUTO", 16);
+		break;
+		case 1:
+			x.param_uint32 = (systemStatus.status & (1 << 1))?1:0;
+			valueMsg.param_value = x.param_float;
+			valueMsg.param_index = 1;
+			strncpy(valueMsg.param_id, "MODE_HIL", 16);
+		break;
+		case 2:
+			x.param_uint32 = (systemStatus.status & (1 << 2))?1:0;
+			valueMsg.param_value = x.param_float;
+			valueMsg.param_index = 2;
+			strncpy(valueMsg.param_id, "MODE_HILSENSE", 16);
+		break;
+		case 3:
+			x.param_uint32 = (systemStatus.status & (1 << 3))?1:0;
+			valueMsg.param_value = x.param_float;
+			valueMsg.param_index = 3;
+			strncpy(valueMsg.param_id, "MODE_RCDISCON", 16);
+		break;
+		default:
+			return; // Do nothing if there's no matching parameter.
+		break;
+	}
+	
+	char y[5];
+	sprintf(y, "Tx:%d\r\n", valueMsg.param_index);
+	uart2EnqueueData((uint8_t*)y, (uint8_t)strlen(y));
+	
+	mavlink_msg_param_value_encode(mavlink_system.sysid, mavlink_system.compid, &msg, &valueMsg);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	uart1EnqueueData(buf, (uint8_t)len);
 }
@@ -423,53 +440,119 @@ void MavLinkSendWindAirData(void)
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
-/** Core receive->state machine->transmit MAVLink functions **/
+/** Core MAVLink functions handling transmission and state machines **/
 
 void MavLinkEvaluateParameterState(uint8_t event, void *data)
 {
+	// Track the parameter protocol state
+	static uint8_t state = PARAM_STATE_INACTIVE;
+	
+	// Keep a record of the current parameter being used
+	static uint8_t currentParameter;
+	
+	// Used for the delaying parameter transmission
+	static uint8_t delayCountdown = 0;
+
+	// Store the state to change into
+	uint8_t nextState = state;
 	
 	// First check the parameter protocol state
-	switch (parameterProtocolState) {
-		// Initialize variables for starting a a single parameter transmission
-		case PARAM_STATE_SINGLETON_TRANSMIT_START: {
-			AddTransientMessage(MAVLINK_MSG_ID_PARAM_VALUE);
-			parameterProtocolState = PARAM_STATE_SINGLETON_TRANSMIT_WAITING;
-		} break;
-		
-		case PARAM_STATE_SINGLETON_TRANSMIT_WAITING: {
-			// A do-nothing placeholder state
-		} break;
-		
-		// Initialize variables for starting a parameter transmission stream
-		case PARAM_STATE_STREAM_TRANSMIT_START: {
-			currentParameter = 0;
-			parameterProtocolState = PARAM_STATE_STREAM_TRANSMIT_PARAM;
-		} break;
+	switch (state) {
+		case PARAM_STATE_INACTIVE:
+			if (event == PARAM_EVENT_REQUEST_LIST_RECEIVED) {
+				uart2EnqueueData("rxed\r\n", 6); 
+				currentParameter = 0;
+				nextState = PARAM_STATE_STREAM_SEND_VALUE;
+			} else if (event == PARAM_EVENT_SET_RECEIVED) {
+				mavlink_param_set_t x = *(mavlink_param_set_t *)data;
+				mavlink_param_union_t paramValue;
+				paramValue.param_float = x.param_value;
+				if (strcmp(x.param_id, "MODE_AUTO") == 0) {
+					if (paramValue.param_uint32) {
+						systemStatus.status |= (1 << 0);
+					} else {
+						systemStatus.status &= ~(1 << 0);
+					}
+					currentParameter = 0;
+				} else if (strcmp(x.param_id, "MODE_HIL") == 0) {
+					if (paramValue.param_uint32) {
+						systemStatus.status |= (1 << 1);
+					} else {
+						systemStatus.status &= ~(1 << 1);
+					}
+					currentParameter = 1;
+				} else if (strcmp(x.param_id, "MODE_HILSENSE") == 0) {
+					if (paramValue.param_uint32) {
+						systemStatus.status |= (1 << 2);
+					} else {
+						systemStatus.status &= ~(1 << 2);
+					}
+					currentParameter = 2;
+				} else if (strcmp(x.param_id, "MODE_RCDISCON") == 0) {
+					if (paramValue.param_uint32) {
+						systemStatus.status |= (1 << 3);
+					} else {
+						systemStatus.status &= ~(1 << 3);
+					}
+					currentParameter = 3;
+				}
+				nextState = PARAM_STATE_SINGLETON_SEND_VALUE;
+			} else if (event == PARAM_EVENT_REQUEST_READ_RECEIVED) {
+				currentParameter = *(uint16_t *)data;
+				nextState = PARAM_STATE_SINGLETON_SEND_VALUE;
+			}
+		break;
 
-		// Now transmit the current parameter
-		case PARAM_STATE_STREAM_TRANSMIT_PARAM: {
-			if (currentParameter < parameterCount) {
+		case PARAM_STATE_SINGLETON_SEND_VALUE: {
+			if (event == PARAM_EVENT_ENTER_STATE) {
 				AddTransientMessage(MAVLINK_MSG_ID_PARAM_VALUE);
-				parameterProtocolState = PARAM_STATE_STREAM_TRANSMIT_WAITING;
-			} else {
-				parameterProtocolState = PARAM_STATE_INACTIVE;
+			} else if (event == PARAM_EVENT_VALUE_DISPATCHED) {
+				_transmitParameter(currentParameter);
+				nextState = PARAM_STATE_INACTIVE;
 			}
 		} break;
 		
-		case PARAM_STATE_STREAM_TRANSMIT_WAITING: {
-			// We do nothing in this state. It's just a placeholder until
-			// we are switched into the _DELAY state.
+		case PARAM_STATE_STREAM_SEND_VALUE: {
+			if (event == PARAM_EVENT_ENTER_STATE) {
+				AddTransientMessage(MAVLINK_MSG_ID_PARAM_VALUE);
+			} else if (event == PARAM_EVENT_VALUE_DISPATCHED) {
+				_transmitParameter(currentParameter);
+				
+				// And increment the current parameter index for the next iteration and
+				// we finish if we've hit the limit of parameters.
+				if (++currentParameter == parameterCount) {
+					nextState = PARAM_STATE_INACTIVE;
+				} else {
+					nextState = PARAM_STATE_STREAM_DELAY;
+				}
+			}
 		} break;
 		
 		// Add a delay of 10 timesteps before attempting to schedule another one
-		case PARAM_STATE_STREAM_TRANSMIT_DELAY: {
-			if (delayCountdown++ == 9) {
-				delayCountdown = 0;
-				parameterProtocolState = PARAM_STATE_STREAM_TRANSMIT_PARAM;
+		case PARAM_STATE_STREAM_DELAY: {
+			if (event == PARAM_EVENT_ENTER_STATE) {
+					delayCountdown = 0;
+			} else if (event == PARAM_EVENT_NONE) {
+				if (++delayCountdown == 10) {
+					nextState = PARAM_STATE_STREAM_SEND_VALUE;
+				}
 			}
 		} break;
 		
 		default: break;
+	}
+	
+	// Here is when we actually transition between states, calling init/exit code as necessary
+	if (nextState != state) {
+		// Spit out some debugging info
+		// TODO: Remove
+		char x[5];
+		sprintf(x, "%d\r\n", nextState);
+		uart2EnqueueData((uint8_t*)x, (uint8_t)strlen(x)); 
+
+		MavLinkEvaluateParameterState(PARAM_EVENT_EXIT_STATE, NULL);
+		state = nextState;
+		MavLinkEvaluateParameterState(PARAM_EVENT_ENTER_STATE, NULL);
 	}
 }
 
@@ -556,11 +639,10 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 		break;
 
 		case MISSION_STATE_COUNTDOWN:
-			if (event == MISSION_EVENT_STATE_ENTRY) {
+			if (event == MISSION_EVENT_ENTER_STATE) {
 				counter = 0;
-			} else if (event == MISSION_EVENT_NO_EVENT) {
+			} else if (event == MISSION_EVENT_NONE) {
 				if (counter++ > 400) {
-					uart2EnqueueData("timeout\r\n", 9); 
 					nextState = MISSION_STATE_INACTIVE;
 				}
 			} else if (event == MISSION_EVENT_REQUEST_RECEIVED) {
@@ -665,16 +747,10 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 	}
 	
 	// Here is when we actually transition between states, calling init/exit code as necessary
-	if (nextState != state) {
-		// Spit out some debugging info
-		// TODO: Remove
-		char x[5];
-		sprintf(x, "%d\r\n", nextState);
-		uart2EnqueueData((uint8_t*)x, (uint8_t)strlen(x)); 
-	
-		MavLinkEvaluateMissionState(MISSION_EVENT_STATE_EXIT, NULL);
+	if (nextState != state) {	
+		MavLinkEvaluateMissionState(MISSION_EVENT_EXIT_STATE, NULL);
 		state = nextState;
-		MavLinkEvaluateMissionState(MISSION_EVENT_STATE_ENTRY, NULL);
+		MavLinkEvaluateMissionState(MISSION_EVENT_ENTER_STATE, NULL);
 	}
 }
 
@@ -693,23 +769,16 @@ void MavLinkReceive(void)
 		Read(&uart1RxBuffer, &c);
 		// Parse another byte and if there's a message found process it.
 		if(mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) {
-			
-			if (msg.msgid == MAVLINK_MSG_ID_MISSION_REQUEST) {
+
+			if (msg.msgid == MAVLINK_MSG_ID_PARAM_REQUEST_READ) {
 				char x[5];
-				int y = mavlink_msg_mission_request_get_seq(&msg);
-				sprintf(x, "Rx:%d id=%d\r\n", msg.msgid, y);
-				uart2EnqueueData((uint8_t*)x, (uint8_t)strlen(x)); 
-			} else if (msg.msgid == MAVLINK_MSG_ID_MISSION_ITEM) {
-				char x[5];
-				int y = mavlink_msg_mission_item_get_seq(&msg);
-				sprintf(x, "Rx:%d id=%d\r\n", msg.msgid, y);
+				sprintf(x, "Rx:%d id=%d\r\n", msg.msgid, mavlink_msg_param_request_read_get_param_index(&msg));
 				uart2EnqueueData((uint8_t*)x, (uint8_t)strlen(x)); 
 			} else {
 				char x[5];
 				sprintf(x, "Rx:%d\r\n", msg.msgid);
 				uart2EnqueueData((uint8_t*)x, (uint8_t)strlen(x)); 
 			}
-		
 			// Latch the groundstation system and component ID if we haven't yet.
 			if (!groundStationSystemId && !groundStationComponentId) {
 				groundStationSystemId = msg.sysid;
@@ -765,65 +834,19 @@ void MavLinkReceive(void)
 				// If they're requesting a list of all parameters, call a separate function that'll track the state and transmit the necessary messages.
 				// This reason that this is an external function is so that it can be run separately at 20Hz.
 				case MAVLINK_MSG_ID_PARAM_REQUEST_LIST: {
-					if (parameterProtocolState == PARAM_STATE_INACTIVE) {
-						parameterProtocolState = PARAM_STATE_STREAM_TRANSMIT_START;
-					}
+					MavLinkEvaluateParameterState(PARAM_EVENT_REQUEST_LIST_RECEIVED, NULL);
 				} break;
 				
 				// If a request comes for a single parameter then set that to be the current parameter and move into the proper state.
 				case MAVLINK_MSG_ID_PARAM_REQUEST_READ: {
-					if (parameterProtocolState == PARAM_STATE_INACTIVE) {
-						currentParameter = (uint8_t)mavlink_msg_param_request_read_get_param_index(&msg);
-						parameterProtocolState = PARAM_STATE_SINGLETON_TRANSMIT_START;
-					}
+					uint16_t currentParameter = mavlink_msg_param_request_read_get_param_index(&msg);
+					MavLinkEvaluateParameterState(PARAM_EVENT_REQUEST_READ_RECEIVED, &currentParameter);
 				} break;
 				
-				// Handle receiving a parameter setting message. Here we check the string of the .param_id element of the message as the param_index value	
-				// isn't transmit for some reason. This should be abstracted and be more automatic, but for now everything's carefully hardcoded.
-				// TODO: Move all of this parameter processing into the MavlinkTransmit state machines
 				case MAVLINK_MSG_ID_PARAM_SET: {
-					if (parameterProtocolState == PARAM_STATE_INACTIVE) {
-						mavlink_param_set_t x;
-						mavlink_msg_param_set_decode(&msg, &x);
-						mavlink_param_union_t data;
-						data.param_float = x.param_value;
-						if (strcmp(x.param_id, "MODE_AUTO") == 0) {
-							if (data.param_uint32) {
-								systemStatus.status |= (1 << 0);
-							} else {
-								systemStatus.status &= ~(1 << 0);
-							}
-							currentParameter = 0;
-							_transmitParameter0();
-						} else if (strcmp(x.param_id, "MODE_HIL") == 0) {
-							if (data.param_uint32) {
-								systemStatus.status |= (1 << 1);
-							} else {
-								systemStatus.status &= ~(1 << 1);
-							}
-							currentParameter = 1;
-							_transmitParameter1();
-						} else if (strcmp(x.param_id, "MODE_HILSENSE") == 0) {
-							if (data.param_uint32) {
-								systemStatus.status |= (1 << 2);
-							} else {
-								systemStatus.status &= ~(1 << 2);
-							}
-							currentParameter = 2;
-							_transmitParameter2();
-						} else if (strcmp(x.param_id, "MODE_RCDISCON") == 0) {
-							if (data.param_uint32) {
-								systemStatus.status |= (1 << 3);
-							} else {
-								systemStatus.status &= ~(1 << 3);
-							}
-							currentParameter = 3;
-							_transmitParameter3();
-						}
-						
-						// Trigger a response parameter value message
-						parameterProtocolState = PARAM_STATE_SINGLETON_TRANSMIT_START;
-					}
+					mavlink_param_set_t x;
+					mavlink_msg_param_set_decode(&msg, &x);
+					MavLinkEvaluateParameterState(PARAM_EVENT_SET_RECEIVED, &x);
 				} break;
 				
 				default: {
@@ -835,6 +858,7 @@ void MavLinkReceive(void)
  
 	status.packet_rx_drop_count;
 }
+
 /**
  * This function handles transmission of MavLink messages taking into account transmission
  * speed, message size, and desired transmission rate.
@@ -846,12 +870,6 @@ void MavLinkTransmit(void)
 	SListItem *messagesToSend = IncrementTimestep();
 	SListItem *j;
 	for (j = messagesToSend; j; j = j->sibling) {
-	
-		if (j->_transient) {
-			char x[5];
-			sprintf(x, "Tx:%d\r\n", j->id);
-			uart2EnqueueData((uint8_t*)x, (uint8_t)strlen(x));
-		}
 			
 		switch(j->id) {
 			case MAVLINK_MSG_ID_HEARTBEAT: {
@@ -875,28 +893,7 @@ void MavLinkTransmit(void)
 			} break;
 			
 			case MAVLINK_MSG_ID_PARAM_VALUE: {
-				switch (currentParameter) {
-					case 0:
-						_transmitParameter0();
-					break;
-					case 1:
-						_transmitParameter1();
-					break;
-					case 2:
-						_transmitParameter2();
-					break;
-					case 3:
-						_transmitParameter3();
-					break;
-					default:
-					break;
-				}
-				if (parameterProtocolState == PARAM_STATE_STREAM_TRANSMIT_WAITING) {
-					++currentParameter;
-					parameterProtocolState = PARAM_STATE_STREAM_TRANSMIT_DELAY;
-				} else if (parameterProtocolState == PARAM_STATE_SINGLETON_TRANSMIT_WAITING) {
-					parameterProtocolState = PARAM_STATE_INACTIVE;
-				}
+				MavLinkEvaluateParameterState(PARAM_EVENT_VALUE_DISPATCHED, NULL);
 			} break;
 
 			case MAVLINK_MSG_ID_MISSION_COUNT: {
