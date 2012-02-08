@@ -1,5 +1,4 @@
 #include "uart1.h"
-#include "uart2.h"
 #include "gps.h"
 #include "MavlinkMessageScheduler.h"
 #include "ecanSensors.h"
@@ -362,10 +361,6 @@ void _transmitParameter(uint16_t id)
 		break;
 	}
 	
-	char y[5];
-	sprintf(y, "Tx:%d\r\n", valueMsg.param_index);
-	uart2EnqueueData((uint8_t*)y, (uint8_t)strlen(y));
-	
 	mavlink_msg_param_value_encode(mavlink_system.sysid, mavlink_system.compid, &msg, &valueMsg);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	uart1EnqueueData(buf, (uint8_t)len);
@@ -460,7 +455,6 @@ void MavLinkEvaluateParameterState(uint8_t event, void *data)
 	switch (state) {
 		case PARAM_STATE_INACTIVE:
 			if (event == PARAM_EVENT_REQUEST_LIST_RECEIVED) {
-				uart2EnqueueData("rxed\r\n", 6); 
 				currentParameter = 0;
 				nextState = PARAM_STATE_STREAM_SEND_VALUE;
 			} else if (event == PARAM_EVENT_SET_RECEIVED) {
@@ -544,12 +538,6 @@ void MavLinkEvaluateParameterState(uint8_t event, void *data)
 	
 	// Here is when we actually transition between states, calling init/exit code as necessary
 	if (nextState != state) {
-		// Spit out some debugging info
-		// TODO: Remove
-		char x[5];
-		sprintf(x, "%d\r\n", nextState);
-		uart2EnqueueData((uint8_t*)x, (uint8_t)strlen(x)); 
-
 		MavLinkEvaluateParameterState(PARAM_EVENT_EXIT_STATE, NULL);
 		state = nextState;
 		MavLinkEvaluateParameterState(PARAM_EVENT_ENTER_STATE, NULL);
@@ -770,15 +758,6 @@ void MavLinkReceive(void)
 		// Parse another byte and if there's a message found process it.
 		if(mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) {
 
-			if (msg.msgid == MAVLINK_MSG_ID_PARAM_REQUEST_READ) {
-				char x[5];
-				sprintf(x, "Rx:%d id=%d\r\n", msg.msgid, mavlink_msg_param_request_read_get_param_index(&msg));
-				uart2EnqueueData((uint8_t*)x, (uint8_t)strlen(x)); 
-			} else {
-				char x[5];
-				sprintf(x, "Rx:%d\r\n", msg.msgid);
-				uart2EnqueueData((uint8_t*)x, (uint8_t)strlen(x)); 
-			}
 			// Latch the groundstation system and component ID if we haven't yet.
 			if (!groundStationSystemId && !groundStationComponentId) {
 				groundStationSystemId = msg.sysid;
