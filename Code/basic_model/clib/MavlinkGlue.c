@@ -21,6 +21,7 @@
 #include "gps.h"
 #include "MavlinkMessageScheduler.h"
 #include "ecanSensors.h"
+#include "Rudder.h"
 
 /* Include generated header files */
 #include "MissionManager.h"
@@ -128,10 +129,31 @@ void MavLinkInit(void)
 	AddMessage(MAVLINK_MSG_ID_SYS_STATUS, 1);
 
 	AddMessage(MAVLINK_MSG_ID_LOCAL_POSITION_NED, 10);
+	AddMessage(MAVLINK_MSG_ID_ATTITUDE, 10);
+	AddMessage(MAVLINK_MSG_ID_VFR_HUD, 4);
 	AddMessage(MAVLINK_MSG_ID_GPS_RAW_INT, 1);
 
 	AddMessage(MAVLINK_MSG_ID_STATUS_AND_ERRORS, 4);
 	AddMessage(MAVLINK_MSG_ID_WSO100, 2);
+	AddMessage(MAVLINK_MSG_ID_BASIC_STATE, 10);
+	AddMessage(MAVLINK_MSG_ID_RUDDER_RAW, 4);
+	AddMessage(MAVLINK_MSG_ID_DST800, 2);
+}
+
+/**
+ * Simulink helper function that scheduls a one-off MISSION_CURRENT message.
+ */
+void MavLinkScheduleCurrentMission(void)
+{
+	AddTransientMessage(MAVLINK_MSG_ID_MISSION_CURRENT);
+}
+
+/**
+ * Simulink helper function that scheduls a one-off GPS_GLOBAL_ORIGIN message.
+ */
+void MavLinkScheduleGpsOrigin(void)
+{
+	AddTransientMessage(MAVLINK_MSG_ID_GPS_GLOBAL_ORIGIN);
 }
 
 /**
@@ -200,17 +222,36 @@ void MavLinkSendRawGps(void)
 }
 
 /**
+ * Transmits the custom BASIC_STATE message. This just transmits a bunch of random variables
+ * that are good to know but arbitrarily grouped.
+ */
+void MavLinkSendBasicState(void)
+{
+	mavlink_message_t msg;
+ 
+	mavlink_msg_basic_state_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+		internalVariables.RudderCommand, internalVariables.RudderPositionAngle,
+		 internalVariables.ThrottleCommand,
+		internalVariables.PropellerRpm,
+		internalVariables.L2Vector[0], internalVariables.L2Vector[1]);
+
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	
+	uart1EnqueueData(buf, (uint8_t)len);
+}
+
+/**
  * Transmits the vehicle attitude. Right now just the yaw value.
  * Expects systemStatus.time to be in centiseconds which are then converted
  * to ms for transmission.
  * Yaw should be in radians where positive is eastward from north.
  */
-void MavLinkSendAttitude(float yaw)
+void MavLinkSendAttitude(void)
 {
 	mavlink_message_t msg;
 
 	mavlink_msg_attitude_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-                              systemStatus.time*10, 0.0, 0.0, yaw, 0.0, 0.0, 0.0);
+                              systemStatus.time*10, 0.0, 0.0, internalVariables.Heading, 0.0, 0.0, 0.0);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
@@ -221,12 +262,21 @@ void MavLinkSendAttitude(float yaw)
  * Transmits some information necessary for the HUD. Specifically unique to this packet
  * is airspeed, throttle, and climb rate of which I only care about the throttle value.
  */
-void MavLinkSendVfrHud(float groundSpeed, int16_t heading, uint16_t throttle)
+void MavLinkSendVfrHud(void)
 {
 	mavlink_message_t msg;
 
+	float speed = sqrtf(internalVariables.Velocity[0]*internalVariables.Velocity[0] +
+	                    internalVariables.Velocity[1]*internalVariables.Velocity[1] +
+	                    internalVariables.Velocity[2]*internalVariables.Velocity[2]);
+	
+	int16_t heading = (int16_t)(internalVariables.Heading * 180.0 / 3.14159);
+	
+	// Map throttle into the 0..100 
+	uint8_t throttle = (uint16_t)((float)internalVariables.ThrottleCommand) / 1024.0 * 100.0;
+	
 	mavlink_msg_vfr_hud_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-                              0.0, groundSpeed, heading, throttle, 0.0, 0.0);
+                              0.0, speed, heading, throttle, 0.0, 0.0);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
@@ -258,9 +308,16 @@ void MavLinkSendLocalPosition(void)
  * Transmits the current GPS position of the origin of the local coordinate frame that the North-East-Down
  * coordinates are all relative too. They should be in units of 1e-7 degrees.
  */
-void MavLinkSendGpsGlobalOrigin(int32_t latitude, int32_t longitude, int32_t altitude)
+void MavLinkSendGpsGlobalOrigin()
 {
 	mavlink_message_t msg;
+	
+	tGpsData gpsSensorData;
+	GetGpsData(&gpsSensorData);
+	
+	int32_t latitude = (int32_t)(gpsSensorData.lat.flData * 1e7);
+	int32_t longitude = (int32_t)(gpsSensorData.lon.flData * 1e7);
+	int32_t altitude = (int32_t)(gpsSensorData.alt.flData * 1e7);
 
 	mavlink_msg_gps_global_origin_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                                   latitude, longitude, altitude);
@@ -392,16 +449,17 @@ void _transmitParameter(uint16_t id)
 
 /** Custom Sealion Messages **/
 
-void MavLinkSendRudderRaw(uint16_t position, uint8_t port_limit, uint8_t starboard_limit)
+void MavLinkSendRudderRaw(void)
 {
-//	mavlink_message_t msg;
-//
-//	mavlink_msg_rudder_raw_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-//                                position, port_limit, 0, starboard_limit);
-//
-//	len = mavlink_msg_to_send_buffer(buf, &msg);
-//	
-//	uart1EnqueueData(buf, (uint8_t)len);
+	mavlink_message_t msg;
+
+	mavlink_msg_rudder_raw_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+                               rudderDataStore.Position.usData, rudderDataStore.PortLimit, 0, rudderDataStore.StarboardLimit,
+							   internalVariables.RudderCalLimitStarboard, internalVariables.RudderCalLimitStarboard);
+
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	
+	uart1EnqueueData(buf, (uint8_t)len);
 }
 
 void MavLinkSendStatusAndErrors(void)
@@ -454,7 +512,17 @@ void MavLinkSendWindAirData(void)
 {
 	mavlink_message_t msg;
 	mavlink_msg_wso100_pack(mavlink_system.sysid, mavlink_system.compid, &msg, 
-	                        windData.speed.flData, windData.direction.flData, airData.temp.flData, airData.pressure.flData, airData.humidity.flData);
+		windDataStore.speed.flData, windDataStore.direction.flData, 
+		airDataStore.temp.flData, airDataStore.pressure.flData, airDataStore.humidity.flData);
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	uart1EnqueueData(buf, (uint8_t)len);
+}
+
+void MavLinkSendDst800Data(void)
+{
+	mavlink_message_t msg;
+	mavlink_msg_dst800_pack(mavlink_system.sysid, mavlink_system.compid, &msg, 
+	                        waterDataStore.speed.flData, waterDataStore.temp.flData, waterDataStore.depth.flData);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	uart1EnqueueData(buf, (uint8_t)len);
 }
@@ -642,6 +710,11 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 				AddTransientMessage(MAVLINK_MSG_ID_MISSION_CURRENT);
 				nextState = MISSION_STATE_SEND_CURRENT;
 			}
+			// If a MISSION_CURRENT message was scheduled and we aren't in any state, just transmit
+			// it. This is likely due to a waypoint being reached.
+			else if (event == MISSION_EVENT_CURRENT_DISPATCHED) {
+				MavLinkSendCurrentMission();
+			}
 		break;
 		
 		case MISSION_STATE_SEND_MISSION_COUNT:
@@ -790,20 +863,6 @@ void MavLinkReceive(void)
 				groundStationComponentId = msg.compid;
 			}
 
-			if (msg.msgid == MAVLINK_MSG_ID_MISSION_ACK) {
-				char x[30];
-				sprintf(x, "ACK: %d\r\n", mavlink_msg_mission_ack_get_type(&msg));
-				uart2EnqueueData(x, strlen(x));
-			} else if (msg.msgid == MAVLINK_MSG_ID_MISSION_REQUEST) {
-				char x[30];
-				sprintf(x, "MIS_REQ: %d\r\n", mavlink_msg_mission_request_get_seq(&msg));
-				uart2EnqueueData(x, strlen(x));
-			} else {
-				char x[30];
-				sprintf(x, "Rx: %d\r\n", msg.msgid);
-				uart2EnqueueData(x, strlen(x));
-			}
-
 			// Handle message
 			mavlink_message_t out_msg;
  
@@ -850,13 +909,13 @@ void MavLinkReceive(void)
 					uint8_t ackType = mavlink_msg_mission_ack_get_type(&msg);
 					MavLinkEvaluateMissionState(MISSION_EVENT_ACK_RECEIVED, NULL);
 				} break;
-					
+
 				// If they're requesting a list of all parameters, call a separate function that'll track the state and transmit the necessary messages.
 				// This reason that this is an external function is so that it can be run separately at 20Hz.
 				case MAVLINK_MSG_ID_PARAM_REQUEST_LIST: {
 					MavLinkEvaluateParameterState(PARAM_EVENT_REQUEST_LIST_RECEIVED, NULL);
 				} break;
-				
+
 				// If a request comes for a single parameter then set that to be the current parameter and move into the proper state.
 				case MAVLINK_MSG_ID_PARAM_REQUEST_READ: {
 					uint16_t currentParameter = mavlink_msg_param_request_read_get_param_index(&msg);
@@ -899,6 +958,14 @@ void MavLinkTransmit(void)
 				MavLinkSendStatus();
 			} break;
 			
+			case MAVLINK_MSG_ID_VFR_HUD: {
+				MavLinkSendVfrHud();
+			} break;
+			
+			case MAVLINK_MSG_ID_ATTITUDE: {
+				MavLinkSendAttitude();
+			} break;
+			
 			case MAVLINK_MSG_ID_LOCAL_POSITION_NED: {
 				MavLinkSendLocalPosition();
 			} break;
@@ -907,13 +974,9 @@ void MavLinkTransmit(void)
 				MavLinkSendRawGps();
 			} break;
 			
-			case MAVLINK_MSG_ID_STATUS_AND_ERRORS: {
-				MavLinkSendStatusAndErrors();
-			} break;
-			
-			case MAVLINK_MSG_ID_WSO100: {
-				MavLinkSendWindAirData();
-			} break;
+			case MAVLINK_MSG_ID_GPS_GLOBAL_ORIGIN:
+				MavLinkSendGpsGlobalOrigin();
+			break;
 			
 			/** Parameter Protocol Messages **/
 			
@@ -944,6 +1007,26 @@ void MavLinkTransmit(void)
 			} break;
 			
 			/** Sealion Messages **/
+			
+			case MAVLINK_MSG_ID_STATUS_AND_ERRORS: {
+				MavLinkSendStatusAndErrors();
+			} break;
+			
+			case MAVLINK_MSG_ID_WSO100: {
+				MavLinkSendWindAirData();
+			} break;
+			
+			case MAVLINK_MSG_ID_BASIC_STATE:
+				MavLinkSendBasicState();
+			break;
+			
+			case MAVLINK_MSG_ID_RUDDER_RAW:
+				MavLinkSendRudderRaw();
+			break;
+			
+			case MAVLINK_MSG_ID_DST800:
+				MavLinkSendDst800Data();
+			break;
 			
 			default: {
 			

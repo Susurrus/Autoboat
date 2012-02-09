@@ -6,30 +6,34 @@
 
 #include "types.h"
 
-static struct {
+struct WindData {
 	tFloatToChar speed;
 	tFloatToChar direction;
 	bool newData;
-} windData;
+};
+extern struct WindData windDataStore;
 
-static struct {
+struct AirData {
 	tFloatToChar temp;
 	tFloatToChar pressure;
 	tFloatToChar humidity;
 	bool newData;
-} airData;
+};
+extern struct AirData airDataStore;
 
-static struct {
+struct WaterData {
 	tFloatToChar speed;
 	tFloatToChar temp;
 	tFloatToChar depth;
 	bool newData;
-} waterData;
+};
+extern struct WaterData waterDataStore;
 
-static struct {
+struct ThrottleData {
 	tIntToChar rpm;
 	bool newData;
-} throttleData;
+};
+extern struct ThrottleData throttleDataStore;
 
 void GetWindData(unsigned char *data);
 
