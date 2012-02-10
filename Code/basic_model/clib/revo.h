@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "types.h"
 
-typedef struct RevoData {
+struct RevoData {
 	tFloatToChar           heading;
 	char                   magStatus;
 	tFloatToChar           pitch;
@@ -38,7 +38,8 @@ typedef struct RevoData {
 	tFloatToChar           dip;
 	tUnsignedShortToChar   magneticMagnitude;
 	unsigned char          newData; // Flag for whether this struct stores new data
-} RevoData;
+};
+extern struct RevoData revoDataStore;
 
 void processRevoSentence(char *sentence);
 

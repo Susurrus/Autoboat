@@ -22,6 +22,7 @@
 #include "MavlinkMessageScheduler.h"
 #include "ecanSensors.h"
 #include "Rudder.h"
+#include "revo.h"
 
 /* Include generated header files */
 #include "MissionManager.h"
@@ -138,6 +139,7 @@ void MavLinkInit(void)
 	AddMessage(MAVLINK_MSG_ID_BASIC_STATE, 10);
 	AddMessage(MAVLINK_MSG_ID_RUDDER_RAW, 4);
 	AddMessage(MAVLINK_MSG_ID_DST800, 2);
+	AddMessage(MAVLINK_MSG_ID_REVO_GS, 2);
 }
 
 /**
@@ -188,10 +190,15 @@ void MavLinkSendStatus(void)
 	// TODO: Use actual sensor health status for that portion of the status message.
 	uint32_t systemsPresent = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 5) |
 	                          (1 << 12) | (1 << 14) | (1 << 15);
+
+	uint16_t voltage = (uint16_t)(internalVariables.BatteryVoltage * 1000);
+	int16_t amperage = (int16_t)(internalVariables.BatteryAmperage * 100);
 	
 	mavlink_msg_sys_status_pack(mavlink_system.sysid, mavlink_system.compid, &msg, 
-	                            systemsPresent, systemsPresent, systemsPresent, 
-								((uint16_t)systemStatus.cpu_load)*10, 14000, 20000, 75, 20, 0, 0, 0, 0, 0);
+		systemsPresent, systemsPresent, systemsPresent, 
+		(uint16_t)(systemStatus.cpu_load)*10,
+		voltage, amperage, -1,
+		0, 0, 0, 0, 0, 0);
 	
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
@@ -523,6 +530,18 @@ void MavLinkSendDst800Data(void)
 	mavlink_message_t msg;
 	mavlink_msg_dst800_pack(mavlink_system.sysid, mavlink_system.compid, &msg, 
 	                        waterDataStore.speed.flData, waterDataStore.temp.flData, waterDataStore.depth.flData);
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	uart1EnqueueData(buf, (uint8_t)len);
+}
+
+void MavLinkSendRevoGsData(void)
+{
+	mavlink_message_t msg;
+	mavlink_msg_revo_gs_pack(mavlink_system.sysid, mavlink_system.compid, &msg, 
+		revoDataStore.heading.flData, revoDataStore.magStatus,
+		revoDataStore.pitch.flData, revoDataStore.pitchStatus,
+		revoDataStore.roll.flData, revoDataStore.rollStatus,
+		revoDataStore.dip.flData, revoDataStore.magneticMagnitude.usData);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	uart1EnqueueData(buf, (uint8_t)len);
 }
@@ -1026,6 +1045,10 @@ void MavLinkTransmit(void)
 			
 			case MAVLINK_MSG_ID_DST800:
 				MavLinkSendDst800Data();
+			break;
+			
+			case MAVLINK_MSG_ID_REVO_GS:
+				MavLinkSendRevoGsData();
 			break;
 			
 			default: {
