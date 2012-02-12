@@ -18,7 +18,6 @@
  */
 
 #include "uart1.h"
-#include "gps.h"
 #include "MavlinkMessageScheduler.h"
 #include "ecanSensors.h"
 #include "Rudder.h"
@@ -206,22 +205,20 @@ void MavLinkSendStatus(void)
 }
 
 /**
- * Pull the raw GPS sensor data from the gpsSensorData struct within the GPS module and
+ * Pull the raw GPS sensor data from the gpsDataStore struct within the GPS module and
  * transmit it via MAVLink over UART1. This function should only be called when the GPS
  * data has been updated.
+ * TODO: Convert this message to a GLOBAL_POSITION_INT
  */
 void MavLinkSendRawGps(void)
 {
 	mavlink_message_t msg;
-	
-	tGpsData gpsSensorData;
-	GetGpsData(&gpsSensorData);
  
 	mavlink_msg_gps_raw_int_pack(mavlink_system.sysid, mavlink_system.compid, &msg, ((uint64_t)systemStatus.time)*10000,
-	                             gpsSensorData.fix, (int32_t)(gpsSensorData.lat.flData*1e7), (int32_t)(gpsSensorData.lon.flData*1e7), (int32_t)(gpsSensorData.alt.flData*1e7),
-								 (uint16_t)gpsSensorData.hdop.flData*100, 0xFFFF,
-								 (uint16_t)gpsSensorData.sog.flData*100, (uint16_t)gpsSensorData.cog.flData * 100,
-								 gpsSensorData.sats);
+		3, (int32_t)(gpsDataStore.lat.flData*180/3.14159*1e7), (int32_t)(gpsDataStore.lon.flData*180/3.14159*1e7), (int32_t)(gpsDataStore.alt.flData*1e7),
+		0xFFFF, 0xFFFF,
+		(uint16_t)gpsDataStore.sog.flData*100, (uint16_t)gpsDataStore.cog.flData * 100,
+		0xFF);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
@@ -319,12 +316,9 @@ void MavLinkSendGpsGlobalOrigin()
 {
 	mavlink_message_t msg;
 	
-	tGpsData gpsSensorData;
-	GetGpsData(&gpsSensorData);
-	
-	int32_t latitude = (int32_t)(gpsSensorData.lat.flData * 1e7);
-	int32_t longitude = (int32_t)(gpsSensorData.lon.flData * 1e7);
-	int32_t altitude = (int32_t)(gpsSensorData.alt.flData * 1e7);
+	int32_t latitude = (int32_t)(gpsDataStore.lat.flData * 180 / 3.14159 * 1e7);
+	int32_t longitude = (int32_t)(gpsDataStore.lon.flData * 180 / 3.14159 * 1e7);
+	int32_t altitude = (int32_t)(gpsDataStore.alt.flData * 1e7);
 
 	mavlink_msg_gps_global_origin_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                                   latitude, longitude, altitude);

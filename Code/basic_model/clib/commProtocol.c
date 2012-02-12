@@ -48,7 +48,7 @@ THE SOFTWARE.
 #include "uart2.h"
 #include "Rudder.h"
 #include "types.h"
-#include "gps.h"
+#include "ecanSensors.h"
 
 // Declaration of the relevant message structs used.
 static struct {
@@ -57,13 +57,9 @@ static struct {
 } tHilData;
 
 // This is the value of the BRG register for configuring different baud
-// rates.
-#define BAUD4800_BRG_REG 520
+// rates. These BRG values have been calculated based on a 40MHz system clock.
 #define BAUD57600_BRG_REG 42
 #define BAUD115200_BRG_REG 21
-
-// These are local declarations of each of the message structs.
-// They're populated with relevant data by buildAndcheckMessage().
 
 // Keep track of how many messages were successfully received.
 static unsigned long receivedMessageCount = 0;
@@ -72,9 +68,8 @@ static unsigned long failedMessageCount = 0;
 static unsigned char sameFailedMessageFlag = 0;
 
 void cpInitCommunications() {
-	//initUart1(BAUD57600_BRG_REG);
+	initUart2(BAUD57600_BRG_REG);
 	initUart1(BAUD115200_BRG_REG);
-	initUart2(BAUD4800_BRG_REG);
 }
 
 /**
@@ -174,13 +169,12 @@ void buildAndCheckMessage(unsigned char characterIn) {
 		// is stored in the appropriate struct.
 		if (message[messageIndex] == calculateChecksum(&message[2], messageIndex - 4)) {
 			// We now memcpy all the data into our global data structs.
-			// NOTE: message[4] is used to skip the header, message ID, and size chars.
 			receivedMessageCount++;
 			if (message[2] == 1) {
 				// FIXME: We skip data 4 & 5 as it's unnecessary throttle data.
 				UpdateGpsDataFromHil(&message[6]);
-				SetRudderData(&message[33]);
-				SetHilData(&message[41]);
+				SetRudderData(&message[27]);
+				SetHilData(&message[35]);
 			}
 
 			// Now that we've successfully parsed a message, clear the flag.
@@ -231,7 +225,7 @@ void setHilMode(unsigned char mode) {
 		changeUart2BaudRate(BAUD115200_BRG_REG);
 		oldMode = mode;
 	} else if (oldMode && !mode) {
-		changeUart2BaudRate(BAUD4800_BRG_REG);
+		changeUart2BaudRate(BAUD57600_BRG_REG);
 		oldMode = mode;
 	}
 }
@@ -260,45 +254,32 @@ unsigned char calculateChecksum(unsigned char* sentence, unsigned char size) {
 }
 
 void UpdateGpsDataFromHil(unsigned char* data) {
-	if (data[26]) {
-		tGpsData gpsSensorData;
-		gpsSensorData.lat.chData[0] = data[0];
-		gpsSensorData.lat.chData[1] = data[1];
-		gpsSensorData.lat.chData[2] = data[2];
-		gpsSensorData.lat.chData[3] = data[3];
+	if (data[20]) {
+		gpsDataStore.lat.chData[0] = data[0];
+		gpsDataStore.lat.chData[1] = data[1];
+		gpsDataStore.lat.chData[2] = data[2];
+		gpsDataStore.lat.chData[3] = data[3];
 		
-		gpsSensorData.lon.chData[0] = data[4];
-		gpsSensorData.lon.chData[1] = data[5];
-		gpsSensorData.lon.chData[2] = data[6];
-		gpsSensorData.lon.chData[3] = data[7];
+		gpsDataStore.lon.chData[0] = data[4];
+		gpsDataStore.lon.chData[1] = data[5];
+		gpsDataStore.lon.chData[2] = data[6];
+		gpsDataStore.lon.chData[3] = data[7];
 		
-		gpsSensorData.alt.chData[0] = data[8];
-		gpsSensorData.alt.chData[1] = data[9];
-		gpsSensorData.alt.chData[2] = data[10];
-		gpsSensorData.alt.chData[3] = data[11];
+		gpsDataStore.alt.chData[0] = data[8];
+		gpsDataStore.alt.chData[1] = data[9];
+		gpsDataStore.alt.chData[2] = data[10];
+		gpsDataStore.alt.chData[3] = data[11];
 		
-		gpsSensorData.year = data[12];
-		gpsSensorData.month = data[13];
-		gpsSensorData.day = data[14];
-		gpsSensorData.hour = data[15];
-		gpsSensorData.min = data[16];
-		gpsSensorData.sec = data[17];
+		gpsDataStore.cog.chData[0] = data[12];
+		gpsDataStore.cog.chData[1] = data[13];
+		gpsDataStore.cog.chData[2] = data[14];
+		gpsDataStore.cog.chData[3] = data[15];
+		gpsDataStore.sog.chData[0] = data[16];
+		gpsDataStore.sog.chData[1] = data[17];
+		gpsDataStore.sog.chData[2] = data[18];
+		gpsDataStore.sog.chData[3] = data[19];
 		
-		gpsSensorData.cog.chData[0] = data[18];
-		gpsSensorData.cog.chData[1] = data[19];
-		gpsSensorData.cog.chData[2] = data[20];
-		gpsSensorData.cog.chData[3] = data[21];
-		gpsSensorData.sog.chData[0] = data[22];
-		gpsSensorData.sog.chData[1] = data[23];
-		gpsSensorData.sog.chData[2] = data[24];
-		gpsSensorData.sog.chData[3] = data[25];
-		gpsSensorData.sog.flData *= .5144444; // Convert SoG from knots to m/s
-		
-		gpsSensorData.fix = 3;
-		gpsSensorData.sats = 7;
-		gpsSensorData.newData = 1;
-		
-		SetGpsData(&gpsSensorData);
+		gpsDataStore.newData = 1;
 	}
 }
 

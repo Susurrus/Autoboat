@@ -1,39 +1,45 @@
 #ifndef __NMEA2000_H__
 #define __NMEA2000_H__
 
+#include <inttypes.h>
+
 /**
  * Miscellaneous utilities.
  */
 
 // Converts the 29-bit CAN extended address into its components according to the ISO 11783 spec.
-unsigned long ISO11783Decode(unsigned long id, unsigned char *src, unsigned char *dest, unsigned char *pri);
+uint32_t ISO11783Decode(uint32_t id, uint8_t *src, uint8_t *dest, uint8_t *pri);
+
+// Given a number of days return the offset since January 1st 1970 in years, months, and days.
+uint8_t DaysSinceEpochToOffset(uint16_t days, uint8_t *offset_years, uint8_t *offset_months, uint8_t *offset_days);
 
 /***
  * PGN Parsers
  */
 
+ // Units are year: absolute, month: 1-12, day: 1-31, hour: 0-23, min: 0-59, sec: 0-59, seqId: none, source: 0 (GPS), 1 (GLONASS), 2 (Radio station), 3 (Local cesium clock), 4 (local rubidium clock), 5 (Local crystal clock).
+ // NOTE: The date values aren't properly decoded yet.
+uint8_t ParsePgn126992(uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_t *year, uint8_t *month, uint8_t *day, uint8_t *hour, uint8_t *min, uint8_t *sec);
+
 // Units are seqId: none, waterSpeed: m/s.
-unsigned char ParsePgn128259(unsigned char data[8], unsigned char *seqId, float *waterSpeed);
+uint8_t ParsePgn128259(uint8_t data[8], uint8_t *seqId, float *waterSpeed);
 
 // Units are seqId: none, waterDepth: m, offset: m.
-unsigned char ParsePgn128267(unsigned char data[8], unsigned char *seqId, float *waterDepth, float *offset);
+uint8_t ParsePgn128267(uint8_t data[8], uint8_t *seqId, float *waterDepth, float *offset);
 
-// Units are seqId: none, latitude: degrees, longitude: degrees.
-unsigned char ParsePgn129025(unsigned char data[8], float *latitude, float *longitude);
+// Units are seqId: none, latitude: radians (+ north), longitude: radians (+ east).
+uint8_t ParsePgn129025(uint8_t data[8], float *latitude, float *longitude);
 
-// Units are seqId: none, cogRef: 0=True, 1=magnetic, cog: .0001 rads eastward from north, sog: .01 m/s
-unsigned char ParsePgn129026(unsigned char data[8], unsigned char *seqId, unsigned char *cogRef, float *cog, float *sog);
-
-// Units are obvious.
-unsigned char ParsePgn129033(unsigned char data[8], unsigned char *day, unsigned char *month, unsigned char *year, unsigned char *hour, unsigned char *minute, unsigned char *seconds);
+// Units are seqId: none, cogRef: 0 (True), 1 (magnetic), cog: radians eastward from north, sog: m/s
+uint8_t ParsePgn129026(uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, float *cog, float *sog);
 
 // Units are seqId: none, airSpeed: m/s, direction: radians eastward from north.
-unsigned char ParsePgn130306(unsigned char data[8], unsigned char *seqId, float *airSpeed, float *direction);
+uint8_t ParsePgn130306(uint8_t data[8], uint8_t *seqId, float *airSpeed, float *direction);
 
 // Units are seqId: none, waterTemp: degrees C, airTemp: degrees C, and airPressure: kPa.
-unsigned char ParsePgn130310(unsigned char data[8], unsigned char *seqId, float *waterTemp, float *airTemp, float *airPressure);
+uint8_t ParsePgn130310(uint8_t data[8], uint8_t *seqId, float *waterTemp, float *airTemp, float *airPressure);
 
 // Units are seqId: none, temp: degrees C, humidity: %, pressure: kPa.
-unsigned char ParsePgn130311(unsigned char data[8], unsigned char *seqId, float *temp, float *humidity, float *pressure);
+uint8_t ParsePgn130311(uint8_t data[8], uint8_t *seqId, float *temp, float *humidity, float *pressure);
 
 #endif // __NMEA2000_H__

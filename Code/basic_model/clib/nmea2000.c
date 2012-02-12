@@ -1,38 +1,41 @@
 #include "nmea2000.h"
 #include "types.h"
+#include <math.h>
 
+#ifndef M_PI
 #define M_PI 3.1415926535
+#endif
 
-unsigned long ISO11783Decode(unsigned long id, unsigned char *src, unsigned char *dest, unsigned char *pri)
+uint32_t ISO11783Decode(uint32_t id, uint8_t *src, uint8_t *dest, uint8_t *pri)
 {
 
-	unsigned long pgn;
+	uint32_t pgn;
 
 	// The source address is the lowest 8 bits
 	if (src) {
-	    	*src = (unsigned char)id;
+	    	*src = (uint8_t)id;
 	}
     
 	// The priority are the highest 3 bits
 	if (pri) {
-		*pri = (unsigned char)((id >> 26) & 7);
+		*pri = (uint8_t)((id >> 26) & 7);
 	}
 	
 	// PDU Format byte
-	unsigned char PF = (unsigned char)(id >> 8);
+	uint8_t PF = (uint8_t)(id >> 8);
 	
 	// PDU Specific byte
-	unsigned long PS = (id >> 16) & 0xFF;
+	uint32_t PS = (id >> 16) & 0xFF;
 	
 	// Most Significant byte
-	unsigned long MS = (id >> 24) & 3;
+	uint32_t MS = (id >> 24) & 3;
 
 	if (PS > 239) {
 		// PDU2 format, the destination is implied global and the PGN is extended.
 		if (dest) {
 			*dest = 0xFF;
 		}
-		pgn = (MS << 16) | (PS << 8) | ((unsigned long)PF);
+		pgn = (MS << 16) | (PS << 8) | ((uint32_t)PF);
 	} else {
 		// PDU1 format, the PF contains the destination address.
 		if (dest) {
@@ -44,182 +47,114 @@ unsigned long ISO11783Decode(unsigned long id, unsigned char *src, unsigned char
 	return pgn;
 }
 
-unsigned char ParsePgn128259(unsigned char data[8], unsigned char *seqId, float *waterSpeed)
+uint8_t DaysSinceEpochToOffset(uint16_t days, uint8_t *offset_years, uint8_t *offset_months, uint8_t *offset_days)
 {
+	static const float quad_year = 365 + 365 + 366 + 365;
+	static const uint16_t year_lengths[] = {365, 365, 366, 365};
+	uint8_t month_lengths[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	
+	// Modulo out the number of days into the current year we are. This also calculates
+	// what year offset we are.
+	uint8_t years_tmp = 4 * floorf(((float)days) / quad_year);
+	uint16_t days_tmp = fmodf((float)days, quad_year);
+	uint8_t i = 0;
+	while (days_tmp >= year_lengths[i]) {
+		days_tmp -= year_lengths[i];
+		++i;
+		++years_tmp;		
+	}
+	
+	// If it's a leap year, account for that in the number of days in February
+	if (i == 2) {
+		month_lengths[1] = 29;
+	}
+	
+	// Return the offset years.
+	if (offset_years) {
+		*offset_years = years_tmp;
+	}
+	
+	// Modulo out the number of months along with the exact number of days
+	i = 0;
+	uint8_t months_tmp = 0;
+	while (days_tmp >= month_lengths[i]) {
+		days_tmp -= month_lengths[i];
+		++i;
+		++months_tmp;
+	}
+	
+	// Return the months value
+	if (offset_months) {
+		*offset_months = months_tmp;
+	}
+	
+	// Return the days value
+	if (offset_days) {
+		*offset_days = days_tmp;
+	}
+}
 
-	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each field.
-	unsigned char fieldStatus = 0;
+uint8_t ParsePgn126992(uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_t *year, uint8_t *month, uint8_t *day, uint8_t *hour, uint8_t *minute, uint8_t *second)
+{
+	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
+	uint8_t fieldStatus = 0;
 	
 	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep. If the sequence ID is 255, it's invalid.
 	if (seqId && data[0] != 0xFF) {
 		*seqId = data[0];
 		fieldStatus |= 0x01;
 	}
-	
-	// Field 1: Water speed. Raw units are centimeters/second. Converted to meters/second for output.
-	if (waterSpeed) {
-		unsigned int unpacked = data[1];
-		unpacked |= ((unsigned int)data[2]) << 8;
-		*waterSpeed = ((float)unpacked) / 100.0;
+
+	// Field 1: Source, 4-bit enumeration. This field describes the source of this date/time:
+	// 0 (GPS),
+	// 1 (GLONASS),
+	// 2 (Radio station),
+	// 3 (Local cesium clock),
+	// 4 (local rubidium clock),
+	// 5 (Local crystal clock).
+	if (source) {
+		*source = data[1] & 0x0F;
 		fieldStatus |= 0x02;
 	}
 	
-	return fieldStatus;
-}
-
-unsigned char ParsePgn128267(unsigned char data[8], unsigned char *seqId, float *waterDepth, float *offset)
-{
-
-	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each field.
-	unsigned char fieldStatus = 0;
-	
-	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep. If the sequence ID is 255, it's invalid.
-	if (seqId && data[0] != 0xFF) {
-		*seqId = data[0];
-		fieldStatus |= 0x01;
-	}
-	
-	// Field 1: Water depth. Raw units are centimeters. Converted to meters for output.
-	if (waterDepth) {
-		unsigned int unpacked = data[1];
-		unpacked |= ((unsigned int)data[2]) << 8;
-		if (unpacked != 0xFFFF) {
-			*waterDepth = ((float)unpacked) / 100.0;
-			fieldStatus |= 0x02;
-		} else {
-			*waterDepth = 0.0;
+	// Field 2: Date in days since Jan 1 1970.
+	// This field can be invalid if all 1's.
+	if (data[2] != 0xFF || data[3] != 0xFF) {
+		tUnsignedShortToChar unpacked;
+		unpacked.chData[0] = data[2];
+		unpacked.chData[1] = data[3];
+		fieldStatus |= 0x04;
+		
+		// Obtain the offset from epoch based on the number of days
+		// I use local variables here only for consistency with the yearOffset variable.
+		uint8_t yearOffset;
+		uint8_t monthOffset;
+		uint8_t dayOffset;
+		DaysSinceEpochToOffset(unpacked.usData, &yearOffset, &monthOffset, &dayOffset);
+		
+		// Add the offsets to that these are the actual date
+		if (year) {
+			*year = 1970 + (uint16_t)yearOffset;
+		}
+		if (month) {
+			*month = 1 + monthOffset;
+		}
+		if (day) {
+			*day = 1 + dayOffset;
 		}
 	}
 	
-	// Field 2: Water depth offset. Raw units are centimeters. Converted to meters for output.
-	if (offset) {
-		unsigned int unpacked = data[5];
-		unpacked |= ((unsigned int)data[6]) << 8;
-		*offset = ((float)unpacked) * .01;
-		fieldStatus |= 0x04;
-	}
-	
-	return fieldStatus;
-}
-
-unsigned char ParsePgn129025(unsigned char data[8], float *latitude, float *longitude)
-{
-
-	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each field.
-	unsigned char fieldStatus = 0;
-
-	// Make conversions between long and chars easy
-	tLongToChar unpacked;
-		
-	// Field 0: Latitude. Raw units are 1e-7 degrees, but they're converted to raw radians on output.
-	if (latitude) {
-		unpacked.chData[0] = data[0];
-		unpacked.chData[1] = data[1];
-		unpacked.chData[2] = data[2];
-		unpacked.chData[3] = data[3];
-		*latitude = ((float)unpacked.lData) / 1e7 * M_PI / 180;
-		fieldStatus |= 0x01;
-	}
-	
-	// Field 1: Longitude. Raw units are 1e-7 degrees, but they're converted to raw radians on output.
-	if (longitude) {
+	// Field 3: Seconds since midnight in units of 1e-4 second.
+	if (data[4] != 0xFF || data[5] != 0xFF || data[6] != 0xFF || data[7] != 0xFF) {
+		tUnsignedLongToChar unpacked;
 		unpacked.chData[0] = data[4];
 		unpacked.chData[1] = data[5];
 		unpacked.chData[2] = data[6];
 		unpacked.chData[3] = data[7];
-		*longitude = ((float)unpacked.lData) / 1e7 * M_PI / 180;
-		fieldStatus |= 0x02;
-	}
-	
-	return fieldStatus;
-}
-
-unsigned char ParsePgn129026(unsigned char data[8], unsigned char *seqId, unsigned char *cogRef, float *cog, float *sog)
-{
-
-	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each field.
-	unsigned char fieldStatus = 0;
-	
-	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep. If the sequence ID is 255, it's invalid.
-	if (seqId && data[0] != 0xFF) {
-		*seqId = data[0];
-		fieldStatus |= 0x01;
-	}
-	
-	// Field 1: Course over ground reference. A 0 for True reference and a 1 for a magnetic field reference.
-	if (cogRef) {
-		*cogRef = data[1] & 0x03;
-		fieldStatus |= 0x02;
-	}
-	
-	// Field 2: Course over ground. Raw units are .0001 degrees eastward from north but are converted to plain radians for output.
-	if (cog) {
-		tUnsignedShortToChar unpacked;
-		unpacked.chData[0] = data[2];
-		unpacked.chData[1] = data[3];
-		*cog = ((float)unpacked.usData) / 1e4;
-		fieldStatus |= 0x04;
-	}
-	
-	// Field 3: Speed over ground. Raw units are .01 m/s but are converted to straight m/s on output.
-	if (sog) {
-		tUnsignedShortToChar unpacked;
-		unpacked.chData[0] = data[4];
-		unpacked.chData[1] = data[5];
-		*sog = ((float)unpacked.usData) / 1e2;
-		fieldStatus |= 0x08;
-	}
-	
-	return fieldStatus;
-}
-
-unsigned char ParsePgn129033(unsigned char data[8], unsigned char *day, unsigned char *month, unsigned char *year, unsigned char *hour, unsigned char *minute, unsigned char *second)
-{
-
-	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each field.
-	unsigned char fieldStatus = 0;
-	
-	// Field 2: Local offset. Units in minutes. We fetch this field first as it affects the other two fields
-	// Figure out proper algorithm and fill in the code below.
-//	{
-//		tShortToChar unpacked;
-//		unpacked.chData[0] = data[6];
-//		unpacked.chData[1] = data[7];
-//		fieldStatus != 0x04;
-//	}
-	
-	// Field 0: Date in days since Jan 1 1970.
-	// This field can be invalid if all 1's.
-	if (data[0] != 0xFF && data[1] != 0xFF) {
-		tUnsignedShortToChar unpacked;
-		unpacked.chData[0] = data[0];
-		unpacked.chData[1] = data[1];
-		fieldStatus |= 0x01;
-		
-		if (day) {
-			*day = 0;
-		}
-		
-		if (month) {
-			*month = 0;
-		}
-		
-		if (year) {
-			*year = 0;
-		}
-	}
-	
-	// Field 1: Seconds since midnight in units of 1e-4 second.
-	{
-		tUnsignedLongToChar unpacked;
-		unpacked.chData[0] = data[2];
-		unpacked.chData[1] = data[3];
-		unpacked.chData[2] = data[4];
-		unpacked.chData[3] = data[5];
 		unpacked.ulData /= 1e4;
-		fieldStatus |= 0x02;
+		fieldStatus |= 0x08;
 
-		unsigned long seconds = unpacked.ulData;
+		uint32_t seconds = unpacked.ulData;
 		if (hour) {
 			*hour = seconds / 3600;
 		}
@@ -238,11 +173,143 @@ unsigned char ParsePgn129033(unsigned char data[8], unsigned char *day, unsigned
 	return fieldStatus;
 }
 
-unsigned char ParsePgn130306(unsigned char data[8], unsigned char *seqId, float *airSpeed, float *direction)
+uint8_t ParsePgn128259(uint8_t data[8], uint8_t *seqId, float *waterSpeed)
 {
 
-	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each field.
-	unsigned char fieldStatus = 0;
+	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
+	uint8_t fieldStatus = 0;
+	
+	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep. If the sequence ID is 255, it's invalid.
+	if (seqId && data[0] != 0xFF) {
+		*seqId = data[0];
+		fieldStatus |= 0x01;
+	}
+	
+	// Field 1: Water speed. Raw units are centimeters/second. Converted to meters/second for output.
+	if (waterSpeed) {
+		tUnsignedShortToChar unpacked;
+		unpacked.chData[0] = data[1];
+		unpacked.chData[1] = data[2];
+		*waterSpeed = ((float)unpacked.usData) / 100.0;
+		fieldStatus |= 0x02;
+	}
+	
+	return fieldStatus;
+}
+
+uint8_t ParsePgn128267(uint8_t data[8], uint8_t *seqId, float *waterDepth, float *offset)
+{
+
+	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
+	uint8_t fieldStatus = 0;
+	
+	// Field 0: Sequence ID (8-bits). Links data together across PGNs that occured at the same timestep. If the sequence ID is 255, it's invalid.
+	if (seqId && data[0] != 0xFF) {
+		*seqId = data[0];
+		fieldStatus |= 0x01;
+	}
+	
+	// Field 1: Water depth (8-bits). Raw units are centimeters. Converted to meters for output.
+	if (waterDepth && (data[1] != 0xFF || data[2] != 0xFF)) {
+		tUnsignedShortToChar unpacked;
+		unpacked.chData[0] = data[1];
+		unpacked.chData[1] = data[2];
+		*waterDepth = ((float)unpacked.usData) / 100.0;
+		fieldStatus |= 0x02;
+	}
+	
+	// Field 2: Water depth offset (8-bits). Raw units are centimeters. Converted to meters for output.
+	if (offset && (data[5] != 0xFF || data[6] != 0xFF)) {
+		tUnsignedShortToChar unpacked;
+		unpacked.chData[0] = data[5];
+		unpacked.chData[1] = data[6];
+		*offset = ((float)unpacked.usData) * .01;
+		fieldStatus |= 0x04;
+	}
+	
+	return fieldStatus;
+}
+
+uint8_t ParsePgn129025(uint8_t data[8], float *latitude, float *longitude)
+{
+
+	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
+	uint8_t fieldStatus = 0;
+
+	// Make conversions between long and chars easy
+	tLongToChar unpacked;
+		
+	// Field 0: Latitude (32-bits). Raw units are 1e-7 degrees, but they're converted to raw radians on output.
+	if (latitude && (data[0] != 0xFF || data[1] != 0xFF || data[2] != 0xFF || data[3] != 0x7F)) {
+		unpacked.chData[0] = data[0];
+		unpacked.chData[1] = data[1];
+		unpacked.chData[2] = data[2];
+		unpacked.chData[3] = data[3];
+		*latitude = ((float)unpacked.lData) / 1e7 * M_PI / 180;
+		fieldStatus |= 0x01;
+	}
+	
+	// Field 1: Longitude (32-bits). Raw units are 1e-7 degrees, but they're converted to raw radians on output.
+	if (longitude && (data[4] != 0xFF || data[5] != 0xFF || data[6] != 0xFF || data[7] != 0x7F)) {
+		unpacked.chData[0] = data[4];
+		unpacked.chData[1] = data[5];
+		unpacked.chData[2] = data[6];
+		unpacked.chData[3] = data[7];
+		*longitude = ((float)unpacked.lData) / 1e7 * M_PI / 180;
+		fieldStatus |= 0x02;
+	}
+	
+	return fieldStatus;
+}
+
+uint8_t ParsePgn129026(uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, float *cog, float *sog)
+{
+
+	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
+	uint8_t fieldStatus = 0;
+	
+	// Field 0: Sequence ID (8-bits). Links data together across PGNs that occured at the same timestep. If the sequence ID is 255, it's invalid.
+	if (seqId && data[0] != 0xFF) {
+		*seqId = data[0];
+		fieldStatus |= 0x01;
+	}
+	
+	// Field 1: Course over ground reference (2-bits). A 0 for True reference and a 1 for a magnetic field reference.
+	if (cogRef) {
+		*cogRef = data[1] & 0x03;
+		fieldStatus |= 0x02;
+	}
+	
+	// 6-bits reserved
+	
+	// Field 2: Course over ground (16-bits). Raw units are .0001 degrees eastward from north but are converted to plain radians for output.
+	if (cog && (data[2] != 0xFF || data[3] != 0xFF)) {
+		tUnsignedShortToChar unpacked;
+		unpacked.chData[0] = data[2];
+		unpacked.chData[1] = data[3];
+		*cog = ((float)unpacked.usData) / 1e4;
+		fieldStatus |= 0x04;
+	}
+	
+	// Field 3: Speed over ground (16-bits). Raw units are .01 m/s but are converted to straight m/s on output.
+	if (sog && (data[4] != 0xFF || data[5] != 0xFF)) {
+		tUnsignedShortToChar unpacked;
+		unpacked.chData[0] = data[4];
+		unpacked.chData[1] = data[5];
+		*sog = ((float)unpacked.usData) / 1e2;
+		fieldStatus |= 0x08;
+	}
+	
+	// Last 16-bits reserved
+	
+	return fieldStatus;
+}
+
+uint8_t ParsePgn130306(uint8_t data[8], uint8_t *seqId, float *airSpeed, float *direction)
+{
+
+	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
+	uint8_t fieldStatus = 0;
 	
 	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep. If the sequence ID is 255, it's invalid.
 	if (seqId && data[0] != 0xFF) {
@@ -252,88 +319,75 @@ unsigned char ParsePgn130306(unsigned char data[8], unsigned char *seqId, float 
 	
 	// Field 1: Wind speed. Message units are cm/s but are converted to m/s on output.
 	if (airSpeed) {
-		unsigned int unpacked = data[1];
-		unpacked |= ((unsigned int)data[2]) << 8;
-		*airSpeed = ((float)unpacked) / 100.0;
+		tUnsignedShortToChar unpacked;
+		unpacked.chData[0] = data[1];
+		unpacked.chData[1] = data[2];
+		*airSpeed = ((float)unpacked.usData) / 100.0;
 		fieldStatus |= 0x02;
 	}
 	
 	// Field 2: Wind direction. Message units are e-4 rads but are converted to raw radians on output.
-	if (direction) {
-		unsigned int unpacked = data[3];
-		unpacked |= ((unsigned int)data[4]) << 8;
-		*direction = 0;
-		if (unpacked != 0xFFFF) {
-			*direction = ((float)unpacked) * .0001;
-			fieldStatus |= 0x04;
-		} else {
-			*direction = 0;
-		}
+	if (direction && (data[3] != 0xFF || data[4] != 0xFF)) {
+		tUnsignedShortToChar unpacked;
+		unpacked.chData[0] = data[3];
+		unpacked.chData[1] = data[4];
+		*direction = ((float)unpacked.usData) * .0001;
+		fieldStatus |= 0x04;
 	}
 	
 	return fieldStatus;
 }
 
-unsigned char ParsePgn130310(unsigned char data[8], unsigned char *seqId, float *waterTemp, float *airTemp, float *airPressure)
+uint8_t ParsePgn130310(uint8_t data[8], uint8_t *seqId, float *waterTemp, float *airTemp, float *airPressure)
 {
 
-	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each field.
-	unsigned char fieldStatus = 0;
+	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
+	uint8_t fieldStatus = 0;
 	
 	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep. If the sequence ID is 255, it's invalid.
 	if (seqId && data[0] != 0xFF) {
 		*seqId = data[0];
 		fieldStatus |= 0x01;
 	}
+
+	tUnsignedShortToChar unpacked;
 	
 	// Water temperature data. Read in as centiKelvin and converted to Celsius.
 	// A value of 0xFFFF implies invalid data.
-	if (waterTemp) {
-		unsigned int unpacked = data[1];
-		unpacked |= ((unsigned int)data[2]) << 8;
-		if (unpacked != 0xFFFF) {
-			*waterTemp = ((float)unpacked) / 100.0 - 273.15;
-			fieldStatus |= 0x02;
-		} else {
-			*waterTemp = 0;
-		}
+	if (waterTemp && (data[1] != 0xFF || data[2] != 0xFF)) {
+		unpacked.chData[0] = data[1];
+		unpacked.chData[1] = data[2];
+		*waterTemp = ((float)unpacked.usData) / 100.0 - 273.15;
+		fieldStatus |= 0x02;
 	}
 	
 	// Air temperature data. Read in as centiKelvin and converted to Celsius.
 	// A value of 0xFFFF implies invalid data.
-	if (airTemp) {
-		unsigned int unpacked = data[3];
-		unpacked |= ((unsigned int)data[4]) << 8;
-		if (unpacked != 0xFFFF) {
-			*airTemp = ((float)unpacked) / 100.0 - 273.15;
-			fieldStatus |= 0x04;
-		} else {
-			*airTemp = 0;
-		}
+	if (airTemp && (data[3] != 0xFF || data[4] != 0xFF)) {
+		unpacked.chData[0] = data[3];
+		unpacked.chData[1] = data[4];
+		*airTemp = ((float)unpacked.usData) / 100.0 - 273.15;
+		fieldStatus |= 0x04;
 	}
 
 	// Air pressure data. Read in as hectoPascals and converted to kiloPascals.
 	// A value of 0xFFFF implies invalid data.
-	if (airPressure) {
-		unsigned int unpacked = data[5];
-		unpacked |= ((unsigned int)data[6]) << 8;
-		if (unpacked != 0xFFFF) {
-			*airPressure = ((float)unpacked) * 0.1;
-			fieldStatus |= 0x08;
-		} else {
-			*airPressure = 0;
-		}
+	if (airPressure && (data[5] != 0xFF || data[6] != 0xFF)) {
+		unpacked.chData[0] = data[5];
+		unpacked.chData[1] = data[6];
+		*airPressure = ((float)unpacked.usData) * 0.1;
+		fieldStatus |= 0x08;
 	}
 	
 	return fieldStatus;
 }
 
 // TODO: Add code for processing the instance ID and instance fields (2nd byte)
-unsigned char ParsePgn130311(unsigned char data[8], unsigned char *seqId, float *temp, float *humidity, float *pressure)
+uint8_t ParsePgn130311(uint8_t data[8], uint8_t *seqId, float *temp, float *humidity, float *pressure)
 {
 
-	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each field.
-	unsigned char fieldStatus = 0;
+	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
+	uint8_t fieldStatus = 0;
 	
 	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep. If the sequence ID is 255, it's invalid.
 	if (seqId && data[0] != 0xFF) {
@@ -343,25 +397,28 @@ unsigned char ParsePgn130311(unsigned char data[8], unsigned char *seqId, float 
 	
 	// Add air temperature data. Read in as centiKelvin and converted to Celsius
 	if (temp) {
-		unsigned int unpacked = data[2];
-		unpacked |= ((unsigned int)data[3]) << 8;
-		*temp = ((float)unpacked) / 100.0 - 273.15;
+		tUnsignedShortToChar unpacked;
+		unpacked.chData[0] = data[2];
+		unpacked.chData[1] = data[3];
+		*temp = ((float)unpacked.usData) / 100.0 - 273.15;
 		fieldStatus |= 0x02;
 	}
 	
 	// Humidity data. Read in in units of .0004%, output in percent. 
 	if (humidity) {
-		unsigned int unpacked = data[4];
-		unpacked |= ((unsigned int)data[5]) << 8;
-		*humidity = ((float)unpacked) * 0.004;
+		tUnsignedShortToChar unpacked;
+		unpacked.chData[0] = data[4];
+		unpacked.chData[1] = data[5];
+		*humidity = ((float)unpacked.usData) * 0.004;
 		fieldStatus |= 0x04;
 	}
 
 	// Pressure data. Read in as hectoPascals and converted to kiloPascals.
 	if (pressure) {
-		unsigned int unpacked = data[6];
-		unpacked |= ((unsigned int)data[7]) << 8;
-		*pressure = ((float)unpacked) * 0.1;
+		tUnsignedShortToChar unpacked;
+		unpacked.chData[0] = data[6];
+		unpacked.chData[1] = data[7];
+		*pressure = ((float)unpacked.usData) * 0.1;
 		fieldStatus |= 0x08;
 	}
 	

@@ -1,40 +1,32 @@
 #ifndef __TYPES_H__
 #define __TYPES_H__
 
+#include <inttypes.h>
+
 typedef union {
-	unsigned char    chData[2];
-	unsigned short   usData;
+	uint8_t  chData[2];
+	uint16_t usData;
 } tUnsignedShortToChar; 
 
 typedef union {
-	unsigned char    chData[2];
-	short   		 shData;
-} tShortToChar; 
+	uint8_t	chData[2];
+	int16_t	shData;
+} tShortToChar;
 
 typedef union {
-	unsigned char   chData[4];
-	unsigned int   	uiData;
-} tUnsignedIntToChar;
-
-typedef union {
-	unsigned char   chData[4];
-	int   			inData;
-} tIntToChar;
-
-typedef union {
-	unsigned char   chData[4];
-	unsigned long  	ulData;
+	uint8_t  chData[4];
+	uint32_t ulData;
 } tUnsignedLongToChar;
 
 typedef union {
-	unsigned char   chData[4];
-	long  	lData;
+	uint8_t chData[4];
+	int32_t lData;
 } tLongToChar;
 
 typedef union {
-	unsigned char   chData[4];
-	float   		flData;
-	unsigned short	usData[2];
+	uint8_t  chData[4];
+	float    flData;
+	uint16_t usData[2];
 } tFloatToChar;
 
 #ifndef NULL
