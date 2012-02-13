@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2290"
+    ComputedModelVersion    "1.2292"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -28,9 +28,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sat Feb 11 16:41:05 2012"
-  RTWModifiedTimeStamp	  250877474
-  ModelVersionFormat	  "1.%<AutoIncrement:2290>"
+  LastModifiedDate	  "Mon Feb 13 09:18:12 2012"
+  RTWModifiedTimeStamp	  251024781
+  ModelVersionFormat	  "1.%<AutoIncrement:2292>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -68,7 +68,6 @@ Model {
     $ObjectID		    1
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "Boat_sim"
-    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -1652,10 +1651,14 @@ Model {
       SampleTime	      "-1"
       SaturateOnIntegerOverflow	off
     }
+    Block {
+      BlockType		      ZeroOrderHold
+      SampleTime	      "1"
+    }
   }
   System {
     Name		    "Boat_sim"
-    Location		    [210, 82, 1573, 814]
+    Location		    [202, 74, 1581, 822]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1669,7 +1672,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "141"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "8214"
+    SIDHighWatermark	    "8218"
     Block {
       BlockType		      BusSelector
       Name		      "Bus\nSelector"
@@ -1764,6 +1767,7 @@ Model {
       Position		      [25, 1160, 55, 1190]
       BackgroundColor	      "gray"
       ShowName		      off
+      Value		      "0"
       OutDataTypeStr	      "boolean"
     }
     Block {
@@ -9049,7 +9053,7 @@ Model {
 	  BlockType		  Goto
 	  Name			  "Wind Heading4"
 	  SID			  "357"
-	  Position		  [815, 299, 875, 321]
+	  Position		  [825, 279, 885, 301]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "GPS"
@@ -9086,10 +9090,18 @@ Model {
 	  TagVisibility		  "local"
 	}
 	Block {
+	  BlockType		  ZeroOrderHold
+	  Name			  "Zero-Order\nHold"
+	  SID			  "8218"
+	  Position		  [835, 330, 870, 360]
+	  ZOrder		  -19
+	  SampleTime		  ".2"
+	}
+	Block {
 	  BlockType		  Outport
 	  Name			  "GPS"
 	  SID			  "359"
-	  Position		  [835, 338, 865, 352]
+	  Position		  [925, 338, 955, 352]
 	  BackgroundColor	  "yellow"
 	  IconDisplay		  "Port number"
 	}
@@ -9203,12 +9215,12 @@ Model {
 	  SrcPort		  1
 	  Points		  [10, 0]
 	  Branch {
-	    Points		    [0, -35]
+	    Points		    [0, -55]
 	    DstBlock		    "Wind Heading4"
 	    DstPort		    1
 	  }
 	  Branch {
-	    DstBlock		    "GPS"
+	    DstBlock		    "Zero-Order\nHold"
 	    DstPort		    1
 	  }
 	}
@@ -9261,6 +9273,12 @@ Model {
 	  DstBlock		  "Wind Heading6"
 	  DstPort		  1
 	}
+	Line {
+	  SrcBlock		  "Zero-Order\nHold"
+	  SrcPort		  1
+	  DstBlock		  "GPS"
+	  DstPort		  1
+	}
 	Annotation {
 	  Position		  [875, 316]
 	}
@@ -9269,10 +9287,11 @@ Model {
     Block {
       BlockType		      RateTransition
       Name		      "Rate Transition"
-      SID		      "2188"
+      SID		      "8217"
       Position		      [175, 329, 215, 371]
+      ZOrder		      -10
       ShowName		      off
-      Deterministic	      off
+      OutPortSampleTime	      "T_step"
     }
     Block {
       BlockType		      SubSystem
@@ -16761,7 +16780,7 @@ Model {
 	  Ports			  [0, 1]
 	  Position		  [35, 139, 65, 171]
 	  ShowName		  off
-	  Period		  "100"
+	  Period		  "20"
 	  PhaseDelay		  "100"
 	  SampleTime		  "T_step"
 	}
@@ -17352,12 +17371,6 @@ Model {
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Rate Transition"
-      SrcPort		      1
-      DstBlock		      "Subsystem1"
-      DstPort		      1
-    }
-    Line {
       SrcBlock		      "Hold in reset\non init"
       SrcPort		      1
       Points		      [120, 0]
@@ -17558,6 +17571,12 @@ Model {
       SrcBlock		      "From29"
       SrcPort		      1
       DstBlock		      "Log GPS data"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Rate Transition"
+      SrcPort		      1
+      DstBlock		      "Subsystem1"
       DstPort		      1
     }
     Annotation {
