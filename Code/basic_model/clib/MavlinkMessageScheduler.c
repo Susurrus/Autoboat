@@ -86,7 +86,7 @@ bool AddMessage(uint8_t id, uint8_t rate)
 			newMessages[i]->id = id;
 			newMessages[i]->_transient = false;
 		}
-		// Otherwise if malloc() failed, back up through the array andfree any ones that
+		// Otherwise if malloc() failed, back up through the array and free any ones that
 		// were allocated and return failure.
 		else {
 			uint8_t j;
@@ -430,31 +430,39 @@ int main(void)
 		assert(x->id == 143);
 		
 		// Now that this transient message has been handled if we loop around again it should be gone.
+		// We also should also not encounter this message until then.
 		for (i = 0; i < 99; i++) {
-			IncrementTimestep();
+			x = IncrementTimestep();
+			assert(x);
+			assert(x->id == 111);
+			assert(!x->sibling);
 		}
 		
+		// Back to the original timestep + 100 steps. We shouldn't see the transient message here again.
 		x = IncrementTimestep();
 		assert(x);
 		assert(x->id == 111);
+		assert(!x->sibling);
 	}
 	
 	// Now attempt a realistic message scheduling scenario.
 	// I don't actually do any automated checking here, but this can
 	// be useful to confirm things by hand.
 	{
-		// assert(AddMessage(0, 1)); // Heartbeat at 1Hz
-		// assert(AddMessage(1, 1)); // System status at 1Hz
-		// assert(AddMessage(30, 10)); // Attitude at 10Hz
-		// assert(AddMessage(32, 10)); // Local position at 10Hz
-		// assert(AddMessage(74, 4)); // VFR_HUD at 4Hz
-		// assert(AddMessage(24, 1)); // GPS at 1Hz
-		// assert(AddMessage(171, 30)); // State data at 30Hz
-		// assert(AddMessage(161, 1)); // DST800 data at 1Hz
-		// assert(AddMessage(162, 20)); // Revo GS compass data at 20Hz
-		// assert(AddMessage(170, 4)); // Status and errors
-		// assert(AddMessage(160, 1)); // WSO100 data at 1Hz
-		// PrintAllTimesteps();
+		//ClearAllMessages();
+		//assert(AddMessage(0, 1)); // Heartbeat at 1Hz
+		//assert(AddMessage(1, 1)); // System status at 1Hz
+		//assert(AddMessage(30, 10)); // Attitude at 10Hz
+		//assert(AddMessage(32, 10)); // Local position at 10Hz
+		//assert(AddMessage(74, 4)); // VFR_HUD at 4Hz
+		//assert(AddMessage(24, 1)); // GPS at 1Hz
+		//assert(AddMessage(171, 10)); // State data at 10Hz
+		//assert(AddMessage(161, 2)); // DST800 data at 2Hz
+		//assert(AddMessage(162, 2)); // Revo GS compass data at 2Hz
+		//assert(AddMessage(170, 4)); // Status and errors at 4Hz
+		//assert(AddMessage(160, 2)); // WSO100 data at 2Hz
+		//assert(AddMessage(150, 4)); // RUDDER_RAW at 4Hz
+		//PrintAllTimesteps();
 	}
 	
 	// And display success!
