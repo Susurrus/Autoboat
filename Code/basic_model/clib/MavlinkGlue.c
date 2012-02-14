@@ -34,7 +34,7 @@
 // Store a module-wide variable for common MAVLink system variables.
 static mavlink_system_t mavlink_system = {
 	20, // Arbitrarily chosen MAV number
-	MAV_COMP_ID_SYSTEM_CONTROL,
+	MAV_COMP_ID_ALL,
 	MAV_TYPE_SURFACE_BOAT,
 	MAV_STATE_UNINIT,
 	MAV_MODE_PREFLIGHT,
@@ -125,8 +125,8 @@ static uint16_t len;
  */
 void MavLinkInit(void)
 {
-	AddMessage(MAVLINK_MSG_ID_HEARTBEAT, 1);
-	AddMessage(MAVLINK_MSG_ID_SYS_STATUS, 1);
+	AddMessage(MAVLINK_MSG_ID_HEARTBEAT, 2);
+	AddMessage(MAVLINK_MSG_ID_SYS_STATUS, 2);
 
 	AddMessage(MAVLINK_MSG_ID_LOCAL_POSITION_NED, 10);
 	AddMessage(MAVLINK_MSG_ID_ATTITUDE, 10);
@@ -168,7 +168,7 @@ void MavLinkSendHeartbeat(void)
 
 	// Pack the message
 	mavlink_msg_heartbeat_pack(mavlink_system.sysid, mavlink_system.compid, &msg, mavlink_system.type, MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY, mavlink_system.mode, 0, mavlink_system.state);
-	 
+
 	// Copy the message to the send buffer
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	uart1EnqueueData(buf, (uint8_t)len);
@@ -340,7 +340,7 @@ void MavLinkSendCurrentMission(void)
 	
 	if (currentMission != -1) {
 		mavlink_message_t msg;
-		mavlink_msg_mission_current_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &msg, (uint16_t)currentMission);
+		mavlink_msg_mission_current_pack(mavlink_system.sysid, mavlink_system.compid, &msg, (uint16_t)currentMission);
 		len = mavlink_msg_to_send_buffer(buf, &msg);
 		uart1EnqueueData(buf, (uint8_t)len);
 	}
@@ -353,7 +353,7 @@ void MavLinkSendCurrentMission(void)
 void MavLinkSendMissionAck(uint8_t type)
 {
 	mavlink_message_t msg;
-	mavlink_msg_mission_ack_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &msg, 
+	mavlink_msg_mission_ack_pack(mavlink_system.sysid, mavlink_system.compid, &msg, 
 	                             groundStationSystemId, groundStationComponentId, type);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	uart1EnqueueData(buf, (uint8_t)len);
@@ -364,7 +364,7 @@ void MavLinkSendMissionCount(void)
 	uint8_t missionCount;
 	mavlink_message_t msg;
 	GetMissionCount(&missionCount);
-	mavlink_msg_mission_count_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &msg,
+	mavlink_msg_mission_count_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                               groundStationSystemId, groundStationComponentId, missionCount);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	uart1EnqueueData(buf, (uint8_t)len);
@@ -379,7 +379,7 @@ void MavLinkSendMissionItem(uint8_t currentMissionIndex)
 		mavlink_message_t msg;
 		int8_t missionManagerCurrentIndex;
 		GetCurrentMission(&missionManagerCurrentIndex);
-		mavlink_msg_mission_item_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &msg,
+		mavlink_msg_mission_item_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 		                              groundStationSystemId, groundStationComponentId, currentMissionIndex,
 		                              m.refFrame, m.action, (currentMissionIndex == (uint8_t)missionManagerCurrentIndex),
 		                              m.autocontinue, m.parameters[0], m.parameters[1], m.parameters[2], m.parameters[3],
@@ -392,7 +392,7 @@ void MavLinkSendMissionItem(uint8_t currentMissionIndex)
 void MavLinkSendMissionRequest(uint8_t currentMissionIndex)
 {
 	mavlink_message_t msg;
-	mavlink_msg_mission_request_pack(mavlink_system.sysid, MAV_COMP_ID_MISSIONPLANNER, &msg,
+	mavlink_msg_mission_request_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                                 groundStationSystemId, groundStationComponentId, currentMissionIndex);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	uart1EnqueueData(buf, (uint8_t)len);
@@ -958,7 +958,7 @@ void MavLinkTransmit(void)
 	SListItem *messagesToSend = IncrementTimestep();
 	SListItem *j;
 	for (j = messagesToSend; j; j = j->sibling) {
-			
+
 		switch(j->id) {
 			
 			/** Common Messages **/
