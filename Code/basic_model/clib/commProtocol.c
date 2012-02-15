@@ -43,16 +43,18 @@ THE SOFTWARE.
 // ==============================================================
 
 #include "commProtocol.h"
-#include <string.h>
 #include "uart1.h"
 #include "uart2.h"
 #include "Rudder.h"
 #include "types.h"
 #include "ecanSensors.h"
 
+#include <inttypes.h>
+#include <string.h>
+
 // Declaration of the relevant message structs used.
 static struct {
-	unsigned char newData;
+	uint8_t newData;
 	tUnsignedShortToChar timestamp;
 } tHilData;
 
@@ -62,10 +64,10 @@ static struct {
 #define BAUD115200_BRG_REG 21
 
 // Keep track of how many messages were successfully received.
-static unsigned long receivedMessageCount = 0;
+static uint32_t receivedMessageCount = 0;
 // Keep track of how many fails we've run into
-static unsigned long failedMessageCount = 0;
-static unsigned char sameFailedMessageFlag = 0;
+static uint32_t failedMessageCount = 0;
+static uint8_t sameFailedMessageFlag = 0;
 
 void cpInitCommunications() {
 	initUart2(BAUD57600_BRG_REG);
@@ -76,11 +78,13 @@ void cpInitCommunications() {
  * This function builds a full message internally byte-by-byte,
  * verifies its checksum, and then pushes that data into the
  * appropriate struct.
+ * sensorMode is a boolean that is true when generated actuator sensor data
+ * should be overridden by real-world actuator sensor data.
  */
-void buildAndCheckMessage(unsigned char characterIn) {
-	static unsigned char message[64];
-	static unsigned char messageIndex;
-	static unsigned char messageState;
+void buildAndCheckMessage(uint8_t characterIn, uint8_t sensorMode) {
+	static uint8_t message[64];
+	static uint8_t messageIndex;
+	static uint8_t messageState;
 
 	// This contains the function's state of whether
 	// it is currently building a message.
@@ -171,9 +175,14 @@ void buildAndCheckMessage(unsigned char characterIn) {
 			// We now memcpy all the data into our global data structs.
 			receivedMessageCount++;
 			if (message[2] == 1) {
-				// FIXME: We skip data 4 & 5 as it's unnecessary throttle data.
+				// NOTE: We skip data 4 & 5 as it's unnecessary throttle data.
 				UpdateGpsDataFromHil(&message[6]);
-				SetRudderData(&message[27]);
+				
+				// Only update the rudder data if we're not in a sensor-override mode. This mode
+				// specifies that real-world actuator sensor data will be used instead of generated.
+				if (!sensorMode) {
+					SetRudderData(&message[27]);
+				}
 				SetHilData(&message[35]);
 			}
 
@@ -201,12 +210,15 @@ void buildAndCheckMessage(unsigned char characterIn) {
  * it for sensor data. Once a complete message has been parsed
  * the data inside will be returned through the message
  * array.
+ * It's input is a boolean that is true when generated actuator sensor data
+ * should be overridden by real-world actuator sensor data.
  */
-void processNewCommData(unsigned char* message) {
+void processNewCommData(uint8_t sensorMode)
+{
 	while (GetLength(&uart2RxBuffer) > 0) {
-		unsigned char c;
+		uint8_t c;
 		Read(&uart2RxBuffer, &c);
-		buildAndCheckMessage(c);
+		buildAndCheckMessage(c, sensorMode);
 	}
 }
 
@@ -217,8 +229,8 @@ void processNewCommData(unsigned char* message) {
  * rate back to the default 1200. A value
  * of 1 will set it to 115200.
  */
-void setHilMode(unsigned char mode) {
-	static unsigned char oldMode = 0;
+void setHilMode(uint8_t mode) {
+	static uint8_t oldMode = 0;
 
 	// Detect a change to HIL
 	if (!oldMode && mode) {
@@ -242,10 +254,10 @@ inline void disableHil() {
  * This function calculates the checksum of some bytes in an
  * array by XORing all of them.
  */
-unsigned char calculateChecksum(unsigned char* sentence, unsigned char size) {
+uint8_t calculateChecksum(uint8_t* sentence, uint8_t size) {
 
-	unsigned char checkSum = 0;
-	unsigned char i;
+	uint8_t checkSum = 0;
+	uint8_t i;
 	for (i = 0; i < size; i++) {
 		checkSum ^= sentence[i];
 	}
@@ -253,7 +265,7 @@ unsigned char calculateChecksum(unsigned char* sentence, unsigned char size) {
 	return checkSum;
 }
 
-void UpdateGpsDataFromHil(unsigned char* data) {
+void UpdateGpsDataFromHil(uint8_t* data) {
 	if (data[20]) {
 		gpsDataStore.lat.chData[0] = data[0];
 		gpsDataStore.lat.chData[1] = data[1];
@@ -283,23 +295,27 @@ void UpdateGpsDataFromHil(unsigned char* data) {
 	}
 }
 
-void SetHilData(unsigned char *data) {
+void SetHilData(uint8_t *data)
+{
 	tHilData.timestamp.chData[0] = data[0];
 	tHilData.timestamp.chData[1] = data[1];
 	tHilData.newData = 1;
 }
 
-unsigned short GetCurrentTimestamp() {
+uint16_t GetCurrentTimestamp()
+{
 	return tHilData.timestamp.usData;
 }
 
-unsigned char IsNewHilData() {
+uint8_t IsNewHilData()
+{
 	return tHilData.newData;
 }
 
 /**
  * Add all 27 data + 7 header/footer bytes of the actuator struct to UART2's transmission queue.
  */
-inline void uart2EnqueueActuatorData(unsigned char *data) {
+inline void uart2EnqueueActuatorData(uint8_t *data)
+{
 	uart2EnqueueData(data, 34);
 }

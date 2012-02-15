@@ -45,6 +45,8 @@ THE SOFTWARE.
 #ifndef _COMMPROTOCOL_H_
 #define _COMMPROTOCOL_H_
 
+#include <inttypes.h>
+
 /**
  * This function initializes all onboard UART communications
  */
@@ -55,15 +57,15 @@ void cpInitCommunications();
  * verifies its checksum, and then pushes that data into the
  * appropriate struct.
  */
-void buildAndCheckMessage(unsigned char characterIn);
+void buildAndCheckMessage(uint8_t characterIn, uint8_t sensorMode);
 
-void processNewCommData(unsigned char* message);
+void processNewCommData(uint8_t sensorMode);
 
 /**
  * The following functions change the UART2 baud rate to allow
  * for HIL mode (running at 115200baud) and back to the old baud rate.
  */
-void setHilMode(unsigned char mode);
+void setHilMode(uint8_t mode);
 
 inline void enableHil();
 
@@ -73,20 +75,20 @@ inline void disableHil();
  * This function calculates the checksum of some bytes in an
  * array by XORing all of them.
  */
-unsigned char calculateChecksum(unsigned char* sentence, unsigned char size);
+uint8_t calculateChecksum(uint8_t* sentence, uint8_t size);
 
 /**
  * This function takes the byte array of GPS data received during HIL and
  * writes it into the GPS storage struct. It does some necessary conversions.
  */
-void UpdateGpsDataFromHil(unsigned char* data);
+void UpdateGpsDataFromHil(uint8_t* data);
 
-void SetHilData(unsigned char *data);
+void SetHilData(uint8_t *data);
 
-unsigned short GetCurrentTimestamp();
+uint16_t GetCurrentTimestamp();
 
-unsigned char IsNewHilData();
+uint8_t IsNewHilData();
 
-inline void uart2EnqueueActuatorData(unsigned char *data);
+inline void uart2EnqueueActuatorData(uint8_t *data);
 
 #endif /* _COMMPROTOCOL_H_ */
