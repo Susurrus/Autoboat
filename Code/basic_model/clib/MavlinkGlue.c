@@ -31,27 +31,6 @@
 #include <stdio.h>
 #include "mavlink.h"
 
-// Store a module-wide variable for common MAVLink system variables.
-static mavlink_system_t mavlink_system = {
-	20, // Arbitrarily chosen MAV number
-	MAV_COMP_ID_ALL,
-	MAV_TYPE_SURFACE_BOAT,
-	MAV_STATE_UNINIT,
-	MAV_MODE_PREFLIGHT,
-	0 // Unused and unsure of expected usage
-};
-
-// Latch onto the first groundstation unit and only receive and transmit to it.
-static uint8_t groundStationSystemId = 0;
-static uint8_t groundStationComponentId = 0;
-
-// Store the MAVLink communication status. This struct is used by various MAVLink functions
-// to track the MAVLink decoding state among some other parameters.
-static mavlink_status_t status;
-
-// Globally declare here how many parameters we have. Should be dealt with better later.
-static uint16_t parameterCount = 4;
-
 // Set up some state machine variables for the parameter protocol
 enum {
 	PARAM_STATE_INACTIVE = 0,
@@ -115,9 +94,31 @@ enum {
 	MISSION_EVENT_ITEM_DISPATCHED
 };
 
+// Store a module-wide variable for common MAVLink system variables.
+static mavlink_system_t mavlink_system = {
+	20, // Arbitrarily chosen MAV number
+	MAV_COMP_ID_ALL,
+	MAV_TYPE_SURFACE_BOAT,
+	MAV_STATE_UNINIT,
+	MAV_MODE_PREFLIGHT,
+	0 // Unused and unsure of expected usage
+};
+
+// Latch onto the first groundstation unit and only receive and transmit to it.
+static uint8_t groundStationSystemId = 0;
+static uint8_t groundStationComponentId = 0;
+
+// Globally declare here how many parameters we have. Should be dealt with better later.
+static uint16_t parameterCount = 4;
+
 // Declare a character buffer here to prevent continual allocation/deallocation of MAVLink buffers.
 static uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 static uint16_t len;
+
+// Track how well MAVLink decoding is going:
+// WARN: Possible overflow over long-enough duration
+uint16_t mavLinkMessagesReceived = 0;
+uint16_t mavLinkMessagesFailedParsing = 0;
 
 /**
  * Initialize MAVLink transmission. This just sets up the MAVLink scheduler with the basic
@@ -193,12 +194,17 @@ void MavLinkSendStatus(void)
 	uint16_t voltage = (uint16_t)(internalVariables.BatteryVoltage * 1000);
 	int16_t amperage = (int16_t)(internalVariables.BatteryAmperage * 100);
 	
+	// Calculate the drop rate
+	uint16_t dropRate = 0;
+	if (mavLinkMessagesFailedParsing) {
+		dropRate = (uint16_t)(((float)mavLinkMessagesFailedParsing) * 10000.0f / ((float)(mavLinkMessagesReceived + mavLinkMessagesFailedParsing)));
+	}
+	
 	mavlink_msg_sys_status_pack(mavlink_system.sysid, mavlink_system.compid, &msg, 
 		systemsPresent, systemsPresent, systemsPresent, 
 		(uint16_t)(systemStatus.cpu_load)*10,
 		voltage, amperage, -1,
-		0, 0, 0, 0, 0, 0);
-	
+		dropRate, 0, 0, 0, 0, 0);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	
 	uart1EnqueueData(buf, (uint8_t)len);
@@ -863,8 +869,14 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 void MavLinkReceive(void)
 {
 	mavlink_message_t msg;
- 
+	mavlink_status_t status;
+
+	// Track whether we actually handled any data in this function call.
+	// Used for updating the number of MAVLink messages handled
+	bool processedData = false;
+	
 	while (GetLength(&uart1RxBuffer) > 0) {
+		processedData = true;
 		uint8_t c;
 		Read(&uart1RxBuffer, &c);
 		// Parse another byte and if there's a message found process it.
@@ -944,6 +956,13 @@ void MavLinkReceive(void)
 				default: break;
 			}
 		}
+	}
+	
+	// Update the number of messages received, both successful and not. Note that the 'status' variable
+	// will be updated on every call to *_parse_char(), so this will always be a valid value.
+	if (processedData) {
+		mavLinkMessagesReceived = status.packet_rx_success_count;
+		mavLinkMessagesFailedParsing = status.packet_rx_drop_count;
 	}
 }
 
