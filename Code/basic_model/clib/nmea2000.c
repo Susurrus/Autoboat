@@ -2,14 +2,6 @@
 #include "types.h"
 #include <math.h>
 
-#ifndef M_PI
-#define M_PI 3.1415926535
-#endif
-
-#ifndef NAN
-#define NAN __builtin_nan("")
-#endif
-
 uint32_t ISO11783Decode(uint32_t id, uint8_t *src, uint8_t *dest, uint8_t *pri)
 {
 

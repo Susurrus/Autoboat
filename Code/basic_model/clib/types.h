@@ -30,10 +30,23 @@ typedef union {
 } tFloatToChar;
 
 #ifndef NULL
-	#define NULL  0
+#define NULL  0
 #endif
 
+#ifndef TRUE
 #define TRUE  1
+#endif
+
+#ifndef FALSE
 #define FALSE 0
+#endif
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846264338327
+#endif
+
+#ifndef NAN
+#define NAN __builtin_nan("")
+#endif
 
 #endif // __TYPES_H__
