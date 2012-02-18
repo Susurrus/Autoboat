@@ -6,6 +6,10 @@
 #define M_PI 3.1415926535
 #endif
 
+#ifndef NAN
+#define NAN __builtin_nan("")
+#endif
+
 uint32_t ISO11783Decode(uint32_t id, uint8_t *src, uint8_t *dest, uint8_t *pri)
 {
 
@@ -168,6 +172,68 @@ uint8_t ParsePgn126992(uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_
 		if (second) {
 			*second = seconds;
 		}
+	}
+	
+	return fieldStatus;
+}
+
+uint8_t ParsePgn127508(uint8_t data[8], uint8_t *instance, float *voltage, float *current, float *temperature, uint8_t *seqId)
+{
+	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field in the same order as the output arguments to this function.
+	uint8_t fieldStatus = 0;
+	
+	// A temporary-variable used for unpacking the uint16 data.
+	tUnsignedShortToChar unpacked;
+	
+	// Field 0: Battery instance.
+	if (instance) {
+		*instance = data[0];
+		fieldStatus |= 0x01;
+	}
+	
+	// Field 1: Voltage. Comes in in units of .01V
+	if (voltage) {
+		// All 1s in NMEA2000 signifies invalid data.
+		if (data[1] == 0xFF && data[2] == 0xFF) {
+			*voltage = NAN;
+		} else {
+			unpacked.chData[0] = data[1];
+			unpacked.chData[1] = data[2];
+			*voltage = ((float)unpacked.usData) / 100.0;
+			fieldStatus |= 0x02;
+		}
+	}
+	
+	// Field 2: Current. Comes in in units of .1A.
+	if (current) {
+		// All 1s in NMEA2000 signifies invalid data.
+		if (data[3] == 0xFF && data[4] == 0xFF) {
+			*current = NAN;
+		} else {
+			unpacked.chData[0] = data[3];
+			unpacked.chData[1] = data[4];
+			*current = ((float)unpacked.usData) / 10.0;
+			fieldStatus |= 0x04;
+		}
+	}
+	
+	// Field 2: Current. Comes in in units of .01K.
+	if (temperature) {
+		// All 1s in NMEA2000 signifies invalid data.
+		if (data[5] == 0xFF && data[6] == 0xFF) {
+			*temperature = NAN;
+		} else {
+			unpacked.chData[0] = data[5];
+			unpacked.chData[1] = data[6];
+			*temperature = ((float)unpacked.usData) / 100.0 - 273.15;
+			fieldStatus |= 0x08;
+		}
+	}
+	
+	// Field 4: Sequence ID. Links data together across PGNs that occured at the same timestep. If the sequence ID is 255, it's invalid.
+	if (seqId && data[7] != 0xFF) {
+		*seqId = data[7];
+		fieldStatus |= 0x10;
 	}
 	
 	return fieldStatus;

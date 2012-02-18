@@ -19,7 +19,18 @@ uint8_t DaysSinceEpochToOffset(uint16_t days, uint8_t *offset_years, uint8_t *of
 
  // Units are year: absolute, month: 1-12, day: 1-31, hour: 0-23, min: 0-59, sec: 0-59, seqId: none, source: 0 (GPS), 1 (GLONASS), 2 (Radio station), 3 (Local cesium clock), 4 (local rubidium clock), 5 (Local crystal clock).
  // NOTE: The date values aren't properly decoded yet.
-uint8_t ParsePgn126992(uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_t *year, uint8_t *month, uint8_t *day, uint8_t *hour, uint8_t *min, uint8_t *sec);
+uint8_t ParsePgn126992(uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_t *year, uint8_t *month, uint8_t *day, uint8_t *hour, uint8_t *minute, uint8_t *second);
+
+/**
+  * Decodes PGN 127508 - Battery Status
+  * @param[in] data The 8 payload bytes of the CAN message.
+  * @param[out] instance A unique ID for this battery instance.
+  * @param[out] voltage The voltage in Volts of this battery. If invalid is NaN.
+  * @param[out] current The current in Amperes being drawn from this battery. If invalid is NaN.
+  * @param[out] temperature The current temperature in degrees Celsius of the battery. If invalid is NaN.
+  * @param[out] seqId The sequence ID for this data. Other messages from the same source sharing this sequence ID involves data measurements from the same timestep.
+  */
+uint8_t ParsePgn127508(uint8_t data[8], uint8_t *instance, float *voltage, float *current, float *temperature, uint8_t *seqId);
 
 // Units are seqId: none, waterSpeed: m/s.
 uint8_t ParsePgn128259(uint8_t data[8], uint8_t *seqId, float *waterSpeed);
