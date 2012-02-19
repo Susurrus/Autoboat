@@ -129,21 +129,23 @@ unsigned char ProcessAllEcanMessages()
 				switch (pgn) {
 				case 126992: {
 					uint8_t rv = ParsePgn126992(msg.payload, NULL, NULL, &dateTimeDataStore.year, &dateTimeDataStore.month, &dateTimeDataStore.day, &dateTimeDataStore.hour, &dateTimeDataStore.min, &dateTimeDataStore.sec);
-					// Check if both the date and time were successfully decoded before triggering an update
-					if (rv & 0x0C == 0x0C) {
+					// Check if all 6 parts of the datetime were successfully decoded before triggering an update
+					if (rv & 0xFC == 0xFC) {
 						dateTimeDataStore.newData = true;
 					}
 				} break;
 				case 128259:
-					ParsePgn128259(msg.payload, NULL, &waterDataStore.speed.flData);
-					waterDataStore.newData = true;
-				break;
-				case 128267:
-					// Only update the data in waterDataStore if an actual depth was returned.
-					if (ParsePgn128267(msg.payload, NULL, &waterDataStore.depth.flData, NULL) & 0x02) {
+					if (ParsePgn128259(msg.payload, NULL, &waterDataStore.speed.flData)) {
 						waterDataStore.newData = true;
 					}
 				break;
+				case 128267: {
+					// Only update the data in waterDataStore if an actual depth was returned.
+					uint8_t rv = ParsePgn128267(msg.payload, NULL, &waterDataStore.depth.flData, NULL);
+					if (rv & 0x02 == 0x02) {
+						waterDataStore.newData = true;
+					}
+				} break;
 				case 129025: {
 					uint8_t rv = ParsePgn129025(msg.payload, &gpsDataStore.lat.flData, &gpsDataStore.lon.flData);
 					// Only update if both latitude and longitude were parsed successfully.
@@ -159,16 +161,19 @@ unsigned char ProcessAllEcanMessages()
 					}
 				} break;
 				case 130306:
-					ParsePgn130306(msg.payload, NULL, &windDataStore.speed.flData, &windDataStore.direction.flData);
-					windDataStore.newData = true;
+					if (ParsePgn130306(msg.payload, NULL, &windDataStore.speed.flData, &windDataStore.direction.flData)) {
+						windDataStore.newData = true;
+					}
 				break;
 				case 130310:
-					ParsePgn130310(msg.payload, NULL, &waterDataStore.temp.flData, NULL, NULL);
-					waterDataStore.newData = true;
+					if (ParsePgn130310(msg.payload, NULL, &waterDataStore.temp.flData, NULL, NULL)) {
+						waterDataStore.newData = true;
+					}
 				break;
 				case 130311:
-					ParsePgn130311(msg.payload, NULL, &airDataStore.temp.flData, &airDataStore.humidity.flData, &airDataStore.pressure.flData);
-					airDataStore.newData = true;
+					if (ParsePgn130311(msg.payload, NULL, NULL, NULL, &airDataStore.temp.flData, &airDataStore.humidity.flData, &airDataStore.pressure.flData)) {
+						airDataStore.newData = true;
+					}
 				break;
 				}
 			}
