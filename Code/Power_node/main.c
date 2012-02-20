@@ -24,6 +24,7 @@ THE SOFTWARE.
 */
 
 #include "ecanDefinitions.h"
+#include "nmea2000.h"
 #include "types.h"
 
 void ProcessAdcData(float voltage, float amperage)
@@ -37,8 +38,10 @@ void ProcessAdcData(float voltage, float amperage)
 	msg.frame_type = CAN_FRAME_EXT;
 	msg.buffer = 0;
 	
-	// 127508: Voltage, current, temperature
-	msg.id = 127508;
+	// Use PGN 127508: Voltage, current, temperature
+	// We encode it using '0' as the source even though that might not be correct. This would require some move logic to claim an address over the N2K bus.
+	// We choose a lower priority, 3, as this isn't that important of data.
+	msg.id = Iso11783Encode(127508, 0, 0, 3);
 	
 	// Field 0: Battery instance
 	msg.payload[0] = 0;
