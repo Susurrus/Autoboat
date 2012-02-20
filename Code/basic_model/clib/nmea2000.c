@@ -6,49 +6,71 @@
 #define M_PI 3.1415926535
 #endif
 
-#ifndef NAN
-#define NAN __builtin_nan("")
-#endif
-
-uint32_t ISO11783Decode(uint32_t id, uint8_t *src, uint8_t *dest, uint8_t *pri)
+uint32_t Iso11783Decode(uint32_t can_id, uint8_t *src, uint8_t *dest, uint8_t *pri)
 {
-
-	uint32_t pgn;
 
 	// The source address is the lowest 8 bits
 	if (src) {
-	    	*src = (uint8_t)id;
+	    	*src = (uint8_t)can_id;
 	}
     
 	// The priority are the highest 3 bits
 	if (pri) {
-		*pri = (uint8_t)((id >> 26) & 7);
+		*pri = (uint8_t)((can_id >> 26) & 7);
 	}
 	
-	// PDU Format byte
-	uint8_t PF = (uint8_t)(id >> 8);
+	// Most significant byte
+	uint32_t MS = (can_id >> 24) & 0x03;
 	
-	// PDU Specific byte
-	uint32_t PS = (id >> 16) & 0xFF;
+	// PDU format byte
+	uint32_t PF = (can_id >> 16) & 0xFF;
 	
-	// Most Significant byte
-	uint32_t MS = (id >> 24) & 3;
+	// PDU specific byte
+	uint32_t PS = (can_id >> 8) & 0xFF;
 
-	if (PS > 239) {
+	uint32_t pgn;
+	if (PF > 239) {
 		// PDU2 format, the destination is implied global and the PGN is extended.
 		if (dest) {
 			*dest = 0xFF;
 		}
-		pgn = (MS << 16) | (PS << 8) | ((uint32_t)PF);
+		pgn = (MS << 16) | (PF << 8) | (PS);
 	} else {
-		// PDU1 format, the PF contains the destination address.
+		// PDU1 format, the PDU Specific field contains the destination address.
 		if (dest) {
-			*dest = PF;
+			*dest = PS;
 		}
-		pgn = (MS << 16) | (PS << 8);
+		pgn = (MS << 16) | (PF << 8);
 	}
 
 	return pgn;
+}
+
+uint32_t Iso11783Encode(uint32_t pgn, uint8_t src, uint8_t dest, uint8_t pri)
+{
+	uint32_t can_id = 0;
+	
+	// The source address is the lowest 8 bits
+	can_id |= src;
+    
+	// The priority is the highest 3 bits
+	can_id |= ((uint32_t)pri & 0x07) << 26;
+	
+	// Note that both the reserved bit and data page bit are left as 0 according to the protocol.
+	
+	// The following depends on if it's a PDU1 or PDU2 message. This can be determined
+	// by the destination. 255 implies a global message with an extended PGN as PDU2, otherwise
+	// it's PDU1.
+	// For PDU2
+	if (pgn & 0xFF) {
+		can_id |= (pgn & 0x7FFFF) << 8;
+	} 
+	// For PDU1
+	else {
+		can_id |= ((pgn & 0x7FF00) | (uint32_t)dest) << 8;
+	}
+	
+	return can_id;
 }
 
 void DaysSinceEpochToOffset(uint16_t days, uint8_t *offset_years, uint8_t *offset_months, uint8_t *offset_days)
@@ -518,6 +540,77 @@ uint8_t ParsePgn130311(uint8_t data[8], uint8_t *seqId, uint8_t *tempInstance, u
 
 int main(void)
 {
+
+	/** Test Iso11783Decode **/
+	{
+		// Test output from Maretron GPS200 with PGN 129025, priority 2, source 32.
+		uint32_t id = 0x09F80120;
+		uint8_t src;
+		uint8_t dest;
+		uint8_t pri;
+		assert(Iso11783Decode(id, &src, &dest, &pri) == 129025);
+		assert(src == 32);
+		assert(dest == 255);
+		assert(pri == 2);
+		
+		// Test output from Maretron GPS200 with PGN 129026, priority 2, source 32.
+		id = 0x09F80220;
+		assert(Iso11783Decode(id, &src, &dest, &pri) == 129026);
+		assert(src == 32);
+		assert(dest == 255);
+		assert(pri == 2);
+
+		// Test output from Maretron GPS200 with PGN 126992, priority 3, source 32.
+		id = 0x0DF01020;
+		assert(Iso11783Decode(id, &src, &dest, &pri) == 126992);
+		assert(src == 32);
+		assert(dest == 255);
+		assert(pri == 3);
+		
+		// Test output from Maretron GPS200 with PGN 129540, priority 7, source 32.
+		id = 0x19FA0420;
+		assert(Iso11783Decode(id, &src, &dest, &pri) == 129540);
+		assert(src == 32);
+		assert(dest == 255);
+		assert(pri == 6);
+
+		// Test broadcast from Maretron WSO100 with PGN 59904 "ISO Request", priority 6, source 81. 
+		id = 0x18EAFF51;
+		assert(Iso11783Decode(id, &src, &dest, &pri) == 59904);
+		assert(src == 81);
+		assert(dest == 255);
+		assert(pri == 6);
+
+		// Test directed message to the GPS200 from the WSO100 with PGN 59904 "ISO Request", priority 6, source 81, destination 32.
+		id = 0x18EA2051;
+		assert(Iso11783Decode(id, &src, &dest, &pri) == 59904);
+		assert(src == 81);
+		assert(dest = 32);
+		assert(pri == 6);
+		//printf("x:%d\nsrc:%d\ndest:%d\npri%d\n", x, src, dest, pri);
+	
+	}
+
+	/** Test Iso11783Encode **/
+	{
+		// Test output from Maretron GPS200 with PGN 129025, priority 2, source 32.
+		// This is a PDU2/broadcast message
+		uint32_t pgn = 129025;
+		uint8_t src = 32;
+		uint8_t dest = 255;
+		uint8_t pri = 2;
+		assert(Iso11783Encode(pgn, src, dest, pri) == 0x09F80120);
+
+		// Repeat the above test with a different destination. This value is not checked and should have no bearing on the result
+		assert(Iso11783Encode(pgn, src, 120, pri) == 0x09F80120);
+
+		// Test encoding a PDU1 message.
+		pgn =  59904;
+		src = 81;
+		dest = 32;
+		pri = 6;
+		assert(Iso11783Encode(pgn, src, dest, pri) == 0x18EA2051);
+	}
 
 	/** Test parsing of PGN126992 */
 	{

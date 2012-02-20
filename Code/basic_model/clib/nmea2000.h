@@ -7,8 +7,23 @@
  * Miscellaneous utilities.
  */
 
-// Converts the 29-bit CAN extended address into its components according to the ISO 11783 spec.
-uint32_t ISO11783Decode(uint32_t id, uint8_t *src, uint8_t *dest, uint8_t *pri);
+/**
+  * Converts the 29-bit CAN extended address into its components according to the ISO 11783 spec.
+  * @param[in] can_id The 29-bit CAN identifier to decode.
+  * @param[out] src The source of this message.
+  * @param[out] dest The destination for this message. Set to 255 if the message was a broadcast.
+  * @param[out] pri The priority, a 3-bit number with higher values indicating higher priority.
+uint32_t Iso11783Decode(uint32_t can_id, uint8_t *src, uint8_t *dest, uint8_t *pri);
+
+/**
+  * Encodes a 29-bit CAN header given the necessary parameters. Note that there are two
+  * separate styles of encoding: PDU1 is a one-to-one communication with a destination,
+  * PDU2 is a broadcast without a destination. As the destination and PGN can both encode
+  * this information and given the expected usage of this function, the PGN is given
+  * priority for determining this.
+  * @return The encoded 29-bit CAN identifier (as a uint32)
+  */
+uint32_t Iso11783Encode(uint32_t pgn, uint8_t src, uint8_t dest, uint8_t pri);
 
 // Given a number of days return the offset since January 1st 1970 in years, months, and days.
 void DaysSinceEpochToOffset(uint16_t days, uint8_t *offset_years, uint8_t *offset_months, uint8_t *offset_days);

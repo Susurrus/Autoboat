@@ -125,7 +125,7 @@ unsigned char ProcessAllEcanMessages()
 				throttleDataStore.rpm.shData = (int)(((unsigned int)msg.payload[0]) << 8) | ((unsigned int)msg.payload[1]);
 				throttleDataStore.newData = true;
 			} else {
-				pgn = ISO11783Decode(msg.id, NULL, NULL, NULL);
+				pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
 				switch (pgn) {
 				case 126992: {
 					uint8_t rv = ParsePgn126992(msg.payload, NULL, NULL, &dateTimeDataStore.year, &dateTimeDataStore.month, &dateTimeDataStore.day, &dateTimeDataStore.hour, &dateTimeDataStore.min, &dateTimeDataStore.sec);
