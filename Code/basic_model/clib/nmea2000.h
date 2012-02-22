@@ -13,6 +13,7 @@
   * @param[out] src The source of this message.
   * @param[out] dest The destination for this message. Set to 255 if the message was a broadcast.
   * @param[out] pri The priority, a 3-bit number with higher values indicating higher priority.
+  */
 uint32_t Iso11783Decode(uint32_t can_id, uint8_t *src, uint8_t *dest, uint8_t *pri);
 
 /**
