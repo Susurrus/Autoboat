@@ -140,6 +140,7 @@ void MavLinkInit(void)
 	AddMessage(MAVLINK_MSG_ID_RUDDER_RAW, 4);
 	AddMessage(MAVLINK_MSG_ID_DST800, 2);
 	AddMessage(MAVLINK_MSG_ID_REVO_GS, 2);
+	AddMessage(MAVLINK_MSG_ID_MAIN_POWER, 5);
 }
 
 /**
@@ -230,6 +231,22 @@ void MavLinkSendRawGps(void)
 	
 	uart1EnqueueData(buf, (uint8_t)len);
 }
+
+/**
+  * Transmit the main battery state as obtained from the power node via the CAN bus.
+  */
+void MavLinkSendMainPower(void)
+{
+	mavlink_message_t msg;
+ 
+	mavlink_msg_main_power_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+		(uint16_t)(powerDataStore.voltage.flData * 100.0f),(uint16_t)(powerDataStore.current.flData * 10.0f));
+
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	
+	uart1EnqueueData(buf, (uint8_t)len);
+}
+
 
 /**
  * Transmits the custom BASIC_STATE message. This just transmits a bunch of random variables
@@ -1062,6 +1079,10 @@ void MavLinkTransmit(void)
 			
 			case MAVLINK_MSG_ID_REVO_GS:
 				MavLinkSendRevoGsData();
+			break;
+
+			case MAVLINK_MSG_ID_MAIN_POWER:
+				MavLinkSendMainPower();
 			break;
 			
 			default: {

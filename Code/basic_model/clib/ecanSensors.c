@@ -4,6 +4,7 @@
 #include "nmea2000.h"
 #include "types.h"
 
+struct PowerData powerDataStore;
 struct WindData windDataStore;
 struct AirData airDataStore;
 struct WaterData waterDataStore;
@@ -111,11 +112,11 @@ void ClearGpsData(void)
 
 unsigned char ProcessAllEcanMessages()
 {
-	unsigned char messagesLeft = 0;
+	uint8_t messagesLeft = 0;
 	tCanMessage msg;
-	unsigned long pgn;
+	uint32_t pgn;
 
-	unsigned char messagesHandled = 0;
+	uint8_t messagesHandled = 0;
 
 	do {
 		int foundOne = ecan1_receive(&msg, &messagesLeft);
@@ -134,6 +135,12 @@ unsigned char ProcessAllEcanMessages()
 						dateTimeDataStore.newData = true;
 					}
 				} break;
+				case 127508: {
+					uint8_t rv = ParsePgn127508(msg.payload, NULL, NULL, &powerDataStore.voltage.flData, &powerDataStore.current.flData, &powerDataStore.temperature.flData);
+					if ((rv & 0x0C) == 0xC) {
+						powerDataStore.newData = true;
+					}
+				} break;
 				case 128259:
 					if (ParsePgn128259(msg.payload, NULL, &waterDataStore.speed.flData)) {
 						waterDataStore.newData = true;
@@ -142,21 +149,21 @@ unsigned char ProcessAllEcanMessages()
 				case 128267: {
 					// Only update the data in waterDataStore if an actual depth was returned.
 					uint8_t rv = ParsePgn128267(msg.payload, NULL, &waterDataStore.depth.flData, NULL);
-					if (rv & 0x02 == 0x02) {
+					if ((rv & 0x02) == 0x02) {
 						waterDataStore.newData = true;
 					}
 				} break;
 				case 129025: {
 					uint8_t rv = ParsePgn129025(msg.payload, &gpsDataStore.lat.flData, &gpsDataStore.lon.flData);
 					// Only update if both latitude and longitude were parsed successfully.
-					if (rv & 0x03 == 0x03) {
+					if ((rv & 0x03) == 0x03) {
 						gpsDataStore.newData = true;
 					}
 				} break;
 				case 129026: {
 					uint8_t rv = ParsePgn129026(msg.payload, NULL, NULL, &gpsDataStore.cog.flData, &gpsDataStore.sog.flData);
 					// Only update if both course-over-ground and speed-over-ground were parsed successfully.
-					if (rv & 0x0C == 0x0C) {
+					if ((rv & 0x0C) == 0x0C) {
 						gpsDataStore.newData = true;
 					}
 				} break;

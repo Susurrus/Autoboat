@@ -6,6 +6,14 @@
 
 #include "types.h"
 
+struct PowerData {
+	tFloatToChar voltage;
+	tFloatToChar current;
+	tFloatToChar temperature;
+	bool         newData;
+};
+extern struct PowerData powerDataStore;
+
 struct WindData {
 	tFloatToChar speed;
 	tFloatToChar direction;
