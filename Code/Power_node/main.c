@@ -26,6 +26,7 @@ THE SOFTWARE.
 #include "ecanDefinitions.h"
 #include "nmea2000.h"
 #include "types.h"
+#include <math.h>
 
 void ProcessAdcData(float voltage, float amperage)
 {
@@ -48,12 +49,14 @@ void ProcessAdcData(float voltage, float amperage)
 	
 	// Field 1: Voltage (in .01V)
 	tUnsignedShortToChar x;
-	x.usData = (uint16_t)(100.0f * voltage);
+	voltage *= 100.0f;
+	x.usData = (uint16_t)((voltage > 0.0) ? floorf(voltage + 0.5) : ceilf(voltage - 0.5));
 	msg.payload[1] = x.chData[0];
 	msg.payload[2] = x.chData[1];
 	
 	// Field 2: Current (in .1A)
-	x.usData = (uint16_t)(10.0f * amperage);
+	amperage *= 10.0f;
+	x.usData = (uint16_t)((amperage > 0.0) ? floorf(amperage + 0.5) : ceilf(amperage - 0.5));
 	msg.payload[3] = x.chData[0];
 	msg.payload[4] = x.chData[1];
 	
