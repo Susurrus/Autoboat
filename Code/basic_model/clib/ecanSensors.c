@@ -3,6 +3,7 @@
 #include "ecanDefinitions.h"
 #include "nmea2000.h"
 #include "types.h"
+#include "code_gen.h"
 
 struct PowerData powerDataStore;
 struct WindData windDataStore;
@@ -154,17 +155,23 @@ unsigned char ProcessAllEcanMessages()
 					}
 				} break;
 				case 129025: {
-					uint8_t rv = ParsePgn129025(msg.payload, &gpsDataStore.lat.flData, &gpsDataStore.lon.flData);
-					// Only update if both latitude and longitude were parsed successfully.
-					if ((rv & 0x03) == 0x03) {
-						gpsDataStore.newData = true;
+					// Only record the live GPS data if we aren't in HIL mode.
+					if ((systemStatus.status & (1 << 1)) == 0) {
+						uint8_t rv = ParsePgn129025(msg.payload, &gpsDataStore.lat.flData, &gpsDataStore.lon.flData);
+						// Only update if both latitude and longitude were parsed successfully.
+						if ((rv & 0x03) == 0x03) {
+							gpsDataStore.newData = true;
+						}
 					}
 				} break;
 				case 129026: {
-					uint8_t rv = ParsePgn129026(msg.payload, NULL, NULL, &gpsDataStore.cog.flData, &gpsDataStore.sog.flData);
-					// Only update if both course-over-ground and speed-over-ground were parsed successfully.
-					if ((rv & 0x0C) == 0x0C) {
-						gpsDataStore.newData = true;
+					// Only record the live GPS data if we aren't in HIL mode.
+					if ((systemStatus.status & (1 << 1)) == 0) {
+						uint8_t rv = ParsePgn129026(msg.payload, NULL, NULL, &gpsDataStore.cog.flData, &gpsDataStore.sog.flData);
+						// Only update if both course-over-ground and speed-over-ground were parsed successfully.
+						if ((rv & 0x0C) == 0x0C) {
+							gpsDataStore.newData = true;
+						}
 					}
 				} break;
 				case 130306:
