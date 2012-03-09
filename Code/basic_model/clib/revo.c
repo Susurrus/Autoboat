@@ -33,7 +33,7 @@ THE SOFTWARE.
 #include <stdlib.h>
 
 #include "revo.h"
-#include "uart1.h"
+#include "uart2.h"
 #include "types.h"
 #include "conversions.h"
 
@@ -50,11 +50,11 @@ void processRevoSentence(char sentence[]) {
 }
 
 void processNewRevoData() {
-	//while (GetLength(&uart1RxBuffer) > 0) {
-	//	unsigned char c;
-	//	Read(&uart1RxBuffer, &c);
-	//	buildAndCheckSentence((char)c, sentence, &sentenceIndex, &sentenceState, &checksum, processRevoSentence);
-	//}
+	while (GetLength(&uart2RxBuffer) > 0) {
+		unsigned char c;
+		Read(&uart2RxBuffer, &c);
+		buildAndCheckSentence((char)c, sentence, &sentenceIndex, &sentenceState, &checksum, processRevoSentence);
+	}
 }
 
 void getRevoData(unsigned char* data) {

@@ -70,8 +70,8 @@ static uint32_t failedMessageCount = 0;
 static uint8_t sameFailedMessageFlag = 0;
 
 void cpInitCommunications() {
-	initUart2(BAUD57600_BRG_REG);
-	initUart1(BAUD115200_BRG_REG);
+	initUart2(BAUD57600_BRG_REG);  // Initialize UART2 to 57600 for the Revolution GS.
+	initUart1(BAUD115200_BRG_REG); // Initialize UART1 to 115200 for groundstation communications.
 }
 
 /**
