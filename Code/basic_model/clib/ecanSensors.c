@@ -12,6 +12,8 @@ struct WaterData waterDataStore;
 struct ThrottleData throttleDataStore;
 struct GpsData gpsDataStore;
 struct DateTimeData dateTimeDataStore;
+uint8_t sensorsEnabled = 0; // Initially assume that nothing's enabled.
+uint8_t sensorsHealthy = 0; // Initially assume that nothing's active.
 
 void GetWindDataPacked(unsigned char *data)
 {

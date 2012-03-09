@@ -94,6 +94,17 @@ enum {
 	MISSION_EVENT_ITEM_DISPATCHED
 };
 
+// These flags are for use with the SYS_STATUS MAVLink message as a mapping from the Autoboat's
+// sensors to the sensors/controllers available in SYS_STATUS.
+enum {
+	ONBOARD_SENSORS_REVO_GS = (1 << 0) | (1 << 1) | (1 << 2),
+	ONBOARD_SENSORS_WSO100 = 1 << 3,
+	ONBOARD_SENSORS_GPS = 1 << 5,
+	ONBOARD_CONTROL_YAW_POS = 1 << 12,
+	ONBOARD_CONTROL_XY_POS = 1 << 14,
+	ONBOARD_CONTROL_MOTOR = 1 << 15
+};
+
 // Store a module-wide variable for common MAVLink system variables.
 static mavlink_system_t mavlink_system = {
 	20, // Arbitrarily chosen MAV number
@@ -176,21 +187,37 @@ void MavLinkSendHeartbeat(void)
 }
 
 /**
- * This function transmits a MAVLink status message.
- * It takes in a single argument for the computation load on the system. It should be between 0 and 100 and be in % of usage of the mainloop time.
- * TODO: Add info on the GPS sensor.
+ * This function transmits a MAVLink SYS_STATUS message. It relies on various external information such as sensor/actuator status
+ * from ecanSensors.h, the internalVariables struct exported by Simulink, and the drop rate calculated within ecanSensors.c.
  */
 void MavLinkSendStatus(void)
 {
 	mavlink_message_t msg;
 
-	// Declare that we have onboard sensors: 3D gyro, 3D accelerometer, 3D magnetometer, GPS
+	// Declare that we have onboard sensors: 3D gyro, 3D accelerometer, 3D magnetometer, absolute pressure, GPS
 	// And that we have the following controllers: yaw position, x/y position control, motor outputs/control.
-	// We reuse this variable for both the enabled and health status parameters as these are all assumed on and good.
-	// TODO: Use actual sensor health status for that portion of the status message.
-	uint32_t systemsPresent = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 5) |
-	                          (1 << 12) | (1 << 14) | (1 << 15);
+	uint32_t systemsPresent = ONBOARD_SENSORS_REVO_GS |
+	                          ONBOARD_SENSORS_WSO100  |
+	                          ONBOARD_SENSORS_GPS     |
+							  ONBOARD_CONTROL_YAW_POS |
+							  ONBOARD_CONTROL_XY_POS  |
+							  ONBOARD_CONTROL_MOTOR;
+							  
+	uint32_t systemsEnabled = ONBOARD_CONTROL_YAW_POS;
+	systemsEnabled |= (sensorsEnabled & SENSOR_GPS)?ONBOARD_SENSORS_GPS:0;
+	systemsEnabled |= (sensorsEnabled & SENSOR_REVO_GS)?ONBOARD_SENSORS_REVO_GS:0;
+	systemsEnabled |= (sensorsEnabled & SENSOR_WSO100)?ONBOARD_SENSORS_WSO100:0;
+	// The DST800 doesn't map into this bitfield.
+	systemsEnabled |= (sensorsEnabled & ACTUATOR_PROP)?(ONBOARD_SENSORS_GPS|ONBOARD_CONTROL_XY_POS):0;
+							  
+	uint32_t systemsActive = ONBOARD_CONTROL_YAW_POS;
+	systemsActive |= (sensorsHealthy & SENSOR_GPS)?ONBOARD_SENSORS_GPS:0;
+	systemsActive |= (sensorsHealthy & SENSOR_REVO_GS)?ONBOARD_SENSORS_REVO_GS:0;
+	systemsActive |= (sensorsHealthy & SENSOR_WSO100)?ONBOARD_SENSORS_WSO100:0;
+	// The DST800 doesn't map into this bitfield.
+	systemsActive |= (sensorsHealthy & ACTUATOR_PROP)?(ONBOARD_SENSORS_GPS|ONBOARD_CONTROL_XY_POS):0;
 
+	// Grab the globally-declared battery sensor data and map into the values necessary for transmission.
 	uint16_t voltage = (uint16_t)(internalVariables.BatteryVoltage * 1000);
 	int16_t amperage = (int16_t)(internalVariables.BatteryAmperage * 100);
 	
@@ -201,7 +228,7 @@ void MavLinkSendStatus(void)
 	}
 	
 	mavlink_msg_sys_status_pack(mavlink_system.sysid, mavlink_system.compid, &msg, 
-		systemsPresent, systemsPresent, systemsPresent, 
+		systemsPresent, systemsEnabled, systemsActive, 
 		(uint16_t)(systemStatus.cpu_load)*10,
 		voltage, amperage, -1,
 		dropRate, 0, 0, 0, 0, 0);
