@@ -17,20 +17,21 @@ void buildAndCheckSentence(unsigned char characterIn, char *sentence, unsigned c
 	// We start recording a new sentence if we see a dollarsign.
 	// The sentenceIndex is hard-set to 1 so that multiple dollar-signs
 	// keep you at the beginning.
-	if (characterIn == '$') {
-		sentence[0] = characterIn;
-		(*sentenceIndex) = 1;
-		(*sentenceState) = 1;
+	if ((*sentenceState) == 0) {
+		if (characterIn == '$') {
+			(*sentenceIndex) = 0;
+			(*sentenceState) = 1;
+		}
 	} else if ((*sentenceState) == 1) {
 		// Record every character that comes in now that we're building a sentence.
 		// Only stop if we run out of room or an asterisk is found.
-		sentence[(*sentenceIndex)++] = characterIn;
 		if (characterIn == '*') {
 			(*sentenceState) = 2;
 		} else if ((*sentenceIndex) > 127) {
 			// If we've filled up the buffer, ignore the entire message as we can't store it all
 			(*sentenceState) = 0;
-			(*sentenceIndex) = 0;
+		} else {
+			sentence[(*sentenceIndex)++] = characterIn;
 		}
 	} else if ((*sentenceState) == 2) {
 		// Record the first ASCII-hex character of the checksum byte.
@@ -46,9 +47,8 @@ void buildAndCheckSentence(unsigned char characterIn, char *sentence, unsigned c
 		if ((*checksum) == test) {
 			processResult(sentence);
 		}
-		
+
 		// We clear all state variables here regardless of success.
-		(*sentenceIndex) = 0;
 		(*sentenceState) = 0;
 	}
 }
