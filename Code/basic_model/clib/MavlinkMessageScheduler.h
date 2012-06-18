@@ -23,8 +23,10 @@
  * preprocessor macro defined. For example: 
  *   `gcc MavlinkMessageScheduler.c -DUNIT_TEST -g -lm`
  */
+#ifndef _MAVLINK_MESSAGE_SCHEDULER_H_
+#define _MAVLINK_MESSAGE_SCHEDULER_H_
 
-#include <inttypes.h>
+#include <stdint.h>
 #include <stdbool.h>
 
 /**
@@ -73,3 +75,5 @@ SListItem *IncrementTimestep(void);
  * Reset the current timestep. This has no other affect on the dispatcher.
  */
 void ResetTimestep(void);
+
+#endif // _MAVLINK_MESSAGE_SCHEDULER_H_
