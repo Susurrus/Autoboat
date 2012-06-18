@@ -1,7 +1,7 @@
-#ifndef __NMEA2000_H__
-#define __NMEA2000_H__
+#ifndef _NMEA2000_H_
+#define _NMEA2000_H_
 
-#include <inttypes.h>
+#include <stdint.h>
 
 /**
  * Miscellaneous utilities.
@@ -35,8 +35,8 @@ void DaysSinceEpochToOffset(uint16_t days, uint8_t *offset_years, uint8_t *offse
  */
 
  // Units are year: absolute, month: 1-12, day: 1-31, hour: 0-23, min: 0-59, sec: 0-59, seqId: none, source: 0 (GPS), 1 (GLONASS), 2 (Radio station), 3 (Local cesium clock), 4 (local rubidium clock), 5 (Local crystal clock).
- // NOTE: The date values aren't properly decoded yet.
-uint8_t ParsePgn126992(uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_t *year, uint8_t *month, uint8_t *day, uint8_t *hour, uint8_t *minute, uint8_t *second);
+ // NOTE: The usecSinceEpoch value is not part of the return value bitfield and is only valid if the time given within the message was valid.
+uint8_t ParsePgn126992(uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_t *year, uint8_t *month, uint8_t *day, uint8_t *hour, uint8_t *minute, uint8_t *second, uint64_t *usecSinceEpoch);
 
 /**
   * Decodes PGN 127508 - Battery Status
@@ -71,4 +71,4 @@ uint8_t ParsePgn130310(uint8_t data[8], uint8_t *seqId, float *waterTemp, float 
 // Units are seqId: none, tempInstance: none/enum, humidityInstance: none/enum, temp: degrees C, humidity: %, pressure: kPa.
 uint8_t ParsePgn130311(uint8_t data[8], uint8_t *seqId, uint8_t *tempInstance, uint8_t *humidityInstance, float *temp, float *humidity, float *pressure);
 
-#endif // __NMEA2000_H__
+#endif // _NMEA2000_H_

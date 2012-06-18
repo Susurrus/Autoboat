@@ -8,7 +8,7 @@ CircularBuffer uart2TxBuffer;
 /*
  * Private functions.
  */
-void startUart2Transmission();
+void startUart2Transmission(void);
 
 /**
  * Initialization function for the UART2 peripheral.

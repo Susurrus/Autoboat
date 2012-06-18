@@ -36,6 +36,7 @@ THE SOFTWARE.
 #include "uart2.h"
 #include "types.h"
 #include "conversions.h"
+#include "nmea0183.h"
 
 struct RevoData revoDataStore;
 static char sentence[127];
@@ -49,7 +50,7 @@ void processRevoSentence(char sentence[]) {
 	}
 }
 
-void processNewRevoData() {
+void processNewRevoData(void) {
 	while (GetLength(&uart2RxBuffer) > 0) {
 		unsigned char c;
 		Read(&uart2RxBuffer, &c);
@@ -90,7 +91,7 @@ void getRevoData(unsigned char* data) {
 	revoDataStore.newData = 0;
 }
 
-void clearRevoData() {
+void clearRevoData(void) {
 	revoDataStore.heading.flData = 0.0;
 	revoDataStore.magStatus = 0;
 	revoDataStore.pitch.flData = 0.0;
@@ -102,7 +103,7 @@ void clearRevoData() {
 	revoDataStore.newData = 0;
 }
 
-void parseHTM(char* stream) {
+void parseHTM(char *stream) {
 	char token[15]; // Tokens set to 15 characters in length
 	
 	// Initialize tokenizer with the data stream. This first token is ignored

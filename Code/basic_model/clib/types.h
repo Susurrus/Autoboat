@@ -1,7 +1,7 @@
-#ifndef __TYPES_H__
-#define __TYPES_H__
+#ifndef _TYPES_H_
+#define _TYPES_H_
 
-#include <inttypes.h>
+#include <stdint.h>
 
 typedef union {
 	uint8_t  chData[2];
@@ -49,4 +49,4 @@ typedef union {
 #define NAN __builtin_nan("")
 #endif
 
-#endif // __TYPES_H__
+#endif // _TYPES_H_

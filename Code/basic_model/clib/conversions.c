@@ -28,7 +28,7 @@ float degMinToDeg(unsigned char degrees, float minutes) {
 	return ((float)degrees + minutes/60.0);
 }
 
-#ifdef UNIT_TEST
+#ifdef UNIT_TEST_CONVERSIONS
 int main() {
 	
 	printf("Testing conversions.c. All errors will be reported as failed assertions.\n");

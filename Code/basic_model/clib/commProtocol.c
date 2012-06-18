@@ -49,7 +49,7 @@ THE SOFTWARE.
 #include "types.h"
 #include "ecanSensors.h"
 
-#include <inttypes.h>
+#include <stdint.h>
 #include <string.h>
 
 // Declaration of the relevant message structs used.
@@ -69,7 +69,7 @@ static uint32_t receivedMessageCount = 0;
 static uint32_t failedMessageCount = 0;
 static uint8_t sameFailedMessageFlag = 0;
 
-void cpInitCommunications() {
+void cpInitCommunications(void) {
 	initUart2(BAUD57600_BRG_REG);  // Initialize UART2 to 57600 for the Revolution GS.
 	initUart1(BAUD115200_BRG_REG); // Initialize UART1 to 115200 for groundstation communications.
 }
@@ -242,11 +242,11 @@ void setHilMode(uint8_t mode) {
 	}
 }
 
-inline void enableHil() {
+inline void enableHil(void) {
 	setHilMode(1);
 }
 
-inline void disableHil() {
+inline void disableHil(void) {
 	setHilMode(0);
 }
 
@@ -254,7 +254,7 @@ inline void disableHil() {
  * This function calculates the checksum of some bytes in an
  * array by XORing all of them.
  */
-uint8_t calculateChecksum(uint8_t* sentence, uint8_t size) {
+uint8_t calculateChecksum(uint8_t *sentence, uint8_t size) {
 
 	uint8_t checkSum = 0;
 	uint8_t i;
@@ -265,23 +265,23 @@ uint8_t calculateChecksum(uint8_t* sentence, uint8_t size) {
 	return checkSum;
 }
 
-void UpdateGpsDataFromHil(uint8_t* data) {
+void UpdateGpsDataFromHil(uint8_t *data) {
 	if (data[20]) {
 		gpsDataStore.lat.chData[0] = data[0];
 		gpsDataStore.lat.chData[1] = data[1];
 		gpsDataStore.lat.chData[2] = data[2];
 		gpsDataStore.lat.chData[3] = data[3];
-		
+
 		gpsDataStore.lon.chData[0] = data[4];
 		gpsDataStore.lon.chData[1] = data[5];
 		gpsDataStore.lon.chData[2] = data[6];
 		gpsDataStore.lon.chData[3] = data[7];
-		
+
 		gpsDataStore.alt.chData[0] = data[8];
 		gpsDataStore.alt.chData[1] = data[9];
 		gpsDataStore.alt.chData[2] = data[10];
 		gpsDataStore.alt.chData[3] = data[11];
-		
+
 		gpsDataStore.cog.chData[0] = data[12];
 		gpsDataStore.cog.chData[1] = data[13];
 		gpsDataStore.cog.chData[2] = data[14];
@@ -290,8 +290,13 @@ void UpdateGpsDataFromHil(uint8_t* data) {
 		gpsDataStore.sog.chData[1] = data[17];
 		gpsDataStore.sog.chData[2] = data[18];
 		gpsDataStore.sog.chData[3] = data[19];
-		
+
 		gpsDataStore.newData = 1;
+
+        // Finally reset the timeout counter for the GPS if we're receiving HIL data.
+		sensorAvailability.gps.enabled_counter = 0;
+		sensorAvailability.gps.active_counter = 0;
+		UpdateSensorsAvailability();
 	}
 }
 
@@ -302,12 +307,12 @@ void SetHilData(uint8_t *data)
 	tHilData.newData = 1;
 }
 
-uint16_t GetCurrentTimestamp()
+uint16_t GetCurrentTimestamp(void)
 {
 	return tHilData.timestamp.usData;
 }
 
-uint8_t IsNewHilData()
+uint8_t IsNewHilData(void)
 {
 	return tHilData.newData;
 }

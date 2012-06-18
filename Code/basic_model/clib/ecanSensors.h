@@ -1,5 +1,5 @@
-#ifndef __ECAN_SENSORS_H__
-#define __ECAN_SENSORS_H__
+#ifndef _ECAN_SENSORS_H_
+#define _ECAN_SENSORS_H_
 
 #include <stddef.h>
 #include <stdbool.h>
@@ -60,24 +60,31 @@ struct DateTimeData {
 	uint8_t	 hour;
 	uint8_t	 min;
 	uint8_t	 sec;
+	uint64_t usecSinceEpoch;
 	bool     newData; // Flag for whether this struct stores new data
 };
 extern struct DateTimeData dateTimeDataStore;
 
-// This variable is a bitfield storing which sensors are enabled and which are healthy. Enabled means that the sensor/actuator is online and communicating normally. Active is a subset of enabled when it's also broadcasting good useable data.
-enum {
-	SENSOR_GPS = 0x01, // GPS is enabled when any CAN messages have been received within the last second, active when enabled and the lat/lon are valid within the last second.
-	SENSOR_REVO_GS = 0x02, // The Revo GS is enabled when any messages have been received within the last second, active whenever it's enabled.
-	SENSOR_WSO100 = 0x04, // The WSO100 is enabled when any messages have been received within the last second, active whenever it's enabled.
-	SENSOR_DST800 = 0x08, // The DST800 is enabled when any messages have been received within the last second, active whenever depth is valid within the last second (this should only be true when it's in the water)
-	ACTUATOR_PROP = 0x10 // The ACS300 outputs CAN messages quite frequently. It's enabled whenever one of these messages has been received within the last second and active when it's enabled and in run mode within the last second.
-};
-extern uint8_t sensorsEnabled;
-extern uint8_t sensorsHealthy;
+typedef struct {
+	bool enabled            : 1; // If the sensor is enabled, i.e. it is online and transmitting messages.
+	uint8_t enabled_counter : 7; // The timeout counter for this sensor being enabled.
+	bool active             : 1; // If the sensor is active, i.e. receiving valid data.
+	uint8_t active_counter  : 7; // The timeout counter for this sensor being active.
+} timeoutCounters;
+
+extern struct stc {
+	timeoutCounters gps; // GPS is enabled when any CAN messages have been received within the last second, active when enabled and the lat/lon are valid within the last second. This is also the only sensor that is enabled when HIL is engaged.
+	timeoutCounters revo_gs; // The Revo GS is enabled when any messages have been received within the last second, active whenever it's enabled.
+	timeoutCounters wso100; // The WSO100 is enabled when any messages have been received within the last second, active whenever it's enabled.
+	timeoutCounters dst800; // The DST800 is enabled when any messages have been received within the last second, active whenever depth is valid within the last second (this should only be true when it's in the water)
+	timeoutCounters power; // The power node is enabled when a messages has been received within the last second and active at the same time.
+	timeoutCounters prop; // The ACS300 outputs CAN messages quite frequently. It's enabled whenever one of these messages has been received within the last second and active when it's enabled and in run mode within the last second.
+} sensorAvailability;
+
 
 /**
-  * These functions are getters for the above structs for use with Matlab.
-  */
+ * These functions are getters for the above structs for use with Matlab.
+ */
 void GetWindDataPacked(uint8_t *data);
 
 void GetAirDataPacked(uint8_t *data);
@@ -86,7 +93,7 @@ void GetWaterDataPacked(uint8_t *data);
 
 void GetThrottleDataPacked(uint8_t *data);
 
-void GetGpsDataPacked(uint8_t* data);
+void GetGpsDataPacked(uint8_t *data);
 
 /**
   * Clears the GPS data struct.
@@ -94,8 +101,17 @@ void GetGpsDataPacked(uint8_t* data);
 void ClearGpsData(void);
 
 /**
-  * This function should be called every timestep to process any received ECAN messages.
-  */
-uint8_t ProcessAllEcanMessages();
+ * This function should be called every timestep to process any received ECAN messages.
+ */
+uint8_t ProcessAllEcanMessages(void);
 
-#endif // __ECAN_SENSORS_H__
+/**
+ * This function updates the sensor availability. This all ends up being reflected in the
+ * 'sensorAvailability' struct. It's used by both ProcessAllEcanMessages() and in commProtocol.c
+ * when GPS data is received via HIL. Ideally this function should only be used where sensor data is
+ * received and that should be in no more than the places where HIL data is received and the real
+ * sensor data is received.
+ */
+void UpdateSensorsAvailability(void);
+
+#endif // _ECAN_SENSORS_H_

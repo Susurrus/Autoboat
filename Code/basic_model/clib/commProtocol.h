@@ -45,7 +45,7 @@ THE SOFTWARE.
 #ifndef _COMMPROTOCOL_H_
 #define _COMMPROTOCOL_H_
 
-#include <inttypes.h>
+#include <stdint.h>
 
 /**
  * This function initializes all onboard UART communications

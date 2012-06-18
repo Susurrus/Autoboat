@@ -1,4 +1,5 @@
 #include "nmea0183.h"
+#include "conversions.h"
 
 #include <string.h>
 

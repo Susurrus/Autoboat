@@ -116,7 +116,7 @@ unsigned char DeepPeek(CircularBuffer *b, unsigned short bytes, unsigned char* d
 	int tmpHead;
 	
 	// if the circular buffer is not null
-	if (b != NULL) {	
+	if (b != NULL) {
 		// if there are bytes in the buffer
 		if (GetLength(b) >= bytes) {
 			tmpHead = b->startIndex;

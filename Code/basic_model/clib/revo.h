@@ -47,30 +47,30 @@ void processRevoSentence(char *sentence);
  * Pull new bytes from the UART2 receive buffer and
  * calls buildAndCheckSentence on each of them.
  */
-void processNewRevoData();
+void processNewRevoData(void);
 
 /**
  * Computes the checksum for a given GPS sentence.
  */
-unsigned char getChecksum(char* sentence, unsigned char size);
+unsigned char getChecksum(char *sentence, unsigned char size);
 
 /**
  * This is a Matlab helper function that returns the most recent 
  * GPS data in a large array that Matlab can handle.
  * @param data A pointer to a float array for storing the GPS data that was requested.
  */
-void getRevoData(unsigned char* data);
+void getRevoData(unsigned char *data);
 
 /**
  * This function resets the entire revo data struct to zeros.
  */
-void clearRevoData();
+void clearRevoData(void);
 
 /**
  * A simple tokenizer. Similar to strtok(), but supports
  * multiple tokens in a row.
  */
-unsigned char myTokenizer(char* stringToTokenize, char token, char * returnToken);
+unsigned char myTokenizer(char *stringToTokenize, char token, char *returnToken);
 
 /**
  * Parses proprietary NMEA0183 HTM sentences. Results are stored in the

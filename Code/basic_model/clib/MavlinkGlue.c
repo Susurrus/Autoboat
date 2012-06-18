@@ -6,7 +6,7 @@
  * The main functions are at the bottom: MavLinkTransmit() and MavLinkReceive()
  * handle the dispatching of messages (and sending of non-FSM reliant ones) and
  * the reception of messages and forwarding of reception events to the relevent
- * FSMs. The two state machine functions (MavLinkEvaluateMissionState and 
+ * FSMs. The two state machine functions (MavLinkEvaluateMissionState and
  * MavLinkEvaluateParameterState) both contain all of the state logic for the
  * MAVLink mission and parameter protocols. As the specifications for those two
  * protocols are not fully defined they have been tested with QGroundControl to
@@ -34,9 +34,9 @@
 // Set up some state machine variables for the parameter protocol
 enum {
 	PARAM_STATE_INACTIVE = 0,
-	
+
 	PARAM_STATE_SINGLETON_SEND_VALUE,
-	
+
 	PARAM_STATE_STREAM_SEND_VALUE,
 	PARAM_STATE_STREAM_DELAY
 };
@@ -45,7 +45,7 @@ enum {
 	PARAM_EVENT_NONE,
 	PARAM_EVENT_ENTER_STATE,
 	PARAM_EVENT_EXIT_STATE,
-	
+
 	PARAM_EVENT_REQUEST_LIST_RECEIVED,
 	PARAM_EVENT_REQUEST_READ_RECEIVED,
 	PARAM_EVENT_SET_RECEIVED,
@@ -55,15 +55,15 @@ enum {
 // Set up state machine variables for the mission protocol
 enum {
 	MISSION_STATE_INACTIVE = 0,
-	
+
 	// States handling reading of our mission list
 	MISSION_STATE_SEND_MISSION_COUNT,
 	MISSION_STATE_COUNTDOWN,
 	MISSION_STATE_SEND_MISSION_ITEM,
-	
+
 	// States handling current mission setting
 	MISSION_STATE_SEND_CURRENT,
-	
+
 	// States handling writing to our mission list
 	MISSION_STATE_SEND_REQUEST,
 	MISSION_STATE_ACK_ERROR,
@@ -76,7 +76,7 @@ enum {
 	MISSION_EVENT_NONE = 0,
 	MISSION_EVENT_ENTER_STATE,
 	MISSION_EVENT_EXIT_STATE,
-	
+
 	// Message reception events
 	MISSION_EVENT_COUNT_RECEIVED,
 	MISSION_EVENT_ACK_RECEIVED,
@@ -85,7 +85,7 @@ enum {
 	MISSION_EVENT_CLEAR_ALL_RECEIVED,
 	MISSION_EVENT_SET_CURRENT_RECEIVED,
 	MISSION_EVENT_ITEM_RECEIVED,
-	
+
 	// Message transmission events
 	MISSION_EVENT_COUNT_DISPATCHED,
 	MISSION_EVENT_ACK_DISPATCHED,
@@ -139,6 +139,7 @@ void MavLinkInit(void)
 {
 	AddMessage(MAVLINK_MSG_ID_HEARTBEAT, 2);
 	AddMessage(MAVLINK_MSG_ID_SYS_STATUS, 2);
+	AddMessage(MAVLINK_MSG_ID_SYSTEM_TIME, 1);
 
 	AddMessage(MAVLINK_MSG_ID_LOCAL_POSITION_NED, 10);
 	AddMessage(MAVLINK_MSG_ID_ATTITUDE, 10);
@@ -187,6 +188,32 @@ void MavLinkSendHeartbeat(void)
 }
 
 /**
+ * This function transmits the system time. Looks like it's necessary for QGC to
+ * record timestamps on data reliably. For some reason it doesn't just use the local
+ * time of message reception. Hopefully this fixes that.
+ * This message is only transmitted if there actually is a global clock to sync with.
+ */
+void MavLinkSendSystemTime(void)
+{
+	mavlink_message_t msg;
+	uint64_t globalTime = 0;
+
+	// Grab the global time if the GPS is active
+	if (sensorAvailability.gps.active) {
+		globalTime = dateTimeDataStore.usecSinceEpoch;
+	}
+
+	// Pack the message
+	mavlink_msg_system_time_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+								 dateTimeDataStore.usecSinceEpoch,
+								 ((uint64_t)systemStatus.time)*10000);
+
+	// Copy the message to the send buffer
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	uart1EnqueueData(buf, (uint8_t)len);
+}
+
+/**
  * This function transmits a MAVLink SYS_STATUS message. It relies on various external information such as sensor/actuator status
  * from ecanSensors.h, the internalVariables struct exported by Simulink, and the drop rate calculated within ecanSensors.c.
  */
@@ -199,41 +226,43 @@ void MavLinkSendStatus(void)
 	uint32_t systemsPresent = ONBOARD_SENSORS_REVO_GS |
 	                          ONBOARD_SENSORS_WSO100  |
 	                          ONBOARD_SENSORS_GPS     |
-							  ONBOARD_CONTROL_YAW_POS |
-							  ONBOARD_CONTROL_XY_POS  |
-							  ONBOARD_CONTROL_MOTOR;
-							  
+	                          ONBOARD_CONTROL_YAW_POS |
+	                          ONBOARD_CONTROL_XY_POS  |
+	                          ONBOARD_CONTROL_MOTOR;
+
 	uint32_t systemsEnabled = ONBOARD_CONTROL_YAW_POS;
-	systemsEnabled |= (sensorsEnabled & SENSOR_GPS)?ONBOARD_SENSORS_GPS:0;
-	systemsEnabled |= (sensorsEnabled & SENSOR_REVO_GS)?ONBOARD_SENSORS_REVO_GS:0;
-	systemsEnabled |= (sensorsEnabled & SENSOR_WSO100)?ONBOARD_SENSORS_WSO100:0;
+	systemsEnabled |= sensorAvailability.gps.enabled?ONBOARD_SENSORS_GPS:0;
+	systemsEnabled |= sensorAvailability.revo_gs.enabled?ONBOARD_SENSORS_REVO_GS:0;
+	systemsEnabled |= sensorAvailability.wso100.enabled?ONBOARD_SENSORS_WSO100:0;
 	// The DST800 doesn't map into this bitfield.
-	systemsEnabled |= (sensorsEnabled & ACTUATOR_PROP)?(ONBOARD_SENSORS_GPS|ONBOARD_CONTROL_XY_POS):0;
-							  
+	// The power node doesn't map into this bitfield.z
+	systemsEnabled |= sensorAvailability.prop.enabled?(ONBOARD_CONTROL_XY_POS|ONBOARD_CONTROL_MOTOR):0;
+
 	uint32_t systemsActive = ONBOARD_CONTROL_YAW_POS;
-	systemsActive |= (sensorsHealthy & SENSOR_GPS)?ONBOARD_SENSORS_GPS:0;
-	systemsActive |= (sensorsHealthy & SENSOR_REVO_GS)?ONBOARD_SENSORS_REVO_GS:0;
-	systemsActive |= (sensorsHealthy & SENSOR_WSO100)?ONBOARD_SENSORS_WSO100:0;
+	systemsActive |= sensorAvailability.gps.active?ONBOARD_SENSORS_GPS:0;
+	systemsActive |= sensorAvailability.revo_gs.active?ONBOARD_SENSORS_REVO_GS:0;
+	systemsActive |= sensorAvailability.wso100.active?ONBOARD_SENSORS_WSO100:0;
 	// The DST800 doesn't map into this bitfield.
-	systemsActive |= (sensorsHealthy & ACTUATOR_PROP)?(ONBOARD_SENSORS_GPS|ONBOARD_CONTROL_XY_POS):0;
+	// The power node doesn't map into this bitfield.
+	systemsActive |= sensorAvailability.prop.active?(ONBOARD_CONTROL_XY_POS|ONBOARD_CONTROL_MOTOR):0;
 
 	// Grab the globally-declared battery sensor data and map into the values necessary for transmission.
 	uint16_t voltage = (uint16_t)(internalVariables.BatteryVoltage * 1000);
 	int16_t amperage = (int16_t)(internalVariables.BatteryAmperage * 100);
-	
+
 	// Calculate the drop rate
 	uint16_t dropRate = 0;
 	if (mavLinkMessagesFailedParsing) {
 		dropRate = (uint16_t)(((float)mavLinkMessagesFailedParsing) * 10000.0f / ((float)(mavLinkMessagesReceived + mavLinkMessagesFailedParsing)));
 	}
-	
-	mavlink_msg_sys_status_pack(mavlink_system.sysid, mavlink_system.compid, &msg, 
-		systemsPresent, systemsEnabled, systemsActive, 
+
+	mavlink_msg_sys_status_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+		systemsPresent, systemsEnabled, systemsActive,
 		(uint16_t)(systemStatus.cpu_load)*10,
 		voltage, amperage, -1,
 		dropRate, 0, 0, 0, 0, 0);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
-	
+
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
@@ -246,15 +275,15 @@ void MavLinkSendStatus(void)
 void MavLinkSendRawGps(void)
 {
 	mavlink_message_t msg;
- 
+
 	mavlink_msg_gps_raw_int_pack(mavlink_system.sysid, mavlink_system.compid, &msg, ((uint64_t)systemStatus.time)*10000,
-		3, (int32_t)(gpsDataStore.lat.flData*180/M_PI*1e7), (int32_t)(gpsDataStore.lon.flData*180/M_PI*1e7), (int32_t)(gpsDataStore.alt.flData*1e7),
+		sensorAvailability.gps.active?3:0, (int32_t)(gpsDataStore.lat.flData*180/M_PI*1e7), (int32_t)(gpsDataStore.lon.flData*180/M_PI*1e7), (int32_t)(gpsDataStore.alt.flData*1e7),
 		0xFFFF, 0xFFFF,
 		(uint16_t)gpsDataStore.sog.flData*100, (uint16_t)gpsDataStore.cog.flData * 100,
 		0xFF);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
-	
+
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
@@ -264,12 +293,12 @@ void MavLinkSendRawGps(void)
 void MavLinkSendMainPower(void)
 {
 	mavlink_message_t msg;
- 
+
 	mavlink_msg_main_power_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 		(uint16_t)(powerDataStore.voltage.flData * 100.0f),(uint16_t)(powerDataStore.current.flData * 10.0f));
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
-	
+
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
@@ -281,7 +310,7 @@ void MavLinkSendMainPower(void)
 void MavLinkSendBasicState(void)
 {
 	mavlink_message_t msg;
- 
+
 	mavlink_msg_basic_state_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 		internalVariables.RudderCommand, internalVariables.RudderPositionAngle,
 		 internalVariables.ThrottleCommand,
@@ -289,7 +318,7 @@ void MavLinkSendBasicState(void)
 		internalVariables.L2Vector[0], internalVariables.L2Vector[1]);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
-	
+
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
@@ -307,7 +336,7 @@ void MavLinkSendAttitude(void)
                               systemStatus.time*10, 0.0, 0.0, internalVariables.Heading, 0.0, 0.0, 0.0);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
-	
+
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
@@ -324,11 +353,11 @@ void MavLinkSendLocalPosition(void)
 
 	mavlink_msg_local_position_ned_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
                                         systemStatus.time*10,
-										internalVariables.LocalPosition[0], internalVariables.LocalPosition[1], internalVariables.LocalPosition[2], 
+										internalVariables.LocalPosition[0], internalVariables.LocalPosition[1], internalVariables.LocalPosition[2],
 										internalVariables.Velocity[0], internalVariables.Velocity[1], internalVariables.Velocity[2]);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
-	
+
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
@@ -336,10 +365,10 @@ void MavLinkSendLocalPosition(void)
  * Transmits the current GPS position of the origin of the local coordinate frame that the North-East-Down
  * coordinates are all relative too. They should be in units of 1e-7 degrees.
  */
-void MavLinkSendGpsGlobalOrigin()
+void MavLinkSendGpsGlobalOrigin(void)
 {
 	mavlink_message_t msg;
-	
+
 	int32_t latitude = (int32_t)(gpsDataStore.lat.flData * 180 / M_PI * 1e7);
 	int32_t longitude = (int32_t)(gpsDataStore.lon.flData * 180 / M_PI * 1e7);
 	int32_t altitude = (int32_t)(gpsDataStore.alt.flData * 1e7);
@@ -348,7 +377,7 @@ void MavLinkSendGpsGlobalOrigin()
 	                                   latitude, longitude, altitude);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
-	
+
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
@@ -359,9 +388,9 @@ void MavLinkSendGpsGlobalOrigin()
 void MavLinkSendCurrentMission(void)
 {
 	int8_t currentMission;
-	
+
 	GetCurrentMission(&currentMission);
-	
+
 	if (currentMission != -1) {
 		mavlink_message_t msg;
 		mavlink_msg_mission_current_pack(mavlink_system.sysid, mavlink_system.compid, &msg, (uint16_t)currentMission);
@@ -371,13 +400,13 @@ void MavLinkSendCurrentMission(void)
 }
 
 /**
- * Transmit a mission acknowledgement message. The type of message is the sole argument to this 
+ * Transmit a mission acknowledgement message. The type of message is the sole argument to this
  * function (see enum MAV_MISSIONRESULT).
  */
 void MavLinkSendMissionAck(uint8_t type)
 {
 	mavlink_message_t msg;
-	mavlink_msg_mission_ack_pack(mavlink_system.sysid, mavlink_system.compid, &msg, 
+	mavlink_msg_mission_ack_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                             groundStationSystemId, groundStationComponentId, type);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	uart1EnqueueData(buf, (uint8_t)len);
@@ -436,7 +465,7 @@ void _transmitParameter(uint16_t id)
 		"",
 		MAV_VAR_UINT32
 	};
-	
+
 	switch (id) {
 		case 0:
 			x.param_uint32 = (systemStatus.status & (1 << 0))?1:0;
@@ -466,7 +495,7 @@ void _transmitParameter(uint16_t id)
 			return; // Do nothing if there's no matching parameter.
 		break;
 	}
-	
+
 	mavlink_msg_param_value_encode(mavlink_system.sysid, mavlink_system.compid, &msg, &valueMsg);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	uart1EnqueueData(buf, (uint8_t)len);
@@ -479,11 +508,11 @@ void MavLinkSendRudderRaw(void)
 	mavlink_message_t msg;
 
 	mavlink_msg_rudder_raw_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-                               rudderDataStore.Position.usData, rudderDataStore.PortLimit, 0, rudderDataStore.StarboardLimit,
-							   internalVariables.RudderCalLimitPort, internalVariables.RudderCalLimitStarboard);
+                                rudderDataStore.Position.usData, rudderDataStore.PortLimit, 0, rudderDataStore.StarboardLimit,
+                                internalVariables.RudderCalLimitPort, internalVariables.RudderCalLimitStarboard);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
-	
+
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
@@ -495,7 +524,7 @@ void MavLinkSendStatusAndErrors(void)
 	uart1EnqueueData(buf, (uint8_t)len);
 
 	// And finally update the MAVLink state based on the system state.
-	
+
 	// If the startup reset line is triggered, indicate we're booting up. This is the only unarmed state
 	// although that's not technically true with this controller.
 	if (systemStatus.reset & (1 << 0)) {
@@ -514,7 +543,7 @@ void MavLinkSendStatusAndErrors(void)
 		mavlink_system.state = MAV_STATE_ACTIVE;
 		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
 	}
-	
+
 	/// Then we update the system mode using MAV_MODE_FLAGs
 	// Set manual/autonomous mode. Note that they're not mutually exclusive within the MAVLink protocol,
 	// though I treat them as such for my autopilot.
@@ -524,7 +553,7 @@ void MavLinkSendStatusAndErrors(void)
 	} else {
 		mavlink_system.mode &= ~(MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
 		mavlink_system.mode |= MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
-	}	
+	}
 	// Set HIL status
 	if (systemStatus.status & (1 << 1)) {
 		mavlink_system.mode |= MAV_MODE_FLAG_HIL_ENABLED;
@@ -536,8 +565,8 @@ void MavLinkSendStatusAndErrors(void)
 void MavLinkSendWindAirData(void)
 {
 	mavlink_message_t msg;
-	mavlink_msg_wso100_pack(mavlink_system.sysid, mavlink_system.compid, &msg, 
-		windDataStore.speed.flData, windDataStore.direction.flData, 
+	mavlink_msg_wso100_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+		windDataStore.speed.flData, windDataStore.direction.flData,
 		airDataStore.temp.flData, airDataStore.pressure.flData, airDataStore.humidity.flData);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	uart1EnqueueData(buf, (uint8_t)len);
@@ -546,7 +575,7 @@ void MavLinkSendWindAirData(void)
 void MavLinkSendDst800Data(void)
 {
 	mavlink_message_t msg;
-	mavlink_msg_dst800_pack(mavlink_system.sysid, mavlink_system.compid, &msg, 
+	mavlink_msg_dst800_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                        waterDataStore.speed.flData, waterDataStore.temp.flData, waterDataStore.depth.flData);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	uart1EnqueueData(buf, (uint8_t)len);
@@ -555,7 +584,7 @@ void MavLinkSendDst800Data(void)
 void MavLinkSendRevoGsData(void)
 {
 	mavlink_message_t msg;
-	mavlink_msg_revo_gs_pack(mavlink_system.sysid, mavlink_system.compid, &msg, 
+	mavlink_msg_revo_gs_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 		revoDataStore.heading.flData, revoDataStore.magStatus,
 		revoDataStore.pitch.flData, revoDataStore.pitchStatus,
 		revoDataStore.roll.flData, revoDataStore.rollStatus,
@@ -570,16 +599,16 @@ void MavLinkEvaluateParameterState(uint8_t event, void *data)
 {
 	// Track the parameter protocol state
 	static uint8_t state = PARAM_STATE_INACTIVE;
-	
+
 	// Keep a record of the current parameter being used
 	static uint8_t currentParameter;
-	
+
 	// Used for the delaying parameter transmission
 	static uint8_t delayCountdown = 0;
 
 	// Store the state to change into
 	uint8_t nextState = state;
-	
+
 	// First check the parameter protocol state
 	switch (state) {
 		case PARAM_STATE_INACTIVE:
@@ -634,13 +663,13 @@ void MavLinkEvaluateParameterState(uint8_t event, void *data)
 				nextState = PARAM_STATE_INACTIVE;
 			}
 		} break;
-		
+
 		case PARAM_STATE_STREAM_SEND_VALUE: {
 			if (event == PARAM_EVENT_ENTER_STATE) {
 				AddTransientMessage(MAVLINK_MSG_ID_PARAM_VALUE);
 			} else if (event == PARAM_EVENT_VALUE_DISPATCHED) {
 				_transmitParameter(currentParameter);
-				
+
 				// And increment the current parameter index for the next iteration and
 				// we finish if we've hit the limit of parameters.
 				if (++currentParameter == parameterCount) {
@@ -650,7 +679,7 @@ void MavLinkEvaluateParameterState(uint8_t event, void *data)
 				}
 			}
 		} break;
-		
+
 		// Add a delay of 10 timesteps before attempting to schedule another one
 		case PARAM_STATE_STREAM_DELAY: {
 			if (event == PARAM_EVENT_ENTER_STATE) {
@@ -661,10 +690,10 @@ void MavLinkEvaluateParameterState(uint8_t event, void *data)
 				}
 			}
 		} break;
-		
+
 		default: break;
 	}
-	
+
 	// Here is when we actually transition between states, calling init/exit code as necessary
 	if (nextState != state) {
 		MavLinkEvaluateParameterState(PARAM_EVENT_EXIT_STATE, NULL);
@@ -683,16 +712,16 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 {
 	// Internal counter variable for use with the COUNTDOWN state
 	static uint16_t counter = 0;
-	
+
 	// Keep track of the expected length of the incoming mission list
 	static uint16_t mavlinkNewMissionListSize;
-	
+
 	// Track a mission index for some multi-state loops.
 	static uint8_t currentMissionIndex;
 
 	// Track the state
 	static uint8_t state = MISSION_STATE_INACTIVE;
-	
+
 	// Keep track of the next state to transition into
 	uint8_t nextState = state;
 
@@ -709,9 +738,9 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 					AddTransientMessage(MAVLINK_MSG_ID_MISSION_ACK);
 					nextState = MISSION_STATE_ACK_ERROR;
 				} else {
-					
+
 					uint8_t newListSize = *(uint8_t *)data;
-					
+
 					// Only respond with a request if there are missions to request.
 					// If we received a 0-length mission list, just respond with a MISSION_ACK error
 					if (newListSize == 0) {
@@ -753,7 +782,7 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 				MavLinkSendCurrentMission();
 			}
 		break;
-		
+
 		case MISSION_STATE_SEND_MISSION_COUNT:
 			if (event == MISSION_EVENT_COUNT_DISPATCHED) {
 				MavLinkSendMissionCount();
@@ -776,29 +805,39 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 			} else if (event == MISSION_EVENT_ACK_RECEIVED) {
 				nextState = MISSION_STATE_INACTIVE;
 			} else if (event == MISSION_EVENT_ITEM_RECEIVED) {
-				
+
 				mavlink_mission_item_t incomingMission = *(mavlink_mission_item_t *)data;
-			
+
 				// Make sure that they're coming in in the right order, and if they don't return an error in
 				// the acknowledgment response.
 				if (currentMissionIndex == incomingMission.seq) {
 					Mission m = {
-						incomingMission.x, incomingMission.y, incomingMission.z,
-						incomingMission.frame, incomingMission.command,
-						incomingMission.param1, incomingMission.param2, incomingMission.param3, incomingMission.param4, 
+						{
+							incomingMission.x,
+							incomingMission.y,
+							incomingMission.z
+						},
+						incomingMission.frame,
+						incomingMission.command,
+						{
+							incomingMission.param1,
+							incomingMission.param2,
+							incomingMission.param3,
+							incomingMission.param4
+						},
 						incomingMission.autocontinue
 					};
-					
+
 					// Attempt to record this mission to the list, recording the result, which will be 0 for failure.
 					int8_t missionAddStatus;
 					AppendMission(&m, &missionAddStatus);
-					
+
 					if (missionAddStatus != -1) {
 						// If this is going to be the new current mission, then we should set it as such.
 						if (incomingMission.current) {
 							SetCurrentMission(incomingMission.seq);
 						}
-						
+
 						// If this was the last mission we were expecting, respond with an ACK confirming that we've successfully
 						// received the entire mission list. Otherwise we just increment and request the next mission.
 						if (currentMissionIndex == mavlinkNewMissionListSize - 1) {
@@ -816,9 +855,9 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 						nextState = MISSION_STATE_ACK_NO_SPACE;
 					}
 				}
-			} 
+			}
 		break;
-		
+
 		case MISSION_STATE_SEND_MISSION_ITEM:
 			if (event == MISSION_EVENT_ITEM_DISPATCHED) {
 				MavLinkSendMissionItem(currentMissionIndex);
@@ -826,7 +865,7 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 				nextState = MISSION_STATE_COUNTDOWN;
 			}
 		break;
-		
+
 		case MISSION_STATE_SEND_CURRENT:
 			if (event == MISSION_EVENT_CURRENT_DISPATCHED) {
 				MavLinkSendCurrentMission();
@@ -861,7 +900,7 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 				nextState = MISSION_STATE_INACTIVE;
 			}
 		break;
-		
+
 		case MISSION_STATE_SEND_REQUEST: {
 			if (event == MISSION_EVENT_REQUEST_DISPATCHED) {
 				MavLinkSendMissionRequest(currentMissionIndex);
@@ -869,9 +908,9 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 			}
 		} break;
 	}
-	
+
 	// Here is when we actually transition between states, calling init/exit code as necessary
-	if (nextState != state) {	
+	if (nextState != state) {
 		MavLinkEvaluateMissionState(MISSION_EVENT_EXIT_STATE, NULL);
 		state = nextState;
 		MavLinkEvaluateMissionState(MISSION_EVENT_ENTER_STATE, NULL);
@@ -892,7 +931,7 @@ void MavLinkReceive(void)
 	// Track whether we actually handled any data in this function call.
 	// Used for updating the number of MAVLink messages handled
 	bool processedData = false;
-	
+
 	while (GetLength(&uart1RxBuffer) > 0) {
 		processedData = true;
 		uint8_t c;
@@ -906,9 +945,6 @@ void MavLinkReceive(void)
 				groundStationComponentId = msg.compid;
 			}
 
-			// Handle message
-			mavlink_message_t out_msg;
- 
 			switch(msg.msgid) {
 
 				// If we are not doing any mission protocol operations, record the size of the incoming mission
@@ -945,11 +981,11 @@ void MavLinkReceive(void)
 				// Allow for the groundstation to set the current mission. This requires a WAYPOINT_CURRENT response message agreeing with the received current message index.
 				case MAVLINK_MSG_ID_MISSION_SET_CURRENT: {
 					uint8_t newCurrentMission = mavlink_msg_mission_set_current_get_seq(&msg);
-					MavLinkEvaluateMissionState(MISSION_EVENT_SET_CURRENT_RECEIVED, &newCurrentMission);					
+					MavLinkEvaluateMissionState(MISSION_EVENT_SET_CURRENT_RECEIVED, &newCurrentMission);
 				} break;
 
 				case MAVLINK_MSG_ID_MISSION_ACK: {
-					uint8_t ackType = mavlink_msg_mission_ack_get_type(&msg);
+					mavlink_msg_mission_ack_get_type(&msg);
 					MavLinkEvaluateMissionState(MISSION_EVENT_ACK_RECEIVED, NULL);
 				} break;
 
@@ -964,18 +1000,18 @@ void MavLinkReceive(void)
 					uint16_t currentParameter = mavlink_msg_param_request_read_get_param_index(&msg);
 					MavLinkEvaluateParameterState(PARAM_EVENT_REQUEST_READ_RECEIVED, &currentParameter);
 				} break;
-				
+
 				case MAVLINK_MSG_ID_PARAM_SET: {
 					mavlink_param_set_t x;
 					mavlink_msg_param_set_decode(&msg, &x);
 					MavLinkEvaluateParameterState(PARAM_EVENT_SET_RECEIVED, &x);
 				} break;
-				
+
 				default: break;
 			}
 		}
 	}
-	
+
 	// Update the number of messages received, both successful and not. Note that the 'status' variable
 	// will be updated on every call to *_parse_char(), so this will always be a valid value.
 	if (processedData) {
@@ -990,20 +1026,24 @@ void MavLinkReceive(void)
  */
 void MavLinkTransmit(void)
 {
-	
+
 	// And now transmit all messages for this timestep
 	SListItem *messagesToSend = IncrementTimestep();
 	SListItem *j;
 	for (j = messagesToSend; j; j = j->sibling) {
 
 		switch(j->id) {
-			
+
 			/** Common Messages **/
 
 			case MAVLINK_MSG_ID_HEARTBEAT: {
 				MavLinkSendHeartbeat();
 			} break;
-			
+
+			case MAVLINK_MSG_ID_SYSTEM_TIME: {
+				MavLinkSendSystemTime();
+			} break;
+
 			case MAVLINK_MSG_ID_SYS_STATUS: {
 				MavLinkSendStatus();
 			} break;
@@ -1011,25 +1051,25 @@ void MavLinkTransmit(void)
 			case MAVLINK_MSG_ID_ATTITUDE: {
 				MavLinkSendAttitude();
 			} break;
-			
+
 			case MAVLINK_MSG_ID_LOCAL_POSITION_NED: {
 				MavLinkSendLocalPosition();
 			} break;
-			
+
 			case MAVLINK_MSG_ID_GPS_RAW_INT: {
 				MavLinkSendRawGps();
 			} break;
-			
+
 			case MAVLINK_MSG_ID_GPS_GLOBAL_ORIGIN:
 				MavLinkSendGpsGlobalOrigin();
 			break;
-			
+
 			/** Parameter Protocol Messages **/
-			
+
 			case MAVLINK_MSG_ID_PARAM_VALUE: {
 				MavLinkEvaluateParameterState(PARAM_EVENT_VALUE_DISPATCHED, NULL);
 			} break;
-			
+
 			/** Mission Protocol Messages **/
 
 			case MAVLINK_MSG_ID_MISSION_COUNT: {
@@ -1039,41 +1079,41 @@ void MavLinkTransmit(void)
 			case MAVLINK_MSG_ID_MISSION_ITEM:
 				MavLinkEvaluateMissionState(MISSION_EVENT_ITEM_DISPATCHED, NULL);
 			break;
-			
+
 			case MAVLINK_MSG_ID_MISSION_REQUEST: {
 				MavLinkEvaluateMissionState(MISSION_EVENT_REQUEST_DISPATCHED, NULL);
 			} break;
-			
+
 			case MAVLINK_MSG_ID_MISSION_CURRENT: {
 				MavLinkEvaluateMissionState(MISSION_EVENT_CURRENT_DISPATCHED, NULL);
 			} break;
-			
+
 			case MAVLINK_MSG_ID_MISSION_ACK: {
 				MavLinkEvaluateMissionState(MISSION_EVENT_ACK_DISPATCHED, NULL);
 			} break;
-			
+
 			/** Sealion Messages **/
-			
+
 			case MAVLINK_MSG_ID_STATUS_AND_ERRORS: {
 				MavLinkSendStatusAndErrors();
 			} break;
-			
+
 			case MAVLINK_MSG_ID_WSO100: {
 				MavLinkSendWindAirData();
 			} break;
-			
+
 			case MAVLINK_MSG_ID_BASIC_STATE:
 				MavLinkSendBasicState();
 			break;
-			
+
 			case MAVLINK_MSG_ID_RUDDER_RAW:
 				MavLinkSendRudderRaw();
 			break;
-			
+
 			case MAVLINK_MSG_ID_DST800:
 				MavLinkSendDst800Data();
 			break;
-			
+
 			case MAVLINK_MSG_ID_REVO_GS:
 				MavLinkSendRevoGsData();
 			break;
@@ -1081,9 +1121,9 @@ void MavLinkTransmit(void)
 			case MAVLINK_MSG_ID_MAIN_POWER:
 				MavLinkSendMainPower();
 			break;
-			
+
 			default: {
-			
+
 			} break;
 		}
 	}

@@ -120,7 +120,7 @@ void DaysSinceEpochToOffset(uint16_t days, uint8_t *offset_years, uint8_t *offse
 	}
 }
 
-uint8_t ParsePgn126992(uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_t *year, uint8_t *month, uint8_t *day, uint8_t *hour, uint8_t *minute, uint8_t *second)
+uint8_t ParsePgn126992(uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_t *year, uint8_t *month, uint8_t *day, uint8_t *hour, uint8_t *minute, uint8_t *second, uint64_t *usecSinceEpoch)
 {
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
 	uint8_t fieldStatus = 0;
@@ -179,9 +179,8 @@ uint8_t ParsePgn126992(uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_
 		unpacked.chData[1] = data[5];
 		unpacked.chData[2] = data[6];
 		unpacked.chData[3] = data[7];
-		unpacked.ulData /= 1e4;
 
-		uint32_t seconds = unpacked.ulData;
+		uint32_t seconds = (uint32_t)(unpacked.ulData / 1e4);
 		if (hour) {
 			*hour = seconds / 3600;
 			fieldStatus |= 0x20;
@@ -197,6 +196,10 @@ uint8_t ParsePgn126992(uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_
 		if (second) {
 			*second = seconds;
 			fieldStatus |= 0x80;
+		}
+		
+		if (usecSinceEpoch) {
+			*usecSinceEpoch = unpacked.ulData;
 		}
 	}
 	
