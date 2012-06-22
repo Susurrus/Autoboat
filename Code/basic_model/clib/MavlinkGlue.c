@@ -205,8 +205,7 @@ void MavLinkSendSystemTime(void)
 
 	// Pack the message
 	mavlink_msg_system_time_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-								 dateTimeDataStore.usecSinceEpoch,
-								 ((uint64_t)systemStatus.time)*10000);
+	                             globalTime, systemStatus.time*10);
 
 	// Copy the message to the send buffer
 	len = mavlink_msg_to_send_buffer(buf, &msg);
