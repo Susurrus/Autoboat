@@ -195,21 +195,19 @@ void MavLinkSendHeartbeat(void)
  */
 void MavLinkSendSystemTime(void)
 {
-	mavlink_message_t msg;
-	uint64_t globalTime = 0;
 
 	// Grab the global time if the GPS is active
 	if (sensorAvailability.gps.active) {
-		globalTime = dateTimeDataStore.usecSinceEpoch;
+		mavlink_message_t msg;
+
+		// Pack the message
+		mavlink_msg_system_time_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+		                             dateTimeDataStore.usecSinceEpoch, systemStatus.time*10);
+
+		// Copy the message to the send buffer
+		len = mavlink_msg_to_send_buffer(buf, &msg);
+		uart1EnqueueData(buf, (uint8_t)len);
 	}
-
-	// Pack the message
-	mavlink_msg_system_time_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-	                             globalTime, systemStatus.time*10);
-
-	// Copy the message to the send buffer
-	len = mavlink_msg_to_send_buffer(buf, &msg);
-	uart1EnqueueData(buf, (uint8_t)len);
 }
 
 /**
