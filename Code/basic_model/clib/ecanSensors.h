@@ -6,6 +6,12 @@
 
 #include "types.h"
 
+struct RudderCanData  {
+	tFloatToChar Position;
+	bool         NewData;
+};
+extern struct RudderCanData rudderCanDataStore;
+
 struct PowerData {
 	tFloatToChar voltage;
 	tFloatToChar current;
@@ -94,6 +100,8 @@ void GetWaterDataPacked(uint8_t *data);
 void GetThrottleDataPacked(uint8_t *data);
 
 void GetGpsDataPacked(uint8_t *data);
+
+void GetRudderCanDataPacked(uint8_t *data);
 
 /**
   * Clears the GPS data struct.

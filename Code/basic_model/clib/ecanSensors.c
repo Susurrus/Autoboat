@@ -13,10 +13,11 @@ struct WaterData waterDataStore = {};
 struct ThrottleData throttleDataStore = {};
 struct GpsData gpsDataStore = {};
 struct DateTimeData dateTimeDataStore = {};
+struct RudderCanData rudderCanDataStore = {};
 
 struct stc sensorAvailability = {};
 
-void GetWindDataPacked(unsigned char *data)
+void GetWindDataPacked(uint8_t *data)
 {
 	data[0] = windDataStore.speed.chData[0];
 	data[1] = windDataStore.speed.chData[1];
@@ -30,7 +31,7 @@ void GetWindDataPacked(unsigned char *data)
 	windDataStore.newData = false;
 }
 
-void GetAirDataPacked(unsigned char *data)
+void GetAirDataPacked(uint8_t *data)
 {
 	data[0] = airDataStore.temp.chData[0];
 	data[1] = airDataStore.temp.chData[1];
@@ -48,7 +49,7 @@ void GetAirDataPacked(unsigned char *data)
 	airDataStore.newData = false;
 }
 
-void GetWaterDataPacked(unsigned char *data)
+void GetWaterDataPacked(uint8_t *data)
 {
 	data[0] = waterDataStore.speed.chData[0];
 	data[1] = waterDataStore.speed.chData[1];
@@ -66,7 +67,7 @@ void GetWaterDataPacked(unsigned char *data)
 	waterDataStore.newData = false;
 }
 
-void GetThrottleDataPacked(unsigned char *data)
+void GetThrottleDataPacked(uint8_t *data)
 {
 	data[0] = throttleDataStore.rpm.chData[0];
 	data[1] = throttleDataStore.rpm.chData[1];
@@ -74,7 +75,7 @@ void GetThrottleDataPacked(unsigned char *data)
 	throttleDataStore.newData = false;
 }
 
-void GetGpsDataPacked(unsigned char *data)
+void GetGpsDataPacked(uint8_t *data)
 {
 	data[0] = gpsDataStore.lat.chData[0];
 	data[1] = gpsDataStore.lat.chData[1];
@@ -104,6 +105,15 @@ void GetGpsDataPacked(unsigned char *data)
 	gpsDataStore.newData = 0;
 }
 
+void GetRudderCanDataPacked(uint8_t *data){
+	data[0] = rudderCanDataStore.Position.chData[0];
+	data[1] = rudderCanDataStore.Position.chData[1];
+	data[2] = rudderCanDataStore.Position.chData[2];
+	data[3] = rudderCanDataStore.Position.chData[3];
+
+	rudderCanDataStore.NewData = 0;
+}
+
 void ClearGpsData(void)
 {
 	gpsDataStore.lat.flData = 0.0;
@@ -114,7 +124,7 @@ void ClearGpsData(void)
 	gpsDataStore.newData = 0;
 }
 
-unsigned char ProcessAllEcanMessages(void)
+uint8_t ProcessAllEcanMessages(void)
 {
 	uint8_t messagesLeft = 0;
 	tCanMessage msg;
@@ -181,6 +191,11 @@ unsigned char ProcessAllEcanMessages(void)
 					if ((rv & 0xFC) == 0xFC) {
 						sensorAvailability.gps.active_counter = 0;
 						dateTimeDataStore.newData = true;
+					}
+				} break;
+				case 127245: {
+					if (ParsePgn127245(msg.payload, NULL, NULL, NULL, NULL, &rudderCanDataStore.Position.flData) == 0x04){
+						rudderCanDataStore.NewData = true;
 					}
 				} break;
 				case 127508: { // From the Power Node
