@@ -3,8 +3,23 @@
 
 #include <stdint.h>
 
+/**************************************************************************************************
+ * Testing this library:
+ *
+ * Have in the same directory the external requirements: types.h
+ *
+ * On a system with GCC run: gcc -Wall nmea2000.c -DUNIT_TEST_NMEA2000 -lm
+ *
+ * Location of floorf, fmodf --> in the math library so you need to link against
+ * it by adding '-lm'
+ *
+ * '-DUNIT_TEST_NMEA2000' --> Specifies a UNIT_TEST_NMEA2000 constant which enabled
+ * the main() at the end for use in unit testing this library
+ *
+ *************************************************************************************************/
+
 /**
- * Miscellaneous utilities.
+ * Helper functions.
  */
 
 /**
@@ -37,6 +52,9 @@ void DaysSinceEpochToOffset(uint16_t days, uint8_t *offset_years, uint8_t *offse
  // Units are year: absolute, month: 1-12, day: 1-31, hour: 0-23, min: 0-59, sec: 0-59, seqId: none, source: 0 (GPS), 1 (GLONASS), 2 (Radio station), 3 (Local cesium clock), 4 (local rubidium clock), 5 (Local crystal clock).
  // NOTE: The usecSinceEpoch value is not part of the return value bitfield and is only valid if the time given within the message was valid.
 uint8_t ParsePgn126992(uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_t *year, uint8_t *month, uint8_t *day, uint8_t *hour, uint8_t *minute, uint8_t *second, uint64_t *usecSinceEpoch);
+
+// Units are seqId: none, instance: none, direction: none/enum, angleOrder: .0001 Radians, position: .0001 Radians.
+uint8_t ParsePgn127245(uint8_t data[8], uint8_t *seqId, uint8_t *instance, uint8_t *direction, float *angleOrder, float *position);
 
 /**
   * Decodes PGN 127508 - Battery Status
