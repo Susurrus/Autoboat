@@ -4,29 +4,29 @@
 #include <stdint.h>
 
 typedef union {
-	uint8_t  chData[2];
 	uint16_t usData;
+	uint8_t  chData[2];
 } tUnsignedShortToChar; 
 
 typedef union {
-	uint8_t	chData[2];
-	int16_t	shData;
+	int16_t shData;
+	uint8_t chData[2];
 } tShortToChar;
 
 typedef union {
-	uint8_t  chData[4];
 	uint32_t ulData;
+	uint8_t  chData[4];
 } tUnsignedLongToChar;
 
 typedef union {
-	uint8_t chData[4];
 	int32_t lData;
+	uint8_t chData[4];
 } tLongToChar;
 
 typedef union {
-	uint8_t  chData[4];
 	float    flData;
 	uint16_t usData[2];
+	uint8_t  chData[4];
 } tFloatToChar;
 
 #ifndef NULL
