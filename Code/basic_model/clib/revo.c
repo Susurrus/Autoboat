@@ -45,7 +45,7 @@ static unsigned char checksum;
 static unsigned char sentenceState;
 
 void processRevoSentence(char sentence[]) {
-	if (sentence[5] == 'H' && sentence[6] == 'T' && sentence[7] == 'M') {
+	if (sentence[4] == 'H' && sentence[5] == 'T' && sentence[6] == 'M') {
 		parseHTM(sentence);
 	}
 }
