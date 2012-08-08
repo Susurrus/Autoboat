@@ -462,7 +462,7 @@ void _transmitParameter(uint16_t id)
 		parameterCount,
 		0,
 		"",
-		0
+		MAV_PARAM_TYPE_UINT32
 	};
 
 	switch (id) {
