@@ -167,7 +167,9 @@ void MavLinkScheduleCurrentMission(void)
  */
 void MavLinkScheduleGpsOrigin(void)
 {
-	AddTransientMessage(MAVLINK_MSG_ID_GPS_GLOBAL_ORIGIN);
+	// Commented out on 7/22/2012 because QGC doesn't handle these messages well,
+	// spawning a modal dialog whenever it's received.
+	//AddTransientMessage(MAVLINK_MSG_ID_GPS_GLOBAL_ORIGIN);
 }
 
 /**
