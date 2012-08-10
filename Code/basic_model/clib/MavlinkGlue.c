@@ -145,6 +145,7 @@ void MavLinkInit(void)
 	AddMessage(MAVLINK_MSG_ID_ATTITUDE, 10);
 	AddMessage(MAVLINK_MSG_ID_GPS_RAW_INT, 1);
 
+	AddMessage(MAVLINK_MSG_ID_RC_CHANNELS_RAW, 4);
 	AddMessage(MAVLINK_MSG_ID_STATUS_AND_ERRORS, 4);
 	AddMessage(MAVLINK_MSG_ID_WSO100, 2);
 	AddMessage(MAVLINK_MSG_ID_BASIC_STATE, 10);
@@ -354,6 +355,20 @@ void MavLinkSendLocalPosition(void)
                                         systemStatus.time*10,
 										internalVariables.LocalPosition[0], internalVariables.LocalPosition[1], internalVariables.LocalPosition[2],
 										internalVariables.Velocity[0], internalVariables.Velocity[1], internalVariables.Velocity[2]);
+
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+
+	uart1EnqueueData(buf, (uint8_t)len);
+}
+
+void MavLinkSendRcData(void)
+{
+	mavlink_message_t msg;
+
+	mavlink_msg_rc_channels_raw_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+	                                 systemStatus.time*10,
+									 0, rcSignalRudder, rcSignalThrottle, rcSignalMode, rcSignalTrack, 0, 0, 0, 0,
+			                         255);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
@@ -1062,6 +1077,10 @@ void MavLinkTransmit(void)
 			case MAVLINK_MSG_ID_GPS_GLOBAL_ORIGIN:
 				MavLinkSendGpsGlobalOrigin();
 			break;
+
+			case MAVLINK_MSG_ID_RC_CHANNELS_RAW: {
+				MavLinkSendRcData();
+			} break;
 
 			/** Parameter Protocol Messages **/
 
