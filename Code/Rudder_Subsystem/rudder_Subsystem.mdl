@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2342"
+    ComputedModelVersion    "1.2353"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -28,9 +28,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "ASL"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Aug 20 10:34:45 2012"
-  RTWModifiedTimeStamp	  267359670
-  ModelVersionFormat	  "1.%<AutoIncrement:2342>"
+  LastModifiedDate	  "Tue Aug 21 14:33:47 2012"
+  RTWModifiedTimeStamp	  267456466
+  ModelVersionFormat	  "1.%<AutoIncrement:2353>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -433,8 +433,8 @@ Model {
 	  RTWUseLocalCustomCode	  off
 	  RTWUseSimCustomCode	  off
 	  CustomInclude		  "../../../mavlink/include\n../../../mavlink/include/sealion\nclib"
-	  CustomSource		  "clib/Rudder.c\nclib/ecanRudder.c\nclib/MavlinkMessageScheduler.c\n\n../../../ECAN_dspic/CircularBu"
-	  "ffer.c\n../../../ECAN_dspic/ecanFunctions.c"
+	  CustomSource		  "clib/Rudder.c\nclib/ecanRudder.c\nclib/MavlinkMessageScheduler.c\nclib/nmea2000.c\n\n../../../ECAN"
+	  "_dspic/CircularBuffer.c\n../../../ECAN_dspic/ecanFunctions.c"
 	  IncludeHyperlinkInReport off
 	  LaunchReport		  off
 	  TargetLang		  "C"
@@ -661,7 +661,7 @@ Model {
 		  ExtModeStaticAlloc	  off
 		  ExtModeStaticAllocSize  1000000
 		  ExtModeTesting	  off
-		  ExtModeMexFile	  "ext_comm"
+		  ExtModeMexFile	  "ext_serial_win32_comm"
 		  ExtModeIntrfLevel	  "Level1"
 		  InlinedParameterPlacement "NonHierarchical"
 		  TargetOS		  "BareBoardExample"
@@ -775,7 +775,7 @@ Model {
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=0 "
       CurrentDlgPage	      "Code Generation/Custom Code"
-      ConfigPrmDlgPosition     [ 227, 50, 1160, 922 ] 
+      ConfigPrmDlgPosition     [ 198, 96, 1083, 854 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -1071,7 +1071,7 @@ Model {
   }
   System {
     Name		    "rudder_Subsystem"
-    Location		    [202, 82, 1245, 964]
+    Location		    [202, 74, 1261, 956]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1085,7 +1085,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "22092"
+    SIDHighWatermark	    "22096"
     Block {
       BlockType		      SubSystem
       Name		      "Blink LED D10 a 1Hz"
@@ -1268,7 +1268,7 @@ Model {
       SID		      "20590"
       Tag		      "dsPIC_Digital_Output"
       Ports		      [1]
-      Position		      [700, 680, 815, 720]
+      Position		      [720, 680, 835, 720]
       Priority		      "5"
       LibraryVersion	      "3.79"
       SourceBlock	      "dsPICdrivers/Digital I//O/Digital Output Write"
@@ -1447,7 +1447,7 @@ Model {
       BlockType		      DataStoreMemory
       Name		      "Data Store\nMemory1"
       SID		      "20731"
-      Position		      [740, 95, 839, 124]
+      Position		      [780, 90, 879, 119]
       ZOrder		      -4
       DataStoreName	      "rudderData"
       ReadBeforeWriteMsg      "warning"
@@ -1580,7 +1580,7 @@ Model {
       BlockType		      From
       Name		      "From1"
       SID		      "20744"
-      Position		      [1495, 625, 1620, 655]
+      Position		      [1505, 625, 1630, 655]
       ZOrder		      -9
       BackgroundColor	      "magenta"
       GotoTag		      "SelectedMotor"
@@ -1657,6 +1657,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [435, 223, 520, 257]
 	  ZOrder		  -6
+	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  DataStoreName		  "rudderData"
 	  DataStoreElements	  "rudderData.starLimit"
@@ -1668,6 +1669,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [560, 63, 645, 97]
 	  ZOrder		  -6
+	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  DataStoreName		  "rudderData"
 	  DataStoreElements	  "rudderData.potValue"
@@ -1679,6 +1681,7 @@ Model {
 	  Ports			  [1]
 	  Position		  [435, 178, 520, 212]
 	  ZOrder		  -6
+	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  DataStoreName		  "rudderData"
 	  DataStoreElements	  "rudderData.portLimit"
@@ -2025,6 +2028,43 @@ Model {
       }
     }
     Block {
+      BlockType		      Reference
+      Name		      "Get the new angle for the rudder\n[ecanRudder.c]"
+      SID		      "22094"
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      [0, 1]
+      Position		      [185, 1137, 335, 1223]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.79"
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "Output Function"
+      fctName		      "getNewAngle"
+      INPUT_SIZE	      "1"
+      INPUT1		      "--"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "real32"
+      SampleTime	      ".01"
+      InputType		      "[ ]"
+      OutputType	      "[ 7 ]"
+      FctDeclaration	      "extern real32_T getNewAngle();"
+      FctCall		      "%y1 = getNewAngle();"
+      OrderingInOutPopup      "None"
+      FctStart		      "None"
+      FctStart_Name	      "Init_onlyOnce"
+      FctStart_Declaration    "inline extern void Init_onlyOnce();"
+      FctStart_Call	      "Init_onlyOnce();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
+    }
+    Block {
       BlockType		      Goto
       Name		      "Goto1"
       SID		      "20743"
@@ -2058,7 +2098,7 @@ Model {
       BlockType		      Goto
       Name		      "Goto4"
       SID		      "22092"
-      Position		      [1470, 900, 1600, 930]
+      Position		      [1475, 895, 1605, 925]
       ZOrder		      -10
       BackgroundColor	      "cyan"
       GotoTag		      "SelectedMotor"
@@ -2231,6 +2271,124 @@ Model {
       }
     }
     Block {
+      BlockType		      SubSystem
+      Name		      "MATLAB Function1"
+      SID		      "22095"
+      Ports		      [1, 1]
+      Position		      [430, 1252, 500, 1298]
+      ZOrder		      -4
+      LibraryVersion	      "1.32"
+      ErrorFcn		      "Stateflow.Translate.translate"
+      PermitHierarchicalResolution "ExplicitOnly"
+      TreatAsAtomicUnit	      on
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      SFBlockType	      "MATLAB Function"
+      MaskType		      "Stateflow"
+      MaskDescription	      "Embedded MATLAB block"
+      MaskSelfModifiable      on
+      MaskDisplay	      "bgColor = Simulink.Root.ColorString2Rgb(get_param(gcbh, 'BackgroundColor')); image(imread('pr"
+      "ivate/eml_membrane_16.png','png','BackgroundColor',bgColor(1:3)),'center'); disp([10 10 'fcn']);"
+      MaskIconFrame	      on
+      MaskIconOpaque	      off
+      MaskIconRotate	      "none"
+      MaskPortRotate	      "default"
+      MaskIconUnits	      "normalized"
+      System {
+	Name			"MATLAB Function1"
+	Location		[257, 457, 812, 717]
+	Open			off
+	ModelBrowserVisibility	on
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	SIDHighWatermark	"17"
+	Block {
+	  BlockType		  Inport
+	  Name			  "u"
+	  SID			  "22095::1"
+	  Position		  [20, 101, 40, 119]
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Demux
+	  Name			  " Demux "
+	  SID			  "22095::15"
+	  Ports			  [1, 1]
+	  Position		  [270, 160, 320, 200]
+	  Outputs		  "1"
+	}
+	Block {
+	  BlockType		  S-Function
+	  Name			  " SFunction "
+	  SID			  "22095::14"
+	  Tag			  "Stateflow S-Function rudder_Subsystem 3"
+	  Ports			  [1, 2]
+	  Position		  [180, 100, 230, 160]
+	  FunctionName		  "sf_sfun"
+	  PortCounts		  "[1 2]"
+	  EnableBusSupport	  on
+	  Port {
+	    PortNumber		    2
+	    Name		    "y"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Terminator
+	  Name			  " Terminator "
+	  SID			  "22095::17"
+	  Position		  [460, 171, 480, 189]
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "y"
+	  SID			  "22095::5"
+	  Position		  [460, 101, 480, 119]
+	  IconDisplay		  "Port number"
+	}
+	Line {
+	  SrcBlock		  "u"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "y"
+	  Labels		  [0, 0]
+	  SrcBlock		  " SFunction "
+	  SrcPort		  2
+	  DstBlock		  "y"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  " Demux "
+	  SrcPort		  1
+	  DstBlock		  " Terminator "
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  " SFunction "
+	  SrcPort		  1
+	  DstBlock		  " Demux "
+	  DstPort		  1
+	}
+      }
+    }
+    Block {
       BlockType		      Reference
       Name		      "Master"
       SID		      "11080"
@@ -2307,13 +2465,13 @@ Model {
       SID		      "20799"
       Tag		      "dsPIC_dsPIC_CFunctionCall"
       Ports		      []
-      Position		      [550, 172, 695, 248]
+      Position		      [594, 168, 757, 254]
       BackgroundColor	      "orange"
       LibraryVersion	      "3.79"
       SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
       SourceType	      "C Function Call"
       FctUpdate		      "Output Function"
-      fctName		      "ProcessAllEcanMessages"
+      fctName		      "processAllEcanMessages"
       INPUT_SIZE	      "1"
       INPUT1		      "--"
       INPUT2		      "--"
@@ -2323,8 +2481,8 @@ Model {
       SampleTime	      ".01"
       InputType		      "[ ]"
       OutputType	      "[ ]"
-      FctDeclaration	      "extern void ProcessAllEcanMessages();"
-      FctCall		      "ProcessAllEcanMessages();"
+      FctDeclaration	      "extern void processAllEcanMessages();"
+      FctCall		      "processAllEcanMessages();"
       OrderingInOutPopup      "None"
       FctStart		      "None"
       FctStart_Name	      "Init_onlyOnce"
@@ -2926,9 +3084,9 @@ Model {
 	}
 	Block {
 	  BlockType		  Inport
-	  Name			  "Calibrating"
+	  Name			  "Calibrated"
 	  SID			  "22089"
-	  Position		  [25, 88, 55, 102]
+	  Position		  [30, 88, 60, 102]
 	  Port			  "2"
 	  IconDisplay		  "Port number"
 	}
@@ -2983,6 +3141,7 @@ Model {
 	      Name		      "Action Port"
 	      SID		      "22067"
 	      Position		      [170, 15, 229, 43]
+	      ActionType	      "else"
 	    }
 	    Block {
 	      BlockType		      SignalConversion
@@ -3057,6 +3216,7 @@ Model {
 	      Name		      "Action Port"
 	      SID		      "22075"
 	      Position		      [170, 15, 229, 43]
+	      ActionType	      "then"
 	    }
 	    Block {
 	      BlockType		      SignalConversion
@@ -3092,7 +3252,7 @@ Model {
 	  Name			  "If1"
 	  SID			  "22080"
 	  Ports			  [1, 2]
-	  Position		  [80, 76, 180, 114]
+	  Position		  [85, 76, 185, 114]
 	  ShowName		  off
 	  IfExpression		  "~u1"
 	}
@@ -3115,14 +3275,14 @@ Model {
 	Line {
 	  SrcBlock		  "If1"
 	  SrcPort		  1
-	  Points		  [75, 0]
+	  Points		  [70, 0]
 	  DstBlock		  "If Action\nSubsystem3"
 	  DstPort		  ifaction
 	}
 	Line {
 	  SrcBlock		  "If1"
 	  SrcPort		  2
-	  Points		  [75, 0]
+	  Points		  [70, 0]
 	  DstBlock		  "If Action\nSubsystem2"
 	  DstPort		  ifaction
 	}
@@ -3147,7 +3307,7 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Calibrating"
+	  SrcBlock		  "Calibrated"
 	  SrcPort		  1
 	  DstBlock		  "If1"
 	  DstPort		  1
@@ -3172,7 +3332,7 @@ Model {
       SID		      "20760"
       Tag		      "dsPIC_dsPIC_CFunctionCall"
       Ports		      []
-      Position		      [725, 168, 853, 258]
+      Position		      [765, 163, 893, 253]
       BackgroundColor	      "orange"
       LibraryVersion	      "3.79"
       SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
@@ -3598,7 +3758,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Subsystem"
-	Location		[641, 407, 1191, 711]
+	Location		[202, 74, 1278, 973]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -3615,14 +3775,14 @@ Model {
 	  BlockType		  Inport
 	  Name			  "NewRudderAngle"
 	  SID			  "22055"
-	  Position		  [25, 83, 55, 97]
+	  Position		  [120, 188, 150, 202]
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "CurrentRudderAngle"
 	  SID			  "22057"
-	  Position		  [25, 113, 55, 127]
+	  Position		  [120, 223, 150, 237]
 	  Port			  "2"
 	  IconDisplay		  "Port number"
 	}
@@ -3630,7 +3790,7 @@ Model {
 	  BlockType		  Abs
 	  Name			  "Abs"
 	  SID			  "22035"
-	  Position		  [210, 215, 240, 245]
+	  Position		  [305, 320, 335, 350]
 	  ShowName		  off
 	  SaturateOnIntegerOverflow off
 	}
@@ -3639,7 +3799,7 @@ Model {
 	  Name			  "Add"
 	  SID			  "22036"
 	  Ports			  [2, 1]
-	  Position		  [80, 74, 110, 141]
+	  Position		  [175, 179, 205, 246]
 	  ShowName		  off
 	  Inputs		  "+-"
 	  InputSameDT		  off
@@ -3651,7 +3811,7 @@ Model {
 	  Name			  "Bus\nCreator"
 	  SID			  "22037"
 	  Ports			  [4, 1]
-	  Position		  [465, 29, 470, 191]
+	  Position		  [560, 134, 565, 296]
 	  ShowName		  off
 	  DisplayOption		  "bar"
 	}
@@ -3660,7 +3820,7 @@ Model {
 	  Name			  "Compare\nTo Constant"
 	  SID			  "22038"
 	  Ports			  [1, 1]
-	  Position		  [255, 221, 305, 239]
+	  Position		  [350, 326, 400, 344]
 	  ShowName		  off
 	  LibraryVersion	  "1.256"
 	  SourceBlock		  "simulink/Logic and Bit\nOperations/Compare\nTo Constant"
@@ -3674,7 +3834,7 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Constant1"
 	  SID			  "22039"
-	  Position		  [210, 145, 240, 175]
+	  Position		  [305, 250, 335, 280]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  ".003*OC2max/.01"
@@ -3684,7 +3844,7 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Constant2"
 	  SID			  "22041"
-	  Position		  [210, 180, 240, 210]
+	  Position		  [305, 285, 335, 315]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -3694,7 +3854,7 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Constant3"
 	  SID			  "22040"
-	  Position		  [385, 35, 415, 65]
+	  Position		  [480, 140, 510, 170]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -3710,7 +3870,7 @@ Model {
 	  BlockType		  DataTypeConversion
 	  Name			  "Data Type Conversion"
 	  SID			  "22042"
-	  Position		  [360, 81, 415, 99]
+	  Position		  [455, 186, 510, 204]
 	  ShowName		  off
 	  OutDataTypeStr	  "boolean"
 	  RndMeth		  "Simplest"
@@ -3723,21 +3883,11 @@ Model {
 	  }
 	}
 	Block {
-	  BlockType		  Logic
-	  Name			  "Logical\nOperator"
-	  SID			  "22043"
-	  Ports			  [2, 1]
-	  Position		  [325, 222, 355, 253]
-	  ShowName		  off
-	  AllPortsSameDT	  off
-	  OutDataTypeStr	  "boolean"
-	}
-	Block {
 	  BlockType		  Saturate
 	  Name			  "Saturation1"
 	  SID			  "22045"
 	  Ports			  [1, 1]
-	  Position		  [270, 75, 300, 105]
+	  Position		  [365, 180, 395, 210]
 	  ShowName		  off
 	  InputPortMap		  "u0"
 	  UpperLimit		  "1"
@@ -3749,7 +3899,7 @@ Model {
 	  Name			  "Shift\nArithmetic"
 	  SID			  "22046"
 	  Ports			  [1, 1]
-	  Position		  [270, 113, 350, 127]
+	  Position		  [365, 218, 445, 232]
 	  ShowName		  off
 	  InputPortMap		  "u0"
 	  BitShiftNumber	  "1"
@@ -3758,14 +3908,14 @@ Model {
 	  BlockType		  Signum
 	  Name			  "Sign"
 	  SID			  "22047"
-	  Position		  [215, 75, 245, 105]
+	  Position		  [310, 180, 340, 210]
 	  ShowName		  off
 	}
 	Block {
 	  BlockType		  Switch
 	  Name			  "Switch"
 	  SID			  "22048"
-	  Position		  [385, 155, 415, 185]
+	  Position		  [480, 260, 510, 290]
 	  ShowName		  off
 	  Criteria		  "u2 ~= 0"
 	  InputSameDT		  off
@@ -3781,7 +3931,7 @@ Model {
 	  BlockType		  Switch
 	  Name			  "Switch4"
 	  SID			  "22049"
-	  Position		  [385, 115, 415, 145]
+	  Position		  [480, 220, 510, 250]
 	  ShowName		  off
 	  Criteria		  "u2 ~= 0"
 	  InputSameDT		  off
@@ -3797,7 +3947,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "Command"
 	  SID			  "22056"
-	  Position		  [495, 103, 525, 117]
+	  Position		  [590, 208, 620, 222]
 	  IconDisplay		  "Port number"
 	}
 	Line {
@@ -3814,9 +3964,9 @@ Model {
 	  }
 	}
 	Line {
-	  SrcBlock		  "Logical\nOperator"
+	  SrcBlock		  "Compare\nTo Constant"
 	  SrcPort		  1
-	  Points		  [5, 0; 0, -70]
+	  Points		  [55, 0; 0, -60]
 	  Branch {
 	    Points		    [0, -40]
 	    DstBlock		    "Switch4"
@@ -3826,12 +3976,6 @@ Model {
 	    DstBlock		    "Switch"
 	    DstPort		    2
 	  }
-	}
-	Line {
-	  SrcBlock		  "Compare\nTo Constant"
-	  SrcPort		  1
-	  DstBlock		  "Logical\nOperator"
-	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Constant2"
@@ -3932,7 +4076,6 @@ Model {
 	Line {
 	  SrcBlock		  "CurrentRudderAngle"
 	  SrcPort		  1
-	  Points		  [5, 0]
 	  DstBlock		  "Add"
 	  DstPort		  2
 	}
@@ -4024,7 +4167,7 @@ Model {
 	  SourceBlock		  "dsPICdrivers/OTHERS/C Function Call"
 	  SourceType		  "C Function Call"
 	  FctUpdate		  "Output Function"
-	  fctName		  "GetRudderMessage"
+	  fctName		  "getCalibrateMessage"
 	  INPUT_SIZE		  "1"
 	  INPUT1		  "--"
 	  INPUT2		  "--"
@@ -4034,8 +4177,8 @@ Model {
 	  SampleTime		  ".01"
 	  InputType		  "[ ]"
 	  OutputType		  "[ 2 ]"
-	  FctDeclaration	  "extern uint8_T GetRudderMessage();"
-	  FctCall		  "%y1 = GetRudderMessage();"
+	  FctDeclaration	  "extern uint8_T getCalibrateMessage();"
+	  FctCall		  "%y1 = getCalibrateMessage();"
 	  OrderingInOutPopup	  "None"
 	  FctStart		  "None"
 	  FctStart_Name		  "Init_onlyOnce"
@@ -4069,6 +4212,43 @@ Model {
 	  DstPort		  1
 	}
       }
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Updates the rate at which\necan messages are sent\n[ecanRudder.c]"
+      SID		      "22093"
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      []
+      Position		      [435, 167, 583, 252]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.79"
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "Output Function"
+      fctName		      "updateMessageRate"
+      INPUT_SIZE	      "1"
+      INPUT1		      "--"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "--"
+      SampleTime	      ".01"
+      InputType		      "[ ]"
+      OutputType	      "[ ]"
+      FctDeclaration	      "extern void updateMessageRate();"
+      FctCall		      "updateMessageRate();"
+      OrderingInOutPopup      "None"
+      FctStart		      "None"
+      FctStart_Name	      "Init_onlyOnce"
+      FctStart_Declaration    "inline extern void Init_onlyOnce();"
+      FctStart_Call	      "Init_onlyOnce();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
     }
     Line {
       SrcBlock		      "Counter\nFree-Running"
@@ -4133,12 +4313,12 @@ Model {
       SrcPort		      5
       Points		      [80, 0]
       Branch {
-	DstBlock		"Calibrated\n(LED D7 )"
+	Points			[0, -20]
+	DstBlock		"Data Store\nWrite7"
 	DstPort			1
       }
       Branch {
-	Points			[0, -20]
-	DstBlock		"Data Store\nWrite7"
+	DstBlock		"Calibrated\n(LED D7 )"
 	DstPort			1
       }
     }
@@ -4328,11 +4508,14 @@ Model {
     Line {
       SrcBlock		      "From3"
       SrcPort		      1
-      DstBlock		      "Subsystem"
-      DstPort		      2
+      DstBlock		      "MATLAB Function1"
+      DstPort		      1
     }
     Line {
-      Points		      [335, 1200]
+      Labels		      [2, 0]
+      SrcBlock		      "Get the new angle for the rudder\n[ecanRudder.c]"
+      SrcPort		      1
+      Points		      [145, 0; 0, 20]
       DstBlock		      "Subsystem"
       DstPort		      1
     }
@@ -4365,6 +4548,12 @@ Model {
       SrcPort		      1
       DstBlock		      "Goto4"
       DstPort		      1
+    }
+    Line {
+      SrcBlock		      "MATLAB Function1"
+      SrcPort		      1
+      DstBlock		      "Subsystem"
+      DstPort		      2
     }
     Annotation {
       Position		      [101, 56]
@@ -4403,7 +4592,7 @@ Stateflow {
     name		    "rudder_Subsystem"
     created		    "20-Jul-2010 14:18:50"
     isLibrary		    0
-    firstTarget		    43
+    firstTarget		    50
     sfVersion		    76014001.0002
   }
   chart {
@@ -4682,8 +4871,8 @@ Stateflow {
   }
   chart {
     id			    18
-    name		    "Store Rudder\nData/Pack rudder data"
-    windowPosition	    [288.45 176.633 200.25 189.75]
+    name		    "MATLAB Function1"
+    windowPosition	    [281.813 329.45 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1280 1024 1.333333333333333]
     treeNode		    [0 19 0 0]
@@ -4692,11 +4881,11 @@ Stateflow {
     viewObj		    18
     machine		    1
     toolbarMode		    LIBRARY_TOOLBAR
-    ssIdHighWaterMark	    17
+    ssIdHighWaterMark	    5
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
     firstData		    22
-    chartFileNumber	    9
+    chartFileNumber	    3
     disableImplicitCasting  1
     eml {
       name		      "fcn"
@@ -4716,10 +4905,8 @@ Stateflow {
     decomposition	    CLUSTER_STATE
     eml {
       isEML		      1
-      script		      "function y = fcn(position, portLimit, sbLimit)\n%#codegen\n\ny = zeros(4, 1, 'uint8');\ny(1) = ui"
-      "nt8(bitand(position,hex2dec('FF')));\ny(2) = uint8(bitand(bitshift(position,-8),hex2dec('FF')));\ny(3) = uint8(p"
-      "ortLimit);\ny(4) = uint8(sbLimit);"
-      editorLayout	      "100 M4x1[284 359 729 994]"
+      script		      "function y = fcn(u)\n%#codegen\n\ny = u/10000;"
+      editorLayout	      "100 M4x1[205 227 1080 733]"
     }
   }
   junction {
@@ -4755,7 +4942,7 @@ Stateflow {
   data {
     id			    22
     ssIdNumber		    4
-    name		    "position"
+    name		    "u"
     linkNode		    [18 0 23]
     scope		    INPUT_DATA
     machine		    1
@@ -4775,7 +4962,124 @@ Stateflow {
     id			    23
     ssIdNumber		    5
     name		    "y"
-    linkNode		    [18 22 24]
+    linkNode		    [18 22 0]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  instance {
+    id			    24
+    name		    "MATLAB Function1"
+    machine		    1
+    chart		    18
+  }
+  chart {
+    id			    25
+    name		    "Store Rudder\nData/Pack rudder data"
+    windowPosition	    [288.45 176.633 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1280 1024 1.333333333333333]
+    treeNode		    [0 26 0 0]
+    firstTransition	    28
+    firstJunction	    27
+    viewObj		    25
+    machine		    1
+    toolbarMode		    LIBRARY_TOOLBAR
+    ssIdHighWaterMark	    17
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    29
+    chartFileNumber	    9
+    disableImplicitCasting  1
+    eml {
+      name		      "fcn"
+    }
+  }
+  state {
+    id			    26
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    25
+    treeNode		    [25 0 0 0]
+    superState		    SUBCHART
+    subviewer		    25
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function y = fcn(position, portLimit, sbLimit)\n%#codegen\n\ny = zeros(4, 1, 'uint8');\ny(1) = ui"
+      "nt8(bitand(position,hex2dec('FF')));\ny(2) = uint8(bitand(bitshift(position,-8),hex2dec('FF')));\ny(3) = uint8(p"
+      "ortLimit);\ny(4) = uint8(sbLimit);"
+      editorLayout	      "100 M4x1[284 359 729 994]"
+    }
+  }
+  junction {
+    id			    27
+    position		    [23.5747 49.5747 7]
+    chart		    25
+    linkNode		    [25 0 0]
+    subviewer		    25
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    28
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      27
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    25
+    linkNode		    [25 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    25
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    29
+    ssIdNumber		    4
+    name		    "position"
+    linkNode		    [25 0 30]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    30
+    ssIdNumber		    5
+    name		    "y"
+    linkNode		    [25 29 31]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -4792,10 +5096,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    24
+    id			    31
     ssIdNumber		    6
     name		    "portLimit"
-    linkNode		    [18 23 25]
+    linkNode		    [25 30 32]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -4814,10 +5118,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    25
+    id			    32
     ssIdNumber		    7
     name		    "sbLimit"
-    linkNode		    [18 24 0]
+    linkNode		    [25 31 0]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -4836,27 +5140,27 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   instance {
-    id			    26
+    id			    33
     name		    "Store Rudder\nData/Pack rudder data"
     machine		    1
-    chart		    18
+    chart		    25
   }
   chart {
-    id			    27
+    id			    34
     name		    "Run rudder\nfor calibration"
     windowPosition	    [389.813 159.299 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1280 1024 1.333333333333333]
-    treeNode		    [0 28 0 0]
-    firstTransition	    30
-    firstJunction	    29
-    viewObj		    27
+    treeNode		    [0 35 0 0]
+    firstTransition	    37
+    firstJunction	    36
+    viewObj		    34
     machine		    1
     toolbarMode		    LIBRARY_TOOLBAR
     ssIdHighWaterMark	    18
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
-    firstData		    31
+    firstData		    38
     chartFileNumber	    25
     disableImplicitCasting  1
     eml {
@@ -4865,14 +5169,14 @@ Stateflow {
     noDebugging		    1
   }
   state {
-    id			    28
+    id			    35
     labelString		    "eML_blk_kernel()"
     position		    [18 64.5 118 66]
     fontSize		    12
-    chart		    27
-    treeNode		    [27 0 0 0]
+    chart		    34
+    treeNode		    [34 0 0 0]
     superState		    SUBCHART
-    subviewer		    27
+    subviewer		    34
     ssIdNumber		    1
     type		    FUNC_STATE
     decomposition	    CLUSTER_STATE
@@ -4951,16 +5255,16 @@ Stateflow {
     }
   }
   junction {
-    id			    29
+    id			    36
     position		    [23.5747 49.5747 7]
-    chart		    27
-    linkNode		    [27 0 0]
-    subviewer		    27
+    chart		    34
+    linkNode		    [34 0 0]
+    subviewer		    34
     ssIdNumber		    3
     type		    CONNECTIVE_JUNCTION
   }
   transition {
-    id			    30
+    id			    37
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -4968,172 +5272,23 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      29
+      id		      36
       intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
-    chart		    27
-    linkNode		    [27 0 0]
+    chart		    34
+    linkNode		    [34 0 0]
     dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    27
+    subviewer		    34
     drawStyle		    SMART
     executionOrder	    1
     ssIdNumber		    2
   }
   data {
-    id			    31
+    id			    38
     ssIdNumber		    15
     name		    "rudderAngle"
-    linkNode		    [27 0 32]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    32
-    ssIdNumber		    4
-    name		    "trigger"
-    linkNode		    [27 31 33]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    33
-    ssIdNumber		    6
-    name		    "rudderPot"
-    linkNode		    [27 32 34]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    34
-    ssIdNumber		    7
-    name		    "rudderPortLimit"
-    linkNode		    [27 33 35]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_INT16_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    35
-    ssIdNumber		    14
-    name		    "rudderSbLimit"
-    linkNode		    [27 34 36]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_INT16_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    36
-    ssIdNumber		    5
-    name		    "step"
-    linkNode		    [27 35 37]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    37
-    ssIdNumber		    8
-    name		    "dir"
-    linkNode		    [27 36 38]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    38
-    ssIdNumber		    13
-    name		    "calibratingMode"
-    linkNode		    [27 37 39]
+    linkNode		    [34 0 39]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -5153,9 +5308,114 @@ Stateflow {
   }
   data {
     id			    39
-    ssIdNumber		    18
-    name		    "calibratedMode"
-    linkNode		    [27 38 40]
+    ssIdNumber		    4
+    name		    "trigger"
+    linkNode		    [34 38 40]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    40
+    ssIdNumber		    6
+    name		    "rudderPot"
+    linkNode		    [34 39 41]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    41
+    ssIdNumber		    7
+    name		    "rudderPortLimit"
+    linkNode		    [34 40 42]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_INT16_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    42
+    ssIdNumber		    14
+    name		    "rudderSbLimit"
+    linkNode		    [34 41 43]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_INT16_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    43
+    ssIdNumber		    5
+    name		    "step"
+    linkNode		    [34 42 44]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    44
+    ssIdNumber		    8
+    name		    "dir"
+    linkNode		    [34 43 45]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -5174,10 +5434,54 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    40
+    id			    45
+    ssIdNumber		    13
+    name		    "calibratingMode"
+    linkNode		    [34 44 46]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    46
+    ssIdNumber		    18
+    name		    "calibratedMode"
+    linkNode		    [34 45 47]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    47
     ssIdNumber		    16
     name		    "lowLimit"
-    linkNode		    [27 39 41]
+    linkNode		    [34 46 48]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -5195,10 +5499,10 @@ Stateflow {
     dataType		    "uint16"
   }
   data {
-    id			    41
+    id			    48
     ssIdNumber		    17
     name		    "highLimit"
-    linkNode		    [27 40 0]
+    linkNode		    [34 47 0]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -5216,22 +5520,22 @@ Stateflow {
     dataType		    "uint16"
   }
   instance {
-    id			    42
+    id			    49
     name		    "Run rudder\nfor calibration"
     machine		    1
-    chart		    27
+    chart		    34
   }
   target {
-    id			    43
+    id			    50
     name		    "sfun"
     description		    "Default Simulink S-Function Target."
     machine		    1
-    linkNode		    [1 0 44]
+    linkNode		    [1 0 51]
   }
   target {
-    id			    44
+    id			    51
     name		    "rtw"
     machine		    1
-    linkNode		    [1 43 0]
+    linkNode		    [1 50 0]
   }
 }

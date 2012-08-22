@@ -2,6 +2,7 @@
 #include "rudder_Subsystem.h"
 #include "MavlinkMessageScheduler.h"
 #include "ecanRudder.h"
+#include "nmea2000.h"
 
 #define RUDDER_MSG_ID_NMEA_ANGLE 10
 #define ECAN_ID_NMEA_ANGLE 127245
@@ -48,7 +49,7 @@ void rudderTransmit(void){
 void rudderSendNmea(void){
     //PGN127245 packing
     tCanMessage Message;
-    Message.id = ECAN_ID_NMEA_ANGLE;
+    Message.id = Iso11783Encode(ECAN_ID_NMEA_ANGLE, 10, 255, 2);
     Message.buffer = 0;
     Message.message_type = CAN_MSG_DATA;
     Message.frame_type = CAN_FRAME_EXT;
@@ -98,56 +99,78 @@ void rudderSendCustomLimit(void){
 }
 
 
-void ProcessAllEcanMessages(void)
+void processAllEcanMessages(void)
 {
 	uint8_t messagesLeft = 0;
 	tCanMessage msg;
 	uint32_t pgn;
-
-	uint8_t messagesHandled = 0;
 
 	do {
 		int foundOne = ecan1_receive(&msg, &messagesLeft);
 		if (foundOne) {
 			// Process custom rudder messages. Anything not explicitly handled is assumed to be a NMEA2000 message.
 			if (msg.id == 0x8081) {
-				if ((msg.payload[1] & 0x01) == 1) {
+				if ((msg.payload[0] & 0x01) == 1) {
 					rudderMessageStore.calibrate = 1;
 				}
 				else{
 					rudderMessageStore.calibrate = 0;
 				}
-			/*else if (msg.id == 0x8082){
-			
-			}*/
+			//update send message rates
+			}
+			if (msg.id == 0x8082){
+				rudderMessageStore.angleRate = msg.payload[0];
+				rudderMessageStore.statusRate = msg.payload[1];
+				
 			} else {
-				//pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
-				pgn = 1;
+				pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
 				switch (pgn) {
-				case 126992: { // From GPS
-				/*	sensorAvailability.gps.enabled_counter = 0;
-					uint8_t rv = ParsePgn126992(msg.payload, NULL, NULL, &dateTimeDataStore.year, &dateTimeDataStore.month, &dateTimeDataStore.day, &dateTimeDataStore.hour, &dateTimeDataStore.min, &dateTimeDataStore.sec, &dateTimeDataStore.usecSinceEpoch);
-					// Check if all 6 parts of the datetime were successfully decoded before triggering an update
-					if ((rv & 0xFC) == 0xFC) {
-						sensorAvailability.gps.active_counter = 0;
-						dateTimeDataStore.newData = true;
-					}*/
+				case ECAN_ID_NMEA_ANGLE: { 
+					if((msg.payload[2] != 0xFF) && (msg.payload[3] !=0xFF)){
+					rudderMessageStore.newAngle = msg.payload[3];
+					rudderMessageStore.newAngle = (rudderMessageStore.newAngle << 8) | msg.payload[2];
+					}
 				} break;
 				}
 			}
-
-			++messagesHandled;
 		}
 	}while (messagesLeft > 0);
-
-	//UpdateSensorsAvailability();
-	
 }
 
 
-uint8_t GetRudderMessage(void) {
+uint8_t getCalibrateMessage(void) {
 	uint8_t temp = rudderMessageStore.calibrate;
 	rudderMessageStore.calibrate = 0;
 	return temp;
 }
 
+void updateMessageRate(void) {
+	//handle the angle message first
+	if(rudderMessageStore.angleRate != 0xFF){
+		if(rudderMessageStore.angleRate == 0x00){
+		//write code for this
+		} else if((rudderMessageStore.angleRate <= 100) && (rudderMessageStore.angleRate >= 1)){
+			RemoveMessage(RUDDER_MSG_ID_NMEA_ANGLE);
+			AddMessage(RUDDER_MSG_ID_NMEA_ANGLE, rudderMessageStore.angleRate);
+		}
+	}
+	
+	//handle the status message
+	if(rudderMessageStore.statusRate != 0xFF){
+		if(rudderMessageStore.statusRate == 0x00){
+		//write code for this
+		} else if((rudderMessageStore.statusRate <= 100) && (rudderMessageStore.statusRate >= 1)){
+			RemoveMessage(RUDDER_MSG_ID_CUSTOM_LIMITS);
+			AddMessage(RUDDER_MSG_ID_CUSTOM_LIMITS, rudderMessageStore.statusRate);
+		}
+	}
+	rudderMessageStore.statusRate = 0xFF;
+	rudderMessageStore.angleRate = 0xFF;
+}
+
+
+
+double getNewAngle(void){
+	double temp = rudderMessageStore.newAngle;
+	return temp/10000;
+}
