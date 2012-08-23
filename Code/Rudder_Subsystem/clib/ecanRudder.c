@@ -59,9 +59,11 @@ void rudderSendNmea(void){
 	//only used for receiving a wanted angle
     Message.payload[2] = 0xFF;
     Message.payload[3] = 0xFF;
+	//convert rudderPositionAngle to 1e-4 radians
+	int16_t angle = ((float)rudderData.rudderPositionAngle * 10000);
 	//Send current angle over the CAN bus
-    Message.payload[4] = rudderData.rudderPositionAngle;
-    Message.payload[5] = (rudderData.rudderPositionAngle>>8);
+    Message.payload[4] = angle;
+    Message.payload[5] = (angle>>8);
     Message.validBytes = 6;
 	//transmit the message over CAN
     ecan1_transmit(Message);
