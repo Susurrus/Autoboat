@@ -368,7 +368,7 @@ uint8_t ParsePgn128267(uint8_t data[8], uint8_t *seqId, float *waterDepth, float
 	return fieldStatus;
 }
 
-uint8_t ParsePgn129025(uint8_t data[8], float *latitude, float *longitude)
+uint8_t ParsePgn129025(uint8_t data[8], int32_t *latitude, int32_t *longitude)
 {
 
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
@@ -383,24 +383,24 @@ uint8_t ParsePgn129025(uint8_t data[8], float *latitude, float *longitude)
 		unpacked.chData[1] = data[1];
 		unpacked.chData[2] = data[2];
 		unpacked.chData[3] = data[3];
-		*latitude = ((float)unpacked.lData) / 1e7 * M_PI / 180;
+		*latitude = unpacked.lData;
 		fieldStatus |= 0x01;
 	}
 
-	// Field 1: Longitude (32-bits). Raw units are 1e-7 degrees, but they're converted to raw radians on output.
+	// Field 1: Longitude (32-bits). Units are 1e-7 degrees.
 	if (longitude && (data[4] != 0xFF || data[5] != 0xFF || data[6] != 0xFF || data[7] != 0x7F)) {
 		unpacked.chData[0] = data[4];
 		unpacked.chData[1] = data[5];
 		unpacked.chData[2] = data[6];
 		unpacked.chData[3] = data[7];
-		*longitude = ((float)unpacked.lData) / 1e7 * M_PI / 180;
+		*longitude = unpacked.lData;
 		fieldStatus |= 0x02;
 	}
 
 	return fieldStatus;
 }
 
-uint8_t ParsePgn129026(uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, float *cog, float *sog)
+uint8_t ParsePgn129026(uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, uint16_t *cog, uint16_t *sog)
 {
 
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
@@ -420,21 +420,21 @@ uint8_t ParsePgn129026(uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, float *
 
 	// 6-bits reserved
 
-	// Field 2: Course over ground (16-bits). Raw units are .0001 degrees eastward from north but are converted to plain radians for output.
+	// Field 2: Course over ground (16-bits). Units are .0001 degrees eastward from north.
 	if (cog && (data[2] != 0xFF || data[3] != 0xFF)) {
 		tUnsignedShortToChar unpacked;
 		unpacked.chData[0] = data[2];
 		unpacked.chData[1] = data[3];
-		*cog = ((float)unpacked.usData) / 1e4;
+		*cog = unpacked.usData;
 		fieldStatus |= 0x04;
 	}
 
-	// Field 3: Speed over ground (16-bits). Raw units are .01 m/s but are converted to straight m/s on output.
+	// Field 3: Speed over ground (16-bits). Units are .01 m/s.
 	if (sog && (data[4] != 0xFF || data[5] != 0xFF)) {
 		tUnsignedShortToChar unpacked;
 		unpacked.chData[0] = data[4];
 		unpacked.chData[1] = data[5];
-		*sog = ((float)unpacked.usData) / 1e2;
+		*sog = unpacked.usData;
 		fieldStatus |= 0x08;
 	}
 

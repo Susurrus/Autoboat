@@ -3,6 +3,12 @@
 % Simulation timestep size (s)
 T_step = 0.01;
 
+% Maximum PWM uptime (s)
+% This variable is used in the input compare block for scaling the output
+% to real-world units. This isn't used in the IC block because that block
+% can't or won't evaluate MATLAB workspace variables.
+MaxPwmIn = .0025;
+
 % Initial GPS location
 % Stored as radians for a priori computations.
 ref_lla = [36.955; -122.002; 0] * pi / 180;

@@ -181,9 +181,9 @@ void buildAndCheckMessage(uint8_t characterIn, uint8_t sensorMode) {
 				// Only update the rudder data if we're not in a sensor-override mode. This mode
 				// specifies that real-world actuator sensor data will be used instead of generated.
 				if (!sensorMode) {
-					SetRudderData(&message[27]);
+					SetRudderData(&message[23]);
 				}
-				SetHilData(&message[35]);
+				SetHilData(&message[31]);
 			}
 
 			// Now that we've successfully parsed a message, clear the flag.
@@ -266,7 +266,7 @@ uint8_t calculateChecksum(uint8_t *sentence, uint8_t size) {
 }
 
 void UpdateGpsDataFromHil(uint8_t *data) {
-	if (data[20]) {
+	if (data[16]) {
 		gpsDataStore.lat.chData[0] = data[0];
 		gpsDataStore.lat.chData[1] = data[1];
 		gpsDataStore.lat.chData[2] = data[2];
@@ -284,12 +284,8 @@ void UpdateGpsDataFromHil(uint8_t *data) {
 
 		gpsDataStore.cog.chData[0] = data[12];
 		gpsDataStore.cog.chData[1] = data[13];
-		gpsDataStore.cog.chData[2] = data[14];
-		gpsDataStore.cog.chData[3] = data[15];
-		gpsDataStore.sog.chData[0] = data[16];
-		gpsDataStore.sog.chData[1] = data[17];
-		gpsDataStore.sog.chData[2] = data[18];
-		gpsDataStore.sog.chData[3] = data[19];
+		gpsDataStore.sog.chData[0] = data[14];
+		gpsDataStore.sog.chData[1] = data[15];
 
 		gpsDataStore.newData = 1;
 

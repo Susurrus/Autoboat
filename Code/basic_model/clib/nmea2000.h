@@ -75,10 +75,10 @@ uint8_t ParsePgn128259(uint8_t data[8], uint8_t *seqId, float *waterSpeed);
 uint8_t ParsePgn128267(uint8_t data[8], uint8_t *seqId, float *waterDepth, float *offset);
 
 // Units are seqId: none, latitude: radians (+ north), longitude: radians (+ east).
-uint8_t ParsePgn129025(uint8_t data[8], float *latitude, float *longitude);
+uint8_t ParsePgn129025(uint8_t data[8], int32_t *latitude, int32_t *longitude);
 
 // Units are seqId: none, cogRef: 0 (True), 1 (magnetic), cog: radians eastward from north, sog: m/s
-uint8_t ParsePgn129026(uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, float *cog, float *sog);
+uint8_t ParsePgn129026(uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, uint16_t *cog, uint16_t *sog);
 
 // Units are seqId: none, airSpeed: m/s, direction: radians eastward from north.
 uint8_t ParsePgn130306(uint8_t data[8], uint8_t *seqId, float *airSpeed, float *direction);

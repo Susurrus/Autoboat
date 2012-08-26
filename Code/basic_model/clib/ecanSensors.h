@@ -50,11 +50,11 @@ struct ThrottleData {
 extern struct ThrottleData throttleDataStore;
 
 struct GpsData {
-	tFloatToChar lat; // Latitude in degrees
-	tFloatToChar lon; // Longitude in degrees
-	tFloatToChar alt; // Altitude in meters
-	tFloatToChar cog; // Course over ground in degrees eastward from north.
-	tFloatToChar sog; // Speed over ground in m/s
+	tLongToChar lat; // Latitude in units of 1e-7 degrees
+	tLongToChar lon; // Longitude in units of 1e-7 degrees
+	tLongToChar alt; // Altitude in 1e-6 meters
+	tUnsignedShortToChar cog; // Course over ground in degrees eastward from north.
+	tUnsignedShortToChar sog; // Speed over ground in m/s
 	bool         newData; // Flag for whether this struct stores new data
 };
 extern struct GpsData gpsDataStore;

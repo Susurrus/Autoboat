@@ -137,22 +137,32 @@ uint16_t mavLinkMessagesFailedParsing = 0;
  */
 void MavLinkInit(void)
 {
-	AddMessage(MAVLINK_MSG_ID_HEARTBEAT, 2);
-	AddMessage(MAVLINK_MSG_ID_SYS_STATUS, 2);
-	AddMessage(MAVLINK_MSG_ID_SYSTEM_TIME, 1);
-
-	AddMessage(MAVLINK_MSG_ID_LOCAL_POSITION_NED, 10);
-	AddMessage(MAVLINK_MSG_ID_ATTITUDE, 10);
-	AddMessage(MAVLINK_MSG_ID_GPS_RAW_INT, 1);
-
-	AddMessage(MAVLINK_MSG_ID_RC_CHANNELS_RAW, 4);
-	AddMessage(MAVLINK_MSG_ID_STATUS_AND_ERRORS, 4);
-	AddMessage(MAVLINK_MSG_ID_WSO100, 2);
-	AddMessage(MAVLINK_MSG_ID_BASIC_STATE, 10);
-	AddMessage(MAVLINK_MSG_ID_RUDDER_RAW, 4);
-	AddMessage(MAVLINK_MSG_ID_DST800, 2);
-	AddMessage(MAVLINK_MSG_ID_REVO_GS, 2);
-	AddMessage(MAVLINK_MSG_ID_MAIN_POWER, 5);
+	uint8_t ids[] = {
+		MAVLINK_MSG_ID_HEARTBEAT,
+		MAVLINK_MSG_ID_SYS_STATUS,
+		MAVLINK_MSG_ID_SYSTEM_TIME,
+		MAVLINK_MSG_ID_LOCAL_POSITION_NED,
+		MAVLINK_MSG_ID_ATTITUDE,
+		MAVLINK_MSG_ID_GPS_RAW_INT,
+		MAVLINK_MSG_ID_RC_CHANNELS_RAW,
+		MAVLINK_MSG_ID_RC_CHANNELS_SCALED,
+		MAVLINK_MSG_ID_STATUS_AND_ERRORS,
+		MAVLINK_MSG_ID_WSO100,
+		MAVLINK_MSG_ID_BASIC_STATE,
+		MAVLINK_MSG_ID_RUDDER_RAW,
+		MAVLINK_MSG_ID_DST800,
+		MAVLINK_MSG_ID_REVO_GS,
+		MAVLINK_MSG_ID_MAIN_POWER
+	};
+	uint8_t periodicities[] = {2, 2, 1, 10, 10, 1, 4, 4, 4, 2, 10, 4, 2, 2, 5};
+	uint8_t i, t;
+	for (i = 0; i < sizeof(ids); ++i) {
+		if (i == 10)
+			t = 6;
+		if (!AddMessage(ids[i], periodicities[i])) {
+			while (1);
+		}
+	}
 }
 
 /**
@@ -160,7 +170,9 @@ void MavLinkInit(void)
  */
 void MavLinkScheduleCurrentMission(void)
 {
-	AddTransientMessage(MAVLINK_MSG_ID_MISSION_CURRENT);
+	if (!AddTransientMessage(MAVLINK_MSG_ID_MISSION_CURRENT)) {
+		while (1);
+	}
 }
 
 /**
@@ -170,7 +182,9 @@ void MavLinkScheduleGpsOrigin(void)
 {
 	// Commented out on 7/22/2012 because QGC doesn't handle these messages well,
 	// spawning a modal dialog whenever it's received.
-	//AddTransientMessage(MAVLINK_MSG_ID_GPS_GLOBAL_ORIGIN);
+	//if (!AddTransientMessage(MAVLINK_MSG_ID_GPS_GLOBAL_ORIGIN)) {
+	//	while (1);
+	//}
 }
 
 /**
@@ -268,8 +282,7 @@ void MavLinkSendStatus(void)
 
 /**
  * Pull the raw GPS sensor data from the gpsDataStore struct within the GPS module and
- * transmit it via MAVLink over UART1. This function should only be called when the GPS
- * data has been updated.
+ * transmit it via MAVLink over UART1.
  * TODO: Convert this message to a GLOBAL_POSITION_INT
  */
 void MavLinkSendRawGps(void)
@@ -277,9 +290,9 @@ void MavLinkSendRawGps(void)
 	mavlink_message_t msg;
 
 	mavlink_msg_gps_raw_int_pack(mavlink_system.sysid, mavlink_system.compid, &msg, ((uint64_t)systemStatus.time)*10000,
-		sensorAvailability.gps.active?3:0, (int32_t)(gpsDataStore.lat.flData*180/M_PI*1e7), (int32_t)(gpsDataStore.lon.flData*180/M_PI*1e7), (int32_t)(gpsDataStore.alt.flData*1e7),
+		sensorAvailability.gps.active?3:0, gpsDataStore.lat.lData, gpsDataStore.lon.lData, gpsDataStore.alt.lData,
 		0xFFFF, 0xFFFF,
-		(uint16_t)gpsDataStore.sog.flData*100, (uint16_t)gpsDataStore.cog.flData * 100,
+		gpsDataStore.sog.usData, (uint16_t)(((float)gpsDataStore.cog.usData) * 180 / M_PI / 100),
 		0xFF);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
@@ -361,7 +374,7 @@ void MavLinkSendLocalPosition(void)
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
-void MavLinkSendRcData(void)
+void MavLinkSendRcRawData(void)
 {
 	mavlink_message_t msg;
 
@@ -376,6 +389,31 @@ void MavLinkSendRcData(void)
 }
 
 /**
+ * Only transmit scaled RC data messages if the RC transmitter's been calibrated. If it
+ * hasn't, the scaled data doesn't make any sense.
+ */
+void MavLinkSendRcScaledData(void)
+{
+    if (systemStatus.status & (1 << 4)) {
+	mavlink_message_t msg;
+
+	mavlink_msg_rc_channels_scaled_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+	                                 systemStatus.time*10,
+									 0,
+									 (int16_t)(rcSignalRudderScaled * 10000),
+									 (int16_t)(rcSignalThrottleScaled * 10000),
+									 (int16_t)(rcSignalModeScaled * 10000),
+									 (int16_t)(rcSignalTrackScaled * 10000),
+									 0, 0, 0, 0,
+			                         255);
+
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+
+	uart1EnqueueData(buf, (uint8_t)len);
+    }
+}
+
+/**
  * Transmits the current GPS position of the origin of the local coordinate frame that the North-East-Down
  * coordinates are all relative too. They should be in units of 1e-7 degrees.
  */
@@ -383,9 +421,9 @@ void MavLinkSendGpsGlobalOrigin(void)
 {
 	mavlink_message_t msg;
 
-	int32_t latitude = (int32_t)(gpsDataStore.lat.flData * 180 / M_PI * 1e7);
-	int32_t longitude = (int32_t)(gpsDataStore.lon.flData * 180 / M_PI * 1e7);
-	int32_t altitude = (int32_t)(gpsDataStore.alt.flData * 1e7);
+	int32_t latitude = gpsDataStore.lat.lData;
+	int32_t longitude = gpsDataStore.lon.lData;
+	int32_t altitude = gpsDataStore.alt.lData;
 
 	mavlink_msg_gps_global_origin_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                                   latitude, longitude, altitude);
@@ -671,7 +709,9 @@ void MavLinkEvaluateParameterState(uint8_t event, void *data)
 
 		case PARAM_STATE_SINGLETON_SEND_VALUE: {
 			if (event == PARAM_EVENT_ENTER_STATE) {
-				AddTransientMessage(MAVLINK_MSG_ID_PARAM_VALUE);
+				if (!AddTransientMessage(MAVLINK_MSG_ID_PARAM_VALUE)) {
+					while (1);
+				}
 			} else if (event == PARAM_EVENT_VALUE_DISPATCHED) {
 				_transmitParameter(currentParameter);
 				nextState = PARAM_STATE_INACTIVE;
@@ -680,7 +720,9 @@ void MavLinkEvaluateParameterState(uint8_t event, void *data)
 
 		case PARAM_STATE_STREAM_SEND_VALUE: {
 			if (event == PARAM_EVENT_ENTER_STATE) {
-				AddTransientMessage(MAVLINK_MSG_ID_PARAM_VALUE);
+				if (!AddTransientMessage(MAVLINK_MSG_ID_PARAM_VALUE)) {
+					while (1);
+				}
 			} else if (event == PARAM_EVENT_VALUE_DISPATCHED) {
 				_transmitParameter(currentParameter);
 
@@ -743,13 +785,17 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 	switch (state) {
 		case MISSION_STATE_INACTIVE:
 			if (event == MISSION_EVENT_REQUEST_LIST_RECEIVED) {
-				AddTransientMessage(MAVLINK_MSG_ID_MISSION_COUNT);
+				if (!AddTransientMessage(MAVLINK_MSG_ID_MISSION_COUNT)) {
+					while (1);
+				}
 				currentMissionIndex = 0;
 				nextState = MISSION_STATE_SEND_MISSION_COUNT;
 			} else if (event == MISSION_EVENT_COUNT_RECEIVED) {
 				// Don't allow for writing of new missions if we're in autonomous mode.
 				if ((systemStatus.status & 0x0001) > 0) {
-					AddTransientMessage(MAVLINK_MSG_ID_MISSION_ACK);
+					if (!AddTransientMessage(MAVLINK_MSG_ID_MISSION_ACK)) {
+						while (1);
+					}
 					nextState = MISSION_STATE_ACK_ERROR;
 				} else {
 
@@ -758,10 +804,14 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 					// Only respond with a request if there are missions to request.
 					// If we received a 0-length mission list, just respond with a MISSION_ACK error
 					if (newListSize == 0) {
-						AddTransientMessage(MAVLINK_MSG_ID_MISSION_ACK);
+						if (!AddTransientMessage(MAVLINK_MSG_ID_MISSION_ACK)) {
+							while (1);
+						}
 						nextState = MISSION_STATE_ACK_ERROR;
 					} else if (newListSize > mList.maxSize) {
-						AddTransientMessage(MAVLINK_MSG_ID_MISSION_ACK);
+						if (!AddTransientMessage(MAVLINK_MSG_ID_MISSION_ACK)) {
+							while (1);
+						}
 						nextState = MISSION_STATE_ACK_NO_SPACE;
 					}
 					// Otherwise we're set to start retrieving a new mission list so we request the first mission.
@@ -769,25 +819,33 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 						mavlinkNewMissionListSize = newListSize;
 						ClearMissionList();
 						currentMissionIndex = 0;
-						AddTransientMessage(MAVLINK_MSG_ID_MISSION_REQUEST);
+						if (!AddTransientMessage(MAVLINK_MSG_ID_MISSION_REQUEST)) {
+							while (1);
+						}
 						nextState = MISSION_STATE_SEND_REQUEST;
 					}
 				}
 			} else if (event == MISSION_EVENT_CLEAR_ALL_RECEIVED) {
 				// If we're in autonomous mode, don't allow for clearing the mission list
 				if ((systemStatus.status & 0x0001) > 0) {
-					AddTransientMessage(MAVLINK_MSG_ID_MISSION_ACK);
+					if (!AddTransientMessage(MAVLINK_MSG_ID_MISSION_ACK)) {
+						while (1);
+					}
 					nextState = MISSION_STATE_ACK_ERROR;
 				}
 				// But if we're in manual mode, go ahead and clear everything.
 				else {
 					ClearMissionList();
-					AddTransientMessage(MAVLINK_MSG_ID_MISSION_ACK);
+					if (!AddTransientMessage(MAVLINK_MSG_ID_MISSION_ACK)) {
+						while (1);
+					}
 					nextState = MISSION_STATE_ACK_ACCEPTED;
 				}
 			} else if (event == MISSION_EVENT_SET_CURRENT_RECEIVED) {
 				SetCurrentMission(*(uint8_t*)data);
-				AddTransientMessage(MAVLINK_MSG_ID_MISSION_CURRENT);
+				if (!AddTransientMessage(MAVLINK_MSG_ID_MISSION_CURRENT)) {
+					while (1);
+				}
 				nextState = MISSION_STATE_SEND_CURRENT;
 			}
 			// If a MISSION_CURRENT message was scheduled and we aren't in any state, just transmit
@@ -813,7 +871,9 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 				}
 			} else if (event == MISSION_EVENT_REQUEST_RECEIVED) {
 				if (*(uint8_t *)data == currentMissionIndex) {
-					AddTransientMessage(MAVLINK_MSG_ID_MISSION_ITEM);
+					if (!AddTransientMessage(MAVLINK_MSG_ID_MISSION_ITEM)) {
+						while (1);
+					}
 					nextState = MISSION_STATE_SEND_MISSION_ITEM;
 				}
 			} else if (event == MISSION_EVENT_ACK_RECEIVED) {
@@ -855,17 +915,23 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 						// If this was the last mission we were expecting, respond with an ACK confirming that we've successfully
 						// received the entire mission list. Otherwise we just increment and request the next mission.
 						if (currentMissionIndex == mavlinkNewMissionListSize - 1) {
-							AddTransientMessage(MAVLINK_MSG_ID_MISSION_ACK);
+							if (!AddTransientMessage(MAVLINK_MSG_ID_MISSION_ACK)) {
+								while (1);
+							}
 							nextState = MISSION_STATE_ACK_ACCEPTED;
 						} else {
 							++currentMissionIndex;
-							AddTransientMessage(MAVLINK_MSG_ID_MISSION_REQUEST);
+							if (!AddTransientMessage(MAVLINK_MSG_ID_MISSION_REQUEST)) {
+								while (1);
+							}
 							nextState = MISSION_STATE_SEND_REQUEST;
 						}
 					}
 					// If we've run out of space before the last message, respond saying so.
 					else {
-						AddTransientMessage(MAVLINK_MSG_ID_MISSION_ACK);
+						if (!AddTransientMessage(MAVLINK_MSG_ID_MISSION_ACK)) {
+							while (1);
+						}
 						nextState = MISSION_STATE_ACK_NO_SPACE;
 					}
 				}
@@ -1079,7 +1145,11 @@ void MavLinkTransmit(void)
 			break;
 
 			case MAVLINK_MSG_ID_RC_CHANNELS_RAW: {
-				MavLinkSendRcData();
+				MavLinkSendRcRawData();
+			} break;
+
+			case MAVLINK_MSG_ID_RC_CHANNELS_SCALED: {
+				MavLinkSendRcScaledData();
 			} break;
 
 			/** Parameter Protocol Messages **/

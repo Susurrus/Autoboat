@@ -89,18 +89,14 @@ void GetGpsDataPacked(uint8_t *data)
 	data[9] = gpsDataStore.alt.chData[1];
 	data[10] = gpsDataStore.alt.chData[2];
 	data[11] = gpsDataStore.alt.chData[3];
-	
+
 	data[12] = gpsDataStore.cog.chData[0];
 	data[13] = gpsDataStore.cog.chData[1];
-	data[14] = gpsDataStore.cog.chData[2];
-	data[15] = gpsDataStore.cog.chData[3];
-	data[16] = gpsDataStore.sog.chData[0];
-	data[17] = gpsDataStore.sog.chData[1];
-	data[18] = gpsDataStore.sog.chData[2];
-	data[19] = gpsDataStore.sog.chData[3];
-	
-	data[20] = gpsDataStore.newData;
-	
+	data[14] = gpsDataStore.sog.chData[0];
+	data[15] = gpsDataStore.sog.chData[1];
+
+	data[16] = gpsDataStore.newData;
+
 	// Mark this data as old now
 	gpsDataStore.newData = 0;
 }
@@ -116,11 +112,11 @@ void GetRudderCanDataPacked(uint8_t *data){
 
 void ClearGpsData(void)
 {
-	gpsDataStore.lat.flData = 0.0;
-	gpsDataStore.lon.flData = 0.0;
-	gpsDataStore.alt.flData = 0.0;
-	gpsDataStore.cog.flData = 0.0;
-	gpsDataStore.sog.flData = 0.0;
+	gpsDataStore.lat.lData = 0.0;
+	gpsDataStore.lon.lData = 0.0;
+	gpsDataStore.alt.lData = 0.0;
+	gpsDataStore.cog.usData = 0;
+	gpsDataStore.sog.usData = 0;
 	gpsDataStore.newData = 0;
 }
 
@@ -226,7 +222,7 @@ uint8_t ProcessAllEcanMessages(void)
 					// Only record the live GPS data if we aren't in HIL mode.
 					if ((systemStatus.status & (1 << 1)) == 0) {
 						sensorAvailability.gps.enabled_counter = 0;
-						uint8_t rv = ParsePgn129025(msg.payload, &gpsDataStore.lat.flData, &gpsDataStore.lon.flData);
+						uint8_t rv = ParsePgn129025(msg.payload, &gpsDataStore.lat.lData, &gpsDataStore.lon.lData);
 						// Only update if both latitude and longitude were parsed successfully.
 						if ((rv & 0x03) == 0x03) {
 							sensorAvailability.gps.active_counter = 0;
@@ -238,7 +234,7 @@ uint8_t ProcessAllEcanMessages(void)
 					// Only record the live GPS data if we aren't in HIL mode.
 					if ((systemStatus.status & (1 << 1)) == 0) {
 						sensorAvailability.gps.enabled_counter = 0;
-						uint8_t rv = ParsePgn129026(msg.payload, NULL, NULL, &gpsDataStore.cog.flData, &gpsDataStore.sog.flData);
+						uint8_t rv = ParsePgn129026(msg.payload, NULL, NULL, &gpsDataStore.cog.usData, &gpsDataStore.sog.usData);
 						// Only update if both course-over-ground and speed-over-ground were parsed successfully.
 						if ((rv & 0x0C) == 0x0C) {
 							sensorAvailability.gps.active_counter = 0;
@@ -275,7 +271,7 @@ uint8_t ProcessAllEcanMessages(void)
 	} while (messagesLeft > 0);
 
 	UpdateSensorsAvailability();
-	
+
 	return messagesHandled;
 }
 
