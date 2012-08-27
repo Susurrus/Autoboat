@@ -326,7 +326,7 @@ void MavLinkSendBasicState(void)
 
 	mavlink_msg_basic_state_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 		internalVariables.RudderCommand, internalVariables.RudderPositionAngle,
-		 internalVariables.ThrottleCommand,
+		internalVariables.ThrottleCommand,
 		internalVariables.PropellerRpm,
 		internalVariables.L2Vector[0], internalVariables.L2Vector[1]);
 
@@ -346,7 +346,7 @@ void MavLinkSendAttitude(void)
 	mavlink_message_t msg;
 
 	mavlink_msg_attitude_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-                              systemStatus.time*10, 0.0, 0.0, internalVariables.Heading, 0.0, 0.0, 0.0);
+	                          systemStatus.time*10, 0.0, 0.0, internalVariables.Heading, 0.0, 0.0, 0.0);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
@@ -365,9 +365,9 @@ void MavLinkSendLocalPosition(void)
 	mavlink_message_t msg;
 
 	mavlink_msg_local_position_ned_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-                                        systemStatus.time*10,
-										internalVariables.LocalPosition[0], internalVariables.LocalPosition[1], internalVariables.LocalPosition[2],
-										internalVariables.Velocity[0], internalVariables.Velocity[1], internalVariables.Velocity[2]);
+	                                    systemStatus.time*10,
+	                                    internalVariables.LocalPosition[0], internalVariables.LocalPosition[1], internalVariables.LocalPosition[2],
+	                                    internalVariables.Velocity[0], internalVariables.Velocity[1], internalVariables.Velocity[2]);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
@@ -380,8 +380,8 @@ void MavLinkSendRcRawData(void)
 
 	mavlink_msg_rc_channels_raw_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                                 systemStatus.time*10,
-									 0, rcSignalRudder, rcSignalThrottle, rcSignalMode, rcSignalTrack, 0, 0, 0, 0,
-			                         255);
+	                                 0, rcSignalRudder, rcSignalThrottle, rcSignalMode, rcSignalTrack, 0, 0, 0, 0,
+	                                 255);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
@@ -399,13 +399,13 @@ void MavLinkSendRcScaledData(void)
 
 	mavlink_msg_rc_channels_scaled_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                                 systemStatus.time*10,
-									 0,
-									 (int16_t)(rcSignalRudderScaled * 10000),
-									 (int16_t)(rcSignalThrottleScaled * 10000),
-									 (int16_t)(rcSignalModeScaled * 10000),
-									 (int16_t)(rcSignalTrackScaled * 10000),
-									 0, 0, 0, 0,
-			                         255);
+	                                 0,
+	                                 (int16_t)(rcSignalRudderScaled * 10000),
+	                                 (int16_t)(rcSignalThrottleScaled * 10000),
+	                                 (int16_t)(rcSignalModeScaled * 10000),
+	                                 (int16_t)(rcSignalTrackScaled * 10000),
+	                                 0, 0, 0, 0,
+	                                 255);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
@@ -903,8 +903,29 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 					};
 
 					// Attempt to record this mission to the list, recording the result, which will be 0 for failure.
+					// We also map all incoming Global Lat/Long/Alt messages to North-East-Down here.
+					// These can be created in QGroundControl by just double-clicking on the Map. Once you write them
+					// to this controller, they'll pop back out as NED.
 					int8_t missionAddStatus;
-					AppendMission(&m, &missionAddStatus);
+					if (m.refFrame == MAV_FRAME_GLOBAL) {
+						Mission convertedLocalMission = {
+							{0.0, 0.0, 0.0},
+							MAV_FRAME_LOCAL_NED,
+							m.action,
+							{m.parameters[0], m.parameters[1], m.parameters[2], m.parameters[3]},
+							m.autocontinue
+						};
+						const int32_t x[3] = {
+							(int32_t)(m.coordinates[0] * 1e7),
+							(int32_t)(m.coordinates[1] * 1e7),
+							(int32_t)(m.coordinates[2] * 1e7)
+						};
+						code_gen_LLA2LTP(true, x, convertedLocalMission.coordinates);
+
+						AppendMission(&convertedLocalMission, &missionAddStatus);
+					} else {
+						AppendMission(&m, &missionAddStatus);
+					}
 
 					if (missionAddStatus != -1) {
 						// If this is going to be the new current mission, then we should set it as such.
