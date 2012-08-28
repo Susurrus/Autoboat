@@ -50,13 +50,13 @@ void ProcessAdcData(float voltage, float amperage)
 	// Field 1: Voltage (in .01V)
 	tUnsignedShortToChar x;
 	voltage *= 100.0f;
-	x.usData = (uint16_t)((voltage > 0.0) ? floorf(voltage + 0.5) : ceilf(voltage - 0.5));
+	x.usData = (uint16_t)voltage;
 	msg.payload[1] = x.chData[0];
 	msg.payload[2] = x.chData[1];
 	
 	// Field 2: Current (in .1A)
 	amperage *= 10.0f;
-	x.usData = (uint16_t)((amperage > 0.0) ? floorf(amperage + 0.5) : ceilf(amperage - 0.5));
+	x.usData = (uint16_t)amperage;
 	msg.payload[3] = x.chData[0];
 	msg.payload[4] = x.chData[1];
 	
