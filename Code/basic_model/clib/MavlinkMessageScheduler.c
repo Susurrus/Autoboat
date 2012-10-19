@@ -82,11 +82,11 @@ bool AddMessage(uint8_t id, uint8_t rate)
 	for (i = 0; i < rate; i++) {
 		newMessages[i] = malloc(sizeof(SListItem));
 		// If we were able to malloc the item, populate it and continue.
-		if (newMessages[i]) {
+		if (newMessages[i] != NULL) {
 			newMessages[i]->id = id;
 			newMessages[i]->_transient = false;
 		}
-		// Otherwise if malloc() failed, back up through the array and free any ones that
+		// Otherwise if malloc() has failed, back up through the array and free any ones that
 		// were allocated and return failure.
 		else {
 			uint8_t j;
@@ -141,7 +141,7 @@ bool AddTransientMessage(uint8_t id)
 	
 	// Now that we have the best timestep to add this in, do it.
 	SListItem *x = malloc(sizeof(SListItem));
-	if (!x) {
+	if (x == NULL) {
 		return false;
 	}
 	

@@ -4,14 +4,16 @@
 % comma-delimited list of column headers. They can be written in the form
 % of X.Y and the resulting struct will then be organized as logData.X.Y =
 % ACTUAL_DATA.
-function logData = processCsvFile(filename)
+function logData = ProcessCsvFile(filename)
 
     fid = fopen(filename);
 
     % Read the lines until we reach one that doesn't start with a comment
     firstLine = fgetl(fid);
-    while firstLine(1) == '%'
-        firstLine = fgetl(fid);
+    if ~isempty(firstLine)
+        while firstLine(1) == '%'
+            firstLine = fgetl(fid);
+        end
     end
 
     % Assume the first line after comments are header names

@@ -1,5 +1,5 @@
 % Set some constants for use with the L2+ trajectory controller
-TStar = single(4.5);
+TStar = single(2);
 IPStar = 0;
 InitialPoint = 0;
 Turn2Track = 0;

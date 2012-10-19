@@ -29,7 +29,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include "mavlink.h"
+#include <mavlink.h>
 
 // Set up some state machine variables for the parameter protocol
 enum {
@@ -120,11 +120,14 @@ static uint8_t groundStationSystemId = 0;
 static uint8_t groundStationComponentId = 0;
 
 // Globally declare here how many parameters we have. Should be dealt with better later.
-static uint16_t parameterCount = 4;
+static uint16_t parameterCount = 5;
 
 // Declare a character buffer here to prevent continual allocation/deallocation of MAVLink buffers.
 static uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 static uint16_t len;
+
+// Parameters are declared here and imported into Simulink
+uint8_t manualInputSelect; // Tracks which manual input is enabled: 0 => RC, 1 => joystick, 2 => MAVLink
 
 // Track how well MAVLink decoding is going:
 // WARN: Possible overflow over long-enough duration
@@ -154,7 +157,7 @@ void MavLinkInit(void)
 		MAVLINK_MSG_ID_REVO_GS,
 		MAVLINK_MSG_ID_MAIN_POWER
 	};
-	uint8_t periodicities[] = {2, 2, 1, 10, 10, 1, 4, 4, 4, 2, 10, 4, 2, 2, 5};
+	uint8_t periodicities[] = {2, 2, 1, 10, 10, 5, 4, 4, 4, 2, 10, 4, 2, 2, 5};
 	uint8_t i, t;
 	for (i = 0; i < sizeof(ids); ++i) {
 		if (i == 10)
@@ -166,7 +169,7 @@ void MavLinkInit(void)
 }
 
 /**
- * Simulink helper function that scheduls a one-off MISSION_CURRENT message.
+ * Simulink helper function that schedules a one-off MISSION_CURRENT message.
  */
 void MavLinkScheduleCurrentMission(void)
 {
@@ -376,42 +379,47 @@ void MavLinkSendLocalPosition(void)
 
 void MavLinkSendRcRawData(void)
 {
+    if (manualInputSelect == 0) {
 	mavlink_message_t msg;
 
 	mavlink_msg_rc_channels_raw_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                                 systemStatus.time*10,
-	                                 0, rcSignalRudder, rcSignalThrottle, rcSignalMode, rcSignalTrack, 0, 0, 0, 0,
-	                                 255);
-
-	len = mavlink_msg_to_send_buffer(buf, &msg);
-
-	uart1EnqueueData(buf, (uint8_t)len);
-}
-
-/**
- * Only transmit scaled RC data messages if the RC transmitter's been calibrated. If it
- * hasn't, the scaled data doesn't make any sense.
- */
-void MavLinkSendRcScaledData(void)
-{
-    if (systemStatus.status & (1 << 4)) {
-	mavlink_message_t msg;
-
-	mavlink_msg_rc_channels_scaled_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-	                                 systemStatus.time*10,
 	                                 0,
-	                                 (int16_t)(rcSignalRudderScaled * 10000),
-	                                 (int16_t)(rcSignalThrottleScaled * 10000),
-	                                 (int16_t)(rcSignalModeScaled * 10000),
-	                                 (int16_t)(rcSignalTrackScaled * 10000),
-	                                 0, 0, 0, 0,
-	                                 255);
+	                                 rcSignalRudder, rcSignalThrottle, rcSignalMode,
+	                                 UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,
+	                                 UINT8_MAX);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
 	uart1EnqueueData(buf, (uint8_t)len);
     }
 }
+
+/**
+ * Only transmit scaled RC data messages if the RC transmitter's been calibrated and
+ * the RC transmitter is selected. Doesn't make sense to transmit otherwise.
+ */
+void MavLinkSendRcScaledData(void)
+{
+    if (!(systemStatus.status & (1 << 4)) &&
+        manualInputSelect == 0) {
+        mavlink_message_t msg;
+
+        mavlink_msg_rc_channels_scaled_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+                                                                         systemStatus.time*10,
+                                                                         0,
+                                                                         (int16_t)(signalRudderScaled * 10000),
+                                                                         (int16_t)(signalThrottleScaled * 10000),
+                                                                         (int16_t)(signalModeScaled * 10000),
+                                                                         INT16_MAX, INT16_MAX, INT16_MAX, INT16_MAX, INT16_MAX,
+                                                                         UINT8_MAX);
+
+        len = mavlink_msg_to_send_buffer(buf, &msg);
+
+        uart1EnqueueData(buf, (uint8_t)len);
+    }
+}
+
 
 /**
  * Transmits the current GPS position of the origin of the local coordinate frame that the North-East-Down
@@ -515,7 +523,7 @@ void _transmitParameter(uint16_t id)
 		parameterCount,
 		0,
 		"",
-		MAV_PARAM_TYPE_UINT32
+		MAVLINK_TYPE_UINT32_T
 	};
 
 	switch (id) {
@@ -542,6 +550,12 @@ void _transmitParameter(uint16_t id)
 			valueMsg.param_value = x.param_float;
 			valueMsg.param_index = 3;
 			strncpy(valueMsg.param_id, "MODE_RCDISCON", 16);
+		break;
+		case 4:
+			x.param_uint32 = (uint32_t)manualInputSelect;
+			valueMsg.param_value = x.param_float;
+			valueMsg.param_index = 4;
+			strncpy(valueMsg.param_id, "MAN_SELECT", 16);
 		break;
 		default:
 			return; // Do nothing if there's no matching parameter.
@@ -645,6 +659,15 @@ void MavLinkSendRevoGsData(void)
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
+void MavLinkReceiveManualControl(mavlink_manual_control_t *msg)
+{
+	if (msg->target == mavlink_system.sysid) {
+		mavlinkRudder = msg->x;
+		mavlinkThrottle = msg->z;
+		mavlinkAutoMode = ((msg->buttons & (1 << 1)) > 0);
+	}
+}
+
 /** Core MAVLink functions handling transmission and state machines **/
 
 void MavLinkEvaluateParameterState(uint8_t event, void *data)
@@ -699,6 +722,9 @@ void MavLinkEvaluateParameterState(uint8_t event, void *data)
 						systemStatus.status &= ~(1 << 3);
 					}
 					currentParameter = 3;
+				} else if (strcmp(x.param_id, "MAN_SELECT") == 0) {
+					manualInputSelect = paramValue.param_uint32;
+					currentParameter = 4;
 				}
 				nextState = PARAM_STATE_SINGLETON_SEND_VALUE;
 			} else if (event == PARAM_EVENT_REQUEST_READ_RECEIVED) {
@@ -1047,6 +1073,13 @@ void MavLinkReceive(void)
 			}
 
 			switch(msg.msgid) {
+
+				// Check for manual commands via Joystick from QGC.
+				case MAVLINK_MSG_ID_MANUAL_CONTROL: {
+					mavlink_manual_control_t manualControl;
+					mavlink_msg_manual_control_decode(&msg, &manualControl);
+					MavLinkReceiveManualControl(&manualControl);
+				} break;
 
 				// If we are not doing any mission protocol operations, record the size of the incoming mission
 				// list and transition into the write missions state machine loop.

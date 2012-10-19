@@ -1,9 +1,11 @@
 #include "DEE.h"
 
-extern unsigned short rudderRange[2];
-extern unsigned short throttleRange[2];
-extern unsigned short trackRange[2];
+extern unsigned short rcRudderRange[2];
+extern unsigned short rcThrottleRange[2];
+extern unsigned short jRudderRange[2];
+extern unsigned short jThrottleRange[2];
 extern unsigned char restoredCalibration;
+extern unsigned char restoredJoystickCalibration;
 
 /**
  * This function restored the calibrated range for the RC receiver PWM signals if any exist.
@@ -15,33 +17,44 @@ extern unsigned char restoredCalibration;
 void initCalibrationRange() {
 	unsigned short tmp;
 
-	// Initialize rudder range
+	// Initialize RC transmitter rudder range
 	if ((tmp = DataEERead(10)) != 0xFFFF) {
-		rudderRange[0] = tmp;
+		rcRudderRange[0] = tmp;
 		restoredCalibration = 1;
 	}
 	if ((tmp = DataEERead(11)) != 0xFFFF) {
-		rudderRange[1] = tmp;
+		rcRudderRange[1] = tmp;
 		restoredCalibration = 1;
 	}
 
-	// Initialize throttle range
+	// Initialize RC transmitter throttle range
 	if ((tmp = DataEERead(12)) != 0xFFFF) {
-		throttleRange[0] = tmp;
+		rcThrottleRange[0] = tmp;
 		restoredCalibration = 1;
 	}
 	if ((tmp = DataEERead(13)) != 0xFFFF) {
-		throttleRange[1] = tmp;
+		rcThrottleRange[1] = tmp;
 		restoredCalibration = 1;
 	}
 
-	// Initialize track range
+	// Initialize RC transmitter rudder range
 	if ((tmp = DataEERead(14)) != 0xFFFF) {
-		trackRange[0] = tmp;
-		restoredCalibration = 1;
+		jRudderRange[0] = tmp;
+		restoredJoystickCalibration = 1;
 	}
 	if ((tmp = DataEERead(15)) != 0xFFFF) {
-		trackRange[1] = tmp;
+		jRudderRange[1] = tmp;
+		restoredJoystickCalibration = 1;
+	}
+
+	// Initialize RC transmitter throttle range
+	if ((tmp = DataEERead(16)) != 0xFFFF) {
+		jThrottleRange[0] = tmp;
+		restoredJoystickCalibration = 1;
+	}
+	if ((tmp = DataEERead(17)) != 0xFFFF) {
+		jThrottleRange[1] = tmp;
+		restoredJoystickCalibration = 1;
 	}
 }
 
