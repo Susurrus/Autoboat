@@ -3,7 +3,9 @@
 #include <p33Fxxxx.h>
 
 CircularBuffer uart1RxBuffer;
+uint8_t u1RxBuf[64];
 CircularBuffer uart1TxBuffer;
+uint8_t u1TxBuf[64];
 
 /*
  * Private functions.
@@ -19,58 +21,58 @@ void startUart1Transmission();
  */
 void initUart1(unsigned int brgRegister) {
 
-	// First initialize the necessary circular buffers.
-	InitCircularBuffer(&uart1RxBuffer);
-	InitCircularBuffer(&uart1TxBuffer);
+    // First initialize the necessary circular buffers.
+    CB_Init(&uart1RxBuffer, u1RxBuf, sizeof(u1RxBuf));
+    CB_Init(&uart1TxBuffer, u1TxBuf, sizeof(u1TxBuf));
 
-	// Configure and open the port;
-	// U1MODE Register
-	// ==============
-	U1MODEbits.UARTEN	= 0;		// Disable the port
-	U1MODEbits.USIDL 	= 0;		// Stop on idle
-	U1MODEbits.IREN		= 0;		// No IR decoder
-	U1MODEbits.RTSMD	= 0;		// Ready to send mode (irrelevant)
-	U1MODEbits.UEN		= 0;		// Only RX and TX
-	U1MODEbits.WAKE		= 1;		// Enable at startup
-	U1MODEbits.LPBACK	= 0;		// Disable loopback
-	U1MODEbits.ABAUD	= 0;		// Disable autobaud
-	U1MODEbits.URXINV	= 0;		// Normal operation (high is idle)
-	U1MODEbits.PDSEL	= 0;		// No parity 8 bit
-	U1MODEbits.STSEL	= 0;		// 1 stop bit
-	U1MODEbits.BRGH 	= 0;		// Low speed mode
+    // Configure and open the port;
+    // U1MODE Register
+    // ==============
+    U1MODEbits.UARTEN	= 0;		// Disable the port
+    U1MODEbits.USIDL 	= 0;		// Stop on idle
+    U1MODEbits.IREN		= 0;		// No IR decoder
+    U1MODEbits.RTSMD	= 0;		// Ready to send mode (irrelevant)
+    U1MODEbits.UEN		= 0;		// Only RX and TX
+    U1MODEbits.WAKE		= 1;		// Enable at startup
+    U1MODEbits.LPBACK	= 0;		// Disable loopback
+    U1MODEbits.ABAUD	= 0;		// Disable autobaud
+    U1MODEbits.URXINV	= 0;		// Normal operation (high is idle)
+    U1MODEbits.PDSEL	= 0;		// No parity 8 bit
+    U1MODEbits.STSEL	= 0;		// 1 stop bit
+    U1MODEbits.BRGH 	= 0;		// Low speed mode
 
-	// U1STA Register
-	// ==============
-	U1STAbits.URXISEL	= 2;		// RX interrupt when 3 chars are in
-	U1STAbits.OERR		= 0;		// clear overun error
+    // U1STA Register
+    // ==============
+    U1STAbits.URXISEL	= 2;		// RX interrupt when 3 chars are in
+    U1STAbits.OERR		= 0;		// clear overun error
 
-	U1BRG = brgRegister;			// Set the baud rate register
+    U1BRG = brgRegister;			// Set the baud rate register
 
-	// Finally setup interrupts for proper UART communication.
-	IPC3bits.U1TXIP = 6;    		// Interrupt priority 6  
-	IPC2bits.U1RXIP = 6;    		// Interrupt priority 6 
-	IEC0bits.U1TXIE = 1; 			// Enable transmission interrupt
-	IEC0bits.U1RXIE = 1; 			// Enable reception interrupt
+    // Finally setup interrupts for proper UART communication.
+    IPC3bits.U1TXIP = 6;    		// Interrupt priority 6
+    IPC2bits.U1RXIP = 6;    		// Interrupt priority 6
+    IEC0bits.U1TXIE = 1; 			// Enable transmission interrupt
+    IEC0bits.U1RXIE = 1; 			// Enable reception interrupt
 
-	// Enable the port;
-	U1MODEbits.UARTEN	= 1;		// Enable the port
-	U1STAbits.UTXEN		= 1;		// Enable TX
+    // Enable the port;
+    U1MODEbits.UARTEN	= 1;		// Enable the port
+    U1STAbits.UTXEN		= 1;		// Enable TX
 
 }
 
 void changeUart1BaudRate(unsigned short brgRegister) {
 
-	unsigned char utxen = U1STAbits.UTXEN;
+    unsigned char utxen = U1STAbits.UTXEN;
 
-	// Disable the port;
-	U1MODEbits.UARTEN = 0;
+    // Disable the port;
+    U1MODEbits.UARTEN = 0;
 
-	// Change the BRG register to set the new baud rate
-	U1BRG = brgRegister;
+    // Change the BRG register to set the new baud rate
+    U1BRG = brgRegister;
 
-	// Enable the port restoring the previous transmission settings
-	U1MODEbits.UARTEN	= 1;
-	U1STAbits.UTXEN		= utxen;
+    // Enable the port restoring the previous transmission settings
+    U1MODEbits.UARTEN	= 1;
+    U1STAbits.UTXEN		= utxen;
 }
 
 /**
@@ -83,12 +85,12 @@ void changeUart1BaudRate(unsigned short brgRegister) {
  * it has room for new data before attempting to transmit.
  */
 void startUart1Transmission() {
-	if (!IsEmpty(&uart1TxBuffer) && !U1STAbits.UTXBF) {
-		// A temporary variable is used here because writing directly into U1TXREG causes some weird issues.
-		unsigned char c;
-		Read(&uart1TxBuffer, &c);
-		U1TXREG = c;
-	}
+    if (uart1TxBuffer.dataSize > 0 && !U1STAbits.UTXBF) {
+        // A temporary variable is used here because writing directly into U1TXREG causes some weird issues.
+        unsigned char c;
+        CB_ReadByte(&uart1TxBuffer, &c);
+        U1TXREG = c;
+    }
 }
 
 /**
@@ -96,8 +98,8 @@ void startUart1Transmission() {
  * providing an interface that only enqueues a single byte.
  */
 void uart1EnqueueByte(unsigned char datum) {
-	Write(&uart1TxBuffer, datum);
-	startUart1Transmission();
+    CB_WriteByte(&uart1TxBuffer, datum);
+    startUart1Transmission();
 }
 
 /**
@@ -105,29 +107,29 @@ void uart1EnqueueByte(unsigned char datum) {
  * length.
  */
 void uart1EnqueueData(unsigned char *data, unsigned char length) {
-	unsigned char g;
+    unsigned char g;
 
-	for (g = 0; g < length; g++) {
-		Write(&uart1TxBuffer,data[g]);
-	}
+    for (g = 0; g < length; g++) {
+            CB_WriteByte(&uart1TxBuffer,data[g]);
+    }
 
-	startUart1Transmission();
+    startUart1Transmission();
 }
 
 void __attribute__((__interrupt__, no_auto_psv)) _U1RXInterrupt(void) {
 
-	// Keep receiving new bytes while the buffer has data.
-	while (U1STAbits.URXDA == 1) {
-		Write(&uart1RxBuffer, (unsigned char)U1RXREG);
-	}
+    // Keep receiving new bytes while the buffer has data.
+    while (U1STAbits.URXDA == 1) {
+            CB_WriteByte(&uart1RxBuffer, (unsigned char)U1RXREG);
+    }
 
-	// Clear buffer overflow bit if triggered
-	if (U1STAbits.OERR == 1) {
-		U1STAbits.OERR = 0;
-	}
+    // Clear buffer overflow bit if triggered
+    if (U1STAbits.OERR == 1) {
+            U1STAbits.OERR = 0;
+    }
 
-	// Clear the interrupt flag
-	IFS0bits.U1RXIF = 0;
+    // Clear the interrupt flag
+    IFS0bits.U1RXIF = 0;
 }
 
 /**
@@ -138,8 +140,8 @@ void __attribute__((__interrupt__, no_auto_psv)) _U1RXInterrupt(void) {
  * in the queue.
  */
 void __attribute__((__interrupt__, no_auto_psv)) _U1TXInterrupt(void) {
-	startUart1Transmission();
+    startUart1Transmission();
 
-	// Clear the interrupt flag
-	IFS0bits.U1TXIF = 0;
+    // Clear the interrupt flag
+    IFS0bits.U1TXIF = 0;
 }

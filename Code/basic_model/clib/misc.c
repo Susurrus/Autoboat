@@ -2,10 +2,7 @@
 
 extern unsigned short rcRudderRange[2];
 extern unsigned short rcThrottleRange[2];
-extern unsigned short jRudderRange[2];
-extern unsigned short jThrottleRange[2];
 extern unsigned char restoredCalibration;
-extern unsigned char restoredJoystickCalibration;
 
 /**
  * This function restored the calibrated range for the RC receiver PWM signals if any exist.
@@ -35,26 +32,6 @@ void initCalibrationRange() {
 	if ((tmp = DataEERead(13)) != 0xFFFF) {
 		rcThrottleRange[1] = tmp;
 		restoredCalibration = 1;
-	}
-
-	// Initialize RC transmitter rudder range
-	if ((tmp = DataEERead(14)) != 0xFFFF) {
-		jRudderRange[0] = tmp;
-		restoredJoystickCalibration = 1;
-	}
-	if ((tmp = DataEERead(15)) != 0xFFFF) {
-		jRudderRange[1] = tmp;
-		restoredJoystickCalibration = 1;
-	}
-
-	// Initialize RC transmitter throttle range
-	if ((tmp = DataEERead(16)) != 0xFFFF) {
-		jThrottleRange[0] = tmp;
-		restoredJoystickCalibration = 1;
-	}
-	if ((tmp = DataEERead(17)) != 0xFFFF) {
-		jThrottleRange[1] = tmp;
-		restoredJoystickCalibration = 1;
 	}
 }
 

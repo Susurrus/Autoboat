@@ -215,9 +215,9 @@ void buildAndCheckMessage(uint8_t characterIn, uint8_t sensorMode) {
  */
 void processNewCommData(uint8_t sensorMode)
 {
-	while (GetLength(&uart2RxBuffer) > 0) {
+	while (&uart2RxBuffer.dataSize > 0) {
 		uint8_t c;
-		Read(&uart2RxBuffer, &c);
+		CB_ReadByte(&uart2RxBuffer, &c);
 		buildAndCheckMessage(c, sensorMode);
 	}
 }

@@ -51,9 +51,9 @@ void processRevoSentence(char sentence[]) {
 }
 
 void processNewRevoData(void) {
-	while (GetLength(&uart2RxBuffer) > 0) {
+	while (uart2RxBuffer.dataSize > 0) {
 		unsigned char c;
-		Read(&uart2RxBuffer, &c);
+		CB_ReadByte(&uart2RxBuffer, &c);
 		buildAndCheckSentence((char)c, sentence, &sentenceIndex, &sentenceState, &checksum, processRevoSentence);
 	}
 }

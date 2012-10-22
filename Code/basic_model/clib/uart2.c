@@ -3,7 +3,9 @@
 #include <p33Fxxxx.h>
 
 CircularBuffer uart2RxBuffer;
+uint8_t u2RxBuf[64];
 CircularBuffer uart2TxBuffer;
+uint8_t u2TxBuf[64];
 
 /*
  * Private functions.
@@ -19,58 +21,58 @@ void startUart2Transmission(void);
  */
 void initUart2(unsigned int brgRegister) {
 
-	// First initialize the necessary circular buffers.
-	InitCircularBuffer(&uart2RxBuffer);
-	InitCircularBuffer(&uart2TxBuffer);
+    // First initialize the necessary circular buffers.
+    CB_Init(&uart2RxBuffer, u2RxBuf, sizeof(u2RxBuf));
+    CB_Init(&uart2TxBuffer, u2TxBuf, sizeof(u2TxBuf));
 
-	// Configure and open the port;
-	// U2MODE Register
-	// ==============
-	U2MODEbits.UARTEN	= 0;		// Disable the port		
-	U2MODEbits.USIDL 	= 0;		// Stop on idle
-	U2MODEbits.IREN		= 0;		// No IR decoder
-	U2MODEbits.RTSMD	= 0;		// Ready to send mode (irrelevant)
-	U2MODEbits.UEN		= 0;		// Only RX and TX
-	U2MODEbits.WAKE		= 1;		// Enable at startup
-	U2MODEbits.LPBACK	= 0;		// Disable loopback
-	U2MODEbits.ABAUD	= 0;		// Disable autobaud
-	U2MODEbits.URXINV	= 0;		// Normal operation (high is idle)
-	U2MODEbits.PDSEL	= 0;		// No parity 8 bit
-	U2MODEbits.STSEL	= 0;		// 1 stop bit
-	U2MODEbits.BRGH 	= 0;		// Low speed mode
+    // Configure and open the port;
+    // U2MODE Register
+    // ==============
+    U2MODEbits.UARTEN	= 0;		// Disable the port
+    U2MODEbits.USIDL 	= 0;		// Stop on idle
+    U2MODEbits.IREN		= 0;		// No IR decoder
+    U2MODEbits.RTSMD	= 0;		// Ready to send mode (irrelevant)
+    U2MODEbits.UEN		= 0;		// Only RX and TX
+    U2MODEbits.WAKE		= 1;		// Enable at startup
+    U2MODEbits.LPBACK	= 0;		// Disable loopback
+    U2MODEbits.ABAUD	= 0;		// Disable autobaud
+    U2MODEbits.URXINV	= 0;		// Normal operation (high is idle)
+    U2MODEbits.PDSEL	= 0;		// No parity 8 bit
+    U2MODEbits.STSEL	= 0;		// 1 stop bit
+    U2MODEbits.BRGH 	= 0;		// Low speed mode
 
-	// U2STA Register
-	// ==============
-	U2STAbits.URXISEL	= 2;		// RX interrupt when 3 chars are in
-	U2STAbits.OERR		= 0;		// clear overun error
+    // U2STA Register
+    // ==============
+    U2STAbits.URXISEL	= 2;		// RX interrupt when 3 chars are in
+    U2STAbits.OERR		= 0;		// clear overun error
 
-	U2BRG = brgRegister;			// Set the baud rate register
+    U2BRG = brgRegister;			// Set the baud rate register
 
-	// Finally setup interrupts for proper UART communication.
-  	IPC7bits.U2TXIP = 6;    		// Interrupt priority 6  
-  	IPC7bits.U2RXIP = 6;    		// Interrupt priority 6 
-	IEC1bits.U2TXIE = 1; 			// Enable transmission interrupt
-	IEC1bits.U2RXIE = 1; 			// Enable reception interrupt
+    // Finally setup interrupts for proper UART communication.
+    IPC7bits.U2TXIP = 6;    		// Interrupt priority 6
+    IPC7bits.U2RXIP = 6;    		// Interrupt priority 6
+    IEC1bits.U2TXIE = 1; 			// Enable transmission interrupt
+    IEC1bits.U2RXIE = 1; 			// Enable reception interrupt
 
-	// Enable the port;
-	U2MODEbits.UARTEN	= 1;		// Enable the port	
-	U2STAbits.UTXEN		= 1;		// Enable TX
+    // Enable the port;
+    U2MODEbits.UARTEN	= 1;		// Enable the port
+    U2STAbits.UTXEN		= 1;		// Enable TX
 
 }
 
 void changeUart2BaudRate(unsigned short brgRegister) {
 
-	unsigned char utxen = U2STAbits.UTXEN;
+    unsigned char utxen = U2STAbits.UTXEN;
 
-	// Disable the port;
-	U2MODEbits.UARTEN = 0;
+    // Disable the port;
+    U2MODEbits.UARTEN = 0;
 
-	// Change the BRG register to set the new baud rate
-	U2BRG = brgRegister;
+    // Change the BRG register to set the new baud rate
+    U2BRG = brgRegister;
 
-	// Enable the port restoring the previous transmission settings
-	U2MODEbits.UARTEN	= 1;
-	U2STAbits.UTXEN		= utxen;
+    // Enable the port restoring the previous transmission settings
+    U2MODEbits.UARTEN	= 1;
+    U2STAbits.UTXEN		= utxen;
 }
 
 /**
@@ -83,12 +85,12 @@ void changeUart2BaudRate(unsigned short brgRegister) {
  * it has room for new data before attempting to transmit.
  */
 void startUart2Transmission() {
-	if (GetLength(&uart2TxBuffer) > 0 && !U2STAbits.UTXBF) {
-		// A temporary variable is used here because writing directly into U2TXREG causes some weird issues.
-		unsigned char c;
-		Read(&uart2TxBuffer, &c);
-		U2TXREG = c;
-	}
+    if (uart2TxBuffer.dataSize > 0 && !U2STAbits.UTXBF) {
+        // A temporary variable is used here because writing directly into U2TXREG causes some weird issues.
+        unsigned char c;
+        CB_ReadByte(&uart2TxBuffer, &c);
+        U2TXREG = c;
+    }
 }
 
 /**
@@ -96,8 +98,8 @@ void startUart2Transmission() {
  * providing an interface that only enqueues a single byte.
  */
 void uart2EnqueueByte(unsigned char datum) {
-	Write(&uart2TxBuffer, datum);
-	startUart2Transmission();
+    CB_WriteByte(&uart2TxBuffer, datum);
+    startUart2Transmission();
 }
 
 /**
@@ -105,29 +107,29 @@ void uart2EnqueueByte(unsigned char datum) {
  * length.
  */
 void uart2EnqueueData(unsigned char *data, unsigned char length) {
-	unsigned char g;
+    unsigned char g;
 
-	for (g = 0; g < length; g++) {
-		Write(&uart2TxBuffer,data[g]);
-	}
+    for (g = 0; g < length; g++) {
+        CB_WriteByte(&uart2TxBuffer, data[g]);
+    }
 
-	startUart2Transmission();
+    startUart2Transmission();
 }
 
 void __attribute__((__interrupt__, no_auto_psv)) _U2RXInterrupt(void) {
 
-	// Keep receiving new bytes while the buffer has data.
-	while (U2STAbits.URXDA == 1) {
-		Write(&uart2RxBuffer, (unsigned char)U2RXREG);
-	}
+    // Keep receiving new bytes while the buffer has data.
+    while (U2STAbits.URXDA == 1) {
+        CB_WriteByte(&uart2RxBuffer, (unsigned char)U2RXREG);
+    }
 
-	// Clear buffer overflow bit if triggered
-	if (U2STAbits.OERR == 1) {
-		U2STAbits.OERR = 0;
-	}
+    // Clear buffer overflow bit if triggered
+    if (U2STAbits.OERR == 1) {
+        U2STAbits.OERR = 0;
+    }
 
-	// Clear the interrupt flag
-	IFS1bits.U2RXIF = 0;
+    // Clear the interrupt flag
+    IFS1bits.U2RXIF = 0;
 }
 
 /**
@@ -138,8 +140,8 @@ void __attribute__((__interrupt__, no_auto_psv)) _U2RXInterrupt(void) {
  * in the queue.
  */
 void __attribute__((__interrupt__, no_auto_psv)) _U2TXInterrupt(void) {
-	startUart2Transmission();
+    startUart2Transmission();
 
-	// Clear the interrupt flag
-	IFS1bits.U2TXIF = 0;
+    // Clear the interrupt flag
+    IFS1bits.U2TXIF = 0;
 }
