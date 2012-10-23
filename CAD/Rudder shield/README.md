@@ -1,0 +1,1 @@
+This board is designed for V2.x of the CAN node that exists in the ASL repository. I provides connections for integrating an analog potentiometer (with a 21Hz lowpass filter on it) and two open-drain limit switches. Additionally it has a connection for a stepper motor driver board.
