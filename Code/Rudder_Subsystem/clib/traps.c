@@ -1,132 +1,161 @@
-/***********************************************************************
- * This file provides a basic template for writing dsPIC30F trap       *
- * handlers in C language for the C30 compiler                         *
- *                                                                     *
- * Add this file into your MPLAB project. Build your project, program  *
- * the device and run. If any trap occurs during code execution, the   *
- * processor vectors to one of these routines.                         *
- *                                                                     *
- * For additional information about dsPIC architecture and language    *
- * tools, refer to the following documents:                            *
- *                                                                     *
- * MPLAB C30 Compiler User's Guide                        : DS51284    *
- * dsPIC 30F MPLAB ASM30, MPLAB LINK30 and Utilites                    *
- *                                           User's Guide : DS51317    *
- * Getting Started with dsPIC DSC Language Tools          : DS51316    *
- * dsPIC 30F Language Tools Quick Reference Card          : DS51322    *
- * dsPIC 30F 16-bit MCU Family Reference Manual           : DS70046    *
- * dsPIC 30F General Purpose and Sensor Families                       *
- *                                           Data Sheet   : DS70083    *
- * dsPIC 30F/33F Programmer's Reference Manual            : DS70157    *
- *                                                                     *
- * Template file has been compiled with MPLAB C30 v3.00.               *
- *                                                                     *
- ***********************************************************************
- *                                                                     *
- *    Author:                                                          *
- *    Company:                                                         *
- *    Filename:       traps.c                                          *
- *    Date:           04/11/2007                                       *
- *    File Version:   3.00                                             *
- *    Devices Supported:  All PIC24F,PIC24H,dsPIC30F,dsPIC33F devices  *
- *                                                                     *
- **********************************************************************/
+/**********************************************************************
+* � 2005 Microchip Technology Inc.
+*
+* FileName:        traps.c
+* Dependencies:    Header (.h) files if applicable, see below
+* Processor:       dsPIC33Fxxxx/PIC24Hxxxx
+* Compiler:        MPLAB� C30 v3.00 or higher
+*
+* SOFTWARE LICENSE AGREEMENT:
+* Microchip Technology Incorporated ("Microchip") retains all ownership and 
+* intellectual property rights in the code accompanying this message and in all 
+* derivatives hereto.  You may use this code, and any derivatives created by 
+* any person or entity by or on your behalf, exclusively with Microchip's
+* proprietary products.  Your acceptance and/or use of this code constitutes 
+* agreement to the terms and conditions of this notice.
+*
+* CODE ACCOMPANYING THIS MESSAGE IS SUPPLIED BY MICROCHIP "AS IS".  NO 
+* WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT NOT LIMITED 
+* TO, IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS FOR A 
+* PARTICULAR PURPOSE APPLY TO THIS CODE, ITS INTERACTION WITH MICROCHIP'S 
+* PRODUCTS, COMBINATION WITH ANY OTHER PRODUCTS, OR USE IN ANY APPLICATION. 
+*
+* YOU ACKNOWLEDGE AND AGREE THAT, IN NO EVENT, SHALL MICROCHIP BE LIABLE, WHETHER 
+* IN CONTRACT, WARRANTY, TORT (INCLUDING NEGLIGENCE OR BREACH OF STATUTORY DUTY), 
+* STRICT LIABILITY, INDEMNITY, CONTRIBUTION, OR OTHERWISE, FOR ANY INDIRECT, SPECIAL, 
+* PUNITIVE, EXEMPLARY, INCIDENTAL OR CONSEQUENTIAL LOSS, DAMAGE, FOR COST OR EXPENSE OF 
+* ANY KIND WHATSOEVER RELATED TO THE CODE, HOWSOEVER CAUSED, EVEN IF MICROCHIP HAS BEEN 
+* ADVISED OF THE POSSIBILITY OR THE DAMAGES ARE FORESEEABLE.  TO THE FULLEST EXTENT 
+* ALLOWABLE BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN ANY WAY RELATED TO 
+* THIS CODE, SHALL NOT EXCEED THE PRICE YOU PAID DIRECTLY TO MICROCHIP SPECIFICALLY TO 
+* HAVE THIS CODE DEVELOPED.
+*
+* You agree that you are solely responsible for testing the code and 
+* determining its suitability.  Microchip has no obligation to modify, test, 
+* certify, or support the code.
+*
+* REVISION HISTORY:
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Author            Date      Comments on this revision
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Settu D 			03/09/06  First release of source file
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*
+* ADDITIONAL NOTES:
+* 1. This file contains trap service routines (handlers) for hardware
+*    exceptions generated by the dsPIC33F device.
+* 2. All trap service routines in this file simply ensure that device
+*    continuously executes code within the trap service routine. Users
+*    may modify the basic framework provided here to suit to the needs
+*    of their application.
+*
+**********************************************************************/
 
-#ifdef __dsPIC30F__
-
-        #include "p30fxxxx.h"
-
+#if defined(__dsPIC33F__)
+#include "p33fxxxx.h"
+#elif defined(__PIC24H__)
+#include "p24hxxxx.h"
 #endif
 
-#ifdef __dsPIC33F__
+void __attribute__((__interrupt__)) _OscillatorFail(void);
+void __attribute__((__interrupt__)) _AddressError(void);
+void __attribute__((__interrupt__)) _StackError(void);
+void __attribute__((__interrupt__)) _MathError(void);
+void __attribute__((__interrupt__)) _DMACError(void);
 
-        #include "p33Fxxxx.h"
+void __attribute__((__interrupt__)) _AltOscillatorFail(void);
+void __attribute__((__interrupt__)) _AltAddressError(void);
+void __attribute__((__interrupt__)) _AltStackError(void);
+void __attribute__((__interrupt__)) _AltMathError(void);
+void __attribute__((__interrupt__)) _AltDMACError(void);
 
-#endif
-
-#ifdef __PIC24F__
-
-        #include "p24Fxxxx.h"
-
-#endif
-
-#ifdef __PIC24H__
-
-        #include "p24Hxxxx.h"
-
-#endif
-
-
-#define _trapISR __attribute__((interrupt,no_auto_psv))
-
-/* ****************************************************************
-* Standard Exception Vector handlers if ALTIVT (INTCON2<15>) = 0  *
-*                                                                 *
-* Not required for labs but good to always include                *
-******************************************************************/
-void _trapISR _OscillatorFail(void)
+/*
+Primary Exception Vector handlers:
+These routines are used if INTCON2bits.ALTIVT = 0.
+All trap service routines in this file simply ensure that device
+continuously executes code within the trap service routine. Users
+may modify the basic framework provided here to suit to the needs
+of their application.
+*/
+void __attribute__((interrupt, no_auto_psv)) _OscillatorFail(void)
 {
+        INTCON1bits.OSCFAIL = 0;        //Clear the trap flag
+        TRISAbits.TRISA3 = 0;
+        LATAbits.LATA3 = 1;
+        while (1);
+}
 
+void __attribute__((interrupt, no_auto_psv)) _AddressError(void)
+{
+        INTCON1bits.ADDRERR = 0;        //Clear the trap flag
+        TRISAbits.TRISA3 = 0;
+        LATAbits.LATA3 = 1;
+        while (1);
+}
+void __attribute__((interrupt, no_auto_psv)) _StackError(void)
+{
+        INTCON1bits.STKERR = 0;         //Clear the trap flag
+        TRISAbits.TRISA3 = 0;
+        LATAbits.LATA3 = 1;
+        while (1);
+}
+
+void __attribute__((interrupt, no_auto_psv)) _MathError(void)
+{
+        INTCON1bits.MATHERR = 0;        //Clear the trap flag
+        TRISAbits.TRISA3 = 0;
+        LATAbits.LATA3 = 1;
+        while (1);
+}
+
+void __attribute__((interrupt, no_auto_psv)) _DMACError(void)
+{
+        INTCON1bits.DMACERR = 0;        //Clear the trap flag
+        TRISAbits.TRISA3 = 0;
+        LATAbits.LATA3 = 1;
+        while (1);
+}
+
+
+
+
+
+/*
+Alternate Exception Vector handlers:
+These routines are used if INTCON2bits.ALTIVT = 1.
+All trap service routines in this file simply ensure that device
+continuously executes code within the trap service routine. Users
+may modify the basic framework provided here to suit to the needs
+of their application.
+*/
+
+void __attribute__((interrupt, no_auto_psv)) _AltOscillatorFail(void)
+{
         INTCON1bits.OSCFAIL = 0;
-        while(1);
+        while (1);
 }
 
-void _trapISR _AddressError(void)
+void __attribute__((interrupt, no_auto_psv)) _AltAddressError(void)
 {
-
         INTCON1bits.ADDRERR = 0;
-        while(1);
+        while (1);
 }
 
-void _trapISR _StackError(void)
+void __attribute__((interrupt, no_auto_psv)) _AltStackError(void)
 {
-
         INTCON1bits.STKERR = 0;
-        while(1);
+        while (1);
 }
 
-void _trapISR _MathError(void)
+void __attribute__((interrupt, no_auto_psv)) _AltMathError(void)
 {
-
         INTCON1bits.MATHERR = 0;
-        while(1);
+        while (1);
 }
 
-
-
-
-/* ****************************************************************
-* Alternate Exception Vector handlers if ALTIVT (INTCON2<15>) = 1 *
-*                                                                 *
-* Not required for labs but good to always include                *
-******************************************************************/
-void _trapISR _AltOscillatorFail(void)
+void __attribute__((interrupt, no_auto_psv)) _AltDMACError(void)
 {
-
-        INTCON1bits.OSCFAIL = 0;
-        while(1);
+        INTCON1bits.DMACERR = 0;        //Clear the trap flag
+        while (1);
 }
-
-void _trapISR _AltAddressError(void)
-{
-
-        INTCON1bits.ADDRERR = 0;
-        while(1);
-}
-
-void _trapISR _AltStackError(void)
-{
-
-        INTCON1bits.STKERR = 0;
-        while(1);
-}
-
-void _trapISR _AltMathError(void)
-{
-
-        INTCON1bits.MATHERR = 0;
-        while(1);
-}
-
-
 

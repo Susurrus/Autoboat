@@ -2,6 +2,7 @@
 #include "rudder_Subsystem.h"
 #include "MavlinkMessageScheduler.h"
 #include "ecanRudder.h"
+#include "ecanFunctions.h"
 #include "nmea2000.h"
 
 #define RUDDER_MSG_ID_NMEA_ANGLE 10
@@ -12,14 +13,20 @@
 
 static struct rudderMessages rudderMessageStore;
 
-//Add messages to the Scheduler which we will later process.
+/**
+ * Schedule the CAN messages for 10Hz.
+ */
 void RudderEcanInit(void){
 
 	//NMEA2000 message
-	AddMessage(RUDDER_MSG_ID_NMEA_ANGLE,40);
+	if (!AddMessage(RUDDER_MSG_ID_NMEA_ANGLE, 10)) {
+            while (1);
+        }
 	
 	//Custom CAN message
-	AddMessage(RUDDER_MSG_ID_CUSTOM_LIMITS, 40);
+	if (!AddMessage(RUDDER_MSG_ID_CUSTOM_LIMITS, 10)) {
+            while (1);
+        }
 
 
 }
@@ -79,20 +86,20 @@ void rudderSendCustomLimit(void){
     Message.message_type = CAN_MSG_DATA;
     Message.frame_type = CAN_FRAME_EXT;
     Message.payload[0] = rudderData.potValue;
-    Message.payload[1] = ((rudderData.potValue >> 8));
+    Message.payload[1] = rudderData.potValue >> 8;
     Message.payload[2] = rudderData.portLimitValue;
-    Message.payload[3] = ((rudderData.portLimitValue >> 8) & 0x02);
+    Message.payload[3] = rudderData.portLimitValue >> 8;
     Message.payload[4] = rudderData.starLimitValue;
-    Message.payload[5] = ((rudderData.starLimitValue >> 8) & 0x02);
+    Message.payload[5] = rudderData.starLimitValue >> 8;
     {
         Message.payload[6] = (rudderData.portLimit << 7);
-        Message.payload[6] = (rudderData.starLimit << 5) | Message.payload[6];
+        Message.payload[6] |= (rudderData.starLimit << 5);
         //if rudder is calibrated set second bit high
         //if it is not calibrated set rudder to 'enable' (First bit high)
         if(rudderData.calibrate) {
-                Message.payload[6] = 2 | Message.payload[6];
+                Message.payload[6] |= 0x02;
         } else {
-                Message.payload[6] = 1 | Message.payload[6];
+                Message.payload[6] |= 0x01;
         }
     }
     Message.validBytes = 7;
@@ -119,8 +126,7 @@ void processAllEcanMessages(void)
 					rudderMessageStore.calibrate = 0;
 				}
 			//update send message rates
-			}
-			if (msg.id == 0x8082){
+			} else if (msg.id == 0x8082){
 				rudderMessageStore.angleRate = msg.payload[0];
 				rudderMessageStore.statusRate = msg.payload[1];
 				
@@ -138,7 +144,6 @@ void processAllEcanMessages(void)
 		}
 	}while (messagesLeft > 0);
 }
-
 
 uint8_t getCalibrateMessage(void) {
 	uint8_t temp = rudderMessageStore.calibrate;
@@ -169,8 +174,6 @@ void updateMessageRate(void) {
 	rudderMessageStore.statusRate = 0xFF;
 	rudderMessageStore.angleRate = 0xFF;
 }
-
-
 
 double getNewAngle(void){
 	double temp = rudderMessageStore.newAngle;
