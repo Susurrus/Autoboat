@@ -5,55 +5,41 @@
 #include "ecanFunctions.h"
 #include "nmea2000.h"
 
+// Declare some constants for use with the message scheduler
+// (don't use PGN or message ID as it must be a uint8)
 #define RUDDER_MSG_ID_NMEA_ANGLE 10
-#define ECAN_ID_NMEA_ANGLE 127245
 #define RUDDER_MSG_ID_CUSTOM_LIMITS 20
+
+// Define the PGN number for the NMEA angle message
+#define ECAN_ID_NMEA_ANGLE 127245
+
+// Define the CAN ID for our custom messages
 #define ECAN_ID_CUSTOM_LIMITS 8080
 #define RUDDER_MSG_ID_SET_STATUS 8081
 
-static struct rudderMessages rudderMessageStore;
+// Declare a struct for storing received data.
+static struct {
+	bool calibrate;     // Whether a calibration has been requested or not.
+	uint8_t angleRate;  // The desired transmission rate of angle messages (Hz)
+	uint8_t statusRate; // The desired transmission rate of status messages (Hz)
+	int16_t newAngle;   // The commanded rudder angle
+} rudderMessageStore;
 
-/**
- * Schedule the CAN messages for 10Hz.
- */
-void RudderEcanInit(void){
+void RudderEcanInit(void) {
 
-	//NMEA2000 message
+	// Transmit the rudder angle at 10Hz
 	if (!AddMessage(RUDDER_MSG_ID_NMEA_ANGLE, 10)) {
-            while (1);
-        }
-	
-	//Custom CAN message
-	if (!AddMessage(RUDDER_MSG_ID_CUSTOM_LIMITS, 10)) {
-            while (1);
-        }
+		while (1);
+	}
 
-
-}
-
-void rudderTransmit(void){
-	// And now transmit all messages for this timestep
-	SListItem *messagesToSend = IncrementTimestep();
-	SListItem *j;
-	for (j = messagesToSend; j; j = j->sibling) {
-		switch(j->id) {
-			case RUDDER_MSG_ID_CUSTOM_LIMITS: {
-				rudderSendCustomLimit();
-			} break;
-
-			case RUDDER_MSG_ID_NMEA_ANGLE: {
-				rudderSendNmea();
-			} break;
-			
-			default: {
-				
-			} break;
-		}
-	}			
+	// Transmit metadata at 4Hz
+	if (!AddMessage(RUDDER_MSG_ID_CUSTOM_LIMITS, 4)) {
+		while (1);
+	}
 }
 
 //configures the message into a tCanMessage, and sends it
-void rudderSendNmea(void){
+void RudderSendNmea(void) {
     //PGN127245 packing
     tCanMessage Message;
     Message.id = Iso11783Encode(ECAN_ID_NMEA_ANGLE, 10, 255, 2);
@@ -78,7 +64,7 @@ void rudderSendNmea(void){
 }
 
 //configures the message into a tCanMessage, and sends it
-void rudderSendCustomLimit(void){
+void RudderSendCustomLimit(void){
     //MSG8080 Send Status
     tCanMessage Message;
     Message.id = ECAN_ID_CUSTOM_LIMITS;
@@ -107,8 +93,7 @@ void rudderSendCustomLimit(void){
     ecan1_transmit(Message);
 }
 
-
-void processAllEcanMessages(void)
+void SendAndReceiveEcan(void)
 {
 	uint8_t messagesLeft = 0;
 	tCanMessage msg;
@@ -143,15 +128,24 @@ void processAllEcanMessages(void)
 			}
 		}
 	}while (messagesLeft > 0);
+
+	// And now transmit all messages for this timestep
+	SListItem *messagesToSend = IncrementTimestep();
+	SListItem *j;
+	for (j = messagesToSend; j; j = j->sibling) {
+		switch(j->id) {
+			case RUDDER_MSG_ID_CUSTOM_LIMITS: {
+				RudderSendCustomLimit();
+			} break;
+
+			case RUDDER_MSG_ID_NMEA_ANGLE: {
+				RudderSendNmea();
+			} break;
+		}
+	}
 }
 
-uint8_t getCalibrateMessage(void) {
-	uint8_t temp = rudderMessageStore.calibrate;
-	rudderMessageStore.calibrate = 0;
-	return temp;
-}
-
-void updateMessageRate(void) {
+void UpdateMessageRate(void) {
 	//handle the angle message first
 	if(rudderMessageStore.angleRate != 0xFF){
 		if(rudderMessageStore.angleRate == 0x00){
@@ -161,7 +155,7 @@ void updateMessageRate(void) {
 			AddMessage(RUDDER_MSG_ID_NMEA_ANGLE, rudderMessageStore.angleRate);
 		}
 	}
-	
+
 	//handle the status message
 	if(rudderMessageStore.statusRate != 0xFF){
 		if(rudderMessageStore.statusRate == 0x00){
@@ -175,7 +169,13 @@ void updateMessageRate(void) {
 	rudderMessageStore.angleRate = 0xFF;
 }
 
-double getNewAngle(void){
-	double temp = rudderMessageStore.newAngle;
+bool GetCalibrateMessage(void) {
+	bool temp = rudderMessageStore.calibrate;
+	rudderMessageStore.calibrate = false;
+	return temp;
+}
+
+float GetNewAngle(void){
+	float temp = rudderMessageStore.newAngle;
 	return temp/10000;
 }

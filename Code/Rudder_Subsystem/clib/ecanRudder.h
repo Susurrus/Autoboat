@@ -1,30 +1,53 @@
 #ifndef _ECAN_RUDDER_H_
 #define _ECAN_RUDDER_H_
-#include "types.h"
 
-struct rudderMessages{
-	uint8_t calibrate;
-	uint8_t angleRate;
-	uint8_t statusRate;
-	int16_t newAngle;
-};
+#include "stdbool.h"
 
-
-
+/**
+ * Schedule the CAN messages.
+ */
 void RudderEcanInit(void);
 
-void rudderTransmit(void);
+/**
+ * Transmit the appropriate messages for this timestep.
+ * Relies on the MavLinkMessageScheduler to determine which
+ * those are. Actual transmission is deferred to helper
+ * functions.
+ */
+void RudderTransmit(void);
 
-void rudderSendNmea(void);
+/**
+ * Transmit PGN 127245 message.
+ */
+void RudderSendNmea(void);
 
-void rudderSendCustomLimit(void);
+/**
+ * Transmit CUSTOM_LIMITS message.
+ */
+void RudderSendCustomLimit(void);
 
-void processAllEcanMessages(void);
+/**
+ * Manage the ECAN message system for a given timestamp. This
+ * function reads in and processes all received timestamps. It
+ * also checks which messages should be transmit for the current
+ * timestep and sends those off.
+ */
+void SendAndReceiveEcan(void);
 
-uint8_t getcalibrateMessage(void);
+void UpdateMessageRate(void);
 
-void updateMessageRate(void);
+/**
+ * Helper function for retrieving whether a calibration should occur.
+ * Used to pull this data into Simulink.
+ * @returns A boolean for whether or not to calibrate.
+ */
+bool GetCalibrateMessage(void);
 
-double getNewAngle(void);
+/**
+ * Helper function for retrieving what the commanded angle should be.
+ * Used to pull this data into Simulink.
+ * @returns The desired angle in radians.
+ */
+float GetNewAngle(void);
 
 #endif // _ECAN_RUDDER_H_
