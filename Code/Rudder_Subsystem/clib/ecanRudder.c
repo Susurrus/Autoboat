@@ -20,12 +20,10 @@
 // Declare a struct for storing received data.
 static struct {
 	bool calibrate;     // Whether a calibration has been requested or not.
-	uint8_t angleRate;  // The desired transmission rate of angle messages (Hz)
-	uint8_t statusRate; // The desired transmission rate of status messages (Hz)
 	int16_t newAngle;   // The commanded rudder angle
 } rudderMessageStore;
 
-void RudderEcanInit(void) {
+void RudderSubsystemInit(void) {
 
 	// Transmit the rudder angle at 10Hz
 	if (!AddMessage(RUDDER_MSG_ID_NMEA_ANGLE, 10)) {
@@ -89,84 +87,79 @@ void RudderSendCustomLimit(void){
         }
     }
     Message.validBytes = 7;
-	//transmit the message over CAN
+    //transmit the message over CAN
     ecan1_transmit(Message);
 }
 
 void SendAndReceiveEcan(void)
 {
-	uint8_t messagesLeft = 0;
-	tCanMessage msg;
-	uint32_t pgn;
+    uint8_t messagesLeft = 0;
+    tCanMessage msg;
+    uint32_t pgn;
 
-	do {
-		int foundOne = ecan1_receive(&msg, &messagesLeft);
-		if (foundOne) {
-			// Process custom rudder messages. Anything not explicitly handled is assumed to be a NMEA2000 message.
-			if (msg.id == 0x8081) {
-				if ((msg.payload[0] & 0x01) == 1) {
-					rudderMessageStore.calibrate = 1;
-				}
-				else{
-					rudderMessageStore.calibrate = 0;
-				}
-			//update send message rates
-			} else if (msg.id == 0x8082){
-				rudderMessageStore.angleRate = msg.payload[0];
-				rudderMessageStore.statusRate = msg.payload[1];
-				
-			} else {
-				pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
-				switch (pgn) {
-				case ECAN_ID_NMEA_ANGLE: { 
-					if((msg.payload[2] != 0xFF) && (msg.payload[3] !=0xFF)){
-					rudderMessageStore.newAngle = msg.payload[3];
-					rudderMessageStore.newAngle = (rudderMessageStore.newAngle << 8) | msg.payload[2];
-					}
-				} break;
-				}
-			}
-		}
-	}while (messagesLeft > 0);
+    do {
+        int foundOne = ecan1_receive(&msg, &messagesLeft);
+        if (foundOne) {
+            // Process custom rudder messages. Anything not explicitly handled is assumed to be a NMEA2000 message.
+            if (msg.id == 0x8081) {
+                if ((msg.payload[0] & 0x01) == 1) {
+                    rudderMessageStore.calibrate = 1;
+                }
+                else{
+                    rudderMessageStore.calibrate = 0;
+                }
+            // Update send message rates
+            } else if (msg.id == 0x8082){
+                UpdateMessageRate(msg.payload[0], msg.payload[1]);
+            } else {
+                pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
+                switch (pgn) {
+                case ECAN_ID_NMEA_ANGLE:
+                    if((msg.payload[2] != 0xFF) && (msg.payload[3] != 0xFF)){
+                        rudderMessageStore.newAngle = (msg.payload[3] << 8) | msg.payload[2];
+                    }
+                break;
+                }
+            }
+        }
+    } while (messagesLeft > 0);
 
-	// And now transmit all messages for this timestep
-	SListItem *messagesToSend = IncrementTimestep();
-	SListItem *j;
-	for (j = messagesToSend; j; j = j->sibling) {
-		switch(j->id) {
-			case RUDDER_MSG_ID_CUSTOM_LIMITS: {
-				RudderSendCustomLimit();
-			} break;
+    // And now transmit all messages for this timestep
+    SListItem *messagesToSend = IncrementTimestep();
+    SListItem *j;
+    for (j = messagesToSend; j; j = j->sibling) {
+        switch(j->id) {
+            case RUDDER_MSG_ID_CUSTOM_LIMITS: {
+                RudderSendCustomLimit();
+            } break;
 
-			case RUDDER_MSG_ID_NMEA_ANGLE: {
-				RudderSendNmea();
-			} break;
-		}
-	}
+            case RUDDER_MSG_ID_NMEA_ANGLE: {
+                RudderSendNmea();
+            } break;
+        }
+    }
 }
 
-void UpdateMessageRate(void) {
-	//handle the angle message first
-	if(rudderMessageStore.angleRate != 0xFF){
-		if(rudderMessageStore.angleRate == 0x00){
-		//write code for this
-		} else if((rudderMessageStore.angleRate <= 100) && (rudderMessageStore.angleRate >= 1)){
-			RemoveMessage(RUDDER_MSG_ID_NMEA_ANGLE);
-			AddMessage(RUDDER_MSG_ID_NMEA_ANGLE, rudderMessageStore.angleRate);
-		}
-	}
+void UpdateMessageRate(const uint8_t angleRate, const uint8_t statusRate) {
+    //handle the angle message first
+    if(angleRate != 0xFF){
+        if(angleRate == 0x00){
+        //write code for this
+        } else if((angleRate <= 100) && (angleRate >= 1)){
+            RemoveMessage(RUDDER_MSG_ID_NMEA_ANGLE);
+            AddMessage(RUDDER_MSG_ID_NMEA_ANGLE, angleRate);
+        }
+    }
 
-	//handle the status message
-	if(rudderMessageStore.statusRate != 0xFF){
-		if(rudderMessageStore.statusRate == 0x00){
-		//write code for this
-		} else if((rudderMessageStore.statusRate <= 100) && (rudderMessageStore.statusRate >= 1)){
-			RemoveMessage(RUDDER_MSG_ID_CUSTOM_LIMITS);
-			AddMessage(RUDDER_MSG_ID_CUSTOM_LIMITS, rudderMessageStore.statusRate);
-		}
-	}
-	rudderMessageStore.statusRate = 0xFF;
-	rudderMessageStore.angleRate = 0xFF;
+    //handle the status message
+    if(statusRate != 0xFF){
+        if(statusRate == 0x00){
+        //write code for this
+        } else if((statusRate <= 100) && (statusRate >= 1)){
+            RemoveMessage(RUDDER_MSG_ID_CUSTOM_LIMITS);
+            AddMessage(RUDDER_MSG_ID_CUSTOM_LIMITS, statusRate);
+        }
+    }
 }
 
 bool GetCalibrateMessage(void) {

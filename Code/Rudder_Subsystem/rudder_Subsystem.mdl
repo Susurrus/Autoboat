@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2420"
+    ComputedModelVersion    "1.2422"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -21,16 +21,16 @@ Model {
   MinMaxOverflowArchiveMode "Overwrite"
   FPTRunName		  "Run 1"
   MaxMDLFileLineLength	  120
-  InitFcn		  "clear all\nmissions\nSignals\ncommon\nphysical_constants\ninitial_values\nl2plus"
+  InitFcn		  "clear all\ncommon\nBusses"
   Created		  "Thu Jul 15 15:40:25 2010"
   Creator		  "bwmairs"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Oct 23 12:49:20 2012"
-  RTWModifiedTimeStamp	  272879281
-  ModelVersionFormat	  "1.%<AutoIncrement:2420>"
+  LastModifiedDate	  "Wed Oct 24 08:42:54 2012"
+  RTWModifiedTimeStamp	  272968149
+  ModelVersionFormat	  "1.%<AutoIncrement:2422>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -432,9 +432,9 @@ Model {
 	  ConfigAtBuild		  off
 	  RTWUseLocalCustomCode	  off
 	  RTWUseSimCustomCode	  off
-	  CustomInclude		  "../../../mavlink/seaslug/sealion\n../../../mavlink/seaslug/\nclib"
-	  CustomSource		  "clib/Rudder.c\nclib/ecanRudder.c\nclib/MavlinkMessageScheduler.c\nclib/nmea2000.c\n\n../../../ECAN"
-	  "_dspic/CircularBuffer.c\n../../../ECAN_dspic/ecanFunctions.c"
+	  CustomInclude		  "../../../mavlink/seaslug/sealion\n../../../mavlink/seaslug/\nclib\n../basic_model/clib"
+	  CustomSource		  "clib/Rudder.c\nclib/ecanRudder.c\nclib/nmea2000.c\nclib/traps.c\n\n../basic_model/clib/MavlinkMess"
+	  "ageScheduler.c\n\n../../../ECAN_dspic/CircularBuffer.c\n../../../ECAN_dspic/ecanFunctions.c"
 	  IncludeHyperlinkInReport off
 	  LaunchReport		  off
 	  TargetLang		  "C"
@@ -784,8 +784,8 @@ Model {
       }
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=0 "
-      CurrentDlgPage	      "Code Generation/Custom Code"
-      ConfigPrmDlgPosition     [ 190, 66, 1091, 862 ] 
+      CurrentDlgPage	      "Code Generation/Data Type Replacement"
+      ConfigPrmDlgPosition     [ 294, 65, 1386, 879 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -835,12 +835,6 @@ Model {
       LockScale		      off
       RndMeth		      "Floor"
       SaturateOnIntegerOverflow	on
-    }
-    Block {
-      BlockType		      ActionPort
-      InitializeStates	      "held"
-      PropagateVarSize	      "Only when execution is resumed"
-      ActionType	      "unset"
     }
     Block {
       BlockType		      ArithShift
@@ -931,14 +925,6 @@ Model {
       IconDisplay	      "Tag"
     }
     Block {
-      BlockType		      If
-      NumInputs		      "1"
-      IfExpression	      "u1 > 0"
-      ShowElse		      on
-      ZeroCross		      on
-      SampleTime	      "-1"
-    }
-    Block {
       BlockType		      Inport
       Port		      "1"
       OutputFunctionCall      off
@@ -964,13 +950,6 @@ Model {
       AllPortsSameDT	      on
       OutDataTypeStr	      "Inherit: Logical (see Configuration Parameters: Optimization)"
       SampleTime	      "-1"
-    }
-    Block {
-      BlockType		      Merge
-      Inputs		      "2"
-      InitialOutput	      "[]"
-      AllowUnequalInputPortWidths off
-      InputPortOffsets	      "[]"
     }
     Block {
       BlockType		      Outport
@@ -1090,7 +1069,7 @@ Model {
   }
   System {
     Name		    "rudder_Subsystem"
-    Location		    [202, 82, 1661, 997]
+    Location		    [202, 74, 1661, 989]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1104,7 +1083,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "22141"
+    SIDHighWatermark	    "22143"
     Block {
       BlockType		      Reference
       Name		      "Configure ECAN 1"
@@ -1232,23 +1211,10 @@ Model {
       SourceType	      ""
     }
     Block {
-      BlockType		      Reference
-      Name		      "Counter\nFree-Running"
-      SID		      "17848"
-      Ports		      [0, 1]
-      Position		      [30, 430, 60, 460]
-      ShowName		      off
-      LibraryVersion	      "1.256"
-      SourceBlock	      "simulink/Sources/Counter\nFree-Running"
-      SourceType	      "Counter Free-Running"
-      NumBits		      "32"
-      tsamp		      "T_step"
-    }
-    Block {
       BlockType		      DataStoreMemory
       Name		      "Data Store\nMemory1"
       SID		      "20731"
-      Position		      [560, 330, 659, 359]
+      Position		      [455, 265, 554, 294]
       ZOrder		      -4
       ShowName		      off
       DataStoreName	      "rudderData"
@@ -1257,18 +1223,6 @@ Model {
       WriteAfterReadMsg	      "warning"
       RTWStateStorageClass    "ExportedGlobal"
       OutDataTypeStr	      "Bus: RudderVariables"
-    }
-    Block {
-      BlockType		      DataStoreWrite
-      Name		      "Data Store\nWrite"
-      SID		      "19713"
-      Ports		      [1]
-      Position		      [140, 431, 220, 459]
-      ZOrder		      -6
-      BackgroundColor	      "gray"
-      ShowName		      off
-      DataStoreName	      "systemStatus"
-      DataStoreElements	      "systemStatus.time"
     }
     Block {
       BlockType		      DataStoreWrite
@@ -1357,7 +1311,7 @@ Model {
       BlockType		      From
       Name		      "From2"
       SID		      "22132"
-      Position		      [885, 770, 1010, 800]
+      Position		      [890, 770, 1015, 800]
       ZOrder		      -9
       BackgroundColor	      "magenta"
       ShowName		      off
@@ -1377,7 +1331,7 @@ Model {
       BlockType		      From
       Name		      "From4"
       SID		      "22085"
-      Position		      [895, 715, 1020, 745]
+      Position		      [890, 715, 1015, 745]
       ZOrder		      -9
       BackgroundColor	      "magenta"
       ShowName		      off
@@ -1415,7 +1369,7 @@ Model {
       SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
       SourceType	      "C Function Call"
       FctUpdate		      "Output Function"
-      fctName		      "getNewAngle"
+      fctName		      "GetNewAngle"
       INPUT_SIZE	      "1"
       INPUT1		      "--"
       INPUT2		      "--"
@@ -1425,8 +1379,8 @@ Model {
       SampleTime	      "T_step"
       InputType		      "[ ]"
       OutputType	      "[ 7 ]"
-      FctDeclaration	      "extern real32_T getNewAngle();"
-      FctCall		      "%y1 = getNewAngle();"
+      FctDeclaration	      "extern real32_T GetNewAngle();"
+      FctCall		      "%y1 = GetNewAngle();"
       OrderingInOutPopup      "None"
       FctStart		      "None"
       FctStart_Name	      "Init_onlyOnce"
@@ -1496,22 +1450,12 @@ Model {
       TagVisibility	      "local"
     }
     Block {
-      BlockType		      Goto
-      Name		      "Goto8"
-      SID		      "17849"
-      Position		      [100, 400, 230, 420]
-      BackgroundColor	      "cyan"
-      ShowName		      off
-      GotoTag		      "SystemTime"
-      TagVisibility	      "global"
-    }
-    Block {
       BlockType		      Reference
       Name		      "Init Ecan Messages\necanRudder.c"
       SID		      "20749"
       Tag		      "dsPIC_dsPIC_CFunctionCall"
       Ports		      []
-      Position		      [30, 118, 147, 192]
+      Position		      [30, 118, 144, 168]
       BackgroundColor	      "orange"
       LibraryVersion	      "3.84"
       SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
@@ -1979,7 +1923,7 @@ Model {
       SID		      "22108"
       Tag		      "dsPIC_PortInfo"
       Ports		      []
-      Position		      [720, 44, 961, 212]
+      Position		      [655, 34, 896, 202]
       LibraryVersion	      "3.84"
       SourceBlock	      "dsPICdrivers/Ports Info"
       SourceType	      ""
@@ -2006,13 +1950,13 @@ Model {
       SID		      "20799"
       Tag		      "dsPIC_dsPIC_CFunctionCall"
       Ports		      []
-      Position		      [339, 118, 502, 204]
+      Position		      [174, 118, 341, 167]
       BackgroundColor	      "orange"
       LibraryVersion	      "3.84"
       SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
       SourceType	      "C Function Call"
       FctUpdate		      "Output Function"
-      fctName		      "processAllEcanMessages"
+      fctName		      "SendAndReceiveEcan"
       INPUT_SIZE	      "1"
       INPUT1		      "--"
       INPUT2		      "--"
@@ -2022,8 +1966,8 @@ Model {
       SampleTime	      ".01"
       InputType		      "[ ]"
       OutputType	      "[ ]"
-      FctDeclaration	      "extern void processAllEcanMessages();"
-      FctCall		      "processAllEcanMessages();"
+      FctDeclaration	      "extern void SendAndReceiveEcan();"
+      FctCall		      "SendAndReceiveEcan();"
       OrderingInOutPopup      "None"
       FctStart		      "None"
       FctStart_Name	      "Init_onlyOnce"
@@ -2051,7 +1995,7 @@ Model {
       tsamp		      "1"
       OutMin		      "[]"
       OutMax		      "[]"
-      OutDataTypeStr	      "boolean"
+      OutDataTypeStr	      "fixdt('boolean')"
       OutputDataTypeScalingMode	"Specify via dialog"
       OutDataType	      "fixdt('boolean')"
       ConRadixGroup	      "Best Precision: Vector-wise"
@@ -2072,7 +2016,7 @@ Model {
       tsamp		      ".1"
       OutMin		      "[]"
       OutMax		      "[]"
-      OutDataTypeStr	      "boolean"
+      OutDataTypeStr	      "fixdt('boolean')"
       OutputDataTypeScalingMode	"Specify via dialog"
       OutDataType	      "fixdt('boolean')"
       ConRadixGroup	      "Best Precision: Vector-wise"
@@ -3041,221 +2985,38 @@ Model {
 	  IconDisplay		  "Port number"
 	}
 	Block {
-	  BlockType		  SubSystem
-	  Name			  "If Action\nSubsystem2"
-	  SID			  "22064"
-	  Ports			  [1, 1, 0, 0, 0, 0, 0, 1]
-	  Position		  [225, 137, 295, 173]
+	  BlockType		  Switch
+	  Name			  "Switch1"
+	  SID			  "22143"
+	  Position		  [275, 75, 325, 115]
+	  ZOrder		  -18
 	  ShowName		  off
-	  LibraryVersion	  "1.216"
-	  TreatAsAtomicUnit	  on
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  System {
-	    Name		    "If Action\nSubsystem2"
-	    Location		    [342, 471, 840, 771]
-	    Open		    off
-	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "usletter"
-	    PaperUnits		    "inches"
-	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "96"
-	    Block {
-	      BlockType		      Inport
-	      Name		      "r_i"
-	      SID		      "22065"
-	      Position		      [75, 78, 105, 92]
-	      IconDisplay	      "Port number"
-	    }
-	    Block {
-	      BlockType		      ActionPort
-	      Name		      "Action Port"
-	      SID		      "22067"
-	      Position		      [170, 15, 229, 43]
-	      ActionType	      "else"
-	    }
-	    Block {
-	      BlockType		      SignalConversion
-	      Name		      "Signal\nConversion"
-	      SID		      "22068"
-	      Position		      [180, 72, 235, 98]
-	      ShowName		      off
-	      ConversionOutput	      "Bus copy"
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "r_o"
-	      SID		      "22070"
-	      Position		      [325, 78, 355, 92]
-	      IconDisplay	      "Port number"
-	    }
-	    Line {
-	      SrcBlock		      "r_i"
-	      SrcPort		      1
-	      DstBlock		      "Signal\nConversion"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Signal\nConversion"
-	      SrcPort		      1
-	      DstBlock		      "r_o"
-	      DstPort		      1
-	    }
-	  }
-	}
-	Block {
-	  BlockType		  SubSystem
-	  Name			  "If Action\nSubsystem3"
-	  SID			  "22072"
-	  Ports			  [1, 1, 0, 0, 0, 0, 0, 1]
-	  Position		  [225, 27, 295, 63]
-	  NamePlacement		  "alternate"
-	  ShowName		  off
-	  LibraryVersion	  "1.216"
-	  TreatAsAtomicUnit	  on
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  System {
-	    Name		    "If Action\nSubsystem3"
-	    Location		    [342, 471, 840, 771]
-	    Open		    off
-	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "usletter"
-	    PaperUnits		    "inches"
-	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "100"
-	    Block {
-	      BlockType		      Inport
-	      Name		      "r_i"
-	      SID		      "22073"
-	      Position		      [75, 78, 105, 92]
-	      IconDisplay	      "Port number"
-	    }
-	    Block {
-	      BlockType		      ActionPort
-	      Name		      "Action Port"
-	      SID		      "22075"
-	      Position		      [170, 15, 229, 43]
-	      ActionType	      "then"
-	    }
-	    Block {
-	      BlockType		      SignalConversion
-	      Name		      "Signal\nConversion1"
-	      SID		      "22077"
-	      Position		      [190, 70, 230, 100]
-	      ShowName		      off
-	      ConversionOutput	      "Bus copy"
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "r_o"
-	      SID		      "22078"
-	      Position		      [325, 78, 355, 92]
-	      IconDisplay	      "Port number"
-	    }
-	    Line {
-	      SrcBlock		      "r_i"
-	      SrcPort		      1
-	      DstBlock		      "Signal\nConversion1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Signal\nConversion1"
-	      SrcPort		      1
-	      DstBlock		      "r_o"
-	      DstPort		      1
-	    }
-	  }
-	}
-	Block {
-	  BlockType		  If
-	  Name			  "If1"
-	  SID			  "22080"
-	  Ports			  [1, 2]
-	  Position		  [85, 76, 185, 114]
-	  ShowName		  off
-	  IfExpression		  "~u1"
-	}
-	Block {
-	  BlockType		  Merge
-	  Name			  "Merge3"
-	  SID			  "22082"
-	  Ports			  [2, 1]
-	  Position		  [365, 80, 405, 120]
-	  ShowName		  off
-	  InitialOutput		  "rudderCommandIC"
+	  Criteria		  "u2 ~= 0"
+	  InputSameDT		  off
+	  SaturateOnIntegerOverflow off
 	}
 	Block {
 	  BlockType		  Outport
 	  Name			  "MotorOutput"
 	  SID			  "22090"
-	  Position		  [430, 93, 460, 107]
+	  Position		  [385, 88, 415, 102]
 	  IconDisplay		  "Port number"
-	}
-	Line {
-	  SrcBlock		  "If1"
-	  SrcPort		  1
-	  Points		  [70, 0]
-	  DstBlock		  "If Action\nSubsystem3"
-	  DstPort		  ifaction
-	}
-	Line {
-	  SrcBlock		  "If1"
-	  SrcPort		  2
-	  Points		  [70, 0]
-	  DstBlock		  "If Action\nSubsystem2"
-	  DstPort		  ifaction
-	}
-	Line {
-	  SrcBlock		  "If Action\nSubsystem3"
-	  SrcPort		  1
-	  Points		  [30, 0; 0, 45]
-	  DstBlock		  "Merge3"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "If Action\nSubsystem2"
-	  SrcPort		  1
-	  Points		  [30, 0; 0, -45]
-	  DstBlock		  "Merge3"
-	  DstPort		  2
 	}
 	Line {
 	  SrcBlock		  "CommandMotor"
 	  SrcPort		  1
-	  DstBlock		  "If Action\nSubsystem3"
+	  Points		  [90, 0]
+	  DstBlock		  "Switch1"
 	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Calibrating"
 	  SrcPort		  1
-	  DstBlock		  "If1"
-	  DstPort		  1
+	  DstBlock		  "Switch1"
+	  DstPort		  2
 	}
 	Line {
-	  SrcBlock		  "Merge3"
+	  SrcBlock		  "Switch1"
 	  SrcPort		  1
 	  DstBlock		  "MotorOutput"
 	  DstPort		  1
@@ -3263,47 +3024,11 @@ Model {
 	Line {
 	  SrcBlock		  "CalibrateMotor"
 	  SrcPort		  1
-	  DstBlock		  "If Action\nSubsystem2"
-	  DstPort		  1
+	  Points		  [90, 0]
+	  DstBlock		  "Switch1"
+	  DstPort		  3
 	}
       }
-    }
-    Block {
-      BlockType		      Reference
-      Name		      "Send ecan messages\necanRudder.c"
-      SID		      "20760"
-      Tag		      "dsPIC_dsPIC_CFunctionCall"
-      Ports		      []
-      Position		      [530, 118, 658, 208]
-      BackgroundColor	      "orange"
-      LibraryVersion	      "3.84"
-      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
-      SourceType	      "C Function Call"
-      FctUpdate		      "Output Function"
-      fctName		      "rudderTransmit"
-      INPUT_SIZE	      "1"
-      INPUT1		      "--"
-      INPUT2		      "--"
-      INPUT3		      "--"
-      OUTPUT_SIZE	      "-1"
-      OUTPUT1		      "--"
-      SampleTime	      ".01"
-      InputType		      "[ ]"
-      OutputType	      "[ ]"
-      FctDeclaration	      "extern void rudderTransmit();"
-      FctCall		      "rudderTransmit();"
-      OrderingInOutPopup      "None"
-      FctStart		      "None"
-      FctStart_Name	      "RudderEcanInit"
-      FctStart_Declaration    "inline extern void RudderEcanInit();"
-      FctStart_Call	      "RudderEcanInit();"
-      FctInit		      "None"
-      FctInit_Name	      "RudderEcanInit"
-      FctInit_Declaration     "inline extern void RudderEcanInit();"
-      FctInit_Call	      "RudderEcanInit();"
-      PinDigitalInput	      "[]"
-      PinDigitalOutput	      "[]"
-      AnalogueInput	      "[]"
     }
     Block {
       BlockType		      SignalConversion
@@ -3451,37 +3176,13 @@ Model {
 	  DataStoreElements	  "rudderData.potValue"
 	}
 	Block {
-	  BlockType		  DataTypeConversion
-	  Name			  "Data Type Conversion1"
-	  SID			  "22128"
-	  Position		  [311, 170, 329, 185]
-	  ZOrder		  -7
-	  BlockRotation		  270
-	  ShowName		  off
-	  OutDataTypeStr	  "uint8"
-	  RndMeth		  "Floor"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  DataTypeConversion
-	  Name			  "Data Type Conversion2"
-	  SID			  "22129"
-	  Position		  [311, 270, 329, 285]
-	  ZOrder		  -7
-	  BlockRotation		  270
-	  BlockMirror		  on
-	  ShowName		  off
-	  OutDataTypeStr	  "uint8"
-	  RndMeth		  "Floor"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
 	  BlockType		  Goto
 	  Name			  "Goto2"
 	  SID			  "22125"
 	  Position		  [585, 185, 675, 215]
 	  ZOrder		  -10
 	  BackgroundColor	  "cyan"
+	  ShowName		  off
 	  GotoTag		  "PotBus"
 	  TagVisibility		  "global"
 	}
@@ -3595,7 +3296,8 @@ Model {
 	    }
 	  }
 	  Branch {
-	    DstBlock		    "Data Type Conversion1"
+	    Points		    [0, -35]
+	    DstBlock		    "Data Store\nWrite1"
 	    DstPort		    1
 	  }
 	}
@@ -3618,7 +3320,8 @@ Model {
 	    }
 	  }
 	  Branch {
-	    DstBlock		    "Data Type Conversion2"
+	    Points		    [0, 55]
+	    DstBlock		    "Data Store\nWrite2"
 	    DstPort		    1
 	  }
 	}
@@ -3662,19 +3365,6 @@ Model {
 	  SrcBlock		  "Bus\nCreator"
 	  SrcPort		  1
 	  DstBlock		  "Goto2"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Data Type Conversion1"
-	  SrcPort		  1
-	  DstBlock		  "Data Store\nWrite1"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Data Type Conversion2"
-	  SrcPort		  1
-	  Points		  [0, 20]
-	  DstBlock		  "Data Store\nWrite2"
 	  DstPort		  1
 	}
 	Annotation {
@@ -3749,7 +3439,7 @@ Model {
 	  SourceBlock		  "dsPICdrivers/OTHERS/C Function Call"
 	  SourceType		  "C Function Call"
 	  FctUpdate		  "Output Function"
-	  fctName		  "getCalibrateMessage"
+	  fctName		  "GetCalibrateMessage"
 	  INPUT_SIZE		  "1"
 	  INPUT1		  "--"
 	  INPUT2		  "--"
@@ -3759,8 +3449,8 @@ Model {
 	  SampleTime		  "T_step"
 	  InputType		  "[ ]"
 	  OutputType		  "[ 2 ]"
-	  FctDeclaration	  "extern uint8_T getCalibrateMessage();"
-	  FctCall		  "%y1 = getCalibrateMessage();"
+	  FctDeclaration	  "extern uint8_T GetCalibrateMessage();"
+	  FctCall		  "%y1 = GetCalibrateMessage();"
 	  OrderingInOutPopup	  "None"
 	  FctStart		  "None"
 	  FctStart_Name		  "Init_onlyOnce"
@@ -3794,57 +3484,6 @@ Model {
 	  DstBlock		  "Calibrate"
 	  DstPort		  1
 	}
-      }
-    }
-    Block {
-      BlockType		      Reference
-      Name		      "Updates the rate at which\necan messages are sent\n[ecanRudder.c]"
-      SID		      "22093"
-      Tag		      "dsPIC_dsPIC_CFunctionCall"
-      Ports		      []
-      Position		      [175, 117, 323, 202]
-      BackgroundColor	      "orange"
-      LibraryVersion	      "3.84"
-      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
-      SourceType	      "C Function Call"
-      FctUpdate		      "Output Function"
-      fctName		      "updateMessageRate"
-      INPUT_SIZE	      "1"
-      INPUT1		      "--"
-      INPUT2		      "--"
-      INPUT3		      "--"
-      OUTPUT_SIZE	      "1"
-      OUTPUT1		      "--"
-      SampleTime	      ".01"
-      InputType		      "[ ]"
-      OutputType	      "[ ]"
-      FctDeclaration	      "extern void updateMessageRate();"
-      FctCall		      "updateMessageRate();"
-      OrderingInOutPopup      "None"
-      FctStart		      "None"
-      FctStart_Name	      "Init_onlyOnce"
-      FctStart_Declaration    "inline extern void Init_onlyOnce();"
-      FctStart_Call	      "Init_onlyOnce();"
-      FctInit		      "None"
-      FctInit_Name	      "Init_Reset"
-      FctInit_Declaration     "inline extern void Init_Reset();"
-      FctInit_Call	      "Init_Reset();"
-      PinDigitalInput	      "[]"
-      PinDigitalOutput	      "[]"
-      AnalogueInput	      "[]"
-    }
-    Line {
-      SrcBlock		      "Counter\nFree-Running"
-      SrcPort		      1
-      Points		      [5, 0]
-      Branch {
-	Points			[0, -35]
-	DstBlock		"Goto8"
-	DstPort			1
-      }
-      Branch {
-	DstBlock		"Data Store\nWrite"
-	DstPort			1
       }
     }
     Line {
@@ -4052,14 +3691,14 @@ Model {
       Position		      [268, 67]
     }
     Annotation {
-      Name		      "This block provides a uint32 counter for the system time in units of T_step."
-      Position		      [36, 373]
-      HorizontalAlignment     "left"
-    }
-    Annotation {
       Name		      "When in calibration mode, override the\ncontrol signals"
       Position		      [1057, 673]
       HorizontalAlignment     "left"
+    }
+    Annotation {
+      Name		      "Store rudder data calculated within Simulink into a rudderData struct.\nIt's stored globally and ma"
+      "kes it easy to access this data from custom\nC code. (see Busses.m for more details)"
+      Position		      [516, 324]
     }
   }
 }

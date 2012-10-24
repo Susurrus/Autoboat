@@ -4,25 +4,18 @@
 #include "stdbool.h"
 
 /**
- * Schedule the CAN messages.
+ * Initialize the rudder subsystem. Currently this means
+ * scheduling repetitive transmission of CAN messages.
  */
-void RudderEcanInit(void);
+void RudderSubsystemInit(void);
 
 /**
- * Transmit the appropriate messages for this timestep.
- * Relies on the MavLinkMessageScheduler to determine which
- * those are. Actual transmission is deferred to helper
- * functions.
- */
-void RudderTransmit(void);
-
-/**
- * Transmit PGN 127245 message.
+ * Transmit PGN 127245 message via CAN.
  */
 void RudderSendNmea(void);
 
 /**
- * Transmit CUSTOM_LIMITS message.
+ * Transmit CUSTOM_LIMITS message via CAN.
  */
 void RudderSendCustomLimit(void);
 
@@ -34,7 +27,12 @@ void RudderSendCustomLimit(void);
  */
 void SendAndReceiveEcan(void);
 
-void UpdateMessageRate(void);
+/**
+ * Update the transmission rates of broadcast messages.
+ * @param angleRate The desired transmission rate of the NMEA2000 PGN127245 message.
+ * @param statusRate The desired transmission rate of the custom status message.
+ */
+void UpdateMessageRate(const uint8_t angleRate, const uint8_t statusRate);
 
 /**
  * Helper function for retrieving whether a calibration should occur.
