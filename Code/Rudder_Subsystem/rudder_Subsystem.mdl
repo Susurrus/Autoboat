@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2424"
+    ComputedModelVersion    "1.2426"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -28,9 +28,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Oct 24 10:00:08 2012"
+  LastModifiedDate	  "Wed Oct 24 13:56:05 2012"
   RTWModifiedTimeStamp	  272968149
-  ModelVersionFormat	  "1.%<AutoIncrement:2424>"
+  ModelVersionFormat	  "1.%<AutoIncrement:2426>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -846,6 +846,11 @@ Model {
       CheckOORBitShift	      off
     }
     Block {
+      BlockType		      Bias
+      Bias		      "0"
+      SaturateOnIntegerOverflow	on
+    }
+    Block {
       BlockType		      BusCreator
       Inputs		      "4"
       DisplayOption	      "none"
@@ -919,6 +924,21 @@ Model {
       BlockType		      From
       IconDisplay	      "Tag"
       TagVisibility	      "local"
+    }
+    Block {
+      BlockType		      Gain
+      Gain		      "1"
+      Multiplication	      "Element-wise(K.*u)"
+      ParamMin		      "[]"
+      ParamMax		      "[]"
+      ParamDataTypeStr	      "Inherit: Same as input"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Same as input"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      SampleTime	      "-1"
     }
     Block {
       BlockType		      Goto
@@ -1078,7 +1098,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "88"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "22155"
+    SIDHighWatermark	    "22159"
     Block {
       BlockType		      Reference
       Name		      "Configure ECAN 1"
@@ -1805,7 +1825,7 @@ Model {
       tmr2345		      "[8  0  0  0]"
       tmr2345cfg	      "[-1 -1 -1 -1]"
       IOautoConf	      on
-      typePort		      "[ 9   0   0   0  10   0   0   0   0   0   0   0   0   0   0   0   0   9   8   0  22   0   0  23"
+      typePort		      "[ 9   8   0   0  10   0   0   0   0   0   0   0   0   0   0   0   0   9   8   0  22   0   0  23"
       "   0  10  10   0  23   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
       "   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
       "   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
@@ -3204,11 +3224,11 @@ Model {
 	ZoomFactor		"100"
 	Block {
 	  BlockType		  Reference
-	  Name			  "ADC inputs:\nAN4 - Rudder pot"
+	  Name			  "ADC inputs:\nAN1 - Temp sensor\nAN4 - Rudder pot"
 	  SID			  "20708"
 	  Tag			  "dsPIC_ADC"
-	  Ports			  [0, 1]
-	  Position		  [40, 95, 125, 145]
+	  Ports			  [0, 2]
+	  Position		  [40, 82, 125, 133]
 	  Priority		  "5"
 	  LibraryVersion	  "3.84"
 	  SourceBlock		  "dsPICdrivers/Peripheral I//O/ADC Input"
@@ -3219,22 +3239,33 @@ Model {
 	  VoltRefpopup		  "AVdd  -  AVss"
 	  OutFormatBitspopup	  "0000 dddd dddd dddd : Integer"
 	  InterruptPriority	  "6"
-	  ANCHANNELS		  "[4]"
+	  ANCHANNELS		  "[4 1]"
 	  MaxName		  "ANmax = 4095"
 	  Rin			  "0"
 	  ADCS			  "53"
 	  SAMC			  "1"
 	  Temperature		  "25"
-	  DMAChannel		  "7"
+	  DMAChannel		  "1"
 	  SampleTime		  "T_step"
-	  Status		  "OK  |  Tsmp=6.749e-007 |  T/Channel=1.012e-005 |  Tall=1.012e-005"
+	  Status		  "OK  |  Tsmp=6.749e-007 |  T/Channel=1.012e-005 |  Tall=2.025e-005"
 	  SSRC			  "auto convert"
 	  Port {
-	    PortNumber		    1
+	    PortNumber		    2
 	    Name		    "position"
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
+	}
+	Block {
+	  BlockType		  Bias
+	  Name			  "Bias"
+	  SID			  "22157"
+	  Position		  [220, 35, 260, 65]
+	  ZOrder		  -5
+	  NamePlacement		  "alternate"
+	  ShowName		  off
+	  Bias			  "-0.5"
+	  SaturateOnIntegerOverflow off
 	}
 	Block {
 	  BlockType		  BusCreator
@@ -3272,15 +3303,53 @@ Model {
 	}
 	Block {
 	  BlockType		  DataStoreWrite
+	  Name			  "Data Store\nWrite3"
+	  SID			  "22159"
+	  Ports			  [1]
+	  Position		  [350, 33, 435, 67]
+	  ZOrder		  -6
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  DataStoreName		  "rudderData"
+	  DataStoreElements	  "rudderData.temp"
+	}
+	Block {
+	  BlockType		  DataStoreWrite
 	  Name			  "Data Store\nWrite7"
 	  SID			  "22121"
 	  Ports			  [1]
-	  Position		  [350, 38, 435, 72]
+	  Position		  [350, 63, 435, 97]
 	  ZOrder		  -6
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  DataStoreName		  "rudderData"
 	  DataStoreElements	  "rudderData.potValue"
+	}
+	Block {
+	  BlockType		  Gain
+	  Name			  "Gain"
+	  SID			  "22156"
+	  Position		  [165, 35, 195, 65]
+	  ZOrder		  -11
+	  ShowName		  off
+	  Gain			  "3.3/ANmax"
+	  ParamDataTypeStr	  "single"
+	  OutDataTypeStr	  "single"
+	  RndMeth		  "Simplest"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Gain
+	  Name			  "Gain3"
+	  SID			  "22158"
+	  Position		  [280, 35, 310, 65]
+	  ZOrder		  -11
+	  ShowName		  off
+	  Gain			  "100"
+	  ParamDataTypeStr	  "single"
+	  OutDataTypeStr	  "single"
+	  RndMeth		  "Simplest"
+	  SaturateOnIntegerOverflow off
 	}
 	Block {
 	  BlockType		  Goto
@@ -3445,33 +3514,55 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  Name			  "position"
-	  Labels		  [1, 0]
-	  SrcBlock		  "ADC inputs:\nAN4 - Rudder pot"
+	  SrcBlock		  "Bus\nCreator"
 	  SrcPort		  1
-	  Points		  [200, 0]
+	  DstBlock		  "Goto2"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "position"
+	  Labels		  [0, 0]
+	  SrcBlock		  "ADC inputs:\nAN1 - Temp sensor\nAN4 - Rudder pot"
+	  SrcPort		  2
+	  Points		  [185, 0]
 	  Branch {
-	    Points		    [30, 0]
-	    Branch {
-	      DstBlock		      "rudder_pot"
-	      DstPort		      1
-	    }
-	    Branch {
-	      Points		      [0, 70]
-	      DstBlock		      "Bus\nCreator"
-	      DstPort		      1
-	    }
+	    DstBlock		    "rudder_pot"
+	    DstPort		    1
 	  }
 	  Branch {
-	    Points		    [0, -65]
+	    Points		    [0, -40]
 	    DstBlock		    "Data Store\nWrite7"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, 70]
+	    DstBlock		    "Bus\nCreator"
 	    DstPort		    1
 	  }
 	}
 	Line {
-	  SrcBlock		  "Bus\nCreator"
+	  SrcBlock		  "ADC inputs:\nAN1 - Temp sensor\nAN4 - Rudder pot"
 	  SrcPort		  1
-	  DstBlock		  "Goto2"
+	  Points		  [10, 0; 0, -45]
+	  DstBlock		  "Gain"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Gain"
+	  SrcPort		  1
+	  DstBlock		  "Bias"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Bias"
+	  SrcPort		  1
+	  DstBlock		  "Gain3"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Gain3"
+	  SrcPort		  1
+	  DstBlock		  "Data Store\nWrite3"
 	  DstPort		  1
 	}
 	Annotation {
@@ -3482,6 +3573,10 @@ Model {
 	  "ometer was powered at 3.3V for these \nmeasurements."
 	  Position		  [28, 370]
 	  HorizontalAlignment	  "left"
+	}
+	Annotation {
+	  Name			  "Convert measured voltage to temperature degC."
+	  Position		  [237, 20]
 	}
       }
     }
@@ -3879,7 +3974,7 @@ Stateflow {
       "conversion reversing the range and mapping it into [.7854:-0.7854]\n    rads = (0.5 - single(val)/single(in_max)"
       ")*2*0.7854;\n\n    % Finally cap the value to +- our range to prevent odd errors later.\n    if rads > 0.7854\n "
       "       rads = single(0.7854);\n    elseif rads < -0.7854\n        rads = single(-0.7854);\n    end\nend"
-      editorLayout	      "100 M4x1[1672 196 1696 1026]"
+      editorLayout	      "100 M4x1[1247 197 1696 1026]"
     }
   }
   junction {

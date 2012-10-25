@@ -37,6 +37,10 @@ uint32_t Iso11783Decode(uint32_t can_id, uint8_t *src, uint8_t *dest, uint8_t *p
   * PDU2 is a broadcast without a destination. As the destination and PGN can both encode
   * this information and given the expected usage of this function, the PGN is given
   * priority for determining this.
+  * @param[in] pgn The PGN number used for this message.
+  * @param[in] src The source of this message.
+  * @param[in] dest The destination for this message. Set to 255 if the message was a broadcast.
+  * @param[in] pri The priority, a 3-bit number with higher values indicating higher priority.
   * @return The encoded 29-bit CAN identifier (as a uint32)
   */
 uint32_t Iso11783Encode(uint32_t pgn, uint8_t src, uint8_t dest, uint8_t pri);

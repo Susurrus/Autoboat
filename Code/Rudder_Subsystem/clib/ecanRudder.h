@@ -10,7 +10,7 @@
 void RudderSubsystemInit(void);
 
 /**
- * Transmit PGN 127245 message via CAN.
+ * Transmit PGN 127245 (rudder angle) message via CAN.
  */
 void RudderSendNmea(void);
 
@@ -18,6 +18,11 @@ void RudderSendNmea(void);
  * Transmit CUSTOM_LIMITS message via CAN.
  */
 void RudderSendCustomLimit(void);
+
+/**
+ * Transmit PGN130311 (ambient temperature) message via CAN.
+ */
+void RudderSendTemperature(void);
 
 /**
  * Manage the ECAN message system for a given timestamp. This

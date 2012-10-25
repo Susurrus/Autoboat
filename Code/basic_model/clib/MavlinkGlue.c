@@ -111,7 +111,7 @@ static mavlink_system_t mavlink_system = {
 	MAV_COMP_ID_ALL,
 	MAV_TYPE_SURFACE_BOAT,
 	MAV_STATE_UNINIT,
-	MAV_MODE_PREFLIGHT,
+	MAV_MODE_PREFLIGHT | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED, // The vehicle is booting up and have manual control enabled.
 	0 // Unused and unsure of expected usage
 };
 
@@ -413,7 +413,7 @@ void MavLinkSendRcRawData(void)
  */
 void MavLinkSendRcScaledData(void)
 {
-	if (!(systemStatus.status & (1 << 4))) {
+	if (!(systemStatus.status & 1)) {
 		mavlink_message_t msg;
 
 		mavlink_msg_rc_channels_scaled_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
@@ -594,7 +594,7 @@ void MavLinkSendStatusAndErrors(void)
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	uart1EnqueueData(buf, (uint8_t)len);
 
-	// And finally update the MAVLink state based on the system state.
+	// And finally update the MAVLink state and run mode based on the system state.
 
 	// If the startup reset line is triggered, indicate we're booting up. This is the only unarmed state
 	// although that's not technically true with this controller.

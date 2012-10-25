@@ -77,6 +77,17 @@ elems(7).SamplingMode = 'Sample based';
 elems(7).Min = [];
 elems(7).Max = [];
 
+elems(8) = Simulink.BusElement;
+elems(8).Name = 'temp';
+elems(8).Dimensions = 1;
+elems(8).DimensionsMode = 'Fixed';
+elems(8).DataType = 'single';
+elems(8).SampleTime = -1;
+elems(8).Complexity = 'real';
+elems(8).SamplingMode = 'Sample based';
+elems(8).Min = [];
+elems(8).Max = [];
+
 RudderVariables = Simulink.Bus;
 RudderVariables.HeaderFile = '';
 RudderVariables.Description = sprintf('');
