@@ -29,15 +29,15 @@ THE SOFTWARE.
 // the Autoboat project. As most programming relies on Simulink and
 // the Real-Time Workshop, retrieval functions here return arrays of
 // data to be compatible (instead of much-nicer structs).
-// A complete structure is passed byte-by-byte and assembled in an 
-// internal buffer. This is then verified by its checksum and the 
-//data pushed into the appropriate struct. This data can then be 
+// A complete structure is passed byte-by-byte and assembled in an
+// internal buffer. This is then verified by its checksum and the
+//data pushed into the appropriate struct. This data can then be
 // retrieved via an accessor function.
 //
 // While this code was written specifically for the Autoboat and its
 // protocol, it has been kept as modular as possible to be useful
 // in other situations with the most minimal alterations.
-// 
+//
 // Code by: Bryant W. Mairs
 // First Revision: Aug 25 2010
 // ==============================================================
@@ -94,7 +94,7 @@ void buildAndCheckMessage(uint8_t characterIn, uint8_t sensorMode) {
 	// 3 - Awaiting header byte 0 (^)
 	// 4 - Awaiting header byte 1 (&)
 	// 5 - Reading checksum character
-	
+
 	// We start recording a new message if we see the header
 	if (messageState == 0) {
 		if (characterIn == '%') {
@@ -104,7 +104,7 @@ void buildAndCheckMessage(uint8_t characterIn, uint8_t sensorMode) {
 		} else {
 			messageIndex = 0;
 			messageState = 0;
-			
+
 			// Here we've failed parsing a message so count another failure.
 			if (!sameFailedMessageFlag) {
 				failedMessageCount++;
@@ -122,7 +122,7 @@ void buildAndCheckMessage(uint8_t characterIn, uint8_t sensorMode) {
 		} else if (characterIn != '%'){
 			messageIndex = 0;
 			messageState = 0;
-			
+
 			// Here we've failed parsing a message so count another failure.
 			if (!sameFailedMessageFlag) {
 				failedMessageCount++;
@@ -139,7 +139,7 @@ void buildAndCheckMessage(uint8_t characterIn, uint8_t sensorMode) {
 			} else {
 				messageState = 0;
 				messageIndex = 0;
-				
+
 				// Here we've failed parsing a message.
 				failedMessageCount++;
 				sameFailedMessageFlag = 1;
@@ -148,7 +148,7 @@ void buildAndCheckMessage(uint8_t characterIn, uint8_t sensorMode) {
 			// If we've filled up the buffer, ignore the entire message as we can't store it all
 			messageState = 0;
 			messageIndex = 0;
-			
+
 			// Here we've failed parsing a message.
 			failedMessageCount++;
 			sameFailedMessageFlag = 1;
@@ -177,11 +177,11 @@ void buildAndCheckMessage(uint8_t characterIn, uint8_t sensorMode) {
 			if (message[2] == 1) {
 				// NOTE: We skip data 4 & 5 as it's unnecessary throttle data.
 				UpdateGpsDataFromHil(&message[6]);
-				
+
 				// Only update the rudder data if we're not in a sensor-override mode. This mode
 				// specifies that real-world actuator sensor data will be used instead of generated.
 				if (!sensorMode) {
-					SetRudderData(&message[23]);
+					SetRudderAngle(&message[23]);
 				}
 				SetHilData(&message[31]);
 			}

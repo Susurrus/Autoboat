@@ -579,8 +579,8 @@ void MavLinkSendRudderRaw(void)
 	mavlink_message_t msg;
 
 	mavlink_msg_rudder_raw_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-                                rudderDataStore.Position.usData, rudderDataStore.PortLimit, 0, rudderDataStore.StarboardLimit,
-                                internalVariables.RudderCalLimitPort, internalVariables.RudderCalLimitStarboard);
+                                rudderAngle.flData, 0, 0, 0,
+                                0, 0);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 

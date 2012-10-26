@@ -4,6 +4,7 @@
 #include "ecanFunctions.h"
 #include "nmea2000.h"
 #include "types.h"
+#include "Rudder.h"
 #include "code_gen.h"
 
 struct PowerData powerDataStore = {};
@@ -190,8 +191,8 @@ uint8_t ProcessAllEcanMessages(void)
 					}
 				} break;
 				case 127245: {
-					if (ParsePgn127245(msg.payload, NULL, NULL, NULL, NULL, &rudderCanDataStore.Position.flData) == 0x04){
-						rudderCanDataStore.NewData = true;
+					if (ParsePgn127245(msg.payload, NULL, NULL, NULL, NULL, &rudderAngle.flData) == 0x04){
+						// No action necessary.
 					}
 				} break;
 				case 127508: { // From the Power Node

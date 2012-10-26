@@ -5,29 +5,21 @@
 
 #include "types.h"
 
-// Declaration of the relevant message structs used.
-struct RudderData {
-	tUnsignedShortToChar Position;
-	bool PortLimit;
-	bool StarboardLimit;
-};
-extern struct RudderData rudderDataStore;
+extern tFloatToChar rudderAngle;
 
 /**
- * Retrieves the stored rudder data from the struct into
- * a packed uint8 array. Suitable for using in Matlab.
+ * Returns the current vessel rudder angle. Units are in radians with positive values to port.
  */
-void GetRudderData(uint8_t *data);
+float GetRudderAngle();
 
 /**
- * Records the provided rudder data in a uint8 array
- * into a local tRudderData struct.
+ * Stores a recorded value of the rudder angle.
  */
-void SetRudderData(uint8_t *data);
+void SetRudderData(const uint8_t data[2]);
 
 /**
  * Clears the stored rudder data to all zeros.
  */
-void ClearRudderData();
+void ClearRudderAngle();
 
 #endif // _RUDDER_H_
