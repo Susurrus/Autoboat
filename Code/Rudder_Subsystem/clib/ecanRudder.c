@@ -22,8 +22,8 @@
 
 // Declare a struct for storing received data.
 static struct {
-	bool calibrate;	 // Whether a calibration has been requested or not.
-	int16_t newAngle;   // The commanded rudder angle
+	bool calibrate;    // Whether a calibration has been requested or not.
+	int16_t newAngle;  // The commanded rudder angle
 } rudderMessageStore;
 
 void RudderSubsystemInit(void)
@@ -47,57 +47,57 @@ void RudderSubsystemInit(void)
 
 void RudderSendNmea(void) {
 	// Set CAN header information.
-	tCanMessage Message;
-	Message.id = Iso11783Encode(PGN_RUDDER_ANGLE, 10, 255, 2);
-	Message.buffer = 0;
-	Message.message_type = CAN_MSG_DATA;
-	Message.frame_type = CAN_FRAME_EXT;
-	Message.validBytes = 6;
+	tCanMessage msg;
+	msg.id = Iso11783Encode(PGN_RUDDER_ANGLE, 10, 255, 2);
+	msg.buffer = 0;
+	msg.message_type = CAN_MSG_DATA;
+	msg.frame_type = CAN_FRAME_EXT;
+	msg.validBytes = 6;
 
 	// Now fill in the data.
-	Message.payload[0] = 0xFF; // Unused
-	Message.payload[1] = 0xFF; // Unused
-	Message.payload[2] = 0xFF; // Unused
-	Message.payload[3] = 0xFF; // Unused
+	msg.payload[0] = 0xFF; // Unused
+	msg.payload[1] = 0xFF; // Unused
+	msg.payload[2] = 0xFF; // Unused
+	msg.payload[3] = 0xFF; // Unused
 	// Convert rudderPositionAngle to 1e-4 radians
 	int16_t angle = ((float)rudderData.rudderPositionAngle * 10000);
 	// Send current angle over the CAN bus
-	Message.payload[4] = angle;
-	Message.payload[5] = angle >> 8;
+	msg.payload[4] = angle;
+	msg.payload[5] = angle >> 8;
 
 	// And finally transmit it.
-	ecan1_transmit(Message);
+	ecan1_buffered_transmit(&msg);
 }
 
 void RudderSendCustomLimit(void)
 {
 	// Set CAN header information.
-	tCanMessage Message;
-	Message.id = CAN_ID_CUSTOM_LIMITS;
-	Message.buffer = 0;
-	Message.message_type = CAN_MSG_DATA;
-	Message.frame_type = CAN_FRAME_EXT;
-	Message.validBytes = 7;
+	tCanMessage msg;
+	msg.id = CAN_ID_CUSTOM_LIMITS;
+	msg.buffer = 0;
+	msg.message_type = CAN_MSG_DATA;
+	msg.frame_type = CAN_FRAME_EXT;
+	msg.validBytes = 7;
 
 	// Now fill in the data.
-	Message.payload[0] = rudderData.potValue;
-	Message.payload[1] = rudderData.potValue >> 8;
-	Message.payload[2] = rudderData.portLimitValue;
-	Message.payload[3] = rudderData.portLimitValue >> 8;
-	Message.payload[4] = rudderData.starLimitValue;
-	Message.payload[5] = rudderData.starLimitValue >> 8;
-	Message.payload[6] = rudderData.portLimit << 7;
-	Message.payload[6] |= rudderData.starLimit << 5;
+	msg.payload[0] = rudderData.potValue;
+	msg.payload[1] = rudderData.potValue >> 8;
+	msg.payload[2] = rudderData.portLimitValue;
+	msg.payload[3] = rudderData.portLimitValue >> 8;
+	msg.payload[4] = rudderData.starLimitValue;
+	msg.payload[5] = rudderData.starLimitValue >> 8;
+	msg.payload[6] = rudderData.portLimit << 7;
+	msg.payload[6] |= rudderData.starLimit << 5;
 	//if rudder is calibrated set second bit high
 	//if it is not calibrated set rudder to 'enable' (First bit high)
 	if (rudderData.calibrate) {
-		Message.payload[6] |= 0x02;
+		msg.payload[6] |= 0x02;
 	} else {
-		Message.payload[6] |= 0x01;
+		msg.payload[6] |= 0x01;
 	}
 
 	// And finally transmit it.
-	ecan1_transmit(Message);
+	ecan1_buffered_transmit(&msg);
 }
 
 //configures the message into a tCanMessage, and sends it
@@ -105,28 +105,28 @@ void RudderSendTemperature(void)
 {
 
 	// Specify a new CAN message w/ metadata
-	tCanMessage Message;
-	Message.id = Iso11783Encode(PGN_TEMP, 10, 0xFF, 2);
-	Message.buffer = 0;
-	Message.message_type = CAN_MSG_DATA;
-	Message.frame_type = CAN_FRAME_EXT;
-	Message.validBytes = 8;
+	tCanMessage msg;
+	msg.id = Iso11783Encode(PGN_TEMP, 10, 0xFF, 2);
+	msg.buffer = 0;
+	msg.message_type = CAN_MSG_DATA;
+	msg.frame_type = CAN_FRAME_EXT;
+	msg.validBytes = 8;
 
 	// Now set the data.
-	Message.payload[0] = 0xFF;      // SID
-	Message.payload[1] = 2;         // Temperature instance (Inside)
-	Message.payload[1] |= 0x3 << 6; // Humidity instance (Invalid)
+	msg.payload[0] = 0xFF;      // SID
+	msg.payload[1] = 2;         // Temperature instance (Inside)
+	msg.payload[1] |= 0x3 << 6; // Humidity instance (Invalid)
 	// Record the temperature in units of .01Kelvin.
 	uint16_t temp = (uint16_t)((rudderData.temp + 273.2) * 100);
-	Message.payload[2] = (uint8_t)temp;
-	Message.payload[3] = (uint8_t)(temp >> 8);
-	Message.payload[4] = 0xFF; // Humidity is invalid
-	Message.payload[5] = 0xFF; // Humidity is invalid
-	Message.payload[6] = 0xFF; // Atmospheric pressure is invalid
-	Message.payload[7] = 0xFF; // Atmospheric pressure is invalid
+	msg.payload[2] = (uint8_t)temp;
+	msg.payload[3] = (uint8_t)(temp >> 8);
+	msg.payload[4] = 0xFF; // Humidity is invalid
+	msg.payload[5] = 0xFF; // Humidity is invalid
+	msg.payload[6] = 0xFF; // Atmospheric pressure is invalid
+	msg.payload[7] = 0xFF; // Atmospheric pressure is invalid
 
 	// And finally transmit it.
-	ecan1_transmit(Message);
+	ecan1_buffered_transmit(&msg);
 }
 
 void SendAndReceiveEcan(void)
