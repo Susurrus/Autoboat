@@ -190,7 +190,7 @@ uint8_t ProcessAllEcanMessages(void)
 						dateTimeDataStore.newData = true;
 					}
 				} break;
-				case 127245: {
+				case 127245: { // From the Rudder Controller
 					if (ParsePgn127245(msg.payload, NULL, NULL, NULL, NULL, &rudderAngle.flData) == 0x04){
 						// No action necessary.
 					}

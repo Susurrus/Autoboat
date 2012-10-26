@@ -15,7 +15,7 @@ float GetRudderAngle();
 /**
  * Stores a recorded value of the rudder angle.
  */
-void SetRudderData(const uint8_t data[2]);
+void SetRudderAngle(const uint8_t data[2]);
 
 /**
  * Clears the stored rudder data to all zeros.
