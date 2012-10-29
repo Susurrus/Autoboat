@@ -120,7 +120,7 @@ void DaysSinceEpochToOffset(uint16_t days, uint8_t *offset_years, uint8_t *offse
 	}
 }
 
-uint8_t ParsePgn126992(uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_t *year, uint8_t *month, uint8_t *day, uint8_t *hour, uint8_t *minute, uint8_t *second, uint64_t *usecSinceEpoch)
+uint8_t ParsePgn126992(const uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_t *year, uint8_t *month, uint8_t *day, uint8_t *hour, uint8_t *minute, uint8_t *second, uint64_t *usecSinceEpoch)
 {
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
 	uint8_t fieldStatus = 0;
@@ -206,7 +206,7 @@ uint8_t ParsePgn126992(uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_
 	return fieldStatus;
 }
 
-uint8_t ParsePgn127245(uint8_t data[8], uint8_t *seqId, uint8_t *instance, uint8_t *direction, float *angleOrder, float *position)
+uint8_t ParsePgn127245(const uint8_t data[8], uint8_t *seqId, uint8_t *instance, uint8_t *direction, float *angleOrder, float *position)
 {
 
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
@@ -232,26 +232,26 @@ uint8_t ParsePgn127245(uint8_t data[8], uint8_t *seqId, uint8_t *instance, uint8
 
 	// Field 3: Angle Order. This is a 16-bit field that is used to command rudder angles. This field contains a signed value with the units of 0.0001 radians.
 	if (angleOrder && (data[3] != 0xFF || data[4] != 0xFF)) {
-		tUnsignedShortToChar unpacked;
-		unpacked.chData[0] = data[3];
-		unpacked.chData[1] = data[4];
-		*angleOrder = ((float)unpacked.usData);
+		tShortToChar unpacked;
+		unpacked.chData[0] = data[4];
+		unpacked.chData[1] = data[3];
+		*angleOrder = ((float)unpacked.shData) / 10000;
 		fieldStatus |= 0x08;
 	}
 
 	//Field 4: Position. This is a 16-bit field that represents the  current rudder angle. A value of all 1s (65535) means that the angle cannot be measured. This field contains a signed value with the units of 0.0001 radians.
 	if (position && (data[5] != 0xFF || data[6] != 0xFF)) {
-		tUnsignedShortToChar unpacked;
-		unpacked.chData[0] = data[5];
-		unpacked.chData[1] = data[6];
-		*position = ((float)unpacked.usData);
+		tShortToChar unpacked;
+		unpacked.chData[0] = data[6];
+		unpacked.chData[1] = data[5];
+		*position = ((float)unpacked.shData) / 10000;
 		fieldStatus |= 0x10;
 	}
 
 	return fieldStatus;
 }
 
-uint8_t ParsePgn127508(uint8_t data[8], uint8_t *seqId, uint8_t *instance, float *voltage, float *current, float *temperature)
+uint8_t ParsePgn127508(const uint8_t data[8], uint8_t *seqId, uint8_t *instance, float *voltage, float *current, float *temperature)
 {
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field in the same order as the output arguments to this function.
 	uint8_t fieldStatus = 0;
@@ -311,7 +311,7 @@ uint8_t ParsePgn127508(uint8_t data[8], uint8_t *seqId, uint8_t *instance, float
 	return fieldStatus;
 }
 
-uint8_t ParsePgn128259(uint8_t data[8], uint8_t *seqId, float *waterSpeed)
+uint8_t ParsePgn128259(const uint8_t data[8], uint8_t *seqId, float *waterSpeed)
 {
 
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
@@ -335,7 +335,7 @@ uint8_t ParsePgn128259(uint8_t data[8], uint8_t *seqId, float *waterSpeed)
 	return fieldStatus;
 }
 
-uint8_t ParsePgn128267(uint8_t data[8], uint8_t *seqId, float *waterDepth, float *offset)
+uint8_t ParsePgn128267(const uint8_t data[8], uint8_t *seqId, float *waterDepth, float *offset)
 {
 
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
@@ -368,7 +368,7 @@ uint8_t ParsePgn128267(uint8_t data[8], uint8_t *seqId, float *waterDepth, float
 	return fieldStatus;
 }
 
-uint8_t ParsePgn129025(uint8_t data[8], int32_t *latitude, int32_t *longitude)
+uint8_t ParsePgn129025(const uint8_t data[8], int32_t *latitude, int32_t *longitude)
 {
 
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
@@ -400,7 +400,7 @@ uint8_t ParsePgn129025(uint8_t data[8], int32_t *latitude, int32_t *longitude)
 	return fieldStatus;
 }
 
-uint8_t ParsePgn129026(uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, uint16_t *cog, uint16_t *sog)
+uint8_t ParsePgn129026(const uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, uint16_t *cog, uint16_t *sog)
 {
 
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
@@ -443,7 +443,7 @@ uint8_t ParsePgn129026(uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, uint16_
 	return fieldStatus;
 }
 
-uint8_t ParsePgn130306(uint8_t data[8], uint8_t *seqId, float *airSpeed, float *direction)
+uint8_t ParsePgn130306(const uint8_t data[8], uint8_t *seqId, float *airSpeed, float *direction)
 {
 
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
@@ -476,7 +476,7 @@ uint8_t ParsePgn130306(uint8_t data[8], uint8_t *seqId, float *airSpeed, float *
 	return fieldStatus;
 }
 
-uint8_t ParsePgn130310(uint8_t data[8], uint8_t *seqId, float *waterTemp, float *airTemp, float *airPressure)
+uint8_t ParsePgn130310(const uint8_t data[8], uint8_t *seqId, float *waterTemp, float *airTemp, float *airPressure)
 {
 
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
@@ -520,7 +520,7 @@ uint8_t ParsePgn130310(uint8_t data[8], uint8_t *seqId, float *waterTemp, float 
 	return fieldStatus;
 }
 
-uint8_t ParsePgn130311(uint8_t data[8], uint8_t *seqId, uint8_t *tempInstance, uint8_t *humidityInstance, float *temp, float *humidity, float *pressure)
+uint8_t ParsePgn130311(const uint8_t data[8], uint8_t *seqId, uint8_t *tempInstance, uint8_t *humidityInstance, float *temp, float *humidity, float *pressure)
 {
 
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.

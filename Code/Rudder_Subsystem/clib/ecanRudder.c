@@ -88,13 +88,17 @@ void RudderSendCustomLimit(void)
 	msg.payload[5] = rudderData.starLimitValue >> 8;
 	msg.payload[6] = rudderData.portLimit << 7;
 	msg.payload[6] |= rudderData.starLimit << 5;
+        // Set the rudder to being enabled.
+        // TODO: Make the rudder disabled until first calibration.
+        msg.payload[6] |= 0x01;
 	//if rudder is calibrated set second bit high
 	//if it is not calibrated set rudder to 'enable' (First bit high)
 	if (rudderData.calibrate) {
 		msg.payload[6] |= 0x02;
-	} else {
-		msg.payload[6] |= 0x01;
 	}
+        //if (rudderData.calibrating) {
+	//	msg.payload[6] |= 0x04;
+	//}
 
 	// And finally transmit it.
 	ecan1_buffered_transmit(&msg);

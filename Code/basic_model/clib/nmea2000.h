@@ -51,10 +51,10 @@ void DaysSinceEpochToOffset(uint16_t days, uint8_t *offset_years, uint8_t *offse
 
  // Units are year: absolute, month: 1-12, day: 1-31, hour: 0-23, min: 0-59, sec: 0-59, seqId: none, source: 0 (GPS), 1 (GLONASS), 2 (Radio station), 3 (Local cesium clock), 4 (local rubidium clock), 5 (Local crystal clock).
  // NOTE: The usecSinceEpoch value is not part of the return value bitfield and is only valid if the time given within the message was valid.
-uint8_t ParsePgn126992(uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_t *year, uint8_t *month, uint8_t *day, uint8_t *hour, uint8_t *minute, uint8_t *second, uint64_t *usecSinceEpoch);
+uint8_t ParsePgn126992(const uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_t *year, uint8_t *month, uint8_t *day, uint8_t *hour, uint8_t *minute, uint8_t *second, uint64_t *usecSinceEpoch);
 
 // Units are seqId: none, instance: none, direction: none/enum, angleOrder: .0001 Radians, position: .0001 Radians.
-uint8_t ParsePgn127245(uint8_t data[8], uint8_t *seqId, uint8_t *instance, uint8_t *direction, float *angleOrder, float *position);
+uint8_t ParsePgn127245(const uint8_t data[8], uint8_t *seqId, uint8_t *instance, uint8_t *direction, float *angleOrder, float *position);
 
 /**
   * Decodes PGN 127508 - Battery Status
@@ -66,27 +66,27 @@ uint8_t ParsePgn127245(uint8_t data[8], uint8_t *seqId, uint8_t *instance, uint8
   * @param[out] seqId The sequence ID for this data. Other messages from the same source sharing this sequence ID involves data measurements from the same timestep.
   * @return A bitfield containing success (1) or failure (0) for data from each output argument. For success to be indicated the corresponding argument must be non-null and have valid data within the message.
   */
-uint8_t ParsePgn127508(uint8_t data[8], uint8_t *seqId, uint8_t *instance, float *voltage, float *current, float *temperature);
+uint8_t ParsePgn127508(const uint8_t data[8], uint8_t *seqId, uint8_t *instance, float *voltage, float *current, float *temperature);
 
 // Units are seqId: none, waterSpeed: m/s.
-uint8_t ParsePgn128259(uint8_t data[8], uint8_t *seqId, float *waterSpeed);
+uint8_t ParsePgn128259(const uint8_t data[8], uint8_t *seqId, float *waterSpeed);
 
 // Units are seqId: none, waterDepth: m, offset: m.
-uint8_t ParsePgn128267(uint8_t data[8], uint8_t *seqId, float *waterDepth, float *offset);
+uint8_t ParsePgn128267(const uint8_t data[8], uint8_t *seqId, float *waterDepth, float *offset);
 
 // Units are seqId: none, latitude: radians (+ north), longitude: radians (+ east).
-uint8_t ParsePgn129025(uint8_t data[8], int32_t *latitude, int32_t *longitude);
+uint8_t ParsePgn129025(const uint8_t data[8], int32_t *latitude, int32_t *longitude);
 
 // Units are seqId: none, cogRef: 0 (True), 1 (magnetic), cog: radians eastward from north, sog: m/s
-uint8_t ParsePgn129026(uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, uint16_t *cog, uint16_t *sog);
+uint8_t ParsePgn129026(const uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, uint16_t *cog, uint16_t *sog);
 
 // Units are seqId: none, airSpeed: m/s, direction: radians eastward from north.
-uint8_t ParsePgn130306(uint8_t data[8], uint8_t *seqId, float *airSpeed, float *direction);
+uint8_t ParsePgn130306(const uint8_t data[8], uint8_t *seqId, float *airSpeed, float *direction);
 
 // Units are seqId: none, waterTemp: degrees C, airTemp: degrees C, and airPressure: kPa.
-uint8_t ParsePgn130310(uint8_t data[8], uint8_t *seqId, float *waterTemp, float *airTemp, float *airPressure);
+uint8_t ParsePgn130310(const uint8_t data[8], uint8_t *seqId, float *waterTemp, float *airTemp, float *airPressure);
 
 // Units are seqId: none, tempInstance: none/enum, humidityInstance: none/enum, temp: degrees C, humidity: %, pressure: kPa.
-uint8_t ParsePgn130311(uint8_t data[8], uint8_t *seqId, uint8_t *tempInstance, uint8_t *humidityInstance, float *temp, float *humidity, float *pressure);
+uint8_t ParsePgn130311(const uint8_t data[8], uint8_t *seqId, uint8_t *tempInstance, uint8_t *humidityInstance, float *temp, float *humidity, float *pressure);
 
 #endif // _NMEA2000_H_

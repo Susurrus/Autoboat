@@ -339,7 +339,7 @@ void MavLinkSendBasicState(void)
 	mavlink_message_t msg;
 
 	mavlink_msg_basic_state_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-		internalVariables.RudderCommand, internalVariables.RudderPositionAngle,
+		internalVariables.RudderCommand, rudderSensorData.RudderAngle.flData,
 		internalVariables.ThrottleCommand,
 		internalVariables.PropellerRpm,
 		internalVariables.L2Vector[0], internalVariables.L2Vector[1]
@@ -579,8 +579,8 @@ void MavLinkSendRudderRaw(void)
 	mavlink_message_t msg;
 
 	mavlink_msg_rudder_raw_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-                                rudderAngle.flData, 0, 0, 0,
-                                0, 0);
+                                rudderSensorData.RudderPotValue.usData, rudderSensorData.LimitHitPort, 0, rudderSensorData.LimitHitStarboard,
+                                rudderSensorData.RudderPotLimitPort.usData, rudderSensorData.RudderPotLimitStarboard.usData);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 

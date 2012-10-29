@@ -14,7 +14,6 @@ struct WaterData waterDataStore = {};
 struct ThrottleData throttleDataStore = {};
 struct GpsData gpsDataStore = {};
 struct DateTimeData dateTimeDataStore = {};
-struct RudderCanData rudderCanDataStore = {};
 
 struct stc sensorAvailability = {};
 
@@ -102,15 +101,6 @@ void GetGpsDataPacked(uint8_t *data)
 	gpsDataStore.newData = 0;
 }
 
-void GetRudderCanDataPacked(uint8_t *data){
-	data[0] = rudderCanDataStore.Position.chData[0];
-	data[1] = rudderCanDataStore.Position.chData[1];
-	data[2] = rudderCanDataStore.Position.chData[2];
-	data[3] = rudderCanDataStore.Position.chData[3];
-
-	rudderCanDataStore.NewData = 0;
-}
-
 void ClearGpsData(void)
 {
 	gpsDataStore.lat.lData = 0.0;
@@ -166,6 +156,12 @@ uint8_t ProcessAllEcanMessages(void)
 	if (sensorAvailability.prop.active_counter < 100) {
 		++sensorAvailability.prop.active_counter;
 	}
+	if (sensorAvailability.rudder.enabled_counter < 100) {
+		++sensorAvailability.rudder.enabled_counter;
+	}
+	if (sensorAvailability.rudder.active_counter < 100) {
+		++sensorAvailability.rudder.active_counter;
+	}
 
 	do {
 		int foundOne = ecan1_receive(&msg, &messagesLeft);
@@ -173,11 +169,27 @@ uint8_t ProcessAllEcanMessages(void)
 			// Process throttle messages here. Anything not explicitly handled is assumed to be a NMEA2000 message.
 			if (msg.id == 0x402) { // From the ACS300
 				sensorAvailability.prop.enabled_counter = 0;
-				if ((msg.payload[6] & 0x40) == 0) {
+				if ((msg.payload[6] & 0x40) == 0) { // Checks the status bit to determine if the ACS300 is enabled.
 					sensorAvailability.prop.active_counter = 0;
 				}
-				throttleDataStore.rpm.shData = (int)(((unsigned int)msg.payload[0]) << 8) | ((unsigned int)msg.payload[1]);
+				throttleDataStore.rpm.chData[0] = msg.payload[1];
+				throttleDataStore.rpm.chData[1] = msg.payload[0];
 				throttleDataStore.newData = true;
+			} if (msg.id == 0x8080) { // From the rudder controller
+				sensorAvailability.rudder.enabled_counter = 0;
+				if ((msg.payload[6] & 0x01) == 1 && // If the rudder is calibrated
+                                    (msg.payload[6] & 0x02) == 0) { // And done calibrating
+					sensorAvailability.rudder.active_counter = 0; // Then it's active
+				}
+				rudderSensorData.RudderPotValue.chData[0] = msg.payload[0];
+				rudderSensorData.RudderPotValue.chData[1] = msg.payload[1];
+				rudderSensorData.RudderPotLimitStarboard.chData[0] = msg.payload[2];
+				rudderSensorData.RudderPotLimitStarboard.chData[1] = msg.payload[3];
+				rudderSensorData.RudderPotLimitPort.chData[0] = msg.payload[4];
+				rudderSensorData.RudderPotLimitPort.chData[1] = msg.payload[5];
+				rudderSensorData.LimitHitStarboard = msg.payload[6] & (1 << 5);
+				rudderSensorData.LimitHitPort = msg.payload[6] & (1 << 7);
+				rudderSensorData.RudderState = msg.payload[6] & 0x7;
 			} else {
 				pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
 				switch (pgn) {
@@ -191,7 +203,7 @@ uint8_t ProcessAllEcanMessages(void)
 					}
 				} break;
 				case 127245: { // From the Rudder Controller
-					if (ParsePgn127245(msg.payload, NULL, NULL, NULL, NULL, &rudderAngle.flData) == 0x04){
+					if (ParsePgn127245(msg.payload, NULL, NULL, NULL, NULL, &rudderSensorData.RudderAngle.flData) == 0x10){
 						// No action necessary.
 					}
 				} break;
@@ -338,5 +350,15 @@ void UpdateSensorsAvailability(void)
 		sensorAvailability.prop.active = false;
 	} else if (!sensorAvailability.prop.active && sensorAvailability.prop.active_counter == 0) {
 		sensorAvailability.prop.active = true;
+	}
+	if (sensorAvailability.rudder.enabled && sensorAvailability.rudder.enabled_counter >= 100) {
+		sensorAvailability.rudder.enabled = false;
+	} else if (!sensorAvailability.rudder.enabled && sensorAvailability.rudder.enabled_counter == 0) {
+		sensorAvailability.rudder.enabled = true;
+	}
+	if (sensorAvailability.rudder.active && sensorAvailability.rudder.active_counter >= 100) {
+		sensorAvailability.rudder.active = false;
+	} else if (!sensorAvailability.rudder.active && sensorAvailability.rudder.active_counter == 0) {
+		sensorAvailability.rudder.active = true;
 	}
 }
