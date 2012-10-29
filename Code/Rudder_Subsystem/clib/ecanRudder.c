@@ -4,6 +4,7 @@
 #include "ecanRudder.h"
 #include "ecanFunctions.h"
 #include "nmea2000.h"
+#include "Nvram.h"
 
 // Declare some constants for use with the message scheduler
 // (don't use PGN or message ID as it must be a uint8)
@@ -20,11 +21,25 @@
 #define CAN_ID_SET_STATUS 0x8081
 #define CAN_ID_SET_TX_RATE 0x8082
 
+// Define some calibration setting constants
+#define TO_PORT      1
+#define TO_STARBOARD 0
+enum {
+	RUDDER_CAL_STATE_NULL,
+	RUDDER_CAL_STATE_INIT,
+	RUDDER_CAL_STATE_FIRST_TO_PORT,
+	RUDDER_CAL_STATE_FIRST_TO_STARBOARD,
+	RUDDER_CAL_STATE_SECOND_TO_PORT,
+	RUDDER_CAL_STATE_SECOND_TO_STARBOARD,
+	RUDDER_CAL_STATE_RECENTER
+};
+
 // Declare a struct for storing received data.
 static struct {
 	bool calibrate;    // Whether a calibration has been requested or not.
 	int16_t newAngle;  // The commanded rudder angle
 } rudderMessageStore;
+struct RudderCalibrationData rudderCalData = {0};
 
 void RudderSubsystemInit(void)
 {
@@ -45,7 +60,57 @@ void RudderSubsystemInit(void)
 	}
 }
 
-void RudderSendNmea(void) {
+void RudderCalibrate(void)
+{
+	if (rudderCalData.CalibrationState == RUDDER_CAL_STATE_INIT) {
+		rudderCalData.Calibrating = true;
+		rudderCalData.CommandedRun = true;
+		if (rudderData.starLimit) {
+			rudderCalData.CalibrationState = RUDDER_CAL_STATE_FIRST_TO_PORT;
+			rudderCalData.CommandedDirection = TO_PORT;
+		} else {
+			rudderCalData.CalibrationState = RUDDER_CAL_STATE_FIRST_TO_STARBOARD;
+			rudderCalData.CommandedDirection = TO_STARBOARD;
+		}
+	} else if (rudderCalData.CalibrationState == RUDDER_CAL_STATE_FIRST_TO_PORT) {
+		if (rudderData.portLimit) {
+			rudderCalData.PortLimitValue = rudderData.potValue;
+			rudderCalData.CalibrationState = RUDDER_CAL_STATE_SECOND_TO_PORT;
+			rudderCalData.CommandedDirection = TO_STARBOARD;
+		}
+	} else if (rudderCalData.CalibrationState == RUDDER_CAL_STATE_FIRST_TO_STARBOARD) {
+		if (rudderData.starLimit) {
+			rudderCalData.StarLimitValue = rudderData.potValue;
+			rudderCalData.CalibrationState = RUDDER_CAL_STATE_SECOND_TO_PORT;
+			rudderCalData.CommandedDirection = TO_PORT;
+		}
+	} else if (rudderCalData.CalibrationState == RUDDER_CAL_STATE_SECOND_TO_PORT) {
+		if (rudderData.portLimit) {
+			rudderCalData.PortLimitValue = rudderData.potValue;
+			SaveRudderCalibrationRange();
+			rudderCalData.CalibrationState = RUDDER_CAL_STATE_RECENTER;
+			rudderCalData.CommandedDirection = TO_STARBOARD;
+			rudderCalData.Calibrated = true;
+		}
+	} else if (rudderCalData.CalibrationState == RUDDER_CAL_STATE_SECOND_TO_STARBOARD) {
+		if (rudderData.starLimit) {
+			rudderCalData.StarLimitValue = rudderData.potValue;
+			SaveRudderCalibrationRange();
+			rudderCalData.CalibrationState = RUDDER_CAL_STATE_RECENTER;
+			rudderCalData.CommandedDirection = TO_PORT;
+			rudderCalData.Calibrated = true;
+		}
+	}else if (rudderCalData.CalibrationState == RUDDER_CAL_STATE_RECENTER) {
+		if (fabs(rudderData.rudderPositionAngle) < 0.1) {
+			rudderCalData.CommandedRun = false;
+			rudderCalData.Calibrating = false;
+			rudderCalData.CalibrationState = RUDDER_CAL_STATE_NULL;
+		}
+	}
+}
+
+void RudderSendNmea(void)
+{
 	// Set CAN header information.
 	tCanMessage msg;
 	msg.id = Iso11783Encode(PGN_RUDDER_ANGLE, 10, 255, 2);
@@ -89,16 +154,16 @@ void RudderSendCustomLimit(void)
 	msg.payload[6] = rudderData.portLimit << 7;
 	msg.payload[6] |= rudderData.starLimit << 5;
         // Set the rudder to being enabled.
-        // TODO: Make the rudder disabled until first calibration.
-        msg.payload[6] |= 0x01;
+    // TODO: Make the rudder disabled until first calibration.
+    msg.payload[6] |= 0x01;
 	//if rudder is calibrated set second bit high
 	//if it is not calibrated set rudder to 'enable' (First bit high)
-	if (rudderData.calibrate) {
+	if (rudderCalData.Calibrated) {
 		msg.payload[6] |= 0x02;
 	}
-        //if (rudderData.calibrating) {
-	//	msg.payload[6] |= 0x04;
-	//}
+    if (rudderCalData.Calibrating) {
+		msg.payload[6] |= 0x04;
+	}
 
 	// And finally transmit it.
 	ecan1_buffered_transmit(&msg);
@@ -143,11 +208,10 @@ void SendAndReceiveEcan(void)
 		int foundOne = ecan1_receive(&msg, &messagesLeft);
 		if (foundOne) {
 			// Process custom rudder messages. Anything not explicitly handled is assumed to be a NMEA2000 message.
+			// If we receive a calibration message, start calibration if we aren't calibrating right now.
 			if (msg.id == CAN_ID_SET_STATUS) {
-				if ((msg.payload[0] & 0x01) == 1) {
-					rudderMessageStore.calibrate = 1;
-				} else{
-					rudderMessageStore.calibrate = 0;
+				if ((msg.payload[0] & 0x01) == 1 && rudderCalData.Calibrating == false) {
+					rudderCalData.CalibrationState = RUDDER_CAL_STATE_INIT;
 				}
 			// Update send message rates
 			} else if (msg.id == CAN_ID_SET_TX_RATE) {
@@ -217,6 +281,37 @@ bool GetCalibrateMessage(void)
 
 float GetNewAngle(void)
 {
-	float temp = rudderMessageStore.newAngle;
-	return temp/10000;
+    float temp = rudderMessageStore.newAngle;
+    return temp/10000;
+}
+
+void CalculateRudderAngle(void)
+{
+    rudderData.rudderPositionAngle = PotToRads(rudderData.potValue, rudderCalData.StarLimitValue, rudderCalData.PortLimitValue);
+}
+
+float PotToRads(uint16_t input, uint16_t highSide, uint16_t lowSide)
+{
+    // This function converts the potentiometer reading from the boat's rudder sensors
+    // to a value in degrees. It relies on each limit being hit to set the bounds on
+    // the rudder sensor value and then maps that value from that range into the new
+    // range of -.07854 to .07854 (+-45 deg). It is loosely based off of the integer
+    // mapping function at: http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1289758376
+
+    // Prepare our input. Here we subtract the baseline 'lowSide' value off of
+    // the input so we start with a range from [0..highSide-lowSide] and map it
+    // into the output range of 45 degrees.
+    int32_t in_max = highSide - lowSide;
+    float val = (float)((int32_t)input - (int32_t)lowSide);
+
+    // Do the actual conversion reversing the range and mapping it into [.7854:-0.7854]
+    float rads = (0.5 - val/((float)in_max))*2*0.7854;
+
+    // Finally cap the value to +- our range to prevent odd errors later.
+    if (rads > 0.7854) {
+        rads = 0.7854;
+    } else if (rads < -0.7854) {
+        rads = -0.7854;
+    }
+	return rads;
 }

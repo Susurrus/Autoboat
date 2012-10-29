@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2426"
+    ComputedModelVersion    "1.2427"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -28,9 +28,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Oct 24 13:56:05 2012"
-  RTWModifiedTimeStamp	  272968149
-  ModelVersionFormat	  "1.%<AutoIncrement:2426>"
+  LastModifiedDate	  "Mon Oct 29 15:53:54 2012"
+  RTWModifiedTimeStamp	  273425268
+  ModelVersionFormat	  "1.%<AutoIncrement:2427>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -433,8 +433,9 @@ Model {
 	  RTWUseLocalCustomCode	  off
 	  RTWUseSimCustomCode	  off
 	  CustomInclude		  "../../../mavlink/seaslug/sealion\n../../../mavlink/seaslug/\nclib\n../basic_model/clib"
-	  CustomSource		  "clib/ecanRudder.c\nclib/nmea2000.c\nclib/traps.c\n\n../basic_model/clib/MavlinkMessageScheduler.c\n"
-	  "\n../../../ECAN_dspic/CircularBuffer.c\n../../../ECAN_dspic/ecanFunctions.c"
+	  CustomSource		  "clib/ecanRudder.c\nclib/nmea2000.c\nclib/traps.c\nclib/Nvram.c\n\n../basic_model/clib/DEE.c\n../ba"
+	  "sic_model/clib/DEES.s\n../basic_model/clib/MavlinkMessageScheduler.c\n\n../../../ECAN_dspic/CircularBuffer.c\n../.."
+	  "/../ECAN_dspic/ecanFunctions.c"
 	  IncludeHyperlinkInReport off
 	  LaunchReport		  off
 	  TargetLang		  "C"
@@ -899,6 +900,11 @@ Model {
       DataLoggingNameMode     "SignalName"
     }
     Block {
+      BlockType		      DataStoreRead
+      DataStoreName	      "A"
+      SampleTime	      "-1"
+    }
+    Block {
       BlockType		      DataStoreWrite
       DataStoreName	      "A"
       SampleTime	      "-1"
@@ -913,12 +919,6 @@ Model {
       RndMeth		      "Zero"
       SaturateOnIntegerOverflow	on
       SampleTime	      "-1"
-    }
-    Block {
-      BlockType		      Demux
-      Outputs		      "4"
-      DisplayOption	      "none"
-      BusSelectionMode	      off
     }
     Block {
       BlockType		      From
@@ -998,13 +998,6 @@ Model {
       OutPortSampleTime	      "-1"
     }
     Block {
-      BlockType		      S-Function
-      FunctionName	      "system"
-      SFunctionModules	      "''"
-      PortCounts	      "[]"
-      SFunctionDeploymentMode off
-    }
-    Block {
       BlockType		      Saturate
       UpperLimitSource	      "Dialog"
       UpperLimit	      "0.5"
@@ -1078,13 +1071,10 @@ Model {
       SampleTime	      "-1"
       AllowDiffInputSizes     off
     }
-    Block {
-      BlockType		      Terminator
-    }
   }
   System {
     Name		    "rudder_Subsystem"
-    Location		    [202, 82, 1678, 997]
+    Location		    [202, 74, 1678, 989]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1096,9 +1086,46 @@ Model {
     TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
     TiledPageScale	    1
     ShowPageBoundaries	    off
-    ZoomFactor		    "88"
+    ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "22159"
+    SIDHighWatermark	    "22169"
+    Block {
+      BlockType		      Reference
+      Name		      "Calculate the actual rudder\nangle using calibration data\n[ecanRudder.c]"
+      SID		      "22164"
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      [0, 1]
+      Position		      [280, 365, 445, 415]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.84"
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "Output Function"
+      fctName		      "CalculateRudderAngle"
+      INPUT_SIZE	      "1"
+      INPUT1		      "--"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "--"
+      SampleTime	      "T_step"
+      InputType		      "[ ]"
+      OutputType	      "[ ]"
+      FctDeclaration	      "extern void CalculateRudderAngle();"
+      FctCall		      "CalculateRudderAngle();"
+      OrderingInOutPopup      "Output"
+      FctStart		      "None"
+      FctStart_Name	      "Init_onlyOnce"
+      FctStart_Declaration    "inline extern void Init_onlyOnce();"
+      FctStart_Call	      "Init_onlyOnce();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
+    }
     Block {
       BlockType		      Reference
       Name		      "Configure ECAN 1"
@@ -1240,83 +1267,72 @@ Model {
       OutDataTypeStr	      "Bus: RudderVariables"
     }
     Block {
-      BlockType		      DataStoreWrite
-      Name		      "Data Store\nWrite3"
-      SID		      "20740"
-      Ports		      [1]
-      Position		      [655, 327, 790, 363]
-      ZOrder		      -6
-      BackgroundColor	      "gray"
+      BlockType		      DataStoreMemory
+      Name		      "Data Store\nMemory2"
+      SID		      "22163"
+      Position		      [465, 220, 564, 249]
+      ZOrder		      -4
       ShowName		      off
-      DataStoreName	      "rudderData"
-      DataStoreElements	      "rudderData.rudderPositionAngle"
+      DataStoreName	      "rudderCalData"
+      ReadBeforeWriteMsg      "warning"
+      WriteAfterWriteMsg      "warning"
+      WriteAfterReadMsg	      "warning"
+      RTWStateStorageClass    "ImportedExtern"
+      OutDataTypeStr	      "Bus: RudderCalData"
     }
     Block {
-      BlockType		      DataStoreWrite
-      Name		      "Data Store\nWrite4"
-      SID		      "20741"
-      Ports		      [1]
-      Position		      [515, 552, 630, 588]
-      ZOrder		      -6
-      BackgroundColor	      "gray"
+      BlockType		      DataStoreRead
+      Name		      "Data Store\nRead"
+      SID		      "22165"
+      Ports		      [0, 2]
+      Position		      [750, 417, 870, 463]
+      ZOrder		      -5
       ShowName		      off
-      DataStoreName	      "rudderData"
-      DataStoreElements	      "rudderData.portLimitValue"
+      DataStoreName	      "rudderCalData"
+      DataStoreElements	      "rudderCalData.CommandedRun#rudderCalData.CommandedDirection"
     }
     Block {
-      BlockType		      DataStoreWrite
-      Name		      "Data Store\nWrite5"
-      SID		      "20742"
-      Ports		      [1]
-      Position		      [515, 597, 630, 633]
-      ZOrder		      -6
-      BackgroundColor	      "gray"
+      BlockType		      DataStoreRead
+      Name		      "Data Store\nRead1"
+      SID		      "22166"
+      Ports		      [0, 2]
+      Position		      [860, 299, 980, 346]
+      ZOrder		      -5
       ShowName		      off
-      DataStoreName	      "rudderData"
-      DataStoreElements	      "rudderData.starLimitValue"
+      DataStoreName	      "rudderCalData"
+      DataStoreElements	      "rudderCalData.Calibrated#rudderCalData.Calibrating"
     }
     Block {
-      BlockType		      DataStoreWrite
-      Name		      "Data Store\nWrite7"
-      SID		      "20747"
-      Ports		      [1]
-      Position		      [665, 508, 750, 542]
-      ZOrder		      -6
-      BackgroundColor	      "gray"
+      BlockType		      DataStoreRead
+      Name		      "Data Store\nRead2"
+      SID		      "22168"
+      Ports		      [0, 2]
+      Position		      [750, 743, 870, 792]
+      ZOrder		      -5
       ShowName		      off
       DataStoreName	      "rudderData"
-      DataStoreElements	      "rudderData.calibrate"
+      DataStoreElements	      "rudderData.portLimit#rudderData.starLimit"
     }
     Block {
-      BlockType		      From
-      Name		      "From"
-      SID		      "20734"
-      Position		      [780, 741, 875, 769]
-      ZOrder		      -9
-      BackgroundColor	      "magenta"
+      BlockType		      DataStoreRead
+      Name		      "Data Store\nRead3"
+      SID		      "22169"
+      Ports		      [0, 1]
+      Position		      [825, 595, 920, 625]
+      ZOrder		      -5
       ShowName		      off
-      GotoTag		      "PotBus"
-      TagVisibility	      "global"
+      DataStoreName	      "rudderCalData"
+      DataStoreElements	      "rudderCalData.Calibrating"
     }
     Block {
       BlockType		      From
       Name		      "From1"
       SID		      "20744"
-      Position		      [780, 815, 905, 845]
+      Position		      [780, 830, 905, 860]
       ZOrder		      -9
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "SelectedMotor"
-    }
-    Block {
-      BlockType		      From
-      Name		      "From2"
-      SID		      "22132"
-      Position		      [825, 595, 950, 625]
-      ZOrder		      -9
-      BackgroundColor	      "magenta"
-      ShowName		      off
-      GotoTag		      "CalibratingMode"
     }
     Block {
       BlockType		      From
@@ -1347,26 +1363,6 @@ Model {
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "CalibrateMotorBus"
-    }
-    Block {
-      BlockType		      From
-      Name		      "From6"
-      SID		      "22137"
-      Position		      [865, 290, 990, 320]
-      ZOrder		      -9
-      BackgroundColor	      "magenta"
-      ShowName		      off
-      GotoTag		      "CalibratingMode"
-    }
-    Block {
-      BlockType		      From
-      Name		      "From7"
-      SID		      "22146"
-      Position		      [865, 325, 990, 355]
-      ZOrder		      -9
-      BackgroundColor	      "magenta"
-      ShowName		      off
-      GotoTag		      "CalibratedStatus"
     }
     Block {
       BlockType		      Reference
@@ -1409,22 +1405,11 @@ Model {
       BlockType		      Goto
       Name		      "Goto1"
       SID		      "20743"
-      Position		      [675, 400, 805, 430]
+      Position		      [1110, 425, 1240, 455]
       ZOrder		      -10
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "CalibrateMotorBus"
-      TagVisibility	      "local"
-    }
-    Block {
-      BlockType		      Goto
-      Name		      "Goto2"
-      SID		      "21755"
-      Position		      [665, 280, 755, 310]
-      ZOrder		      -10
-      BackgroundColor	      "cyan"
-      ShowName		      off
-      GotoTag		      "RudderAngle"
       TagVisibility	      "local"
     }
     Block {
@@ -1447,28 +1432,6 @@ Model {
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "SelectedMotor"
-      TagVisibility	      "local"
-    }
-    Block {
-      BlockType		      Goto
-      Name		      "Goto5"
-      SID		      "22131"
-      Position		      [525, 465, 655, 495]
-      ZOrder		      -10
-      BackgroundColor	      "cyan"
-      ShowName		      off
-      GotoTag		      "CalibratingMode"
-      TagVisibility	      "local"
-    }
-    Block {
-      BlockType		      Goto
-      Name		      "Goto6"
-      SID		      "22145"
-      Position		      [525, 500, 655, 530]
-      ZOrder		      -10
-      BackgroundColor	      "cyan"
-      ShowName		      off
-      GotoTag		      "CalibratedStatus"
       TagVisibility	      "local"
     }
     Block {
@@ -1509,6 +1472,43 @@ Model {
       AnalogueInput	      "[]"
     }
     Block {
+      BlockType		      Reference
+      Name		      "Initialize Data EE \nemulation\n[DEE.c]"
+      SID		      "22160"
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      [0, 1]
+      Position		      [445, 125, 575, 165]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.84"
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "None"
+      fctName		      "'DataEEInitAndClear'"
+      INPUT_SIZE	      "1"
+      INPUT1		      "--"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "--"
+      SampleTime	      "Inf"
+      InputType		      "[]"
+      OutputType	      "[]"
+      FctDeclaration	      "extern void DataEEInitAndClear();"
+      FctCall		      "DataEEInitAndClear();"
+      OrderingInOutPopup      "Output"
+      FctStart		      "Start Function (Call once and only once)"
+      FctStart_Name	      "DataEEInitAndClear"
+      FctStart_Declaration    "inline extern void DataEEInitAndClear();"
+      FctStart_Call	      "DataEEInitAndClear();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
+    }
+    Block {
       BlockType		      SubSystem
       Name		      "LED Output"
       SID		      "22147"
@@ -1538,17 +1538,17 @@ Model {
 	ZoomFactor		"100"
 	Block {
 	  BlockType		  Inport
-	  Name			  "calMode"
-	  SID			  "22148"
-	  Position		  [105, 358, 135, 372]
+	  Name			  "calibrated"
+	  SID			  "22149"
+	  Position		  [105, 213, 135, 227]
 	  BackgroundColor	  "darkGreen"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Inport
-	  Name			  "calStatus"
-	  SID			  "22149"
-	  Position		  [105, 213, 135, 227]
+	  Name			  "calibrating"
+	  SID			  "22148"
+	  Position		  [105, 358, 135, 372]
 	  BackgroundColor	  "darkGreen"
 	  Port			  "2"
 	  IconDisplay		  "Port number"
@@ -1715,7 +1715,7 @@ Model {
 	  DstPort		  3
 	}
 	Line {
-	  SrcBlock		  "calMode"
+	  SrcBlock		  "calibrating"
 	  SrcPort		  1
 	  Points		  [80, 0]
 	  Branch {
@@ -1767,7 +1767,7 @@ Model {
 	  DstPort		  3
 	}
 	Line {
-	  SrcBlock		  "calStatus"
+	  SrcBlock		  "calibrated"
 	  SrcPort		  1
 	  DstBlock		  "Logical\nOperator"
 	  DstPort		  1
@@ -1851,8 +1851,8 @@ Model {
       BlockType		      SubSystem
       Name		      "Motor Driver Outputs"
       SID		      "22114"
-      Ports		      [2]
-      Position		      [955, 719, 1140, 866]
+      Ports		      [3]
+      Position		      [955, 721, 1140, 869]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -1877,17 +1877,37 @@ Model {
 	ZoomFactor		"100"
 	Block {
 	  BlockType		  Inport
-	  Name			  "In1"
+	  Name			  "pt_limit"
 	  SID			  "22115"
-	  Position		  [30, 63, 60, 77]
+	  Position		  [30, 48, 60, 62]
 	  IconDisplay		  "Port number"
+	  Port {
+	    PortNumber		    1
+	    ShowPropagatedSignals   "on"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "sb_limit"
+	  SID			  "22167"
+	  Position		  [30, 83, 60, 97]
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	  Port {
+	    PortNumber		    1
+	    ShowPropagatedSignals   "on"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
 	}
 	Block {
 	  BlockType		  Inport
 	  Name			  "In2"
 	  SID			  "22116"
 	  Position		  [25, 223, 55, 237]
-	  Port			  "2"
+	  Port			  "3"
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -1919,27 +1939,6 @@ Model {
 	  Port {
 	    PortNumber		    4
 	    Name		    "<period>"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	}
-	Block {
-	  BlockType		  BusSelector
-	  Name			  "Bus\nSelector2"
-	  SID			  "20694"
-	  Ports			  [1, 2]
-	  Position		  [85, 28, 90, 112]
-	  ShowName		  off
-	  OutputSignals		  "limit port,limit starboard"
-	  Port {
-	    PortNumber		    1
-	    Name		    "<limit port>"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	  Port {
-	    PortNumber		    2
-	    Name		    "<limit starboard>"
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
@@ -2119,23 +2118,6 @@ Model {
 	  DstPort		  2
 	}
 	Line {
-	  Name			  "<limit starboard>"
-	  Labels		  [0, 0]
-	  SrcBlock		  "Bus\nSelector2"
-	  SrcPort		  2
-	  DstBlock		  "Switch2"
-	  DstPort		  3
-	}
-	Line {
-	  Name			  "<limit port>"
-	  Labels		  [0, 0]
-	  SrcBlock		  "Bus\nSelector2"
-	  SrcPort		  1
-	  Points		  [35, 0; 0, 20]
-	  DstBlock		  "Switch2"
-	  DstPort		  1
-	}
-	Line {
 	  Name			  "<direction>"
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector1"
@@ -2152,9 +2134,11 @@ Model {
 	  }
 	}
 	Line {
-	  SrcBlock		  "In1"
+	  Labels		  [2, 0]
+	  SrcBlock		  "pt_limit"
 	  SrcPort		  1
-	  DstBlock		  "Bus\nSelector2"
+	  Points		  [0, 15]
+	  DstBlock		  "Switch2"
 	  DstPort		  1
 	}
 	Line {
@@ -2162,6 +2146,13 @@ Model {
 	  SrcPort		  1
 	  DstBlock		  "Bus\nSelector1"
 	  DstPort		  1
+	}
+	Line {
+	  Labels		  [1, 0]
+	  SrcBlock		  "sb_limit"
+	  SrcPort		  1
+	  DstBlock		  "Switch2"
+	  DstPort		  3
 	}
 	Annotation {
 	  Name			  "Rudder commands are output via a pulse-train signaling step (through the OC2 pins),\na direction bit set "
@@ -2237,7 +2228,7 @@ Model {
       SID		      "22108"
       Tag		      "dsPIC_PortInfo"
       Ports		      []
-      Position		      [655, 34, 896, 202]
+      Position		      [880, 34, 1121, 202]
       LibraryVersion	      "3.84"
       SourceBlock	      "dsPICdrivers/Ports Info"
       SourceType	      ""
@@ -2280,11 +2271,374 @@ Model {
       AnalogueInput	      "[]"
     }
     Block {
+      BlockType		      Reference
+      Name		      "Recieve ecan messages\n[ecanRudder.c]1"
+      SID		      "22162"
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      [1]
+      Position		      [480, 365, 645, 415]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.84"
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "Output Function"
+      fctName		      "RudderCalibrate"
+      INPUT_SIZE	      "1"
+      INPUT1		      "--"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "--"
+      SampleTime	      "T_step"
+      InputType		      "[ ]"
+      OutputType	      "[ ]"
+      FctDeclaration	      "extern void RudderCalibrate();"
+      FctCall		      "RudderCalibrate();"
+      OrderingInOutPopup      "Input"
+      FctStart		      "None"
+      FctStart_Name	      "Init_onlyOnce"
+      FctStart_Declaration    "inline extern void Init_onlyOnce();"
+      FctStart_Call	      "Init_onlyOnce();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
+    }
+    Block {
+      BlockType		      SubSystem
+      Name		      "Record Rudder\nSensor Data"
+      SID		      "20698"
+      Ports		      []
+      Position		      [60, 352, 150, 408]
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      System {
+	Name			"Record Rudder\nSensor Data"
+	Location		[473, 263, 1207, 787]
+	Open			off
+	ModelBrowserVisibility	on
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Reference
+	  Name			  "ADC inputs:\nAN1 - Temp sensor\nAN4 - Rudder pot"
+	  SID			  "20708"
+	  Tag			  "dsPIC_ADC"
+	  Ports			  [0, 2]
+	  Position		  [40, 82, 125, 133]
+	  Priority		  "5"
+	  LibraryVersion	  "3.84"
+	  SourceBlock		  "dsPICdrivers/Peripheral I//O/ADC Input"
+	  SourceType		  "dsPIC : ADC10"
+	  ADC_TYPE		  "12 bits"
+	  ADC_MODE		  "Continuous sampling & get last channel value"
+	  NbrSampleStep		  "1"
+	  VoltRefpopup		  "AVdd  -  AVss"
+	  OutFormatBitspopup	  "0000 dddd dddd dddd : Integer"
+	  InterruptPriority	  "6"
+	  ANCHANNELS		  "[4 1]"
+	  MaxName		  "ANmax = 4095"
+	  Rin			  "0"
+	  ADCS			  "53"
+	  SAMC			  "1"
+	  Temperature		  "25"
+	  DMAChannel		  "1"
+	  SampleTime		  "T_step"
+	  Status		  "OK  |  Tsmp=6.749e-007 |  T/Channel=1.012e-005 |  Tall=2.025e-005"
+	  SSRC			  "auto convert"
+	  Port {
+	    PortNumber		    2
+	    Name		    "position"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Bias
+	  Name			  "Bias"
+	  SID			  "22157"
+	  Position		  [220, 55, 260, 85]
+	  ZOrder		  -5
+	  NamePlacement		  "alternate"
+	  ShowName		  off
+	  Bias			  "-0.5"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  DataStoreWrite
+	  Name			  "Data Store\nWrite1"
+	  SID			  "22122"
+	  Ports			  [1]
+	  Position		  [350, 183, 435, 217]
+	  ZOrder		  -6
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  DataStoreName		  "rudderData"
+	  DataStoreElements	  "rudderData.starLimit"
+	}
+	Block {
+	  BlockType		  DataStoreWrite
+	  Name			  "Data Store\nWrite2"
+	  SID			  "22123"
+	  Ports			  [1]
+	  Position		  [350, 238, 435, 272]
+	  ZOrder		  -6
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  DataStoreName		  "rudderData"
+	  DataStoreElements	  "rudderData.portLimit"
+	}
+	Block {
+	  BlockType		  DataStoreWrite
+	  Name			  "Data Store\nWrite3"
+	  SID			  "22159"
+	  Ports			  [1]
+	  Position		  [350, 53, 435, 87]
+	  ZOrder		  -6
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  DataStoreName		  "rudderData"
+	  DataStoreElements	  "rudderData.temp"
+	}
+	Block {
+	  BlockType		  DataStoreWrite
+	  Name			  "Data Store\nWrite7"
+	  SID			  "22121"
+	  Ports			  [1]
+	  Position		  [350, 103, 435, 137]
+	  ZOrder		  -6
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  DataStoreName		  "rudderData"
+	  DataStoreElements	  "rudderData.potValue"
+	}
+	Block {
+	  BlockType		  Gain
+	  Name			  "Gain"
+	  SID			  "22156"
+	  Position		  [165, 55, 195, 85]
+	  ZOrder		  -11
+	  ShowName		  off
+	  Gain			  "3.3/ANmax"
+	  ParamDataTypeStr	  "single"
+	  OutDataTypeStr	  "single"
+	  RndMeth		  "Simplest"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Gain
+	  Name			  "Gain3"
+	  SID			  "22158"
+	  Position		  [280, 55, 310, 85]
+	  ZOrder		  -11
+	  ShowName		  off
+	  Gain			  "100"
+	  ParamDataTypeStr	  "single"
+	  OutDataTypeStr	  "single"
+	  RndMeth		  "Simplest"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Logic
+	  Name			  "Logical\nOperator"
+	  SID			  "20701"
+	  Ports			  [1, 1]
+	  Position		  [185, 239, 215, 271]
+	  ShowName		  off
+	  Operator		  "NOT"
+	  Inputs		  "1"
+	  AllPortsSameDT	  off
+	  OutDataTypeStr	  "boolean"
+	  Port {
+	    PortNumber		    1
+	    Name		    "limit port"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Logic
+	  Name			  "Logical\nOperator1"
+	  SID			  "20702"
+	  Ports			  [1, 1]
+	  Position		  [185, 184, 215, 216]
+	  ShowName		  off
+	  Operator		  "NOT"
+	  Inputs		  "1"
+	  AllPortsSameDT	  off
+	  OutDataTypeStr	  "boolean"
+	  Port {
+	    PortNumber		    1
+	    Name		    "limit starboard"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Port Hall"
+	  SID			  "20704"
+	  Tag			  "dsPIC_Digital_Input"
+	  Ports			  [0, 1]
+	  Position		  [25, 235, 140, 275]
+	  LibraryVersion	  "3.84"
+	  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Input"
+	  SourceType		  ""
+	  PORT			  "A"
+	  Pin			  "[0]"
+	  SampleTime		  "T_step"
+	  OrderingInOutPopup	  "None"
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Starboard Hall"
+	  SID			  "20706"
+	  Tag			  "dsPIC_Digital_Input"
+	  Ports			  [0, 1]
+	  Position		  [25, 180, 140, 220]
+	  LibraryVersion	  "3.84"
+	  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Input"
+	  SourceType		  ""
+	  PORT			  "B"
+	  Pin			  "[1]"
+	  SampleTime		  "T_step"
+	  OrderingInOutPopup	  "None"
+	}
+	Line {
+	  Name			  "limit starboard"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Logical\nOperator1"
+	  SrcPort		  1
+	  DstBlock		  "Data Store\nWrite1"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "limit port"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Logical\nOperator"
+	  SrcPort		  1
+	  DstBlock		  "Data Store\nWrite2"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Port Hall"
+	  SrcPort		  1
+	  DstBlock		  "Logical\nOperator"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Starboard Hall"
+	  SrcPort		  1
+	  DstBlock		  "Logical\nOperator1"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "position"
+	  Labels		  [0, 0]
+	  SrcBlock		  "ADC inputs:\nAN1 - Temp sensor\nAN4 - Rudder pot"
+	  SrcPort		  2
+	  DstBlock		  "Data Store\nWrite7"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "ADC inputs:\nAN1 - Temp sensor\nAN4 - Rudder pot"
+	  SrcPort		  1
+	  Points		  [10, 0; 0, -25]
+	  DstBlock		  "Gain"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Gain"
+	  SrcPort		  1
+	  DstBlock		  "Bias"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Bias"
+	  SrcPort		  1
+	  DstBlock		  "Gain3"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Gain3"
+	  SrcPort		  1
+	  DstBlock		  "Data Store\nWrite3"
+	  DstPort		  1
+	}
+	Annotation {
+	  Name			  "The rudder has two main sensors: hall effect and a potentiometer. The\npotentiometer returns a voltage va"
+	  "lue through the onboard ADC indicating\nrudder position exactly. The three Hall effect sensors are used as limit sw"
+	  "itches\nindicating port and starboard limits as well as center, though this sensor isn't\nbeing used currently.\n\n"
+	  "It expects a range of 1.12-2.11V for the rudder position potentiometer with \n2.11V being hard to port. The potenti"
+	  "ometer was powered at 3.3V for these \nmeasurements."
+	  Position		  [38, 420]
+	  HorizontalAlignment	  "left"
+	}
+	Annotation {
+	  Name			  "Convert measured voltage to temperature degC."
+	  Position		  [237, 20]
+	}
+      }
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Restore rudder\ncalibration from NVRAM\n[misc.c]"
+      SID		      "22161"
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      [1]
+      Position		      [600, 124, 710, 166]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.84"
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "None"
+      fctName		      "'initCalibrationRange'"
+      INPUT_SIZE	      "1"
+      INPUT1		      "--"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "--"
+      SampleTime	      "Inf"
+      InputType		      "[]"
+      OutputType	      "[]"
+      FctDeclaration	      "extern void initCalibrationRange();"
+      FctCall		      "initCalibrationRange();"
+      OrderingInOutPopup      "Input"
+      FctStart		      "Start Function (Call once and only once)"
+      FctStart_Name	      "InitRudderCalibrationRange"
+      FctStart_Declaration    "inline extern void InitRudderCalibrationRange();"
+      FctStart_Call	      "InitRudderCalibrationRange();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
+    }
+    Block {
       BlockType		      SubSystem
       Name		      "Rudder\nCommand"
       SID		      "20611"
       Ports		      [2, 1]
-      Position		      [495, 368, 610, 457]
+      Position		      [930, 393, 1045, 482]
       NamePlacement	      "alternate"
       ShowName		      off
       MinAlgLoopOccurrences   off
@@ -2296,7 +2650,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Rudder\nCommand"
-	Location		[462, 115, 1542, 1028]
+	Location		[1826, 431, 2906, 1344]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -2328,7 +2682,6 @@ Model {
 	  Port {
 	    PortNumber		    1
 	    Name		    "direction"
-	    PropagatedSignals	    "dir"
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
@@ -2868,719 +3221,6 @@ Model {
       }
     }
     Block {
-      BlockType		      SubSystem
-      Name		      "Run rudder\nfor calibration"
-      SID		      "20625"
-      Ports		      [4, 7]
-      Position		      [275, 323, 430, 637]
-      LibraryVersion	      "1.31"
-      ErrorFcn		      "Stateflow.Translate.translate"
-      PermitHierarchicalResolution "ExplicitOnly"
-      TreatAsAtomicUnit	      on
-      MinAlgLoopOccurrences   off
-      PropExecContextOutsideSubsystem off
-      RTWSystemCode	      "Auto"
-      FunctionWithSeparateData off
-      Opaque		      off
-      RequestExecContextInheritance off
-      MaskHideContents	      off
-      SFBlockType	      "MATLAB Function"
-      MaskType		      "Stateflow"
-      MaskDescription	      "Embedded MATLAB block"
-      MaskSelfModifiable      on
-      MaskDisplay	      "bgColor = Simulink.Root.ColorString2Rgb(get_param(gcbh, 'BackgroundColor')); image(imread('pr"
-      "ivate/eml_membrane_16.png','png','BackgroundColor',bgColor(1:3)),'center'); disp([10 10 'calibrate']);"
-      MaskIconFrame	      on
-      MaskIconOpaque	      off
-      MaskIconRotate	      "none"
-      MaskPortRotate	      "default"
-      MaskIconUnits	      "normalized"
-      Port {
-	PortNumber		6
-	PropagatedSignals	"lowLimit"
-	ShowPropagatedSignals	"on"
-	RTWStorageClass		"Auto"
-	DataLoggingNameMode	"SignalName"
-      }
-      Port {
-	PortNumber		7
-	PropagatedSignals	"highLimit"
-	ShowPropagatedSignals	"on"
-	RTWStorageClass		"Auto"
-	DataLoggingNameMode	"SignalName"
-      }
-      System {
-	Name			"Run rudder\nfor calibration"
-	Location		[257, 457, 812, 717]
-	Open			off
-	ModelBrowserVisibility	on
-	ModelBrowserWidth	200
-	ScreenColor		"white"
-	PaperOrientation	"landscape"
-	PaperPositionMode	"auto"
-	PaperType		"usletter"
-	PaperUnits		"inches"
-	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
-	TiledPageScale		1
-	ShowPageBoundaries	off
-	ZoomFactor		"100"
-	SIDHighWatermark	"35"
-	SIDPrevWatermark	"25"
-	Block {
-	  BlockType		  Inport
-	  Name			  "trigger"
-	  SID			  "20625::1"
-	  Position		  [20, 101, 40, 119]
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Inport
-	  Name			  "rudderPot"
-	  SID			  "20625::18"
-	  Position		  [20, 136, 40, 154]
-	  Port			  "2"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Inport
-	  Name			  "rudderPortLimit"
-	  SID			  "20625::19"
-	  Position		  [20, 171, 40, 189]
-	  Port			  "3"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Inport
-	  Name			  "rudderSbLimit"
-	  SID			  "20625::26"
-	  Position		  [20, 206, 40, 224]
-	  Port			  "4"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Demux
-	  Name			  " Demux "
-	  SID			  "20625::31"
-	  Ports			  [1, 1]
-	  Position		  [270, 350, 320, 390]
-	  Outputs		  "1"
-	}
-	Block {
-	  BlockType		  S-Function
-	  Name			  " SFunction "
-	  SID			  "20625::30"
-	  Tag			  "Stateflow S-Function rudder_Subsystem 25"
-	  Ports			  [4, 8]
-	  Position		  [180, 106, 230, 309]
-	  FunctionName		  "sf_sfun"
-	  PortCounts		  "[4 8]"
-	  EnableBusSupport	  on
-	  Port {
-	    PortNumber		    2
-	    Name		    "rudderAngle"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	  Port {
-	    PortNumber		    3
-	    Name		    "step"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	  Port {
-	    PortNumber		    4
-	    Name		    "dir"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	  Port {
-	    PortNumber		    5
-	    Name		    "calibratingMode"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	  Port {
-	    PortNumber		    6
-	    Name		    "calibratedMode"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	  Port {
-	    PortNumber		    7
-	    Name		    "lowLimit"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	  Port {
-	    PortNumber		    8
-	    Name		    "highLimit"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	}
-	Block {
-	  BlockType		  Terminator
-	  Name			  " Terminator "
-	  SID			  "20625::33"
-	  Position		  [460, 361, 480, 379]
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "rudderAngle"
-	  SID			  "20625::27"
-	  Position		  [460, 101, 480, 119]
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "step"
-	  SID			  "20625::5"
-	  Position		  [460, 136, 480, 154]
-	  Port			  "2"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "dir"
-	  SID			  "20625::20"
-	  Position		  [460, 171, 480, 189]
-	  Port			  "3"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "calibratingMode"
-	  SID			  "20625::25"
-	  Position		  [460, 206, 480, 224]
-	  Port			  "4"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "calibratedMode"
-	  SID			  "20625::34"
-	  Position		  [460, 246, 480, 264]
-	  Port			  "5"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "lowLimit"
-	  SID			  "20625::28"
-	  Position		  [460, 281, 480, 299]
-	  Port			  "6"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "highLimit"
-	  SID			  "20625::29"
-	  Position		  [460, 316, 480, 334]
-	  Port			  "7"
-	  IconDisplay		  "Port number"
-	}
-	Line {
-	  SrcBlock		  "trigger"
-	  SrcPort		  1
-	  DstBlock		  " SFunction "
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "rudderPot"
-	  SrcPort		  1
-	  DstBlock		  " SFunction "
-	  DstPort		  2
-	}
-	Line {
-	  SrcBlock		  "rudderPortLimit"
-	  SrcPort		  1
-	  DstBlock		  " SFunction "
-	  DstPort		  3
-	}
-	Line {
-	  SrcBlock		  "rudderSbLimit"
-	  SrcPort		  1
-	  DstBlock		  " SFunction "
-	  DstPort		  4
-	}
-	Line {
-	  Name			  "rudderAngle"
-	  Labels		  [0, 0]
-	  SrcBlock		  " SFunction "
-	  SrcPort		  2
-	  DstBlock		  "rudderAngle"
-	  DstPort		  1
-	}
-	Line {
-	  Name			  "step"
-	  Labels		  [0, 0]
-	  SrcBlock		  " SFunction "
-	  SrcPort		  3
-	  DstBlock		  "step"
-	  DstPort		  1
-	}
-	Line {
-	  Name			  "dir"
-	  Labels		  [0, 0]
-	  SrcBlock		  " SFunction "
-	  SrcPort		  4
-	  DstBlock		  "dir"
-	  DstPort		  1
-	}
-	Line {
-	  Name			  "calibratingMode"
-	  Labels		  [0, 0]
-	  SrcBlock		  " SFunction "
-	  SrcPort		  5
-	  DstBlock		  "calibratingMode"
-	  DstPort		  1
-	}
-	Line {
-	  Name			  "calibratedMode"
-	  Labels		  [0, 0]
-	  SrcBlock		  " SFunction "
-	  SrcPort		  6
-	  DstBlock		  "calibratedMode"
-	  DstPort		  1
-	}
-	Line {
-	  Name			  "lowLimit"
-	  Labels		  [0, 0]
-	  SrcBlock		  " SFunction "
-	  SrcPort		  7
-	  DstBlock		  "lowLimit"
-	  DstPort		  1
-	}
-	Line {
-	  Name			  "highLimit"
-	  Labels		  [0, 0]
-	  SrcBlock		  " SFunction "
-	  SrcPort		  8
-	  DstBlock		  "highLimit"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  " Demux "
-	  SrcPort		  1
-	  DstBlock		  " Terminator "
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  " SFunction "
-	  SrcPort		  1
-	  DstBlock		  " Demux "
-	  DstPort		  1
-	}
-      }
-    }
-    Block {
-      BlockType		      SubSystem
-      Name		      "Store Rudder\nData"
-      SID		      "20698"
-      Ports		      [0, 3]
-      Position		      [65, 493, 155, 547]
-      MinAlgLoopOccurrences   off
-      PropExecContextOutsideSubsystem off
-      RTWSystemCode	      "Auto"
-      FunctionWithSeparateData off
-      Opaque		      off
-      RequestExecContextInheritance off
-      MaskHideContents	      off
-      Port {
-	PortNumber		1
-	PropagatedSignals	"position"
-	ShowPropagatedSignals	"on"
-	RTWStorageClass		"Auto"
-	DataLoggingNameMode	"SignalName"
-      }
-      Port {
-	PortNumber		2
-	PropagatedSignals	"limit port"
-	ShowPropagatedSignals	"on"
-	RTWStorageClass		"Auto"
-	DataLoggingNameMode	"SignalName"
-      }
-      Port {
-	PortNumber		3
-	PropagatedSignals	"limit starboard"
-	ShowPropagatedSignals	"on"
-	RTWStorageClass		"Auto"
-	DataLoggingNameMode	"SignalName"
-      }
-      System {
-	Name			"Store Rudder\nData"
-	Location		[202, 82, 1678, 997]
-	Open			off
-	ModelBrowserVisibility	on
-	ModelBrowserWidth	200
-	ScreenColor		"white"
-	PaperOrientation	"landscape"
-	PaperPositionMode	"auto"
-	PaperType		"usletter"
-	PaperUnits		"inches"
-	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
-	TiledPageScale		1
-	ShowPageBoundaries	off
-	ZoomFactor		"100"
-	Block {
-	  BlockType		  Reference
-	  Name			  "ADC inputs:\nAN1 - Temp sensor\nAN4 - Rudder pot"
-	  SID			  "20708"
-	  Tag			  "dsPIC_ADC"
-	  Ports			  [0, 2]
-	  Position		  [40, 82, 125, 133]
-	  Priority		  "5"
-	  LibraryVersion	  "3.84"
-	  SourceBlock		  "dsPICdrivers/Peripheral I//O/ADC Input"
-	  SourceType		  "dsPIC : ADC10"
-	  ADC_TYPE		  "12 bits"
-	  ADC_MODE		  "Continuous sampling & get last channel value"
-	  NbrSampleStep		  "1"
-	  VoltRefpopup		  "AVdd  -  AVss"
-	  OutFormatBitspopup	  "0000 dddd dddd dddd : Integer"
-	  InterruptPriority	  "6"
-	  ANCHANNELS		  "[4 1]"
-	  MaxName		  "ANmax = 4095"
-	  Rin			  "0"
-	  ADCS			  "53"
-	  SAMC			  "1"
-	  Temperature		  "25"
-	  DMAChannel		  "1"
-	  SampleTime		  "T_step"
-	  Status		  "OK  |  Tsmp=6.749e-007 |  T/Channel=1.012e-005 |  Tall=2.025e-005"
-	  SSRC			  "auto convert"
-	  Port {
-	    PortNumber		    2
-	    Name		    "position"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	}
-	Block {
-	  BlockType		  Bias
-	  Name			  "Bias"
-	  SID			  "22157"
-	  Position		  [220, 35, 260, 65]
-	  ZOrder		  -5
-	  NamePlacement		  "alternate"
-	  ShowName		  off
-	  Bias			  "-0.5"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  BusCreator
-	  Name			  "Bus\nCreator"
-	  SID			  "22124"
-	  Ports			  [3, 1]
-	  Position		  [530, 181, 535, 219]
-	  ShowName		  off
-	  Inputs		  "3"
-	  DisplayOption		  "bar"
-	}
-	Block {
-	  BlockType		  DataStoreWrite
-	  Name			  "Data Store\nWrite1"
-	  SID			  "22122"
-	  Ports			  [1]
-	  Position		  [350, 148, 435, 182]
-	  ZOrder		  -6
-	  BackgroundColor	  "gray"
-	  ShowName		  off
-	  DataStoreName		  "rudderData"
-	  DataStoreElements	  "rudderData.starLimit"
-	}
-	Block {
-	  BlockType		  DataStoreWrite
-	  Name			  "Data Store\nWrite2"
-	  SID			  "22123"
-	  Ports			  [1]
-	  Position		  [350, 293, 435, 327]
-	  ZOrder		  -6
-	  BackgroundColor	  "gray"
-	  ShowName		  off
-	  DataStoreName		  "rudderData"
-	  DataStoreElements	  "rudderData.portLimit"
-	}
-	Block {
-	  BlockType		  DataStoreWrite
-	  Name			  "Data Store\nWrite3"
-	  SID			  "22159"
-	  Ports			  [1]
-	  Position		  [350, 33, 435, 67]
-	  ZOrder		  -6
-	  BackgroundColor	  "gray"
-	  ShowName		  off
-	  DataStoreName		  "rudderData"
-	  DataStoreElements	  "rudderData.temp"
-	}
-	Block {
-	  BlockType		  DataStoreWrite
-	  Name			  "Data Store\nWrite7"
-	  SID			  "22121"
-	  Ports			  [1]
-	  Position		  [350, 63, 435, 97]
-	  ZOrder		  -6
-	  BackgroundColor	  "gray"
-	  ShowName		  off
-	  DataStoreName		  "rudderData"
-	  DataStoreElements	  "rudderData.potValue"
-	}
-	Block {
-	  BlockType		  Gain
-	  Name			  "Gain"
-	  SID			  "22156"
-	  Position		  [165, 35, 195, 65]
-	  ZOrder		  -11
-	  ShowName		  off
-	  Gain			  "3.3/ANmax"
-	  ParamDataTypeStr	  "single"
-	  OutDataTypeStr	  "single"
-	  RndMeth		  "Simplest"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Gain
-	  Name			  "Gain3"
-	  SID			  "22158"
-	  Position		  [280, 35, 310, 65]
-	  ZOrder		  -11
-	  ShowName		  off
-	  Gain			  "100"
-	  ParamDataTypeStr	  "single"
-	  OutDataTypeStr	  "single"
-	  RndMeth		  "Simplest"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Goto
-	  Name			  "Goto2"
-	  SID			  "22125"
-	  Position		  [585, 185, 675, 215]
-	  ZOrder		  -10
-	  BackgroundColor	  "cyan"
-	  ShowName		  off
-	  GotoTag		  "PotBus"
-	  TagVisibility		  "global"
-	}
-	Block {
-	  BlockType		  Logic
-	  Name			  "Logical\nOperator"
-	  SID			  "20701"
-	  Ports			  [1, 1]
-	  Position		  [185, 239, 215, 271]
-	  ShowName		  off
-	  Operator		  "NOT"
-	  Inputs		  "1"
-	  AllPortsSameDT	  off
-	  OutDataTypeStr	  "boolean"
-	  Port {
-	    PortNumber		    1
-	    Name		    "limit port"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	}
-	Block {
-	  BlockType		  Logic
-	  Name			  "Logical\nOperator1"
-	  SID			  "20702"
-	  Ports			  [1, 1]
-	  Position		  [185, 184, 215, 216]
-	  ShowName		  off
-	  Operator		  "NOT"
-	  Inputs		  "1"
-	  AllPortsSameDT	  off
-	  OutDataTypeStr	  "boolean"
-	  Port {
-	    PortNumber		    1
-	    Name		    "limit starboard"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	}
-	Block {
-	  BlockType		  Reference
-	  Name			  "Port Hall"
-	  SID			  "20704"
-	  Tag			  "dsPIC_Digital_Input"
-	  Ports			  [0, 1]
-	  Position		  [25, 235, 140, 275]
-	  LibraryVersion	  "3.84"
-	  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Input"
-	  SourceType		  ""
-	  PORT			  "A"
-	  Pin			  "[0]"
-	  SampleTime		  "T_step"
-	  OrderingInOutPopup	  "None"
-	}
-	Block {
-	  BlockType		  Reference
-	  Name			  "Starboard Hall"
-	  SID			  "20706"
-	  Tag			  "dsPIC_Digital_Input"
-	  Ports			  [0, 1]
-	  Position		  [25, 180, 140, 220]
-	  LibraryVersion	  "3.84"
-	  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Input"
-	  SourceType		  ""
-	  PORT			  "B"
-	  Pin			  "[1]"
-	  SampleTime		  "T_step"
-	  OrderingInOutPopup	  "None"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "rudder_pot"
-	  SID			  "22118"
-	  Position		  [420, 113, 450, 127]
-	  BackgroundColor	  "yellow"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "port_hall"
-	  SID			  "22120"
-	  Position		  [420, 248, 450, 262]
-	  BackgroundColor	  "yellow"
-	  Port			  "2"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "starboard_hall"
-	  SID			  "22119"
-	  Position		  [420, 193, 450, 207]
-	  BackgroundColor	  "yellow"
-	  Port			  "3"
-	  IconDisplay		  "Port number"
-	}
-	Line {
-	  Name			  "limit starboard"
-	  Labels		  [0, 0]
-	  SrcBlock		  "Logical\nOperator1"
-	  SrcPort		  1
-	  Points		  [100, 0]
-	  Branch {
-	    Points		    [15, 0]
-	    Branch {
-	      DstBlock		      "starboard_hall"
-	      DstPort		      1
-	    }
-	    Branch {
-	      DstBlock		      "Bus\nCreator"
-	      DstPort		      2
-	    }
-	  }
-	  Branch {
-	    Points		    [0, -35]
-	    DstBlock		    "Data Store\nWrite1"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  Name			  "limit port"
-	  Labels		  [0, 0]
-	  SrcBlock		  "Logical\nOperator"
-	  SrcPort		  1
-	  Points		  [100, 0]
-	  Branch {
-	    Points		    [25, 0]
-	    Branch {
-	      DstBlock		      "port_hall"
-	      DstPort		      1
-	    }
-	    Branch {
-	      Points		      [0, -45]
-	      DstBlock		      "Bus\nCreator"
-	      DstPort		      3
-	    }
-	  }
-	  Branch {
-	    Points		    [0, 55]
-	    DstBlock		    "Data Store\nWrite2"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  SrcBlock		  "Port Hall"
-	  SrcPort		  1
-	  DstBlock		  "Logical\nOperator"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Starboard Hall"
-	  SrcPort		  1
-	  DstBlock		  "Logical\nOperator1"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Bus\nCreator"
-	  SrcPort		  1
-	  DstBlock		  "Goto2"
-	  DstPort		  1
-	}
-	Line {
-	  Name			  "position"
-	  Labels		  [0, 0]
-	  SrcBlock		  "ADC inputs:\nAN1 - Temp sensor\nAN4 - Rudder pot"
-	  SrcPort		  2
-	  Points		  [185, 0]
-	  Branch {
-	    DstBlock		    "rudder_pot"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, -40]
-	    DstBlock		    "Data Store\nWrite7"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, 70]
-	    DstBlock		    "Bus\nCreator"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  SrcBlock		  "ADC inputs:\nAN1 - Temp sensor\nAN4 - Rudder pot"
-	  SrcPort		  1
-	  Points		  [10, 0; 0, -45]
-	  DstBlock		  "Gain"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Gain"
-	  SrcPort		  1
-	  DstBlock		  "Bias"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Bias"
-	  SrcPort		  1
-	  DstBlock		  "Gain3"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Gain3"
-	  SrcPort		  1
-	  DstBlock		  "Data Store\nWrite3"
-	  DstPort		  1
-	}
-	Annotation {
-	  Name			  "The rudder has two main sensors: hall effect and a potentiometer. The\npotentiometer returns a voltage va"
-	  "lue through the onboard ADC indicating\nrudder position exactly. The three Hall effect sensors are used as limit sw"
-	  "itches\nindicating port and starboard limits as well as center, though this sensor isn't\nbeing used currently.\n\n"
-	  "It expects a range of 1.12-2.11V for the rudder position potentiometer with \n2.11V being hard to port. The potenti"
-	  "ometer was powered at 3.3V for these \nmeasurements."
-	  Position		  [28, 370]
-	  HorizontalAlignment	  "left"
-	}
-	Annotation {
-	  Name			  "Convert measured voltage to temperature degC."
-	  Position		  [237, 20]
-	}
-      }
-    }
-    Block {
       BlockType		      Switch
       Name		      "Switch1"
       SID		      "22143"
@@ -3591,118 +3231,17 @@ Model {
       InputSameDT	      off
       SaturateOnIntegerOverflow	off
     }
-    Block {
-      BlockType		      SubSystem
-      Name		      "Trigger Calibration"
-      SID		      "20754"
-      Ports		      [0, 1]
-      Position		      [65, 334, 155, 386]
-      MinAlgLoopOccurrences   off
-      PropExecContextOutsideSubsystem off
-      RTWSystemCode	      "Auto"
-      FunctionWithSeparateData off
-      Opaque		      off
-      RequestExecContextInheritance off
-      MaskHideContents	      off
-      System {
-	Name			"Trigger Calibration"
-	Location		[856, 342, 1504, 874]
-	Open			off
-	ModelBrowserVisibility	on
-	ModelBrowserWidth	200
-	ScreenColor		"white"
-	PaperOrientation	"landscape"
-	PaperPositionMode	"auto"
-	PaperType		"usletter"
-	PaperUnits		"inches"
-	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
-	TiledPageScale		1
-	ShowPageBoundaries	off
-	ZoomFactor		"100"
-	Block {
-	  BlockType		  DataTypeConversion
-	  Name			  "Data Type Conversion"
-	  SID			  "20794"
-	  Position		  [230, 113, 305, 147]
-	  ZOrder		  -5
-	  OutDataTypeStr	  "boolean"
-	  RndMeth		  "Floor"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Reference
-	  Name			  "Retrieve rudder data\nfrom the C struct\n[Rudder.c]"
-	  SID			  "20793"
-	  Tag			  "dsPIC_dsPIC_CFunctionCall"
-	  Ports			  [0, 1]
-	  Position		  [35, 106, 185, 154]
-	  BackgroundColor	  "orange"
-	  LibraryVersion	  "3.84"
-	  SourceBlock		  "dsPICdrivers/OTHERS/C Function Call"
-	  SourceType		  "C Function Call"
-	  FctUpdate		  "Output Function"
-	  fctName		  "GetCalibrateMessage"
-	  INPUT_SIZE		  "1"
-	  INPUT1		  "--"
-	  INPUT2		  "--"
-	  INPUT3		  "--"
-	  OUTPUT_SIZE		  "1"
-	  OUTPUT1		  "uint8"
-	  SampleTime		  "T_step"
-	  InputType		  "[ ]"
-	  OutputType		  "[ 2 ]"
-	  FctDeclaration	  "extern uint8_T GetCalibrateMessage();"
-	  FctCall		  "%y1 = GetCalibrateMessage();"
-	  OrderingInOutPopup	  "None"
-	  FctStart		  "None"
-	  FctStart_Name		  "Init_onlyOnce"
-	  FctStart_Declaration	  "inline extern void Init_onlyOnce();"
-	  FctStart_Call		  "Init_onlyOnce();"
-	  FctInit		  "None"
-	  FctInit_Name		  "Init_Reset"
-	  FctInit_Declaration	  "inline extern void Init_Reset();"
-	  FctInit_Call		  "Init_Reset();"
-	  PinDigitalInput	  "[]"
-	  PinDigitalOutput	  "[]"
-	  AnalogueInput		  "[]"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "Calibrate"
-	  SID			  "20755"
-	  Position		  [340, 123, 370, 137]
-	  BackgroundColor	  "yellow"
-	  IconDisplay		  "Port number"
-	}
-	Line {
-	  SrcBlock		  "Retrieve rudder data\nfrom the C struct\n[Rudder.c]"
-	  SrcPort		  1
-	  DstBlock		  "Data Type Conversion"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Data Type Conversion"
-	  SrcPort		  1
-	  DstBlock		  "Calibrate"
-	  DstPort		  1
-	}
-      }
-    }
     Line {
-      SrcBlock		      "Trigger Calibration"
+      SrcBlock		      "Data Store\nRead"
       SrcPort		      1
-      DstBlock		      "Run rudder\nfor calibration"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Run rudder\nfor calibration"
-      SrcPort		      2
+      Points		      [0, -15]
       DstBlock		      "Rudder\nCommand"
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Run rudder\nfor calibration"
-      SrcPort		      3
+      SrcBlock		      "Data Store\nRead"
+      SrcPort		      2
+      Points		      [0, 10]
       DstBlock		      "Rudder\nCommand"
       DstPort		      2
     }
@@ -3713,60 +3252,10 @@ Model {
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Run rudder\nfor calibration"
-      SrcPort		      5
-      Points		      [55, 0]
-      Branch {
-	Labels			[1, 0]
-	DstBlock		"Data Store\nWrite7"
-	DstPort			1
-      }
-      Branch {
-	Points			[0, -10]
-	DstBlock		"Goto6"
-	DstPort			1
-      }
-    }
-    Line {
-      Labels		      [0, 0]
-      SrcBlock		      "Run rudder\nfor calibration"
-      SrcPort		      6
-      DstBlock		      "Data Store\nWrite4"
-      DstPort		      1
-    }
-    Line {
-      Labels		      [0, 0]
-      SrcBlock		      "Run rudder\nfor calibration"
-      SrcPort		      7
-      DstBlock		      "Data Store\nWrite5"
-      DstPort		      1
-    }
-    Line {
-      Labels		      [0, 0]
-      SrcBlock		      "Store Rudder\nData"
-      SrcPort		      2
-      DstBlock		      "Run rudder\nfor calibration"
-      DstPort		      3
-    }
-    Line {
-      SrcBlock		      "From"
-      SrcPort		      1
-      DstBlock		      "Motor Driver Outputs"
-      DstPort		      1
-    }
-    Line {
-      Labels		      [0, 0]
-      SrcBlock		      "Store Rudder\nData"
-      SrcPort		      1
-      Points		      [35, 0; 0, -60]
-      DstBlock		      "Run rudder\nfor calibration"
-      DstPort		      2
-    }
-    Line {
       SrcBlock		      "From1"
       SrcPort		      1
       DstBlock		      "Motor Driver Outputs"
-      DstPort		      2
+      DstPort		      3
     }
     Line {
       SrcBlock		      "Rudder angle\ncontroller"
@@ -3797,23 +3286,9 @@ Model {
     Line {
       SrcBlock		      "From3"
       SrcPort		      1
-      Points		      [0, -5]
+      Points		      [40, 0; 0, -5]
       DstBlock		      "Rudder angle\ncontroller"
       DstPort		      2
-    }
-    Line {
-      SrcBlock		      "Run rudder\nfor calibration"
-      SrcPort		      1
-      Points		      [150, 0]
-      Branch {
-	DstBlock		"Data Store\nWrite3"
-	DstPort			1
-      }
-      Branch {
-	Points			[0, -50]
-	DstBlock		"Goto2"
-	DstPort			1
-      }
     }
     Line {
       SrcBlock		      "Get the new angle for the rudder\nin radians\n[ecanRudder.c]"
@@ -3822,35 +3297,49 @@ Model {
       DstPort		      1
     }
     Line {
-      Labels		      [0, 0]
-      SrcBlock		      "Store Rudder\nData"
-      SrcPort		      3
-      Points		      [50, 0; 0, 60]
-      DstBlock		      "Run rudder\nfor calibration"
-      DstPort		      4
-    }
-    Line {
-      SrcBlock		      "Run rudder\nfor calibration"
-      SrcPort		      4
-      DstBlock		      "Goto5"
+      SrcBlock		      "Initialize Data EE \nemulation\n[DEE.c]"
+      SrcPort		      1
+      DstBlock		      "Restore rudder\ncalibration from NVRAM\n[misc.c]"
       DstPort		      1
     }
     Line {
-      SrcBlock		      "From2"
+      SrcBlock		      "Calculate the actual rudder\nangle using calibration data\n[ecanRudder.c]"
       SrcPort		      1
-      DstBlock		      "Switch1"
+      DstBlock		      "Recieve ecan messages\n[ecanRudder.c]1"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Data Store\nRead1"
+      SrcPort		      1
+      Points		      [30, 0; 0, -5]
+      DstBlock		      "LED Output"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Data Store\nRead1"
+      SrcPort		      2
+      Points		      [30, 0; 0, 5]
+      DstBlock		      "LED Output"
       DstPort		      2
     }
     Line {
-      SrcBlock		      "From6"
+      SrcBlock		      "Data Store\nRead2"
       SrcPort		      1
-      DstBlock		      "LED Output"
+      Points		      [45, 0; 0, -10]
+      DstBlock		      "Motor Driver Outputs"
       DstPort		      1
     }
     Line {
-      SrcBlock		      "From7"
+      SrcBlock		      "Data Store\nRead2"
+      SrcPort		      2
+      Points		      [45, 0; 0, 15]
+      DstBlock		      "Motor Driver Outputs"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Data Store\nRead3"
       SrcPort		      1
-      DstBlock		      "LED Output"
+      DstBlock		      "Switch1"
       DstPort		      2
     }
     Annotation {
@@ -3884,381 +3373,20 @@ Stateflow {
     name		    "rudder_Subsystem"
     created		    "20-Jul-2010 14:18:50"
     isLibrary		    0
-    firstTarget		    18
+    firstTarget		    2
     sfVersion		    76014001.0002
   }
-  chart {
-    id			    2
-    name		    "Run rudder\nfor calibration"
-    windowPosition	    [389.813 159.299 200.25 189.75]
-    viewLimits		    [0 156.75 0 153.75]
-    screen		    [1 1 1280 1024 1.333333333333333]
-    treeNode		    [0 3 0 0]
-    firstTransition	    5
-    firstJunction	    4
-    viewObj		    2
-    machine		    1
-    toolbarMode		    LIBRARY_TOOLBAR
-    ssIdHighWaterMark	    19
-    decomposition	    CLUSTER_CHART
-    type		    EML_CHART
-    firstData		    6
-    chartFileNumber	    25
-    disableImplicitCasting  1
-    eml {
-      name		      "calibrate"
-    }
-    noDebugging		    1
-  }
-  state {
-    id			    3
-    labelString		    "eML_blk_kernel()"
-    position		    [18 64.5 118 66]
-    fontSize		    12
-    chart		    2
-    treeNode		    [2 0 0 0]
-    superState		    SUBCHART
-    subviewer		    2
-    ssIdNumber		    1
-    type		    FUNC_STATE
-    decomposition	    CLUSTER_STATE
-    eml {
-      isEML		      1
-      script		      "function [rudderAngle, step, dir, calibratingMode, calibratedMode, lowLimit, highLimit] = calibra"
-      "te(trigger, rudderPot, rudderPortLimit, rudderSbLimit)\n\n    % cal_state stores which state we're in.\n    pers"
-      "istent cal_state direction run calibrating low_side high_side calibrated;\n    if isempty(cal_state)\n        ca"
-      "l_state = uint8(0);      % State machine state\n        direction = false;         % Commanded rudder direction "
-      "(true for port, false for starboard)\n        run = false;               % Commanded rudder enable\n        cali"
-      "brating = false;       % Calibrating when true  \n        low_side = int32(-1);      % The lowest limit read fro"
-      "m the potentiometer\n        high_side = int32(-1);     % The highest limit read from the potentiometer\n       "
-      " calibrated = false;        % Whether the rudder is calibrated\n    end\n\n    if trigger\n        calibrating ="
-      " ~calibrating;\n    end\n\n    % We perform the output generation here, before the state machine, as the rudderA"
-      "ngle is required for the last state.\n    highLimit = uint16(high_side);\n    lowLimit = uint16(low_side);\n    "
-      "if calibrated\n        rudderAngle = pot_to_rads(rudderPot, high_side, low_side);\n    else\n        % Return 0 "
-      "when we can't actually determine the rudder position\n        rudderAngle = single(0);\n    end\n\n    if cal_st"
-      "ate == 0 % Waiting for calibration trigger\n        if trigger\n            cal_state = uint8(6);\n            l"
-      "ow_side = int32(-1);\n            high_side = int32(-1);\n            calibrated = false;\n        end\n        "
-      "\n    elseif cal_state == 6 % Initial calibration mode\n        if ~calibrating % Reset if calibration is disabl"
-      "ed\n            cal_state = uint8(0);\n            run = false;\n        elseif rudderSbLimit % If the starboard"
-      " limit is active, go to port first\n            cal_state = uint8(5);\n            run = true;\n            dire"
-      "ction = true;\n        else % Head to starboard if on the port side\n            run = true;\n            direct"
-      "ion = false;\n            cal_state = uint8(4);\n        end\n        \n    elseif cal_state == 5 % Calibrating "
-      "the first limit (port)\n        if ~calibrating % Reset if calibration is disabled\n            cal_state = uint"
-      "8(0);\n            run = false;\n        elseif rudderPortLimit % If we've hit the limit, we're done here\n     "
-      "       low_side = int32(rudderPot);\n            cal_state = uint8(2);\n            direction = false;\n        "
-      "end\n        \n    elseif cal_state == 4 % Calibrating the first limit (starboard)\n        if ~calibrating % Re"
-      "set if calibration is disabled\n            cal_state = uint8(0);\n            run = false;\n        elseif rudd"
-      "erSbLimit % If we've hit the limit, we're done here\n            high_side = int32(rudderPot);\n        \n      "
-      "      cal_state = uint8(3);\n            direction = true;\n        end\n        \n    elseif cal_state == 3 % L"
-      "ast limit calibration (port)\n        if ~calibrating % Reset if calibration is disabled\n            cal_state "
-      "= uint8(0);\n            run = false;\n        elseif rudderPortLimit % If we've hit the port limit then we're d"
-      "one calibrating, so we recenter the rudder.\n            low_side = int32(rudderPot);\n            \n           "
-      " calibrated = true;\n            cal_state = uint8(1);\n            direction = false;\n        end\n        \n "
-      "   elseif cal_state == 2 % Last limit calibration (starboard)\n        if ~calibrating % Reset if calibration is"
-      " disabled\n            cal_state = uint8(0);\n            run = false;\n        elseif rudderSbLimit % If we've "
-      "hit the starboard limit then we're done calibrating, so we recenter the rudder.\n            high_side = int32(r"
-      "udderPot);\n            \n            calibrated = true;\n            cal_state = uint8(1);\n            directi"
-      "on = true;\n        end\n    elseif cal_state == 1 % Center the rudder\n        if ~calibrating % Reset if calib"
-      "ration is disabled\n            cal_state = uint8(0);\n            run = false;\n        elseif abs(rudderAngle)"
-      " < 0.1 % If we're close to the center, stop commanding the rudder. Set to 0.1 to account for delay\n            "
-      "cal_state = uint8(0);\n            run = false;\n            calibrating = false;\n        end\n    end\n    \n "
-      "   % Specify the calibration modes for output\n    calibratingMode = calibrating;\n    calibratedMode = calibrat"
-      "ed;\n    \n    % Set the rest of the outputs\n    step = run;\n    dir = direction;\nend\n\nfunction [rads] = po"
-      "t_to_rads(input, high_side, low_side)\n    %#codegen\n    % This function converts the potentiometer reading fro"
-      "m the boat's rudder sensors\n    % to a value in degrees. It relies on each limit being hit to set the bounds on"
-      "\n    % the rudder sensor value and then maps that value from that range into the new\n    % range of -.07854 to"
-      " .07854 (+-45 deg). It is loosely based off of the integer\n    % mapping function at: http://www.arduino.cc/cgi"
-      "-bin/yabb2/YaBB.pl?num=1289758376\n\n    % Prepare our input. Here we subtract the baseline 'low_side' value off"
-      " of\n    % the input so we start with a range from [0..high_side-lowside] and map it\n    % into the output rang"
-      "e of 45 degrees.\n    in_max = high_side - low_side;\n    val = int32(input) - low_side;\n\n    % Do the actual "
-      "conversion reversing the range and mapping it into [.7854:-0.7854]\n    rads = (0.5 - single(val)/single(in_max)"
-      ")*2*0.7854;\n\n    % Finally cap the value to +- our range to prevent odd errors later.\n    if rads > 0.7854\n "
-      "       rads = single(0.7854);\n    elseif rads < -0.7854\n        rads = single(-0.7854);\n    end\nend"
-      editorLayout	      "100 M4x1[1247 197 1696 1026]"
-    }
-  }
-  junction {
-    id			    4
-    position		    [23.5747 49.5747 7]
-    chart		    2
-    linkNode		    [2 0 0]
-    subviewer		    2
-    ssIdNumber		    3
-    type		    CONNECTIVE_JUNCTION
-  }
-  transition {
-    id			    5
-    labelString		    "{eML_blk_kernel();}"
-    labelPosition	    [32.125 19.875 102.544 14.964]
-    fontSize		    12
-    src {
-      intersection	      [0 0 1 0 23.5747 14.625 0 0]
-    }
-    dst {
-      id		      4
-      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
-    }
-    midPoint		    [23.5747 24.9468]
-    chart		    2
-    linkNode		    [2 0 0]
-    dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    2
-    drawStyle		    SMART
-    executionOrder	    1
-    ssIdNumber		    2
-  }
-  data {
-    id			    6
-    ssIdNumber		    15
-    name		    "rudderAngle"
-    linkNode		    [2 0 7]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    7
-    ssIdNumber		    4
-    name		    "trigger"
-    linkNode		    [2 6 8]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    8
-    ssIdNumber		    6
-    name		    "rudderPot"
-    linkNode		    [2 7 9]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    9
-    ssIdNumber		    7
-    name		    "rudderPortLimit"
-    linkNode		    [2 8 10]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_INT16_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    10
-    ssIdNumber		    14
-    name		    "rudderSbLimit"
-    linkNode		    [2 9 11]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_INT16_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    11
-    ssIdNumber		    5
-    name		    "step"
-    linkNode		    [2 10 12]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    12
-    ssIdNumber		    8
-    name		    "dir"
-    linkNode		    [2 11 13]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    13
-    ssIdNumber		    13
-    name		    "calibratingMode"
-    linkNode		    [2 12 14]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    14
-    ssIdNumber		    18
-    name		    "calibratedMode"
-    linkNode		    [2 13 15]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    15
-    ssIdNumber		    16
-    name		    "lowLimit"
-    linkNode		    [2 14 16]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	primitive		SF_UINT16_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "uint16"
-  }
-  data {
-    id			    16
-    ssIdNumber		    17
-    name		    "highLimit"
-    linkNode		    [2 15 0]
-    scope		    OUTPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	primitive		SF_UINT16_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
-    }
-    dataType		    "uint16"
-  }
-  instance {
-    id			    17
-    name		    "Run rudder\nfor calibration"
-    machine		    1
-    chart		    2
-  }
   target {
-    id			    18
+    id			    2
     name		    "sfun"
     description		    "Default Simulink S-Function Target."
     machine		    1
-    linkNode		    [1 0 19]
+    linkNode		    [1 0 3]
   }
   target {
-    id			    19
+    id			    3
     name		    "rtw"
     machine		    1
-    linkNode		    [1 18 0]
+    linkNode		    [1 2 0]
   }
 }

@@ -1,13 +1,27 @@
 #ifndef _ECAN_RUDDER_H_
 #define _ECAN_RUDDER_H_
 
-#include "stdbool.h"
+#include "types.h"
+
+struct RudderCalibrationData {
+	uint16_t PortLimitValue; // The lower limit on the rudder potentiometer.
+	uint16_t StarLimitValue; // The upper limit on the rudder potentiometer.
+	uint8_t CalibrationState;  // Tracks the internal state machine of the calibration FSM.
+	uint8_t CommandedDirection; // Dictates the direction the rudder should be commanded.
+	uint8_t CommandedRun; // Whether the rudder should be stepping now.
+	bool RestoredCalibration;
+	bool Calibrating;
+	bool Calibrated;
+};
+extern struct RudderCalibrationData rudderCalData;
 
 /**
  * Initialize the rudder subsystem. Currently this means
  * scheduling repetitive transmission of CAN messages.
  */
 void RudderSubsystemInit(void);
+
+void RudderCalibrate(void);
 
 /**
  * Transmit PGN 127245 (rudder angle) message via CAN.
@@ -52,5 +66,11 @@ bool GetCalibrateMessage(void);
  * @returns The desired angle in radians.
  */
 float GetNewAngle(void);
+
+/**
+ * Convert the potentiometer readings to floating point radians. Tries to use integer math whenever
+ * possible.
+ */
+float PotToRads(uint16_t input, uint16_t highSide, uint16_t lowSide);
 
 #endif // _ECAN_RUDDER_H_

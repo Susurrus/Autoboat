@@ -2,6 +2,7 @@
 #define _TYPES_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef union {
 	uint16_t usData;
