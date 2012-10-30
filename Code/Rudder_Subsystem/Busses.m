@@ -2,10 +2,10 @@
 clear elems;
 
 elems(1) = Simulink.BusElement;
-elems(1).Name = 'portLimit';
+elems(1).Name = 'CommandedRudderAngle';
 elems(1).Dimensions = 1;
 elems(1).DimensionsMode = 'Fixed';
-elems(1).DataType = 'boolean';
+elems(1).DataType = 'single';
 elems(1).SampleTime = -1;
 elems(1).Complexity = 'real';
 elems(1).SamplingMode = 'Sample based';
@@ -13,10 +13,10 @@ elems(1).Min = [];
 elems(1).Max = [];
 
 elems(2) = Simulink.BusElement;
-elems(2).Name = 'starLimit';
+elems(2).Name = 'RudderPositionAngle';
 elems(2).Dimensions = 1;
 elems(2).DimensionsMode = 'Fixed';
-elems(2).DataType = 'boolean';
+elems(2).DataType = 'single';
 elems(2).SampleTime = -1;
 elems(2).Complexity = 'real';
 elems(2).SamplingMode = 'Sample based';
@@ -24,7 +24,7 @@ elems(2).Min = [];
 elems(2).Max = [];
 
 elems(3) = Simulink.BusElement;
-elems(3).Name = 'rudderPositionAngle';
+elems(3).Name = 'Temperature';
 elems(3).Dimensions = 1;
 elems(3).DimensionsMode = 'Fixed';
 elems(3).DataType = 'single';
@@ -35,7 +35,7 @@ elems(3).Min = [];
 elems(3).Max = [];
 
 elems(4) = Simulink.BusElement;
-elems(4).Name = 'potValue';
+elems(4).Name = 'PotValue';
 elems(4).Dimensions = 1;
 elems(4).DimensionsMode = 'Fixed';
 elems(4).DataType = 'uint16';
@@ -46,15 +46,26 @@ elems(4).Min = [];
 elems(4).Max = [];
 
 elems(5) = Simulink.BusElement;
-elems(5).Name = 'temp';
+elems(5).Name = 'PortLimit';
 elems(5).Dimensions = 1;
 elems(5).DimensionsMode = 'Fixed';
-elems(5).DataType = 'single';
+elems(5).DataType = 'boolean';
 elems(5).SampleTime = -1;
 elems(5).Complexity = 'real';
 elems(5).SamplingMode = 'Sample based';
 elems(5).Min = [];
 elems(5).Max = [];
+
+elems(6) = Simulink.BusElement;
+elems(6).Name = 'StarLimit';
+elems(6).Dimensions = 1;
+elems(6).DimensionsMode = 'Fixed';
+elems(6).DataType = 'boolean';
+elems(6).SampleTime = -1;
+elems(6).Complexity = 'real';
+elems(6).SamplingMode = 'Sample based';
+elems(6).Min = [];
+elems(6).Max = [];
 
 RudderVariables = Simulink.Bus;
 RudderVariables.HeaderFile = '';

@@ -34,12 +34,11 @@ enum {
 	RUDDER_CAL_STATE_RECENTER
 };
 
-// Declare a struct for storing received data.
-static struct {
-	bool calibrate;    // Whether a calibration has been requested or not.
-	int16_t newAngle;  // The commanded rudder angle
-} rudderMessageStore;
+// Instantiate a struct to store calibration data.
 struct RudderCalibrationData rudderCalData = {0};
+
+// Instantiate a struct to store rudder input data.
+struct RudderSensorData rudderSensorData = {0};
 
 void RudderSubsystemInit(void)
 {
@@ -65,7 +64,7 @@ void RudderCalibrate(void)
 	if (rudderCalData.CalibrationState == RUDDER_CAL_STATE_INIT) {
 		rudderCalData.Calibrating = true;
 		rudderCalData.CommandedRun = true;
-		if (rudderData.starLimit) {
+		if (rudderSensorData.StarLimit) {
 			rudderCalData.CalibrationState = RUDDER_CAL_STATE_FIRST_TO_PORT;
 			rudderCalData.CommandedDirection = TO_PORT;
 		} else {
@@ -73,35 +72,35 @@ void RudderCalibrate(void)
 			rudderCalData.CommandedDirection = TO_STARBOARD;
 		}
 	} else if (rudderCalData.CalibrationState == RUDDER_CAL_STATE_FIRST_TO_PORT) {
-		if (rudderData.portLimit) {
-			rudderCalData.PortLimitValue = rudderData.potValue;
+		if (rudderSensorData.PortLimit) {
+			rudderCalData.PortLimitValue = rudderSensorData.PotValue;
 			rudderCalData.CalibrationState = RUDDER_CAL_STATE_SECOND_TO_PORT;
 			rudderCalData.CommandedDirection = TO_STARBOARD;
 		}
 	} else if (rudderCalData.CalibrationState == RUDDER_CAL_STATE_FIRST_TO_STARBOARD) {
-		if (rudderData.starLimit) {
-			rudderCalData.StarLimitValue = rudderData.potValue;
+		if (rudderSensorData.StarLimit) {
+			rudderCalData.StarLimitValue = rudderSensorData.PotValue;
 			rudderCalData.CalibrationState = RUDDER_CAL_STATE_SECOND_TO_PORT;
 			rudderCalData.CommandedDirection = TO_PORT;
 		}
 	} else if (rudderCalData.CalibrationState == RUDDER_CAL_STATE_SECOND_TO_PORT) {
-		if (rudderData.portLimit) {
-			rudderCalData.PortLimitValue = rudderData.potValue;
+		if (rudderSensorData.PortLimit) {
+			rudderCalData.PortLimitValue = rudderSensorData.PotValue;
 			SaveRudderCalibrationRange();
 			rudderCalData.CalibrationState = RUDDER_CAL_STATE_RECENTER;
 			rudderCalData.CommandedDirection = TO_STARBOARD;
 			rudderCalData.Calibrated = true;
 		}
 	} else if (rudderCalData.CalibrationState == RUDDER_CAL_STATE_SECOND_TO_STARBOARD) {
-		if (rudderData.starLimit) {
-			rudderCalData.StarLimitValue = rudderData.potValue;
+		if (rudderSensorData.StarLimit) {
+			rudderCalData.StarLimitValue = rudderSensorData.PotValue;
 			SaveRudderCalibrationRange();
 			rudderCalData.CalibrationState = RUDDER_CAL_STATE_RECENTER;
 			rudderCalData.CommandedDirection = TO_PORT;
 			rudderCalData.Calibrated = true;
 		}
 	}else if (rudderCalData.CalibrationState == RUDDER_CAL_STATE_RECENTER) {
-		if (fabs(rudderData.rudderPositionAngle) < 0.1) {
+		if (fabs(rudderSensorData.RudderPositionAngle) < 0.1) {
 			rudderCalData.CommandedRun = false;
 			rudderCalData.Calibrating = false;
 			rudderCalData.CalibrationState = RUDDER_CAL_STATE_NULL;
@@ -125,7 +124,7 @@ void RudderSendNmea(void)
 	msg.payload[2] = 0xFF; // Unused
 	msg.payload[3] = 0xFF; // Unused
 	// Convert rudderPositionAngle to 1e-4 radians
-	int16_t angle = ((float)rudderData.rudderPositionAngle * 10000);
+	int16_t angle = ((float)rudderSensorData.RudderPositionAngle * 10000);
 	// Send current angle over the CAN bus
 	msg.payload[4] = angle;
 	msg.payload[5] = angle >> 8;
@@ -145,14 +144,14 @@ void RudderSendCustomLimit(void)
 	msg.validBytes = 7;
 
 	// Now fill in the data.
-	msg.payload[0] = rudderData.potValue;
-	msg.payload[1] = rudderData.potValue >> 8;
-	msg.payload[2] = rudderData.portLimitValue;
-	msg.payload[3] = rudderData.portLimitValue >> 8;
-	msg.payload[4] = rudderData.starLimitValue;
-	msg.payload[5] = rudderData.starLimitValue >> 8;
-	msg.payload[6] = rudderData.portLimit << 7;
-	msg.payload[6] |= rudderData.starLimit << 5;
+	msg.payload[0] = rudderSensorData.PotValue;
+	msg.payload[1] = rudderSensorData.PotValue >> 8;
+	msg.payload[2] = rudderCalData.PortLimitValue;
+	msg.payload[3] = rudderCalData.PortLimitValue >> 8;
+	msg.payload[4] = rudderCalData.StarLimitValue;
+	msg.payload[5] = rudderCalData.StarLimitValue >> 8;
+	msg.payload[6] = rudderSensorData.PortLimit << 7;
+	msg.payload[6] |= rudderSensorData.StarLimit << 5;
         // Set the rudder to being enabled.
     // TODO: Make the rudder disabled until first calibration.
     msg.payload[6] |= 0x01;
@@ -172,7 +171,6 @@ void RudderSendCustomLimit(void)
 //configures the message into a tCanMessage, and sends it
 void RudderSendTemperature(void)
 {
-
 	// Specify a new CAN message w/ metadata
 	tCanMessage msg;
 	msg.id = Iso11783Encode(PGN_TEMP, 10, 0xFF, 2);
@@ -186,7 +184,7 @@ void RudderSendTemperature(void)
 	msg.payload[1] = 2;         // Temperature instance (Inside)
 	msg.payload[1] |= 0x3 << 6; // Humidity instance (Invalid)
 	// Record the temperature in units of .01Kelvin.
-	uint16_t temp = (uint16_t)((rudderData.temp + 273.2) * 100);
+	uint16_t temp = (uint16_t)((rudderSensorData.Temperature + 273.2) * 100);
 	msg.payload[2] = (uint8_t)temp;
 	msg.payload[3] = (uint8_t)(temp >> 8);
 	msg.payload[4] = 0xFF; // Humidity is invalid
@@ -220,9 +218,7 @@ void SendAndReceiveEcan(void)
 				pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
 				switch (pgn) {
 				case PGN_RUDDER_ANGLE:
-					if (msg.payload[2] != 0xFF && msg.payload[3] != 0xFF) {
-						rudderMessageStore.newAngle = (msg.payload[3] << 8) | msg.payload[2];
-					}
+					ParsePgn127245(msg.payload, NULL, NULL, NULL, &rudderSensorData.CommandedRudderAngle, NULL);
 				break;
 				}
 			}
@@ -272,22 +268,9 @@ void UpdateMessageRate(const uint8_t angleRate, const uint8_t statusRate)
 	}
 }
 
-bool GetCalibrateMessage(void)
-{
-	bool temp = rudderMessageStore.calibrate;
-	rudderMessageStore.calibrate = false;
-	return temp;
-}
-
-float GetNewAngle(void)
-{
-    float temp = rudderMessageStore.newAngle;
-    return temp/10000;
-}
-
 void CalculateRudderAngle(void)
 {
-    rudderData.rudderPositionAngle = PotToRads(rudderData.potValue, rudderCalData.StarLimitValue, rudderCalData.PortLimitValue);
+    rudderSensorData.RudderPositionAngle = PotToRads(rudderSensorData.PotValue, rudderCalData.StarLimitValue, rudderCalData.PortLimitValue);
 }
 
 float PotToRads(uint16_t input, uint16_t highSide, uint16_t lowSide)

@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2427"
+    ComputedModelVersion    "1.2429"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -28,9 +28,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Oct 29 15:53:54 2012"
+  LastModifiedDate	  "Mon Oct 29 17:38:42 2012"
   RTWModifiedTimeStamp	  273425268
-  ModelVersionFormat	  "1.%<AutoIncrement:2427>"
+  ModelVersionFormat	  "1.%<AutoIncrement:2429>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -412,7 +412,7 @@ Model {
 	    PropName		    "DisabledProps"
 	  }
 	  SystemTargetFile	  "dspic.tlc"
-	  GenCodeOnly		  off
+	  GenCodeOnly		  on
 	  MakeCommand		  "make_CreateMPLAB"
 	  GenerateMakefile	  on
 	  TemplateMakefile	  "dspic_pic30_gcc.tmf"
@@ -785,8 +785,8 @@ Model {
       }
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=0 "
-      CurrentDlgPage	      "Code Generation/Custom Code"
-      ConfigPrmDlgPosition     [ 278, 5, 1402, 895 ] 
+      CurrentDlgPage	      "Code Generation"
+      ConfigPrmDlgPosition     [ 270, -25, 1410, 903 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -1088,7 +1088,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "22169"
+    SIDHighWatermark	    "22171"
     Block {
       BlockType		      Reference
       Name		      "Calculate the actual rudder\nangle using calibration data\n[ecanRudder.c]"
@@ -1131,7 +1131,7 @@ Model {
       Name		      "Configure ECAN 1"
       SID		      "20713"
       Ports		      []
-      Position		      [305, 29, 420, 81]
+      Position		      [345, 29, 460, 81]
       BackgroundColor	      "lightBlue"
       DropShadow	      on
       LibraryVersion	      "1.9"
@@ -1244,7 +1244,7 @@ Model {
       Name		      "Configure Model \nfor dsPIC"
       SID		      "11078"
       Ports		      []
-      Position		      [20, 24, 132, 80]
+      Position		      [45, 24, 157, 80]
       ForegroundColor	      "blue"
       BackgroundColor	      "yellow"
       ShowName		      off
@@ -1259,11 +1259,11 @@ Model {
       Position		      [190, 210, 289, 239]
       ZOrder		      -4
       ShowName		      off
-      DataStoreName	      "rudderData"
+      DataStoreName	      "rudderSensorData"
       ReadBeforeWriteMsg      "warning"
       WriteAfterWriteMsg      "warning"
       WriteAfterReadMsg	      "warning"
-      RTWStateStorageClass    "ExportedGlobal"
+      RTWStateStorageClass    "ImportedExtern"
       OutDataTypeStr	      "Bus: RudderVariables"
     }
     Block {
@@ -1285,7 +1285,7 @@ Model {
       Name		      "Data Store\nRead"
       SID		      "22165"
       Ports		      [0, 2]
-      Position		      [750, 417, 870, 463]
+      Position		      [75, 537, 195, 583]
       ZOrder		      -5
       ShowName		      off
       DataStoreName	      "rudderCalData"
@@ -1296,7 +1296,7 @@ Model {
       Name		      "Data Store\nRead1"
       SID		      "22166"
       Ports		      [0, 2]
-      Position		      [860, 299, 980, 346]
+      Position		      [810, 249, 930, 296]
       ZOrder		      -5
       ShowName		      off
       DataStoreName	      "rudderCalData"
@@ -1307,28 +1307,50 @@ Model {
       Name		      "Data Store\nRead2"
       SID		      "22168"
       Ports		      [0, 2]
-      Position		      [750, 743, 870, 792]
+      Position		      [700, 693, 820, 742]
       ZOrder		      -5
       ShowName		      off
-      DataStoreName	      "rudderData"
-      DataStoreElements	      "rudderData.portLimit#rudderData.starLimit"
+      DataStoreName	      "rudderSensorData"
+      DataStoreElements	      "rudderSensorData.PortLimit#rudderSensorData.StarLimit"
     }
     Block {
       BlockType		      DataStoreRead
       Name		      "Data Store\nRead3"
       SID		      "22169"
       Ports		      [0, 1]
-      Position		      [825, 595, 920, 625]
+      Position		      [775, 545, 870, 575]
       ZOrder		      -5
       ShowName		      off
       DataStoreName	      "rudderCalData"
       DataStoreElements	      "rudderCalData.Calibrating"
     }
     Block {
+      BlockType		      DataStoreRead
+      Name		      "Data Store\nRead4"
+      SID		      "22170"
+      Ports		      [0, 1]
+      Position		      [45, 792, 215, 818]
+      ZOrder		      -5
+      ShowName		      off
+      DataStoreName	      "rudderSensorData"
+      DataStoreElements	      "rudderSensorData.RudderPositionAngle"
+    }
+    Block {
+      BlockType		      DataStoreRead
+      Name		      "Data Store\nRead5"
+      SID		      "22171"
+      Ports		      [0, 1]
+      Position		      [45, 717, 215, 743]
+      ZOrder		      -5
+      ShowName		      off
+      DataStoreName	      "rudderSensorData"
+      DataStoreElements	      "rudderSensorData.CommandedRudderAngle"
+    }
+    Block {
       BlockType		      From
       Name		      "From1"
       SID		      "20744"
-      Position		      [780, 830, 905, 860]
+      Position		      [730, 780, 855, 810]
       ZOrder		      -9
       BackgroundColor	      "magenta"
       ShowName		      off
@@ -1336,19 +1358,9 @@ Model {
     }
     Block {
       BlockType		      From
-      Name		      "From3"
-      SID		      "22052"
-      Position		      [75, 795, 200, 825]
-      ZOrder		      -9
-      BackgroundColor	      "magenta"
-      ShowName		      off
-      GotoTag		      "RudderAngle"
-    }
-    Block {
-      BlockType		      From
       Name		      "From4"
       SID		      "22085"
-      Position		      [825, 630, 950, 660]
+      Position		      [775, 580, 900, 610]
       ZOrder		      -9
       BackgroundColor	      "magenta"
       ShowName		      off
@@ -1358,54 +1370,17 @@ Model {
       BlockType		      From
       Name		      "From5"
       SID		      "22086"
-      Position		      [825, 560, 950, 590]
+      Position		      [775, 510, 900, 540]
       ZOrder		      -9
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "CalibrateMotorBus"
     }
     Block {
-      BlockType		      Reference
-      Name		      "Get the new angle for the rudder\nin radians\n[ecanRudder.c]"
-      SID		      "22094"
-      Tag		      "dsPIC_dsPIC_CFunctionCall"
-      Ports		      [0, 1]
-      Position		      [60, 704, 210, 756]
-      BackgroundColor	      "orange"
-      LibraryVersion	      "3.84"
-      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
-      SourceType	      "C Function Call"
-      FctUpdate		      "Output Function"
-      fctName		      "GetNewAngle"
-      INPUT_SIZE	      "1"
-      INPUT1		      "--"
-      INPUT2		      "--"
-      INPUT3		      "--"
-      OUTPUT_SIZE	      "1"
-      OUTPUT1		      "real32"
-      SampleTime	      "T_step"
-      InputType		      "[ ]"
-      OutputType	      "[ 7 ]"
-      FctDeclaration	      "extern real32_T GetNewAngle();"
-      FctCall		      "%y1 = GetNewAngle();"
-      OrderingInOutPopup      "None"
-      FctStart		      "None"
-      FctStart_Name	      "Init_onlyOnce"
-      FctStart_Declaration    "inline extern void Init_onlyOnce();"
-      FctStart_Call	      "Init_onlyOnce();"
-      FctInit		      "None"
-      FctInit_Name	      "Init_Reset"
-      FctInit_Declaration     "inline extern void Init_Reset();"
-      FctInit_Call	      "Init_Reset();"
-      PinDigitalInput	      "[]"
-      PinDigitalOutput	      "[]"
-      AnalogueInput	      "[]"
-    }
-    Block {
       BlockType		      Goto
       Name		      "Goto1"
       SID		      "20743"
-      Position		      [1110, 425, 1240, 455]
+      Position		      [400, 545, 530, 575]
       ZOrder		      -10
       BackgroundColor	      "cyan"
       ShowName		      off
@@ -1427,7 +1402,7 @@ Model {
       BlockType		      Goto
       Name		      "Goto4"
       SID		      "22092"
-      Position		      [1135, 595, 1265, 625]
+      Position		      [1050, 545, 1180, 575]
       ZOrder		      -10
       BackgroundColor	      "cyan"
       ShowName		      off
@@ -1513,7 +1488,7 @@ Model {
       Name		      "LED Output"
       SID		      "22147"
       Ports		      [2]
-      Position		      [1055, 287, 1190, 358]
+      Position		      [1005, 237, 1140, 308]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -1806,7 +1781,7 @@ Model {
       SID		      "11080"
       Tag		      "dsPIC_MASTER"
       Ports		      []
-      Position		      [174, 30, 274, 80]
+      Position		      [204, 30, 304, 80]
       BackgroundColor	      "lightBlue"
       DropShadow	      on
       ShowName		      off
@@ -1852,7 +1827,7 @@ Model {
       Name		      "Motor Driver Outputs"
       SID		      "22114"
       Ports		      [3]
-      Position		      [955, 721, 1140, 869]
+      Position		      [905, 671, 1090, 819]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -2168,7 +2143,7 @@ Model {
       SID		      "22107"
       Tag		      "dsPIC_PIN_Mapping"
       Ports		      []
-      Position		      [445, 30, 545, 80]
+      Position		      [495, 30, 595, 80]
       LibraryVersion	      "3.84"
       SourceBlock	      "dsPICdrivers/Peripheral MAPPING/PIN Mapping"
       SourceType	      "Peripheral PIN Mapping"
@@ -2389,8 +2364,8 @@ Model {
 	  ZOrder		  -6
 	  BackgroundColor	  "gray"
 	  ShowName		  off
-	  DataStoreName		  "rudderData"
-	  DataStoreElements	  "rudderData.starLimit"
+	  DataStoreName		  "rudderSensorData"
+	  DataStoreElements	  "rudderSensorData.StarLimit"
 	}
 	Block {
 	  BlockType		  DataStoreWrite
@@ -2401,8 +2376,8 @@ Model {
 	  ZOrder		  -6
 	  BackgroundColor	  "gray"
 	  ShowName		  off
-	  DataStoreName		  "rudderData"
-	  DataStoreElements	  "rudderData.portLimit"
+	  DataStoreName		  "rudderSensorData"
+	  DataStoreElements	  "rudderSensorData.PortLimit"
 	}
 	Block {
 	  BlockType		  DataStoreWrite
@@ -2413,8 +2388,8 @@ Model {
 	  ZOrder		  -6
 	  BackgroundColor	  "gray"
 	  ShowName		  off
-	  DataStoreName		  "rudderData"
-	  DataStoreElements	  "rudderData.temp"
+	  DataStoreName		  "rudderSensorData"
+	  DataStoreElements	  "rudderSensorData.Temperature"
 	}
 	Block {
 	  BlockType		  DataStoreWrite
@@ -2425,8 +2400,8 @@ Model {
 	  ZOrder		  -6
 	  BackgroundColor	  "gray"
 	  ShowName		  off
-	  DataStoreName		  "rudderData"
-	  DataStoreElements	  "rudderData.potValue"
+	  DataStoreName		  "rudderSensorData"
+	  DataStoreElements	  "rudderSensorData.PotValue"
 	}
 	Block {
 	  BlockType		  Gain
@@ -2638,7 +2613,7 @@ Model {
       Name		      "Rudder\nCommand"
       SID		      "20611"
       Ports		      [2, 1]
-      Position		      [930, 393, 1045, 482]
+      Position		      [255, 540, 365, 580]
       NamePlacement	      "alternate"
       ShowName		      off
       MinAlgLoopOccurrences   off
@@ -3105,9 +3080,9 @@ Model {
 	Line {
 	  SrcBlock		  "Compare\nTo Constant"
 	  SrcPort		  1
-	  Points		  [55, 0; 0, -50]
+	  Points		  [55, 0; 0, -65]
 	  Branch {
-	    Points		    [0, -55]
+	    Points		    [0, -40]
 	    DstBlock		    "Switch4"
 	    DstPort		    2
 	  }
@@ -3224,7 +3199,7 @@ Model {
       BlockType		      Switch
       Name		      "Switch1"
       SID		      "22143"
-      Position		      [1030, 590, 1080, 630]
+      Position		      [960, 540, 1010, 580]
       ZOrder		      -18
       ShowName		      off
       Criteria		      "u2 ~= 0"
@@ -3234,14 +3209,12 @@ Model {
     Line {
       SrcBlock		      "Data Store\nRead"
       SrcPort		      1
-      Points		      [0, -15]
       DstBlock		      "Rudder\nCommand"
       DstPort		      1
     }
     Line {
       SrcBlock		      "Data Store\nRead"
       SrcPort		      2
-      Points		      [0, 10]
       DstBlock		      "Rudder\nCommand"
       DstPort		      2
     }
@@ -3266,14 +3239,14 @@ Model {
     Line {
       SrcBlock		      "From5"
       SrcPort		      1
-      Points		      [45, 0; 0, 20]
+      Points		      [0, 20]
       DstBlock		      "Switch1"
       DstPort		      1
     }
     Line {
       SrcBlock		      "From4"
       SrcPort		      1
-      Points		      [45, 0; 0, -20]
+      Points		      [0, -20]
       DstBlock		      "Switch1"
       DstPort		      3
     }
@@ -3284,14 +3257,13 @@ Model {
       DstPort		      1
     }
     Line {
-      SrcBlock		      "From3"
+      SrcBlock		      "Data Store\nRead4"
       SrcPort		      1
-      Points		      [40, 0; 0, -5]
       DstBlock		      "Rudder angle\ncontroller"
       DstPort		      2
     }
     Line {
-      SrcBlock		      "Get the new angle for the rudder\nin radians\n[ecanRudder.c]"
+      SrcBlock		      "Data Store\nRead5"
       SrcPort		      1
       DstBlock		      "Rudder angle\ncontroller"
       DstPort		      1
@@ -3325,14 +3297,14 @@ Model {
     Line {
       SrcBlock		      "Data Store\nRead2"
       SrcPort		      1
-      Points		      [45, 0; 0, -10]
+      Points		      [0, -10]
       DstBlock		      "Motor Driver Outputs"
       DstPort		      1
     }
     Line {
       SrcBlock		      "Data Store\nRead2"
       SrcPort		      2
-      Points		      [45, 0; 0, 15]
+      Points		      [0, 15]
       DstBlock		      "Motor Driver Outputs"
       DstPort		      2
     }
@@ -3350,7 +3322,7 @@ Model {
     }
     Annotation {
       Name		      "When in calibration mode, override the\ncontrol signals"
-      Position		      [922, 518]
+      Position		      [872, 478]
       HorizontalAlignment     "left"
     }
     Annotation {

@@ -9,11 +9,21 @@ struct RudderCalibrationData {
 	uint8_t CalibrationState;  // Tracks the internal state machine of the calibration FSM.
 	uint8_t CommandedDirection; // Dictates the direction the rudder should be commanded.
 	uint8_t CommandedRun; // Whether the rudder should be stepping now.
-	bool RestoredCalibration;
+	bool RestoredCalibration; // If calibration data was restored after a reset.
 	bool Calibrating;
 	bool Calibrated;
 };
 extern struct RudderCalibrationData rudderCalData;
+
+struct RudderSensorData {
+	float CommandedRudderAngle; // The rudder angle in radians.
+	float RudderPositionAngle; // The rudder angle in radians.
+	float Temperature; // The temperature in Celsius.
+	uint16_t PotValue; // The rudder potentiometer value.
+	bool PortLimit; // Whether the port limit switch has been triggered.
+	bool StarLimit; // Whether the starboard limit switch has been triggered.
+};
+extern struct RudderSensorData rudderSensorData;
 
 /**
  * Initialize the rudder subsystem. Currently this means
