@@ -12,7 +12,7 @@ struct RudderData {
 	tUnsignedShortToChar RudderPotLimitPort;
 	bool LimitHitStarboard;
 	bool LimitHitPort;
-	uint8_t RudderState; // Bitfield where 0th bit: disconnected, 1st bit: enabled/disabled, 2nd bit: calibrated, 3rd bit: calibrating, 
+	uint8_t RudderState; // Bitfield where 0th bit: enabled/disabled, 1st bit: calibrated, 2nd bit: calibrating, 
 };
 extern struct RudderData rudderSensorData;
 
@@ -21,7 +21,11 @@ extern struct RudderData rudderSensorData;
  */
 float GetRudderAngle();
 
-void GetRudderStatus(bool *calibrated, bool *calibrating);
+/**
+ * Returns the rudder state as a 3-bit number following
+ * from msg 0x8081 used with the rudder.
+ */
+uint8_t GetRudderStatus(void);
 
 /**
  * Stores a recorded value of the rudder angle.

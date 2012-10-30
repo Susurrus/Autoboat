@@ -176,9 +176,11 @@ uint8_t ProcessAllEcanMessages(void)
 				throttleDataStore.rpm.chData[1] = msg.payload[0];
 				throttleDataStore.newData = true;
 			} if (msg.id == 0x8080) { // From the rudder controller
+				// If the rudder is transmitting can messages, it's automatically enabled.
 				sensorAvailability.rudder.enabled_counter = 0;
-				if ((msg.payload[6] & 0x01) == 1 && // If the rudder is calibrated
-                                    (msg.payload[6] & 0x02) == 0) { // And done calibrating
+				if ((msg.payload[6] & (1 << 0)) == 1 && // If the rudder is enabled
+				    (msg.payload[6] & (1 << 1)) == 1 && // If the rudder is calibrated
+                    (msg.payload[6] & (1 << 2)) == 0) { // And done calibrating
 					sensorAvailability.rudder.active_counter = 0; // Then it's active
 				}
 				rudderSensorData.RudderPotValue.chData[0] = msg.payload[0];

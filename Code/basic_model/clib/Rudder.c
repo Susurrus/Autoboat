@@ -11,10 +11,9 @@ float GetRudderAngle(void )
 	return rudderSensorData.RudderAngle.flData;
 }
 
-void GetRudderStatus(bool *calibrated, bool *calibrating)
+uint8_t GetRudderStatus(void)
 {
-	*calibrated = rudderSensorData.RudderState && (1 << 2);
-	*calibrating = rudderSensorData.RudderState && (1 << 3);
+	return rudderSensorData.RudderState;
 }
 
 void SetRudderAngle(const uint8_t data[2])
