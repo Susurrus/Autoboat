@@ -211,7 +211,7 @@ uint8_t ParsePgn127245(const uint8_t data[8], uint8_t *seqId, uint8_t *instance,
 
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
 	uint8_t fieldStatus = 0;
-
+	
 	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep. If the sequence ID is 255, it's invalid.
 	if (seqId && (data[0] != 0xFF)) {
 		*seqId = data[0];
@@ -229,7 +229,6 @@ uint8_t ParsePgn127245(const uint8_t data[8], uint8_t *seqId, uint8_t *instance,
 		*direction = (data[2] & 0xC0) >> 6;
 		fieldStatus |= 0x04;
 	}
-
 	// Field 3: Angle Order. This is a 16-bit field that is used to command rudder angles. This field contains a signed value with the units of 0.0001 radians.
 	if (angleOrder && (data[3] != 0xFF || data[4] != 0xFF)) {
 		tShortToChar unpacked;
