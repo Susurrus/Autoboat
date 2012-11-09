@@ -389,9 +389,11 @@ void MavLinkSendLocalPosition(void)
 	uart1EnqueueData(buf, (uint8_t)len);
 }
 
+/**
+ * Only transmit if the RC receiver was selected, as raw mode for the joystick doesn't make sense.
+ */
 void MavLinkSendRcRawData(void)
 {
-	// Only transmit if the RC receiver was selected, as raw mode for the joystick doesn't make sense.
 	if (manualInputSelect == 0) {
 		mavlink_message_t msg;
 
@@ -409,11 +411,12 @@ void MavLinkSendRcRawData(void)
 }
 
 /**
- * Only transmit scaled manual control data messages if manual control is enabled.
+ * Only transmit scaled manual control data messages if manual control is enabled OR if 
+ * the RC transmitter is enabled as the RC transmitter overrides everything.
  */
 void MavLinkSendRcScaledData(void)
 {
-	if (!(systemStatus.status & 1)) {
+	if (!(systemStatus.status & 1) || manualInputSelect == 0) {
 		mavlink_message_t msg;
 
 		mavlink_msg_rc_channels_scaled_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
