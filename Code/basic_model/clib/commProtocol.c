@@ -70,8 +70,12 @@ static uint32_t failedMessageCount = 0;
 static uint8_t sameFailedMessageFlag = 0;
 
 void cpInitCommunications(void) {
-	initUart2(BAUD57600_BRG_REG);  // Initialize UART2 to 57600 for the Revolution GS.
-	initUart1(BAUD115200_BRG_REG); // Initialize UART1 to 115200 for groundstation communications.
+        // Initialize UART2 to 57600 for the Revolution GS.
+        // It is also used for HIL data transmission.
+	initUart2(BAUD57600_BRG_REG);
+
+        // Initialize UART1 to 115200 for groundstation communications.
+	initUart1(BAUD115200_BRG_REG);
 }
 
 /**
@@ -215,7 +219,7 @@ void buildAndCheckMessage(uint8_t characterIn, uint8_t sensorMode) {
  */
 void processNewCommData(uint8_t sensorMode)
 {
-	while (&uart2RxBuffer.dataSize > 0) {
+	while (uart2RxBuffer.dataSize > 0) {
 		uint8_t c;
 		CB_ReadByte(&uart2RxBuffer, &c);
 		buildAndCheckMessage(c, sensorMode);
@@ -226,7 +230,7 @@ void processNewCommData(uint8_t sensorMode)
  * This function sets the proper UART2
  * baud rate depending on the HIL mode.
  * A mode value of 0 will set the baud
- * rate back to the default 1200. A value
+ * rate back to the default 57600. A value
  * of 1 will set it to 115200.
  */
 void setHilMode(uint8_t mode) {
@@ -318,5 +322,5 @@ uint8_t IsNewHilData(void)
  */
 inline void uart2EnqueueActuatorData(uint8_t *data)
 {
-	uart2EnqueueData(data, 34);
+	uart2EnqueueData(data, 32);
 }
