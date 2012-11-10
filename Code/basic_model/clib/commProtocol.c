@@ -320,7 +320,7 @@ uint8_t IsNewHilData(void)
 /**
  * Add all 27 data + 7 header/footer bytes of the actuator struct to UART2's transmission queue.
  */
-inline void uart2EnqueueActuatorData(uint8_t *data)
+inline void uart2EnqueueActuatorData(uint8_t data[32])
 {
 	uart2EnqueueData(data, 32);
 }

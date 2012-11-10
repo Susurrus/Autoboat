@@ -101,7 +101,7 @@ hold off;
 %% Plot the vehicle commands
 figure;
 subplot(3,1,1);
-plot(commands_rudder_up > 0);
+plot(commands_rudder_angle > 0);
 title('Rudder Commands');
 
 subplot(3,1,2);
