@@ -3,6 +3,7 @@
 #include "Rudder.h"
 #include "EcanFunctions.h"
 #include "Nmea2000Encode.h"
+#include "CanMessages.h"
 
 struct RudderData rudderSensorData;
 
@@ -31,14 +32,8 @@ void RudderStartCalibration(void)
 {
 	// Set CAN header information.
 	tCanMessage msg;
-	msg.id = 0x8081;
-	msg.buffer = 0;
-	msg.message_type = CAN_MSG_DATA;
-	msg.frame_type = CAN_FRAME_EXT;
-	msg.validBytes = 1;
 
-	// Now fill in the data.
-	msg.payload[0] = 1;
+	CanMessagePackageRudderSetState(&msg, true, false, true);
 
 	// And finally transmit it.
 	ecan1_buffered_transmit(&msg);

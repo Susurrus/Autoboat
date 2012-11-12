@@ -46,12 +46,27 @@ THE SOFTWARE.
 #include "uart1.h"
 #include "DEE.h"
 #include "ecanFunctions.h"
+#include "CanMessages.h"
+
+// Track the node ID of this RC node.
+const uint8_t nodeId = 0x3;
 
 // Store some values for calibrating the RC transmitter.
 uint16_t rcRudderRange[2];
 uint16_t rcThrottleRange[2];
 bool restoredCalibration;
+
+/// Store some 16-bit bitfields for tracking the system status and various erros.
+// systemStatus tracks various statuses of the node.
+//  * bit 0: RC transmitter is disconnected
 uint16_t systemStatus;
+// systemErrors tracks the various flags that can put the node into a reset state.
+//  * bit 0: eStop has been pushed.
+//  * bit 1: rudder is calibrating
+//  * bit 2: rudder is uncalibrated
+//  * bit 3: the ECAN peripheral has reached an error state for transmission
+//  * bit 4: the ECAN peripheral has reached an error state for reception
+uint16_t systemErrors;
 
 typedef struct {
 	bool enabled            : 1; // If the sensor is enabled, i.e. it is online and transmitting messages.
@@ -65,25 +80,19 @@ struct stc {
 	timeoutCounters rudder; // The rudder controller outputs messages quite frequently also. It's enabled whenever one of these messages has been received within the last second. It's active when it's enabled and calibrated and done calibrating.
 } sensorAvailability;
 
-// This is the value of the BRG register for configuring different baud
-// rates. These BRG values have been calculated based on a 40MHz system clock.
-#define BAUD115200_BRG_REG 21
-
-/**
- * This function initializes UART1 to 115200baud for communications with a PC.
- * NOTE: This is really only useful for debugging.
- */
-void InitUart(void)
+void TransmitStatus(void)
 {
-	initUart1(BAUD115200_BRG_REG);
+    tCanMessage msg;
+    CanMessagePackageStatus(&msg, nodeId, systemStatus, systemErrors);
+    ecan1_buffered_transmit(&msg);
 }
 
 bool GetEstopStatus(void)
 {
-	if (sensorAvailability.prop.enabled) {
-		return true;
-	}
-	return false;
+    if (sensorAvailability.prop.enabled) {
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -161,7 +170,7 @@ uint8_t ProcessAllEcanMessages(void)
 	if (sensorAvailability.rudder.active_counter < 100) {
 		++sensorAvailability.rudder.active_counter;
 	}
-
+        
 	do {
 		int foundOne = ecan1_receive(&msg, &messagesLeft);
 		if (foundOne) {
@@ -174,7 +183,7 @@ uint8_t ProcessAllEcanMessages(void)
 				//throttleDataStore.rpm.chData[0] = msg.payload[1];
 				//throttleDataStore.rpm.chData[1] = msg.payload[0];
 				//throttleDataStore.newData = true;
-			} if (msg.id == 0x8080) { // From the rudder controller
+			} if (msg.id == CAN_MSG_ID_RUDDER_DETAILS) { // From the rudder controller
 				// If the rudder is transmitting can messages, it's automatically enabled.
 				sensorAvailability.rudder.enabled_counter = 0;
 				if ((msg.payload[6] & (1 << 0)) == 1 && // If the rudder is enabled

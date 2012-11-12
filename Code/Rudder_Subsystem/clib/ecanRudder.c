@@ -5,6 +5,7 @@
 #include "ecanFunctions.h"
 #include "nmea2000.h"
 #include "Nvram.h"
+#include "CanMessages.h"
 
 // Declare some constants for use with the message scheduler
 // (don't use PGN or message ID as it must be a uint8)
@@ -15,11 +16,6 @@
 // Define the PGN numbers for necessary NMEA2000 messages
 #define PGN_RUDDER_ANGLE 127245
 #define PGN_TEMP 130311
-
-// Define the CAN ID for our custom messages
-#define CAN_ID_CUSTOM_LIMITS 0x8080
-#define CAN_ID_SET_STATUS 0x8081
-#define CAN_ID_SET_TX_RATE 0x8082
 
 // Define some calibration setting constants
 #define TO_PORT      1
@@ -137,11 +133,11 @@ void RudderSendCustomLimit(void)
 {
 	// Set CAN header information.
 	tCanMessage msg;
-	msg.id = CAN_ID_CUSTOM_LIMITS;
+	msg.id = CAN_MSG_ID_RUDDER_DETAILS;
 	msg.buffer = 0;
 	msg.message_type = CAN_MSG_DATA;
 	msg.frame_type = CAN_FRAME_EXT;
-	msg.validBytes = 7;
+	msg.validBytes = CAN_MSG_SIZE_RUDDER_DETAILS;
 
 	// Now fill in the data.
 	msg.payload[0] = rudderSensorData.PotValue;
@@ -207,12 +203,12 @@ void SendAndReceiveEcan(void)
 		if (foundOne) {
 			// Process custom rudder messages. Anything not explicitly handled is assumed to be a NMEA2000 message.
 			// If we receive a calibration message, start calibration if we aren't calibrating right now.
-			if (msg.id == CAN_ID_SET_STATUS) {
+			if (msg.id == CAN_MSG_ID_RUDDER_SET_STATE) {
 				if ((msg.payload[0] & 0x01) == 1 && rudderCalData.Calibrating == false) {
 					rudderCalData.CalibrationState = RUDDER_CAL_STATE_INIT;
 				}
 			// Update send message rates
-			} else if (msg.id == CAN_ID_SET_TX_RATE) {
+			} else if (msg.id == CAN_MSG_ID_RUDDER_SET_TX_RATE) {
 				UpdateMessageRate(msg.payload[0], msg.payload[1]);
 			} else {
 				pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
