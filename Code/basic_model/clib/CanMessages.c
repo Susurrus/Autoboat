@@ -38,3 +38,29 @@ void CanMessagePackageRudderSetState(tCanMessage *msg, bool enable, bool reset, 
 	msg->payload[0] |= reset?0x02:0x00;
 	msg->payload[0] |= enable?0x04:0x00;
 }
+
+void CanMessagePackageRudderDetails(tCanMessage *msg, uint16_t potVal, uint16_t portLimitVal, uint16_t sbLimitVal, bool portLimitTrig, bool sbLimitTrig, bool enabled, bool calibrated, bool calibrating)
+{
+    msg->id = CAN_MSG_ID_RUDDER_DETAILS;
+    msg->buffer = 0;
+    msg->message_type = CAN_MSG_DATA;
+    msg->frame_type = CAN_FRAME_STD;
+    msg->validBytes = CAN_MSG_SIZE_RUDDER_DETAILS;
+
+    // Now fill in the data.
+    msg->payload[0] = potVal;
+    msg->payload[1] = potVal >> 8;
+    msg->payload[2] = portLimitVal;
+    msg->payload[3] = portLimitVal >> 8;
+    msg->payload[4] = sbLimitVal;
+    msg->payload[5] = sbLimitVal >> 8;
+    msg->payload[6] = portLimitTrig << 7;
+    msg->payload[6] |= sbLimitTrig << 5;
+    msg->payload[6] |= enabled;
+    if (calibrated) {
+        msg->payload[6] |= 0x02;
+    }
+    if (calibrating) {
+        msg->payload[6] |= 0x04;
+    }
+}

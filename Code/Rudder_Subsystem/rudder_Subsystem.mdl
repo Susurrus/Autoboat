@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2435"
+    ComputedModelVersion    "1.2436"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -28,9 +28,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Nov 01 19:20:34 2012"
-  RTWModifiedTimeStamp	  273687948
-  ModelVersionFormat	  "1.%<AutoIncrement:2435>"
+  LastModifiedDate	  "Mon Nov 12 12:13:43 2012"
+  RTWModifiedTimeStamp	  274619275
+  ModelVersionFormat	  "1.%<AutoIncrement:2436>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -432,10 +432,10 @@ Model {
 	  ConfigAtBuild		  off
 	  RTWUseLocalCustomCode	  off
 	  RTWUseSimCustomCode	  off
-	  CustomInclude		  "../../../mavlink/seaslug/sealion\n../../../mavlink/seaslug/\nclib\n../basic_model/clib"
+	  CustomInclude		  "../../../mavlink/sealion/sealion\n../../../mavlink/sealion/\nclib\n../basic_model/clib"
 	  CustomSource		  "clib/ecanRudder.c\nclib/traps.c\nclib/Nvram.c\n\n../basic_model/clib/nmea2000.c\n../basic_model/cl"
-	  "ib/DEE.c\n../basic_model/clib/DEES.s\n../basic_model/clib/MavlinkMessageScheduler.c\n\n../../../ECAN_dspic/Circular"
-	  "Buffer.c\n../../../ECAN_dspic/ecanFunctions.c"
+	  "ib/DEE.c\n../basic_model/clib/DEES.s\n../basic_model/clib/MavlinkMessageScheduler.c\n../basic_model/clib/CanMessage"
+	  "s.c\n\n../../../ECAN_dspic/CircularBuffer.c\n../../../ECAN_dspic/ecanFunctions.c"
 	  IncludeHyperlinkInReport off
 	  LaunchReport		  off
 	  TargetLang		  "C"
@@ -786,7 +786,7 @@ Model {
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=0 "
       CurrentDlgPage	      "Code Generation/Custom Code"
-      ConfigPrmDlgPosition     [ 422, 100, 1498, 896 ] 
+      ConfigPrmDlgPosition     [ 406, 40, 1514, 912 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -1088,7 +1088,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "22171"
+    SIDHighWatermark	    "22172"
     Block {
       BlockType		      Reference
       Name		      "Calculate the actual rudder\nangle using calibration data\n[ecanRudder.c]"
@@ -1256,7 +1256,7 @@ Model {
       BlockType		      DataStoreMemory
       Name		      "Data Store\nMemory1"
       SID		      "20731"
-      Position		      [190, 210, 289, 239]
+      Position		      [315, 220, 414, 249]
       ZOrder		      -4
       ShowName		      off
       DataStoreName	      "rudderSensorData"
@@ -2620,7 +2620,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Rudder\nCommand"
-	Location		[1826, 431, 2906, 1344]
+	Location		[596, 136, 1676, 1049]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -2864,7 +2864,7 @@ Model {
       System {
 	Name			"Rudder angle\ncontroller"
 	Location		[202, 82, 1902, 1027]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -3201,6 +3201,43 @@ Model {
       InputSameDT	      off
       SaturateOnIntegerOverflow	off
     }
+    Block {
+      BlockType		      Reference
+      Name		      "Transmit status message\n[ecanRudder.c]"
+      SID		      "22172"
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      []
+      Position		      [30, 208, 176, 257]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.84"
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "Output Function"
+      fctName		      "RudderTransmitStatus"
+      INPUT_SIZE	      "1"
+      INPUT1		      "--"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "-1"
+      OUTPUT1		      "--"
+      SampleTime	      "0.5"
+      InputType		      "[ ]"
+      OutputType	      "[ ]"
+      FctDeclaration	      "extern void RudderTransmitStatus();"
+      FctCall		      "RudderTransmitStatus();"
+      OrderingInOutPopup      "None"
+      FctStart		      "None"
+      FctStart_Name	      "RudderSubsystemInit"
+      FctStart_Declaration    "inline extern void RudderSubsystemInit();"
+      FctStart_Call	      "RudderSubsystemInit();"
+      FctInit		      "None"
+      FctInit_Name	      "RudderEcanInit"
+      FctInit_Declaration     "inline extern void RudderEcanInit();"
+      FctInit_Call	      "RudderEcanInit();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
+    }
     Line {
       SrcBlock		      "Data Store\nRead"
       SrcPort		      1
@@ -3321,7 +3358,7 @@ Model {
     Annotation {
       Name		      "Store rudder data calculated within Simulink into a rudderData struct.\nIt's stored globally and ma"
       "kes it easy to access this data from custom\nC code. (see Busses.m for more details)"
-      Position		      [251, 269]
+      Position		      [401, 284]
     }
   }
 }

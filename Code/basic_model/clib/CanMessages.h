@@ -46,4 +46,6 @@ void CanMessagePackageStatus(tCanMessage *msg, uint8_t nodeId, uint16_t statusBi
  */
 void CanMessagePackageRudderSetState(tCanMessage *msg, bool enable, bool reset, bool calibrate);
 
+void CanMessagePackageRudderDetails(tCanMessage *msg, uint16_t potVal, uint16_t portLimitVal, uint16_t sbLimitVal, bool portLimitTrig, bool sbLimitTrig, bool enabled, bool calibrated, bool calibrating);
+
 #endif // _CAN_MESSAGES_H_

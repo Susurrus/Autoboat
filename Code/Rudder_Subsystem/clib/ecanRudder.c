@@ -30,6 +30,9 @@ enum {
 	RUDDER_CAL_STATE_RECENTER
 };
 
+// Store the unique ID for this node.
+const uint8_t nodeId = 0x04;
+
 // Instantiate a struct to store calibration data.
 struct RudderCalibrationData rudderCalData = {0};
 
@@ -53,6 +56,16 @@ void RudderSubsystemInit(void)
 	if (!AddMessage(SCHED_ID_TEMPERATURE, 1)) {
 		while (1);
 	}
+}
+
+void RudderTransmitStatus(void)
+{
+    tCanMessage msg;
+	uint16_t systemStatus = rudderCalData.Calibrating |
+	                        (rudderCalData.Calibrated << 1);
+	uint16_t systemErrors = 0;
+    CanMessagePackageStatus(&msg, nodeId, systemStatus, systemErrors);
+    ecan1_buffered_transmit(&msg);
 }
 
 void RudderCalibrate(void)
@@ -131,36 +144,17 @@ void RudderSendNmea(void)
 
 void RudderSendCustomLimit(void)
 {
-	// Set CAN header information.
 	tCanMessage msg;
-	msg.id = CAN_MSG_ID_RUDDER_DETAILS;
-	msg.buffer = 0;
-	msg.message_type = CAN_MSG_DATA;
-	msg.frame_type = CAN_FRAME_EXT;
-	msg.validBytes = CAN_MSG_SIZE_RUDDER_DETAILS;
+        CanMessagePackageRudderDetails(&msg, rudderSensorData.PotValue,
+                                             rudderCalData.PortLimitValue,
+                                             rudderCalData.StarLimitValue,
+                                             rudderSensorData.PortLimit,
+                                             rudderSensorData.StarLimit,
+                                             true,
+                                             rudderCalData.Calibrated,
+                                             rudderCalData.Calibrating
+                                             );
 
-	// Now fill in the data.
-	msg.payload[0] = rudderSensorData.PotValue;
-	msg.payload[1] = rudderSensorData.PotValue >> 8;
-	msg.payload[2] = rudderCalData.PortLimitValue;
-	msg.payload[3] = rudderCalData.PortLimitValue >> 8;
-	msg.payload[4] = rudderCalData.StarLimitValue;
-	msg.payload[5] = rudderCalData.StarLimitValue >> 8;
-	msg.payload[6] = rudderSensorData.PortLimit << 7;
-	msg.payload[6] |= rudderSensorData.StarLimit << 5;
-        // Set the rudder to being enabled.
-    // TODO: Make the rudder disabled until first calibration.
-    msg.payload[6] |= 0x01;
-	//if rudder is calibrated set second bit high
-	//if it is not calibrated set rudder to 'enable' (First bit high)
-	if (rudderCalData.Calibrated) {
-		msg.payload[6] |= 0x02;
-	}
-    if (rudderCalData.Calibrating) {
-		msg.payload[6] |= 0x04;
-	}
-
-	// And finally transmit it.
 	ecan1_buffered_transmit(&msg);
 }
 
