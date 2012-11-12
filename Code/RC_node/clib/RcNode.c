@@ -49,7 +49,7 @@ THE SOFTWARE.
 #include "CanMessages.h"
 
 // Track the node ID of this RC node.
-const uint8_t nodeId = 0x3;
+const uint8_t nodeId = CAN_NODE_RC;
 
 // Store some values for calibrating the RC transmitter.
 uint16_t rcRudderRange[2];

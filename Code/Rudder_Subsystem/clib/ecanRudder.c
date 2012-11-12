@@ -31,7 +31,7 @@ enum {
 };
 
 // Store the unique ID for this node.
-const uint8_t nodeId = 0x04;
+const uint8_t nodeId = CAN_NODE_RUDDER_CONTROLLER;
 
 // Instantiate a struct to store calibration data.
 struct RudderCalibrationData rudderCalData = {0};

@@ -36,6 +36,14 @@ enum {
 	CAN_MSG_SIZE_STATUS              = 5
 };
 
+// Give each CAN node a unique ID
+enum {
+    CAN_NODE_PRIMARY_CONTROLLER = 1,
+    CAN_NODE_RUDDER_CONTROLLER  = 2,
+    CAN_NODE_RC                 = 3,
+    CAN_NODE_POWER_SENSOR       = 4
+};
+
 /**
  * Package the data that makes up a STATUS CAN message.
  */
