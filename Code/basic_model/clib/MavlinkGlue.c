@@ -158,7 +158,6 @@ void MavLinkInit(void)
 		MAVLINK_MSG_ID_LOCAL_POSITION_NED,
 		MAVLINK_MSG_ID_ATTITUDE,
 		MAVLINK_MSG_ID_GPS_RAW_INT,
-		MAVLINK_MSG_ID_RC_CHANNELS_RAW,
 		MAVLINK_MSG_ID_RC_CHANNELS_SCALED,
 		MAVLINK_MSG_ID_STATUS_AND_ERRORS,
 		MAVLINK_MSG_ID_WSO100,
@@ -168,7 +167,7 @@ void MavLinkInit(void)
 		MAVLINK_MSG_ID_REVO_GS,
 		MAVLINK_MSG_ID_MAIN_POWER
 	};
-	uint8_t periodicities[] = {2, 2, 1, 10, 10, 5, 4, 4, 4, 2, 10, 4, 2, 2, 5};
+	uint8_t periodicities[] = {2, 2, 1, 10, 10, 5, 4, 4, 2, 10, 4, 2, 2, 5};
 	uint8_t i, t;
 	for (i = 0; i < sizeof(ids); ++i) {
 		if (i == 10)
@@ -390,33 +389,12 @@ void MavLinkSendLocalPosition(void)
 }
 
 /**
- * Only transmit if the RC receiver was selected, as raw mode for the joystick doesn't make sense.
- */
-void MavLinkSendRcRawData(void)
-{
-	if (manualInputSelect == 0) {
-		mavlink_message_t msg;
-
-		mavlink_msg_rc_channels_raw_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-		                                 systemStatus.time*10,
-		                                 0,
-		                                 rcSignalRudder, rcSignalThrottle, rcSignalMode,
-		                                 UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,
-		                                 UINT8_MAX);
-
-		len = mavlink_msg_to_send_buffer(buf, &msg);
-
-		uart1EnqueueData(buf, (uint8_t)len);
-	}
-}
-
-/**
  * Only transmit scaled manual control data messages if manual control is enabled OR if 
  * the RC transmitter is enabled as the RC transmitter overrides everything.
  */
 void MavLinkSendRcScaledData(void)
 {
-	if (!(systemStatus.status & 1) || manualInputSelect == 0) {
+	if (!(systemStatus.status & 1)) {
 		mavlink_message_t msg;
 
 		mavlink_msg_rc_channels_scaled_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
@@ -1219,10 +1197,6 @@ void MavLinkTransmit(void)
 			case MAVLINK_MSG_ID_GPS_GLOBAL_ORIGIN:
 				MavLinkSendGpsGlobalOrigin();
 			break;
-
-			case MAVLINK_MSG_ID_RC_CHANNELS_RAW: {
-				MavLinkSendRcRawData();
-			} break;
 
 			case MAVLINK_MSG_ID_RC_CHANNELS_SCALED: {
 				MavLinkSendRcScaledData();
