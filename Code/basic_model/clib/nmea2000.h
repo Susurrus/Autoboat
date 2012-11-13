@@ -93,4 +93,19 @@ uint8_t ParsePgn130310(const uint8_t data[8], uint8_t *seqId, float *waterTemp, 
 // Units are seqId: none, tempInstance: none/enum, humidityInstance: none/enum, temp: degrees C, humidity: %, pressure: kPa.
 uint8_t ParsePgn130311(const uint8_t data[8], uint8_t *seqId, uint8_t *tempInstance, uint8_t *humidityInstance, float *temp, float *humidity, float *pressure);
 
+/**
+ * Define nice constants for dealing with all the PGN numbers.
+ */
+enum {
+	PGN_RUDDER           = 127245,
+	PGN_BATTERY_STATUS   = 127508,
+	PGN_WATER_DEPTH      = 128267,
+	PGN_POSITION_RAP_UPD = 129025,
+	PGN_COG_SOG_RAP_UPD  = 129026,
+	PGN_TIME_DATE        = 129033,
+	PGN_WIND_DATA        = 130306,
+	PGN_ENV_PARAMETERS   = 130310,
+	PGN_ENV_PARAMETERS2  = 130311
+};
+
 #endif // _NMEA2000_H_

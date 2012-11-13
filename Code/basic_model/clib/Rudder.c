@@ -7,7 +7,7 @@
 
 struct RudderData rudderSensorData;
 
-float GetRudderAngle(void )
+float GetRudderAngle(void)
 {
 	return rudderSensorData.RudderAngle.flData;
 }
@@ -23,7 +23,7 @@ void SetRudderAngle(const uint8_t data[2])
 	rudderSensorData.RudderAngle.chData[1] = data[1];
 }
 
-void ClearRudderAngle(const uint8_t data[2])
+void ClearRudderAngle(void)
 {
 	rudderSensorData.RudderAngle.flData = 0.0;
 }
@@ -39,11 +39,11 @@ void RudderStartCalibration(void)
 	ecan1_buffered_transmit(&msg);
 }
 
-void RudderSendAngleCommand(float angleCommand)
+void RudderSendAngleCommand(uint8_t sourceNode, float angleCommand)
 {
 	// Set CAN header information.
 	tCanMessage msg;
-	PackagePgn127245(&msg, 9, 0, CAN_INV_DATA, angleCommand, CAN_INV_DATA);
+	PackagePgn127245(&msg, sourceNode, 0xFF, 0x3, angleCommand, -180);
 
 	// And finally transmit it.
 	ecan1_buffered_transmit(&msg);

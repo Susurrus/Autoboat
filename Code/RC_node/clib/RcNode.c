@@ -47,6 +47,7 @@ THE SOFTWARE.
 #include "DEE.h"
 #include "ecanFunctions.h"
 #include "CanMessages.h"
+#include "Rudder.h"
 
 // Track the node ID of this RC node.
 const uint8_t nodeId = CAN_NODE_RC;
@@ -89,10 +90,7 @@ void TransmitStatus(void)
 
 bool GetEstopStatus(void)
 {
-    if (sensorAvailability.prop.enabled) {
-        return true;
-    }
-    return false;
+    return sensorAvailability.prop.enabled;
 }
 
 /**
@@ -180,26 +178,25 @@ uint8_t ProcessAllEcanMessages(void)
 				if ((msg.payload[6] & 0x40) == 0) { // Checks the status bit to determine if the ACS300 is enabled.
 					sensorAvailability.prop.active_counter = 0;
 				}
-				//throttleDataStore.rpm.chData[0] = msg.payload[1];
-				//throttleDataStore.rpm.chData[1] = msg.payload[0];
-				//throttleDataStore.newData = true;
-			} if (msg.id == CAN_MSG_ID_RUDDER_DETAILS) { // From the rudder controller
-				// If the rudder is transmitting can messages, it's automatically enabled.
-				sensorAvailability.rudder.enabled_counter = 0;
-				if ((msg.payload[6] & (1 << 0)) == 1 && // If the rudder is enabled
-				    (msg.payload[6] & (1 << 1)) == 1 && // If the rudder is calibrated
-                    (msg.payload[6] & (1 << 2)) == 0) { // And done calibrating
-					sensorAvailability.rudder.active_counter = 0; // Then it's active
+			} else if (msg.id == CAN_MSG_ID_RUDDER_DETAILS) { // From the rudder controller
+				uint8_t x = msg.payload[6];
+				if (x & 1) { // If the rudder is enabled.
+					if (x & 2) { // If the rudder is calibrated.
+						if (!(x & 4)) { // If the rudder isn't calibrating.
+							sensorAvailability.rudder.active_counter = 0; // Then it's active
+						}
+					}
 				}
-				//rudderSensorData.RudderPotValue.chData[0] = msg.payload[0];
-				//rudderSensorData.RudderPotValue.chData[1] = msg.payload[1];
-				//rudderSensorData.RudderPotLimitStarboard.chData[0] = msg.payload[2];
-				//rudderSensorData.RudderPotLimitStarboard.chData[1] = msg.payload[3];
-				//rudderSensorData.RudderPotLimitPort.chData[0] = msg.payload[4];
-				//rudderSensorData.RudderPotLimitPort.chData[1] = msg.payload[5];
-				//rudderSensorData.LimitHitStarboard = msg.payload[6] & (1 << 5);
-				////rudderSensorData.LimitHitPort = msg.payload[6] & (1 << 7);
-				//rudderSensorData.RudderState = msg.payload[6] & 0x7;
+				rudderSensorData.RudderPotValue.chData[0] = msg.payload[0];
+				rudderSensorData.RudderPotValue.chData[1] = msg.payload[1];
+				rudderSensorData.RudderPotLimitStarboard.chData[0] = msg.payload[2];
+				rudderSensorData.RudderPotLimitStarboard.chData[1] = msg.payload[3];
+				rudderSensorData.RudderPotLimitPort.chData[0] = msg.payload[4];
+				rudderSensorData.RudderPotLimitPort.chData[1] = msg.payload[5];
+				rudderSensorData.LimitHitStarboard = msg.payload[6] & (1 << 5);
+				rudderSensorData.LimitHitPort = msg.payload[6] & (1 << 7);
+				rudderSensorData.RudderState = msg.payload[6] & 0x7;
+				sensorAvailability.rudder.enabled_counter = 0;
 			}
 
 			++messagesHandled;
