@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2437"
+    ComputedModelVersion    "1.2438"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,11 +26,11 @@ Model {
   Creator		  "bwmairs"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "Bryant"
+  LastModifiedBy	  "PhyzzBetch"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Nov 12 12:42:14 2012"
-  RTWModifiedTimeStamp	  274619275
-  ModelVersionFormat	  "1.%<AutoIncrement:2437>"
+  LastModifiedDate	  "Mon Nov 12 23:33:01 2012"
+  RTWModifiedTimeStamp	  274663968
+  ModelVersionFormat	  "1.%<AutoIncrement:2438>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1074,7 +1074,7 @@ Model {
   }
   System {
     Name		    "rudder_Subsystem"
-    Location		    [202, 82, 1902, 1027]
+    Location		    [202, 74, 1261, 722]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1088,7 +1088,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "22172"
+    SIDHighWatermark	    "22198"
     Block {
       BlockType		      Reference
       Name		      "Calculate the actual rudder\nangle using calibration data\n[ecanRudder.c]"
@@ -1321,12 +1321,24 @@ Model {
       Name		      "Data Store\nRead3"
       SID		      "22169"
       Ports		      [0, 1]
-      Position		      [775, 545, 870, 575]
+      Position		      [700, 535, 795, 565]
       ZOrder		      -5
       ShowName		      off
       DataStoreName	      "rudderCalData"
       SampleTime	      "T_step"
       DataStoreElements	      "rudderCalData.Calibrating"
+    }
+    Block {
+      BlockType		      DataStoreRead
+      Name		      "Data Store\nRead4"
+      SID		      "22197"
+      Ports		      [0, 1]
+      Position		      [700, 460, 795, 490]
+      ZOrder		      -5
+      ShowName		      off
+      DataStoreName	      "rudderCalData"
+      SampleTime	      "T_step"
+      DataStoreElements	      "rudderCalData.Calibrated"
     }
     Block {
       BlockType		      DataStoreRead
@@ -1341,6 +1353,154 @@ Model {
       DataStoreElements	      "rudderSensorData.CommandedRudderAngle#rudderSensorData.RudderPositionAngle"
     }
     Block {
+      BlockType		      SubSystem
+      Name		      "Disable rudder"
+      SID		      "22173"
+      Ports		      [0, 1]
+      Position		      [260, 726, 365, 814]
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      System {
+	Name			"Disable rudder"
+	Location		[313, 146, 1047, 670]
+	Open			off
+	ModelBrowserVisibility	on
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  BusCreator
+	  Name			  "Bus\nCreator"
+	  SID			  "22178"
+	  Ports			  [4, 1]
+	  Position		  [150, 29, 155, 191]
+	  ShowName		  off
+	  DisplayOption		  "bar"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant1"
+	  SID			  "22190"
+	  Position		  [70, 75, 100, 105]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "0"
+	  OutDataTypeStr	  "boolean"
+	  Port {
+	    PortNumber		    1
+	    Name		    "direction"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant2"
+	  SID			  "22191"
+	  Position		  [70, 115, 100, 145]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "0"
+	  OutDataTypeStr	  "uint16"
+	  Port {
+	    PortNumber		    1
+	    Name		    "up"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant3"
+	  SID			  "22182"
+	  Position		  [70, 35, 100, 65]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  OutDataTypeStr	  "boolean"
+	  Port {
+	    PortNumber		    1
+	    Name		    "enable"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant4"
+	  SID			  "22192"
+	  Position		  [70, 155, 100, 185]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "0"
+	  OutDataTypeStr	  "uint16"
+	  Port {
+	    PortNumber		    1
+	    Name		    "period"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "Command"
+	  SID			  "22189"
+	  Position		  [180, 103, 210, 117]
+	  BackgroundColor	  "yellow"
+	  IconDisplay		  "Port number"
+	}
+	Line {
+	  SrcBlock		  "Bus\nCreator"
+	  SrcPort		  1
+	  DstBlock		  "Command"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "direction"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Constant1"
+	  SrcPort		  1
+	  DstBlock		  "Bus\nCreator"
+	  DstPort		  2
+	}
+	Line {
+	  Name			  "enable"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Constant3"
+	  SrcPort		  1
+	  DstBlock		  "Bus\nCreator"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "period"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Constant4"
+	  SrcPort		  1
+	  DstBlock		  "Bus\nCreator"
+	  DstPort		  4
+	}
+	Line {
+	  Name			  "up"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Constant2"
+	  SrcPort		  1
+	  DstBlock		  "Bus\nCreator"
+	  DstPort		  3
+	}
+      }
+    }
+    Block {
       BlockType		      From
       Name		      "From1"
       SID		      "20744"
@@ -1352,9 +1512,19 @@ Model {
     }
     Block {
       BlockType		      From
+      Name		      "From2"
+      SID		      "22198"
+      Position		      [650, 578, 820, 602]
+      ZOrder		      -9
+      BackgroundColor	      "magenta"
+      ShowName		      off
+      GotoTag		      "UncalibratedMotorCommands"
+    }
+    Block {
+      BlockType		      From
       Name		      "From4"
       SID		      "22085"
-      Position		      [775, 580, 900, 610]
+      Position		      [700, 430, 825, 460]
       ZOrder		      -9
       BackgroundColor	      "magenta"
       ShowName		      off
@@ -1364,7 +1534,7 @@ Model {
       BlockType		      From
       Name		      "From5"
       SID		      "22086"
-      Position		      [775, 510, 900, 540]
+      Position		      [700, 495, 825, 525]
       ZOrder		      -9
       BackgroundColor	      "magenta"
       ShowName		      off
@@ -1383,6 +1553,17 @@ Model {
     }
     Block {
       BlockType		      Goto
+      Name		      "Goto2"
+      SID		      "22193"
+      Position		      [400, 755, 580, 785]
+      ZOrder		      -10
+      BackgroundColor	      "cyan"
+      ShowName		      off
+      GotoTag		      "UncalibratedMotorCommands"
+      TagVisibility	      "local"
+    }
+    Block {
+      BlockType		      Goto
       Name		      "Goto3"
       SID		      "22060"
       Position		      [400, 640, 530, 670]
@@ -1396,7 +1577,7 @@ Model {
       BlockType		      Goto
       Name		      "Goto4"
       SID		      "22092"
-      Position		      [1050, 545, 1180, 575]
+      Position		      [1045, 460, 1175, 490]
       ZOrder		      -10
       BackgroundColor	      "cyan"
       ShowName		      off
@@ -1446,7 +1627,7 @@ Model {
       SID		      "22160"
       Tag		      "dsPIC_dsPIC_CFunctionCall"
       Ports		      [0, 1]
-      Position		      [445, 125, 575, 165]
+      Position		      [435, 125, 565, 165]
       BackgroundColor	      "orange"
       LibraryVersion	      "3.84"
       SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
@@ -1831,7 +2012,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Motor Driver Outputs"
-	Location		[202, 82, 1902, 1027]
+	Location		[202, 82, 1262, 771]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -2583,7 +2764,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Rudder\nCommand"
-	Location		[596, 136, 1676, 1049]
+	Location		[361, 122, 1095, 646]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -2826,7 +3007,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Rudder angle\ncontroller"
-	Location		[202, 82, 1902, 1027]
+	Location		[313, 146, 1047, 670]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -3194,7 +3375,18 @@ Model {
       BlockType		      Switch
       Name		      "Switch1"
       SID		      "22143"
-      Position		      [960, 540, 1010, 580]
+      Position		      [885, 530, 935, 570]
+      ZOrder		      -18
+      ShowName		      off
+      Criteria		      "u2 ~= 0"
+      InputSameDT	      off
+      SaturateOnIntegerOverflow	off
+    }
+    Block {
+      BlockType		      Switch
+      Name		      "Switch2"
+      SID		      "22195"
+      Position		      [970, 455, 1020, 495]
       ZOrder		      -18
       ShowName		      off
       Criteria		      "u2 ~= 0"
@@ -3271,21 +3463,15 @@ Model {
     Line {
       SrcBlock		      "From5"
       SrcPort		      1
-      Points		      [0, 20]
+      Points		      [0, 25]
       DstBlock		      "Switch1"
       DstPort		      1
     }
     Line {
       SrcBlock		      "From4"
       SrcPort		      1
-      Points		      [0, -20]
-      DstBlock		      "Switch1"
-      DstPort		      3
-    }
-    Line {
-      SrcBlock		      "Switch1"
-      SrcPort		      1
-      DstBlock		      "Goto4"
+      Points		      [125, 0]
+      DstBlock		      "Switch2"
       DstPort		      1
     }
     Line {
@@ -3304,12 +3490,6 @@ Model {
       SrcBlock		      "Initialize Data EE \nemulation\n[DEE.c]"
       SrcPort		      1
       DstBlock		      "Restore rudder\ncalibration from NVRAM\n[misc.c]"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Calculate the actual rudder\nangle using calibration data\n[ecanRudder.c]"
-      SrcPort		      1
-      DstBlock		      "Run Calibration state\nmachine\n[ecanRudder.c]"
       DstPort		      1
     }
     Line {
@@ -3344,6 +3524,44 @@ Model {
       DstBlock		      "Switch1"
       DstPort		      2
     }
+    Line {
+      SrcBlock		      "Calculate the actual rudder\nangle using calibration data\n[ecanRudder.c]"
+      SrcPort		      1
+      DstBlock		      "Run Calibration state\nmachine\n[ecanRudder.c]"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Disable rudder"
+      SrcPort		      1
+      DstBlock		      "Goto2"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Data Store\nRead4"
+      SrcPort		      1
+      DstBlock		      "Switch2"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Switch2"
+      SrcPort		      1
+      DstBlock		      "Goto4"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Switch1"
+      SrcPort		      1
+      Points		      [10, 0; 0, -60]
+      DstBlock		      "Switch2"
+      DstPort		      3
+    }
+    Line {
+      SrcBlock		      "From2"
+      SrcPort		      1
+      Points		      [45, 0]
+      DstBlock		      "Switch1"
+      DstPort		      3
+    }
     Annotation {
       Position		      [101, 56]
     }
@@ -3352,7 +3570,7 @@ Model {
     }
     Annotation {
       Name		      "When in calibration mode, override the\ncontrol signals"
-      Position		      [872, 478]
+      Position		      [872, 393]
       HorizontalAlignment     "left"
     }
     Annotation {
