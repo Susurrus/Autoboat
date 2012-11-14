@@ -70,11 +70,11 @@ static uint32_t failedMessageCount = 0;
 static uint8_t sameFailedMessageFlag = 0;
 
 void cpInitCommunications(void) {
-        // Initialize UART2 to 57600 for the Revolution GS.
-        // It is also used for HIL data transmission.
+	// Initialize UART2 to 57600 for the Revolution GS.
+	// It is also used for HIL data transmission.
 	initUart2(BAUD57600_BRG_REG);
 
-        // Initialize UART1 to 115200 for groundstation communications.
+	// Initialize UART1 to 115200 for groundstation communications.
 	initUart1(BAUD115200_BRG_REG);
 }
 
