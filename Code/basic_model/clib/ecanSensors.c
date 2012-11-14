@@ -6,6 +6,7 @@
 #include "types.h"
 #include "Rudder.h"
 #include "code_gen.h"
+#include "CanMessages.h"
 
 struct PowerData powerDataStore = {};
 struct WindData windDataStore = {};
@@ -175,12 +176,12 @@ uint8_t ProcessAllEcanMessages(void)
 				throttleDataStore.rpm.chData[0] = msg.payload[1];
 				throttleDataStore.rpm.chData[1] = msg.payload[0];
 				throttleDataStore.newData = true;
-			} if (msg.id == 0x8080) { // From the rudder controller
+			} if (msg.id == CAN_MSG_ID_RUDDER_DETAILS) { // From the rudder controller
 				// If the rudder is transmitting can messages, it's automatically enabled.
 				sensorAvailability.rudder.enabled_counter = 0;
 				if ((msg.payload[6] & (1 << 0)) == 1 && // If the rudder is enabled
 				    (msg.payload[6] & (1 << 1)) == 1 && // If the rudder is calibrated
-                    (msg.payload[6] & (1 << 2)) == 0) { // And done calibrating
+                                    (msg.payload[6] & (1 << 2)) == 0) { // And done calibrating
 					sensorAvailability.rudder.active_counter = 0; // Then it's active
 				}
 				rudderSensorData.RudderPotValue.chData[0] = msg.payload[0];
@@ -195,7 +196,7 @@ uint8_t ProcessAllEcanMessages(void)
 			} else {
 				pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
 				switch (pgn) {
-				case 126992: { // From GPS
+				case PGN_SYSTEM_TIME: { // From GPS
 					sensorAvailability.gps.enabled_counter = 0;
 					uint8_t rv = ParsePgn126992(msg.payload, NULL, NULL, &dateTimeDataStore.year, &dateTimeDataStore.month, &dateTimeDataStore.day, &dateTimeDataStore.hour, &dateTimeDataStore.min, &dateTimeDataStore.sec, &dateTimeDataStore.usecSinceEpoch);
 					// Check if all 6 parts of the datetime were successfully decoded before triggering an update
@@ -204,12 +205,12 @@ uint8_t ProcessAllEcanMessages(void)
 						dateTimeDataStore.newData = true;
 					}
 				} break;
-				case 127245: { // From the Rudder Controller
+				case PGN_RUDDER: { // From the Rudder Controller
 					if (ParsePgn127245(msg.payload, NULL, NULL, NULL, NULL, &rudderSensorData.RudderAngle.flData) == 0x10){
 						// No action necessary.
 					}
 				} break;
-				case 127508: { // From the Power Node
+				case PGN_BATTERY_STATUS: { // From the Power Node
 					sensorAvailability.power.enabled_counter = 0;
 					uint8_t rv = ParsePgn127508(msg.payload, NULL, NULL, &powerDataStore.voltage.flData, &powerDataStore.current.flData, &powerDataStore.temperature.flData);
 					if ((rv & 0x0C) == 0xC) {
@@ -217,14 +218,14 @@ uint8_t ProcessAllEcanMessages(void)
 						powerDataStore.newData = true;
 					}
 				} break;
-				case 128259: // From the WSO100
+				case PGN_SPEED: // From the WSO100
 					sensorAvailability.wso100.enabled_counter = 0;
 					if (ParsePgn128259(msg.payload, NULL, &waterDataStore.speed.flData)) {
 						sensorAvailability.wso100.active_counter = 0;
 						waterDataStore.newData = true;
 					}
 				break;
-				case 128267: { // From the DST800
+				case PGN_WATER_DEPTH: { // From the DST800
 					sensorAvailability.dst800.enabled_counter = 0;
 					// Only update the data in waterDataStore if an actual depth was returned.
 					uint8_t rv = ParsePgn128267(msg.payload, NULL, &waterDataStore.depth.flData, NULL);
@@ -233,7 +234,7 @@ uint8_t ProcessAllEcanMessages(void)
 						waterDataStore.newData = true;
 					}
 				} break;
-				case 129025: { // From the GPS100
+				case PGN_POSITION_RAP_UPD: { // From the GPS100
 					// Only record the live GPS data if we aren't in HIL mode.
 					if ((systemStatus.status & (1 << 1)) == 0) {
 						sensorAvailability.gps.enabled_counter = 0;
@@ -245,7 +246,7 @@ uint8_t ProcessAllEcanMessages(void)
 						}
 					}
 				} break;
-				case 129026: { // From the GPS100
+				case PGN_COG_SOG_RAP_UPD: { // From the GPS100
 					// Only record the live GPS data if we aren't in HIL mode.
 					if ((systemStatus.status & (1 << 1)) == 0) {
 						sensorAvailability.gps.enabled_counter = 0;
@@ -257,21 +258,21 @@ uint8_t ProcessAllEcanMessages(void)
 						}
 					}
 				} break;
-				case 130306: // From the WSO100
+				case PGN_WIND_DATA: // From the WSO100
 					sensorAvailability.wso100.enabled_counter = 0;
 					if (ParsePgn130306(msg.payload, NULL, &windDataStore.speed.flData, &windDataStore.direction.flData)) {
 						sensorAvailability.wso100.active_counter = 0;
 						windDataStore.newData = true;
 					}
 				break;
-				case 130310: // From the DST800
+				case PGN_ENV_PARAMETERS: // From the DST800
 					sensorAvailability.dst800.enabled_counter = 0;
 					if (ParsePgn130310(msg.payload, NULL, &waterDataStore.temp.flData, NULL, NULL)) {
 						// The DST800 is only considered active when a water depth is received
 						waterDataStore.newData = true;
 					}
 				break;
-				case 130311: // From the WSO100
+				case PGN_ENV_PARAMETERS2: // From the WSO100
 					sensorAvailability.wso100.enabled_counter = 0;
 					if (ParsePgn130311(msg.payload, NULL, NULL, NULL, &airDataStore.temp.flData, &airDataStore.humidity.flData, &airDataStore.pressure.flData)) {
 						sensorAvailability.wso100.active_counter = 0;

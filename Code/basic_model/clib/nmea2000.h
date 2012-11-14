@@ -97,8 +97,10 @@ uint8_t ParsePgn130311(const uint8_t data[8], uint8_t *seqId, uint8_t *tempInsta
  * Define nice constants for dealing with all the PGN numbers.
  */
 enum {
+	PGN_SYSTEM_TIME      = 126992,
 	PGN_RUDDER           = 127245,
 	PGN_BATTERY_STATUS   = 127508,
+	PGN_SPEED            = 128259,
 	PGN_WATER_DEPTH      = 128267,
 	PGN_POSITION_RAP_UPD = 129025,
 	PGN_COG_SOG_RAP_UPD  = 129026,
