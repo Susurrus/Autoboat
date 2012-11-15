@@ -450,8 +450,8 @@ int main(void)
 		// so was the first of the smallest timesteps, which is what's chosen).
 		count = GetMessagesForTimestep(&sched, msgs);
 		assert(count == 2); // Check that there's only one message
-		assert(msgs[0] == 100 | msgs[1] == 100);
-		assert(msgs[0] == 0 | msgs[1] == 0);
+		assert(msgs[0] == 100 || msgs[1] == 100);
+		assert(msgs[0] == 0 || msgs[1] == 0);
 		
 		// Now clear the list and confirm that it's empty.
 		ClearSchedule(&sched);

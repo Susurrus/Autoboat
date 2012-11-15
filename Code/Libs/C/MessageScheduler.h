@@ -22,7 +22,7 @@
  * TESTING:
  * A unit-testing framework is built-in to this library and available by running with the UNIT_TEST
  * preprocessor macro defined. For example: 
- *   `gcc MessageScheduler.c -DUNIT_TEST -g -lm`
+ *   `gcc MessageScheduler.c -DUNIT_TEST -g -Wall -lm`
  */
 #ifndef _MESSAGE_SCHEDULER_H_
 #define _MESSAGE_SCHEDULER_H_
@@ -37,10 +37,10 @@
 typedef struct {
 	// Number of messages. Equal the the first dimensions of the *Messages[] arrays.
 	const uint8_t MessageTypes;
-	// An ID for every message type.
-	uint8_t *MessageIds;
-	// The size in bytes of every message type. Contains `MessageTypes` entries.
-	uint8_t *MessageSizes;
+	// An ID for every message type. The data is left unconstant so that initialization functions can manipulate it.
+	uint8_t* const MessageIds;
+	// The size in bytes of every message type. Contains `MessageTypes` entries. The data is left unconstant so that the initialization functions can manipulate it.
+	uint8_t* const MessageSizes;
 	// Tracks the current timestep that we're executing at.
 	uint8_t CurrentTimestep;
 	// Keep a 128-bit schedule for every message. First dimension is messagetype,
@@ -48,7 +48,7 @@ typedef struct {
 	// storing the boolean values for each timestep.
 	// We use 16-bit integers here because this is likely running on a 16-bit MCU and
 	// this will be substantially faster than doing 32-bit operations.
-	uint16_t (*Timesteps)[2][8];
+	uint16_t (* const Timesteps)[2][8];
 } MessageSchedule;
 
 /// These functions handle adding/removing messages from the schedule.
