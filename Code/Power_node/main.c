@@ -23,9 +23,9 @@ THE SOFTWARE.
 
 */
 
-#include "ecanDefinitions.h"
-#include "nmea2000.h"
-#include "types.h"
+#include "ecanFunctions.h"
+#include "Nmea2000.h"
+#include "Types.h"
 #include <math.h>
 
 void ProcessAdcData(float voltage, float amperage)
@@ -36,7 +36,7 @@ void ProcessAdcData(float voltage, float amperage)
 	// Set it as a data message with an extended frame type.
 	tCanMessage msg;
 	msg.message_type = CAN_MSG_DATA;
-	msg.frame_type = CAN_FRAME_EXT;
+	msg.frame_type = CAN_FRAME_STD;
 	msg.buffer = 0;
 	
 	// Use PGN 127508: Voltage, current, temperature
@@ -70,5 +70,5 @@ void ProcessAdcData(float voltage, float amperage)
 	
 	// Finish it off with a payload length and send it.
 	msg.validBytes = 8;
-	ecan1_buffered_transmit(msg);
+	ecan1_buffered_transmit(&msg);
 }

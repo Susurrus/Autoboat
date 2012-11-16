@@ -1,6 +1,6 @@
 #include "ecanDefinitions.h"
 #include "rudder_Subsystem.h"
-#include "MavlinkMessageScheduler.h"
+#include "MessageScheduler.h"
 #include "ecanRudder.h"
 #include "ecanFunctions.h"
 #include "nmea2000.h"
@@ -39,26 +39,45 @@ struct RudderCalibrationData rudderCalData = {0};
 // Instantiate a struct to store rudder input data.
 struct RudderSensorData rudderSensorData = {0};
 
+// Initialize the message scheduler
+
+// Set up the message scheduler for MAVLink transmission
+#define ECAN_MSGS_SIZE 4
+static uint8_t ids[ECAN_MSGS_SIZE] = {
+    SCHED_ID_RUDDER_ANGLE,
+    SCHED_ID_CUSTOM_LIMITS,
+    SCHED_ID_TEMPERATURE,
+    SCHED_ID_STATUS
+};
+static uint16_t tsteps[ECAN_MSGS_SIZE][2][8] = {};
+static uint8_t  mSizes[ECAN_MSGS_SIZE];
+static MessageSchedule sched = {
+	ECAN_MSGS_SIZE,
+	ids,
+	mSizes,
+	0,
+	tsteps
+};
+
 void RudderSubsystemInit(void)
 {
-
 	// Transmit the rudder angle at 10Hz
-	if (!AddMessage(SCHED_ID_RUDDER_ANGLE, 10)) {
+	if (!AddMessageRepeating(&sched, SCHED_ID_RUDDER_ANGLE, 10)) {
 		while (1);
 	}
 
 	// Transmit status at 4Hz
-	if (!AddMessage(SCHED_ID_CUSTOM_LIMITS, 4)) {
+	if (!AddMessageRepeating(&sched, SCHED_ID_CUSTOM_LIMITS, 4)) {
 		while (1);
 	}
 
 	// Transmit temperature at 1Hz
-	if (!AddMessage(SCHED_ID_TEMPERATURE, 1)) {
+	if (!AddMessageRepeating(&sched, SCHED_ID_TEMPERATURE, 1)) {
 		while (1);
 	}
 
 	// Transmit error/status at 2Hz
-	if (!AddMessage(SCHED_ID_STATUS, 2)) {
+	if (!AddMessageRepeating(&sched, SCHED_ID_STATUS, 2)) {
 		while (1);
 	}
 }
@@ -122,21 +141,21 @@ void RudderSendNmea(void)
 	PackagePgn127245(&msg, nodeId, 0xFF, 0xF, 0.0, rudderSensorData.RudderPositionAngle);
 
 	// And finally transmit it.
-	//ecan1_buffered_transmit(&msg);
+	ecan1_buffered_transmit(&msg);
 }
 
 void RudderSendCustomLimit(void)
 {
 	tCanMessage msg;
-        CanMessagePackageRudderDetails(&msg, rudderSensorData.PotValue,
-                                             rudderCalData.PortLimitValue,
-                                             rudderCalData.StarLimitValue,
-                                             rudderSensorData.PortLimit,
-                                             rudderSensorData.StarLimit,
-                                             true,
-                                             rudderCalData.Calibrated,
-                                             rudderCalData.Calibrating
-                                             );
+	CanMessagePackageRudderDetails(&msg, rudderSensorData.PotValue,
+										 rudderCalData.PortLimitValue,
+										 rudderCalData.StarLimitValue,
+										 rudderSensorData.PortLimit,
+										 rudderSensorData.StarLimit,
+										 true,
+										 rudderCalData.Calibrated,
+										 rudderCalData.Calibrating
+										 );
 
 	ecan1_buffered_transmit(&msg);
 }
@@ -175,9 +194,9 @@ void RudderSendStatus(void)
 	// Specify a new CAN message w/ metadata
 	tCanMessage msg;
 	uint16_t status = (rudderSensorData.PortLimit << 3) |
-					  (rudderSensorData.StarLimit << 2) |
-					  (rudderCalData.Calibrated << 0) |
-					  (rudderCalData.Calibrating << 1);
+	                  (rudderSensorData.StarLimit << 2) |
+	                  (rudderCalData.Calibrated << 0) |
+	                  (rudderCalData.Calibrating << 1);
 	uint16_t errors = 0;
 	CanMessagePackageStatus(&msg, nodeId, status, errors);
 
@@ -215,50 +234,51 @@ void SendAndReceiveEcan(void)
 	} while (messagesLeft > 0);
 
 	// And now transmit all messages for this timestep
-	SListItem *messagesToSend = IncrementTimestep();
-	SListItem *j;
-	for (j = messagesToSend; j; j = j->sibling) {
-		switch (j->id) {
-			case SCHED_ID_CUSTOM_LIMITS:
-				RudderSendCustomLimit();
-			break;
+        uint8_t msgs[ECAN_MSGS_SIZE];
+	uint8_t count = GetMessagesForTimestep(&sched, msgs);
+        int i;
+	for (i = 0; i < count; ++i) {
+            switch (msgs[i]) {
+                case SCHED_ID_CUSTOM_LIMITS:
+                    RudderSendCustomLimit();
+                break;
 
-			case SCHED_ID_RUDDER_ANGLE:
-				RudderSendNmea();
-			break;
+                case SCHED_ID_RUDDER_ANGLE:
+                    RudderSendNmea();
+                break;
 
-			case SCHED_ID_TEMPERATURE:
-				RudderSendTemperature();
-			break;
+                case SCHED_ID_TEMPERATURE:
+                    RudderSendTemperature();
+                break;
 
-                        case SCHED_ID_STATUS:
-                            RudderSendStatus();
-                        break;
-		}
+                case SCHED_ID_STATUS:
+                    RudderSendStatus();
+                break;
+            }
 	}
 }
 
 void UpdateMessageRate(const uint8_t angleRate, const uint8_t statusRate)
 {
-	//handle the angle message first
-	if (angleRate != 0xFF) {
-		if (angleRate == 0x00) {
-		//write code for this
-		} else if ((angleRate <= 100) && (angleRate >= 1)) {
-			RemoveMessage(SCHED_ID_RUDDER_ANGLE);
-			AddMessage(SCHED_ID_RUDDER_ANGLE, angleRate);
-		}
-	}
+    // Handle the angle message first
+    if (angleRate != 0xFF) {
+        if (angleRate == 0x00) {
+            // TODO: write code for this
+        } else if ((angleRate <= 100) && (angleRate >= 1)) {
+            RemoveMessage(&sched, SCHED_ID_RUDDER_ANGLE);
+            AddMessageRepeating(&sched, SCHED_ID_RUDDER_ANGLE, angleRate);
+        }
+    }
 
-	//handle the status message
-	if (statusRate != 0xFF) {
-		if (statusRate == 0x00) {
-		//write code for this
-		} else if ((statusRate <= 100) && (statusRate >= 1)) {
-			RemoveMessage(SCHED_ID_CUSTOM_LIMITS);
-			AddMessage(SCHED_ID_CUSTOM_LIMITS, statusRate);
-		}
-	}
+    // Handle the status message
+    if (statusRate != 0xFF) {
+        if (statusRate == 0x00) {
+            // TODO: write code for this
+        } else if ((statusRate <= 100) && (statusRate >= 1)) {
+            RemoveMessage(&sched, SCHED_ID_CUSTOM_LIMITS);
+            AddMessageRepeating(&sched, SCHED_ID_CUSTOM_LIMITS, statusRate);
+        }
+    }
 }
 
 void CalculateRudderAngle(void)

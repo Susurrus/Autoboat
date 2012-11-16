@@ -10,7 +10,7 @@
 //TODO: Add Status decoder
 //TODO: Add RudderSetState decoder
 
-#include "types.h"
+#include "Types.h"
 #include "ecanDefinitions.h"
 
  // Define the standard (11-bit) IDs for all custom CAN messages.

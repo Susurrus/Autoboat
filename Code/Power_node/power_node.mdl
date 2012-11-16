@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.34"
+    ComputedModelVersion    "1.40"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Aug 28 11:37:13 2012"
-  RTWModifiedTimeStamp	  268054631
-  ModelVersionFormat	  "1.%<AutoIncrement:34>"
+  LastModifiedDate	  "Thu Nov 15 17:55:18 2012"
+  RTWModifiedTimeStamp	  274899798
+  ModelVersionFormat	  "1.%<AutoIncrement:40>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -67,6 +67,7 @@ Model {
     $ObjectID		    1
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "gps_node"
+    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -429,8 +430,9 @@ Model {
 	  ConfigAtBuild		  off
 	  RTWUseLocalCustomCode	  off
 	  RTWUseSimCustomCode	  off
-	  CustomSource		  "../basic_model/clib/conversions.c\n../basic_model/clib/nmea2000.c\n../basic_model/clib/CircularBuf"
-	  "fer.c\n../../../ECAN_dspic/ecanFunctions.c\nmain.c"
+	  CustomInclude		  "../Libs/C\n../../../ECAN_dspic"
+	  CustomSource		  "main.c\n\n../Libs/C/Conversions.c\n../Libs/C/Nmea2000.c\n\n../../../ECAN_dspic/ecanFunctions.c\n.."
+	  "/../../ECAN_dspic/CircularBuffer.c"
 	  IncludeHyperlinkInReport off
 	  LaunchReport		  off
 	  TargetLang		  "C"
@@ -699,19 +701,19 @@ Model {
 	      CustomProperty {
 		DataType		"string"
 		Name			"LDPICTYPE"
-		Value			" -Xlinker --script=C:\\PROGRA~2\\MICROC~1\\mplabc30\\v3.30c\\support\\dsPIC33F\\gld\\p33fj128GP802.gld"
+		Value			" -Xlinker --script=C:\\PROGRA~2\\MICROC~1\\xc16\\v1.10\\support\\dsPIC33F\\gld\\p33fj128GP802.gld"
 	      }
 	      CustomProperty {
 		DataType		"string"
 		Name			"LDLIBPIC"
-		Value			" C:\\PROGRA~2\\MICROC~1\\mplabc30\\v3.30c\\lib\\libpic30-coff.a C:\\PROGRA~2\\MICROC~1\\mplabc30\\v3.30c\\l"
-		"ib\\dsPIC33F\\libp33fj128GP802-coff.a C:\\PROGRA~2\\MICROC~1\\mplabc30\\v3.30c\\lib\\libc-coff.a C:\\PROGRA~2\\MICRO"
-		"C~1\\mplabc30\\v3.30c\\lib\\libm-coff.a"
+		Value			" C:\\PROGRA~2\\MICROC~1\\xc16\\v1.10\\lib\\libpic30-coff.a C:\\PROGRA~2\\MICROC~1\\xc16\\v1.10\\lib\\dsPIC3"
+		"3F\\libp33fj128GP802-coff.a C:\\PROGRA~2\\MICROC~1\\xc16\\v1.10\\lib\\libc-coff.a C:\\PROGRA~2\\MICROC~1\\xc16\\v1.1"
+		"0\\lib\\libm-coff.a"
 	      }
 	      CustomProperty {
 		DataType		"string"
 		Name			"PIC_INCLUDES"
-		Value			" -I C:\\PROGRA~2\\MICROC~1\\mplabc30\\v3.30c\\include"
+		Value			" -I C:\\PROGRA~2\\MICROC~1\\xc16\\v1.10\\include"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -721,7 +723,22 @@ Model {
 	      CustomProperty {
 		DataType		"string"
 		Name			"GCCPATH"
-		Value			"''"
+		Value			""
+	      }
+	      CustomProperty {
+		DataType		"string"
+		Name			"GCC1"
+		Value			"xc16-gcc -omf=coff"
+	      }
+	      CustomProperty {
+		DataType		"string"
+		Name			"AR1"
+		Value			"xc16-ar -r -omf=coff"
+	      }
+	      CustomProperty {
+		DataType		"string"
+		Name			"BIN2HEX"
+		Value			"xc16-bin2hex -omf=coff"
 	      }
 	    }
 	    PropName		    "Components"
@@ -732,7 +749,7 @@ Model {
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=0 "
       CurrentDlgPage	      "Code Generation/Custom Code"
-      ConfigPrmDlgPosition     [ 336, 10, 1265, 801 ] 
+      ConfigPrmDlgPosition     [ 473, 80, 1418, 1015 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -824,7 +841,7 @@ Model {
   }
   System {
     Name		    "power_node"
-    Location		    [830, 269, 1543, 948]
+    Location		    [11, 83, 1909, 1010]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -848,7 +865,7 @@ Model {
       Position		      [45, 247, 195, 298]
       ShowName		      off
       Priority		      "5"
-      LibraryVersion	      "3.79"
+      LibraryVersion	      "3.84"
       SourceBlock	      "dsPICdrivers/Peripheral I//O/ADC Input"
       SourceType	      "dsPIC : ADC10"
       ADC_TYPE		      "12 bits"
@@ -870,7 +887,7 @@ Model {
     }
     Block {
       BlockType		      SubSystem
-      Name		      "Blink LED on RA3 at 1Hz"
+      Name		      "Blink status LED @ 1Hz"
       SID		      "50"
       Ports		      []
       Position		      [530, 30, 631, 75]
@@ -889,7 +906,7 @@ Model {
       MaskPortRotate	      "default"
       MaskIconUnits	      "autoscale"
       System {
-	Name			"Blink LED on RA3 at 1Hz"
+	Name			"Blink status LED @ 1Hz"
 	Location		[202, 82, 1582, 847]
 	Open			off
 	ModelBrowserVisibility	off
@@ -936,17 +953,17 @@ Model {
 	}
 	Block {
 	  BlockType		  Reference
-	  Name			  "Running status\n(LED1)"
+	  Name			  "Running status\n(LED2)"
 	  SID			  "53"
 	  Tag			  "dsPIC_Digital_Output"
 	  Ports			  [1]
 	  Position		  [240, 28, 345, 62]
 	  Priority		  "5"
-	  LibraryVersion	  "3.79"
+	  LibraryVersion	  "3.84"
 	  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Output Write"
 	  SourceType		  ""
 	  PORT			  "A"
-	  Pin			  "[3]"
+	  Pin			  "[4]"
 	  Simultaneous		  off
 	  OrderingInOutPopup	  "None"
 	}
@@ -959,7 +976,7 @@ Model {
 	Line {
 	  SrcBlock		  "Data Type Conversion"
 	  SrcPort		  1
-	  DstBlock		  "Running status\n(LED1)"
+	  DstBlock		  "Running status\n(LED2)"
 	  DstPort		  1
 	}
       }
@@ -1134,7 +1151,7 @@ Model {
       DropShadow	      on
       ShowName		      off
       Priority		      "1"
-      LibraryVersion	      "3.79"
+      LibraryVersion	      "3.84"
       SourceBlock	      "dsPICdrivers/Master"
       SourceType	      "Master"
       TimeStepType	      "Timer1"
@@ -1148,12 +1165,12 @@ Model {
       tmr2345		      "[0  0  0  0]"
       tmr2345cfg	      "[-1 -1 -1 -1]"
       IOautoConf	      on
-      typePort		      "[ 8   0   0  10   0   0   0   0   0   0   0   0   0   0   0   0   8   0   0   0   0   0  22  23"
+      typePort		      "[ 8   0   0   0  10   0   0   0   0   0   0   0   0   0   0   0   8   0   0   0  22   0   0  23"
       "   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
       "   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
       "   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
       "   0   0   0   0 ]"
-      TRIS		      "[ 65527  65407  65535  65535  65535  65535  65535 ]"
+      TRIS		      "[ 65519  65407  65535  65535  65535  65535  65535 ]"
       ADPCFG		      "0"
       MasterBusyPort	      "None"
       MasterOverloadPort      "None"
@@ -1177,7 +1194,7 @@ Model {
       Tag		      "dsPIC_PIN_Mapping"
       Ports		      []
       Position		      [365, 25, 465, 75]
-      LibraryVersion	      "3.79"
+      LibraryVersion	      "3.84"
       SourceBlock	      "dsPICdrivers/Peripheral MAPPING/PIN Mapping"
       SourceType	      "Peripheral PIN Mapping"
       in_INT1		      "Not tied (VSS)"
@@ -1225,7 +1242,7 @@ Model {
       out_SCK2OUT	      "Not changed"
       in_SS2		      "Not tied (VSS)"
       out_SS2OUT	      "Not changed"
-      in_C1RX		      "tied to RP6"
+      in_C1RX		      "tied to RP4"
       out_C1TX		      "tied to RP7"
       out_C1OUT		      "Not changed"
       out_C2OUT		      "Not changed"
@@ -1238,7 +1255,7 @@ Model {
       Ports		      [2]
       Position		      [480, 245, 685, 300]
       BackgroundColor	      "orange"
-      LibraryVersion	      "3.79"
+      LibraryVersion	      "3.84"
       SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
       SourceType	      "C Function Call"
       FctUpdate		      "Output Function"
