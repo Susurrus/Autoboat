@@ -220,7 +220,7 @@ void SendAndReceiveEcan(void)
             // Update send message rates
             } else if (msg.id == CAN_MSG_ID_RUDDER_SET_TX_RATE) {
                 uint16_t angleRate, statusRate;
-                CanMessageDecodeRudderSetTxRate(&msg, angleRate, statusRate);
+                CanMessageDecodeRudderSetTxRate(&msg, &angleRate, &statusRate);
                 UpdateMessageRate(angleRate, statusRate);
             } else {
                 pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
