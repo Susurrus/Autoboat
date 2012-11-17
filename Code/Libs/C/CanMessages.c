@@ -23,6 +23,21 @@ void CanMessagePackageStatus(tCanMessage *msg, uint8_t nodeId, uint16_t statusBi
 	msg->payload[4] = (uint8_t)(errorBitfield >> 8);
 }
 
+void CanMessageDecodeStatus(const tCanMessage *msg, uint8_t *nodeId, uint16_t *statusBitfield, uint16_t *errorBitfield)
+{
+	if (nodeId) {
+		*nodeId = msg->payload[0];
+	}
+
+	if (statusBitfield) {
+		*statusBitfield = ((uint16_t)msg->payload[1]) || (((uint16_t)msg->payload[2]) << 8);
+	}
+
+	if (errorBitfield) {
+		*errorBitfield = ((uint16_t)msg->payload[3]) || (((uint16_t)msg->payload[4]) << 8);
+	}
+}
+
 void CanMessagePackageRudderSetState(tCanMessage *msg, bool enable, bool reset, bool calibrate)
 { 
 	// Set CAN header information.

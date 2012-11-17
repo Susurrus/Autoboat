@@ -49,6 +49,7 @@ enum {
  */
 void CanMessagePackageStatus(tCanMessage *msg, uint8_t nodeId, uint16_t statusBitfield, uint16_t errorBitfield);
 
+void CanMessageDecodeStatus(const tCanMessage *msg, uint8_t *nodeId, uint16_t *statusBitfield, uint16_t *errorBitfield);
 /**
  * Package the data that makes up a RUDDER_SET_STATE message into a struct suitable for transmission.
  */

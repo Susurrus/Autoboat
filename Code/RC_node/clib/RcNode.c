@@ -59,7 +59,7 @@ bool restoredCalibration;
 
 /// Store some 16-bit bitfields for tracking the system status and various erros.
 // systemStatus tracks various statuses of the node.
-//  * bit 0: RC transmitter is disconnected
+//  * bit 0: Manual control enabled.
 uint16_t systemStatus;
 // systemErrors tracks the various flags that can put the node into a reset state.
 //  * bit 0: eStop has been pushed.
