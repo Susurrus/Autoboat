@@ -3,18 +3,42 @@
 
 #include "ecanDefinitions.h"
 
-// Define a constant for specifying when a field is invalid. Use instead of all 1s or all 0s.
-#define CAN_INV_DATA 0xFFFFFFFF
+/**
+ *
+ * @param msg
+ * @param sourceDevice An ID representing the transmitting device.
+ * @param instance Which rudder instance this is. Used for when multiple rudder controller exist. If no value or unknown use 0xFF.
+ * @param dirOrder UNKNOWN. Set to 0x3 to specify invalid.
+ * @param angleOrder Commanded rudder angle in radians.  If no value or invalid use NAN.
+ * @param position Sensed rudder angle in radians.  If no value or invalid use NAN.
+ */
+void PackagePgn127245(tCanMessage *msg, uint8_t sourceDevice, uint8_t instance, uint8_t dirOrder, float angleOrder, float position);
 
 /**
  *
  * @param msg
  * @param sourceDevice An ID representing the transmitting device.
- * @param instance Which rudder instance this is. Used for when multiple rudder controller exist. If unknown set to 0xFF.
- * @param dirOrder UNKNOWN. Set to 3 to specify invalid.
- * @param angleOrder Commanded rudder angle in radians. Set to >90 or <-90 to specify as invalid
- * @param position Sensed rudder angle in radians. Set to >90 or <-90 to specify as invalid.
+ * @param battInstance A unique ID for this battery status. If no value or invalid use 0xFF.
+ * @param voltage The voltage measured for this device in Volts. If no value or invalid use NAN.
+ * @param amperage The amps measured as being drawn from this device in Amps. If no value or invalid use NAN.
+ * @param temp The temperature of this battery measured in degrees C. If no value or invalid use NAN.
+ * @param sid The sequence ID for this measurement. If no value or invalid use NAN.
  */
-void PackagePgn127245(tCanMessage *msg, uint8_t sourceDevice, uint8_t instance, uint8_t dirOrder, float angleOrder, float position);
+void PackagePgn127508(tCanMessage *msg, uint8_t sourceDevice, uint8_t battInstance, float voltage, float amperage, float temp, uint8_t sid);
+
+/**
+ *
+ * @param msg The provided struct to store the encoded CAN message in
+ * @param sourceDevice An ID representing the transmitting device.
+ * @param sid The sequence ID of this data set. If no value or unknown use 0xFF.
+ * @param tempInst The instance of this temperature measurement. See PGN_130311_TEMP_INST.
+ * @param humidInst The instance of this humidity measurement. See PGN_130311_HUMID_INST.
+ * @param temp The temperature reading in Celsius. If no value or invalid use NAN.
+ * @param humid The humidity reading in percent. If no value or invalid use NAN.
+ * @param press The pressure reading in kPa. If no value or invalid use NAN.
+ * @see PGN_130311_TEMP_INST
+ * @see PGN_130311_HUMID_INST
+ */
+void PackagePgn130311(tCanMessage *msg, uint8_t sourceDevice, uint8_t sid, uint8_t tempInst, uint8_t humidInst, float temp, float humid, float press);
 
 #endif // _NMEA2000_ENCODE_H_

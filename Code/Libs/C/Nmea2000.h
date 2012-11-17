@@ -96,18 +96,46 @@ uint8_t ParsePgn130311(const uint8_t data[8], uint8_t *seqId, uint8_t *tempInsta
 /**
  * Define nice constants for dealing with all the PGN numbers.
  */
-enum {
-	PGN_SYSTEM_TIME      = 126992,
-	PGN_RUDDER           = 127245,
-	PGN_BATTERY_STATUS   = 127508,
-	PGN_SPEED            = 128259,
-	PGN_WATER_DEPTH      = 128267,
-	PGN_POSITION_RAP_UPD = 129025,
-	PGN_COG_SOG_RAP_UPD  = 129026,
-	PGN_TIME_DATE        = 129033,
-	PGN_WIND_DATA        = 130306,
-	PGN_ENV_PARAMETERS   = 130310,
-	PGN_ENV_PARAMETERS2  = 130311
+enum PGN {
+    PGN_SYSTEM_TIME      = 126992,
+    PGN_RUDDER           = 127245,
+    PGN_BATTERY_STATUS   = 127508,
+    PGN_SPEED            = 128259,
+    PGN_WATER_DEPTH      = 128267,
+    PGN_POSITION_RAP_UPD = 129025,
+    PGN_COG_SOG_RAP_UPD  = 129026,
+    PGN_TIME_DATE        = 129033,
+    PGN_WIND_DATA        = 130306,
+    PGN_ENV_PARAMETERS   = 130310,
+    PGN_ENV_PARAMETERS2  = 130311
+};
+
+/**
+ * Define constants for use with the SID (sequence ID).
+ */
+enum PGN_SID {
+    PGN_SID_INVALID = 0xFF
+};
+
+/**
+ * Define constants for use with the temperature instance field of PGN 130311.
+ */
+enum PGN_130311_TEMP_INST {
+    PGN_130311_TEMP_INST_SEA         = 0,
+    PGN_130311_TEMP_INST_OUTSIDE     = 1,
+    PGN_130311_TEMP_INST_INSIDE      = 2,
+    PGN_130311_TEMP_INST_ENGINE_ROOM = 3,
+    PGN_130311_TEMP_INST_MAIN_CABIN  = 4,
+    PGN_130311_TEMP_INST_INVALID  = 0x3F
+};
+
+/**
+ * Define constants for use with the humidity instance field of PGN 130311.
+ */
+enum PGN_130311_HUMID_INST {
+    PGN_130311_HUMID_INST_INSIDE = 0,
+    PGN_130311_HUMID_INST_OUTSIDE = 1,
+    PGN_130311_HUMID_INST_INVALID = 3,
 };
 
 #endif // _NMEA2000_H_

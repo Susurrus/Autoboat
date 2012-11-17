@@ -70,15 +70,15 @@ uint16_t systemStatus;
 uint16_t systemErrors;
 
 typedef struct {
-	bool enabled            : 1; // If the sensor is enabled, i.e. it is online and transmitting messages.
-	uint8_t enabled_counter : 7; // The timeout counter for this sensor being enabled.
-	bool active             : 1; // If the sensor is active, i.e. receiving valid data.
-	uint8_t active_counter  : 7; // The timeout counter for this sensor being active.
+    unsigned enabled         : 1; // If the sensor is enabled, i.e. it is online and transmitting messages.
+    unsigned enabled_counter : 7; // The timeout counter for this sensor being enabled.
+    unsigned active          : 1; // If the sensor is active, i.e. receiving valid data.
+    unsigned active_counter  : 7; // The timeout counter for this sensor being active.
 } timeoutCounters;
 
 struct stc {
-	timeoutCounters prop; // The ACS300 outputs CAN messages quite frequently. It's enabled whenever one of these messages has been received within the last second and active when it's enabled and in run mode within the last second.
-	timeoutCounters rudder; // The rudder controller outputs messages quite frequently also. It's enabled whenever one of these messages has been received within the last second. It's active when it's enabled and calibrated and done calibrating.
+    timeoutCounters prop; // The ACS300 outputs CAN messages quite frequently. It's enabled whenever one of these messages has been received within the last second and active when it's enabled and in run mode within the last second.
+    timeoutCounters rudder; // The rudder controller outputs messages quite frequently also. It's enabled whenever one of these messages has been received within the last second. It's active when it's enabled and calibrated and done calibrating.
 } sensorAvailability;
 
 void TransmitStatus(void)
@@ -173,30 +173,27 @@ uint8_t ProcessAllEcanMessages(void)
 		int foundOne = ecan1_receive(&msg, &messagesLeft);
 		if (foundOne) {
 			// Process throttle messages here. Anything not explicitly handled is assumed to be a NMEA2000 message.
-			if (msg.id == 0x402) { // From the ACS300
+			if (msg.id == 0x402) { // From the ACS300 TODO: Move into a separate library.
 				sensorAvailability.prop.enabled_counter = 0;
 				if ((msg.payload[6] & 0x40) == 0) { // Checks the status bit to determine if the ACS300 is enabled.
 					sensorAvailability.prop.active_counter = 0;
 				}
 			} else if (msg.id == CAN_MSG_ID_RUDDER_DETAILS) { // From the rudder controller
-				uint8_t x = msg.payload[6];
-				if (x & 1) { // If the rudder is enabled.
-					if (x & 2) { // If the rudder is calibrated.
-						if (!(x & 4)) { // If the rudder isn't calibrating.
-							sensorAvailability.rudder.active_counter = 0; // Then it's active
-						}
-					}
-				}
-				rudderSensorData.RudderPotValue.chData[0] = msg.payload[0];
-				rudderSensorData.RudderPotValue.chData[1] = msg.payload[1];
-				rudderSensorData.RudderPotLimitStarboard.chData[0] = msg.payload[2];
-				rudderSensorData.RudderPotLimitStarboard.chData[1] = msg.payload[3];
-				rudderSensorData.RudderPotLimitPort.chData[0] = msg.payload[4];
-				rudderSensorData.RudderPotLimitPort.chData[1] = msg.payload[5];
-				rudderSensorData.LimitHitStarboard = msg.payload[6] & (1 << 5);
-				rudderSensorData.LimitHitPort = msg.payload[6] & (1 << 7);
-				rudderSensorData.RudderState = msg.payload[6] & 0x7;
-				sensorAvailability.rudder.enabled_counter = 0;
+                            CanMessageDecodeRudderDetails(&msg,
+                                                          &rudderSensorData.RudderPotValue.usData,
+                                                          &rudderSensorData.RudderPotLimitStarboard.usData,
+                                                          &rudderSensorData.RudderPotLimitPort.usData,
+                                                          &rudderSensorData.LimitHitStarboard,
+                                                          &rudderSensorData.LimitHitPort,
+                                                          &rudderSensorData.Enabled,
+                                                          &rudderSensorData.Calibrated,
+                                                          &rudderSensorData.Calibrating);
+                            if (rudderSensorData.Enabled &&
+                                rudderSensorData.Calibrated &&
+                                !rudderSensorData.Calibrating) {
+                                sensorAvailability.rudder.active_counter = 0; // Then it's active
+                            }
+                            sensorAvailability.rudder.enabled_counter = 0;
 			}
 
 			++messagesHandled;

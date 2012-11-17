@@ -3,7 +3,7 @@
 #include "MessageScheduler.h"
 #include "ecanRudder.h"
 #include "ecanFunctions.h"
-#include "nmea2000.h"
+#include "Nmea2000.h"
 #include "Nmea2000Encode.h"
 #include "Nvram.h"
 #include "CanMessages.h"
@@ -160,32 +160,28 @@ void RudderSendCustomLimit(void)
 	ecan1_buffered_transmit(&msg);
 }
 
-//configures the message into a tCanMessage, and sends it
 void RudderSendTemperature(void)
 {
 	// Specify a new CAN message w/ metadata
 	tCanMessage msg;
-	msg.id = Iso11783Encode(PGN_ENV_PARAMETERS2, 10, 0xFF, 2);
-	msg.buffer = 0;
-	msg.message_type = CAN_MSG_DATA;
-	msg.frame_type = CAN_FRAME_EXT;
-	msg.validBytes = 8;
-
-	// Now set the data.
-	msg.payload[0] = 0xFF;      // SID
-	msg.payload[1] = 2;         // Temperature instance (Inside)
-	msg.payload[1] |= 0x3 << 6; // Humidity instance (Invalid)
-	// Record the temperature in units of .01Kelvin.
-	uint16_t temp = (uint16_t)((rudderSensorData.Temperature + 273.2) * 100);
-	msg.payload[2] = (uint8_t)temp;
-	msg.payload[3] = (uint8_t)(temp >> 8);
-	msg.payload[4] = 0xFF; // Humidity is invalid
-	msg.payload[5] = 0xFF; // Humidity is invalid
-	msg.payload[6] = 0xFF; // Atmospheric pressure is invalid
-	msg.payload[7] = 0xFF; // Atmospheric pressure is invalid
+	
+	// Send temp values:
+	// * SID: invalid
+	// * Temperature instance: Inside
+	// * Humidity instance: Invalid
+	// * Humidity: Invalid
+	// * Pressure: Invalid
+	PackagePgn130311(&msg,
+                         nodeId,
+                         PGN_SID_INVALID,
+                         PGN_130311_TEMP_INST_INSIDE,
+                         PGN_130311_HUMID_INST_INVALID,
+                         rudderSensorData.Temperature,
+                         NAN,
+                         NAN);
 
 	// And finally transmit it.
-	//ecan1_buffered_transmit(&msg);
+	ecan1_buffered_transmit(&msg);
 }
 
 // Transmits the STATUS message that every node should transmit at 2Hz.
@@ -206,56 +202,60 @@ void RudderSendStatus(void)
 
 void SendAndReceiveEcan(void)
 {
-	uint8_t messagesLeft = 0;
-	tCanMessage msg;
-	uint32_t pgn;
+    uint8_t messagesLeft = 0;
+    tCanMessage msg;
+    uint32_t pgn;
 
-	do {
-		int foundOne = ecan1_receive(&msg, &messagesLeft);
-		if (foundOne) {
-			// Process custom rudder messages. Anything not explicitly handled is assumed to be a NMEA2000 message.
-			// If we receive a calibration message, start calibration if we aren't calibrating right now.
-			if (msg.id == CAN_MSG_ID_RUDDER_SET_STATE) {
-				if ((msg.payload[0] & 0x01) == 1 && rudderCalData.Calibrating == false) {
-					rudderCalData.CalibrationState = RUDDER_CAL_STATE_INIT;
-				}
-			// Update send message rates
-			} else if (msg.id == CAN_MSG_ID_RUDDER_SET_TX_RATE) {
-				UpdateMessageRate(msg.payload[0], msg.payload[1]);
-			} else {
-				pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
-				switch (pgn) {
-				case PGN_RUDDER:
-					ParsePgn127245(msg.payload, NULL, NULL, NULL, &rudderSensorData.CommandedRudderAngle, NULL);
-				break;
-				}
-			}
-		}
-	} while (messagesLeft > 0);
-
-	// And now transmit all messages for this timestep
-        uint8_t msgs[ECAN_MSGS_SIZE];
-	uint8_t count = GetMessagesForTimestep(&sched, msgs);
-        int i;
-	for (i = 0; i < count; ++i) {
-            switch (msgs[i]) {
-                case SCHED_ID_CUSTOM_LIMITS:
-                    RudderSendCustomLimit();
+    do {
+        int foundOne = ecan1_receive(&msg, &messagesLeft);
+        if (foundOne) {
+            // Process custom rudder messages. Anything not explicitly handled is assumed to be a NMEA2000 message.
+            // If we receive a calibration message, start calibration if we aren't calibrating right now.
+            if (msg.id == CAN_MSG_ID_RUDDER_SET_STATE) {
+                bool calibrate;
+                CanMessageDecodeRudderSetState(&msg, NULL, NULL, &calibrate);
+                if (calibrate && rudderCalData.Calibrating == false) {
+                    rudderCalData.CalibrationState = RUDDER_CAL_STATE_INIT;
+                }
+            // Update send message rates
+            } else if (msg.id == CAN_MSG_ID_RUDDER_SET_TX_RATE) {
+                uint16_t angleRate, statusRate;
+                CanMessageDecodeRudderSetTxRate(&msg, angleRate, statusRate);
+                UpdateMessageRate(angleRate, statusRate);
+            } else {
+                pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
+                switch (pgn) {
+                case PGN_RUDDER:
+                    ParsePgn127245(msg.payload, NULL, NULL, NULL, &rudderSensorData.CommandedRudderAngle, NULL);
                 break;
-
-                case SCHED_ID_RUDDER_ANGLE:
-                    RudderSendNmea();
-                break;
-
-                case SCHED_ID_TEMPERATURE:
-                    RudderSendTemperature();
-                break;
-
-                case SCHED_ID_STATUS:
-                    RudderSendStatus();
-                break;
+                }
             }
-	}
+        }
+    } while (messagesLeft > 0);
+
+    // And now transmit all messages for this timestep
+    uint8_t msgs[ECAN_MSGS_SIZE];
+    uint8_t count = GetMessagesForTimestep(&sched, msgs);
+    int i;
+    for (i = 0; i < count; ++i) {
+        switch (msgs[i]) {
+            case SCHED_ID_CUSTOM_LIMITS:
+                RudderSendCustomLimit();
+            break;
+
+            case SCHED_ID_RUDDER_ANGLE:
+                RudderSendNmea();
+            break;
+
+            case SCHED_ID_TEMPERATURE:
+                RudderSendTemperature();
+            break;
+
+            case SCHED_ID_STATUS:
+                RudderSendStatus();
+            break;
+        }
+    }
 }
 
 void UpdateMessageRate(const uint8_t angleRate, const uint8_t statusRate)

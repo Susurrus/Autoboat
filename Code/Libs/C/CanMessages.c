@@ -33,10 +33,32 @@ void CanMessagePackageRudderSetState(tCanMessage *msg, bool enable, bool reset, 
 	msg->validBytes = CAN_MSG_SIZE_RUDDER_SET_STATE;
 
 	// Now fill in the data.
-	msg->payload[0] = 0;
-	msg->payload[0] |= calibrate?0x01:0x00;
+	msg->payload[0] = calibrate?0x01:0x00;
 	msg->payload[0] |= reset?0x02:0x00;
 	msg->payload[0] |= enable?0x04:0x00;
+}
+
+void CanMessageDecodeRudderSetState(const tCanMessage *msg, bool *enable, bool *reset, bool *calibrate)
+{
+    if (calibrate) {
+        *calibrate = msg->payload[0] & 0x01;
+    }
+    if (reset) {
+        *reset = msg->payload[0] & 0x02;
+    }
+    if (enable) {
+        *enable = msg->payload[0] & 0x04;
+    }
+}
+
+void CanMessageDecodeRudderSetTxRate(const tCanMessage *msg, uint16_t *angleRate, uint16_t *statusRate)
+{
+    if (angleRate) {
+        *angleRate = msg->payload[0];
+    }
+    if (statusRate) {
+        *statusRate = msg->payload[1];
+    }
 }
 
 void CanMessagePackageRudderDetails(tCanMessage *msg, uint16_t potVal, uint16_t portLimitVal, uint16_t sbLimitVal, bool portLimitTrig, bool sbLimitTrig, bool enabled, bool calibrated, bool calibrating)
@@ -62,5 +84,35 @@ void CanMessagePackageRudderDetails(tCanMessage *msg, uint16_t potVal, uint16_t 
     }
     if (calibrating) {
         msg->payload[6] |= 0x04;
+    }
+}
+
+void CanMessageDecodeRudderDetails(const tCanMessage *msg, uint16_t *potVal, uint16_t *portLimitVal, uint16_t *sbLimitVal, bool *portLimitTrig, bool *sbLimitTrig, bool *enabled, bool *calibrated, bool *calibrating)
+{
+    if (potVal) {
+        *potVal = ((uint16_t)msg->payload[0]) | (((uint16_t)msg->payload[1]) << 8);
+    }
+    if (portLimitVal) {
+        *portLimitVal = ((uint16_t)msg->payload[2]) | (((uint16_t)msg->payload[3]) << 8);
+    }
+    if (sbLimitVal) {
+        *sbLimitVal = ((uint16_t)msg->payload[4]) | (((uint16_t)msg->payload[5]) << 8);
+    }
+
+    if (portLimitTrig) {
+        *portLimitTrig = (msg->payload[6] >> 7) & 1;
+    }
+    if (sbLimitTrig) {
+        *sbLimitTrig = (msg->payload[6] >> 5) & 1;
+    }
+
+    if (enabled) {
+        *enabled = msg->payload[6] & 1;
+    }
+    if (calibrated) {
+        *calibrated = (msg->payload[6] >> 1) & 1;
+    }
+    if (calibrating) {
+        *calibrating = (msg->payload[6] >> 2) & 1;
     }
 }

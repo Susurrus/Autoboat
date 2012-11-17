@@ -24,51 +24,18 @@ THE SOFTWARE.
 */
 
 #include "ecanFunctions.h"
-#include "Nmea2000.h"
+#include "Nmea2000Encode.h"
+#include "CanMessages.h"
 #include "Types.h"
-#include <math.h>
+
+static const uint8_t nodeId = CAN_NODE_POWER_SENSOR;
 
 void ProcessAdcData(float voltage, float amperage)
 {
 	static uint8_t sequenceID = 0;
-	
-	// Set up a tCanMessage for transmitting all this data.
-	// Set it as a data message with an extended frame type.
 	tCanMessage msg;
-	msg.message_type = CAN_MSG_DATA;
-	msg.frame_type = CAN_FRAME_STD;
-	msg.buffer = 0;
+
+	PackagePgn127508(&msg, nodeId, 0, voltage, amperage, NAN, sequenceID);
 	
-	// Use PGN 127508: Voltage, current, temperature
-	// We encode it using '0' as the source even though that might not be correct. This would require some move logic to claim an address over the N2K bus.
-	// We choose a lower priority, 3, as this isn't that important of data.
-	msg.id = Iso11783Encode(127508, 0, 0, 3);
-	
-	// Field 0: Battery instance
-	msg.payload[0] = 0;
-	
-	// Field 1: Voltage (in .01V)
-	tUnsignedShortToChar x;
-	voltage *= 100.0f;
-	x.usData = (uint16_t)voltage;
-	msg.payload[1] = x.chData[0];
-	msg.payload[2] = x.chData[1];
-	
-	// Field 2: Current (in .1A)
-	amperage *= 10.0f;
-	x.usData = (uint16_t)amperage;
-	msg.payload[3] = x.chData[0];
-	msg.payload[4] = x.chData[1];
-	
-	// Field 3: Temperature (in 1K)
-	// All 1s indicated no-measurement
-	msg.payload[5] = 0xFF;
-	msg.payload[6] = 0xFF;
-	
-	// Field 4: Sequence ID
-	msg.payload[7] = sequenceID++;
-	
-	// Finish it off with a payload length and send it.
-	msg.validBytes = 8;
 	ecan1_buffered_transmit(&msg);
 }

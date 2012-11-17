@@ -12,7 +12,9 @@ struct RudderData {
 	tUnsignedShortToChar RudderPotLimitPort;
 	bool LimitHitStarboard;
 	bool LimitHitPort;
-	uint8_t RudderState; // Bitfield where 0th bit: enabled/disabled, 1st bit: calibrated, 2nd bit: calibrating, 
+        bool Enabled;
+        bool Calibrated;
+        bool Calibrating;
 };
 extern struct RudderData rudderSensorData;
 
