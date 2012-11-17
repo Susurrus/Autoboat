@@ -86,6 +86,7 @@ extern struct stc {
 	timeoutCounters power; // The power node is enabled when a messages has been received within the last second and active at the same time.
 	timeoutCounters prop; // The ACS300 outputs CAN messages quite frequently. It's enabled whenever one of these messages has been received within the last second and active when it's enabled and in run mode within the last second.
 	timeoutCounters rudder; // The rudder controller outputs messages quite frequently also. It's enabled whenever one of these messages has been received within the last second. It's active when it's enabled and calibrated and done calibrating.
+        timeoutCounters rcNode; // The RC CAN node that provides override manual control.
 } sensorAvailability;
 
 
@@ -103,6 +104,13 @@ void GetThrottleDataPacked(uint8_t *data);
 void GetGpsDataPacked(uint8_t *data);
 
 void GetRudderCanDataPacked(uint8_t *data);
+
+/**
+ * Returns the availability of the RcNode. enabled is set to true if it's broadcasting status
+ * messages on the CAN bus. It's active if the RC controller is on and therefore the node is
+ * commanding the vessel.
+ */
+void GetRcNodeAvailability(bool *status);
 
 /**
   * Clears the GPS data struct.

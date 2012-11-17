@@ -112,6 +112,16 @@ void ClearGpsData(void)
 	gpsDataStore.newData = 0;
 }
 
+/**
+ * A MATLAB-helper function for returning the RC Node status.
+ * @param enabled A 2-element array for returning the enabled/active status of the RcNode.
+ */
+void GetRcNodeAvailability(bool *status)
+{
+	status[0] = sensorAvailability.rcNode.enabled;
+	status[1] = sensorAvailability.rcNode.active;
+}
+
 uint8_t ProcessAllEcanMessages(void)
 {
 	uint8_t messagesLeft = 0;
@@ -163,6 +173,12 @@ uint8_t ProcessAllEcanMessages(void)
 	if (sensorAvailability.rudder.active_counter < 100) {
 		++sensorAvailability.rudder.active_counter;
 	}
+	if (sensorAvailability.rcNode.enabled_counter < 100) {
+		++sensorAvailability.rcNode.enabled_counter;
+	}
+	if (sensorAvailability.rcNode.active_counter < 100) {
+		++sensorAvailability.rcNode.active_counter;
+	}
 
 	do {
 		int foundOne = ecan1_receive(&msg, &messagesLeft);
@@ -176,23 +192,32 @@ uint8_t ProcessAllEcanMessages(void)
 				throttleDataStore.rpm.chData[0] = msg.payload[1];
 				throttleDataStore.rpm.chData[1] = msg.payload[0];
 				throttleDataStore.newData = true;
-			} if (msg.id == CAN_MSG_ID_RUDDER_DETAILS) { // From the rudder controller
-				// If the rudder is transmitting can messages, it's automatically enabled.
-				sensorAvailability.rudder.enabled_counter = 0;
-				if ((msg.payload[6] & (1 << 0)) == 1 && // If the rudder is enabled
-				    (msg.payload[6] & (1 << 1)) == 1 && // If the rudder is calibrated
-                                    (msg.payload[6] & (1 << 2)) == 0) { // And done calibrating
-					sensorAvailability.rudder.active_counter = 0; // Then it's active
+			} else if (msg.id == CAN_MSG_ID_STATUS) {
+				uint8_t node;
+				uint16_t status, errors;
+				CanMessageDecodeStatus(&msg, &node, &status, &errors);
+				if (node == CAN_NODE_RC) {
+					sensorAvailability.rcNode.enabled_counter = 0;
+					if (status & 0x01) {
+						sensorAvailability.rcNode.active_counter = 0;
+					}
 				}
-				rudderSensorData.RudderPotValue.chData[0] = msg.payload[0];
-				rudderSensorData.RudderPotValue.chData[1] = msg.payload[1];
-				rudderSensorData.RudderPotLimitStarboard.chData[0] = msg.payload[2];
-				rudderSensorData.RudderPotLimitStarboard.chData[1] = msg.payload[3];
-				rudderSensorData.RudderPotLimitPort.chData[0] = msg.payload[4];
-				rudderSensorData.RudderPotLimitPort.chData[1] = msg.payload[5];
-				rudderSensorData.LimitHitStarboard = msg.payload[6] & (1 << 5);
-				rudderSensorData.LimitHitPort = msg.payload[6] & (1 << 7);
-				rudderSensorData.RudderState = msg.payload[6] & 0x7;
+			} else if (msg.id == CAN_MSG_ID_RUDDER_DETAILS) {
+				sensorAvailability.rudder.enabled_counter = 0;
+				CanMessageDecodeRudderDetails(&msg,
+											  &rudderSensorData.RudderPotValue.usData,
+											  &rudderSensorData.RudderPotLimitStarboard.usData,
+											  &rudderSensorData.RudderPotLimitPort.usData,
+											  &rudderSensorData.LimitHitStarboard,
+											  &rudderSensorData.LimitHitPort,
+											  &rudderSensorData.Enabled,
+											  &rudderSensorData.Calibrated,
+											  &rudderSensorData.Calibrating);
+				if (rudderSensorData.Enabled &&
+					rudderSensorData.Calibrated &&
+					!rudderSensorData.Calibrating) {
+					sensorAvailability.rudder.active_counter = 0;
+				}
 			} else {
 				pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
 				switch (pgn) {
@@ -363,5 +388,15 @@ void UpdateSensorsAvailability(void)
 		sensorAvailability.rudder.active = false;
 	} else if (!sensorAvailability.rudder.active && sensorAvailability.rudder.active_counter == 0) {
 		sensorAvailability.rudder.active = true;
+	}
+	if (sensorAvailability.rcNode.enabled && sensorAvailability.rcNode.enabled_counter >= 100) {
+		sensorAvailability.rcNode.enabled = false;
+	} else if (!sensorAvailability.rcNode.enabled && sensorAvailability.rcNode.enabled_counter == 0) {
+		sensorAvailability.rcNode.enabled = true;
+	}
+	if (sensorAvailability.rcNode.active && sensorAvailability.rcNode.active_counter >= 100) {
+		sensorAvailability.rcNode.active = false;
+	} else if (!sensorAvailability.rcNode.active && sensorAvailability.rcNode.active_counter == 0) {
+		sensorAvailability.rcNode.active = true;
 	}
 }
