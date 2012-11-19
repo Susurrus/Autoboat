@@ -1,5 +1,5 @@
-#ifndef _NMEA0183_H_
-#define _NMEA0183_H_
+#ifndef NMEA0183_H
+#define NMEA0183_H
 
 void buildAndCheckSentence(unsigned char characterIn, char *sentence, unsigned char *sentenceIndex, unsigned char *sentenceState, unsigned char *checksum, void (*processResult)(char *));
 
@@ -14,4 +14,4 @@ unsigned char myTokenizer(char *stringToTokenize, char token, char *returnToken)
 // original code in C# written by Jon Person, author of "GPS.NET" (www.gpsdotnet.com)
 unsigned char getChecksum(char *sentence, unsigned char size);
 
-#endif // _NMEA0183_H_
+#endif // NMEA0183_H

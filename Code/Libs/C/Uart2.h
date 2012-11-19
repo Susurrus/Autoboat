@@ -1,5 +1,5 @@
-#ifndef _UART2_H_
-#define _UART2_H_
+#ifndef UART2_H
+#define UART2_H
 
 // USAGE:
 // Add initUart2() to an initialization sequence called once on startup.
@@ -25,4 +25,4 @@ void uart2EnqueueByte(unsigned char datum);
  */
 void uart2EnqueueData(unsigned char *data, unsigned char length);
 
-#endif /* _UART2_H_ */
+#endif // UART2_H

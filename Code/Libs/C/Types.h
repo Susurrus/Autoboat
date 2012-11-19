@@ -1,5 +1,5 @@
-#ifndef _TYPES_H_
-#define _TYPES_H_
+#ifndef TYPES_H
+#define TYPES_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -50,4 +50,4 @@ typedef union {
 #define NAN __builtin_nan("")
 #endif
 
-#endif // _TYPES_H_
+#endif // TYPES_H

@@ -1,8 +1,8 @@
-#ifndef _NVRAM_H_
-#define _NVRAM_H_
+#ifndef NVRAM_H
+#define NVRAM_H
 
 void InitRudderCalibrationRange(void);
 
 void SaveRudderCalibrationRange(void);
 
-#endif // _NVRAM_H_
+#endif // NVRAM_H

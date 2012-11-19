@@ -1,5 +1,5 @@
-#ifndef _NMEA2000_H_
-#define _NMEA2000_H_
+#ifndef NMEA2000_H
+#define NMEA2000_H
 
 #include <stdint.h>
 
@@ -138,4 +138,4 @@ enum PGN_130311_HUMID_INST {
     PGN_130311_HUMID_INST_INVALID = 3,
 };
 
-#endif // _NMEA2000_H_
+#endif // NMEA2000_H

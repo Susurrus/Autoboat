@@ -1,5 +1,5 @@
-#ifndef _RUDDER_H_
-#define _RUDDER_H_
+#ifndef RUDDER_H
+#define RUDDER_H
 
 #include <stdbool.h>
 
@@ -43,4 +43,4 @@ void RudderStartCalibration(void);
 
 void RudderSendAngleCommand(uint8_t sourceNode, float angleCommand);
 
-#endif // _RUDDER_H_
+#endif // RUDDER_H

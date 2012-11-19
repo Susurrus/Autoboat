@@ -1,5 +1,5 @@
-#ifndef _NMEA2000_ENCODE_H_
-#define _NMEA2000_ENCODE_H_
+#ifndef NMEA2000_ENCODE_H
+#define NMEA2000_ENCODE_H
 
 #include "ecanDefinitions.h"
 
@@ -41,4 +41,4 @@ void PackagePgn127508(tCanMessage *msg, uint8_t sourceDevice, uint8_t battInstan
  */
 void PackagePgn130311(tCanMessage *msg, uint8_t sourceDevice, uint8_t sid, uint8_t tempInst, uint8_t humidInst, float temp, float humid, float press);
 
-#endif // _NMEA2000_ENCODE_H_
+#endif // NMEA2000_ENCODE_H

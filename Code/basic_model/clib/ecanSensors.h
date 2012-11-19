@@ -1,5 +1,5 @@
-#ifndef _ECAN_SENSORS_H_
-#define _ECAN_SENSORS_H_
+#ifndef ECAN_SENSORS_H
+#define ECAN_SENSORS_H
 
 #include <stddef.h>
 #include <stdbool.h>
@@ -131,4 +131,4 @@ uint8_t ProcessAllEcanMessages(void);
  */
 void UpdateSensorsAvailability(void);
 
-#endif // _ECAN_SENSORS_H_
+#endif // ECAN_SENSORS_H

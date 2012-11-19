@@ -1,5 +1,5 @@
-#ifndef _CONVERSIONS_H_
-#define _CONVERSIONS_H_
+#ifndef CONVERSIONS_H
+#define CONVERSIONS_H
 
 /**
  * Converts a hexadecimal ASCII character ('0' through 'f'/'F') to it's numeric representation.
@@ -15,4 +15,4 @@ char hex2char(char halfhex);
  */
 float degMinToDeg(unsigned char degrees, float minutes);
 
-#endif // _CONVERSIONS_H_
+#endif // CONVERSIONS_H

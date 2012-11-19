@@ -24,8 +24,8 @@
  * preprocessor macro defined. For example: 
  *   `gcc MessageScheduler.c -DUNIT_TEST -g -Wall -lm`
  */
-#ifndef _MESSAGE_SCHEDULER_H_
-#define _MESSAGE_SCHEDULER_H_
+#ifndef MESSAGE_SCHEDULER_H
+#define MESSAGE_SCHEDULER_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -90,4 +90,4 @@ uint8_t GetMessagesForTimestep(MessageSchedule *schedule, uint8_t messages[]);
  */
 void ResetTimestep(MessageSchedule *schedule);
 
-#endif // _MESSAGE_SCHEDULER_H_
+#endif // MESSAGE_SCHEDULER_H

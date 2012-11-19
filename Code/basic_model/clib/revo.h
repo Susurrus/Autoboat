@@ -23,10 +23,10 @@ THE SOFTWARE.
 
 */
 
-#ifndef _REVO_H_
-#define _REVO_H_
+#ifndef REVO_H
+#define REVO_H
 
-#include "types.h"
+#include "Types.h"
 
 struct RevoData {
 	tFloatToChar           heading;
@@ -78,4 +78,4 @@ unsigned char myTokenizer(char *stringToTokenize, char token, char *returnToken)
  */
 void parseHTM(char* stream);
        
-#endif /* _REVO_H_ */
+#endif // REVO_H

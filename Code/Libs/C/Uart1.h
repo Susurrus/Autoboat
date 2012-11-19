@@ -1,5 +1,5 @@
-#ifndef _UART1_H_
-#define _UART1_H_
+#ifndef UART1_H
+#define UART1_H
 
 // USAGE:
 // Add initUart1() to an initialization sequence called once on startup.
@@ -25,4 +25,4 @@ void uart1EnqueueByte(unsigned char datum);
  */
 void uart1EnqueueData(unsigned char *data, unsigned char length);
 
-#endif /* _UART1_H_ */
+#endif // UART1_H

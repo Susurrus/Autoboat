@@ -46,10 +46,10 @@
 
 
 
-#ifndef _DEE_H_
-#define _DEE_H_
+#ifndef DEE_H
+#define DEE_H
     
-#include <p33fxxxx.h>
+#include <xc.h>
 
 // User defined constants
 #define DATA_EE_SIZE        255
@@ -134,4 +134,4 @@ unsigned int    DataEERead          (unsigned char addr);
 unsigned char   DataEEWrite         (unsigned int data, unsigned char addr);
 unsigned char   DataEEInitAndClear  (void);
 
-#endif
+#endif // DEE_H

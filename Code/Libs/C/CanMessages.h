@@ -1,5 +1,5 @@
-#ifndef _CAN_MESSAGES_H_
-#define _CAN_MESSAGES_H_
+#ifndef CAN_MESSAGES_H
+#define CAN_MESSAGES_H
 
 /**
  * This module defines all of the custom CAN messages used within the SeaSlug project. These messages all use the standard CAN ID size (11-bits).
@@ -52,4 +52,4 @@ void CanMessagePackageRudderDetails(tCanMessage *msg, uint16_t potVal, uint16_t 
 
 void CanMessageDecodeRudderDetails(const tCanMessage *msg, uint16_t *potVal, uint16_t *portLimitVal, uint16_t *sbLimitVal, bool *portLimitTrig, bool *sbLimitTrig, bool *enabled, bool *calibrated, bool *calibrating);
 
-#endif // _CAN_MESSAGES_H_
+#endif // CAN_MESSAGES_H
