@@ -7,9 +7,6 @@
  * the resultant struct into the ECAN transmission library.
  */
 
-//TODO: Add Status decoder
-//TODO: Add RudderSetState decoder
-
 #include "Types.h"
 #include "ecanDefinitions.h"
 
@@ -34,14 +31,6 @@ enum {
 
     // General messages
     CAN_MSG_SIZE_STATUS              = 5
-};
-
-// Give each CAN node a unique ID
-enum {
-    CAN_NODE_PRIMARY_CONTROLLER = 1,
-    CAN_NODE_RUDDER_CONTROLLER  = 2,
-    CAN_NODE_RC                 = 3,
-    CAN_NODE_POWER_SENSOR       = 4
 };
 
 /**
