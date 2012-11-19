@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.42"
+    ComputedModelVersion    "1.45"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,11 +27,11 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Nov 16 15:15:38 2012"
-  RTWModifiedTimeStamp	  274975950
-  ModelVersionFormat	  "1.%<AutoIncrement:42>"
+  LastModifiedDate	  "Mon Nov 19 13:12:09 2012"
+  RTWModifiedTimeStamp	  275228907
+  ModelVersionFormat	  "1.%<AutoIncrement:45>"
   ConfigurationManager	  "None"
-  SampleTimeColors	  on
+  SampleTimeColors	  off
   SampleTimeAnnotations	  off
   LibraryLinkDisplay	  "disabled"
   WideLines		  off
@@ -67,6 +67,7 @@ Model {
     $ObjectID		    1
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "gps_node"
+    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -430,8 +431,8 @@ Model {
 	  RTWUseLocalCustomCode	  off
 	  RTWUseSimCustomCode	  off
 	  CustomInclude		  "../Libs/C\n../../../ECAN_dspic"
-	  CustomSource		  "main.c\n\n../Libs/C/Conversions.c\n../Libs/C/Nmea2000.c\n../Libs/C/Nmea2000Encode.c\n\n../../../EC"
-	  "AN_dspic/ecanFunctions.c\n../../../ECAN_dspic/CircularBuffer.c"
+	  CustomSource		  "PowerNode.c\n\n../Libs/C/Node.c\n../Libs/C/CanMessages.c\n../Libs/C/Conversions.c\n../Libs/C/Nmea2"
+	  "000.c\n../Libs/C/Nmea2000Encode.c\n\n../../../ECAN_dspic/ecanFunctions.c\n../../../ECAN_dspic/CircularBuffer.c"
 	  IncludeHyperlinkInReport off
 	  LaunchReport		  off
 	  TargetLang		  "C"
@@ -742,8 +743,8 @@ Model {
       }
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=0 "
-      CurrentDlgPage	      "Code Generation"
-      ConfigPrmDlgPosition     [ 520, 130, 1401, 888 ] 
+      CurrentDlgPage	      "Code Generation/Custom Code"
+      ConfigPrmDlgPosition     [ 745, 15, 1690, 925 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -835,7 +836,7 @@ Model {
   }
   System {
     Name		    "power_node"
-    Location		    [2, 74, 1918, 1019]
+    Location		    [2, 82, 1902, 1027]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -849,14 +850,14 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "53"
+    SIDHighWatermark	    "55"
     Block {
       BlockType		      Reference
       Name		      "ADC Input"
       SID		      "43"
       Tag		      "dsPIC_ADC"
       Ports		      [0, 2]
-      Position		      [45, 247, 195, 298]
+      Position		      [50, 282, 200, 333]
       ShowName		      off
       Priority		      "5"
       LibraryVersion	      "3.84"
@@ -983,6 +984,7 @@ Model {
       Position		      [190, 24, 305, 76]
       BackgroundColor	      "lightBlue"
       DropShadow	      on
+      ShowName		      off
       LibraryVersion	      "1.9"
       SourceBlock	      "ecan_dspic/Configure ECAN 1"
       SourceType	      "Initialize ECAN 1"
@@ -1092,7 +1094,7 @@ Model {
       BlockType		      Gain
       Name		      "Convert to\nreal Volts"
       SID		      "44"
-      Position		      [310, 220, 340, 250]
+      Position		      [315, 255, 345, 285]
       ZOrder		      -11
       Gain		      "3.3/ANmax"
       ParamDataTypeStr	      "Inherit: Inherit via internal rule"
@@ -1104,7 +1106,7 @@ Model {
       BlockType		      Gain
       Name		      "Convert to\nreal Volts1"
       SID		      "47"
-      Position		      [310, 290, 340, 320]
+      Position		      [315, 325, 345, 355]
       ZOrder		      -11
       Gain		      "3.3/ANmax"
       ParamDataTypeStr	      "Inherit: Inherit via internal rule"
@@ -1116,7 +1118,7 @@ Model {
       BlockType		      DataTypeConversion
       Name		      "Data Type Conversion"
       SID		      "45"
-      Position		      [225, 253, 270, 267]
+      Position		      [230, 288, 275, 302]
       ZOrder		      -7
       ShowName		      off
       OutDataTypeStr	      "single"
@@ -1127,12 +1129,49 @@ Model {
       BlockType		      DataTypeConversion
       Name		      "Data Type Conversion1"
       SID		      "46"
-      Position		      [225, 278, 270, 292]
+      Position		      [230, 313, 275, 327]
       ZOrder		      -7
       ShowName		      off
       OutDataTypeStr	      "single"
       RndMeth		      "Simplest"
       SaturateOnIntegerOverflow	off
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Initialize node\n[PowerNode.c]"
+      SID		      "54"
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      []
+      Position		      [360, 130, 476, 169]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.84"
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "None"
+      fctName		      "ProcessAdcData"
+      INPUT_SIZE	      "1"
+      INPUT1		      "real32"
+      INPUT2		      "real32"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "--"
+      SampleTime	      "-1"
+      InputType		      "[]"
+      OutputType	      "[]"
+      FctDeclaration	      "extern void ProcessAdcData();"
+      FctCall		      "ProcessAdcData();"
+      OrderingInOutPopup      "None"
+      FctStart		      "Start Function (Call once and only once)"
+      FctStart_Name	      "PowerNodeInit"
+      FctStart_Declaration    "inline extern void PowerNodeInit();"
+      FctStart_Call	      "PowerNodeInit();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
     }
     Block {
       BlockType		      Reference
@@ -1243,11 +1282,11 @@ Model {
     }
     Block {
       BlockType		      Reference
-      Name		      "Process ADC data and\nsend it over CAN\n[main.c]"
+      Name		      "Process ADC data and\nsend it over CAN\n[PowerNode.c]"
       SID		      "14"
       Tag		      "dsPIC_dsPIC_CFunctionCall"
       Ports		      [2]
-      Position		      [480, 245, 685, 300]
+      Position		      [485, 280, 690, 335]
       BackgroundColor	      "orange"
       LibraryVersion	      "3.84"
       SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
@@ -1282,7 +1321,7 @@ Model {
       BlockType		      Gain
       Name		      "To measured\nAmps"
       SID		      "48"
-      Position		      [400, 290, 430, 320]
+      Position		      [405, 325, 435, 355]
       ZOrder		      -11
       Gain		      "1/.03660"
       ParamDataTypeStr	      "Inherit: Inherit via internal rule"
@@ -1294,12 +1333,49 @@ Model {
       BlockType		      Gain
       Name		      "To measured\nVolts"
       SID		      "49"
-      Position		      [400, 220, 430, 250]
+      Position		      [405, 255, 435, 285]
       ZOrder		      -11
       Gain		      "1/.06369"
       ParamDataTypeStr	      "Inherit: Inherit via internal rule"
       OutDataTypeStr	      "Inherit: Inherit via internal rule"
       SaturateOnIntegerOverflow	off
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Transmit status\nmessage over CAN\n[Node.c]"
+      SID		      "55"
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      []
+      Position		      [520, 130, 635, 170]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.84"
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "Output Function"
+      fctName		      "NodeTransmitStatus"
+      INPUT_SIZE	      "1"
+      INPUT1		      "--"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "--"
+      SampleTime	      "-1"
+      InputType		      "[ ]"
+      OutputType	      "[ ]"
+      FctDeclaration	      "extern void NodeTransmitStatus();"
+      FctCall		      "NodeTransmitStatus();"
+      OrderingInOutPopup      "None"
+      FctStart		      "None"
+      FctStart_Name	      "PowerNodeInit"
+      FctStart_Declaration    "inline extern void PowerNodeInit();"
+      FctStart_Call	      "PowerNodeInit();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
     }
     Line {
       SrcBlock		      "ADC Input"
@@ -1343,14 +1419,14 @@ Model {
       SrcBlock		      "To measured\nVolts"
       SrcPort		      1
       Points		      [30, 0]
-      DstBlock		      "Process ADC data and\nsend it over CAN\n[main.c]"
+      DstBlock		      "Process ADC data and\nsend it over CAN\n[PowerNode.c]"
       DstPort		      1
     }
     Line {
       SrcBlock		      "To measured\nAmps"
       SrcPort		      1
       Points		      [30, 0]
-      DstBlock		      "Process ADC data and\nsend it over CAN\n[main.c]"
+      DstBlock		      "Process ADC data and\nsend it over CAN\n[PowerNode.c]"
       DstPort		      2
     }
     Annotation {

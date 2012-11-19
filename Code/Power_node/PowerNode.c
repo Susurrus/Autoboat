@@ -27,8 +27,12 @@ THE SOFTWARE.
 #include "Nmea2000Encode.h"
 #include "CanMessages.h"
 #include "Types.h"
+#include "Node.h"
 
-static const uint8_t nodeId = CAN_NODE_POWER_SENSOR;
+void PowerNodeInit(void)
+{
+	nodeId = CAN_NODE_POWER_SENSOR;
+}
 
 void ProcessAdcData(float voltage, float amperage)
 {
