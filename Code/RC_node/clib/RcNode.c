@@ -42,32 +42,18 @@ THE SOFTWARE.
 // First Revision: Nov 10 2012
 // ==============================================================
 
-#include "types.h"
-#include "uart1.h"
+#include "Types.h"
+#include "Uart1.h"
 #include "DEE.h"
 #include "ecanFunctions.h"
 #include "CanMessages.h"
+#include "Node.h"
 #include "Rudder.h"
-
-// Track the node ID of this RC node.
-const uint8_t nodeId = CAN_NODE_RC;
 
 // Store some values for calibrating the RC transmitter.
 uint16_t rcRudderRange[2];
 uint16_t rcThrottleRange[2];
 bool restoredCalibration;
-
-/// Store some 16-bit bitfields for tracking the system status and various erros.
-// systemStatus tracks various statuses of the node.
-//  * bit 0: Manual control enabled.
-uint16_t systemStatus;
-// systemErrors tracks the various flags that can put the node into a reset state.
-//  * bit 0: eStop has been pushed.
-//  * bit 1: rudder is calibrating
-//  * bit 2: rudder is uncalibrated
-//  * bit 3: the ECAN peripheral has reached an error state for transmission
-//  * bit 4: the ECAN peripheral has reached an error state for reception
-uint16_t systemErrors;
 
 typedef struct {
     unsigned enabled         : 1; // If the sensor is enabled, i.e. it is online and transmitting messages.
@@ -81,10 +67,15 @@ struct stc {
     timeoutCounters rudder; // The rudder controller outputs messages quite frequently also. It's enabled whenever one of these messages has been received within the last second. It's active when it's enabled and calibrated and done calibrating.
 } sensorAvailability;
 
+void RcNodeInit(void)
+{
+	nodeId = CAN_NODE_RC;
+}
+
 void TransmitStatus(void)
 {
     tCanMessage msg;
-    CanMessagePackageStatus(&msg, nodeId, systemStatus, systemErrors);
+    CanMessagePackageStatus(&msg, nodeId, status, errors);
     ecan1_buffered_transmit(&msg);
 }
 

@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2363"
+    ComputedModelVersion    "1.2364"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -29,9 +29,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sat Nov 17 13:12:25 2012"
-  RTWModifiedTimeStamp	  275058605
-  ModelVersionFormat	  "1.%<AutoIncrement:2363>"
+  LastModifiedDate	  "Mon Nov 19 13:25:01 2012"
+  RTWModifiedTimeStamp	  275231984
+  ModelVersionFormat	  "1.%<AutoIncrement:2364>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -414,8 +414,8 @@ Model {
 	  RTWUseSimCustomCode	  off
 	  CustomInclude		  "../Libs/C\n../../../ECAN_dspic"
 	  CustomSource		  "../Libs/C/Conversions.c\n../Libs/C/Nmea2000.c\n../Libs/C/Nmea2000Encode.c\n../Libs/C/Rudder.c\n../"
-	  "Libs/C/Uart1.c\n../Libs/C/DEE.c\n../Libs/C/DEES.s\n../Libs/C/Traps.c\n../Libs/C/CanMessages.c\n\nclib/RcNode.c\n\n."
-	  "./../../ECAN_dspic/CircularBuffer.c\n../../../ECAN_dspic/ecanFunctions.c"
+	  "Libs/C/Uart1.c\n../Libs/C/DEE.c\n../Libs/C/DEES.s\n../Libs/C/Traps.c\n../Libs/C/CanMessages.c\n../Libs/C/Node.c\n\n"
+	  "clib/RcNode.c\n\n../../../ECAN_dspic/CircularBuffer.c\n../../../ECAN_dspic/ecanFunctions.c"
 	  IncludeHyperlinkInReport off
 	  LaunchReport		  off
 	  TargetLang		  "C"
@@ -675,8 +675,8 @@ Model {
 		DataType		"string"
 		Name			"OPTIM_GCC"
 		Value			"-mcpu=33fj128MC802 -O3 -fschedule-insns -fschedule-insns2                                                  "
-		"                                                                                                                -fno"
-		"-short-double"
+		"                                                                                                                  -f"
+		"no-short-double"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -729,7 +729,7 @@ Model {
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=1 "
       CurrentDlgPage	      "Code Generation/Custom Code"
-      ConfigPrmDlgPosition     [ 525, 107, 1633, 979 ] 
+      ConfigPrmDlgPosition     [ 517, 77, 1641, 987 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -1118,7 +1118,7 @@ Model {
   }
   System {
     Name		    "rc_node"
-    Location		    [202, 82, 1918, 1027]
+    Location		    [202, 82, 1881, 1027]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1132,7 +1132,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "22870"
+    SIDHighWatermark	    "22871"
     Block {
       BlockType		      SubSystem
       Name		      "Actuator\nOutputs"
@@ -1706,7 +1706,7 @@ Model {
       Position		      [465, 270, 560, 293]
       ZOrder		      -4
       ShowName		      off
-      DataStoreName	      "systemStatus"
+      DataStoreName	      "status"
       ReadBeforeWriteMsg      "warning"
       WriteAfterWriteMsg      "warning"
       WriteAfterReadMsg	      "warning"
@@ -1720,7 +1720,7 @@ Model {
       Position		      [370, 270, 465, 293]
       ZOrder		      -4
       ShowName		      off
-      DataStoreName	      "systemErrors"
+      DataStoreName	      "errors"
       ReadBeforeWriteMsg      "warning"
       WriteAfterWriteMsg      "warning"
       WriteAfterReadMsg	      "warning"
@@ -1865,6 +1865,43 @@ Model {
       FctStart_Name	      "InitCalibrationRange"
       FctStart_Declaration    "inline extern void InitCalibrationRange();"
       FctStart_Call	      "InitCalibrationRange();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Initialize node\n[RcNode.c]"
+      SID		      "22871"
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      []
+      Position		      [215, 605, 345, 645]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.84"
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "None"
+      fctName		      "TransmitStatus"
+      INPUT_SIZE	      "1"
+      INPUT1		      "--"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "--"
+      SampleTime	      "-1"
+      InputType		      "[]"
+      OutputType	      "[]"
+      FctDeclaration	      "extern void TransmitStatus();"
+      FctCall		      "TransmitStatus();"
+      OrderingInOutPopup      "None"
+      FctStart		      "Start Function (Call once and only once)"
+      FctStart_Name	      "RcNodeInit"
+      FctStart_Declaration    "inline extern void RcNodeInit();"
+      FctStart_Call	      "RcNodeInit();"
       FctInit		      "None"
       FctInit_Name	      "Init_Reset"
       FctInit_Declaration     "inline extern void Init_Reset();"
@@ -9643,8 +9680,8 @@ Model {
 		  Position		  [40, 67, 120, 93]
 		  ZOrder		  -5
 		  ShowName		  off
-		  DataStoreName		  "systemStatus"
-		  DataStoreElements	  "systemStatus"
+		  DataStoreName		  "status"
+		  DataStoreElements	  "status"
 		}
 		Block {
 		  BlockType		  DataStoreWrite
@@ -9654,8 +9691,8 @@ Model {
 		  Position		  [275, 67, 355, 93]
 		  ZOrder		  -6
 		  ShowName		  off
-		  DataStoreName		  "systemStatus"
-		  DataStoreElements	  "systemStatus"
+		  DataStoreName		  "status"
+		  DataStoreElements	  "status"
 		}
 		Line {
 		  SrcBlock		  "Data Store\nRead"
@@ -9764,8 +9801,7 @@ Model {
 		  Position		  [25, 67, 105, 93]
 		  ZOrder		  -5
 		  ShowName		  off
-		  DataStoreName		  "systemStatus"
-		  DataStoreElements	  "systemStatus"
+		  DataStoreName		  "status"
 		}
 		Block {
 		  BlockType		  DataStoreWrite
@@ -9775,8 +9811,7 @@ Model {
 		  Position		  [315, 77, 395, 103]
 		  ZOrder		  -6
 		  ShowName		  off
-		  DataStoreName		  "systemStatus"
-		  DataStoreElements	  "systemStatus"
+		  DataStoreName		  "status"
 		}
 		Line {
 		  SrcBlock		  "Bitwise\nOperator1"
@@ -12060,7 +12095,8 @@ Model {
 	  Position		  [775, 315, 850, 345]
 	  ZOrder		  -6
 	  ShowName		  off
-	  DataStoreName		  "systemErrors"
+	  DataStoreName		  "errors"
+	  DataStoreElements	  "errors"
 	}
 	Block {
 	  BlockType		  DataTypeConversion
