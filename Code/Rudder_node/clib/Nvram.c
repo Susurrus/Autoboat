@@ -1,7 +1,7 @@
 #include "Nvram.h"
 #include "DEE.h"
-#include "types.h"
-#include "EcanRudder.h"
+#include "Types.h"
+#include "RudderNode.h"
 
 /**
  * Make constant the addresses for the various parameters stored in NVRAM
