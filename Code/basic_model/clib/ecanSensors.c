@@ -2,11 +2,12 @@
 
 #include "ecanDefinitions.h"
 #include "ecanFunctions.h"
-#include "nmea2000.h"
-#include "types.h"
+#include "Nmea2000.h"
+#include "Types.h"
 #include "Rudder.h"
 #include "code_gen.h"
 #include "CanMessages.h"
+#include "Node.h"
 
 struct PowerData powerDataStore = {};
 struct WindData windDataStore = {};

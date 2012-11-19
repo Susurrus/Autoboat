@@ -1,5 +1,6 @@
 #include "CanMessages.h"
 #include "ecanFunctions.h"
+#include "Node.h"
 #include "code_gen.h"
 
 void NodeTransmitStatus(void)
