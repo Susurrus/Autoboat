@@ -72,13 +72,6 @@ void RcNodeInit(void)
 	nodeId = CAN_NODE_RC;
 }
 
-void TransmitStatus(void)
-{
-    tCanMessage msg;
-    CanMessagePackageStatus(&msg, nodeId, status, errors);
-    ecan1_buffered_transmit(&msg);
-}
-
 bool GetEstopStatus(void)
 {
     return sensorAvailability.prop.enabled;
