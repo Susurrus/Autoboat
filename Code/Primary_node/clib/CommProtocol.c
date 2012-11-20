@@ -42,12 +42,12 @@ THE SOFTWARE.
 // First Revision: Aug 25 2010
 // ==============================================================
 
-#include "commProtocol.h"
-#include "uart1.h"
-#include "uart2.h"
+#include "CommProtocol.h"
+#include "Uart1.h"
+#include "Uart2.h"
 #include "Rudder.h"
-#include "types.h"
-#include "ecanSensors.h"
+#include "Types.h"
+#include "EcanSensors.h"
 
 #include <stdint.h>
 #include <string.h>

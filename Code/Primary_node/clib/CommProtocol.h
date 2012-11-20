@@ -42,8 +42,8 @@ THE SOFTWARE.
 // First Revision: Aug 25 2010
 // ==============================================================
 
-#ifndef COMMPROTOCOL_H
-#define COMMPROTOCOL_H
+#ifndef COMM_PROTOCOL_H
+#define COMM_PROTOCOL_H
 
 #include <stdint.h>
 
@@ -91,4 +91,4 @@ uint8_t IsNewHilData();
 
 inline void uart2EnqueueActuatorData(uint8_t *data);
 
-#endif // COMMPROTOCOL_H
+#endif // COMM_PROTOCOL_H

@@ -58,6 +58,11 @@ extern uint32_t time;
 extern uint8_t nodeId;
 
 /**
+ * The CPU load for a given node. Units are in percent, so valid values are from 0 to 100.
+ */
+extern uint8_t cpuLoad;
+
+/**
  * Transmit a CAN_MESSAGE_STATUS message using the status and error
  * variables declared in this library.
  */

@@ -32,11 +32,11 @@ THE SOFTWARE.
 #include <string.h>
 #include <stdlib.h>
 
-#include "revo.h"
-#include "uart2.h"
-#include "types.h"
-#include "conversions.h"
-#include "nmea0183.h"
+#include "Revo.h"
+#include "Uart2.h"
+#include "Types.h"
+#include "Conversions.h"
+#include "Nmea0183.h"
 
 struct RevoData revoDataStore;
 static char sentence[127];
