@@ -77,14 +77,18 @@ static HilWrapper wrapper = {
     '&'
 };
 
-static union HilDataToPc hilDataToTransmit = {};
-static union HilDataFromPc hilReceivedData = {};
+union HilDataToPc hilDataToTransmit = {};
+union HilDataFromPc hilReceivedData = {};
 
 // Keep track of how many messages were successfully received.
 static uint32_t receivedMessageCount = 0;
 // Keep track of how many fails we've run into
 static uint32_t failedMessageCount = 0;
 static uint8_t sameFailedMessageFlag = 0;
+
+// Track whether HIL is currently active.
+static bool hilStatus = false;
+
 void HilInit(void)
 {
 	// Initialize UART1 to 115200 for HIL communications.
@@ -216,15 +220,33 @@ void HilBuildMessage(uint8_t data)
  * it for sensor data. Once a complete message has been parsed
  * the data inside will be returned through the message
  * array.
+ * This function also sets/clears the `hilStatus` variable which specifies whether HIL is currently
+ * active or not. This uses a 20-sample timeout, which equates to 0.2s if this function is called
+ * every 1/100th of a second.
  * It's input is a boolean that is true when generated actuator sensor data
  * should be overridden by real-world actuator sensor data.
  */
 void HilReceiveData(void)
 {
+    static int countDown = 0; // Keep a .2s timer going and disable after it expires.
     uint8_t c;
+    if (countDown < 20) {
+        ++countDown;
+    } else {
+        hilStatus = false;
+    }
     while (Uart1ReadByte(&c)) {
         HilBuildMessage(c);
+        countDown = 0;
     }
+    if (!hilStatus && countDown == 0) {
+        hilStatus = true;
+    }
+}
+
+bool HilActive(void)
+{
+    return hilStatus;
 }
 
 int HilTransmitData(void)

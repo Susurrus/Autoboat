@@ -60,6 +60,7 @@ union HilDataToPc {
     } data;
     uint8_t bytes[sizeof(struct x)];
 };
+extern union HilDataToPc hilDataToTransmit;
 
 /**
  * Declare the struct that holds all the data received from the PC for HIL.
@@ -76,6 +77,7 @@ union HilDataFromPc {
     } data;
     uint8_t bytes[sizeof(struct y)];
 };
+extern union HilDataFromPc hilReceivedData;
 
 /**
  * This function initializes all onboard UART communications
@@ -90,6 +92,8 @@ void HilInit(void);
 void HilBuildMessage(uint8_t data);
 
 void HilReceiveData(void);
+
+bool HilActive(void);
 
 int HilTransmitData(void);
 

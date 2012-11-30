@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2352"
+    ComputedModelVersion    "1.2353"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,11 +27,11 @@ Model {
   Creator		  "bwmairs"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "bryantmairs"
+  LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Nov 29 16:45:12 2012"
-  RTWModifiedTimeStamp	  276083610
-  ModelVersionFormat	  "1.%<AutoIncrement:2352>"
+  LastModifiedDate	  "Fri Nov 30 12:19:34 2012"
+  RTWModifiedTimeStamp	  276178175
+  ModelVersionFormat	  "1.%<AutoIncrement:2353>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -676,8 +676,8 @@ Model {
 		DataType		"string"
 		Name			"OPTIM_GCC"
 		Value			"-mcpu=33fj128MC802 -O3 -fschedule-insns -fschedule-insns2                                                  "
-		"                                                                                                           -fno-shor"
-		"t-double"
+		"                                                                                                               -fno-"
+		"short-double"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -810,6 +810,39 @@ Model {
       SaturateOnIntegerOverflow	on
       SampleTime	      "-1"
     }
+    Block {
+      BlockType		      Logic
+      Operator		      "AND"
+      Inputs		      "2"
+      IconShape		      "rectangular"
+      AllPortsSameDT	      on
+      OutDataTypeStr	      "Inherit: Logical (see Configuration Parameters: Optimization)"
+      SampleTime	      "-1"
+    }
+    Block {
+      BlockType		      RateTransition
+      Integrity		      on
+      Deterministic	      on
+      X0		      "0"
+      OutPortSampleTimeOpt    "Specify"
+      OutPortSampleTimeMultiple	"1"
+      OutPortSampleTime	      "-1"
+    }
+    Block {
+      BlockType		      Switch
+      Criteria		      "u2 >= Threshold"
+      Threshold		      "0"
+      InputSameDT	      on
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      ZeroCross		      on
+      SampleTime	      "-1"
+      AllowDiffInputSizes     off
+    }
   }
   System {
     Name		    "hil_node"
@@ -827,7 +860,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "23033"
+    SIDHighWatermark	    "23042"
     Block {
       BlockType		      Reference
       Name		      "Configuration"
@@ -1018,6 +1051,70 @@ Model {
       SaturateOnIntegerOverflow	off
     }
     Block {
+      BlockType		      DataTypeConversion
+      Name		      "Data Type Conversion1"
+      SID		      "23041"
+      Position		      [505, 545, 570, 565]
+      ZOrder		      -7
+      ShowName		      off
+      OutDataTypeStr	      "boolean"
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	off
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Get HIL status\n(true means active)\n[Hil.c]"
+      SID		      "23034"
+      Tag		      "dsPIC_dsPIC_CFunctionCall"
+      Ports		      [0, 1]
+      Position		      [260, 530, 435, 580]
+      BackgroundColor	      "orange"
+      LibraryVersion	      "3.84"
+      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+      SourceType	      "C Function Call"
+      FctUpdate		      "Output Function"
+      fctName		      "HilActive"
+      INPUT_SIZE	      "1"
+      INPUT1		      "--"
+      INPUT2		      "--"
+      INPUT3		      "--"
+      OUTPUT_SIZE	      "1"
+      OUTPUT1		      "uint8"
+      SampleTime	      "T_step"
+      InputType		      "[ ]"
+      OutputType	      "[ 2 ]"
+      FctDeclaration	      "extern uint8_T HilActive();"
+      FctCall		      "%y1 = HilActive();"
+      OrderingInOutPopup      "None"
+      FctStart		      "None"
+      FctStart_Name	      "Init_onlyOnce"
+      FctStart_Declaration    "inline extern void Init_onlyOnce();"
+      FctStart_Call	      "Init_onlyOnce();"
+      FctInit		      "None"
+      FctInit_Name	      "Init_Reset"
+      FctInit_Declaration     "inline extern void Init_Reset();"
+      FctInit_Call	      "Init_Reset();"
+      PinDigitalInput	      "[]"
+      PinDigitalOutput	      "[]"
+      AnalogueInput	      "[]"
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "HIL status\n(amber LED)"
+      SID		      "23035"
+      Tag		      "dsPIC_Digital_Output"
+      Ports		      [1]
+      Position		      [780, 535, 895, 575]
+      Priority		      "5"
+      LibraryVersion	      "3.84"
+      SourceBlock	      "dsPICdrivers/Digital I//O/Digital Output Write"
+      SourceType	      ""
+      PORT		      "A"
+      Pin		      "[4]"
+      Simultaneous	      off
+      OrderingInOutPopup      "None"
+    }
+    Block {
       BlockType		      Reference
       Name		      "Initialize this node\nincl. HIL comms\n[HilNode.c]"
       SID		      "13021"
@@ -1055,6 +1152,18 @@ Model {
       AnalogueInput	      "[]"
     }
     Block {
+      BlockType		      Logic
+      Name		      "Logical\nOperator"
+      SID		      "23042"
+      Ports		      [1, 1]
+      Position		      [585, 265, 615, 285]
+      ZOrder		      -17
+      ShowName		      off
+      Operator		      "NOT"
+      AllPortsSameDT	      off
+      OutDataTypeStr	      "boolean"
+    }
+    Block {
       BlockType		      Reference
       Name		      "Master"
       SID		      "11080"
@@ -1079,12 +1188,12 @@ Model {
       tmr2345		      "[0  0  0  0]"
       tmr2345cfg	      "[-1 -1 -1 -1]"
       IOautoConf	      on
-      typePort		      "[ 0   0   0  10   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0  22   0   0  23"
+      typePort		      "[ 0   0   0  10  10   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0  22   0   0  23"
       "   0   0   0  23   0  22   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
       "   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
       "   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
       "   0   0   0   0 ]"
-      TRIS		      "[ 65527  63359  65535  65535  65535  65535  65535 ]"
+      TRIS		      "[ 65511  63359  65535  65535  65535  65535  65535 ]"
       ADPCFG		      "0"
       MasterBusyPort	      "None"
       MasterOverloadPort      "None"
@@ -1174,6 +1283,20 @@ Model {
       SourceType	      ""
     }
     Block {
+      BlockType		      RateTransition
+      Name		      "Rate Transition1"
+      SID		      "23036"
+      Position		      [560, 469, 600, 511]
+      ShowName		      off
+    }
+    Block {
+      BlockType		      RateTransition
+      Name		      "Rate Transition2"
+      SID		      "23038"
+      Position		      [560, 609, 600, 651]
+      ShowName		      off
+    }
+    Block {
       BlockType		      Reference
       Name		      "Receive HIL data from PC\n[Hil.c]"
       SID		      "23031"
@@ -1249,11 +1372,53 @@ Model {
     }
     Block {
       BlockType		      Reference
+      Name		      "Repeating\nSequence\nStair1"
+      SID		      "23037"
+      Ports		      [0, 1]
+      Position		      [445, 475, 475, 505]
+      ShowName		      off
+      LibraryVersion	      "1.256"
+      SourceBlock	      "simulink/Sources/Repeating\nSequence\nStair"
+      SourceType	      "Repeating Sequence Stair"
+      OutValues		      "[1 0]"
+      tsamp		      "0.2"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "fixdt('boolean')"
+      OutputDataTypeScalingMode	"Specify via dialog"
+      OutDataType	      "fixdt('boolean')"
+      ConRadixGroup	      "Best Precision: Vector-wise"
+      OutScaling	      "[]"
+      LockScale		      off
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Repeating\nSequence\nStair2"
+      SID		      "23039"
+      Ports		      [0, 1]
+      Position		      [445, 615, 475, 645]
+      ShowName		      off
+      LibraryVersion	      "1.256"
+      SourceBlock	      "simulink/Sources/Repeating\nSequence\nStair"
+      SourceType	      "Repeating Sequence Stair"
+      OutValues		      "[1 0]"
+      tsamp		      "1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "fixdt('boolean')"
+      OutputDataTypeScalingMode	"Specify via dialog"
+      OutDataType	      "fixdt('boolean')"
+      ConRadixGroup	      "Best Precision: Vector-wise"
+      OutScaling	      "[]"
+      LockScale		      off
+    }
+    Block {
+      BlockType		      Reference
       Name		      "Reset status\n(red LED)"
       SID		      "23032"
       Tag		      "dsPIC_Digital_Output"
       Ports		      [1]
-      Position		      [580, 255, 695, 295]
+      Position		      [655, 255, 770, 295]
       Priority		      "5"
       LibraryVersion	      "3.84"
       SourceBlock	      "dsPICdrivers/Digital I//O/Digital Output Write"
@@ -1262,6 +1427,16 @@ Model {
       Pin		      "[3]"
       Simultaneous	      off
       OrderingInOutPopup      "None"
+    }
+    Block {
+      BlockType		      Switch
+      Name		      "Switch"
+      SID		      "23040"
+      Position		      [695, 535, 745, 575]
+      ZOrder		      -18
+      ShowName		      off
+      InputSameDT	      off
+      SaturateOnIntegerOverflow	off
     }
     Block {
       BlockType		      Reference
@@ -1370,6 +1545,56 @@ Model {
     }
     Line {
       SrcBlock		      "Data Type Conversion"
+      SrcPort		      1
+      DstBlock		      "Logical\nOperator"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Rate Transition1"
+      SrcPort		      1
+      Points		      [60, 0; 0, 50]
+      DstBlock		      "Switch"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Repeating\nSequence\nStair1"
+      SrcPort		      1
+      DstBlock		      "Rate Transition1"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Repeating\nSequence\nStair2"
+      SrcPort		      1
+      DstBlock		      "Rate Transition2"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Switch"
+      SrcPort		      1
+      DstBlock		      "HIL status\n(amber LED)"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Rate Transition2"
+      SrcPort		      1
+      Points		      [0, -45; 75, 0]
+      DstBlock		      "Switch"
+      DstPort		      3
+    }
+    Line {
+      SrcBlock		      "Get HIL status\n(true means active)\n[Hil.c]"
+      SrcPort		      1
+      DstBlock		      "Data Type Conversion1"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Data Type Conversion1"
+      SrcPort		      1
+      DstBlock		      "Switch"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Logical\nOperator"
       SrcPort		      1
       DstBlock		      "Reset status\n(red LED)"
       DstPort		      1

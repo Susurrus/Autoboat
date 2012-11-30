@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2370"
+    ComputedModelVersion    "1.2371"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,11 +26,11 @@ Model {
   Creator		  "Administrator"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "bryantmairs"
+  LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Nov 29 18:55:50 2012"
-  RTWModifiedTimeStamp	  276085419
-  ModelVersionFormat	  "1.%<AutoIncrement:2370>"
+  LastModifiedDate	  "Fri Nov 30 12:19:24 2012"
+  RTWModifiedTimeStamp	  276178687
+  ModelVersionFormat	  "1.%<AutoIncrement:2371>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -68,6 +68,7 @@ Model {
     $ObjectID		    1
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "Boat_sim"
+    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -3191,9 +3192,9 @@ Model {
 	  LibraryVersion	  "1.84"
 	  SourceBlock		  "instrumentlib/Serial Configuration"
 	  SourceType		  "Serial Configuration"
-	  ComPortMenu		  "COM5"
-	  ComPort		  "COM5"
-	  ObjConstructor	  "serial('COM5');"
+	  ComPortMenu		  "COM3"
+	  ComPort		  "COM3"
+	  ObjConstructor	  "serial('COM3');"
 	  BaudRate		  "115200"
 	  DataBits		  "8"
 	  Parity		  "none"
@@ -3256,9 +3257,9 @@ Model {
 	      LibraryVersion	      "1.84"
 	      SourceBlock	      "instrumentlib/Serial Receive"
 	      SourceType	      "Serial Receive"
-	      ComPortMenu	      "COM5"
-	      ComPort		      "COM5"
-	      ObjConstructor	      "serial('COM5');"
+	      ComPortMenu	      "COM3"
+	      ComPort		      "COM3"
+	      ObjConstructor	      "serial('COM3');"
 	      Header		      "%&"
 	      Terminator	      "^&"
 	      DataSize		      "22"
@@ -3356,9 +3357,9 @@ Model {
 	      LibraryVersion	      "1.84"
 	      SourceBlock	      "instrumentlib/Serial Send"
 	      SourceType	      "Serial Send"
-	      ComPortMenu	      "COM5"
-	      ComPort		      "COM5"
-	      ObjConstructor	      "serial('COM5');"
+	      ComPortMenu	      "COM3"
+	      ComPort		      "COM3"
+	      ObjConstructor	      "serial('COM3');"
 	      Terminator	      "<none>"
 	      EnableBlockingMode      off
 	    }
@@ -12095,8 +12096,6 @@ Stateflow {
     created		    "13-Apr-2010 16:50:36"
     isLibrary		    0
     firstTarget		    94
-    debug {
-    }
     sfVersion		    76014001.0002
   }
   chart {
@@ -12490,33 +12489,33 @@ Stateflow {
       " uint8(0);\n        actuatorData = zeros(16, 1, 'uint8');\n    end\n\n    % This contains the function's state o"
       "f whether\n    % it is currently building a message.\n    % 0 - Awaiting header byte 0 (%)\n    % 1 - Awaiting h"
       "eader byte 1 (&)\n    % 2 - Building message\n    % 3 - Awaiting header byte 0 (^)\n    % 4 - Awaiting header by"
-      "te 1 (&)\n    % 5 - Reading checksum character\n\n    new = false;\n    fail = false;\n    \n    characterIn\n\n"
-      "    % We start recording a new message if we see the header\n    if messageState == 0\n        if characterIn =="
-      " '%'\n            messageIndex = uint8(1);\n            message(messageIndex) = characterIn;\n            messag"
-      "eIndex = messageIndex + 1;\n            messageState = uint8(1);\n        else\n            fail = true;\n      "
-      "  end\n    elseif messageState == 1\n        % If we don't find the necessary ampersand we start over\n        %"
-      " waiting for a new sentence\n        if characterIn == '&'\n            message(messageIndex) = characterIn;\n  "
-      "          messageIndex = messageIndex + 1;\n            messageState = uint8(2);\n        elseif characterIn ~= "
-      "'%'\n            messageIndex = uint8(1);\n            messageState = uint8(0);\n            fail = true;\n     "
-      "   end\n    elseif messageState == 2\n        % Record every character that comes in now that we're building a s"
-      "entence.\n        % Only stop if we run out of room or an asterisk is found.\n        message(messageIndex) = ch"
-      "aracterIn;\n        messageIndex = messageIndex + 1;\n        if messageIndex > 4 && message(4) < 249 && message"
-      "Index == message(4) + 6\n            if characterIn == '^'\n                messageState = uint8(3);\n          "
-      "  else\n                messageIndex = uint8(1);\n                messageState = uint8(0);\n                fail"
-      " = true;\n            end\n        elseif messageIndex == length(message)\n            % If we've filled up the "
-      "buffer, ignore the entire message as we can't store it all\n            messageIndex = uint8(1);\n            me"
-      "ssageState = uint8(0);\n            fail = true;\n        end\n    elseif messageState == 3\n        % If we don"
-      "'t find the necessary ampersand we continue\n        % recording data as we haven't found the footer yet until\n"
-      "        % we've filled up the entire message (ends at 124 characters\n        % as we need room for the 2 footer"
-      " chars).\n        if characterIn == '&'\n\n            % The checksum is now verified and if successful the mess"
-      "age\n            % is stored in the appropriate struct.\n            checksumCalculated = uint8(0);\n           "
-      " for f=5:messageIndex-2\n                checksumCalculated = bitxor(checksumCalculated, message(f));\n         "
-      "   end\n\n            if message(3) == checksumCalculated\n                % If we've found an actuator message,"
-      " update our local data store\n                actuatorData = message(5:5+length(actuatorData)-1);\n             "
-      "   new = true;\n            else\n                fail = true;\n            end\n        end\n\n        % We cle"
-      "ar all state variables here regardless of success.\n        messageIndex = uint8(1);\n        messageState = uin"
-      "t8(0);\n        message = zeros(22,1,'uint8');\n    end\n\n    data = actuatorData;\nend"
-      editorLayout	      "100 M4x1[95 311 1080 733]"
+      "te 1 (&)\n    % 5 - Reading checksum character\n\n    new = false;\n    fail = false;\n\n    % We start recordin"
+      "g a new message if we see the header\n    if messageState == 0\n        if characterIn == '%'\n            messa"
+      "geIndex = uint8(1);\n            message(messageIndex) = characterIn;\n            messageIndex = messageIndex +"
+      " 1;\n            messageState = uint8(1);\n        else\n            fail = true;\n        end\n    elseif messa"
+      "geState == 1\n        % If we don't find the necessary ampersand we start over\n        % waiting for a new sent"
+      "ence\n        if characterIn == '&'\n            message(messageIndex) = characterIn;\n            messageIndex "
+      "= messageIndex + 1;\n            messageState = uint8(2);\n        elseif characterIn ~= '%'\n            messag"
+      "eIndex = uint8(1);\n            messageState = uint8(0);\n            fail = true;\n        end\n    elseif mess"
+      "ageState == 2\n        % Record every character that comes in now that we're building a sentence.\n        % Onl"
+      "y stop if we run out of room or an asterisk is found.\n        message(messageIndex) = characterIn;\n        mes"
+      "sageIndex = messageIndex + 1;\n        if messageIndex > 4 && message(4) < 249 && messageIndex == message(4) + 6"
+      "\n            if characterIn == '^'\n                messageState = uint8(3);\n            else\n               "
+      " messageIndex = uint8(1);\n                messageState = uint8(0);\n                fail = true;\n            e"
+      "nd\n        elseif messageIndex == length(message)\n            % If we've filled up the buffer, ignore the enti"
+      "re message as we can't store it all\n            messageIndex = uint8(1);\n            messageState = uint8(0);\n"
+      "            fail = true;\n        end\n    elseif messageState == 3\n        % If we don't find the necessary am"
+      "persand we continue\n        % recording data as we haven't found the footer yet until\n        % we've filled u"
+      "p the entire message (ends at 124 characters\n        % as we need room for the 2 footer chars).\n        if cha"
+      "racterIn == '&'\n\n            % The checksum is now verified and if successful the message\n            % is st"
+      "ored in the appropriate struct.\n            checksumCalculated = uint8(0);\n            for f=5:messageIndex-2\n"
+      "                checksumCalculated = bitxor(checksumCalculated, message(f));\n            end\n\n            if "
+      "message(3) == checksumCalculated\n                % If we've found an actuator message, update our local data st"
+      "ore\n                actuatorData = message(5:5+length(actuatorData)-1);\n                new = true;\n         "
+      "   else\n                fail = true;\n            end\n        end\n\n        % We clear all state variables he"
+      "re regardless of success.\n        messageIndex = uint8(1);\n        messageState = uint8(0);\n        message ="
+      " zeros(22,1,'uint8');\n    end\n\n    data = actuatorData;\nend"
+      editorLayout	      "100 M4x1[81 206 1080 733]"
       breakpoints	      "100 M1x3[80 121 10]"
       saturateOnIntegerOverflow	0
     }
