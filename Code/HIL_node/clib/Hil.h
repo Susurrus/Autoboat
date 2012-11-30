@@ -42,53 +42,61 @@ THE SOFTWARE.
 // First Revision: Aug 25 2010
 // ==============================================================
 
-#ifndef COMM_PROTOCOL_H
-#define COMM_PROTOCOL_H
+#ifndef HIL_H
+#define HIL_H
 
-#include <stdint.h>
+#include "Types.h"
+
+/**
+ * Declare the struct that holds all the data transmit to the PC for HIL.
+ */
+union HilDataToPc {
+    struct x {
+        float rCommandAngle;
+        float tCommandSpeed;
+        float rudderAngle;
+        uint16_t sensorOverride;
+        uint16_t timestamp;
+    } data;
+    uint8_t bytes[sizeof(struct x)];
+};
+
+/**
+ * Declare the struct that holds all the data received from the PC for HIL.
+ */
+union HilDataFromPc {
+    struct y {
+        float tSpeed;
+        float rAngle;
+        int32_t gpsLatitude;
+        int32_t gpsLongitude;
+        uint16_t gpsCog;
+        uint16_t gpsSog;
+        uint16_t timestamp;
+    } data;
+    uint8_t bytes[sizeof(struct y)];
+};
 
 /**
  * This function initializes all onboard UART communications
  */
-void cpInitCommunications();
+void HilInit(void);
 
 /**
  * This function builds a full message internally byte-by-byte,
  * verifies its checksum, and then pushes that data into the
  * appropriate struct.
  */
-void buildAndCheckMessage(uint8_t characterIn, uint8_t sensorMode);
+void HilBuildMessage(uint8_t data);
 
-void processNewCommData(uint8_t sensorMode);
+void HilReceiveData(void);
 
-/**
- * The following functions change the UART2 baud rate to allow
- * for HIL mode (running at 115200baud) and back to the old baud rate.
- */
-void setHilMode(uint8_t mode);
-
-inline void enableHil();
-
-inline void disableHil();
+int HilTransmitData(void);
 
 /**
  * This function calculates the checksum of some bytes in an
  * array by XORing all of them.
  */
-uint8_t calculateChecksum(uint8_t* sentence, uint8_t size);
+uint8_t HilCalculateChecksum(const uint8_t *sentence, uint8_t size);
 
-/**
- * This function takes the byte array of GPS data received during HIL and
- * writes it into the GPS storage struct. It does some necessary conversions.
- */
-void UpdateGpsDataFromHil(uint8_t* data);
-
-void SetHilData(uint8_t *data);
-
-uint16_t GetCurrentTimestamp();
-
-uint8_t IsNewHilData();
-
-inline void uart2EnqueueActuatorData(uint8_t *data);
-
-#endif // COMM_PROTOCOL_H
+#endif // HIL_H

@@ -2,15 +2,15 @@
 #include "Uart1.h"
 #include <xc.h>
 
-CircularBuffer uart1RxBuffer;
-uint8_t u1RxBuf[64];
-CircularBuffer uart1TxBuffer;
-uint8_t u1TxBuf[64];
+static CircularBuffer uart1RxBuffer;
+static uint8_t u1RxBuf[64];
+static CircularBuffer uart1TxBuffer;
+static uint8_t u1TxBuf[64];
 
 /*
  * Private functions.
  */
-void startUart1Transmission();
+void Uart1StartTransmission(void);
 
 /**
  * Initialization function for the UART1 peripheral.
@@ -19,7 +19,8 @@ void startUart1Transmission();
  * for whatever baud rate is specified. It also configures two circular buffers
  * for transmission and reception.
  */
-void initUart1(unsigned int brgRegister) {
+void Uart1Init(uint16_t brgRegister)
+{
 
     // First initialize the necessary circular buffers.
     CB_Init(&uart1RxBuffer, u1RxBuf, sizeof(u1RxBuf));
@@ -60,9 +61,10 @@ void initUart1(unsigned int brgRegister) {
 
 }
 
-void changeUart1BaudRate(unsigned short brgRegister) {
+void Uart1ChangeBaudRate(uint16_t brgRegister)
+{
 
-    unsigned char utxen = U1STAbits.UTXEN;
+    uint8_t utxen = U1STAbits.UTXEN;
 
     // Disable the port;
     U1MODEbits.UARTEN = 0;
@@ -84,43 +86,50 @@ void changeUart1BaudRate(unsigned short brgRegister) {
  * for new data and the transmission buffer is checked that
  * it has room for new data before attempting to transmit.
  */
-void startUart1Transmission() {
+void Uart1StartTransmission(void)
+{
     if (uart1TxBuffer.dataSize > 0 && !U1STAbits.UTXBF) {
         // A temporary variable is used here because writing directly into U1TXREG causes some weird issues.
-        unsigned char c;
+        uint8_t c;
         CB_ReadByte(&uart1TxBuffer, &c);
         U1TXREG = c;
     }
+}
+
+int Uart1ReadByte(uint8_t *datum)
+{
+    return CB_ReadByte(&uart1RxBuffer, datum);
 }
 
 /**
  * This function supplements the uart1EnqueueData() function by also
  * providing an interface that only enqueues a single byte.
  */
-void uart1EnqueueByte(unsigned char datum) {
+void Uart1WriteByte(uint8_t datum)
+{
     CB_WriteByte(&uart1TxBuffer, datum);
-    startUart1Transmission();
+    Uart1StartTransmission();
 }
 
 /**
  * This function enqueues all bytes in the passed data character array according to the passed
  * length.
  */
-void uart1EnqueueData(unsigned char *data, unsigned char length) {
-    unsigned char g;
+int Uart1WriteData(const void *data, size_t length)
+{
+    int success = CB_WriteMany(&uart1TxBuffer, data, length, false);
 
-    for (g = 0; g < length; g++) {
-            CB_WriteByte(&uart1TxBuffer,data[g]);
-    }
+    Uart1StartTransmission();
 
-    startUart1Transmission();
+    return success;
 }
 
-void __attribute__((__interrupt__, no_auto_psv)) _U1RXInterrupt(void) {
+void __attribute__((__interrupt__, no_auto_psv)) _U1RXInterrupt(void)
+{
 
     // Keep receiving new bytes while the buffer has data.
     while (U1STAbits.URXDA == 1) {
-            CB_WriteByte(&uart1RxBuffer, (unsigned char)U1RXREG);
+            CB_WriteByte(&uart1RxBuffer, (uint8_t)U1RXREG);
     }
 
     // Clear buffer overflow bit if triggered
@@ -139,8 +148,9 @@ void __attribute__((__interrupt__, no_auto_psv)) _U1RXInterrupt(void) {
  * therefore keeps adding bytes to transmit if there're more
  * in the queue.
  */
-void __attribute__((__interrupt__, no_auto_psv)) _U1TXInterrupt(void) {
-    startUart1Transmission();
+void __attribute__((__interrupt__, no_auto_psv)) _U1TXInterrupt(void)
+{
+    Uart1StartTransmission();
 
     // Clear the interrupt flag
     IFS0bits.U1TXIF = 0;

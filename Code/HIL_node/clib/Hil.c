@@ -42,35 +42,55 @@ THE SOFTWARE.
 // First Revision: Aug 25 2010
 // ==============================================================
 
-#include "CommProtocol.h"
+#include "Hil.h"
 #include "Uart1.h"
 #include "Rudder.h"
 #include "Types.h"
-#include "ecanSensors.h"
+#include "Can.h"
 
 #include <stdint.h>
 #include <string.h>
 
-// Declaration of the relevant message structs used.
-static struct {
-	uint8_t newData;
-	tUnsignedShortToChar timestamp;
-} tHilData;
-
 // This is the value of the BRG register for configuring different baud
 // rates. These BRG values have been calculated based on a 40MHz system clock.
 #define BAUD115200_BRG_REG 21
+
+// Here we declare a struct used to hold the HIL data that's ready for transmission.
+// We declare it module-level to prevent reallocation every time and so that it can
+// be initialized with some values.
+typedef struct {
+	uint8_t headerByte1;
+	uint8_t headerByte2;
+	uint8_t checksum;
+	uint8_t messageSize;
+	union HilDataToPc data;
+	uint8_t footerByte1;
+	uint8_t footerByte2;
+} HilWrapper;
+static HilWrapper wrapper = {
+    '%',
+    '&',
+    0,
+    sizeof(union HilDataToPc),
+    {},
+    '^',
+    '&'
+};
+
+static union HilDataToPc hilDataToTransmit = {};
+static union HilDataFromPc hilReceivedData = {};
 
 // Keep track of how many messages were successfully received.
 static uint32_t receivedMessageCount = 0;
 // Keep track of how many fails we've run into
 static uint32_t failedMessageCount = 0;
 static uint8_t sameFailedMessageFlag = 0;
-
-void cpInitCommunications(void) {
+void HilInit(void)
+{
 	// Initialize UART1 to 115200 for HIL communications.
-	initUart1(BAUD115200_BRG_REG);
+	Uart1Init(BAUD115200_BRG_REG);
 }
+
 
 /**
  * This function builds a full message internally byte-by-byte,
@@ -79,10 +99,11 @@ void cpInitCommunications(void) {
  * sensorMode is a boolean that is true when generated actuator sensor data
  * should be overridden by real-world actuator sensor data.
  */
-void buildAndCheckMessage(uint8_t characterIn, uint8_t sensorMode) {
-	static uint8_t message[64];
-	static uint8_t messageIndex;
-	static uint8_t messageState;
+void HilBuildMessage(uint8_t data)
+{
+	static uint8_t message[64] = {};
+	static uint8_t messageIndex = 0;
+	static uint8_t messageState = 0;
 
 	// This contains the function's state of whether
 	// it is currently building a message.
@@ -95,8 +116,8 @@ void buildAndCheckMessage(uint8_t characterIn, uint8_t sensorMode) {
 
 	// We start recording a new message if we see the header
 	if (messageState == 0) {
-		if (characterIn == '%') {
-			message[messageIndex] = characterIn;
+		if (data == '%') {
+			message[messageIndex] = data;
 			messageIndex++;
 			messageState = 1;
 		} else {
@@ -112,12 +133,12 @@ void buildAndCheckMessage(uint8_t characterIn, uint8_t sensorMode) {
 	} else if (messageState == 1) {
 		// If we don't find the necessary ampersand we start over
 		// waiting for a new sentence
-		if (characterIn == '&') {
-			message[messageIndex] = characterIn;
+		if (data == '&') {
+			message[messageIndex] = data;
 			messageIndex++;
 			messageState = 2;
 
-		} else if (characterIn != '%'){
+		} else if (data != '%'){
 			messageIndex = 0;
 			messageState = 0;
 
@@ -130,9 +151,9 @@ void buildAndCheckMessage(uint8_t characterIn, uint8_t sensorMode) {
 	} else if (messageState == 2) {
 		// Record every character that comes in now that we're building a sentence.
 		// Stop scanning once we've reached the message length of characters.
-		message[messageIndex++] = characterIn;
+		message[messageIndex++] = data;
 		if (messageIndex > 3 && messageIndex == message[3] + 5) {
-			if (characterIn == '^') {
+			if (data == '^') {
 				messageState = 3;
 			} else {
 				messageState = 0;
@@ -152,53 +173,40 @@ void buildAndCheckMessage(uint8_t characterIn, uint8_t sensorMode) {
 			sameFailedMessageFlag = 1;
 		}
 	} else if (messageState == 3) {
-		// If we don't find the necessary ampersand we continue
-		// recording data as we haven't found the footer yet until
-		// we've filled up the entire message (ends at 124 characters
-		// as we need room for the 2 footer chars).
-		message[messageIndex++] = characterIn;
-		if (characterIn == '&') {
-			messageState = 4;
-		} else if (messageIndex == sizeof(message) - 2) {
-			messageState = 0;
-			messageIndex = 0;
-		}
-	} else if (messageState == 4) {
-		// Record the checksum byte.
-		message[messageIndex] = characterIn;
+            // If we don't find the necessary ampersand we continue
+            // recording data as we haven't found the footer yet until
+            // we've filled up the entire message (ends at 124 characters
+            // as we need room for the 2 footer chars).
+            message[messageIndex++] = data;
+            if (data == '&') {
+                message[messageIndex] = data;
 
-		// The checksum is now verified and if successful the message
-		// is stored in the appropriate struct.
-		if (message[messageIndex] == calculateChecksum(&message[2], messageIndex - 4)) {
-			// We now memcpy all the data into our global data structs.
-			receivedMessageCount++;
-			if (message[2] == 1) {
-				// NOTE: We skip data 4 & 5 as it's unnecessary throttle data.
-				UpdateGpsDataFromHil(&message[6]);
+                // The checksum is now verified and if successful the message
+                // is stored in the appropriate struct.
+                if (message[2] == HilCalculateChecksum(&message[4], sizeof(union HilDataFromPc))) {
+                    // We now memcpy all the data into our global data struct.
+                    receivedMessageCount++;
+                    memcpy(&hilReceivedData, &message[4], sizeof(union HilDataFromPc));
 
-				// Only update the rudder data if we're not in a sensor-override mode. This mode
-				// specifies that real-world actuator sensor data will be used instead of generated.
-				if (!sensorMode) {
-					SetRudderAngle(&message[23]);
-				}
-				SetHilData(&message[31]);
-			}
+                    // Now that we've successfully parsed a message, clear the flag.
+                    sameFailedMessageFlag = 0;
+                } else {
+                    // Here we've failed parsing a message.
+                    failedMessageCount++;
+                    sameFailedMessageFlag = 1;
+                }
 
-			// Now that we've successfully parsed a message, clear the flag.
-			sameFailedMessageFlag = 0;
-		} else {
-			// Here we've failed parsing a message.
-			failedMessageCount++;
-			sameFailedMessageFlag = 1;
-		}
-
-		// We clear all state variables here regardless of success.
-		messageIndex = 0;
-		messageState = 0;
-		int b;
-		for (b = 0; b < sizeof(message); b++) {
-			message[b] = 0;
-		}
+                // We clear all state variables here regardless of success.
+                messageIndex = 0;
+                messageState = 0;
+                int b;
+                for (b = 0; b < sizeof(message); b++) {
+                    message[b] = 0;
+                }
+            } else {
+                messageIndex = 0;
+                messageState = 0;
+            }
 	}
 }
 
@@ -211,20 +219,37 @@ void buildAndCheckMessage(uint8_t characterIn, uint8_t sensorMode) {
  * It's input is a boolean that is true when generated actuator sensor data
  * should be overridden by real-world actuator sensor data.
  */
-void processNewCommData(uint8_t sensorMode)
+void HilReceiveData(void)
 {
-	while (uart1RxBuffer.dataSize > 0) {
-		uint8_t c;
-		CB_ReadByte(&uart1RxBuffer, &c);
-		buildAndCheckMessage(c, sensorMode);
-	}
+    uint8_t c;
+    while (Uart1ReadByte(&c)) {
+        HilBuildMessage(c);
+    }
+}
+
+int HilTransmitData(void)
+{
+    // First copy the timestamp from the last received HIL data packet to the new outgoing one.
+    hilDataToTransmit.data.timestamp = hilReceivedData.data.timestamp;
+	
+    // Fill the wrapper with the latest data.
+    memcpy(&wrapper.data, &hilDataToTransmit, sizeof(union HilDataToPc));
+
+    // Calculate checksum over the messageType, messageSize, and data.
+    wrapper.checksum = HilCalculateChecksum((const uint8_t *)&wrapper.data, sizeof(union HilDataToPc));
+
+    // And then enqueue the new data for transmission.
+    Uart1WriteData(&wrapper, sizeof(HilWrapper));
+
+    return 1;
 }
 
 /**
  * This function calculates the checksum of some bytes in an
  * array by XORing all of them.
  */
-uint8_t calculateChecksum(uint8_t *sentence, uint8_t size) {
+uint8_t HilCalculateChecksum(const uint8_t *sentence, uint8_t size)
+{
 
 	uint8_t checkSum = 0;
 	uint8_t i;
@@ -233,55 +258,4 @@ uint8_t calculateChecksum(uint8_t *sentence, uint8_t size) {
 	}
 
 	return checkSum;
-}
-
-void UpdateGpsDataFromHil(uint8_t *data) {
-	if (data[16]) {
-		gpsDataStore.lat.chData[0] = data[0];
-		gpsDataStore.lat.chData[1] = data[1];
-		gpsDataStore.lat.chData[2] = data[2];
-		gpsDataStore.lat.chData[3] = data[3];
-
-		gpsDataStore.lon.chData[0] = data[4];
-		gpsDataStore.lon.chData[1] = data[5];
-		gpsDataStore.lon.chData[2] = data[6];
-		gpsDataStore.lon.chData[3] = data[7];
-
-		gpsDataStore.alt.chData[0] = data[8];
-		gpsDataStore.alt.chData[1] = data[9];
-		gpsDataStore.alt.chData[2] = data[10];
-		gpsDataStore.alt.chData[3] = data[11];
-
-		gpsDataStore.cog.chData[0] = data[12];
-		gpsDataStore.cog.chData[1] = data[13];
-		gpsDataStore.sog.chData[0] = data[14];
-		gpsDataStore.sog.chData[1] = data[15];
-
-		gpsDataStore.newData = 1;
-	}
-}
-
-void SetHilData(uint8_t *data)
-{
-	tHilData.timestamp.chData[0] = data[0];
-	tHilData.timestamp.chData[1] = data[1];
-	tHilData.newData = 1;
-}
-
-uint16_t GetCurrentTimestamp(void)
-{
-	return tHilData.timestamp.usData;
-}
-
-uint8_t IsNewHilData(void)
-{
-	return tHilData.newData;
-}
-
-/**
- * Add all 27 data + 7 header/footer bytes of the actuator struct to UART2's transmission queue.
- */
-inline void uart1EnqueueActuatorData(uint8_t data[32])
-{
-	uart1EnqueueData(data, 32);
 }

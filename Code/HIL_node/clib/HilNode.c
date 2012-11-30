@@ -1,5 +1,5 @@
 #include "Node.h"
-#include "CommProtocol.h"
+#include "Hil.h"
 
 void HilNodeInit(void)
 {
@@ -7,5 +7,5 @@ void HilNodeInit(void)
 	nodeId = CAN_NODE_HIL;
 	
 	// Initialize communications for HIL.
-	cpInitCommunications();
+	HilInit();
 }

@@ -1,5 +1,5 @@
-#ifndef ECAN_SENSORS_H
-#define ECAN_SENSORS_H
+#ifndef CAN_H
+#define CAN_H
 
 #include <stddef.h>
 #include <stdbool.h>
@@ -43,6 +43,8 @@ extern struct DateTimeData dateTimeDataStore;
 /**
  * This function should be called every timestep to process any received ECAN messages.
  */
-uint8_t ProcessAllEcanMessages(void);
+uint8_t CanReceiveMessages(void);
 
-#endif // ECAN_SENSORS_H
+void CanTransmitMessages(void);
+
+#endif // CAN_H

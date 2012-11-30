@@ -1,4 +1,4 @@
-#include "EcanSensors.h"
+#include "Can.h"
 
 #include "ecanDefinitions.h"
 #include "ecanFunctions.h"
@@ -13,7 +13,7 @@ struct ThrottleData throttleDataStore = {};
 struct GpsData gpsDataStore = {};
 struct DateTimeData dateTimeDataStore = {};
 
-uint8_t ProcessAllEcanMessages(void)
+uint8_t CanReceiveMessages(void)
 {
 	uint8_t messagesLeft = 0;
 	tCanMessage msg;
@@ -51,4 +51,9 @@ uint8_t ProcessAllEcanMessages(void)
 	} while (messagesLeft > 0);
 
 	return messagesHandled;
+}
+
+void CanTransmitMessages(void)
+{
+
 }
