@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2369"
+    ComputedModelVersion    "1.2370"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -28,9 +28,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "bryantmairs"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Nov 29 16:45:09 2012"
+  LastModifiedDate	  "Thu Nov 29 18:55:50 2012"
   RTWModifiedTimeStamp	  276085419
-  ModelVersionFormat	  "1.%<AutoIncrement:2369>"
+  ModelVersionFormat	  "1.%<AutoIncrement:2370>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1546,7 +1546,7 @@ Model {
   }
   System {
     Name		    "Boat_sim"
-    Location		    [2, 82, 1885, 1027]
+    Location		    [2, 82, 1286, 1010]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    340
@@ -1560,7 +1560,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "141"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "9086"
+    SIDHighWatermark	    "9089"
     Block {
       BlockType		      Constant
       Name		      "Constant"
@@ -3182,20 +3182,29 @@ Model {
 	  SampleTime		  "0"
 	}
 	Block {
-	  BlockType		  Sum
-	  Name			  "Subtract"
-	  SID			  "3049"
-	  Ports			  [2, 1]
-	  Position		  [685, 752, 715, 783]
-	  ShowName		  off
-	  Inputs		  "-+"
-	  InputSameDT		  off
-	  OutDataTypeStr	  "int16"
-	  SaturateOnIntegerOverflow off
+	  BlockType		  Reference
+	  Name			  "Serial Configuration"
+	  SID			  "9088"
+	  Ports			  []
+	  Position		  [875, 30, 985, 76]
+	  Priority		  "-200000"
+	  LibraryVersion	  "1.84"
+	  SourceBlock		  "instrumentlib/Serial Configuration"
+	  SourceType		  "Serial Configuration"
+	  ComPortMenu		  "COM5"
+	  ComPort		  "COM5"
+	  ObjConstructor	  "serial('COM5');"
+	  BaudRate		  "115200"
+	  DataBits		  "8"
+	  Parity		  "none"
+	  StopBits		  "1"
+	  FlowControl		  "none"
+	  Timeout		  "1"
+	  ByteOrder		  "LittleEndian"
 	}
 	Block {
 	  BlockType		  SubSystem
-	  Name			  "UDP Receive\n(localport 15000)"
+	  Name			  "Serial port receive"
 	  SID			  "3036"
 	  Ports			  [0, 1, 1]
 	  Position		  [165, 109, 265, 151]
@@ -3209,7 +3218,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
 	  System {
-	    Name		    "UDP Receive\n(localport 15000)"
+	    Name		    "Serial port receive"
 	    Location		    [777, 280, 1275, 580]
 	    Open		    off
 	    ModelBrowserVisibility  off
@@ -3239,30 +3248,32 @@ Model {
 	      Value		      "zeros(22, 1, 'uint8')"
 	    }
 	    Block {
+	      BlockType		      Reference
+	      Name		      "Serial Receive"
+	      SID		      "9087"
+	      Ports		      [0, 2]
+	      Position		      [115, 104, 225, 151]
+	      LibraryVersion	      "1.84"
+	      SourceBlock	      "instrumentlib/Serial Receive"
+	      SourceType	      "Serial Receive"
+	      ComPortMenu	      "COM5"
+	      ComPort		      "COM5"
+	      ObjConstructor	      "serial('COM5');"
+	      Header		      "%&"
+	      Terminator	      "^&"
+	      DataSize		      "22"
+	      DataType		      "uint8"
+	      EnableBlockingMode      off
+	      ActionDataUnavailable   "Output last received value"
+	      CustomValue	      "0"
+	      SampleTime	      "0.01"
+	    }
+	    Block {
 	      BlockType		      Terminator
 	      Name		      "Terminator"
 	      SID		      "3039"
 	      Position		      [250, 130, 270, 150]
 	      ShowName		      off
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "UDP Receive"
-	      SID		      "6736"
-	      Ports		      [0, 2]
-	      Position		      [110, 103, 220, 152]
-	      LibraryVersion	      "1.84"
-	      SourceBlock	      "instrumentlib/UDP Receive"
-	      SourceType	      "UDP Receive"
-	      Host		      "127.0.0.1"
-	      Port		      "15000"
-	      LocalPort		      "16000"
-	      DataSize		      "22"
-	      EnableBlockingMode      off
-	      Timeout		      "10"
-	      SampleTime	      "0.01"
-	      DataType		      "uint8"
-	      ByteOrder		      "BigEndian"
 	    }
 	    Block {
 	      BlockType		      Outport
@@ -3273,13 +3284,13 @@ Model {
 	      SourceOfInitialOutputValue "Input signal"
 	    }
 	    Line {
-	      SrcBlock		      "UDP Receive"
+	      SrcBlock		      "Serial Receive"
 	      SrcPort		      1
 	      DstBlock		      "IC"
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "UDP Receive"
+	      SrcBlock		      "Serial Receive"
 	      SrcPort		      2
 	      DstBlock		      "Terminator"
 	      DstPort		      1
@@ -3294,7 +3305,7 @@ Model {
 	}
 	Block {
 	  BlockType		  SubSystem
-	  Name			  "UDP Transmit\n(localport: 15000)"
+	  Name			  "Serial port transmit"
 	  SID			  "3041"
 	  Ports			  [1, 0, 1]
 	  Position		  [830, 504, 930, 546]
@@ -3308,7 +3319,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
 	  System {
-	    Name		    "UDP Transmit\n(localport: 15000)"
+	    Name		    "Serial port transmit"
 	    Location		    [1077, 331, 1575, 631]
 	    Open		    off
 	    ModelBrowserVisibility  off
@@ -3338,23 +3349,23 @@ Model {
 	    }
 	    Block {
 	      BlockType		      Reference
-	      Name		      "UDP Send"
-	      SID		      "6735"
+	      Name		      "Serial Send"
+	      SID		      "9089"
 	      Ports		      [1]
-	      Position		      [235, 122, 345, 168]
+	      Position		      [190, 122, 300, 168]
 	      LibraryVersion	      "1.84"
-	      SourceBlock	      "instrumentlib/UDP Send"
-	      SourceType	      "UDP Send"
-	      Host		      "127.0.0.1"
-	      Port		      "15000"
-	      LocalPort		      "16000"
-	      EnableBlockingMode      on
-	      ByteOrder		      "BigEndian"
+	      SourceBlock	      "instrumentlib/Serial Send"
+	      SourceType	      "Serial Send"
+	      ComPortMenu	      "COM5"
+	      ComPort		      "COM5"
+	      ObjConstructor	      "serial('COM5');"
+	      Terminator	      "<none>"
+	      EnableBlockingMode      off
 	    }
 	    Line {
 	      SrcBlock		      "In1"
 	      SrcPort		      1
-	      DstBlock		      "UDP Send"
+	      DstBlock		      "Serial Send"
 	      DstPort		      1
 	    }
 	    Annotation {
@@ -3363,6 +3374,18 @@ Model {
 	      HorizontalAlignment     "left"
 	    }
 	  }
+	}
+	Block {
+	  BlockType		  Sum
+	  Name			  "Subtract"
+	  SID			  "3049"
+	  Ports			  [2, 1]
+	  Position		  [685, 752, 715, 783]
+	  ShowName		  off
+	  Inputs		  "-+"
+	  InputSameDT		  off
+	  OutDataTypeStr	  "int16"
+	  SaturateOnIntegerOverflow off
 	}
 	Block {
 	  BlockType		  Outport
@@ -3416,19 +3439,19 @@ Model {
 	Line {
 	  SrcBlock		  "From"
 	  SrcPort		  1
-	  DstBlock		  "UDP Receive\n(localport 15000)"
+	  DstBlock		  "Serial port receive"
 	  DstPort		  enable
 	}
 	Line {
 	  SrcBlock		  "From1"
 	  SrcPort		  1
-	  DstBlock		  "UDP Transmit\n(localport: 15000)"
+	  DstBlock		  "Serial port transmit"
 	  DstPort		  enable
 	}
 	Line {
 	  SrcBlock		  "Build HIL\nsentence"
 	  SrcPort		  1
-	  DstBlock		  "UDP Transmit\n(localport: 15000)"
+	  DstBlock		  "Serial port transmit"
 	  DstPort		  1
 	}
 	Line {
@@ -3535,7 +3558,7 @@ Model {
 	  DstPort		  6
 	}
 	Line {
-	  SrcBlock		  "UDP Receive\n(localport 15000)"
+	  SrcBlock		  "Serial port receive"
 	  SrcPort		  1
 	  DstBlock		  "Parse HIL\ninput"
 	  DstPort		  1
@@ -12493,7 +12516,7 @@ Stateflow {
       "   new = true;\n            else\n                fail = true;\n            end\n        end\n\n        % We cle"
       "ar all state variables here regardless of success.\n        messageIndex = uint8(1);\n        messageState = uin"
       "t8(0);\n        message = zeros(22,1,'uint8');\n    end\n\n    data = actuatorData;\nend"
-      editorLayout	      "100 M4x1[723 168 1080 733]"
+      editorLayout	      "100 M4x1[95 311 1080 733]"
       breakpoints	      "100 M1x3[80 121 10]"
       saturateOnIntegerOverflow	0
     }
