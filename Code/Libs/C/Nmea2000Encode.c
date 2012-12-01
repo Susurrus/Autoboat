@@ -79,6 +79,43 @@ void PackagePgn127508(tCanMessage *msg, uint8_t sourceDevice, uint8_t battInstan
 	msg->payload[7] = sid;
 }
 
+void PackagePgn129025(tCanMessage *msg, uint8_t sourceDevice, int32_t latitude, int32_t longitude)
+{
+    // Specify a new CAN message w/ metadata
+    msg->id = Iso11783Encode(PGN_POSITION_RAP_UPD, sourceDevice, 0xFF, 2);
+    msg->buffer = 0;
+    msg->message_type = CAN_MSG_DATA;
+    msg->frame_type = CAN_FRAME_EXT;
+    msg->validBytes = 8;
+
+    msg->payload[0] = (uint8_t)latitude;
+    msg->payload[1] = (uint8_t)(latitude >> 8);
+    msg->payload[2] = (uint8_t)(latitude >> 16);
+    msg->payload[3] = (uint8_t)(latitude >> 24);
+
+    msg->payload[4] = (uint8_t)longitude;
+    msg->payload[5] = (uint8_t)(longitude >> 8);
+    msg->payload[6] = (uint8_t)(longitude >> 16);
+    msg->payload[7] = (uint8_t)(longitude >> 24);
+}
+
+void PackagePgn129026(tCanMessage *msg, uint8_t sourceDevice, uint8_t seqId, uint8_t cogRef, uint16_t cog, uint16_t sog)
+{
+    // Specify a new CAN message w/ metadata
+    msg->id = Iso11783Encode(PGN_COG_SOG_RAP_UPD, sourceDevice, 0xFF, 2);
+    msg->buffer = 0;
+    msg->message_type = CAN_MSG_DATA;
+    msg->frame_type = CAN_FRAME_EXT;
+    msg->validBytes = 8;
+
+    msg->payload[0] = seqId;
+	msg->payload[1] = cogRef & 0x03;
+	msg->payload[2] = (uint8_t)cog;
+	msg->payload[3] = (uint8_t)(cog >> 8);
+	msg->payload[4] = (uint8_t)sog;
+	msg->payload[5] = (uint8_t)(sog >> 8);
+}
+
 void PackagePgn130311(tCanMessage *msg, uint8_t sourceDevice, uint8_t sid, uint8_t tempInst, uint8_t humidInst, float temp, float humid, float press)
 {
     // Specify a new CAN message w/ metadata
