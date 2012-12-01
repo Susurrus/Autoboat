@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2373"
+    ComputedModelVersion    "1.2374"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -28,9 +28,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sat Dec 01 13:29:51 2012"
+  LastModifiedDate	  "Sat Dec 01 15:50:30 2012"
   RTWModifiedTimeStamp	  276269286
-  ModelVersionFormat	  "1.%<AutoIncrement:2373>"
+  ModelVersionFormat	  "1.%<AutoIncrement:2374>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1560,7 +1560,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "141"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "9095"
+    SIDHighWatermark	    "9098"
     Block {
       BlockType		      Constant
       Name		      "Constant"
@@ -1568,7 +1568,6 @@ Model {
       Position		      [25, 1160, 55, 1190]
       BackgroundColor	      "gray"
       ShowName		      off
-      Value		      "0"
       OutDataTypeStr	      "boolean"
     }
     Block {
@@ -1648,7 +1647,7 @@ Model {
       BlockType		      From
       Name		      "From1"
       SID		      "1512"
-      Position		      [110, 117, 180, 143]
+      Position		      [110, 112, 180, 138]
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "rudder_c"
@@ -1732,7 +1731,7 @@ Model {
       BlockType		      From
       Name		      "From2"
       SID		      "1513"
-      Position		      [110, 223, 180, 247]
+      Position		      [110, 218, 180, 242]
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "throttle_c"
@@ -2160,7 +2159,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"HIL Interface"
-	Location		[10, 82, 1669, 997]
+	Location		[270, 182, 1633, 947]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -2511,6 +2510,26 @@ Model {
 	  Lockdown		  off
 	}
 	Block {
+	  BlockType		  Display
+	  Name			  "Display1"
+	  SID			  "9096"
+	  Ports			  [1]
+	  Position		  [490, 175, 580, 205]
+	  ShowName		  off
+	  Decimation		  "1"
+	  Lockdown		  off
+	}
+	Block {
+	  BlockType		  Display
+	  Name			  "Display2"
+	  SID			  "9097"
+	  Ports			  [1]
+	  Position		  [515, 60, 605, 90]
+	  ShowName		  off
+	  Decimation		  "1"
+	  Lockdown		  off
+	}
+	Block {
 	  BlockType		  From
 	  Name			  "From"
 	  SID			  "3017"
@@ -2545,7 +2564,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Parse HIL\ninput"
-	    Location		    [144, 172, 1524, 937]
+	    Location		    [270, 182, 1650, 947]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -3408,8 +3427,16 @@ Model {
 	Line {
 	  SrcBlock		  "Parse HIL\ninput"
 	  SrcPort		  1
-	  DstBlock		  "Rudder command"
-	  DstPort		  1
+	  Points		  [35, 0]
+	  Branch {
+	    DstBlock		    "Rudder command"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, -25]
+	    DstBlock		    "Display2"
+	    DstPort		    1
+	  }
 	}
 	Line {
 	  SrcBlock		  "GPS"
@@ -3420,8 +3447,16 @@ Model {
 	Line {
 	  SrcBlock		  "Parse HIL\ninput"
 	  SrcPort		  3
-	  DstBlock		  "Throttle command"
-	  DstPort		  1
+	  Points		  [35, 0]
+	  Branch {
+	    DstBlock		    "Throttle command"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, 30]
+	    DstBlock		    "Display1"
+	    DstPort		    1
+	  }
 	}
 	Line {
 	  SrcBlock		  "Byte Pack"
@@ -3823,7 +3858,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Plant"
-	Location		[499, 82, 1678, 997]
+	Location		[270, 182, 1650, 947]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	212
@@ -5355,6 +5390,17 @@ Model {
 	      }
 	    }
 	    Block {
+	      BlockType		      Display
+	      Name		      "Display"
+	      SID		      "9098"
+	      Ports		      [1]
+	      Position		      [210, 316, 375, 464]
+	      ZOrder		      -1
+	      Format		      "long"
+	      Decimation	      "1"
+	      Lockdown		      off
+	    }
+	    Block {
 	      BlockType		      SubSystem
 	      Name		      "Embedded\nMATLAB Function1"
 	      SID		      "332"
@@ -5647,8 +5693,16 @@ Model {
 	    Line {
 	      SrcBlock		      "P_ned"
 	      SrcPort		      1
-	      DstBlock		      "Flat Earth to LLA"
-	      DstPort		      1
+	      Points		      [45, 0]
+	      Branch {
+		DstBlock		"Flat Earth to LLA"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, 335]
+		DstBlock		"Display"
+		DstPort			1
+	      }
 	    }
 	    Line {
 	      SrcBlock		      "Flat Earth to LLA"
@@ -6515,7 +6569,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Subsystem"
-	Location		[122, 82, 1798, 1011]
+	Location		[270, 182, 1633, 947]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	283
@@ -12029,7 +12083,7 @@ Model {
       Labels		      [0, 0]
       SrcBlock		      "Manual Switch2"
       SrcPort		      1
-      Points		      [200, 0; 0, -140]
+      Points		      [200, 0; 0, -130]
       DstBlock		      "Subsystem"
       DstPort		      6
     }
@@ -12163,6 +12217,8 @@ Stateflow {
     created		    "13-Apr-2010 16:50:36"
     isLibrary		    0
     firstTarget		    94
+    debug {
+    }
     sfVersion		    76014001.0002
   }
   chart {
@@ -12583,7 +12639,7 @@ Stateflow {
       "re regardless of success.\n        messageIndex = uint8(1);\n        messageState = uint8(0);\n        message ="
       " zeros(22,1,'uint8');\n    end\n\n    data = actuatorData;\nend"
       editorLayout	      "100 M4x1[81 206 1080 733]"
-      breakpoints	      "100 M1x3[80 121 10]"
+      breakpoints	      "100 M1x2[121 10]"
       saturateOnIntegerOverflow	0
     }
   }
