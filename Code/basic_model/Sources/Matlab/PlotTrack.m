@@ -100,17 +100,13 @@ legend(myLegend);
 hold off;
 %% Plot the vehicle commands
 figure;
-subplot(3,1,1);
+subplot(2,1,1);
 plot(commands_rudder_angle > 0);
 title('Rudder Commands');
 
-subplot(3,1,2);
-plot(commands_throttle_data);
+subplot(2,1,2);
+plot(commands_throttle);
 title('Throttle Commands');
-
-subplot(3,1,3);
-plot(commands_ballast_enable);
-title('Ballast Commands');
 
 %% Plot commanded rudder versus actual rudder
 
