@@ -234,7 +234,7 @@ void MavLinkSendHeartbeat(void)
 
 	// Copy the message to the send buffer
 	len = mavlink_msg_to_send_buffer(buf, &msg);
-	uart1EnqueueData(buf, (uint8_t)len);
+	Uart1WriteData(buf, (uint8_t)len);
 }
 
 /**
@@ -255,7 +255,7 @@ void MavLinkSendSystemTime(void)
 
 		// Copy the message to the send buffer
 		len = mavlink_msg_to_send_buffer(buf, &msg);
-		uart1EnqueueData(buf, (uint8_t)len);
+		Uart1WriteData(buf, (uint8_t)len);
 	}
 }
 
@@ -309,7 +309,7 @@ void MavLinkSendStatus(void)
 		dropRate, 0, 0, 0, 0, 0);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
-	uart1EnqueueData(buf, (uint8_t)len);
+	Uart1WriteData(buf, (uint8_t)len);
 }
 
 /**
@@ -329,7 +329,7 @@ void MavLinkSendRawGps(void)
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
-	uart1EnqueueData(buf, (uint8_t)len);
+	Uart1WriteData(buf, (uint8_t)len);
 }
 
 /**
@@ -344,7 +344,7 @@ void MavLinkSendMainPower(void)
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
-	uart1EnqueueData(buf, (uint8_t)len);
+	Uart1WriteData(buf, (uint8_t)len);
 }
 
 
@@ -365,7 +365,7 @@ void MavLinkSendBasicState(void)
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
-	uart1EnqueueData(buf, (uint8_t)len);
+	Uart1WriteData(buf, (uint8_t)len);
 }
 
 /**
@@ -383,7 +383,7 @@ void MavLinkSendAttitude(void)
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
-	uart1EnqueueData(buf, (uint8_t)len);
+	Uart1WriteData(buf, (uint8_t)len);
 }
 
 /**
@@ -404,7 +404,7 @@ void MavLinkSendLocalPosition(void)
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
-	uart1EnqueueData(buf, (uint8_t)len);
+	Uart1WriteData(buf, (uint8_t)len);
 }
 
 /**
@@ -427,7 +427,7 @@ void MavLinkSendRcScaledData(void)
 
 		len = mavlink_msg_to_send_buffer(buf, &msg);
 
-		uart1EnqueueData(buf, (uint8_t)len);
+		Uart1WriteData(buf, (uint8_t)len);
 	}
 }
 
@@ -449,7 +449,7 @@ void MavLinkSendGpsGlobalOrigin(void)
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
-	uart1EnqueueData(buf, (uint8_t)len);
+	Uart1WriteData(buf, (uint8_t)len);
 }
 
 /**
@@ -466,7 +466,7 @@ void MavLinkSendCurrentMission(void)
 		mavlink_message_t msg;
 		mavlink_msg_mission_current_pack(mavlink_system.sysid, mavlink_system.compid, &msg, (uint16_t)currentMission);
 		len = mavlink_msg_to_send_buffer(buf, &msg);
-		uart1EnqueueData(buf, (uint8_t)len);
+		Uart1WriteData(buf, (uint8_t)len);
 	}
 }
 
@@ -480,7 +480,7 @@ void MavLinkSendMissionAck(uint8_t type)
 	mavlink_msg_mission_ack_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                             groundStationSystemId, groundStationComponentId, type);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
-	uart1EnqueueData(buf, (uint8_t)len);
+	Uart1WriteData(buf, (uint8_t)len);
 }
 
 void MavLinkSendMissionCount(void)
@@ -491,7 +491,7 @@ void MavLinkSendMissionCount(void)
 	mavlink_msg_mission_count_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                               groundStationSystemId, groundStationComponentId, missionCount);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
-	uart1EnqueueData(buf, (uint8_t)len);
+	Uart1WriteData(buf, (uint8_t)len);
 }
 
 void MavLinkSendMissionItem(uint8_t currentMissionIndex)
@@ -509,7 +509,7 @@ void MavLinkSendMissionItem(uint8_t currentMissionIndex)
 		                              m.autocontinue, m.parameters[0], m.parameters[1], m.parameters[2], m.parameters[3],
 		                              m.coordinates[0], m.coordinates[1], m.coordinates[2]);
 		len = mavlink_msg_to_send_buffer(buf, &msg);
-		uart1EnqueueData(buf, (uint8_t)len);
+		Uart1WriteData(buf, (uint8_t)len);
 	}
 }
 
@@ -519,7 +519,7 @@ void MavLinkSendMissionRequest(uint8_t currentMissionIndex)
 	mavlink_msg_mission_request_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                                 groundStationSystemId, groundStationComponentId, currentMissionIndex);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
-	uart1EnqueueData(buf, (uint8_t)len);
+	Uart1WriteData(buf, (uint8_t)len);
 }
 
 /**
@@ -569,7 +569,7 @@ void _transmitParameter(uint16_t id)
 
 	mavlink_msg_param_value_encode(mavlink_system.sysid, mavlink_system.compid, &msg, &valueMsg);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
-	uart1EnqueueData(buf, (uint8_t)len);
+	Uart1WriteData(buf, (uint8_t)len);
 }
 
 /** Custom Sealion Messages **/
@@ -584,7 +584,7 @@ void MavLinkSendRudderRaw(void)
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
-	uart1EnqueueData(buf, (uint8_t)len);
+	Uart1WriteData(buf, (uint8_t)len);
 }
 
 void MavLinkSendStatusAndErrors(void)
@@ -592,7 +592,7 @@ void MavLinkSendStatusAndErrors(void)
 	mavlink_message_t msg;
 	mavlink_msg_status_and_errors_pack(mavlink_system.sysid, mavlink_system.compid, &msg, systemStatus.status, systemStatus.reset);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
-	uart1EnqueueData(buf, (uint8_t)len);
+	Uart1WriteData(buf, (uint8_t)len);
 
 	// And finally update the MAVLink state and run mode based on the system state.
 
@@ -640,7 +640,7 @@ void MavLinkSendWindAirData(void)
 		windDataStore.speed.flData, windDataStore.direction.flData,
 		airDataStore.temp.flData, airDataStore.pressure.flData, airDataStore.humidity.flData);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
-	uart1EnqueueData(buf, (uint8_t)len);
+	Uart1WriteData(buf, (uint8_t)len);
 }
 
 void MavLinkSendDst800Data(void)
@@ -649,7 +649,7 @@ void MavLinkSendDst800Data(void)
 	mavlink_msg_dst800_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                        waterDataStore.speed.flData, waterDataStore.temp.flData, waterDataStore.depth.flData);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
-	uart1EnqueueData(buf, (uint8_t)len);
+	Uart1WriteData(buf, (uint8_t)len);
 }
 
 void MavLinkSendRevoGsData(void)
@@ -661,7 +661,7 @@ void MavLinkSendRevoGsData(void)
 		revoDataStore.roll.flData, revoDataStore.rollStatus,
 		revoDataStore.dip.flData, revoDataStore.magneticMagnitude.usData);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
-	uart1EnqueueData(buf, (uint8_t)len);
+	Uart1WriteData(buf, (uint8_t)len);
 }
 
 /**
@@ -1078,10 +1078,9 @@ void MavLinkReceive(void)
 	// Used for updating the number of MAVLink messages handled
 	bool processedData = false;
 
-	while (uart1RxBuffer.dataSize > 0) {
+    uint8_t c;
+	while (Uart1ReadByte(&c)) {
 		processedData = true;
-		uint8_t c;
-		CB_ReadByte(&uart1RxBuffer, &c);
 		// Parse another byte and if there's a message found process it.
 		if (mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) {
 

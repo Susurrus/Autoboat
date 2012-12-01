@@ -72,10 +72,10 @@ static uint8_t sameFailedMessageFlag = 0;
 void cpInitCommunications(void) {
 	// Initialize UART2 to 57600 for the Revolution GS.
 	// It is also used for HIL data transmission.
-	initUart2(BAUD57600_BRG_REG);
+	Uart2Init(BAUD57600_BRG_REG);
 
 	// Initialize UART1 to 115200 for groundstation communications.
-	initUart1(BAUD115200_BRG_REG);
+	Uart1Init(BAUD115200_BRG_REG);
 }
 
 /**
@@ -219,9 +219,8 @@ void buildAndCheckMessage(uint8_t characterIn, uint8_t sensorMode) {
  */
 void processNewCommData(uint8_t sensorMode)
 {
-	while (uart2RxBuffer.dataSize > 0) {
-		uint8_t c;
-		CB_ReadByte(&uart2RxBuffer, &c);
+    uint8_t c;
+	while (Uart2ReadByte(&c)) {
 		buildAndCheckMessage(c, sensorMode);
 	}
 }
@@ -238,10 +237,10 @@ void setHilMode(uint8_t mode) {
 
 	// Detect a change to HIL
 	if (!oldMode && mode) {
-		changeUart2BaudRate(BAUD115200_BRG_REG);
+		Uart2ChangeBaudRate(BAUD115200_BRG_REG);
 		oldMode = mode;
 	} else if (oldMode && !mode) {
-		changeUart2BaudRate(BAUD57600_BRG_REG);
+		Uart2ChangeBaudRate(BAUD57600_BRG_REG);
 		oldMode = mode;
 	}
 }
@@ -322,5 +321,5 @@ uint8_t IsNewHilData(void)
  */
 inline void uart2EnqueueActuatorData(uint8_t data[32])
 {
-	uart2EnqueueData(data, 32);
+	Uart2WriteData(data, 32);
 }

@@ -11,6 +11,6 @@ uint8_t cpuLoad = 0;
 void NodeTransmitStatus(void)
 {
 	tCanMessage msg;
-	CanMessagePackageStatus(&msg, CAN_NODE_PRIMARY_CONTROLLER, status, errors);
+	CanMessagePackageStatus(&msg, nodeId, status, errors);
 	ecan1_buffered_transmit(&msg);
 }

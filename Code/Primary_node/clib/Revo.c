@@ -31,18 +31,18 @@ THE SOFTWARE.
 
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "Revo.h"
 #include "Uart2.h"
-#include "Types.h"
 #include "Conversions.h"
 #include "Nmea0183.h"
 
 struct RevoData revoDataStore;
 static char sentence[127];
-static unsigned char sentenceIndex;
-static unsigned char checksum;
-static unsigned char sentenceState;
+static uint8_t sentenceIndex;
+static uint8_t checksum;
+static uint8_t sentenceState;
 
 void processRevoSentence(char sentence[]) {
 	if (sentence[4] == 'H' && sentence[5] == 'T' && sentence[6] == 'M') {
@@ -51,14 +51,13 @@ void processRevoSentence(char sentence[]) {
 }
 
 void processNewRevoData(void) {
-	while (uart2RxBuffer.dataSize > 0) {
-		unsigned char c;
-		CB_ReadByte(&uart2RxBuffer, &c);
+    uint8_t c;
+	while (Uart2ReadByte(&c)) {
 		buildAndCheckSentence((char)c, sentence, &sentenceIndex, &sentenceState, &checksum, processRevoSentence);
 	}
 }
 
-void getRevoData(unsigned char* data) {
+void getRevoData(uint8_t* data) {
 	data[0] = revoDataStore.heading.chData[0];
 	data[1] = revoDataStore.heading.chData[1];
 	data[2] = revoDataStore.heading.chData[2];

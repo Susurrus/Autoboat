@@ -45,11 +45,11 @@ THE SOFTWARE.
 #include "Hil.h"
 #include "Uart1.h"
 #include "Rudder.h"
-#include "Types.h"
 #include "Can.h"
 
 #include <stdint.h>
 #include <string.h>
+#include <stdbool.h>
 
 // This is the value of the BRG register for configuring different baud
 // rates. These BRG values have been calculated based on a 40MHz system clock.

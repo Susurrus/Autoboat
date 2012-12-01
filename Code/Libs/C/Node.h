@@ -15,7 +15,7 @@
  * this library.
  */
 
-#include "Types.h"
+#include <stdint.h>
 
 /**
  * This enum declares the IDs for every node that is in this

@@ -8,6 +8,7 @@
 #include "Rudder.h"
 #include "CanMessages.h"
 #include "Node.h"
+#include "Acs300.h"
 
 struct PowerData powerDataStore = {};
 struct WindData windDataStore = {};
@@ -185,7 +186,7 @@ uint8_t ProcessAllEcanMessages(void)
 		int foundOne = ecan1_receive(&msg, &messagesLeft);
 		if (foundOne) {
 			// Process throttle messages here. Anything not explicitly handled is assumed to be a NMEA2000 message.
-			if (msg.id == 0x402) { // From the ACS300
+			if (msg.id == ACS300_CAN_ID_HRTBT) { // From the ACS300
 				sensorAvailability.prop.enabled_counter = 0;
 				if ((msg.payload[6] & 0x40) == 0) { // Checks the status bit to determine if the ACS300 is enabled.
 					sensorAvailability.prop.active_counter = 0;
