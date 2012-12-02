@@ -23,8 +23,8 @@ THE SOFTWARE.
 
 */
 
-#ifndef REVO_H
-#define REVO_H
+#ifndef REVO_GS_H
+#define REVO_GS_H
 
 #include "Types.h"
 
@@ -37,45 +37,30 @@ struct RevoData {
 	char                   rollStatus;
 	tFloatToChar           dip;
 	tUnsignedShortToChar   magneticMagnitude;
-	unsigned char          newData; // Flag for whether this struct stores new data
 };
 extern struct RevoData revoDataStore;
 
-void processRevoSentence(char *sentence);
+/**
+ * Pull new bytes from the UART2 receive buffer and calls buildAndCheckSentence on each of them.
+ * This function should be called repeatedly for receiving and processing received data.
+ */
+void RevoGsProcessData(void);
 
 /**
- * Pull new bytes from the UART2 receive buffer and
- * calls buildAndCheckSentence on each of them.
+ * Parse an NMEA0183-style sentence from the Revolution GS. Checks the message type and
+ * pases off to the appropriate helper parsing function.
  */
-void processNewRevoData(void);
-
-/**
- * Computes the checksum for a given GPS sentence.
- */
-unsigned char getChecksum(char *sentence, unsigned char size);
-
-/**
- * This is a Matlab helper function that returns the most recent 
- * GPS data in a large array that Matlab can handle.
- * @param data A pointer to a float array for storing the GPS data that was requested.
- */
-void getRevoData(unsigned char *data);
-
-/**
- * This function resets the entire revo data struct to zeros.
- */
-void clearRevoData(void);
-
-/**
- * A simple tokenizer. Similar to strtok(), but supports
- * multiple tokens in a row.
- */
-unsigned char myTokenizer(char *stringToTokenize, char token, char *returnToken);
+void RevoGsParseSentence(const char *sentence);
 
 /**
  * Parses proprietary NMEA0183 HTM sentences. Results are stored in the
  * globally-declared revoData struct.
  */
-void parseHTM(char* stream);
+void RevoGsParseHtm(const char *stream);
+
+/**
+ * This function resets the entire revo data struct to zeros.
+ */
+void RevoGsClearData(void);
        
-#endif // REVO_H
+#endif // REVO_GS_H

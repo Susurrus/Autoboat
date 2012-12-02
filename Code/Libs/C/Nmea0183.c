@@ -3,7 +3,7 @@
 
 #include <string.h>
 
-void buildAndCheckSentence(unsigned char characterIn, char *sentence, unsigned char *sentenceIndex, unsigned char *sentenceState, unsigned char *checksum, void (*processResult)(char *)) {
+void buildAndCheckSentence(unsigned char characterIn, char *sentence, unsigned char *sentenceIndex, unsigned char *sentenceState, unsigned char *checksum, void (*processResult)(const char *)) {
 	// Full specification for NMEA0138 specifies a maximum sentence length
 	// of 255 characters. We're going to ignore this for half the length as
 	// we shouldn't get anything that big.
@@ -54,10 +54,10 @@ void buildAndCheckSentence(unsigned char characterIn, char *sentence, unsigned c
 	}
 }
 
-unsigned char myTokenizer(char* stringToTokenize, char token, char * returnToken) {
+unsigned char myTokenizer(const char *stringToTokenize, char token, char *returnToken) {
 	static char *pch;
-	static char *prevPch;
-	static char *lastByte;
+	static const char *prevPch;
+	static const char *lastByte;
 	
 	// Make sure the return token is "empty"
 	// Tokens set to max-length of 15 bytes
@@ -84,7 +84,7 @@ unsigned char myTokenizer(char* stringToTokenize, char token, char * returnToken
 	return pch == NULL;
 }
 
-unsigned char getChecksum(char* sentence, unsigned char size) {
+unsigned char getChecksum(char *sentence, unsigned char size) {
 
     // Loop through all chars to get a checksum
     unsigned char checkSum = 0;

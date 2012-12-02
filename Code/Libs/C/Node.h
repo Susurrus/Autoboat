@@ -27,7 +27,8 @@ enum CAN_NODE_ID {
     CAN_NODE_RUDDER_CONTROLLER  = 2,
     CAN_NODE_RC                 = 3,
     CAN_NODE_POWER_SENSOR       = 4,
-    CAN_NODE_HIL                = 5
+    CAN_NODE_HIL                = 5,
+    CAN_NODE_IMU_SENSOR         = 6
 };
 
 /**
