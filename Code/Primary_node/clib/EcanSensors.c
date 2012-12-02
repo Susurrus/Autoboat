@@ -17,6 +17,7 @@ struct WaterData waterDataStore = {};
 struct ThrottleData throttleDataStore = {};
 struct GpsData gpsDataStore = {};
 struct DateTimeData dateTimeDataStore = {};
+struct RevoGsData revoGsDataStore = {};
 
 struct stc sensorAvailability = {};
 

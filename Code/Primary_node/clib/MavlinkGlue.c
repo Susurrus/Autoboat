@@ -21,7 +21,6 @@
 #include "MessageScheduler.h"
 #include "EcanSensors.h"
 #include "Rudder.h"
-#include "Revo.h"
 #include "MavlinkGlue.h"
 
 #include <stdio.h>
@@ -656,10 +655,10 @@ void MavLinkSendRevoGsData(void)
 {
 	mavlink_message_t msg;
 	mavlink_msg_revo_gs_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-		revoDataStore.heading.flData, revoDataStore.magStatus,
-		revoDataStore.pitch.flData, revoDataStore.pitchStatus,
-		revoDataStore.roll.flData, revoDataStore.rollStatus,
-		revoDataStore.dip.flData, revoDataStore.magneticMagnitude.usData);
+		revoGsDataStore.heading.flData, revoGsDataStore.magStatus,
+		revoGsDataStore.pitch.flData, revoGsDataStore.pitchStatus,
+		revoGsDataStore.roll.flData, revoGsDataStore.rollStatus,
+		revoGsDataStore.dip.flData, revoGsDataStore.magneticMagnitude.usData);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	Uart1WriteData(buf, (uint8_t)len);
 }

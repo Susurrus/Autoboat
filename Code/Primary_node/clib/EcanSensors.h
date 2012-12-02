@@ -49,6 +49,18 @@ struct ThrottleData {
 };
 extern struct ThrottleData throttleDataStore;
 
+struct RevoGsData {
+	tFloatToChar           heading;
+	char                   magStatus;
+	tFloatToChar           pitch;
+	char                   pitchStatus;
+	tFloatToChar           roll;
+	char                   rollStatus;
+	tFloatToChar           dip;
+	tUnsignedShortToChar   magneticMagnitude;
+};
+extern struct RevoGsData revoGsDataStore;
+
 struct GpsData {
 	tLongToChar lat; // Latitude in units of 1e-7 degrees
 	tLongToChar lon; // Longitude in units of 1e-7 degrees
