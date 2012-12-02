@@ -26,7 +26,7 @@ THE SOFTWARE.
 #include "Node.h"
 #include "Nmea0183.h"
 #include "RevoGs.h"
-#include "Uart2.h"
+#include "Uart1.h"
 
 void ImuNodeInit(void)
 {
@@ -46,7 +46,7 @@ void ImuNodeProcessRevoData(void)
 	static uint8_t sentenceState;
 
     uint8_t c;
-	while (Uart2ReadByte(&c)) {
+	while (Uart1ReadByte(&c)) {
 		buildAndCheckSentence((char)c, sentence, &sentenceIndex, &sentenceState, &checksum, RevoGsParseSentence);
 	}
 }
