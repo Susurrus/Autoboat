@@ -50,13 +50,13 @@ struct ThrottleData {
 extern struct ThrottleData throttleDataStore;
 
 struct RevoGsData {
-	tFloatToChar           heading;
+	tFloatToChar           heading; // In rads
 	char                   magStatus;
-	tFloatToChar           pitch;
+	tFloatToChar           pitch; // In rads
 	char                   pitchStatus;
-	tFloatToChar           roll;
+	tFloatToChar           roll; // In rads
 	char                   rollStatus;
-	tFloatToChar           dip;
+	tFloatToChar           dip; // In rads
 	tUnsignedShortToChar   magneticMagnitude;
 };
 extern struct RevoGsData revoGsDataStore;

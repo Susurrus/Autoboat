@@ -55,9 +55,10 @@ void RevoGsParseHtm(const char *stream)
 	myTokenizer(stream, ',', token);
 	
 	// 1.- True heading (x.x)
+    // We convert heading to be between -pi and pi so that it's consistent with the roll and pitch
 	myTokenizer(NULL, ',', token);
 	if (strlen(token) > 0) {
-		revoGsDataStore.heading.flData = atof(token) * M_PI / 180;
+		revoGsDataStore.heading.flData = (atof(token) - 180.0) * M_PI / 180;
 	}
 	
 	// 2.- Magnetometer status (C,L,M,N,O,P,H)

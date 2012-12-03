@@ -430,7 +430,6 @@ void MavLinkSendRcScaledData(void)
 	}
 }
 
-
 /**
  * Transmits the current GPS position of the origin of the local coordinate frame that the North-East-Down
  * coordinates are all relative too. They should be in units of 1e-7 degrees.

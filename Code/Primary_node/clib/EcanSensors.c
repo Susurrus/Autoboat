@@ -221,6 +221,11 @@ uint8_t ProcessAllEcanMessages(void)
 					!rudderSensorData.Calibrating) {
 					sensorAvailability.rudder.active_counter = 0;
 				}
+			}else if (msg.id == CAN_MSG_ID_IMU_DATA) {
+				CanMessageDecodeImuData(&msg,
+										&revoGsDataStore.heading.flData,
+                                        &revoGsDataStore.pitch.flData,
+                                        &revoGsDataStore.roll.flData);
 			} else {
 				pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
 				switch (pgn) {
