@@ -37,7 +37,7 @@ THE SOFTWARE.
 #include "Types.h"
 #include "Nmea0183.h"
 
-struct RevoData revoDataStore;
+struct RevoGsData revoGsDataStore;
 
 void RevoGsParseSentence(const char *sentence)
 {
@@ -57,60 +57,60 @@ void RevoGsParseHtm(const char *stream)
 	// 1.- True heading (x.x)
 	myTokenizer(NULL, ',', token);
 	if (strlen(token) > 0) {
-		revoDataStore.heading.flData = atof(token);	
+		revoGsDataStore.heading.flData = atof(token);
 	}
 	
 	// 2.- Magnetometer status (C,L,M,N,O,P,H)
 	myTokenizer(NULL, ',', token);
 	if (strlen(token) == 1) {
-		revoDataStore.magStatus = token[0];
+		revoGsDataStore.magStatus = token[0];
 	}
 	
 	// 3.- Pitch angle (x.x)
 	myTokenizer(NULL, ',', token);
 	if (strlen(token) > 0) {
-		revoDataStore.pitch.flData = atof(token);	
+		revoGsDataStore.pitch.flData = atof(token) * M_PI / 180;
 	}
 	
 	// 4.- Pitch status (N,O,P)
 	myTokenizer(NULL, ',', token);
 	if (strlen(token) == 1) {
-		revoDataStore.pitchStatus = token[0];
+		revoGsDataStore.pitchStatus = token[0];
 	}
 	
 	// 5.- Roll angle (x.x)
 	myTokenizer(NULL, ',', token);	
 	if (strlen(token) > 0) {
-		revoDataStore.roll.flData = atof(token);	
+		revoGsDataStore.roll.flData = atof(token) * M_PI / 180;
 	}
 	
 	// 6.- Roll status (N,O,P)
 	myTokenizer(NULL, ',', token);	
 	if (strlen(token) == 1) {
-		revoDataStore.rollStatus = token[0];
+		revoGsDataStore.rollStatus = token[0];
 	}
 	
 	// 7.- Dip angle (x.x)
 	myTokenizer(NULL, ',', token);	
 	if (strlen(token) > 0) {
-		revoDataStore.dip.flData = atof(token);	
+		revoGsDataStore.dip.flData = atof(token) * M_PI / 180;
 	}
 	
 	// 7.- Relative magnitude horizontal component of Earth's magnetic field
 	myTokenizer(NULL, ',', token);
 	if (strlen(token) > 0) {
-		revoDataStore.magneticMagnitude.usData = atoi(token);
+		revoGsDataStore.magneticMagnitude.usData = atoi(token);
 	}
 }
 
 void RevoGsClearData(void)
 {
-	revoDataStore.heading.flData = 0.0;
-	revoDataStore.magStatus = 0;
-	revoDataStore.pitch.flData = 0.0;
-	revoDataStore.pitchStatus = 0;
-	revoDataStore.roll.flData = 0.0;
-	revoDataStore.rollStatus = 0;
-	revoDataStore.dip.flData = 0.0;
-	revoDataStore.magneticMagnitude.usData = 0;
+	revoGsDataStore.heading.flData = 0.0;
+	revoGsDataStore.magStatus = 0;
+	revoGsDataStore.pitch.flData = 0.0;
+	revoGsDataStore.pitchStatus = 0;
+	revoGsDataStore.roll.flData = 0.0;
+	revoGsDataStore.rollStatus = 0;
+	revoGsDataStore.dip.flData = 0.0;
+	revoGsDataStore.magneticMagnitude.usData = 0;
 }

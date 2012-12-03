@@ -28,17 +28,17 @@ THE SOFTWARE.
 
 #include "Types.h"
 
-struct RevoData {
-	tFloatToChar           heading;
+struct RevoGsData {
+	tFloatToChar           heading;               // Units of radians
 	char                   magStatus;
-	tFloatToChar           pitch;
+	tFloatToChar           pitch;                 // Units of radians
 	char                   pitchStatus;
-	tFloatToChar           roll;
+	tFloatToChar           roll;                  // Units of radians
 	char                   rollStatus;
-	tFloatToChar           dip;
+	tFloatToChar           dip;                   // Units of radians
 	tUnsignedShortToChar   magneticMagnitude;
 };
-extern struct RevoData revoDataStore;
+extern struct RevoGsData revoGsDataStore;
 
 /**
  * Pull new bytes from the UART2 receive buffer and calls buildAndCheckSentence on each of them.

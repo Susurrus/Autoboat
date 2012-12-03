@@ -19,7 +19,10 @@ enum {
     CAN_MSG_ID_RUDDER_SET_TX_RATE  = 0x082,
 
     // General messages
-    CAN_MSG_ID_STATUS              = 0x090
+    CAN_MSG_ID_STATUS              = 0x090,
+
+    // IMU messages (defined by the VSAS-2GM)
+    CAN_MSG_ID_IMU_DATA            = 0x102
 };
 
 // Define the length of all of the custom CAN messages.
@@ -30,7 +33,10 @@ enum {
     CAN_MSG_SIZE_RUDDER_SET_TX_RATE  = 2,
 
     // General messages
-    CAN_MSG_SIZE_STATUS              = 5
+    CAN_MSG_SIZE_STATUS              = 5,
+
+    // IMU messages (defined by the VSAS-2GM)
+    CAN_MSG_SIZE_IMU_DATA            = 6
 };
 
 /**
@@ -51,5 +57,11 @@ void CanMessageDecodeRudderSetTxRate(const tCanMessage *msg, uint16_t *angleRate
 void CanMessagePackageRudderDetails(tCanMessage *msg, uint16_t potVal, uint16_t portLimitVal, uint16_t sbLimitVal, bool portLimitTrig, bool sbLimitTrig, bool enabled, bool calibrated, bool calibrating);
 
 void CanMessageDecodeRudderDetails(const tCanMessage *msg, uint16_t *potVal, uint16_t *portLimitVal, uint16_t *sbLimitVal, bool *portLimitTrig, bool *sbLimitTrig, bool *enabled, bool *calibrated, bool *calibrating);
+
+// The IMU data messages are based on the Direction/Attitude messages from the VSAS-2GM
+// All units are in radians.
+void CanMessagePackageImuData(tCanMessage *msg, float direction, float pitch, float roll);
+
+void CanMessageDecodeImuData(const tCanMessage *msg, float *direction, float *pitch, float *roll);
 
 #endif // CAN_MESSAGES_H

@@ -131,3 +131,36 @@ void CanMessageDecodeRudderDetails(const tCanMessage *msg, uint16_t *potVal, uin
         *calibrating = (msg->payload[6] >> 2) & 1;
     }
 }
+
+void CanMessagePackageImuData(tCanMessage *msg, float direction, float pitch, float roll)
+{
+    msg->id = CAN_MSG_ID_IMU_DATA;
+    msg->buffer = 0;
+    msg->message_type = CAN_MSG_DATA;
+    msg->frame_type = CAN_FRAME_STD;
+    msg->validBytes = CAN_MSG_SIZE_IMU_DATA;
+
+    // Now fill in the data.
+    int16_t intDirection = (int16_t)(direction * 8192.0);
+    msg->payload[0] = (uint8_t)intDirection;
+    msg->payload[1] = ((uint16_t)intDirection) >> 8;
+    int16_t intPitch = (int16_t)(pitch * 8192.0);
+    msg->payload[2] = (uint8_t)intPitch;
+    msg->payload[3] = ((uint16_t)intPitch) >> 8;
+    int16_t intRoll = (int16_t)(roll * 8192.0);
+    msg->payload[4] = (uint8_t)intRoll;
+    msg->payload[5] = ((uint16_t)intRoll) >> 8;
+}
+
+void CanMessageDecodeImuData(const tCanMessage *msg, float *direction, float *pitch, float *roll)
+{
+    if (direction) {
+        *direction = (((uint16_t)msg->payload[0]) | (((uint16_t)msg->payload[1]) << 8)) / 8192.0;
+    }
+    if (pitch) {
+        *pitch = (((uint16_t)msg->payload[2]) | (((uint16_t)msg->payload[3]) << 8)) / 8192.0;
+    }
+    if (roll) {
+        *roll = (((uint16_t)msg->payload[4]) | (((uint16_t)msg->payload[5]) << 8)) / 8192.0;
+    }
+}
