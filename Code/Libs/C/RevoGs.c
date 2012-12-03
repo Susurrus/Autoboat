@@ -57,7 +57,7 @@ void RevoGsParseHtm(const char *stream)
 	// 1.- True heading (x.x)
 	myTokenizer(NULL, ',', token);
 	if (strlen(token) > 0) {
-		revoGsDataStore.heading.flData = atof(token);
+		revoGsDataStore.heading.flData = atof(token) * M_PI / 180;
 	}
 	
 	// 2.- Magnetometer status (C,L,M,N,O,P,H)
