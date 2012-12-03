@@ -155,12 +155,15 @@ void CanMessagePackageImuData(tCanMessage *msg, float direction, float pitch, fl
 void CanMessageDecodeImuData(const tCanMessage *msg, float *direction, float *pitch, float *roll)
 {
     if (direction) {
-        *direction = (float)(((uint16_t)msg->payload[0]) | (((uint16_t)msg->payload[1]) << 8)) / 8192.0;
+        int16_t tmp = (int16_t)(((uint16_t)msg->payload[0]) | (((uint16_t)msg->payload[1]) << 8));
+        *direction = (float)tmp / 8192.0;
     }
     if (pitch) {
-        *pitch = (float)(((uint16_t)msg->payload[2]) | (((uint16_t)msg->payload[3]) << 8)) / 8192.0;
+        int16_t tmp = (int16_t)(((uint16_t)msg->payload[2]) | (((uint16_t)msg->payload[3]) << 8));
+        *pitch = (float)tmp / 8192.0;
     }
     if (roll) {
-        *roll = (float)(((uint16_t)msg->payload[4]) | (((uint16_t)msg->payload[5]) << 8)) / 8192.0;
+        int16_t tmp = (int16_t)(((uint16_t)msg->payload[4]) | (((uint16_t)msg->payload[5]) << 8));
+        *roll = (float)tmp / 8192.0;
     }
 }
