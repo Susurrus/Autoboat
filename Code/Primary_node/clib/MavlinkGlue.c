@@ -22,6 +22,7 @@
 #include "EcanSensors.h"
 #include "Rudder.h"
 #include "MavlinkGlue.h"
+#include "Node.h"
 
 #include <stdio.h>
 
@@ -233,15 +234,15 @@ void MavLinkSendHeartbeat(void)
 
 	// If the startup reset line is triggered, indicate we're booting up. This is the only unarmed state
 	// although that's not technically true with this controller.
-	if (systemStatus.reset & (1 << 0)) {
+	if (nodeErrors & (1 << 0)) {
 		mavlink_system.state = MAV_STATE_BOOT;
 		mavlink_system.mode &= ~MAV_MODE_FLAG_SAFETY_ARMED;
 	// Otherwise if we're undergoing calibration indicate that
-	} else if (systemStatus.reset & (1 << 5)) {
+	} else if (nodeErrors & (1 << 5)) {
 		mavlink_system.state = MAV_STATE_CALIBRATING;
 		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
 	// Otherwise if there're any other errors we're in standby
-	} else if (systemStatus.reset > 0) {
+	} else if (nodeErrors > 0) {
 		mavlink_system.state = MAV_STATE_STANDBY;
 		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
 	// Finally we're active if there're no errors. Also indicate within the mode that we're armed.
@@ -253,7 +254,7 @@ void MavLinkSendHeartbeat(void)
 	/// Then we update the system mode using MAV_MODE_FLAGs
 	// Set manual/autonomous mode. Note that they're not mutually exclusive within the MAVLink protocol,
 	// though I treat them as such for my autopilot.
-	if (systemStatus.status & (1 << 0)) {
+	if (nodeStatus & (1 << 0)) {
 		mavlink_system.mode |= (MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
 		mavlink_system.mode &= ~MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
 	} else {
@@ -283,7 +284,7 @@ void MavLinkSendSystemTime(void)
 
 		// Pack the message
 		mavlink_msg_system_time_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-		                             dateTimeDataStore.usecSinceEpoch, systemStatus.time*10);
+		                             dateTimeDataStore.usecSinceEpoch, nodeSystemTime*10);
 
 		// Copy the message to the send buffer
 		len = mavlink_msg_to_send_buffer(buf, &msg);
@@ -336,7 +337,7 @@ void MavLinkSendStatus(void)
 
 	mavlink_msg_sys_status_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 		systemsPresent, systemsEnabled, systemsActive,
-		(uint16_t)(systemStatus.cpu_load)*10,
+		(uint16_t)(nodeCpuLoad)*10,
 		voltage, amperage, -1,
 		dropRate, 0, 0, 0, 0, 0);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
@@ -353,7 +354,7 @@ void MavLinkSendRawGps(void)
 {
 	mavlink_message_t msg;
 
-	mavlink_msg_gps_raw_int_pack(mavlink_system.sysid, mavlink_system.compid, &msg, ((uint64_t)systemStatus.time)*10000,
+	mavlink_msg_gps_raw_int_pack(mavlink_system.sysid, mavlink_system.compid, &msg, ((uint64_t)nodeSystemTime)*10000,
 		sensorAvailability.gps.active?3:0, gpsDataStore.lat.lData, gpsDataStore.lon.lData, gpsDataStore.alt.lData,
 		0xFFFF, 0xFFFF,
 		gpsDataStore.sog.usData, (uint16_t)(((float)gpsDataStore.cog.usData) * 180 / M_PI / 100),
@@ -402,7 +403,7 @@ void MavLinkSendBasicState(void)
 
 /**
  * Transmits the vehicle attitude. Right now just the yaw value.
- * Expects systemStatus.time to be in centiseconds which are then converted
+ * Expects nodeSystemTime to be in centiseconds which are then converted
  * to ms for transmission.
  * Yaw should be in radians where positive is eastward from north.
  */
@@ -411,7 +412,7 @@ void MavLinkSendAttitude(void)
 	mavlink_message_t msg;
 
 	mavlink_msg_attitude_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-	                          systemStatus.time*10, 0.0, 0.0, internalVariables.Heading, 0.0, 0.0, 0.0);
+	                          nodeSystemTime*10, 0.0, 0.0, internalVariables.Heading, 0.0, 0.0, 0.0);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
@@ -430,7 +431,7 @@ void MavLinkSendLocalPosition(void)
 	mavlink_message_t msg;
 
 	mavlink_msg_local_position_ned_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-	                                    systemStatus.time*10,
+	                                    nodeSystemTime*10,
 	                                    internalVariables.LocalPosition[0], internalVariables.LocalPosition[1], internalVariables.LocalPosition[2],
 	                                    internalVariables.Velocity[0], internalVariables.Velocity[1], internalVariables.Velocity[2]);
 
@@ -445,11 +446,11 @@ void MavLinkSendLocalPosition(void)
  */
 void MavLinkSendRcScaledData(void)
 {
-	if (!(systemStatus.status & 1)) {
+	if (!(nodeStatus & 1)) {
 		mavlink_message_t msg;
 
 		mavlink_msg_rc_channels_scaled_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-		                                    systemStatus.time*10,
+		                                    nodeSystemTime*10,
 		                                    0,
 		                                    (int16_t)(signalRudderScaled * 10000),
 		                                    (int16_t)(signalThrottleScaled * 10000),
@@ -570,13 +571,13 @@ void _transmitParameter(uint16_t id)
 
 	switch (id) {
 		case 0:
-			x.param_uint32 = (systemStatus.status & (1 << 0))?1:0;
+			x.param_uint32 = (nodeStatus & (1 << 0))?1:0;
 			valueMsg.param_value = x.param_float;
 			valueMsg.param_index = 0;
 			strncpy(valueMsg.param_id, "MODE_AUTO", 16);
 		break;
 		case 1:
-			x.param_uint32 = (systemStatus.status & (1 << 3))?1:0;
+			x.param_uint32 = (nodeStatus & (1 << 3))?1:0;
 			valueMsg.param_value = x.param_float;
 			valueMsg.param_index = 1;
 			strncpy(valueMsg.param_id, "MODE_RCDISCON", 16);
@@ -609,7 +610,7 @@ void MavLinkSendRudderRaw(void)
 void MavLinkSendStatusAndErrors(void)
 {
 	mavlink_message_t msg;
-	mavlink_msg_status_and_errors_pack(mavlink_system.sysid, mavlink_system.compid, &msg, systemStatus.status, systemStatus.reset);
+	mavlink_msg_status_and_errors_pack(mavlink_system.sysid, mavlink_system.compid, &msg, nodeStatus, nodeErrors);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	Uart1WriteData(buf, (uint8_t)len);
 }
@@ -651,23 +652,39 @@ void MavLinkSendRevoGsData(void)
  */
 void MavLinkReceiveManualControl(mavlink_manual_control_t *msg)
 {
+    static uint16_t lastButtons = 0;
 	if (msg->target == mavlink_system.sysid) {
 		mavlinkManualControlData.unpackedData.X = msg->x;
 		mavlinkManualControlData.unpackedData.Z = msg->z;
 		mavlinkManualControlData.unpackedData.Buttons = msg->buttons;
+
+        // Here we process the buttons and update the relevant variables
+        // If we detect a rise in the autoMode button press, toggle it.
+        if (!(lastButtons & 0x2) && (msg->buttons & 0x2)) {
+            nodeStatus ^= 0x1;
+        }
+
+        // If the rudder calibration button has been pressed, send that command.
+        if (!(lastButtons & 0x20) && (msg->buttons & 0x20)) {
+            RudderStartCalibration();
+        }
+
+        lastButtons = msg->buttons;
+
 		mavlinkManualControlData.unpackedData.NewData = true;
 	}
 }
 
+/**
+ * Returns the throttle and rudder manual control commands received over MAVLink.
+ * @param data
+ */
 void MatlabGetMavLinkManualControl(uint8_t *data)
 {
 	data[0] = mavlinkManualControlData.packedData[0];
 	data[1] = mavlinkManualControlData.packedData[1];
 	data[2] = mavlinkManualControlData.packedData[2];
 	data[3] = mavlinkManualControlData.packedData[3];
-	data[4] = mavlinkManualControlData.packedData[4];
-	data[5] = mavlinkManualControlData.packedData[5];
-	data[6] = mavlinkManualControlData.packedData[6];
 	mavlinkManualControlData.unpackedData.NewData = 0;
 }
 
@@ -699,16 +716,16 @@ void MavLinkEvaluateParameterState(uint8_t event, void *data)
 				paramValue.param_float = x.param_value;
 				if (strcmp(x.param_id, "MODE_AUTO") == 0) {
 					if (paramValue.param_uint32) {
-						systemStatus.status |= (1 << 0);
+						nodeStatus |= (1 << 0);
 					} else {
-						systemStatus.status &= ~(1 << 0);
+						nodeStatus &= ~(1 << 0);
 					}
 					currentParameter = 0;
 				} else if (strcmp(x.param_id, "MODE_RCDISCON") == 0) {
 					if (paramValue.param_uint32) {
-						systemStatus.status |= (1 << 3);
+						nodeStatus |= (1 << 3);
 					} else {
-						systemStatus.status &= ~(1 << 3);
+						nodeStatus &= ~(1 << 3);
 					}
 					currentParameter = 1;
 				}
@@ -804,7 +821,7 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 				nextState = MISSION_STATE_SEND_MISSION_COUNT;
 			} else if (event == MISSION_EVENT_COUNT_RECEIVED) {
 				// Don't allow for writing of new missions if we're in autonomous mode.
-				if ((systemStatus.status & 0x0001) > 0) {
+				if ((nodeStatus & 0x0001) > 0) {
 					if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_ACK)) {
 						while (1);
 					}
@@ -839,7 +856,7 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 				}
 			} else if (event == MISSION_EVENT_CLEAR_ALL_RECEIVED) {
 				// If we're in autonomous mode, don't allow for clearing the mission list
-				if ((systemStatus.status & 0x0001) > 0) {
+				if ((nodeStatus & 0x0001) > 0) {
 					if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_ACK)) {
 						while (1);
 					}

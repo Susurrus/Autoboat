@@ -11,6 +11,6 @@ uint32_t nodeSystemTime = 0;
 void NodeTransmitStatus(void)
 {
 	tCanMessage msg;
-	CanMessagePackageStatus(&msg, nodeId, status, errors);
+	CanMessagePackageStatus(&msg, nodeId, nodeStatus, nodeErrors);
 	ecan1_buffered_transmit(&msg);
 }
