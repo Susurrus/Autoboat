@@ -2,11 +2,11 @@
 #include "ecanFunctions.h"
 #include "CanMessages.h"
 
-uint16_t status = 0;
-uint16_t errors = 0;
-uint32_t time = 0;
 uint8_t nodeId = 0;
-uint8_t cpuLoad = 0;
+uint8_t nodeCpuLoad = 0;
+uint16_t nodeStatus = 0;
+uint16_t nodeErrors = 0;
+uint32_t nodeSystemTime = 0;
 
 void NodeTransmitStatus(void)
 {

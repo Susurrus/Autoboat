@@ -36,7 +36,7 @@ enum CAN_NODE_ID {
  * Details on what each bit means can be found in the main header
  * files for each node.
  */
-extern uint16_t status;
+extern uint16_t nodeStatus;
 
 /**
  * This bitfield stores the various error bits for each CAN node.
@@ -45,13 +45,13 @@ extern uint16_t status;
  * Details on what each bit means can be found in the main header
  * files for each node.
  */
-extern uint16_t errors;
+extern uint16_t nodeErrors;
 
 /**
  * This variable stores the onboard system time in units of 0.01s.
  * It is managed by external code and merely declared in this library.
  */
-extern uint32_t time;
+extern uint32_t nodeSystemTime;
 
 /**
  * The ID for the given node. see the CAN_NODE_ID enum.
@@ -61,7 +61,7 @@ extern uint8_t nodeId;
 /**
  * The CPU load for a given node. Units are in percent, so valid values are from 0 to 100.
  */
-extern uint8_t cpuLoad;
+extern uint8_t nodeCpuLoad;
 
 /**
  * Transmit a CAN_MESSAGE_STATUS message using the status and error
