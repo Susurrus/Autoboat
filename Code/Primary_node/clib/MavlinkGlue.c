@@ -115,7 +115,7 @@ static uint8_t groundStationComponentId = 0;
 
 // Globally declare here how many parameters we have.
 // TODO: Move into its own code section
-static uint16_t parameterCount = 4;
+static uint16_t parameterCount = 2;
 
 // Declare a character buffer here to prevent continual allocation/deallocation of MAVLink buffers.
 static uint8_t buf[MAVLINK_MAX_PACKET_LEN];
@@ -543,21 +543,9 @@ void _transmitParameter(uint16_t id)
 			strncpy(valueMsg.param_id, "MODE_AUTO", 16);
 		break;
 		case 1:
-			x.param_uint32 = (systemStatus.status & (1 << 1))?1:0;
-			valueMsg.param_value = x.param_float;
-			valueMsg.param_index = 1;
-			strncpy(valueMsg.param_id, "MODE_HIL", 16);
-		break;
-		case 2:
-			x.param_uint32 = (systemStatus.status & (1 << 2))?1:0;
-			valueMsg.param_value = x.param_float;
-			valueMsg.param_index = 2;
-			strncpy(valueMsg.param_id, "MODE_HILSENSE", 16);
-		break;
-		case 3:
 			x.param_uint32 = (systemStatus.status & (1 << 3))?1:0;
 			valueMsg.param_value = x.param_float;
-			valueMsg.param_index = 3;
+			valueMsg.param_index = 1;
 			strncpy(valueMsg.param_id, "MODE_RCDISCON", 16);
 		break;
 		default:
@@ -622,12 +610,6 @@ void MavLinkSendStatusAndErrors(void)
 	} else {
 		mavlink_system.mode &= ~(MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
 		mavlink_system.mode |= MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
-	}
-	// Set HIL status
-	if (systemStatus.status & (1 << 1)) {
-		mavlink_system.mode |= MAV_MODE_FLAG_HIL_ENABLED;
-	} else {
-		mavlink_system.mode &= ~MAV_MODE_FLAG_HIL_ENABLED;
 	}
 }
 
@@ -721,27 +703,13 @@ void MavLinkEvaluateParameterState(uint8_t event, void *data)
 						systemStatus.status &= ~(1 << 0);
 					}
 					currentParameter = 0;
-				} else if (strcmp(x.param_id, "MODE_HIL") == 0) {
-					if (paramValue.param_uint32) {
-						systemStatus.status |= (1 << 1);
-					} else {
-						systemStatus.status &= ~(1 << 1);
-					}
-					currentParameter = 1;
-				} else if (strcmp(x.param_id, "MODE_HILSENSE") == 0) {
-					if (paramValue.param_uint32) {
-						systemStatus.status |= (1 << 2);
-					} else {
-						systemStatus.status &= ~(1 << 2);
-					}
-					currentParameter = 2;
 				} else if (strcmp(x.param_id, "MODE_RCDISCON") == 0) {
 					if (paramValue.param_uint32) {
 						systemStatus.status |= (1 << 3);
 					} else {
 						systemStatus.status &= ~(1 << 3);
 					}
-					currentParameter = 3;
+					currentParameter = 1;
 				}
 				nextState = PARAM_STATE_SINGLETON_SEND_VALUE;
 			} else if (event == PARAM_EVENT_REQUEST_READ_RECEIVED) {
