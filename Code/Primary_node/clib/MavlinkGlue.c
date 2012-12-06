@@ -420,7 +420,7 @@ void MavLinkSendRcScaledData(void)
 		                                    0,
 		                                    (int16_t)(signalRudderScaled * 10000),
 		                                    (int16_t)(signalThrottleScaled * 10000),
-		                                    (int16_t)(signalModeScaled * 10000),
+		                                    INT16_MAX,
 		                                    INT16_MAX, INT16_MAX, INT16_MAX, INT16_MAX, INT16_MAX,
 		                                    UINT8_MAX);
 
