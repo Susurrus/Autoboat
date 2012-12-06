@@ -91,7 +91,7 @@ typedef struct {
 } timeoutCounters;
 
 extern struct stc {
-	timeoutCounters gps; // GPS is enabled when any CAN messages have been received within the last second, active when enabled and the lat/lon are valid within the last second. This is also the only sensor that is enabled when HIL is engaged.
+	timeoutCounters gps; // GPS is enabled when any CAN messages have been received within the last second, active when enabled and the lat/lon are valid within the last second.
 	timeoutCounters revo_gs; // The Revo GS is enabled when any messages have been received within the last second, active whenever it's enabled.
 	timeoutCounters wso100; // The WSO100 is enabled when any messages have been received within the last second, active whenever it's enabled.
 	timeoutCounters dst800; // The DST800 is enabled when any messages have been received within the last second, active whenever depth is valid within the last second (this should only be true when it's in the water)
