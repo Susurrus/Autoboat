@@ -228,6 +228,39 @@ void MavLinkSendHeartbeat(void)
 {
 	mavlink_message_t msg;
 
+
+	// Update MAVLink state and run mode based on the system state.
+
+	// If the startup reset line is triggered, indicate we're booting up. This is the only unarmed state
+	// although that's not technically true with this controller.
+	if (systemStatus.reset & (1 << 0)) {
+		mavlink_system.state = MAV_STATE_BOOT;
+		mavlink_system.mode &= ~MAV_MODE_FLAG_SAFETY_ARMED;
+	// Otherwise if we're undergoing calibration indicate that
+	} else if (systemStatus.reset & (1 << 5)) {
+		mavlink_system.state = MAV_STATE_CALIBRATING;
+		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
+	// Otherwise if there're any other errors we're in standby
+	} else if (systemStatus.reset > 0) {
+		mavlink_system.state = MAV_STATE_STANDBY;
+		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
+	// Finally we're active if there're no errors. Also indicate within the mode that we're armed.
+	} else {
+		mavlink_system.state = MAV_STATE_ACTIVE;
+		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
+	}
+
+	/// Then we update the system mode using MAV_MODE_FLAGs
+	// Set manual/autonomous mode. Note that they're not mutually exclusive within the MAVLink protocol,
+	// though I treat them as such for my autopilot.
+	if (systemStatus.status & (1 << 0)) {
+		mavlink_system.mode |= (MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
+		mavlink_system.mode &= ~MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
+	} else {
+		mavlink_system.mode &= ~(MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
+		mavlink_system.mode |= MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
+	}
+
 	// Pack the message
 	mavlink_msg_heartbeat_pack(mavlink_system.sysid, mavlink_system.compid, &msg, mavlink_system.type, MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY, mavlink_system.mode, 0, mavlink_system.state);
 
@@ -579,38 +612,6 @@ void MavLinkSendStatusAndErrors(void)
 	mavlink_msg_status_and_errors_pack(mavlink_system.sysid, mavlink_system.compid, &msg, systemStatus.status, systemStatus.reset);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	Uart1WriteData(buf, (uint8_t)len);
-
-	// And finally update the MAVLink state and run mode based on the system state.
-
-	// If the startup reset line is triggered, indicate we're booting up. This is the only unarmed state
-	// although that's not technically true with this controller.
-	if (systemStatus.reset & (1 << 0)) {
-		mavlink_system.state = MAV_STATE_BOOT;
-		mavlink_system.mode &= ~MAV_MODE_FLAG_SAFETY_ARMED;
-	// Otherwise if we're undergoing calibration indicate that
-	} else if (systemStatus.reset & (1 << 5)) {
-		mavlink_system.state = MAV_STATE_CALIBRATING;
-		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
-	// Otherwise if there're any other errors we're in standby
-	} else if (systemStatus.reset > 0) {
-		mavlink_system.state = MAV_STATE_STANDBY;
-		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
-	// Finally we're active if there're no errors. Also indicate within the mode that we're armed.
-	} else {
-		mavlink_system.state = MAV_STATE_ACTIVE;
-		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
-	}
-
-	/// Then we update the system mode using MAV_MODE_FLAGs
-	// Set manual/autonomous mode. Note that they're not mutually exclusive within the MAVLink protocol,
-	// though I treat them as such for my autopilot.
-	if (systemStatus.status & (1 << 0)) {
-		mavlink_system.mode |= (MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
-		mavlink_system.mode &= ~MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
-	} else {
-		mavlink_system.mode &= ~(MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
-		mavlink_system.mode |= MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
-	}
 }
 
 void MavLinkSendWindAirData(void)
