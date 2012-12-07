@@ -115,6 +115,16 @@ void ClearGpsData(void)
 	gpsDataStore.newData = 0;
 }
 
+uint8_t GetGpsEnabled(void)
+{
+    return sensorAvailability.gps.enabled;
+}
+
+uint8_t GetPropActive(void)
+{
+    return sensorAvailability.prop.enabled;
+}
+
 /**
  * A MATLAB-helper function for returning the RC Node status.
  * @param enabled A 2-element array for returning the enabled/active status of the RcNode.

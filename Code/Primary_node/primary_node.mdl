@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2354"
+    ComputedModelVersion    "1.2360"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -29,9 +29,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Dec 06 14:07:34 2012"
-  RTWModifiedTimeStamp	  276702904
-  ModelVersionFormat	  "1.%<AutoIncrement:2354>"
+  LastModifiedDate	  "Fri Dec 07 09:47:25 2012"
+  RTWModifiedTimeStamp	  276774083
+  ModelVersionFormat	  "1.%<AutoIncrement:2360>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -676,8 +676,8 @@ Model {
 		DataType		"string"
 		Name			"OPTIM_GCC"
 		Value			"-mcpu=33fj128MC802 -O3 -fschedule-insns -fschedule-insns2                                                  "
-		"                                                                                                                   -"
-		"fno-short-double"
+		"                                                                                                                    "
+		"  -fno-short-double"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -1144,7 +1144,7 @@ Model {
   }
   System {
     Name		    "primary_node"
-    Location		    [202, 74, 1901, 1019]
+    Location		    [223, 82, 1901, 1027]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1158,7 +1158,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "23231"
+    SIDHighWatermark	    "23238"
     Block {
       BlockType		      SubSystem
       Name		      "Actuator\nOutputs"
@@ -1660,7 +1660,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Controller"
-	Location		[603, 143, 1810, 773]
+	Location		[223, 82, 1918, 1027]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -4225,6 +4225,7 @@ Model {
 		  IconDisplay		  "Port number"
 		  Port {
 		    PortNumber		    1
+		    PropagatedSignals	    "throttle"
 		    ShowPropagatedSignals   "on"
 		    RTWStorageClass	    "Auto"
 		    DataLoggingNameMode	    "SignalName"
@@ -8809,16 +8810,6 @@ Model {
 	}
 	Block {
 	  BlockType		  From
-	  Name			  "From33"
-	  SID			  "16178"
-	  Position		  [385, 464, 465, 486]
-	  BackgroundColor	  "magenta"
-	  ShowName		  off
-	  GotoTag		  "v_rpm"
-	  TagVisibility		  "global"
-	}
-	Block {
-	  BlockType		  From
 	  Name			  "From37"
 	  SID			  "16510"
 	  Position		  [15, 341, 220, 369]
@@ -8913,6 +8904,15 @@ Model {
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "CalibrationLimitPort"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "From8"
+	  SID			  "23238"
+	  Position		  [385, 464, 465, 486]
+	  BackgroundColor	  "magenta"
+	  ShowName		  off
+	  GotoTag		  "sensors_t"
 	}
 	Block {
 	  BlockType		  Reference
@@ -9192,7 +9192,7 @@ Model {
 	  DstPort		  6
 	}
 	Line {
-	  SrcBlock		  "From33"
+	  SrcBlock		  "From8"
 	  SrcPort		  1
 	  DstBlock		  "Data Store\nWrite"
 	  DstPort		  9
@@ -9493,7 +9493,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Sensor Inputs"
-	Location		[401, 346, 1785, 776]
+	Location		[223, 82, 1918, 1027]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	221
@@ -9771,6 +9771,80 @@ Model {
 	}
 	Block {
 	  BlockType		  Reference
+	  Name			  "Check whether the GPS is\nbroadcasting valid messages\n[EcanSensors.c]"
+	  SID			  "23232"
+	  Tag			  "dsPIC_dsPIC_CFunctionCall"
+	  Ports			  [0, 1]
+	  Position		  [525, 72, 675, 118]
+	  BackgroundColor	  "orange"
+	  LibraryVersion	  "3.84"
+	  SourceBlock		  "dsPICdrivers/OTHERS/C Function Call"
+	  SourceType		  "C Function Call"
+	  FctUpdate		  "Output Function"
+	  fctName		  "GetGpsEnabled"
+	  INPUT_SIZE		  "1"
+	  INPUT1		  "--"
+	  INPUT2		  "--"
+	  INPUT3		  "--"
+	  OUTPUT_SIZE		  "1"
+	  OUTPUT1		  "uint8"
+	  SampleTime		  "T_step"
+	  InputType		  "[ ]"
+	  OutputType		  "[ 2 ]"
+	  FctDeclaration	  "extern uint8_T GetGpsEnabled();"
+	  FctCall		  "%y1 = GetGpsEnabled();"
+	  OrderingInOutPopup	  "None"
+	  FctStart		  "None"
+	  FctStart_Name		  "Init_onlyOnce"
+	  FctStart_Declaration	  "inline extern void Init_onlyOnce();"
+	  FctStart_Call		  "Init_onlyOnce();"
+	  FctInit		  "None"
+	  FctInit_Name		  "Init_Reset"
+	  FctInit_Declaration	  "inline extern void Init_Reset();"
+	  FctInit_Call		  "Init_Reset();"
+	  PinDigitalInput	  "[]"
+	  PinDigitalOutput	  "[]"
+	  AnalogueInput		  "[]"
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Check whether the GPS is\nbroadcasting valid messages\n[EcanSensors.c]1"
+	  SID			  "23234"
+	  Tag			  "dsPIC_dsPIC_CFunctionCall"
+	  Ports			  [0, 1]
+	  Position		  [625, 177, 775, 223]
+	  BackgroundColor	  "orange"
+	  LibraryVersion	  "3.84"
+	  SourceBlock		  "dsPICdrivers/OTHERS/C Function Call"
+	  SourceType		  "C Function Call"
+	  FctUpdate		  "Output Function"
+	  fctName		  "GetPropActive"
+	  INPUT_SIZE		  "1"
+	  INPUT1		  "--"
+	  INPUT2		  "--"
+	  INPUT3		  "--"
+	  OUTPUT_SIZE		  "1"
+	  OUTPUT1		  "uint8"
+	  SampleTime		  "T_step"
+	  InputType		  "[ ]"
+	  OutputType		  "[ 2 ]"
+	  FctDeclaration	  "extern uint8_T GetPropActive();"
+	  FctCall		  "%y1 = GetPropActive();"
+	  OrderingInOutPopup	  "None"
+	  FctStart		  "None"
+	  FctStart_Name		  "Init_onlyOnce"
+	  FctStart_Declaration	  "inline extern void Init_onlyOnce();"
+	  FctStart_Call		  "Init_onlyOnce();"
+	  FctInit		  "None"
+	  FctInit_Name		  "Init_Reset"
+	  FctInit_Declaration	  "inline extern void Init_Reset();"
+	  FctInit_Call		  "Init_Reset();"
+	  PinDigitalInput	  "[]"
+	  PinDigitalOutput	  "[]"
+	  AnalogueInput		  "[]"
+	}
+	Block {
+	  BlockType		  Reference
 	  Name			  "Compare\nTo Zero"
 	  SID			  "20215"
 	  Ports			  [1, 1]
@@ -9893,332 +9967,6 @@ Model {
 	  ecan1_error_sample_time "T_step"
 	}
 	Block {
-	  BlockType		  SubSystem
-	  Name			  "Estop detection"
-	  SID			  "15365"
-	  Ports			  [0, 1]
-	  Position		  [580, 419, 675, 461]
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  System {
-	    Name		    "Estop detection"
-	    Location		    [202, 82, 1582, 847]
-	    Open		    off
-	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "usletter"
-	    PaperUnits		    "inches"
-	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "126"
-	    Block {
-	      BlockType		      Reference
-	      Name		      "Compare\nTo Constant1"
-	      SID		      "17634"
-	      Ports		      [1, 1]
-	      Position		      [590, 147, 625, 163]
-	      ShowName		      off
-	      LibraryVersion	      "1.256"
-	      SourceBlock	      "simulink/Logic and Bit\nOperations/Compare\nTo Constant"
-	      SourceType	      "Compare To Constant"
-	      relop		      "=="
-	      const		      "1"
-	      OutDataTypeStr	      "boolean"
-	      ZeroCross		      on
-	    }
-	    Block {
-	      BlockType		      Constant
-	      Name		      "Constant1"
-	      SID		      "17635"
-	      Position		      [455, 131, 485, 149]
-	      BackgroundColor	      "gray"
-	      ShowName		      off
-	      OutDataTypeStr	      "uint8"
-	    }
-	    Block {
-	      BlockType		      DiscreteIntegrator
-	      Name		      "Discrete-Time\nIntegrator"
-	      SID		      "17636"
-	      Ports		      [2, 2]
-	      Position		      [530, 131, 565, 164]
-	      ShowName		      off
-	      IntegratorMethod	      "Accumulation: Forward Euler"
-	      gainval		      "1"
-	      ExternalReset	      "level"
-	      InitialConditionSource  "internal"
-	      SampleTime	      "-1"
-	      LimitOutput	      on
-	      UpperSaturationLimit    "50"
-	      LowerSaturationLimit    "0"
-	      ShowSaturationPort      on
-	      ICPrevOutput	      "DiscIntNeverNeededParam"
-	      ICPrevScaledInput	      "DiscIntNeverNeededParam"
-	    }
-	    Block {
-	      BlockType		      Goto
-	      Name		      "Goto"
-	      SID		      "17632"
-	      Position		      [460, 88, 510, 112]
-	      BackgroundColor	      "cyan"
-	      ShowName		      off
-	      GotoTag		      "v_rpm"
-	      TagVisibility	      "global"
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "Retrieve throttle data from\nthe ACS300\n[ecanSensors.c]"
-	      SID		      "17630"
-	      Tag		      "dsPIC_dsPIC_CFunctionCall"
-	      Ports		      [0, 1]
-	      Position		      [35, 123, 205, 167]
-	      BackgroundColor	      "orange"
-	      LibraryVersion	      "3.84"
-	      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
-	      SourceType	      "C Function Call"
-	      FctUpdate		      "Output Function"
-	      fctName		      "GetThrottleDataPacked"
-	      INPUT_SIZE	      "1"
-	      INPUT1		      "--"
-	      INPUT2		      "--"
-	      INPUT3		      "--"
-	      OUTPUT_SIZE	      "3"
-	      OUTPUT1		      "uint8"
-	      SampleTime	      ".01"
-	      InputType		      "[ ]"
-	      OutputType	      "[ 2 ]"
-	      FctDeclaration	      "extern void GetThrottleDataPacked(uint8_T* y1);"
-	      FctCall		      "GetThrottleDataPacked(*%y1);"
-	      OrderingInOutPopup      "None"
-	      FctStart		      "None"
-	      FctStart_Name	      "Init_onlyOnce"
-	      FctStart_Declaration    "inline extern void Init_onlyOnce();"
-	      FctStart_Call	      "Init_onlyOnce();"
-	      FctInit		      "None"
-	      FctInit_Name	      "Init_Reset"
-	      FctInit_Declaration     "inline extern void Init_Reset();"
-	      FctInit_Call	      "Init_Reset();"
-	      PinDigitalInput	      "[]"
-	      PinDigitalOutput	      "[]"
-	      AnalogueInput	      "[]"
-	    }
-	    Block {
-	      BlockType		      Terminator
-	      Name		      "Terminator3"
-	      SID		      "17638"
-	      Position		      [590, 126, 610, 144]
-	      ShowName		      off
-	    }
-	    Block {
-	      BlockType		      SubSystem
-	      Name		      "Unpack throttle\ndata"
-	      SID		      "17631"
-	      Ports		      [1, 2]
-	      Position		      [275, 123, 385, 167]
-	      LibraryVersion	      "1.31"
-	      ErrorFcn		      "Stateflow.Translate.translate"
-	      PermitHierarchicalResolution "ExplicitOnly"
-	      TreatAsAtomicUnit	      on
-	      MinAlgLoopOccurrences   off
-	      PropExecContextOutsideSubsystem off
-	      RTWSystemCode	      "Auto"
-	      FunctionWithSeparateData off
-	      Opaque		      off
-	      RequestExecContextInheritance off
-	      MaskHideContents	      off
-	      SFBlockType	      "MATLAB Function"
-	      MaskType		      "Stateflow"
-	      MaskDescription	      "Embedded MATLAB block"
-	      MaskSelfModifiable      on
-	      MaskDisplay	      "bgColor = Simulink.Root.ColorString2Rgb(get_param(gcbh, 'BackgroundColor')); image(imread('p"
-	      "rivate/eml_membrane_16.png','png','BackgroundColor',bgColor(1:3)),'center'); disp([10 10 'unpack']);"
-	      MaskIconFrame	      on
-	      MaskIconOpaque	      off
-	      MaskIconRotate	      "none"
-	      MaskPortRotate	      "default"
-	      MaskIconUnits	      "normalized"
-	      System {
-		Name			"Unpack throttle\ndata"
-		Location		[257, 457, 812, 717]
-		Open			off
-		ModelBrowserVisibility	on
-		ModelBrowserWidth	200
-		ScreenColor		"white"
-		PaperOrientation	"landscape"
-		PaperPositionMode	"auto"
-		PaperType		"usletter"
-		PaperUnits		"inches"
-		TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
-		TiledPageScale		1
-		ShowPageBoundaries	off
-		ZoomFactor		"100"
-		SIDHighWatermark	"41"
-		SIDPrevWatermark	"37"
-		Block {
-		  BlockType		  Inport
-		  Name			  "u"
-		  SID			  "17631::1"
-		  Position		  [20, 101, 40, 119]
-		  IconDisplay		  "Port number"
-		}
-		Block {
-		  BlockType		  Demux
-		  Name			  " Demux "
-		  SID			  "17631::39"
-		  Ports			  [1, 1]
-		  Position		  [270, 180, 320, 220]
-		  Outputs		  "1"
-		}
-		Block {
-		  BlockType		  S-Function
-		  Name			  " SFunction "
-		  SID			  "17631::38"
-		  Tag			  "Stateflow S-Function primary_node 10"
-		  Ports			  [1, 3]
-		  Position		  [180, 100, 230, 180]
-		  FunctionName		  "sf_sfun"
-		  PortCounts		  "[1 3]"
-		  EnableBusSupport	  on
-		  Port {
-		    PortNumber		    2
-		    Name		    "throttle"
-		    RTWStorageClass	    "Auto"
-		    DataLoggingNameMode	    "SignalName"
-		  }
-		  Port {
-		    PortNumber		    3
-		    Name		    "newData"
-		    RTWStorageClass	    "Auto"
-		    DataLoggingNameMode	    "SignalName"
-		  }
-		}
-		Block {
-		  BlockType		  Terminator
-		  Name			  " Terminator "
-		  SID			  "17631::41"
-		  Position		  [460, 191, 480, 209]
-		}
-		Block {
-		  BlockType		  Outport
-		  Name			  "throttle"
-		  SID			  "17631::5"
-		  Position		  [460, 101, 480, 119]
-		  IconDisplay		  "Port number"
-		}
-		Block {
-		  BlockType		  Outport
-		  Name			  "newData"
-		  SID			  "17631::29"
-		  Position		  [460, 136, 480, 154]
-		  Port			  "2"
-		  IconDisplay		  "Port number"
-		}
-		Line {
-		  SrcBlock		  "u"
-		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  1
-		}
-		Line {
-		  Name			  "throttle"
-		  Labels		  [0, 0]
-		  SrcBlock		  " SFunction "
-		  SrcPort		  2
-		  DstBlock		  "throttle"
-		  DstPort		  1
-		}
-		Line {
-		  Name			  "newData"
-		  Labels		  [0, 0]
-		  SrcBlock		  " SFunction "
-		  SrcPort		  3
-		  DstBlock		  "newData"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  " Demux "
-		  SrcPort		  1
-		  DstBlock		  " Terminator "
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  " SFunction "
-		  SrcPort		  1
-		  DstBlock		  " Demux "
-		  DstPort		  1
-		}
-	      }
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "reset_estop"
-	      SID		      "17633"
-	      Position		      [655, 148, 685, 162]
-	      BackgroundColor	      "yellow"
-	      IconDisplay	      "Port number"
-	    }
-	    Line {
-	      SrcBlock		      "Retrieve throttle data from\nthe ACS300\n[ecanSensors.c]"
-	      SrcPort		      1
-	      DstBlock		      "Unpack throttle\ndata"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Unpack throttle\ndata"
-	      SrcPort		      1
-	      Points		      [55, 0]
-	      DstBlock		      "Goto"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Constant1"
-	      SrcPort		      1
-	      DstBlock		      "Discrete-Time\nIntegrator"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Unpack throttle\ndata"
-	      SrcPort		      2
-	      DstBlock		      "Discrete-Time\nIntegrator"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Discrete-Time\nIntegrator"
-	      SrcPort		      2
-	      DstBlock		      "Compare\nTo Constant1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Discrete-Time\nIntegrator"
-	      SrcPort		      1
-	      Points		      [5, 0]
-	      DstBlock		      "Terminator3"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Compare\nTo Constant1"
-	      SrcPort		      1
-	      DstBlock		      "reset_estop"
-	      DstPort		      1
-	    }
-	    Annotation {
-	      Name		      "If a status message hasn't been received for 2.1 seconds, a reset \nsignal is activated. The statu"
-	      "s messages for the ACS300 are not\nsent when it is in reset, so this will catch when the estop is active.\n\nTh"
-	      "is also serves to check that the CAN hardware is working correctly,\nwhich I have had trouble with in the past."
-	      Position		      [18, 53]
-	      HorizontalAlignment     "left"
-	    }
-	  }
-	}
-	Block {
 	  BlockType		  From
 	  Name			  "From1"
 	  SID			  "22753"
@@ -10272,7 +10020,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From2"
 	  SID			  "23217"
-	  Position		  [1120, 292, 1230, 308]
+	  Position		  [1070, 292, 1180, 308]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "autoMode"
@@ -10292,7 +10040,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From4"
 	  SID			  "23222"
-	  Position		  [1160, 222, 1270, 238]
+	  Position		  [1050, 222, 1160, 238]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "reset_GPS_discon"
@@ -10633,7 +10381,7 @@ Model {
 	  BlockType		  Goto
 	  Name			  "Goto2"
 	  SID			  "14222"
-	  Position		  [725, 159, 855, 181]
+	  Position		  [760, 84, 890, 106]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  GotoTag		  "reset_GPS_discon"
@@ -10643,7 +10391,7 @@ Model {
 	  BlockType		  Goto
 	  Name			  "Goto4"
 	  SID			  "15364"
-	  Position		  [725, 429, 805, 451]
+	  Position		  [885, 189, 965, 211]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  GotoTag		  "reset_estop"
@@ -10690,160 +10438,6 @@ Model {
 	  TagVisibility		  "global"
 	}
 	Block {
-	  BlockType		  SubSystem
-	  Name			  "Hold in reset\non init"
-	  SID			  "12902"
-	  Ports			  [1, 1]
-	  Position		  [625, 156, 675, 184]
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  System {
-	    Name		    "Hold in reset\non init"
-	    Location		    [551, 483, 1143, 711]
-	    Open		    off
-	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "usletter"
-	    PaperUnits		    "inches"
-	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "100"
-	    Block {
-	      BlockType		      Inport
-	      Name		      "GPS"
-	      SID		      "12903"
-	      Position		      [25, 68, 55, 82]
-	      BackgroundColor	      "darkGreen"
-	      IconDisplay	      "Port number"
-	    }
-	    Block {
-	      BlockType		      BusSelector
-	      Name		      "Bus\nSelector"
-	      SID		      "12904"
-	      Ports		      [1, 1]
-	      Position		      [90, 56, 95, 94]
-	      ShowName		      off
-	      OutputSignals	      "newData"
-	      Port {
-		PortNumber		1
-		Name			"<newData>"
-		RTWStorageClass		"Auto"
-		DataLoggingNameMode	"SignalName"
-	      }
-	    }
-	    Block {
-	      BlockType		      Constant
-	      Name		      "Constant2"
-	      SID		      "23225"
-	      Position		      [120, 36, 150, 54]
-	      ZOrder		      -5
-	      BackgroundColor	      "gray"
-	      ShowName		      off
-	      OutDataTypeStr	      "boolean"
-	    }
-	    Block {
-	      BlockType		      DataTypeConversion
-	      Name		      "Data Type Conversion"
-	      SID		      "23228"
-	      Position		      [280, 67, 335, 83]
-	      ZOrder		      -7
-	      ShowName		      off
-	      OutDataTypeStr	      "boolean"
-	      RndMeth		      "Simplest"
-	      SaturateOnIntegerOverflow	off
-	    }
-	    Block {
-	      BlockType		      DiscreteIntegrator
-	      Name		      "Discrete-Time\nIntegrator"
-	      SID		      "12906"
-	      Ports		      [2, 2]
-	      Position		      [185, 46, 240, 84]
-	      ShowName		      off
-	      IntegratorMethod	      "Accumulation: Forward Euler"
-	      ExternalReset	      "level"
-	      InitialConditionSource  "internal"
-	      SampleTime	      "-1"
-	      LimitOutput	      on
-	      UpperSaturationLimit    "50"
-	      LowerSaturationLimit    "0"
-	      ShowSaturationPort      on
-	      ICPrevOutput	      "DiscIntNeverNeededParam"
-	      ICPrevScaledInput	      "DiscIntNeverNeededParam"
-	    }
-	    Block {
-	      BlockType		      Terminator
-	      Name		      "Terminator"
-	      SID		      "23227"
-	      Position		      [280, 45, 300, 65]
-	      ZOrder		      -5
-	      ShowName		      off
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "Out1"
-	      SID		      "12907"
-	      Position		      [390, 68, 420, 82]
-	      BackgroundColor	      "yellow"
-	      IconDisplay	      "Port number"
-	    }
-	    Line {
-	      SrcBlock		      "GPS"
-	      SrcPort		      1
-	      DstBlock		      "Bus\nSelector"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Discrete-Time\nIntegrator"
-	      SrcPort		      2
-	      DstBlock		      "Data Type Conversion"
-	      DstPort		      1
-	    }
-	    Line {
-	      Name		      "<newData>"
-	      Labels		      [0, 0]
-	      SrcBlock		      "Bus\nSelector"
-	      SrcPort		      1
-	      DstBlock		      "Discrete-Time\nIntegrator"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "Constant2"
-	      SrcPort		      1
-	      Points		      [5, 0; 0, 10]
-	      DstBlock		      "Discrete-Time\nIntegrator"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Discrete-Time\nIntegrator"
-	      SrcPort		      1
-	      DstBlock		      "Terminator"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Data Type Conversion"
-	      SrcPort		      1
-	      DstBlock		      "Out1"
-	      DstPort		      1
-	    }
-	    Annotation {
-	      Name		      "This block outputs a 1 while it hasn't received a GPS signal for 0.5s.\nTODO: This code should be "
-	      "replaced with code that just checks the status\nof the GPS sensor directly from the sensorAvailability struct i"
-	      "n EcanSensors.c"
-	      Position		      [29, 177]
-	      HorizontalAlignment     "left"
-	    }
-	  }
-	}
-	Block {
 	  BlockType		  Logic
 	  Name			  "Logical\nOperator"
 	  SID			  "23219"
@@ -10884,7 +10478,31 @@ Model {
 	  Name			  "Logical\nOperator3"
 	  SID			  "23223"
 	  Ports			  [1, 1]
-	  Position		  [1300, 221, 1325, 239]
+	  Position		  [1205, 221, 1230, 239]
+	  ZOrder		  -17
+	  ShowName		  off
+	  Operator		  "NOT"
+	  AllPortsSameDT	  off
+	  OutDataTypeStr	  "boolean"
+	}
+	Block {
+	  BlockType		  Logic
+	  Name			  "Logical\nOperator4"
+	  SID			  "23233"
+	  Ports			  [1, 1]
+	  Position		  [700, 86, 725, 104]
+	  ZOrder		  -17
+	  ShowName		  off
+	  Operator		  "NOT"
+	  AllPortsSameDT	  off
+	  OutDataTypeStr	  "boolean"
+	}
+	Block {
+	  BlockType		  Logic
+	  Name			  "Logical\nOperator5"
+	  SID			  "23237"
+	  Ports			  [1, 1]
+	  Position		  [810, 191, 835, 209]
 	  ZOrder		  -17
 	  ShowName		  off
 	  Operator		  "NOT"
@@ -11952,6 +11570,8 @@ Model {
 	  SID			  "22756"
 	  Position		  [1270, 435, 1320, 475]
 	  ZOrder		  -18
+	  ShowName		  off
+	  Criteria		  "u2 ~= 0"
 	  InputSameDT		  off
 	  SaturateOnIntegerOverflow off
 	}
@@ -11987,7 +11607,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Throttle\nSensors"
-	    Location		    [218, 108, 730, 493]
+	    Location		    [218, 108, 969, 493]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -12001,35 +11621,220 @@ Model {
 	    ShowPageBoundaries	    off
 	    ZoomFactor		    "100"
 	    Block {
-	      BlockType		      Constant
-	      Name		      "Constant"
-	      SID		      "12936"
-	      Position		      [115, 102, 145, 118]
-	      BackgroundColor	      "gray"
-	      ShowName		      off
-	      Value		      "0"
-	      OutDataTypeStr	      "int16"
+	      BlockType		      Reference
+	      Name		      "Retrieve throttle data from\nthe ACS300\n[ecanSensors.c]"
+	      SID		      "17630"
+	      Tag		      "dsPIC_dsPIC_CFunctionCall"
+	      Ports		      [0, 1]
+	      Position		      [45, 148, 215, 192]
+	      BackgroundColor	      "orange"
+	      LibraryVersion	      "3.84"
+	      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
+	      SourceType	      "C Function Call"
+	      FctUpdate		      "Output Function"
+	      fctName		      "GetThrottleDataPacked"
+	      INPUT_SIZE	      "1"
+	      INPUT1		      "--"
+	      INPUT2		      "--"
+	      INPUT3		      "--"
+	      OUTPUT_SIZE	      "3"
+	      OUTPUT1		      "uint8"
 	      SampleTime	      ".01"
+	      InputType		      "[ ]"
+	      OutputType	      "[ 2 ]"
+	      FctDeclaration	      "extern void GetThrottleDataPacked(uint8_T* y1);"
+	      FctCall		      "GetThrottleDataPacked(*%y1);"
+	      OrderingInOutPopup      "None"
+	      FctStart		      "None"
+	      FctStart_Name	      "Init_onlyOnce"
+	      FctStart_Declaration    "inline extern void Init_onlyOnce();"
+	      FctStart_Call	      "Init_onlyOnce();"
+	      FctInit		      "None"
+	      FctInit_Name	      "Init_Reset"
+	      FctInit_Declaration     "inline extern void Init_Reset();"
+	      FctInit_Call	      "Init_Reset();"
+	      PinDigitalInput	      "[]"
+	      PinDigitalOutput	      "[]"
+	      AnalogueInput	      "[]"
+	    }
+	    Block {
+	      BlockType		      Terminator
+	      Name		      "Terminator1"
+	      SID		      "23236"
+	      Position		      [425, 171, 445, 189]
+	      ShowName		      off
+	    }
+	    Block {
+	      BlockType		      SubSystem
+	      Name		      "Unpack throttle\ndata"
+	      SID		      "17631"
+	      Ports		      [1, 2]
+	      Position		      [285, 148, 395, 192]
+	      LibraryVersion	      "1.31"
+	      ErrorFcn		      "Stateflow.Translate.translate"
+	      PermitHierarchicalResolution "ExplicitOnly"
+	      TreatAsAtomicUnit	      on
+	      MinAlgLoopOccurrences   off
+	      PropExecContextOutsideSubsystem off
+	      RTWSystemCode	      "Auto"
+	      FunctionWithSeparateData off
+	      Opaque		      off
+	      RequestExecContextInheritance off
+	      MaskHideContents	      off
+	      SFBlockType	      "MATLAB Function"
+	      MaskType		      "Stateflow"
+	      MaskDescription	      "Embedded MATLAB block"
+	      MaskSelfModifiable      on
+	      MaskDisplay	      "bgColor = Simulink.Root.ColorString2Rgb(get_param(gcbh, 'BackgroundColor')); image(imread('p"
+	      "rivate/eml_membrane_16.png','png','BackgroundColor',bgColor(1:3)),'center'); disp([10 10 'unpack']);"
+	      MaskIconFrame	      on
+	      MaskIconOpaque	      off
+	      MaskIconRotate	      "none"
+	      MaskPortRotate	      "default"
+	      MaskIconUnits	      "normalized"
+	      System {
+		Name			"Unpack throttle\ndata"
+		Location		[257, 457, 812, 717]
+		Open			off
+		ModelBrowserVisibility	on
+		ModelBrowserWidth	200
+		ScreenColor		"white"
+		PaperOrientation	"landscape"
+		PaperPositionMode	"auto"
+		PaperType		"usletter"
+		PaperUnits		"inches"
+		TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+		TiledPageScale		1
+		ShowPageBoundaries	off
+		ZoomFactor		"100"
+		SIDHighWatermark	"41"
+		SIDPrevWatermark	"37"
+		Block {
+		  BlockType		  Inport
+		  Name			  "u"
+		  SID			  "17631::1"
+		  Position		  [20, 101, 40, 119]
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Demux
+		  Name			  " Demux "
+		  SID			  "17631::39"
+		  Ports			  [1, 1]
+		  Position		  [270, 180, 320, 220]
+		  Outputs		  "1"
+		}
+		Block {
+		  BlockType		  S-Function
+		  Name			  " SFunction "
+		  SID			  "17631::38"
+		  Tag			  "Stateflow S-Function primary_node 10"
+		  Ports			  [1, 3]
+		  Position		  [180, 100, 230, 180]
+		  FunctionName		  "sf_sfun"
+		  PortCounts		  "[1 3]"
+		  EnableBusSupport	  on
+		  Port {
+		    PortNumber		    2
+		    Name		    "throttle"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		  }
+		  Port {
+		    PortNumber		    3
+		    Name		    "newData"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		  }
+		}
+		Block {
+		  BlockType		  Terminator
+		  Name			  " Terminator "
+		  SID			  "17631::41"
+		  Position		  [460, 191, 480, 209]
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "throttle"
+		  SID			  "17631::5"
+		  Position		  [460, 101, 480, 119]
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "newData"
+		  SID			  "17631::29"
+		  Position		  [460, 136, 480, 154]
+		  Port			  "2"
+		  IconDisplay		  "Port number"
+		}
+		Line {
+		  SrcBlock		  "u"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  1
+		}
+		Line {
+		  Name			  "throttle"
+		  Labels		  [0, 0]
+		  SrcBlock		  " SFunction "
+		  SrcPort		  2
+		  DstBlock		  "throttle"
+		  DstPort		  1
+		}
+		Line {
+		  Name			  "newData"
+		  Labels		  [0, 0]
+		  SrcBlock		  " SFunction "
+		  SrcPort		  3
+		  DstBlock		  "newData"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  " Demux "
+		  SrcPort		  1
+		  DstBlock		  " Terminator "
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  " SFunction "
+		  SrcPort		  1
+		  DstBlock		  " Demux "
+		  DstPort		  1
+		}
+	      }
 	    }
 	    Block {
 	      BlockType		      Outport
 	      Name		      "Out1"
 	      SID		      "12937"
-	      Position		      [235, 103, 265, 117]
+	      Position		      [475, 153, 505, 167]
 	      BackgroundColor	      "yellow"
 	      IconDisplay	      "Port number"
 	    }
 	    Line {
-	      SrcBlock		      "Constant"
+	      SrcBlock		      "Retrieve throttle data from\nthe ACS300\n[ecanSensors.c]"
+	      SrcPort		      1
+	      DstBlock		      "Unpack throttle\ndata"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Unpack throttle\ndata"
 	      SrcPort		      1
 	      DstBlock		      "Out1"
 	      DstPort		      1
 	    }
+	    Line {
+	      SrcBlock		      "Unpack throttle\ndata"
+	      SrcPort		      2
+	      DstBlock		      "Terminator1"
+	      DstPort		      1
+	    }
 	    Annotation {
-	      Name		      "Throttle output is currently being ignored. The motor driver board \nshould report current velocit"
-	      "y along with other status information \non a regular basis and that could be parsed for this information. As\no"
-	      "f right now it's been deemed non-critical and therefore ignored."
-	      Position		      [30, 194]
+	      Name		      "If a status message hasn't been received for 2.1 seconds, a reset \nsignal is activated. The statu"
+	      "s messages for the ACS300 are not\nsent when it is in reset, so this will catch when the estop is active.\n\nTh"
+	      "is also serves to check that the CAN hardware is working correctly,\nwhich I have had trouble with in the past."
+	      Position		      [28, 78]
 	      HorizontalAlignment     "left"
 	    }
 	  }
@@ -12339,16 +12144,8 @@ Model {
 	Line {
 	  SrcBlock		  "Get GPS data"
 	  SrcPort		  1
-	  Points		  [25, 0]
-	  Branch {
-	    DstBlock		    "sensors_GPS"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, -30]
-	    DstBlock		    "Hold in reset\non init"
-	    DstPort		    1
-	  }
+	  DstBlock		  "sensors_GPS"
+	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Logical\nOperator1"
@@ -12375,7 +12172,7 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Hold in reset\non init"
+	  SrcBlock		  "Logical\nOperator4"
 	  SrcPort		  1
 	  DstBlock		  "Goto2"
 	  DstPort		  1
@@ -12387,9 +12184,9 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Estop detection"
+	  SrcBlock		  "Check whether the GPS is\nbroadcasting valid messages\n[EcanSensors.c]1"
 	  SrcPort		  1
-	  DstBlock		  "Goto4"
+	  DstBlock		  "Logical\nOperator5"
 	  DstPort		  1
 	}
 	Line {
@@ -12603,7 +12400,7 @@ Model {
 	Line {
 	  SrcBlock		  "From2"
 	  SrcPort		  1
-	  Points		  [15, 0; 0, 10]
+	  Points		  [65, 0; 0, 10]
 	  DstBlock		  "Logical\nOperator"
 	  DstPort		  1
 	}
@@ -12636,6 +12433,18 @@ Model {
 	  SrcBlock		  "Logical\nOperator"
 	  SrcPort		  1
 	  DstBlock		  "automode status\n(automode LED)"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Check whether the GPS is\nbroadcasting valid messages\n[EcanSensors.c]"
+	  SrcPort		  1
+	  DstBlock		  "Logical\nOperator4"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Logical\nOperator5"
+	  SrcPort		  1
+	  DstBlock		  "Goto4"
 	  DstPort		  1
 	}
 	Annotation {
@@ -13901,10 +13710,10 @@ Stateflow {
   }
   chart {
     id			    51
-    name		    "Sensor Inputs/Estop detection/Unpack throttle\ndata"
-    windowPosition	    [397.266 308.766 200.25 189.75]
+    name		    "Sensor Inputs/Throttle\nSensors/Unpack throttle\ndata"
+    windowPosition	    [412.266 293.766 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
-    screen		    [1 1 1600 900 1.333333333333333]
+    screen		    [1 1 1920 1080 1.333333333333333]
     treeNode		    [0 52 0 0]
     firstTransition	    54
     firstJunction	    53
@@ -14032,7 +13841,7 @@ Stateflow {
   }
   instance {
     id			    58
-    name		    "Sensor Inputs/Estop detection/Unpack throttle\ndata"
+    name		    "Sensor Inputs/Throttle\nSensors/Unpack throttle\ndata"
     machine		    1
     chart		    51
   }
