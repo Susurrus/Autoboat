@@ -1,7 +1,7 @@
 #include "CanMessages.h"
 #include "ecanFunctions.h"
 
-void CanMessagePackageStatus(tCanMessage *msg, uint8_t nodeId, uint16_t statusBitfield, uint16_t errorBitfield)
+void CanMessagePackageStatus(tCanMessage *msg, uint8_t nodeId, uint16_t statusBitfield, uint16_t errorBitfield, uint8_t cpuLoad)
 {
 	// Set CAN header information.
 	msg->buffer = 0; // Dependent on ECAN configuration.
@@ -18,12 +18,14 @@ void CanMessagePackageStatus(tCanMessage *msg, uint8_t nodeId, uint16_t statusBi
 	// The status bitfield
 	msg->payload[1] = (uint8_t)statusBitfield;
 	msg->payload[2] = (uint8_t)(statusBitfield >> 8);
-	// And finally the error bitfield
+	// And the error bitfield
 	msg->payload[3] = (uint8_t)errorBitfield;
 	msg->payload[4] = (uint8_t)(errorBitfield >> 8);
+	// And finally the CPU load
+	msg->payload[5] = cpuLoad;
 }
 
-void CanMessageDecodeStatus(const tCanMessage *msg, uint8_t *nodeId, uint16_t *statusBitfield, uint16_t *errorBitfield)
+void CanMessageDecodeStatus(const tCanMessage *msg, uint8_t *nodeId, uint16_t *statusBitfield, uint16_t *errorBitfield, uint8_t *cpuLoad)
 {
 	if (nodeId) {
 		*nodeId = msg->payload[0];
@@ -35,6 +37,10 @@ void CanMessageDecodeStatus(const tCanMessage *msg, uint8_t *nodeId, uint16_t *s
 
 	if (errorBitfield) {
 		*errorBitfield = ((uint16_t)msg->payload[3]) || (((uint16_t)msg->payload[4]) << 8);
+	}
+
+	if (cpuLoad) {
+		*cpuLoad = msg->payload[5];
 	}
 }
 

@@ -45,7 +45,7 @@ void RudderSendAngleCommand(uint8_t sourceNode, float angleCommand)
 {
 	// Set CAN header information.
 	tCanMessage msg;
-	PackagePgn127245(&msg, sourceNode, 0xFF, 0x3, angleCommand, -180);
+	PackagePgn127245(&msg, sourceNode, 0xFF, 0x3, angleCommand, NAN);
 
 	// And finally transmit it.
 	ecan1_buffered_transmit(&msg);

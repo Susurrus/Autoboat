@@ -26,6 +26,7 @@ void PackagePgn127245(tCanMessage *msg, uint8_t sourceDevice, uint8_t instance, 
 	msg->payload[2] = angle;
 	msg->payload[3] = angle >> 8;
 	// Convert current rudder angle to 1e-4 radians
+    // The following is a test to see if position is NAN
 	if (position == position) {
 		angle = (int16_t)(position * 10000);
 	} else {
@@ -49,6 +50,7 @@ void PackagePgn127508(tCanMessage *msg, uint8_t sourceDevice, uint8_t battInstan
 
 	// Field 1: Voltage (in .01V). Check that it's a valid voltage (basically NOT NaN).
 	uint16_t x = 0xFFFF;
+    // The following is a test to see if position is NAN
 	if (voltage == voltage) {
 		voltage *= 100.0f;
 		x = (uint16_t)voltage;
@@ -58,6 +60,7 @@ void PackagePgn127508(tCanMessage *msg, uint8_t sourceDevice, uint8_t battInstan
 
 	// Field 2: Current (in .1A)
 	x = 0xFFFF;
+    // The following is a test to see if position is NAN
 	if (amperage == amperage) {
 		amperage *= 10.0f;
 		x = (uint16_t)amperage;
@@ -68,6 +71,7 @@ void PackagePgn127508(tCanMessage *msg, uint8_t sourceDevice, uint8_t battInstan
 	// Field 3: Temperature (in 1K)
 	// All 1s indicated no-measurement
 	x = 0xFFFF;
+    // The following is a test to see if position is NAN
 	if (temp == temp) {
 		temp = (temp + 273.15) * 100;
 		x = (uint16_t)temp;
@@ -130,14 +134,17 @@ void PackagePgn130311(tCanMessage *msg, uint8_t sourceDevice, uint8_t sid, uint8
     msg->payload[1] = tempInst & 0x03;           // Temp instance
     msg->payload[1] |= (humidInst & 0x03F) << 6; // Humidity instance
     // Convert temperature from Celius to units of .01Kelvin.
+    // The following is a test to see if position is NAN
     uint16_t tempConverted = (temp == temp)?(uint16_t)((temp + 273.15) * 100):0xFFFF;
     msg->payload[2] = (uint8_t)tempConverted;
     msg->payload[3] = (uint8_t)(tempConverted >> 8);
     // Convert humidity from % to 0.004 %.
+    // The following is a test to see if position is NAN
     uint16_t humidConverted = (humid == humid)?(uint16_t)(humid * 250):0xFFFF;
     msg->payload[4] = (uint8_t)humidConverted;
     msg->payload[5] = (uint8_t)(humidConverted >> 8);
     // Convert pressure from kPa and record as hPa.
+    // The following is a test to see if position is NAN
     uint16_t pressConverted = (press == press)?(uint16_t)(press * 10):0xFFFF;
     msg->payload[6] = (uint8_t)pressConverted;
     msg->payload[7] = (uint8_t)(pressConverted >> 8);

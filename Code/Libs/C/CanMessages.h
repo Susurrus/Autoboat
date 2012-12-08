@@ -33,7 +33,7 @@ enum {
     CAN_MSG_SIZE_RUDDER_SET_TX_RATE  = 2,
 
     // General messages
-    CAN_MSG_SIZE_STATUS              = 5,
+    CAN_MSG_SIZE_STATUS              = 7,
 
     // IMU messages (defined by the VSAS-2GM)
     CAN_MSG_SIZE_IMU_DATA            = 6
@@ -42,9 +42,9 @@ enum {
 /**
  * Package the data that makes up a STATUS CAN message.
  */
-void CanMessagePackageStatus(tCanMessage *msg, uint8_t nodeId, uint16_t statusBitfield, uint16_t errorBitfield);
+void CanMessagePackageStatus(tCanMessage *msg, uint8_t nodeId, uint16_t statusBitfield, uint16_t errorBitfield, uint8_t cpuLoad);
 
-void CanMessageDecodeStatus(const tCanMessage *msg, uint8_t *nodeId, uint16_t *statusBitfield, uint16_t *errorBitfield);
+void CanMessageDecodeStatus(const tCanMessage *msg, uint8_t *nodeId, uint16_t *statusBitfield, uint16_t *errorBitfield, uint8_t *cpuLoad);
 /**
  * Package the data that makes up a RUDDER_SET_STATE message into a struct suitable for transmission.
  */

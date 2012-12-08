@@ -151,7 +151,7 @@ void CanTransmitMessages(void)
     for (i = 0; i < messagesToSend; ++i) {
         switch (msgs[i]) {
             case SCHED_ID_RC_STATUS:
-                CanMessagePackageStatus(&msg, CAN_NODE_RC, 0, 0);
+                CanMessagePackageStatus(&msg, CAN_NODE_RC, 0, 0, 0);
                 ecan1_buffered_transmit(&msg);
             break;
             case SCHED_ID_RUDDER_ANGLE:
