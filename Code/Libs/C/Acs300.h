@@ -1,7 +1,7 @@
 #ifndef ACS300_H
 #define ACS300_H
 
-#include "ecanDefinitions.h"
+#include "EcanDefines.h"
 
 #include <stdint.h>
 
@@ -21,16 +21,16 @@
 #define ACS300_PARAM_CC 0x0105
 
 // The following two functions apply to ACS300_CAN_ID_VEL_CMD
-void Acs300PackageVelocityCommand(tCanMessage *msg, int16_t torqueFeedForward, int16_t velCommand, uint16_t status);
+void Acs300PackageVelocityCommand(CanMessage *msg, int16_t torqueFeedForward, int16_t velCommand, uint16_t status);
 
 void Acs300DecodeVelocityCommand(const uint8_t data[6], int16_t *torqueFeedForward, int16_t *velCommand, uint16_t *status);
 
 // The following two functions apply to ACS300_CAN_ID_WR_PARAM
-void Acs300PackageWriteParam(tCanMessage *msg, uint16_t address, uint16_t value);
+void Acs300PackageWriteParam(CanMessage *msg, uint16_t address, uint16_t value);
 
 void Acs300DecodeWriteParam(const uint8_t data[4], uint16_t *address, uint16_t *value);
 
-void Acs300PackageHeartbeat(tCanMessage *msg, uint16_t dataA, uint16_t dataB, uint16_t voltage, uint16_t errorStatus);
+void Acs300PackageHeartbeat(CanMessage *msg, uint16_t dataA, uint16_t dataB, uint16_t voltage, uint16_t errorStatus);
 
 void Acs300DecodeHeartbeat(const uint8_t data[8], uint16_t *dataA, uint16_t *dataB, uint16_t *voltage, uint16_t *errorStatus);
 

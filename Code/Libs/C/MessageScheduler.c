@@ -51,7 +51,7 @@ bool AddMessageRepeating(MessageSchedule *schedule, uint8_t id, uint8_t rate)
 	// transmission	window.
 	
 	// So we search through every offset and check the number of bytes transmit in a given offset.
-	uint8_t bestOffset;
+	uint8_t bestOffset = 0;
 	uint16_t lastCost = USHRT_MAX;
 	uint8_t offset;
 	for (offset = 0; offset < (uint8_t)period; offset++) {
@@ -112,7 +112,7 @@ bool AddMessageOnce(MessageSchedule *schedule, uint8_t id)
 
 	// Find the smallest bracket in the next second to transmit this message
 	uint16_t lastCost = USHRT_MAX;
-	uint8_t bestTimestep;
+	uint8_t bestTimestep = 0;
 	for (i = 0; i < 100; ++i) {
 		uint8_t testTimestep = (schedule->CurrentTimestep + i) % 100;
 		int currentTimestepWord = (testTimestep & 0x70) >> 4;

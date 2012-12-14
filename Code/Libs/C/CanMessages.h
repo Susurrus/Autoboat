@@ -8,7 +8,7 @@
  */
 
 #include "Types.h"
-#include "ecanDefinitions.h"
+#include "EcanDefines.h"
 
  // Define the standard (11-bit) IDs for all custom CAN messages.
  // We make sure not to trample on the 300/301/302/400/401/402 messages used by the ACS300.
@@ -42,26 +42,26 @@ enum {
 /**
  * Package the data that makes up a STATUS CAN message.
  */
-void CanMessagePackageStatus(tCanMessage *msg, uint8_t nodeId, uint16_t statusBitfield, uint16_t errorBitfield, uint8_t cpuLoad);
+void CanMessagePackageStatus(CanMessage *msg, uint8_t nodeId, uint16_t statusBitfield, uint16_t errorBitfield, uint8_t cpuLoad);
 
-void CanMessageDecodeStatus(const tCanMessage *msg, uint8_t *nodeId, uint16_t *statusBitfield, uint16_t *errorBitfield, uint8_t *cpuLoad);
+void CanMessageDecodeStatus(const CanMessage *msg, uint8_t *nodeId, uint16_t *statusBitfield, uint16_t *errorBitfield, uint8_t *cpuLoad);
 /**
  * Package the data that makes up a RUDDER_SET_STATE message into a struct suitable for transmission.
  */
-void CanMessagePackageRudderSetState(tCanMessage *msg, bool enable, bool reset, bool calibrate);
+void CanMessagePackageRudderSetState(CanMessage *msg, bool enable, bool reset, bool calibrate);
 
-void CanMessageDecodeRudderSetState(const tCanMessage *msg, bool *enable, bool *reset, bool *calibrate);
+void CanMessageDecodeRudderSetState(const CanMessage *msg, bool *enable, bool *reset, bool *calibrate);
 
-void CanMessageDecodeRudderSetTxRate(const tCanMessage *msg, uint16_t *angleRate, uint16_t *statusRate);
+void CanMessageDecodeRudderSetTxRate(const CanMessage *msg, uint16_t *angleRate, uint16_t *statusRate);
 
-void CanMessagePackageRudderDetails(tCanMessage *msg, uint16_t potVal, uint16_t portLimitVal, uint16_t sbLimitVal, bool portLimitTrig, bool sbLimitTrig, bool enabled, bool calibrated, bool calibrating);
+void CanMessagePackageRudderDetails(CanMessage *msg, uint16_t potVal, uint16_t portLimitVal, uint16_t sbLimitVal, bool portLimitTrig, bool sbLimitTrig, bool enabled, bool calibrated, bool calibrating);
 
-void CanMessageDecodeRudderDetails(const tCanMessage *msg, uint16_t *potVal, uint16_t *portLimitVal, uint16_t *sbLimitVal, bool *portLimitTrig, bool *sbLimitTrig, bool *enabled, bool *calibrated, bool *calibrating);
+void CanMessageDecodeRudderDetails(const CanMessage *msg, uint16_t *potVal, uint16_t *portLimitVal, uint16_t *sbLimitVal, bool *portLimitTrig, bool *sbLimitTrig, bool *enabled, bool *calibrated, bool *calibrating);
 
 // The IMU data messages are based on the Direction/Attitude messages from the VSAS-2GM
 // All units are in radians.
-void CanMessagePackageImuData(tCanMessage *msg, float direction, float pitch, float roll);
+void CanMessagePackageImuData(CanMessage *msg, float direction, float pitch, float roll);
 
-void CanMessageDecodeImuData(const tCanMessage *msg, float *direction, float *pitch, float *roll);
+void CanMessageDecodeImuData(const CanMessage *msg, float *direction, float *pitch, float *roll);
 
 #endif // CAN_MESSAGES_H

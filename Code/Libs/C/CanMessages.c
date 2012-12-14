@@ -1,7 +1,7 @@
 #include "CanMessages.h"
-#include "ecanFunctions.h"
+#include "EcanDefines.h"
 
-void CanMessagePackageStatus(tCanMessage *msg, uint8_t nodeId, uint16_t statusBitfield, uint16_t errorBitfield, uint8_t cpuLoad)
+void CanMessagePackageStatus(CanMessage *msg, uint8_t nodeId, uint16_t statusBitfield, uint16_t errorBitfield, uint8_t cpuLoad)
 {
 	// Set CAN header information.
 	msg->buffer = 0; // Dependent on ECAN configuration.
@@ -25,7 +25,7 @@ void CanMessagePackageStatus(tCanMessage *msg, uint8_t nodeId, uint16_t statusBi
 	msg->payload[5] = cpuLoad;
 }
 
-void CanMessageDecodeStatus(const tCanMessage *msg, uint8_t *nodeId, uint16_t *statusBitfield, uint16_t *errorBitfield, uint8_t *cpuLoad)
+void CanMessageDecodeStatus(const CanMessage *msg, uint8_t *nodeId, uint16_t *statusBitfield, uint16_t *errorBitfield, uint8_t *cpuLoad)
 {
 	if (nodeId) {
 		*nodeId = msg->payload[0];
@@ -44,7 +44,7 @@ void CanMessageDecodeStatus(const tCanMessage *msg, uint8_t *nodeId, uint16_t *s
 	}
 }
 
-void CanMessagePackageRudderSetState(tCanMessage *msg, bool enable, bool reset, bool calibrate)
+void CanMessagePackageRudderSetState(CanMessage *msg, bool enable, bool reset, bool calibrate)
 { 
 	// Set CAN header information.
 	msg->id = CAN_MSG_ID_RUDDER_SET_STATE;
@@ -59,7 +59,7 @@ void CanMessagePackageRudderSetState(tCanMessage *msg, bool enable, bool reset, 
 	msg->payload[0] |= enable?0x04:0x00;
 }
 
-void CanMessageDecodeRudderSetState(const tCanMessage *msg, bool *enable, bool *reset, bool *calibrate)
+void CanMessageDecodeRudderSetState(const CanMessage *msg, bool *enable, bool *reset, bool *calibrate)
 {
     if (calibrate) {
         *calibrate = msg->payload[0] & 0x01;
@@ -72,7 +72,7 @@ void CanMessageDecodeRudderSetState(const tCanMessage *msg, bool *enable, bool *
     }
 }
 
-void CanMessageDecodeRudderSetTxRate(const tCanMessage *msg, uint16_t *angleRate, uint16_t *statusRate)
+void CanMessageDecodeRudderSetTxRate(const CanMessage *msg, uint16_t *angleRate, uint16_t *statusRate)
 {
     if (angleRate) {
         *angleRate = msg->payload[0];
@@ -82,7 +82,7 @@ void CanMessageDecodeRudderSetTxRate(const tCanMessage *msg, uint16_t *angleRate
     }
 }
 
-void CanMessagePackageRudderDetails(tCanMessage *msg, uint16_t potVal, uint16_t portLimitVal, uint16_t sbLimitVal, bool portLimitTrig, bool sbLimitTrig, bool enabled, bool calibrated, bool calibrating)
+void CanMessagePackageRudderDetails(CanMessage *msg, uint16_t potVal, uint16_t portLimitVal, uint16_t sbLimitVal, bool portLimitTrig, bool sbLimitTrig, bool enabled, bool calibrated, bool calibrating)
 {
     msg->id = CAN_MSG_ID_RUDDER_DETAILS;
     msg->buffer = 0;
@@ -108,7 +108,7 @@ void CanMessagePackageRudderDetails(tCanMessage *msg, uint16_t potVal, uint16_t 
     }
 }
 
-void CanMessageDecodeRudderDetails(const tCanMessage *msg, uint16_t *potVal, uint16_t *portLimitVal, uint16_t *sbLimitVal, bool *portLimitTrig, bool *sbLimitTrig, bool *enabled, bool *calibrated, bool *calibrating)
+void CanMessageDecodeRudderDetails(const CanMessage *msg, uint16_t *potVal, uint16_t *portLimitVal, uint16_t *sbLimitVal, bool *portLimitTrig, bool *sbLimitTrig, bool *enabled, bool *calibrated, bool *calibrating)
 {
     if (potVal) {
         *potVal = ((uint16_t)msg->payload[0]) | (((uint16_t)msg->payload[1]) << 8);
@@ -138,7 +138,7 @@ void CanMessageDecodeRudderDetails(const tCanMessage *msg, uint16_t *potVal, uin
     }
 }
 
-void CanMessagePackageImuData(tCanMessage *msg, float direction, float pitch, float roll)
+void CanMessagePackageImuData(CanMessage *msg, float direction, float pitch, float roll)
 {
     msg->id = CAN_MSG_ID_IMU_DATA;
     msg->buffer = 0;
@@ -158,7 +158,7 @@ void CanMessagePackageImuData(tCanMessage *msg, float direction, float pitch, fl
     msg->payload[5] = ((uint16_t)intRoll) >> 8;
 }
 
-void CanMessageDecodeImuData(const tCanMessage *msg, float *direction, float *pitch, float *roll)
+void CanMessageDecodeImuData(const CanMessage *msg, float *direction, float *pitch, float *roll)
 {
     if (direction) {
         int16_t tmp = (int16_t)(((uint16_t)msg->payload[0]) | (((uint16_t)msg->payload[1]) << 8));

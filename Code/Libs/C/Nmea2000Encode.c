@@ -1,9 +1,9 @@
 #include "Nmea2000.h"
 #include "Nmea2000Encode.h"
-#include "ecanDefinitions.h"
+#include "EcanDefines.h"
 #include <math.h>
 
-void PackagePgn127245(tCanMessage *msg, uint8_t sourceDevice, uint8_t instance, uint8_t dirOrder, float angleOrder, float position)
+void PackagePgn127245(CanMessage *msg, uint8_t sourceDevice, uint8_t instance, uint8_t dirOrder, float angleOrder, float position)
 {
 	/// Set CAN header information.
 	msg->id = Iso11783Encode(PGN_RUDDER, sourceDevice, 0xFF, 2); // Leave the priority hardcoded to 2.
@@ -37,7 +37,7 @@ void PackagePgn127245(tCanMessage *msg, uint8_t sourceDevice, uint8_t instance, 
 	msg->payload[5] = angle >> 8;
 }
 
-void PackagePgn127508(tCanMessage *msg, uint8_t sourceDevice, uint8_t battInstance, float voltage, float amperage, float temp, uint8_t sid)
+void PackagePgn127508(CanMessage *msg, uint8_t sourceDevice, uint8_t battInstance, float voltage, float amperage, float temp, uint8_t sid)
 {
 	msg->id = Iso11783Encode(PGN_BATTERY_STATUS, sourceDevice, 0xFF, 3);
 	msg->message_type = CAN_MSG_DATA;
@@ -83,7 +83,7 @@ void PackagePgn127508(tCanMessage *msg, uint8_t sourceDevice, uint8_t battInstan
 	msg->payload[7] = sid;
 }
 
-void PackagePgn129025(tCanMessage *msg, uint8_t sourceDevice, int32_t latitude, int32_t longitude)
+void PackagePgn129025(CanMessage *msg, uint8_t sourceDevice, int32_t latitude, int32_t longitude)
 {
     // Specify a new CAN message w/ metadata
     msg->id = Iso11783Encode(PGN_POSITION_RAP_UPD, sourceDevice, 0xFF, 2);
@@ -103,7 +103,7 @@ void PackagePgn129025(tCanMessage *msg, uint8_t sourceDevice, int32_t latitude, 
     msg->payload[7] = (uint8_t)(longitude >> 24);
 }
 
-void PackagePgn129026(tCanMessage *msg, uint8_t sourceDevice, uint8_t seqId, uint8_t cogRef, uint16_t cog, uint16_t sog)
+void PackagePgn129026(CanMessage *msg, uint8_t sourceDevice, uint8_t seqId, uint8_t cogRef, uint16_t cog, uint16_t sog)
 {
     // Specify a new CAN message w/ metadata
     msg->id = Iso11783Encode(PGN_COG_SOG_RAP_UPD, sourceDevice, 0xFF, 2);
@@ -120,7 +120,7 @@ void PackagePgn129026(tCanMessage *msg, uint8_t sourceDevice, uint8_t seqId, uin
 	msg->payload[5] = (uint8_t)(sog >> 8);
 }
 
-void PackagePgn130311(tCanMessage *msg, uint8_t sourceDevice, uint8_t sid, uint8_t tempInst, uint8_t humidInst, float temp, float humid, float press)
+void PackagePgn130311(CanMessage *msg, uint8_t sourceDevice, uint8_t sid, uint8_t tempInst, uint8_t humidInst, float temp, float humid, float press)
 {
     // Specify a new CAN message w/ metadata
     msg->id = Iso11783Encode(PGN_ENV_PARAMETERS2, sourceDevice, 0xFF, 2);

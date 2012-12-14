@@ -1,6 +1,6 @@
 #include "Acs300.h"
 
-void Acs300PackageVelocityCommand(tCanMessage *msg, int16_t torqueFeedForward, int16_t velCommand, uint16_t status)
+void Acs300PackageVelocityCommand(CanMessage *msg, int16_t torqueFeedForward, int16_t velCommand, uint16_t status)
 {
     msg->id = ACS300_CAN_ID_VEL_CMD;
 	msg->buffer = 0; // NOTE: This needs to be changed to the appropriate buffer before transmission.
@@ -32,7 +32,7 @@ void Acs300DecodeVelocityCommand(const uint8_t data[6], int16_t *torqueFeedForwa
 	}
 }
 
-void Acs300PackageWriteParam(tCanMessage *msg, uint16_t address, uint16_t value)
+void Acs300PackageWriteParam(CanMessage *msg, uint16_t address, uint16_t value)
 {
     msg->id = ACS300_CAN_ID_WR_PARAM;
 	msg->buffer = 0; // NOTE: This needs to be changed to the appropriate buffer before transmission.
@@ -58,7 +58,7 @@ void Acs300DecodeWriteParam(const uint8_t data[4], uint16_t *address, uint16_t *
 	}
 }
 
-void Acs300PackageHeartbeat(tCanMessage *msg, uint16_t dataA, uint16_t dataB, uint16_t voltage, uint16_t errorStatus)
+void Acs300PackageHeartbeat(CanMessage *msg, uint16_t dataA, uint16_t dataB, uint16_t voltage, uint16_t errorStatus)
 {
     msg->id = ACS300_CAN_ID_HRTBT;
 	msg->buffer = 0; // NOTE: This needs to be changed to the appropriate buffer before transmission.

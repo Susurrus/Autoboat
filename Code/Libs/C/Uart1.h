@@ -9,7 +9,7 @@
 #include <stddef.h>
 
 #include "CircularBuffer.h"
-#include "Common.h"
+#include <stdint.h>
 
 /**
  * Initializes the UART1 peripheral according to the BRG SFR value passed to it.

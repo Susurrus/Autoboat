@@ -1,5 +1,5 @@
 #include "Node.h"
-#include "ecanFunctions.h"
+#include "Ecan1.h"
 #include "CanMessages.h"
 
 uint8_t nodeId = 0;
@@ -10,7 +10,7 @@ uint32_t nodeSystemTime = 0;
 
 void NodeTransmitStatus(void)
 {
-	tCanMessage msg;
+	CanMessage msg;
 	CanMessagePackageStatus(&msg, nodeId, nodeStatus, nodeErrors, nodeCpuLoad);
-	ecan1_buffered_transmit(&msg);
+	Ecan1Transmit(&msg);
 }

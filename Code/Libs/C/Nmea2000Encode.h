@@ -1,7 +1,7 @@
 #ifndef NMEA2000_ENCODE_H
 #define NMEA2000_ENCODE_H
 
-#include "ecanDefinitions.h"
+#include "EcanDefines.h"
 
 /**
  *
@@ -12,7 +12,7 @@
  * @param angleOrder Commanded rudder angle in radians.  If no value or invalid use NAN.
  * @param position Sensed rudder angle in radians.  If no value or invalid use NAN.
  */
-void PackagePgn127245(tCanMessage *msg, uint8_t sourceDevice, uint8_t instance, uint8_t dirOrder, float angleOrder, float position);
+void PackagePgn127245(CanMessage *msg, uint8_t sourceDevice, uint8_t instance, uint8_t dirOrder, float angleOrder, float position);
 
 /**
  *
@@ -24,11 +24,11 @@ void PackagePgn127245(tCanMessage *msg, uint8_t sourceDevice, uint8_t instance, 
  * @param temp The temperature of this battery measured in degrees C. If no value or invalid use NAN.
  * @param sid The sequence ID for this measurement. If no value or invalid use NAN.
  */
-void PackagePgn127508(tCanMessage *msg, uint8_t sourceDevice, uint8_t battInstance, float voltage, float amperage, float temp, uint8_t sid);
+void PackagePgn127508(CanMessage *msg, uint8_t sourceDevice, uint8_t battInstance, float voltage, float amperage, float temp, uint8_t sid);
 
-void PackagePgn129025(tCanMessage *msg, uint8_t sourceDevice, int32_t latitude, int32_t longitude);
+void PackagePgn129025(CanMessage *msg, uint8_t sourceDevice, int32_t latitude, int32_t longitude);
 
-void PackagePgn129026(tCanMessage *msg, uint8_t sourceDevice, uint8_t seqId, uint8_t cogRef, uint16_t cog, uint16_t sog);
+void PackagePgn129026(CanMessage *msg, uint8_t sourceDevice, uint8_t seqId, uint8_t cogRef, uint16_t cog, uint16_t sog);
 
 /**
  *
@@ -43,6 +43,6 @@ void PackagePgn129026(tCanMessage *msg, uint8_t sourceDevice, uint8_t seqId, uin
  * @see PGN_130311_TEMP_INST
  * @see PGN_130311_HUMID_INST
  */
-void PackagePgn130311(tCanMessage *msg, uint8_t sourceDevice, uint8_t sid, uint8_t tempInst, uint8_t humidInst, float temp, float humid, float press);
+void PackagePgn130311(CanMessage *msg, uint8_t sourceDevice, uint8_t sid, uint8_t tempInst, uint8_t humidInst, float temp, float humid, float press);
 
 #endif // NMEA2000_ENCODE_H
