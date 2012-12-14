@@ -3,9 +3,9 @@
 #include <xc.h>
 
 static CircularBuffer uart1RxBuffer;
-static uint8_t u1RxBuf[64];
+static uint8_t u1RxBuf[1024];
 static CircularBuffer uart1TxBuffer;
-static uint8_t u1TxBuf[64];
+static uint8_t u1TxBuf[1024];
 
 /*
  * Private functions.
@@ -44,7 +44,7 @@ void Uart1Init(uint16_t brgRegister)
 
     // U1STA Register
     // ==============
-    U1STAbits.URXISEL	= 2;		// RX interrupt when 3 chars are in
+    U1STAbits.URXISEL	= 0;		// RX interrupt when 3 chars are in
     U1STAbits.OERR		= 0;		// clear overun error
 
     U1BRG = brgRegister;			// Set the baud rate register
