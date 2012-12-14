@@ -95,7 +95,7 @@ void HilReceiveData(void);
 
 bool HilActive(void);
 
-int HilTransmitData(void);
+void HilTransmitData(void);
 
 /**
  * This function calculates the checksum of some bytes in an

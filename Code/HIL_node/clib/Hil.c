@@ -47,6 +47,7 @@ THE SOFTWARE.
 #include "Rudder.h"
 #include "Can.h"
 
+#include <xc.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdbool.h>
@@ -95,7 +96,6 @@ void HilInit(void)
 	Uart1Init(BAUD115200_BRG_REG);
 }
 
-
 /**
  * This function builds a full message internally byte-by-byte,
  * verifies its checksum, and then pushes that data into the
@@ -121,7 +121,7 @@ void HilBuildMessage(uint8_t data)
 	// We start recording a new message if we see the header
 	if (messageState == 0) {
 		if (data == '%') {
-			message[messageIndex] = data;
+			message[0] = data;
 			messageIndex++;
 			messageState = 1;
 		} else {
@@ -188,6 +188,9 @@ void HilBuildMessage(uint8_t data)
                 // The checksum is now verified and if successful the message
                 // is stored in the appropriate struct.
                 if (message[2] == HilCalculateChecksum(&message[4], sizeof(union HilDataFromPc))) {
+                    // Trigger a debugging signal ona pin indicating that a message was succesfully
+                    // decoded. This is cleared using the 1ms timer.
+                    LATBbits.LATB10 = 1;
                     // We now memcpy all the data into our global data struct.
                     receivedMessageCount++;
                     memcpy(&hilReceivedData, &message[4], sizeof(union HilDataFromPc));
@@ -211,6 +214,7 @@ void HilBuildMessage(uint8_t data)
                 messageIndex = 0;
                 messageState = 0;
             }
+            LATBbits.LATB10 = 0;
 	}
 }
 
@@ -249,7 +253,7 @@ bool HilActive(void)
     return hilStatus;
 }
 
-int HilTransmitData(void)
+void HilTransmitData(void)
 {
     // First copy the timestamp from the last received HIL data packet to the new outgoing one.
     hilDataToTransmit.data.timestamp = hilReceivedData.data.timestamp;
@@ -262,8 +266,6 @@ int HilTransmitData(void)
 
     // And then enqueue the new data for transmission.
     Uart1WriteData(&wrapper, sizeof(HilWrapper));
-
-    return 1;
 }
 
 /**
