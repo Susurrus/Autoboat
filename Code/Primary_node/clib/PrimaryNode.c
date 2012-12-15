@@ -3,7 +3,7 @@
 #include "DEE.h"
 #include "Acs300.h"
 #include "Uart1.h"
-#include "ecanFunctions.h"
+#include "Ecan1.h"
 
 // Calculate the BRG register value necessary for 115200 baud with a 40MHz clock.
 #define BAUD115200_BRG_REG 21
@@ -15,13 +15,19 @@ void PrimaryNodeInit(void)
 	// Initialize UART1 to 115200 for groundstation communications.
 	Uart1Init(BAUD115200_BRG_REG);
 
+	// Initialize the EEPROM for non-volatile data storage
 	DataEEInitAndClear();
+	
+	// Initialize the MAVLink communications channel
 	MavLinkInit();
+	
+	// Initialize the ECAN1 peripheral
+	Ecan1Init();
 }
 
 void SendThrottleCommand(int16_t command)
 {
-    tCanMessage msg = {};
+    CanMessage msg = {};
     Acs300PackageWriteParam(&msg, ACS300_PARAM_CC, (uint16_t)command);
-    ecan1_buffered_transmit(&msg);
+    Ecan1BufferedTransmit(&msg);
 }

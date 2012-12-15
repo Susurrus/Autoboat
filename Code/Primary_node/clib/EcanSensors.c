@@ -1,8 +1,7 @@
 #include "EcanSensors.h"
 #include "primary_node.h"
 
-#include "ecanDefinitions.h"
-#include "ecanFunctions.h"
+#include "Ecan1.h"
 #include "Nmea2000.h"
 #include "Types.h"
 #include "Rudder.h"
@@ -138,7 +137,7 @@ void GetRcNodeAvailability(bool *status)
 uint8_t ProcessAllEcanMessages(void)
 {
 	uint8_t messagesLeft = 0;
-	tCanMessage msg;
+	CanMessage msg;
 	uint32_t pgn;
 
 	uint8_t messagesHandled = 0;
@@ -194,7 +193,7 @@ uint8_t ProcessAllEcanMessages(void)
 	}
 
 	do {
-		int foundOne = ecan1_receive(&msg, &messagesLeft);
+		int foundOne = Ecan1Receive(&msg, &messagesLeft);
 		if (foundOne) {
 			// Process throttle messages here. Anything not explicitly handled is assumed to be a NMEA2000 message.
 			if (msg.id == ACS300_CAN_ID_HRTBT) { // From the ACS300
