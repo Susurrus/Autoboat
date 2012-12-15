@@ -45,6 +45,8 @@ THE SOFTWARE.
 #include "Hil.h"
 #include "Uart1.h"
 #include "Rudder.h"
+#include "Timer2.h"
+#include "Timer3.h"
 
 #include <xc.h>
 #include <stdint.h>
@@ -86,17 +88,13 @@ static uint32_t receivedMessageCount = 0;
 static uint32_t failedMessageCount = 0;
 static uint8_t sameFailedMessageFlag = 0;
 
-// Track whether HIL is currently active.
-static bool hilStatus = false;
-
 void HilInit(void)
 {
 	// Initialize UART1 to 115200 for HIL communications.
 	Uart1Init(BAUD115200_BRG_REG);
-	int i;
-	for (i = 0; i < 100; ++i) {
-		Uart1WriteByte('h');
-	}
+
+	// Set up timer3 for a 5Hz timer.
+	Timer3Init(HilTimer5Hz, 31250);
 }
 
 /**
@@ -191,9 +189,6 @@ void HilBuildMessage(uint8_t data)
                 // The checksum is now verified and if successful the message
                 // is stored in the appropriate struct.
                 if (message[2] == HilCalculateChecksum(&message[4], sizeof(union HilDataFromPc))) {
-                    // Trigger a debugging signal ona pin indicating that a message was succesfully
-                    // decoded. This is cleared using the 1ms timer.
-                    LATBbits.LATB10 = 1;
                     // We now memcpy all the data into our global data struct.
                     receivedMessageCount++;
                     memcpy(&hilReceivedData, &message[4], sizeof(union HilDataFromPc));
@@ -217,7 +212,6 @@ void HilBuildMessage(uint8_t data)
                 messageIndex = 0;
                 messageState = 0;
             }
-            LATBbits.LATB10 = 0;
 	}
 }
 
@@ -235,25 +229,26 @@ void HilBuildMessage(uint8_t data)
  */
 void HilReceiveData(void)
 {
-    static int countDown = 0; // Keep a .2s timer going and disable after it expires.
-    uint8_t c;
-    if (countDown < 20) {
-        ++countDown;
-    } else {
-        hilStatus = false;
-    }
+	uint8_t c;
+	bool newData = false;
     while (Uart1ReadByte(&c)) {
         HilBuildMessage(c);
-        countDown = 0;
+        newData = true; // Reset the HIL timeout counter
     }
-    if (!hilStatus && countDown == 0) {
-        hilStatus = true;
-    }
-}
 
-bool HilActive(void)
-{
-    return hilStatus;
+	// If we parsed new data, then HIL should be active.
+	// Clear timer3, set nodeStatus, and output a status pin.
+	// This also re-enabled Timer2 to allow for CAN messages to be transmit
+	if (newData) {
+		TIMER3_RESET;
+		if (!HIL_ACTIVE) {
+			TIMER3_ENABLE;
+			nodeStatus |= NODE_STATUS_FLAG_HIL_ACTIVE;
+			LATBbits.LATB10 = 1;
+			TIMER2_RESET;
+			TIMER2_ENABLE;
+		}
+	}
 }
 
 void HilTransmitData(void)
@@ -269,6 +264,19 @@ void HilTransmitData(void)
 
     // And then enqueue the new data for transmission.
     Uart1WriteData(&wrapper, sizeof(HilWrapper));
+}
+
+/**
+ * This function clears the HIL active flag when it's called and also disables Timer3, which called
+ * it. This prevents the timer from being continually triggered. Also disables Timer2 so CAN
+ * messages aren't transmit.
+ */
+void HilTimer5Hz(void)
+{
+	TIMER3_DISABLE;
+	nodeStatus &= ~NODE_STATUS_FLAG_HIL_ACTIVE;
+	LATBbits.LATB10 = 0;
+	TIMER2_DISABLE;
 }
 
 /**

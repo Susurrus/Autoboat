@@ -13,6 +13,8 @@
 #include "Node.h"
 #include "CanMessages.h"
 #include "Timer2.h"
+#include "Timer4.h"
+#include "HilNode.h"
 
 //Use internal RC
 _FOSCSEL(FNOSC_FRC & IESO_OFF);
@@ -69,12 +71,6 @@ static MessageSchedule sched = {
 	tsteps
 };
 
-void HilNodeTimer(void);
-void HilNodeInit(void);
-void CanEnableMessages(void);
-void CanDisableMessages(void);
-uint8_t CanReceiveMessages(void);
-
 int main()
 {
     PLLFBD = 63;            // M = 65
@@ -124,37 +120,62 @@ void HilNodeInit(void)
     HilInit();
 
     // Set up Timer2 for a 100Hz timer.
-    Timer2Init(HilNodeTimer, 1562);
+    Timer2Init(HilNodeTimer100Hz, 1562);
+
+	// Set up Timer4 to manage the blinking amber LED.
+	// Initially set it for 0.25s.
+	Timer4Init(HilNodeBlink, 39062);
 
     // Initialize ECAN1
     Ecan1Init();
 
-	CanEnableMessages();
+	// Set a schedule for outgoing CAN messages
+    // Transmit the rudder angle at 10Hz
+    if (!AddMessageRepeating(&sched, SCHED_ID_RUDDER_ANGLE, 10)) {
+            while (1);
+    }
+
+    // Transmit the rudder status at 10Hz
+    if (!AddMessageRepeating(&sched, SCHED_ID_RUDDER_LIMITS, 10)) {
+            while (1);
+    }
+
+    // Transmit the throttle status at 100Hz
+    if (!AddMessageRepeating(&sched, SCHED_ID_THROTTLE_STATUS, 10)) {
+            while (1);
+    }
+
+    // Transmit the RC status at 2Hz
+    if (!AddMessageRepeating(&sched, SCHED_ID_RC_STATUS, 2)) {
+            while (1);
+    }
+
+    // Transmit latitude/longitude at 5Hz
+    if (!AddMessageRepeating(&sched, SCHED_ID_LAT_LON, 5)) {
+            while (1);
+    }
+
+    // Transmit heading & speed at 4Hz
+    if (!AddMessageRepeating(&sched, SCHED_ID_COG_SOG, 4)) {
+            while (1);
+    }
 }
 
-void HilNodeTimer(void)
+void HilNodeBlink(void)
 {
-    // Keep a variable here for counting the 100Hz timer so that it can be used to blink an LED
+    // Keep a variable here for counting the 4Hz timer so that it can be used to blink an LED
     // at 1Hz.
     static int timerCounter = 0;
 
-    /// Toggle the amber LED at 1Hz.
-    if (timerCounter == 100) {
+    /// Toggle the amber LED at 1Hz when no in HIL and 4Hz otherwise.
+    if (++timerCounter >= ((HIL_ACTIVE)?1:4)) {
         LATA ^= 0x0010;
+		timerCounter = 0;
     }
+}
 
-    /// Manage transmitting CAN messages
-    // Track the last HIL status
-    static bool hilStatus = false;
-
-    // Enable or disable CAN messages based on whether HIL is active or not.
-    if (!hilStatus && HilActive()) {
-        //CanEnableMessages();
-        hilStatus = true;
-    } else if (hilStatus && !HilActive()) {
-        //CanDisableMessages();
-        hilStatus = false;
-    }
+void HilNodeTimer100Hz(void)
+{
 
     // Track the messages to be transmit for this timestep.
 	// Here we emulate the same transmission frequency of the messages actually transmit
@@ -195,51 +216,6 @@ void HilNodeTimer(void)
 
 	// Transmit the HIL data at 100Hz
 	HilTransmitData();
-
-    // Keep our .01s timer running.
-    if (timerCounter == 100) {
-        timerCounter = 0;
-    } else {
-        ++timerCounter;
-    }
-}
-
-void CanEnableMessages(void)
-{
-    // Transmit the rudder angle at 10Hz
-    if (!AddMessageRepeating(&sched, SCHED_ID_RUDDER_ANGLE, 10)) {
-            while (1);
-    }
-
-    // Transmit the rudder status at 10Hz
-    if (!AddMessageRepeating(&sched, SCHED_ID_RUDDER_LIMITS, 10)) {
-            while (1);
-    }
-
-    // Transmit the throttle status at 100Hz
-    if (!AddMessageRepeating(&sched, SCHED_ID_THROTTLE_STATUS, 100)) {
-            while (1);
-    }
-
-    // Transmit the throttle status at 2Hz
-    if (!AddMessageRepeating(&sched, SCHED_ID_RC_STATUS, 2)) {
-            while (1);
-    }
-
-    // Transmit latitude/longitude at 5Hz
-    if (!AddMessageRepeating(&sched, SCHED_ID_LAT_LON, 5)) {
-            while (1);
-    }
-
-    // Transmit heading & speed at 4Hz
-    if (!AddMessageRepeating(&sched, SCHED_ID_COG_SOG, 4)) {
-            while (1);
-    }
-}
-
-void CanDisableMessages(void)
-{
-    ClearSchedule(&sched);
 }
 
 uint8_t CanReceiveMessages(void)
