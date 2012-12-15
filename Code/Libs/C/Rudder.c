@@ -1,7 +1,7 @@
 #include <stdbool.h>
 
 #include "Rudder.h"
-#include "EcanFunctions.h"
+#include "Ecan1.h"
 #include "Nmea2000Encode.h"
 #include "CanMessages.h"
 
@@ -33,20 +33,20 @@ void ClearRudderAngle(void)
 void RudderStartCalibration(void)
 {
 	// Set CAN header information.
-	tCanMessage msg;
+	CanMessage msg;
 
 	CanMessagePackageRudderSetState(&msg, true, false, true);
 
 	// And finally transmit it.
-	ecan1_buffered_transmit(&msg);
+	Ecan1BufferedTransmit(&msg);
 }
 
 void RudderSendAngleCommand(uint8_t sourceNode, float angleCommand)
 {
 	// Set CAN header information.
-	tCanMessage msg;
+	CanMessage msg;
 	PackagePgn127245(&msg, sourceNode, 0xFF, 0x3, angleCommand, NAN);
 
 	// And finally transmit it.
-	ecan1_buffered_transmit(&msg);
+	Ecan1BufferedTransmit(&msg);
 }

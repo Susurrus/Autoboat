@@ -45,7 +45,6 @@ THE SOFTWARE.
 #include "Hil.h"
 #include "Uart1.h"
 #include "Rudder.h"
-#include "Can.h"
 
 #include <xc.h>
 #include <stdint.h>
