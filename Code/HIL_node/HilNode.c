@@ -105,15 +105,6 @@ void HilNodeInit(void)
     // Set a unique node ID for this node.
     nodeId = CAN_NODE_HIL;
 
-    // Initialize communications for HIL.
-    HilInit();
-
-    // Set up Timer2 for a 100Hz timer.
-    Timer2Init(HilNodeTimer, 1562);
-
-    // Initialize ECAN1
-    Ecan1Init();
-
 	// And configure the Peripheral Pin Select pins:
 	PPSUnLock;
 	// To enable ECAN1 pins: TX on 7, RX on 4
@@ -128,6 +119,15 @@ void HilNodeInit(void)
     // Finally enable pins B10/A4 as an digital output
     TRISBbits.TRISB10 = 0;
     TRISAbits.TRISA4 = 0;
+
+    // Initialize communications for HIL.
+    HilInit();
+
+    // Set up Timer2 for a 100Hz timer.
+    Timer2Init(HilNodeTimer, 1562);
+
+    // Initialize ECAN1
+    Ecan1Init();
 
 	CanEnableMessages();
 }
@@ -157,6 +157,8 @@ void HilNodeTimer(void)
     }
 
     // Track the messages to be transmit for this timestep.
+	// Here we emulate the same transmission frequency of the messages actually transmit
+	// by the onboard sensors.
     static uint8_t msgs[ECAN_MSGS_SIZE];
 
     uint8_t messagesToSend = GetMessagesForTimestep(&sched, msgs);
@@ -190,6 +192,9 @@ void HilNodeTimer(void)
             break;
         }
     }
+
+	// Transmit the HIL data at 100Hz
+	HilTransmitData();
 
     // Keep our .01s timer running.
     if (timerCounter == 100) {

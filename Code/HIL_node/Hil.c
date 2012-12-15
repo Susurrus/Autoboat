@@ -93,6 +93,10 @@ void HilInit(void)
 {
 	// Initialize UART1 to 115200 for HIL communications.
 	Uart1Init(BAUD115200_BRG_REG);
+	int i;
+	for (i = 0; i < 100; ++i) {
+		Uart1WriteByte('h');
+	}
 }
 
 /**
