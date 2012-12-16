@@ -277,27 +277,21 @@ uint8_t ProcessAllEcanMessages(void)
 					}
 				} break;
 				case PGN_POSITION_RAP_UPD: { // From the GPS100
-					// Only record the live GPS data if we aren't in HIL mode.
-					if ((nodeStatus & (1 << 1)) == 0) {
-						sensorAvailability.gps.enabled_counter = 0;
-						uint8_t rv = ParsePgn129025(msg.payload, &gpsDataStore.lat.lData, &gpsDataStore.lon.lData);
-						// Only update if both latitude and longitude were parsed successfully.
-						if ((rv & 0x03) == 0x03) {
-							sensorAvailability.gps.active_counter = 0;
-							gpsDataStore.newData = true;
-						}
+					sensorAvailability.gps.enabled_counter = 0;
+					uint8_t rv = ParsePgn129025(msg.payload, &gpsDataStore.lat.lData, &gpsDataStore.lon.lData);
+					// Only update if both latitude and longitude were parsed successfully.
+					if ((rv & 0x03) == 0x03) {
+						sensorAvailability.gps.active_counter = 0;
+						gpsDataStore.newData = true;
 					}
 				} break;
 				case PGN_COG_SOG_RAP_UPD: { // From the GPS100
-					// Only record the live GPS data if we aren't in HIL mode.
-					if ((nodeStatus & (1 << 1)) == 0) {
-						sensorAvailability.gps.enabled_counter = 0;
-						uint8_t rv = ParsePgn129026(msg.payload, NULL, NULL, &gpsDataStore.cog.usData, &gpsDataStore.sog.usData);
-						// Only update if both course-over-ground and speed-over-ground were parsed successfully.
-						if ((rv & 0x0C) == 0x0C) {
-							sensorAvailability.gps.active_counter = 0;
-							gpsDataStore.newData = true;
-						}
+					sensorAvailability.gps.enabled_counter = 0;
+					uint8_t rv = ParsePgn129026(msg.payload, NULL, NULL, &gpsDataStore.cog.usData, &gpsDataStore.sog.usData);
+					// Only update if both course-over-ground and speed-over-ground were parsed successfully.
+					if ((rv & 0x0C) == 0x0C) {
+						sensorAvailability.gps.active_counter = 0;
+						gpsDataStore.newData = true;
 					}
 				} break;
 				case PGN_WIND_DATA: // From the WSO100

@@ -136,10 +136,8 @@ uint8_t ProcessAllEcanMessages(void);
 
 /**
  * This function updates the sensor availability. This all ends up being reflected in the
- * 'sensorAvailability' struct. It's used by both ProcessAllEcanMessages() and in commProtocol.c
- * when GPS data is received via HIL. Ideally this function should only be used where sensor data is
- * received and that should be in no more than the places where HIL data is received and the real
- * sensor data is received.
+ * 'sensorAvailability' struct. It's used by ProcessAllEcanMessages(). Ideally this function should
+ * only be used where sensor data is received.
  */
 void UpdateSensorsAvailability(void);
 

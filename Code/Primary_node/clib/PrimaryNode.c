@@ -20,9 +20,6 @@ void PrimaryNodeInit(void)
 	
 	// Initialize the MAVLink communications channel
 	MavLinkInit();
-	
-	// Initialize the ECAN1 peripheral
-	Ecan1Init();
 }
 
 void SendThrottleCommand(int16_t command)

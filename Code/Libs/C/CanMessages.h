@@ -33,7 +33,7 @@ enum {
     CAN_MSG_SIZE_RUDDER_SET_TX_RATE  = 2,
 
     // General messages
-    CAN_MSG_SIZE_STATUS              = 7,
+    CAN_MSG_SIZE_STATUS              = 6,
 
     // IMU messages (defined by the VSAS-2GM)
     CAN_MSG_SIZE_IMU_DATA            = 6
