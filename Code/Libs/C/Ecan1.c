@@ -284,8 +284,8 @@ int Ecan1Receive(CanMessage *msg, uint8_t *messagesLeft)
 // is handled by the transmission circular buffer.
 void Ecan1Transmit(const CanMessage *message)
 {
-    uint32_t word0 = 0, word1 = 0, word2 = 0;
-    uint32_t sid10_0 = 0, eid5_0 = 0, eid17_6 = 0;
+    uint16_t word0 = 0, word1 = 0, word2 = 0;
+    uint16_t sid10_0 = 0, eid5_0 = 0, eid17_6 = 0;
     uint16_t *ecan_msg_buf_ptr = ecan1MsgBuf[message->buffer];
 
     // Variables for setting correct TXREQ bit
