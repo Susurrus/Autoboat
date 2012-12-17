@@ -282,9 +282,12 @@ int Ecan1Receive(CanMessage *msg, uint8_t *messagesLeft)
     return foundOne;
 }
 
-// NOTE: We do not block for message transmission to complete. Message queuing
-// is handled by the transmission circular buffer.
-void Ecan1Transmit(const CanMessage *message)
+/**
+ * This function transmits a CAN message on the ECAN1 CAN bus.
+ * This function is for internal use only as it bypasses the circular buffer. This means that it
+ * can squash existing transfers in progress.
+ */
+void _ecan1TransmitHelper(const CanMessage *message)
 {
     uint16_t word0 = 0, word1 = 0, word2 = 0;
     uint16_t sid10_0 = 0, eid5_0 = 0, eid17_6 = 0;
@@ -337,7 +340,7 @@ void Ecan1Transmit(const CanMessage *message)
 /**
  * Transmits a CanMessage using the transmission circular buffer.
  */
-void Ecan1BufferedTransmit(const CanMessage *msg)
+void Ecan1Transmit(const CanMessage *msg)
 {
     // Append the message to the queue.
     // Message are only removed upon successful transmission.
@@ -348,7 +351,7 @@ void Ecan1BufferedTransmit(const CanMessage *msg)
     // If this is the only message in the queue, attempt to
     // transmit it.
     if (!currentlyTransmitting) {
-        Ecan1Transmit(msg);
+        _ecan1TransmitHelper(msg);
     }
 }
 
@@ -427,7 +430,7 @@ void __attribute__((interrupt, no_auto_psv))_C1Interrupt(void)
         if (ecan1TxCBuffer.dataSize >= sizeof(CanMessage)) {
             CanMessage msg;
             CB_PeekMany(&ecan1TxCBuffer, &msg, sizeof(CanMessage));
-            Ecan1Transmit(&msg);
+            _ecan1TransmitHelper(&msg);
         } else {
             currentlyTransmitting = 0;
         }

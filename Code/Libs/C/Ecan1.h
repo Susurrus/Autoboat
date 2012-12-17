@@ -30,13 +30,6 @@ int Ecan1Receive(CanMessage *msg, uint8_t *messagesLeft);
  * Transmits a CAN message via a circular buffer interface
  * similar to that used by CAN message reception.
  */
-void Ecan1BufferedTransmit(const CanMessage *message);
-
-/**
- * This function transmits a CAN message on the ECAN1 CAN bus.
- * This function shouldn't be used directly, use buffered_transmit
- * instead.
- */
 void Ecan1Transmit(const CanMessage *message);
 
 /**
