@@ -23,7 +23,7 @@ THE SOFTWARE.
 
 */
 
-#include "ecanFunctions.h"
+#include "Ecan1.h"
 #include "Nmea2000Encode.h"
 #include "CanMessages.h"
 #include "Types.h"
@@ -37,9 +37,9 @@ void PowerNodeInit(void)
 void ProcessAdcData(float voltage, float amperage)
 {
 	static uint8_t sequenceID = 0;
-	tCanMessage msg;
+	CanMessage msg;
 
 	PackagePgn127508(&msg, nodeId, 0, voltage, amperage, NAN, sequenceID);
 	
-	ecan1_buffered_transmit(&msg);
+	Ecan1Transmit(&msg);
 }

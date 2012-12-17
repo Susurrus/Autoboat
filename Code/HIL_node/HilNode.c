@@ -189,27 +189,27 @@ void HilNodeTimer100Hz(void)
         switch (msgs[i]) {
             case SCHED_ID_RC_STATUS:
                 CanMessagePackageStatus(&msg, CAN_NODE_RC, 0, 0, 0);
-                Ecan1BufferedTransmit(&msg);
+                Ecan1Transmit(&msg);
             break;
             case SCHED_ID_RUDDER_ANGLE:
                 PackagePgn127245(&msg, nodeId, 0xFF, 0xF, NAN, hilReceivedData.data.rAngle);
-                Ecan1BufferedTransmit(&msg);
+                Ecan1Transmit(&msg);
             break;
             case SCHED_ID_RUDDER_LIMITS:
                 CanMessagePackageRudderDetails(&msg, 0, 0, 0, false, false, true, true, false);
-                Ecan1BufferedTransmit(&msg);
+                Ecan1Transmit(&msg);
             break;
             case SCHED_ID_THROTTLE_STATUS:
                 Acs300PackageHeartbeat(&msg, (uint16_t)hilReceivedData.data.tSpeed, 0, 0, 0);
-                Ecan1BufferedTransmit(&msg);
+                Ecan1Transmit(&msg);
             break;
             case SCHED_ID_LAT_LON:
                 PackagePgn129025(&msg, nodeId, hilReceivedData.data.gpsLatitude, hilReceivedData.data.gpsLongitude);
-                Ecan1BufferedTransmit(&msg);
+                Ecan1Transmit(&msg);
             break;
             case SCHED_ID_COG_SOG:
                 PackagePgn129026(&msg, nodeId, 0xFF, 0x7, hilReceivedData.data.gpsCog, hilReceivedData.data.gpsSog);
-                Ecan1BufferedTransmit(&msg);
+                Ecan1Transmit(&msg);
             break;
         }
     }

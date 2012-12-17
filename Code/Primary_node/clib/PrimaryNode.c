@@ -26,5 +26,5 @@ void SendThrottleCommand(int16_t command)
 {
     CanMessage msg = {};
     Acs300PackageWriteParam(&msg, ACS300_PARAM_CC, (uint16_t)command);
-    Ecan1BufferedTransmit(&msg);
+    Ecan1Transmit(&msg);
 }

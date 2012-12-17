@@ -129,7 +129,7 @@ void ImuNodeTransmitCanMessages(void)
                                          revoGsDataStore.heading.flData,
                                          revoGsDataStore.pitch.flData,
                                          revoGsDataStore.roll.flData);
-                Ecan1BufferedTransmit(&msg);
+                Ecan1Transmit(&msg);
             break;
             case SCHED_ID_NODE_STATUS:
 				NodeTransmitStatus();

@@ -38,7 +38,7 @@ void RudderStartCalibration(void)
 	CanMessagePackageRudderSetState(&msg, true, false, true);
 
 	// And finally transmit it.
-	Ecan1BufferedTransmit(&msg);
+	Ecan1Transmit(&msg);
 }
 
 void RudderSendAngleCommand(uint8_t sourceNode, float angleCommand)
@@ -48,5 +48,5 @@ void RudderSendAngleCommand(uint8_t sourceNode, float angleCommand)
 	PackagePgn127245(&msg, sourceNode, 0xFF, 0x3, angleCommand, NAN);
 
 	// And finally transmit it.
-	Ecan1BufferedTransmit(&msg);
+	Ecan1Transmit(&msg);
 }
