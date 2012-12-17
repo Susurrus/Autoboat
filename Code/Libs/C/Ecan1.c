@@ -21,7 +21,9 @@
 #endif
 
 // Declare space for our message buffer in DMA
-static uint16_t ecan1MsgBuf[4][8] __attribute__((space(dma)));
+// NOTE: This DMA space is aligned along 256-byte boundaries due to Lubin's blockset aligning it's
+// DMA variables to this same boundaries. If you don't you'll end up with memory collisions.
+static uint16_t ecan1MsgBuf[4][8] __attribute__((space(dma),aligned(256)));
 
 // Initialize our circular buffers and data arrays for transreceiving CAN messages
 static CircularBuffer ecan1RxCBuffer;
