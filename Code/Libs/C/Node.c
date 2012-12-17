@@ -12,5 +12,5 @@ void NodeTransmitStatus(void)
 {
 	CanMessage msg;
 	CanMessagePackageStatus(&msg, nodeId, nodeStatus, nodeErrors, nodeCpuLoad);
-	Ecan1BufferedTransmit(&msg);
+	Ecan1Transmit(&msg);
 }
