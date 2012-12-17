@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include "Uart1.h"
 #include "MessageScheduler.h"
 #include "Types.h"
-#include "ecanFunctions.h"
+#include "Ecan1.h"
 #include "CanMessages.h"
 
 typedef union {
@@ -47,11 +47,13 @@ typedef union {
 // Declare some constants for use with the message scheduler
 // (don't use PGN or message ID as it must be a uint8)
 #define SCHED_ID_IMU_DATA 1
+#define SCHED_ID_NODE_STATUS 2
 
 // Set up the message scheduler's various data structures.
-#define ECAN_MSGS_SIZE 1
+#define ECAN_MSGS_SIZE 2
 static uint8_t ids[ECAN_MSGS_SIZE] = {
-    SCHED_ID_IMU_DATA
+    SCHED_ID_IMU_DATA,
+    SCHED_ID_NODE_STATUS
 };
 static uint16_t tsteps[ECAN_MSGS_SIZE][2][8] = {};
 static uint8_t  mSizes[ECAN_MSGS_SIZE];
@@ -80,6 +82,11 @@ void ImuNodeEnableCanMessages(void)
 {
 	// Transmit the rudder angle at 10Hz
 	if (!AddMessageRepeating(&sched, SCHED_ID_IMU_DATA, 25)) {
+		while (1);
+	}
+
+	// Transmit a status message at 2Hz.
+	if (!AddMessageRepeating(&sched, SCHED_ID_NODE_STATUS, 2)) {
 		while (1);
 	}
 }
@@ -114,16 +121,19 @@ void ImuNodeTransmitCanMessages(void)
 
     uint8_t messagesToSend = GetMessagesForTimestep(&sched, msgs);
     int i;
-    tCanMessage msg;
+    CanMessage msg;
     for (i = 0; i < messagesToSend; ++i) {
         switch (msgs[i]) {
-            case SCHED_ID_IMU_DATA: {
+            case SCHED_ID_IMU_DATA:
                 CanMessagePackageImuData(&msg,
                                          revoGsDataStore.heading.flData,
                                          revoGsDataStore.pitch.flData,
                                          revoGsDataStore.roll.flData);
-                ecan1_buffered_transmit(&msg);
-            } break;
+                Ecan1BufferedTransmit(&msg);
+            break;
+            case SCHED_ID_NODE_STATUS:
+				NodeTransmitStatus();
+			break;
         }
     }
 }
