@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2364"
+    ComputedModelVersion    "1.2365"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -29,9 +29,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun Dec 16 16:11:12 2012"
-  RTWModifiedTimeStamp	  277559767
-  ModelVersionFormat	  "1.%<AutoIncrement:2364>"
+  LastModifiedDate	  "Mon Dec 17 17:38:32 2012"
+  RTWModifiedTimeStamp	  277662779
+  ModelVersionFormat	  "1.%<AutoIncrement:2365>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -730,7 +730,7 @@ Model {
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=1 "
       CurrentDlgPage	      "Code Generation/Custom Code"
-      ConfigPrmDlgPosition     [ 378, 73, 1486, 945 ] 
+      ConfigPrmDlgPosition     [ 370, 43, 1494, 953 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -1144,10 +1144,10 @@ Model {
   }
   System {
     Name		    "primary_node"
-    Location		    [232, 83, 1892, 1010]
+    Location		    [202, 74, 1901, 1019]
     Open		    on
     ModelBrowserVisibility  on
-    ModelBrowserWidth	    221
+    ModelBrowserWidth	    200
     ScreenColor		    "white"
     PaperOrientation	    "landscape"
     PaperPositionMode	    "auto"
@@ -1158,7 +1158,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "23251"
+    SIDHighWatermark	    "23254"
     Block {
       BlockType		      SubSystem
       Name		      "Actuator\nOutputs"
@@ -1174,7 +1174,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Actuator\nOutputs"
-	Location		[486, 326, 1305, 922]
+	Location		[352, 132, 1813, 949]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -1251,7 +1251,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Transmit Angle\nCommand"
-	    Location		    [401, 346, 899, 646]
+	    Location		    [273, 556, 771, 856]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -1268,7 +1268,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "r_angle"
 	      SID		      "22656"
-	      Position		      [50, 88, 80, 102]
+	      Position		      [50, 98, 80, 112]
 	      BackgroundColor	      "darkGreen"
 	      IconDisplay	      "Port number"
 	    }
@@ -1282,12 +1282,22 @@ Model {
 	      StatesWhenEnabling      "held"
 	    }
 	    Block {
+	      BlockType		      DataStoreRead
+	      Name		      "Data Store\nRead1"
+	      SID		      "23253"
+	      Ports		      [0, 1]
+	      Position		      [35, 42, 115, 68]
+	      ZOrder		      -5
+	      ShowName		      off
+	      DataStoreName	      "nodeId"
+	    }
+	    Block {
 	      BlockType		      Reference
 	      Name		      "Transmit rudder angle command\n[Rudder.c]"
 	      SID		      "22654"
 	      Tag		      "dsPIC_dsPIC_CFunctionCall"
-	      Ports		      [1]
-	      Position		      [145, 74, 325, 116]
+	      Ports		      [2]
+	      Position		      [140, 74, 365, 116]
 	      BackgroundColor	      "orange"
 	      LibraryVersion	      "3.84"
 	      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
@@ -1295,16 +1305,16 @@ Model {
 	      FctUpdate		      "Output Function"
 	      fctName		      "RudderSendAngleCommand"
 	      INPUT_SIZE	      "1"
-	      INPUT1		      "real32"
-	      INPUT2		      "--"
+	      INPUT1		      "uint8"
+	      INPUT2		      "real32"
 	      INPUT3		      "--"
 	      OUTPUT_SIZE	      "1"
 	      OUTPUT1		      "--"
 	      SampleTime	      "-1"
-	      InputType		      "[ 7 ]"
+	      InputType		      "[ 2 7 ]"
 	      OutputType	      "[ ]"
-	      FctDeclaration	      "extern void RudderSendAngleCommand(real32_T u1);"
-	      FctCall		      "RudderSendAngleCommand(%u1);"
+	      FctDeclaration	      "extern void RudderSendAngleCommand(uint8_T u1, real32_T u2);"
+	      FctCall		      "RudderSendAngleCommand(%u1, %u2);"
 	      OrderingInOutPopup      "None"
 	      FctStart		      "None"
 	      FctStart_Name	      "Init_onlyOnce"
@@ -1321,6 +1331,13 @@ Model {
 	    Line {
 	      SrcBlock		      "r_angle"
 	      SrcPort		      1
+	      DstBlock		      "Transmit rudder angle command\n[Rudder.c]"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Data Store\nRead1"
+	      SrcPort		      1
+	      Points		      [5, 0]
 	      DstBlock		      "Transmit rudder angle command\n[Rudder.c]"
 	      DstPort		      1
 	    }
@@ -1343,7 +1360,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Transmit Throtle\nCommand"
-	    Location		    [401, 346, 899, 646]
+	    Location		    [288, 491, 786, 791]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -1358,7 +1375,7 @@ Model {
 	    ZoomFactor		    "100"
 	    Block {
 	      BlockType		      Inport
-	      Name		      "r_angle"
+	      Name		      "t_speed"
 	      SID		      "23212"
 	      Position		      [50, 88, 80, 102]
 	      BackgroundColor	      "darkGreen"
@@ -1386,7 +1403,7 @@ Model {
 	    }
 	    Block {
 	      BlockType		      Reference
-	      Name		      "Transmit rudder angle command\n[Rudder.c]"
+	      Name		      "Transmit throttle speed command\n[Rudder.c]"
 	      SID		      "23214"
 	      Tag		      "dsPIC_dsPIC_CFunctionCall"
 	      Ports		      [1]
@@ -1422,7 +1439,7 @@ Model {
 	      AnalogueInput	      "[]"
 	    }
 	    Line {
-	      SrcBlock		      "r_angle"
+	      SrcBlock		      "t_speed"
 	      SrcPort		      1
 	      DstBlock		      "Data Type Conversion"
 	      DstPort		      1
@@ -1430,7 +1447,7 @@ Model {
 	    Line {
 	      SrcBlock		      "Data Type Conversion"
 	      SrcPort		      1
-	      DstBlock		      "Transmit rudder angle command\n[Rudder.c]"
+	      DstBlock		      "Transmit throttle speed command\n[Rudder.c]"
 	      DstPort		      1
 	    }
 	  }
@@ -9481,7 +9498,7 @@ Model {
       System {
 	Name			"Sensor Inputs"
 	Location		[299, 138, 1806, 955]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -10522,7 +10539,7 @@ Model {
 	  System {
 	    Name		    "Manual override\ndetection"
 	    Location		    [472, 123, 1464, 888]
-	    Open		    on
+	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
