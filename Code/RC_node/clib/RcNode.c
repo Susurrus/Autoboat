@@ -45,10 +45,11 @@ THE SOFTWARE.
 #include "Types.h"
 #include "Uart1.h"
 #include "DEE.h"
-#include "ecanFunctions.h"
+#include "Ecan1.h"
 #include "CanMessages.h"
 #include "Node.h"
 #include "Rudder.h"
+#include "Acs300.h"
 
 // Store some values for calibrating the RC transmitter.
 uint16_t rcRudderRange[2];
@@ -77,14 +78,14 @@ bool GetEstopStatus(void)
     return sensorAvailability.prop.enabled;
 }
 
-/**
- * This function restored the calibrated range for the RC receiver PWM signals if any exist.
- * Since the EEPROM is initialized to 0xFFFF for each uint16 we only restore the values if
- * the memory locations that should contain our data just contain 0xFFFF instead. restoredCalibration
- * is another exported global that is just a Boolean for whether or not we restored saved data. This
- * is used to correct the calibration state used elsewhere.
- */
-void InitCalibrationRange()
+void SendThrottleCommand(int16_t command)
+{
+	CanMessage msg;
+	Acs300PackageVelocityCommand(&msg, 0, command, 0);
+	Ecan1Transmit(&msg);
+}
+
+void InitCalibrationRange(void)
 {
 	uint16_t tmp;
 
@@ -136,7 +137,7 @@ void UpdateSensorsAvailability(void)
 uint8_t ProcessAllEcanMessages(void)
 {
 	uint8_t messagesLeft = 0;
-	tCanMessage msg;
+	CanMessage msg;
 
 	uint8_t messagesHandled = 0;
 
@@ -154,10 +155,10 @@ uint8_t ProcessAllEcanMessages(void)
 	}
         
 	do {
-		int foundOne = ecan1_receive(&msg, &messagesLeft);
+		int foundOne = Ecan1Receive(&msg, &messagesLeft);
 		if (foundOne) {
 			// Process throttle messages here. Anything not explicitly handled is assumed to be a NMEA2000 message.
-			if (msg.id == 0x402) { // From the ACS300 TODO: Move into a separate library.
+			if (msg.id == ACS300_CAN_ID_HRTBT) { // From the ACS300 TODO: Move into a separate library.
 				sensorAvailability.prop.enabled_counter = 0;
 				if ((msg.payload[6] & 0x40) == 0) { // Checks the status bit to determine if the ACS300 is enabled.
 					sensorAvailability.prop.active_counter = 0;

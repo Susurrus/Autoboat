@@ -12,5 +12,23 @@
 //  * bit 2: rudder is uncalibrated
 //  * bit 3: the ECAN peripheral has reached an error state for transmission
 //  * bit 4: the ECAN peripheral has reached an error state for reception
+//  * bit 5: RC node is uncalibrated  (therefore also active during calibration)
+
+void RcNodeInit(void);
+
+bool GetEstopStatus(void);
+
+void SendThrottleCommand(int16_t command);
+
+/**
+ * This function restored the calibrated range for the RC receiver PWM signals if any exist.
+ * Since the EEPROM is initialized to 0xFFFF for each uint16 we only restore the values if
+ * the memory locations that should contain our data just contain 0xFFFF instead. restoredCalibration
+ * is another exported global that is just a Boolean for whether or not we restored saved data. This
+ * is used to correct the calibration state used elsewhere.
+ */
+void InitCalibrationRange(void);
+
+uint8_t ProcessAllEcanMessages(void);
 
 #endif // RC_NODE_H
