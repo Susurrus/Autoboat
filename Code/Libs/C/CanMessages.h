@@ -41,6 +41,7 @@ enum {
 
 /**
  * Package the data that makes up a STATUS CAN message.
+ * @param cpuLoad This is in units of percent. 0-100 are valid, which any other value invalid. Use 255 (0xFF) to specify an invalid value.
  */
 void CanMessagePackageStatus(CanMessage *msg, uint8_t nodeId, uint16_t statusBitfield, uint16_t errorBitfield, uint8_t cpuLoad);
 
