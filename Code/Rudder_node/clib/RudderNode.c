@@ -1,9 +1,8 @@
-#include "ecanDefinitions.h"
+#include "Ecan1.h"
 #include "rudder_node.h"
 #include "MessageScheduler.h"
 #include "RudderNode.h"
 #include "Node.h"
-#include "ecanFunctions.h"
 #include "Nmea2000.h"
 #include "Nmea2000Encode.h"
 #include "Nvram.h"
@@ -137,16 +136,16 @@ void RudderCalibrate(void)
 void RudderSendNmea(void)
 {
 	// Set CAN header information.
-	tCanMessage msg;
+	CanMessage msg;
 	PackagePgn127245(&msg, nodeId, 0xFF, 0xF, 0.0, rudderSensorData.RudderPositionAngle);
 
 	// And finally transmit it.
-	ecan1_buffered_transmit(&msg);
+	Ecan1Transmit(&msg);
 }
 
 void RudderSendCustomLimit(void)
 {
-	tCanMessage msg;
+	CanMessage msg;
 	CanMessagePackageRudderDetails(&msg, rudderSensorData.PotValue,
 										 rudderCalData.PortLimitValue,
 										 rudderCalData.StarLimitValue,
@@ -157,13 +156,13 @@ void RudderSendCustomLimit(void)
 										 rudderCalData.Calibrating
 										 );
 
-	ecan1_buffered_transmit(&msg);
+	Ecan1Transmit(&msg);
 }
 
 void RudderSendTemperature(void)
 {
 	// Specify a new CAN message w/ metadata
-	tCanMessage msg;
+	CanMessage msg;
 	
 	// Send temp values:
 	// * SID: invalid
@@ -181,33 +180,33 @@ void RudderSendTemperature(void)
                          NAN);
 
 	// And finally transmit it.
-	ecan1_buffered_transmit(&msg);
+	Ecan1Transmit(&msg);
 }
 
 // Transmits the STATUS message that every node should transmit at 2Hz.
 void RudderSendStatus(void)
 {
 	// Specify a new CAN message w/ metadata
-	tCanMessage msg;
+	CanMessage msg;
 	uint16_t status = (rudderSensorData.PortLimit << 3) |
 	                  (rudderSensorData.StarLimit << 2) |
 	                  (rudderCalData.Calibrated << 0) |
 	                  (rudderCalData.Calibrating << 1);
 	uint16_t errors = 0;
-	CanMessagePackageStatus(&msg, nodeId, status, errors);
+	CanMessagePackageStatus(&msg, nodeId, status, errors, 0xFF);
 
 	// And finally transmit it.
-	ecan1_buffered_transmit(&msg);
+	Ecan1Transmit(&msg);
 }
 
 void SendAndReceiveEcan(void)
 {
     uint8_t messagesLeft = 0;
-    tCanMessage msg;
+    CanMessage msg;
     uint32_t pgn;
 
     do {
-        int foundOne = ecan1_receive(&msg, &messagesLeft);
+        int foundOne = Ecan1Receive(&msg, &messagesLeft);
         if (foundOne) {
             // Process custom rudder messages. Anything not explicitly handled is assumed to be a NMEA2000 message.
             // If we receive a calibration message, start calibration if we aren't calibrating right now.
