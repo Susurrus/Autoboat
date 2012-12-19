@@ -15,6 +15,7 @@ void PackagePgn127245(CanMessage *msg, uint8_t sourceDevice, uint8_t instance, u
 	/// Now fill in the data.
 	msg->payload[0] = instance;
 	msg->payload[1] = 0xFC | (0x3 & dirOrder);
+
 	// Convert commanded rudder angle to 1e-4 radians
 	int16_t angle;
 	if (angleOrder == angleOrder) {
@@ -22,9 +23,9 @@ void PackagePgn127245(CanMessage *msg, uint8_t sourceDevice, uint8_t instance, u
 	} else {
 		angle = 0xFFFF;
 	}
-	// Send current angle over the CAN bus
 	msg->payload[2] = angle;
 	msg->payload[3] = angle >> 8;
+
 	// Convert current rudder angle to 1e-4 radians
     // The following is a test to see if position is NAN
 	if (position == position) {
@@ -32,7 +33,6 @@ void PackagePgn127245(CanMessage *msg, uint8_t sourceDevice, uint8_t instance, u
 	} else {
 		angle = 0xFFFF;
 	}
-	// Send current angle over the CAN bus
 	msg->payload[4] = angle;
 	msg->payload[5] = angle >> 8;
 }
