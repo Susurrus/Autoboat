@@ -137,7 +137,7 @@ void RudderSendNmea(void)
 {
 	// Set CAN header information.
 	CanMessage msg;
-	PackagePgn127245(&msg, nodeId, 0xFF, 0xF, 0.0, rudderSensorData.RudderPositionAngle);
+	PackagePgn127245(&msg, nodeId, 0xFF, 0xF, NAN, rudderSensorData.RudderPositionAngle);
 
 	// And finally transmit it.
 	Ecan1Transmit(&msg);
