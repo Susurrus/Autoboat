@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2370"
+    ComputedModelVersion    "1.2371"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -29,11 +29,11 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Dec 17 17:00:23 2012"
-  RTWModifiedTimeStamp	  277664284
-  ModelVersionFormat	  "1.%<AutoIncrement:2370>"
+  LastModifiedDate	  "Tue Dec 18 18:25:56 2012"
+  RTWModifiedTimeStamp	  277755325
+  ModelVersionFormat	  "1.%<AutoIncrement:2371>"
   ConfigurationManager	  "None"
-  SampleTimeColors	  off
+  SampleTimeColors	  on
   SampleTimeAnnotations	  off
   LibraryLinkDisplay	  "user"
   WideLines		  on
@@ -676,7 +676,7 @@ Model {
 		Name			"OPTIM_GCC"
 		Value			"-mcpu=33fj128MC802 -O3 -fschedule-insns -fschedule-insns2                                                  "
 		"                                                                                                                    "
-		"            -fno-short-double"
+		"              -fno-short-double"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -1105,7 +1105,7 @@ Model {
   }
   System {
     Name		    "rc_node"
-    Location		    [202, 74, 1918, 1019]
+    Location		    [223, 82, 1918, 1027]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1119,7 +1119,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "22897"
+    SIDHighWatermark	    "22902"
     Block {
       BlockType		      SubSystem
       Name		      "Actuator\nOutputs"
@@ -1135,7 +1135,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Actuator\nOutputs"
-	Location		[223, 82, 1918, 1027]
+	Location		[401, 346, 882, 629]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -1207,7 +1207,7 @@ Model {
 	Block {
 	  BlockType		  SubSystem
 	  Name			  "Transmit Angle\nCommand"
-	  SID			  "22880"
+	  SID			  "22898"
 	  Ports			  [1, 0, 0, 1]
 	  Position		  [190, 99, 290, 141]
 	  ZOrder		  -23
@@ -1221,7 +1221,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Transmit Angle\nCommand"
-	    Location		    [512, 506, 1010, 806]
+	    Location		    [273, 556, 771, 856]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -1237,27 +1237,37 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "r_angle"
-	      SID		      "22881"
-	      Position		      [50, 88, 80, 102]
+	      SID		      "22899"
+	      Position		      [50, 98, 80, 112]
 	      BackgroundColor	      "darkGreen"
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
 	      BlockType		      TriggerPort
 	      Name		      "Trigger"
-	      SID		      "22882"
+	      SID		      "22900"
 	      Ports		      []
 	      Position		      [225, 20, 245, 40]
 	      ZOrder		      -2
 	      StatesWhenEnabling      "held"
 	    }
 	    Block {
+	      BlockType		      DataStoreRead
+	      Name		      "Data Store\nRead1"
+	      SID		      "22901"
+	      Ports		      [0, 1]
+	      Position		      [35, 42, 115, 68]
+	      ZOrder		      -5
+	      ShowName		      off
+	      DataStoreName	      "nodeId"
+	    }
+	    Block {
 	      BlockType		      Reference
 	      Name		      "Transmit rudder angle command\n[Rudder.c]"
-	      SID		      "22883"
+	      SID		      "22902"
 	      Tag		      "dsPIC_dsPIC_CFunctionCall"
-	      Ports		      [1]
-	      Position		      [145, 74, 325, 116]
+	      Ports		      [2]
+	      Position		      [140, 74, 365, 116]
 	      BackgroundColor	      "orange"
 	      LibraryVersion	      "3.84"
 	      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
@@ -1265,16 +1275,16 @@ Model {
 	      FctUpdate		      "Output Function"
 	      fctName		      "RudderSendAngleCommand"
 	      INPUT_SIZE	      "1"
-	      INPUT1		      "real32"
-	      INPUT2		      "--"
+	      INPUT1		      "uint8"
+	      INPUT2		      "real32"
 	      INPUT3		      "--"
 	      OUTPUT_SIZE	      "1"
 	      OUTPUT1		      "--"
 	      SampleTime	      "-1"
-	      InputType		      "[ 7 ]"
+	      InputType		      "[ 2 7 ]"
 	      OutputType	      "[ ]"
-	      FctDeclaration	      "extern void RudderSendAngleCommand(real32_T u1);"
-	      FctCall		      "RudderSendAngleCommand(%u1);"
+	      FctDeclaration	      "extern void RudderSendAngleCommand(uint8_T u1, real32_T u2);"
+	      FctCall		      "RudderSendAngleCommand(%u1, %u2);"
 	      OrderingInOutPopup      "None"
 	      FctStart		      "None"
 	      FctStart_Name	      "Init_onlyOnce"
@@ -1291,6 +1301,13 @@ Model {
 	    Line {
 	      SrcBlock		      "r_angle"
 	      SrcPort		      1
+	      DstBlock		      "Transmit rudder angle command\n[Rudder.c]"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Data Store\nRead1"
+	      SrcPort		      1
+	      Points		      [5, 0]
 	      DstBlock		      "Transmit rudder angle command\n[Rudder.c]"
 	      DstPort		      1
 	    }
