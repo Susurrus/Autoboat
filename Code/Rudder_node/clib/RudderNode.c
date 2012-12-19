@@ -84,11 +84,11 @@ void RudderNodeInit(void)
 void RudderCalibrate(void)
 {
 	if (rudderCalData.CalibrationState == RUDDER_CAL_STATE_INIT) {
-            rudderCalData.Calibrated = false;
+		rudderCalData.Calibrated = false;
 		rudderCalData.Calibrating = true;
 		rudderCalData.CommandedRun = true;
-                rudderCalData.PortLimitValue = 0;
-                rudderCalData.StarLimitValue = 0;
+		rudderCalData.PortLimitValue = 0;
+		rudderCalData.StarLimitValue = 0;
 		if (rudderSensorData.StarLimit) {
 			rudderCalData.CalibrationState = RUDDER_CAL_STATE_FIRST_TO_PORT;
 			rudderCalData.CommandedDirection = TO_PORT;
@@ -225,7 +225,7 @@ void SendAndReceiveEcan(void)
                 pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
                 switch (pgn) {
                 case PGN_RUDDER:
-                    ParsePgn127245(msg.payload, NULL, NULL, NULL, &rudderSensorData.CommandedRudderAngle, NULL);
+                    ParsePgn127245(msg.payload, NULL, NULL, &rudderSensorData.CommandedRudderAngle, NULL);
                 break;
                 }
             }

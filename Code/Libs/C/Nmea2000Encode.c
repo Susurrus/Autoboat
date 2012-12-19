@@ -14,7 +14,7 @@ void PackagePgn127245(CanMessage *msg, uint8_t sourceDevice, uint8_t instance, u
 
 	/// Now fill in the data.
 	msg->payload[0] = instance;
-	msg->payload[1] = 0xFC | dirOrder;
+	msg->payload[1] = 0xFC | (0x3 & dirOrder);
 	// Convert commanded rudder angle to 1e-4 radians
 	int16_t angle;
 	if (angleOrder == angleOrder) {

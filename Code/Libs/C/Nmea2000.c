@@ -206,43 +206,37 @@ uint8_t ParsePgn126992(const uint8_t data[8], uint8_t *seqId, uint8_t *source, u
 	return fieldStatus;
 }
 
-uint8_t ParsePgn127245(const uint8_t data[8], uint8_t *seqId, uint8_t *instance, uint8_t *direction, float *angleOrder, float *position)
+uint8_t ParsePgn127245(const uint8_t data[8], uint8_t *instance, uint8_t *direction, float *angleOrder, float *position)
 {
 
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
 	uint8_t fieldStatus = 0;
-	
-	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep. If the sequence ID is 255, it's invalid.
-	if (seqId && (data[0] != 0xFF)) {
-		*seqId = data[0];
-		fieldStatus |= 0x01;
-	}
 
-	// Field 1: Instance. This field represents the rudder instance
-	if (instance && (data[1] != 0xFF)) {
-		*instance = data[1];
+	// Field 0: Instance. This field represents the rudder instance
+	if (instance && (data[0] != 0xFF)) {
+		*instance = data[0];
 		fieldStatus |= 0x02;
 	}
 
-	// Field 2: Direction Order: 2-bit field, used to tell the direction.
-	if (direction && ((data[2] & 0xC0) != 0xC0)) {
-		*direction = (data[2] & 0xC0) >> 6;
+	// Field 1: Direction Order: 2-bit field, used to tell the direction.
+	if (direction && ((data[1] & 0xC0) != 0xC0)) {
+		*direction = (data[1] & 0xC0) >> 6;
 		fieldStatus |= 0x04;
 	}
-	// Field 3: Angle Order. This is a 16-bit field that is used to command rudder angles. This field contains a signed value with the units of 0.0001 radians.
-	if (angleOrder && (data[3] != 0xFF || data[4] != 0xFF)) {
+	// Field 2: Angle Order. This is a 16-bit field that is used to command rudder angles. This field contains a signed value with the units of 0.0001 radians.
+	if (angleOrder && (data[2] != 0xFF || data[3] != 0xFF)) {
 		tShortToChar unpacked;
-		unpacked.chData[0] = data[4];
-		unpacked.chData[1] = data[3];
+		unpacked.chData[0] = data[3];
+		unpacked.chData[1] = data[2];
 		*angleOrder = ((float)unpacked.shData) / 10000;
 		fieldStatus |= 0x08;
 	}
 
-	//Field 4: Position. This is a 16-bit field that represents the  current rudder angle. A value of all 1s (65535) means that the angle cannot be measured. This field contains a signed value with the units of 0.0001 radians.
-	if (position && (data[5] != 0xFF || data[6] != 0xFF)) {
+	//Field 3: Position. This is a 16-bit field that represents the  current rudder angle. A value of all 1s (65535) means that the angle cannot be measured. This field contains a signed value with the units of 0.0001 radians.
+	if (position && (data[4] != 0xFF || data[5] != 0xFF)) {
 		tShortToChar unpacked;
-		unpacked.chData[0] = data[6];
-		unpacked.chData[1] = data[5];
+		unpacked.chData[0] = data[5];
+		unpacked.chData[1] = data[4];
 		*position = ((float)unpacked.shData) / 10000;
 		fieldStatus |= 0x10;
 	}

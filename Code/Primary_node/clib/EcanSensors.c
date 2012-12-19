@@ -248,7 +248,7 @@ uint8_t ProcessAllEcanMessages(void)
 					}
 				} break;
 				case PGN_RUDDER: { // From the Rudder Controller
-					if (ParsePgn127245(msg.payload, NULL, NULL, NULL, NULL, &rudderSensorData.RudderAngle.flData) == 0x10){
+					if (ParsePgn127245(msg.payload, NULL, NULL, NULL, &rudderSensorData.RudderAngle.flData) == 0x10){
 						// No action necessary.
 					}
 				} break;
