@@ -146,16 +146,14 @@ uint8_t ParsePgn126992(const uint8_t data[8], uint8_t *seqId, uint8_t *source, u
 	// Field 2: Date in days since Jan 1 1970.
 	// This field can be invalid if all 1's.
 	if (data[2] != 0xFF || data[3] != 0xFF) {
-		tUnsignedShortToChar unpacked;
-		unpacked.chData[0] = data[2];
-		unpacked.chData[1] = data[3];
+		uint16_t days = (uint16_t)data[2] | ((uint16_t)data[3] << 8);
 
 		// Obtain the offset from epoch based on the number of days
 		// I use local variables here only for consistency with the yearOffset variable.
 		uint8_t yearOffset;
 		uint8_t monthOffset;
 		uint8_t dayOffset;
-		DaysSinceEpochToOffset(unpacked.usData, &yearOffset, &monthOffset, &dayOffset);
+		DaysSinceEpochToOffset(days, &yearOffset, &monthOffset, &dayOffset);
 
 		// Add the offsets to that these are the actual date
 		if (year) {
@@ -225,19 +223,15 @@ uint8_t ParsePgn127245(const uint8_t data[8], uint8_t *instance, uint8_t *direct
 	}
 	// Field 2: Angle Order. This is a 16-bit field that is used to command rudder angles. This field contains a signed value with the units of 0.0001 radians.
 	if (angleOrder && (data[2] != 0xFF || data[3] != 0xFF)) {
-		tShortToChar unpacked;
-		unpacked.chData[0] = data[3];
-		unpacked.chData[1] = data[2];
-		*angleOrder = ((float)unpacked.shData) / 10000;
+		int x = (int)data[2] | ((int)data[3] << 8);
+		*angleOrder = (float)x / 10000.0;
 		fieldStatus |= 0x08;
 	}
 
-	//Field 3: Position. This is a 16-bit field that represents the  current rudder angle. A value of all 1s (65535) means that the angle cannot be measured. This field contains a signed value with the units of 0.0001 radians.
+	//Field 3: Position. This is a 16-bit field that represents the current rudder angle. A value of all 1s (65535) means that the angle cannot be measured. This field contains a signed value with the units of 0.0001 radians.
 	if (position && (data[4] != 0xFF || data[5] != 0xFF)) {
-		tShortToChar unpacked;
-		unpacked.chData[0] = data[5];
-		unpacked.chData[1] = data[4];
-		*position = ((float)unpacked.shData) / 10000;
+		int x = (int)data[4] | ((int)data[5] << 8);
+		*position = (float)x / 10000.0;
 		fieldStatus |= 0x10;
 	}
 
@@ -248,9 +242,6 @@ uint8_t ParsePgn127508(const uint8_t data[8], uint8_t *seqId, uint8_t *instance,
 {
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field in the same order as the output arguments to this function.
 	uint8_t fieldStatus = 0;
-
-	// A temporary-variable used for unpacking the uint16 data.
-	tUnsignedShortToChar unpacked;
 
 	// N2K Field 4: Sequence ID. Links data together across PGNs that occured at the same timestep. If the sequence ID is 255, it's invalid.
 	if (seqId) {
@@ -272,9 +263,8 @@ uint8_t ParsePgn127508(const uint8_t data[8], uint8_t *seqId, uint8_t *instance,
 	if (voltage) {
 		// All 1s in NMEA2000 signifies invalid data.
 		if (data[1] != 0xFF || data[2] != 0xFF) {
-			unpacked.chData[0] = data[1];
-			unpacked.chData[1] = data[2];
-			*voltage = ((float)unpacked.usData) / 100.0;
+			uint16_t x = (uint16_t)data[1] | ((uint16_t)data[2] << 8);
+			*voltage = (float)x / 100.0;
 			fieldStatus |= 0x04;
 		}
 	}
@@ -283,20 +273,18 @@ uint8_t ParsePgn127508(const uint8_t data[8], uint8_t *seqId, uint8_t *instance,
 	if (current) {
 		// All 1s in NMEA2000 signifies invalid data.
 		if (data[3] != 0xFF || data[4] != 0xFF) {
-			unpacked.chData[0] = data[3];
-			unpacked.chData[1] = data[4];
-			*current = ((float)unpacked.usData) / 10.0;
+			uint16_t x = (uint16_t)data[3] | ((uint16_t)data[4] << 8);
+			*current = (float)x / 10.0;
 			fieldStatus |= 0x08;
 		}
 	}
 
-	// N2K Field 3: Current. Comes in in units of .01K.
+	// N2K Field 3: Temperature. Comes in in units of .01K.
 	if (temperature) {
 		// All 1s in NMEA2000 signifies invalid data.
 		if (data[5] != 0xFF || data[6] != 0xFF) {
-			unpacked.chData[0] = data[5];
-			unpacked.chData[1] = data[6];
-			*temperature = ((float)unpacked.usData) / 100.0 - 273.15;
+			uint16_t x = (uint16_t)data[5] | ((uint16_t)data[6] << 8);
+			*temperature = (float)x / 100.0 - 273.15;
 			fieldStatus |= 0x10;
 		}
 	}
@@ -318,10 +306,8 @@ uint8_t ParsePgn128259(const uint8_t data[8], uint8_t *seqId, float *waterSpeed)
 
 	// Field 1: Water speed. Raw units are centimeters/second. Converted to meters/second for output.
 	if (waterSpeed && (data[1] != 0xFF || data[2] != 0xFF)) {
-		tUnsignedShortToChar unpacked;
-		unpacked.chData[0] = data[1];
-		unpacked.chData[1] = data[2];
-		*waterSpeed = ((float)unpacked.usData) / 100.0;
+		uint16_t x = (uint16_t)data[1] | ((uint16_t)data[2] << 8);
+		*waterSpeed = (float)x / 100.0;
 		fieldStatus |= 0x02;
 	}
 
@@ -342,19 +328,15 @@ uint8_t ParsePgn128267(const uint8_t data[8], uint8_t *seqId, float *waterDepth,
 
 	// Field 1: Water depth (8-bits). Raw units are centimeters. Converted to meters for output.
 	if (waterDepth && (data[1] != 0xFF || data[2] != 0xFF)) {
-		tUnsignedShortToChar unpacked;
-		unpacked.chData[0] = data[1];
-		unpacked.chData[1] = data[2];
-		*waterDepth = ((float)unpacked.usData) / 100.0;
+		uint16_t x = (uint16_t)data[1] | ((uint16_t)data[2] << 8);
+		*waterDepth = (float)x / 100.0;
 		fieldStatus |= 0x02;
 	}
 
 	// Field 2: Water depth offset (8-bits). Raw units are centimeters. Converted to meters for output.
 	if (offset && (data[5] != 0xFF || data[6] != 0xFF)) {
-		tUnsignedShortToChar unpacked;
-		unpacked.chData[0] = data[5];
-		unpacked.chData[1] = data[6];
-		*offset = ((float)unpacked.usData) * .01;
+		uint16_t x = (uint16_t)data[5] | ((uint16_t)data[6] << 8);
+		*offset = (float)x * .01;
 		fieldStatus |= 0x04;
 	}
 
@@ -415,19 +397,13 @@ uint8_t ParsePgn129026(const uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, u
 
 	// Field 2: Course over ground (16-bits). Units are .0001 degrees eastward from north.
 	if (cog && (data[2] != 0xFF || data[3] != 0xFF)) {
-		tUnsignedShortToChar unpacked;
-		unpacked.chData[0] = data[2];
-		unpacked.chData[1] = data[3];
-		*cog = unpacked.usData;
+		*cog = (uint16_t)data[2] | ((uint16_t)data[3] << 8);
 		fieldStatus |= 0x04;
 	}
 
 	// Field 3: Speed over ground (16-bits). Units are .01 m/s.
 	if (sog && (data[4] != 0xFF || data[5] != 0xFF)) {
-		tUnsignedShortToChar unpacked;
-		unpacked.chData[0] = data[4];
-		unpacked.chData[1] = data[5];
-		*sog = unpacked.usData;
+		*sog = (uint16_t)data[4] | ((uint16_t)data[5] << 8);
 		fieldStatus |= 0x08;
 	}
 
@@ -450,19 +426,15 @@ uint8_t ParsePgn130306(const uint8_t data[8], uint8_t *seqId, float *airSpeed, f
 
 	// Field 1: Wind speed. Message units are cm/s but are converted to m/s on output.
 	if (airSpeed && (data[1] != 0xFF || data[2] != 0xFF)) {
-		tUnsignedShortToChar unpacked;
-		unpacked.chData[0] = data[1];
-		unpacked.chData[1] = data[2];
-		*airSpeed = ((float)unpacked.usData) / 100.0;
+		uint16_t x = (uint16_t)data[1] | ((uint16_t)data[2] << 8);
+		*airSpeed = (float)x / 100.0;
 		fieldStatus |= 0x02;
 	}
 
 	// Field 2: Wind direction. Message units are e-4 rads but are converted to raw radians on output.
 	if (direction && (data[3] != 0xFF || data[4] != 0xFF)) {
-		tUnsignedShortToChar unpacked;
-		unpacked.chData[0] = data[3];
-		unpacked.chData[1] = data[4];
-		*direction = ((float)unpacked.usData) * .0001;
+		uint16_t x = (uint16_t)data[3] | ((uint16_t)data[4] << 8);
+		*direction = (float)x * .0001;
 		fieldStatus |= 0x04;
 	}
 
@@ -481,32 +453,27 @@ uint8_t ParsePgn130310(const uint8_t data[8], uint8_t *seqId, float *waterTemp, 
 		fieldStatus |= 0x01;
 	}
 
-	tUnsignedShortToChar unpacked;
-
 	// Water temperature data. Read in as centiKelvin and converted to Celsius.
 	// A value of 0xFFFF implies invalid data.
 	if (waterTemp && (data[1] != 0xFF || data[2] != 0xFF)) {
-		unpacked.chData[0] = data[1];
-		unpacked.chData[1] = data[2];
-		*waterTemp = ((float)unpacked.usData) / 100.0 - 273.15;
+		uint16_t x = (uint16_t)data[1] | ((uint16_t)data[2] << 8);
+		*waterTemp = (float)x / 100.0 - 273.15;
 		fieldStatus |= 0x02;
 	}
 
 	// Air temperature data. Read in as centiKelvin and converted to Celsius.
 	// A value of 0xFFFF implies invalid data.
 	if (airTemp && (data[3] != 0xFF || data[4] != 0xFF)) {
-		unpacked.chData[0] = data[3];
-		unpacked.chData[1] = data[4];
-		*airTemp = ((float)unpacked.usData) / 100.0 - 273.15;
+		uint16_t x = (uint16_t)data[3] | ((uint16_t)data[4] << 8);
+		*airTemp = (float)x / 100.0 - 273.15;
 		fieldStatus |= 0x04;
 	}
 
 	// Air pressure data. Read in as hectoPascals and converted to kiloPascals.
 	// A value of 0xFFFF implies invalid data.
 	if (airPressure && (data[5] != 0xFF || data[6] != 0xFF)) {
-		unpacked.chData[0] = data[5];
-		unpacked.chData[1] = data[6];
-		*airPressure = ((float)unpacked.usData) * 0.1;
+		uint16_t x = (uint16_t)data[5] | ((uint16_t)data[6] << 8);
+		*airPressure = (float)x * 0.1;
 		fieldStatus |= 0x08;
 	}
 
@@ -546,28 +513,22 @@ uint8_t ParsePgn130311(const uint8_t data[8], uint8_t *seqId, uint8_t *tempInsta
 
 	// N2K Field 3: Air temperature. Read in as centiKelvin and converted to Celsius
 	if (temp && (data[2] != 0xFF || data[3] != 0xFF)) {
-		tUnsignedShortToChar unpacked;
-		unpacked.chData[0] = data[2];
-		unpacked.chData[1] = data[3];
-		*temp = ((float)unpacked.usData) / 100.0 - 273.15;
+		uint16_t x = (uint16_t)data[2] | ((uint16_t)data[3] << 8);
+		*temp = (float)x / 100.0 - 273.15;
 		fieldStatus |= 0x08;
 	}
 
 	// N2K Field 4: Humidity data. Read in as units of .0004%, output in percent.
 	if (humidity && (data[4] != 0xFF || data[5] != 0xFF)) {
-		tUnsignedShortToChar unpacked;
-		unpacked.chData[0] = data[4];
-		unpacked.chData[1] = data[5];
-		*humidity = ((float)unpacked.usData) * 0.004;
+		uint16_t x = (uint16_t)data[4] | ((uint16_t)data[5] << 8);
+		*humidity = (float)x * 0.004;
 		fieldStatus |= 0x10;
 	}
 
 	// N2K Field 5: Pressure data. Read in as hectoPascals and converted to kiloPascals.
 	if (pressure && (data[6] != 0xFF || data[7] != 0xFF)) {
-		tUnsignedShortToChar unpacked;
-		unpacked.chData[0] = data[6];
-		unpacked.chData[1] = data[7];
-		*pressure = ((float)unpacked.usData) * 0.1;
+		uint16_t x = (uint16_t)data[6] | ((uint16_t)data[7] << 8);
+		*pressure = (float)x * 0.1;
 		fieldStatus |= 0x20;
 	}
 
