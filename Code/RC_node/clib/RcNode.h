@@ -8,11 +8,9 @@
 
 // errors tracks the various flags that can put the node into a reset state.
 //  * bit 0: eStop has been pushed.
-//  * bit 1: rudder is calibrating
-//  * bit 2: rudder is uncalibrated
-//  * bit 3: the ECAN peripheral has reached an error state for transmission
-//  * bit 4: the ECAN peripheral has reached an error state for reception
-//  * bit 5: RC node is uncalibrated  (therefore also active during calibration)
+//  * bit 1: RC node is uncalibrated  (therefore also active during calibration)
+//  * bit 2: the ECAN peripheral has reached an error state for transmission
+//  * bit 3: the ECAN peripheral has reached an error state for reception
 
 void RcNodeInit(void);
 
