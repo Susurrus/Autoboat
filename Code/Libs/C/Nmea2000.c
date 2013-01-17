@@ -1,5 +1,4 @@
 #include "nmea2000.h"
-#include "types.h"
 #include <math.h>
 
 #ifndef M_PI
@@ -172,13 +171,12 @@ uint8_t ParsePgn126992(const uint8_t data[8], uint8_t *seqId, uint8_t *source, u
 
 	// Field 3: Seconds since midnight in units of 1e-4 second.
 	if (data[4] != 0xFF || data[5] != 0xFF || data[6] != 0xFF || data[7] != 0xFF) {
-		tUnsignedLongToChar unpacked;
-		unpacked.chData[0] = data[4];
-		unpacked.chData[1] = data[5];
-		unpacked.chData[2] = data[6];
-		unpacked.chData[3] = data[7];
+		uint32_t x = data[4];
+		x |= (uint32_t)data[5] << 8;
+		x |= (uint32_t)data[6] << 8;
+		x |= (uint32_t)data[7] << 8;
 
-		uint32_t seconds = (uint32_t)(unpacked.ulData / 1e4);
+		uint32_t seconds = x / 1e4;
 		if (hour) {
 			*hour = seconds / 3600;
 			fieldStatus |= 0x20;
@@ -197,7 +195,7 @@ uint8_t ParsePgn126992(const uint8_t data[8], uint8_t *seqId, uint8_t *source, u
 		}
 
 		if (usecSinceEpoch) {
-			*usecSinceEpoch = unpacked.ulData;
+			*usecSinceEpoch = x * 100;
 		}
 	}
 
@@ -349,26 +347,23 @@ uint8_t ParsePgn129025(const uint8_t data[8], int32_t *latitude, int32_t *longit
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
 	uint8_t fieldStatus = 0;
 
-	// Make conversions between long and chars easy
-	tLongToChar unpacked;
-
 	// Field 0: Latitude (32-bits). Raw units are 1e-7 degrees, but they're converted to raw radians on output.
 	if (latitude && (data[0] != 0xFF || data[1] != 0xFF || data[2] != 0xFF || data[3] != 0x7F)) {
-		unpacked.chData[0] = data[0];
-		unpacked.chData[1] = data[1];
-		unpacked.chData[2] = data[2];
-		unpacked.chData[3] = data[3];
-		*latitude = unpacked.lData;
+		int32_t x = data[0];
+		x |= (int32_t)data[1] << 8;
+		x |= (int32_t)data[2] << 8;
+		x |= (int32_t)data[3] << 8;
+		*latitude = x;
 		fieldStatus |= 0x01;
 	}
 
 	// Field 1: Longitude (32-bits). Units are 1e-7 degrees.
 	if (longitude && (data[4] != 0xFF || data[5] != 0xFF || data[6] != 0xFF || data[7] != 0x7F)) {
-		unpacked.chData[0] = data[4];
-		unpacked.chData[1] = data[5];
-		unpacked.chData[2] = data[6];
-		unpacked.chData[3] = data[7];
-		*longitude = unpacked.lData;
+		int32_t x = data[4];
+		x |= (int32_t)data[5] << 8;
+		x |= (int32_t)data[6] << 8;
+		x |= (int32_t)data[7] << 8;
+		*longitude = x;
 		fieldStatus |= 0x02;
 	}
 
