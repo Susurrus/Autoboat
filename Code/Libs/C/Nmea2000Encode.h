@@ -1,6 +1,12 @@
 #ifndef NMEA2000_ENCODE_H
 #define NMEA2000_ENCODE_H
 
+/**
+ * @file
+ * This library provide encoding functions for NMEA2000 messages. Note that all of these messages
+ * are in little-endian format.
+ */
+
 #include "EcanDefines.h"
 
 /**

@@ -1,9 +1,12 @@
 #ifndef NMEA2000_H
 #define NMEA2000_H
 
-#include <stdint.h>
-
 /**************************************************************************************************
+ * @file
+ * This library implements some helper functions and decoders for some messages in the NMEA2000 
+ * protocol. This protocol is little-Endian with details on messages found at:
+ * http://www.keversoft.com/Keversoft/Packetlogger.html
+ *
  * Testing this library:
  *
  * Have in the same directory the external requirements: types.h
@@ -17,6 +20,8 @@
  * the main() at the end for use in unit testing this library
  *
  *************************************************************************************************/
+
+#include <stdint.h>
 
 /**
  * Helper functions.
@@ -79,6 +84,8 @@ uint8_t ParsePgn128259(const uint8_t data[8], uint8_t *seqId, float *waterSpeed)
 uint8_t ParsePgn128267(const uint8_t data[8], uint8_t *seqId, float *waterDepth, float *offset);
 
 // Units are seqId: none, latitude: radians (+ north), longitude: radians (+ east).
+// Latitude and longitude are both returned as int32s because there is loss of precision if real32
+// datatypes are used.
 uint8_t ParsePgn129025(const uint8_t data[8], int32_t *latitude, int32_t *longitude);
 
 // Units are seqId: none, cogRef: 0 (True), 1 (magnetic), cog: radians eastward from north, sog: m/s

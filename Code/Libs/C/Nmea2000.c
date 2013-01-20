@@ -1,4 +1,6 @@
-#include "nmea2000.h"
+#include "Nmea2000.h"
+#include "Packing.h"
+
 #include <math.h>
 
 #ifndef M_PI
@@ -211,26 +213,26 @@ uint8_t ParsePgn127245(const uint8_t data[8], uint8_t *instance, uint8_t *direct
 	// Field 0: Instance. This field represents the rudder instance
 	if (instance && (data[0] != 0xFF)) {
 		*instance = data[0];
-		fieldStatus |= 0x02;
+		fieldStatus |= 0x01;
 	}
 
 	// Field 1: Direction Order: 2-bit field, used to tell the direction.
 	if (direction && ((data[1] & 0xC0) != 0xC0)) {
 		*direction = (data[1] & 0xC0) >> 6;
-		fieldStatus |= 0x04;
+		fieldStatus |= 0x02;
 	}
 	// Field 2: Angle Order. This is a 16-bit field that is used to command rudder angles. This field contains a signed value with the units of 0.0001 radians.
 	if (angleOrder && (data[2] != 0xFF || data[3] != 0xFF)) {
 		int x = (int)data[2] | ((int)data[3] << 8);
 		*angleOrder = (float)x / 10000.0;
-		fieldStatus |= 0x08;
+		fieldStatus |= 0x04;
 	}
 
 	//Field 3: Position. This is a 16-bit field that represents the current rudder angle. A value of all 1s (65535) means that the angle cannot be measured. This field contains a signed value with the units of 0.0001 radians.
 	if (position && (data[4] != 0xFF || data[5] != 0xFF)) {
 		int x = (int)data[4] | ((int)data[5] << 8);
 		*position = (float)x / 10000.0;
-		fieldStatus |= 0x10;
+		fieldStatus |= 0x8;
 	}
 
 	return fieldStatus;
@@ -261,7 +263,8 @@ uint8_t ParsePgn127508(const uint8_t data[8], uint8_t *seqId, uint8_t *instance,
 	if (voltage) {
 		// All 1s in NMEA2000 signifies invalid data.
 		if (data[1] != 0xFF || data[2] != 0xFF) {
-			uint16_t x = (uint16_t)data[1] | ((uint16_t)data[2] << 8);
+			uint16_t x;
+			LEUnpackUint16(&x, &data[1]);
 			*voltage = (float)x / 100.0;
 			fieldStatus |= 0x04;
 		}
@@ -271,7 +274,8 @@ uint8_t ParsePgn127508(const uint8_t data[8], uint8_t *seqId, uint8_t *instance,
 	if (current) {
 		// All 1s in NMEA2000 signifies invalid data.
 		if (data[3] != 0xFF || data[4] != 0xFF) {
-			uint16_t x = (uint16_t)data[3] | ((uint16_t)data[4] << 8);
+			uint16_t x;
+			LEUnpackUint16(&x, &data[3]);
 			*current = (float)x / 10.0;
 			fieldStatus |= 0x08;
 		}
@@ -281,7 +285,8 @@ uint8_t ParsePgn127508(const uint8_t data[8], uint8_t *seqId, uint8_t *instance,
 	if (temperature) {
 		// All 1s in NMEA2000 signifies invalid data.
 		if (data[5] != 0xFF || data[6] != 0xFF) {
-			uint16_t x = (uint16_t)data[5] | ((uint16_t)data[6] << 8);
+			uint16_t x;
+			LEUnpackUint16(&x, &data[5]);
 			*temperature = (float)x / 100.0 - 273.15;
 			fieldStatus |= 0x10;
 		}
@@ -304,7 +309,8 @@ uint8_t ParsePgn128259(const uint8_t data[8], uint8_t *seqId, float *waterSpeed)
 
 	// Field 1: Water speed. Raw units are centimeters/second. Converted to meters/second for output.
 	if (waterSpeed && (data[1] != 0xFF || data[2] != 0xFF)) {
-		uint16_t x = (uint16_t)data[1] | ((uint16_t)data[2] << 8);
+		uint16_t x;
+		LEUnpackUint16(&x, &data[1]);
 		*waterSpeed = (float)x / 100.0;
 		fieldStatus |= 0x02;
 	}
@@ -325,16 +331,18 @@ uint8_t ParsePgn128267(const uint8_t data[8], uint8_t *seqId, float *waterDepth,
 	}
 
 	// Field 1: Water depth (8-bits). Raw units are centimeters. Converted to meters for output.
-	if (waterDepth && (data[1] != 0xFF || data[2] != 0xFF)) {
-		uint16_t x = (uint16_t)data[1] | ((uint16_t)data[2] << 8);
+	if (waterDepth && (data[1] != 0xFF || data[2] != 0xFF || data[3] != 0xFF || data[4] != 0xFF)) {
+		uint32_t x;
+		LEUnpackUint32(&x, &data[1]);
 		*waterDepth = (float)x / 100.0;
 		fieldStatus |= 0x02;
 	}
 
 	// Field 2: Water depth offset (8-bits). Raw units are centimeters. Converted to meters for output.
 	if (offset && (data[5] != 0xFF || data[6] != 0xFF)) {
-		uint16_t x = (uint16_t)data[5] | ((uint16_t)data[6] << 8);
-		*offset = (float)x * .01;
+		int16_t x;
+		LEUnpackInt16 (&x, &data[5]);
+		*offset = (float)x / 100.0;
 		fieldStatus |= 0x04;
 	}
 
@@ -349,21 +357,13 @@ uint8_t ParsePgn129025(const uint8_t data[8], int32_t *latitude, int32_t *longit
 
 	// Field 0: Latitude (32-bits). Raw units are 1e-7 degrees, but they're converted to raw radians on output.
 	if (latitude && (data[0] != 0xFF || data[1] != 0xFF || data[2] != 0xFF || data[3] != 0x7F)) {
-		int32_t x = data[0];
-		x |= (int32_t)data[1] << 8;
-		x |= (int32_t)data[2] << 8;
-		x |= (int32_t)data[3] << 8;
-		*latitude = x;
+		LEUnpackInt32(latitude, &data[0]);
 		fieldStatus |= 0x01;
 	}
 
 	// Field 1: Longitude (32-bits). Units are 1e-7 degrees.
 	if (longitude && (data[4] != 0xFF || data[5] != 0xFF || data[6] != 0xFF || data[7] != 0x7F)) {
-		int32_t x = data[4];
-		x |= (int32_t)data[5] << 8;
-		x |= (int32_t)data[6] << 8;
-		x |= (int32_t)data[7] << 8;
-		*longitude = x;
+		LEUnpackInt32(longitude, &data[4]);
 		fieldStatus |= 0x02;
 	}
 
@@ -392,13 +392,13 @@ uint8_t ParsePgn129026(const uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, u
 
 	// Field 2: Course over ground (16-bits). Units are .0001 degrees eastward from north.
 	if (cog && (data[2] != 0xFF || data[3] != 0xFF)) {
-		*cog = (uint16_t)data[2] | ((uint16_t)data[3] << 8);
+		LEUnpackUint16(cog, &data[2]);
 		fieldStatus |= 0x04;
 	}
 
 	// Field 3: Speed over ground (16-bits). Units are .01 m/s.
 	if (sog && (data[4] != 0xFF || data[5] != 0xFF)) {
-		*sog = (uint16_t)data[4] | ((uint16_t)data[5] << 8);
+		LEUnpackUint16(sog, &data[4]);
 		fieldStatus |= 0x08;
 	}
 
@@ -421,15 +421,17 @@ uint8_t ParsePgn130306(const uint8_t data[8], uint8_t *seqId, float *airSpeed, f
 
 	// Field 1: Wind speed. Message units are cm/s but are converted to m/s on output.
 	if (airSpeed && (data[1] != 0xFF || data[2] != 0xFF)) {
-		uint16_t x = (uint16_t)data[1] | ((uint16_t)data[2] << 8);
+		uint16_t x;
+		LEUnpackUint16(&x, &data[1]);
 		*airSpeed = (float)x / 100.0;
 		fieldStatus |= 0x02;
 	}
 
 	// Field 2: Wind direction. Message units are e-4 rads but are converted to raw radians on output.
 	if (direction && (data[3] != 0xFF || data[4] != 0xFF)) {
-		uint16_t x = (uint16_t)data[3] | ((uint16_t)data[4] << 8);
-		*direction = (float)x * .0001;
+		uint16_t x;
+		LEUnpackUint16(&x, &data[3]);
+		*direction = (float)x / 10000.0;
 		fieldStatus |= 0x04;
 	}
 
@@ -451,7 +453,8 @@ uint8_t ParsePgn130310(const uint8_t data[8], uint8_t *seqId, float *waterTemp, 
 	// Water temperature data. Read in as centiKelvin and converted to Celsius.
 	// A value of 0xFFFF implies invalid data.
 	if (waterTemp && (data[1] != 0xFF || data[2] != 0xFF)) {
-		uint16_t x = (uint16_t)data[1] | ((uint16_t)data[2] << 8);
+		uint16_t x;
+		LEUnpackUint16(&x, &data[1]);
 		*waterTemp = (float)x / 100.0 - 273.15;
 		fieldStatus |= 0x02;
 	}
@@ -459,7 +462,8 @@ uint8_t ParsePgn130310(const uint8_t data[8], uint8_t *seqId, float *waterTemp, 
 	// Air temperature data. Read in as centiKelvin and converted to Celsius.
 	// A value of 0xFFFF implies invalid data.
 	if (airTemp && (data[3] != 0xFF || data[4] != 0xFF)) {
-		uint16_t x = (uint16_t)data[3] | ((uint16_t)data[4] << 8);
+		uint16_t x;
+		LEUnpackUint16(&x, &data[3]);
 		*airTemp = (float)x / 100.0 - 273.15;
 		fieldStatus |= 0x04;
 	}
@@ -467,8 +471,9 @@ uint8_t ParsePgn130310(const uint8_t data[8], uint8_t *seqId, float *waterTemp, 
 	// Air pressure data. Read in as hectoPascals and converted to kiloPascals.
 	// A value of 0xFFFF implies invalid data.
 	if (airPressure && (data[5] != 0xFF || data[6] != 0xFF)) {
-		uint16_t x = (uint16_t)data[5] | ((uint16_t)data[6] << 8);
-		*airPressure = (float)x * 0.1;
+		uint16_t x;
+		LEUnpackUint16(&x, &data[5]);
+		*airPressure = (float)x / 10.0;
 		fieldStatus |= 0x08;
 	}
 
@@ -508,22 +513,25 @@ uint8_t ParsePgn130311(const uint8_t data[8], uint8_t *seqId, uint8_t *tempInsta
 
 	// N2K Field 3: Air temperature. Read in as centiKelvin and converted to Celsius
 	if (temp && (data[2] != 0xFF || data[3] != 0xFF)) {
-		uint16_t x = (uint16_t)data[2] | ((uint16_t)data[3] << 8);
+		uint16_t x;
+		LEUnpackUint16(&x, &data[2]);
 		*temp = (float)x / 100.0 - 273.15;
 		fieldStatus |= 0x08;
 	}
 
 	// N2K Field 4: Humidity data. Read in as units of .0004%, output in percent.
 	if (humidity && (data[4] != 0xFF || data[5] != 0xFF)) {
-		uint16_t x = (uint16_t)data[4] | ((uint16_t)data[5] << 8);
-		*humidity = (float)x * 0.004;
+		uint16_t x;
+		LEUnpackUint16(&x, &data[4]);
+		*humidity = (float)x / 250.0;
 		fieldStatus |= 0x10;
 	}
 
 	// N2K Field 5: Pressure data. Read in as hectoPascals and converted to kiloPascals.
 	if (pressure && (data[6] != 0xFF || data[7] != 0xFF)) {
-		uint16_t x = (uint16_t)data[6] | ((uint16_t)data[7] << 8);
-		*pressure = (float)x * 0.1;
+		uint16_t x;
+		LEUnpackUint16(&x, &data[6]);
+		*pressure = (float)x / 10.0;
 		fieldStatus |= 0x20;
 	}
 
@@ -648,9 +656,8 @@ int main(void)
 
 		/*Check for NULL pointer exception*/
 
-		ParsePgn127245(data, NULL, NULL, NULL, NULL, NULL);
+		ParsePgn127245(data, NULL, NULL, NULL, NULL);
 
-		uint8_t seqId = 5;
 		uint8_t instance = 5;
 		uint8_t direction = 5;
 		float angleOrder = 5.0;
@@ -658,58 +665,51 @@ int main(void)
 
 		// Check for proper parsing of invalid data. It should return 0 and not modify any passed arguments.
 
-		assert(ParsePgn127245(data, &seqId, &instance, &direction, &angleOrder, &position) == 0);
-		assert(seqId == 5);
+		assert(ParsePgn127245(data, &instance, &direction, &angleOrder, &position) == 0);
 		assert(instance == 5);
 		assert(direction == 5);
 		assert(angleOrder == 5.0);
 		assert(position == 5.0);
 
-		// Check for correct parsing of only seqId
-		uint8_t data1[8] = {10, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-		assert(ParsePgn127245(data1, &seqId, &instance, &direction, &angleOrder, &position) == 0x01);
-		assert(seqId == 10);
-
 		// Check for correct parsing of only instance
-		uint8_t data2[8] = {0xFF, 10, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-		assert(ParsePgn127245(data2, &seqId, &instance, &direction, &angleOrder, &position) == 0x02);
+		uint8_t data2[8] = {0x0A, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+		assert(ParsePgn127245(data2, &instance, &direction, &angleOrder, &position) == 0x01);
 		assert(instance == 10);
 
 		// Check for correct parsing of only direction
-		uint8_t data3[8] = {0xFF, 0xFF, 0xBF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-		assert(ParsePgn127245(data3, &seqId, &instance, &direction, &angleOrder, &position) == 0x04);
+		uint8_t data3[8] = {0xFF, 0xBF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+		assert(ParsePgn127245(data3, &instance, &direction, &angleOrder, &position) == 0x02);
 		assert(direction == 2);
 
 		// Check for correct parsing of only angleOrder
-		uint8_t data4[8] = {0xFF, 0xFF, 0xFF, 10, 10, 0xFF, 0xFF, 0xFF};
-		assert(ParsePgn127245(data4, &seqId, &instance, &direction, &angleOrder, &position) == 0x08);
-		assert(angleOrder == 0x0A0A);
+		uint8_t data4[8] = {0xFF, 0xFF, 10, 10, 0xFF, 0xFF, 0xFF, 0xFF};
+		assert(ParsePgn127245(data4, &instance, &direction, &angleOrder, &position) == 0x04);
+		assert(fabs(angleOrder - .2570) < EPSILON);
 
 		// Check for correct parsing of only position
-		uint8_t data5[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 10, 10, 0xFF};
-		assert(ParsePgn127245(data5, &seqId, &instance, &direction, &angleOrder, &position) == 0x10);
-		assert(position == 0x0A0A);
+		uint8_t data5[8] = {0xFF, 0xFF, 0xFF, 0xFF, 10, 10, 0xFF, 0xFF};
+		assert(ParsePgn127245(data5, &instance, &direction, &angleOrder, &position) == 0x08);
+		assert(fabs(position - .2570) < EPSILON);
 
-		// Check for correct parsing of seqId and angleOrder
-		uint8_t data6[8] = {0xF5, 0xFF, 0xFF, 0x3F, 0xC3, 0xFF, 0xFF, 0xFF};
-		assert(ParsePgn127245(data6, &seqId, &instance, &direction, &angleOrder, &position) == 0x09);
-		assert(angleOrder == 0xC33F);
-		assert(seqId == 0xF5);
+		// Check for correct parsing of direction and angleOrder
+		uint8_t data6[8] = {0xFF, 0xBF, 0x3F, 0xC3, 0xFF, 0xFF, 0xFF, 0xFF};
+		assert(ParsePgn127245(data6, &instance, &direction, &angleOrder, &position) == 0x06);
+		assert(direction == 2);
+		assert(fabs(angleOrder - 4.9983) < EPSILON);
 
 		// Check for correct parsing of instance and position
-		uint8_t data7[8] = {0xFF, 0xF5, 0xFF, 0xFF, 0xFF, 0x3F, 0xC3, 0xFF};
-		assert(ParsePgn127245(data7, &seqId, &instance, &direction, &angleOrder, &position) == 0x12);
-		assert(position == 0xC33F);
+		uint8_t data7[8] = {0xF5, 0xFF, 0xFF, 0xFF, 0x3F, 0xC3, 0xFF, 0xFF};
+		assert(ParsePgn127245(data7, &instance, &direction, &angleOrder, &position) == 0x09);
 		assert(instance == 0xF5);
+		assert(fabs(position - 4.9983) < EPSILON);
 
 		// Check for correct parsing of all valid fields
-		uint8_t data8[8] = {13, 13, 0x7F, 0x13, 0x13, 0x13, 0x13, 13};
-		assert(ParsePgn127245(data8, &seqId, &instance, &direction, &angleOrder, &position) == 0x1F);
-		assert(seqId == 13);
+		uint8_t data8[8] = {13, 0x7F, 0x14, 0x13, 0x14, 0x13, 0xFF, 0xFF};
+		assert(ParsePgn127245(data8, &instance, &direction, &angleOrder, &position) == 0x0F);
 		assert(instance == 13);
 		assert(direction == 1);
-		assert(angleOrder == 0x1313);
-		assert(position == 0x1313);
+		assert(fabs(angleOrder - .4884) < EPSILON);
+		assert(fabs(position - .4884) < EPSILON);
 
 	}
 
@@ -779,14 +779,14 @@ int main(void)
 		// Check for null-pointer exceptions when passed no arguments
 		ParsePgn129025(data, NULL, NULL);
 
-		float latitude = 5.0;
-		float longitude = 5.0;
+		int32_t latitude = 5e7;
+		int32_t longitude = 5e7;
 
 		// Check for proper parsing of invalid data. It should return 0 and not modify any
 		// passed arguments.
 		assert(ParsePgn129025(data, &latitude, &longitude) == 0);
-		assert(latitude == 5.0);
-		assert(longitude == 5.0);
+		assert(latitude == 5e7);
+		assert(longitude == 5e7);
 	}
 
 	/** Test parsing of PGN129026 **/
@@ -798,16 +798,16 @@ int main(void)
 
 		uint8_t seqId = 5;
 		uint8_t cogRef = 5;
-		float cog = 5.0;
-		float sog = 5.0;
+		uint16_t cog = 5 * 1e4;
+		uint16_t sog = 5 * 1e2;
 
 		// Check for proper parsing of invalid data. It should return 0 and not modify any
 		// passed arguments.
 		assert(ParsePgn129026(data, &seqId, &cogRef, &cog, &sog) == 0);
 		assert(seqId == 5);
 		assert(cogRef == 5);
-		assert(cog == 5.0);
-		assert(sog == 5.0);
+		assert(cog == 5 * 1e4);
+		assert(sog == 5 * 1e2);
 	}
 
 	/** Test parsing of PGN130306 **/
@@ -891,31 +891,36 @@ int main(void)
 
 		// Check for correct parsing of only temp.
 		// Testing the value of 255.4K, which should result in -17.75C.
-		tUnsignedShortToChar unionedTemp = {25540};
-		uint8_t data4[8] = {0xFF, 0xFF, unionedTemp.chData[0], unionedTemp.chData[1], 0xFF, 0xFF, 0xFF, 0xFF};
+		uint16_t newTemp = 25540;
+		uint8_t data4[8] = {0xFF, 0xFF, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF};
+		LEPackUint16(&data4[2], newTemp);
 		assert(ParsePgn130311(data4, &seqId, &tempInstance, &humidityInstance, &temp, &humidity, &pressure) == 0x08);
 		assert(fabs(temp - (-17.75)) <= EPSILON);
 
 		// Check for correct parsing of only humidity
-		tUnsignedShortToChar unionedHumidity = {17000};
-		uint8_t data5[8] = {0xFF, 0xFF, 0xFF, 0xFF, unionedHumidity.chData[0], unionedHumidity.chData[1], 0xFF, 0xFF};
+		uint16_t newHumidity = 17000;
+		uint8_t data5[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0, 0, 0xFF, 0xFF};
+		LEPackUint16(&data5[4], newHumidity);
 		assert(ParsePgn130311(data5, &seqId, &tempInstance, &humidityInstance, &temp, &humidity, &pressure) == 0x10);
 		assert(fabs(humidity - 68.0) <= EPSILON);
 
 		// Check for correct parsing of only pressure
-		tUnsignedShortToChar unionedPressure = {1014};
-		uint8_t data6[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, unionedPressure.chData[0], unionedPressure.chData[1]};
+		uint16_t newPressure = 1014;
+		uint8_t data6[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0, 0};
+		LEPackUint16(&data6[6], newPressure);
 		assert(ParsePgn130311(data6, &seqId, &tempInstance, &humidityInstance, &temp, &humidity, &pressure) == 0x20);
 		assert(fabs(pressure - 101.4) <= EPSILON);
 
 		// Check for correct parsing of seqId and temp
-		uint8_t data7[8] = {0xF5, 0xFF, unionedTemp.chData[0], unionedTemp.chData[1], 0xFF, 0xFF, 0xFF, 0xFF};
+		uint8_t data7[8] = {0xF5, 0xFF, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF};
+		LEPackUint16(&data7[2], newTemp);
 		assert(ParsePgn130311(data7, &seqId, &tempInstance, &humidityInstance, &temp, &humidity, &pressure) == 0x09);
 		assert(fabs(temp - (-17.75)) <= EPSILON);
 		assert(seqId == 0xF5);
 
 		// Check for correct parsing of tempInstance and pressure
-		uint8_t data8[8] = {0xFF, 0x0F, 0xFF, 0xFF, 0xFF, 0xFF, unionedPressure.chData[0], unionedPressure.chData[1]};
+		uint8_t data8[8] = {0xFF, 0x0F, 0xFF, 0xFF, 0xFF, 0xFF, 0, 0};
+		LEPackUint16(&data8[6], newPressure);
 		assert(ParsePgn130311(data8, &seqId, &tempInstance, &humidityInstance, &temp, &humidity, &pressure) == 0x22);
 		assert(fabs(pressure - 101.4) <= EPSILON);
 		assert(tempInstance == 0x03);
@@ -924,10 +929,13 @@ int main(void)
 		uint8_t data9[8] = {
 			13,
 			(33 << 2) | 2,
-			unionedTemp.chData[0], unionedTemp.chData[1],
-			unionedHumidity.chData[0], unionedHumidity.chData[1],
-			unionedPressure.chData[0], unionedPressure.chData[1]
+			0, 0,
+			0, 0,
+			0, 0
 		};
+		LEPackUint16(&data9[2], newTemp);
+		LEPackUint16(&data9[4], newHumidity);
+		LEPackUint16(&data9[6], newPressure);
 		assert(ParsePgn130311(data9, &seqId, &tempInstance, &humidityInstance, &temp, &humidity, &pressure) == 0x3F);
 		assert(seqId == 13);
 		assert(tempInstance == 33);

@@ -1,6 +1,12 @@
 #ifndef ACS300_H
 #define ACS300_H
 
+/**
+ * @file
+ * Thie library provides an interface for the ACS300 brushless motor driver board by Automotion Inc.
+ * Note that all CAN messages are in big-endian format.
+ */
+
 #include "EcanDefines.h"
 
 #include <stdint.h>
@@ -30,6 +36,7 @@ void Acs300PackageWriteParam(CanMessage *msg, uint16_t address, uint16_t value);
 
 void Acs300DecodeWriteParam(const uint8_t data[4], uint16_t *address, uint16_t *value);
 
+// The following two functions apply to ACS300_CAN_ID_HRTBT
 void Acs300PackageHeartbeat(CanMessage *msg, uint16_t dataA, uint16_t dataB, uint16_t voltage, uint16_t errorStatus);
 
 void Acs300DecodeHeartbeat(const uint8_t data[8], uint16_t *dataA, uint16_t *dataB, uint16_t *voltage, uint16_t *errorStatus);

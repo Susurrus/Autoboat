@@ -7,7 +7,8 @@
  * the resultant struct into the ECAN transmission library.
  */
 
-#include "Types.h"
+#include <stdint.h>
+#include <stdbool.h>
 #include "EcanDefines.h"
 
  // Define the standard (11-bit) IDs for all custom CAN messages.
@@ -59,8 +60,8 @@ void CanMessagePackageRudderDetails(CanMessage *msg, uint16_t potVal, uint16_t p
 
 void CanMessageDecodeRudderDetails(const CanMessage *msg, uint16_t *potVal, uint16_t *portLimitVal, uint16_t *sbLimitVal, bool *portLimitTrig, bool *sbLimitTrig, bool *enabled, bool *calibrated, bool *calibrating);
 
-// The IMU data messages are based on the Direction/Attitude messages from the VSAS-2GM
-// All units are in radians.
+// The IMU data messages are based on the Direction/Attitude messages from the VSAS-2GM, which uses
+// a big-endian storage format. All units are in radians.
 void CanMessagePackageImuData(CanMessage *msg, float direction, float pitch, float roll);
 
 void CanMessageDecodeImuData(const CanMessage *msg, float *direction, float *pitch, float *roll);

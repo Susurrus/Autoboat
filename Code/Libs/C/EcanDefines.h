@@ -3,7 +3,7 @@
 #ifndef ECAN_DEFINES_H
 #define ECAN_DEFINES_H
 
-#include "stdint.h"
+#include <stdint.h>
 
 // Message Types either a data message or a remote transmit request
 enum can_msg_type {

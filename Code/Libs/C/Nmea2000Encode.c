@@ -1,6 +1,8 @@
 #include "Nmea2000.h"
 #include "Nmea2000Encode.h"
+#include "Packing.h"
 #include "EcanDefines.h"
+
 #include <math.h>
 
 void PackagePgn127245(CanMessage *msg, uint8_t sourceDevice, uint8_t instance, uint8_t dirOrder, float angleOrder, float position)
@@ -23,8 +25,7 @@ void PackagePgn127245(CanMessage *msg, uint8_t sourceDevice, uint8_t instance, u
 	} else {
 		angle = 0xFFFF;
 	}
-	msg->payload[2] = angle;
-	msg->payload[3] = angle >> 8;
+	LEPackInt16(&msg->payload[2], angle);
 
 	// Convert current rudder angle to 1e-4 radians
     // The following is a test to see if position is NAN
@@ -33,8 +34,7 @@ void PackagePgn127245(CanMessage *msg, uint8_t sourceDevice, uint8_t instance, u
 	} else {
 		angle = 0xFFFF;
 	}
-	msg->payload[4] = angle;
-	msg->payload[5] = angle >> 8;
+	LEPackInt16(&msg->payload[4], angle);
 }
 
 void PackagePgn127508(CanMessage *msg, uint8_t sourceDevice, uint8_t battInstance, float voltage, float amperage, float temp, uint8_t sid)
@@ -55,8 +55,7 @@ void PackagePgn127508(CanMessage *msg, uint8_t sourceDevice, uint8_t battInstanc
 		voltage *= 100.0f;
 		x = (uint16_t)voltage;
 	}
-	msg->payload[1] = (uint8_t)x;
-	msg->payload[2] = (uint8_t)(x >> 8);
+	LEPackUint16(&msg->payload[1], x);
 
 	// Field 2: Current (in .1A)
 	x = 0xFFFF;
@@ -65,8 +64,7 @@ void PackagePgn127508(CanMessage *msg, uint8_t sourceDevice, uint8_t battInstanc
 		amperage *= 10.0f;
 		x = (uint16_t)amperage;
 	}
-	msg->payload[3] = (uint8_t)x;
-	msg->payload[4] = (uint8_t)(x >> 8);
+	LEPackUint16(&msg->payload[3], x);
 
 	// Field 3: Temperature (in 1K)
 	// All 1s indicated no-measurement
@@ -76,8 +74,7 @@ void PackagePgn127508(CanMessage *msg, uint8_t sourceDevice, uint8_t battInstanc
 		temp = (temp + 273.15) * 100;
 		x = (uint16_t)temp;
 	}
-	msg->payload[5] = (uint8_t)x;
-	msg->payload[6] = (uint8_t)(x >> 8);
+	LEPackUint16(&msg->payload[5], x);
 
 	// Field 4: Sequence ID
 	msg->payload[7] = sid;
@@ -92,15 +89,8 @@ void PackagePgn129025(CanMessage *msg, uint8_t sourceDevice, int32_t latitude, i
     msg->frame_type = CAN_FRAME_EXT;
     msg->validBytes = 8;
 
-    msg->payload[0] = (uint8_t)latitude;
-    msg->payload[1] = (uint8_t)(latitude >> 8);
-    msg->payload[2] = (uint8_t)(latitude >> 16);
-    msg->payload[3] = (uint8_t)(latitude >> 24);
-
-    msg->payload[4] = (uint8_t)longitude;
-    msg->payload[5] = (uint8_t)(longitude >> 8);
-    msg->payload[6] = (uint8_t)(longitude >> 16);
-    msg->payload[7] = (uint8_t)(longitude >> 24);
+	LEPackInt32(&msg->payload[0], latitude);
+	LEPackInt32(&msg->payload[4], longitude);
 }
 
 void PackagePgn129026(CanMessage *msg, uint8_t sourceDevice, uint8_t seqId, uint8_t cogRef, uint16_t cog, uint16_t sog)
@@ -114,10 +104,8 @@ void PackagePgn129026(CanMessage *msg, uint8_t sourceDevice, uint8_t seqId, uint
 
     msg->payload[0] = seqId;
 	msg->payload[1] = cogRef & 0x03;
-	msg->payload[2] = (uint8_t)cog;
-	msg->payload[3] = (uint8_t)(cog >> 8);
-	msg->payload[4] = (uint8_t)sog;
-	msg->payload[5] = (uint8_t)(sog >> 8);
+	LEPackUint16(&msg->payload[2], cog);
+	LEPackUint16(&msg->payload[4], sog);
 }
 
 void PackagePgn130311(CanMessage *msg, uint8_t sourceDevice, uint8_t sid, uint8_t tempInst, uint8_t humidInst, float temp, float humid, float press)
@@ -136,16 +124,13 @@ void PackagePgn130311(CanMessage *msg, uint8_t sourceDevice, uint8_t sid, uint8_
     // Convert temperature from Celius to units of .01Kelvin.
     // The following is a test to see if position is NAN
     uint16_t tempConverted = (temp == temp)?(uint16_t)((temp + 273.15) * 100):0xFFFF;
-    msg->payload[2] = (uint8_t)tempConverted;
-    msg->payload[3] = (uint8_t)(tempConverted >> 8);
+	LEPackUint16(&msg->payload[2], tempConverted);
     // Convert humidity from % to 0.004 %.
     // The following is a test to see if position is NAN
     uint16_t humidConverted = (humid == humid)?(uint16_t)(humid * 250):0xFFFF;
-    msg->payload[4] = (uint8_t)humidConverted;
-    msg->payload[5] = (uint8_t)(humidConverted >> 8);
+	LEPackUint16(&msg->payload[4], humidConverted);
     // Convert pressure from kPa and record as hPa.
     // The following is a test to see if position is NAN
     uint16_t pressConverted = (press == press)?(uint16_t)(press * 10):0xFFFF;
-    msg->payload[6] = (uint8_t)pressConverted;
-    msg->payload[7] = (uint8_t)(pressConverted >> 8);
+	LEPackUint16(&msg->payload[6], pressConverted);
 }
