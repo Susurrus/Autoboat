@@ -4,30 +4,25 @@
 #include "Ecan1.h"
 #include "Nmea2000Encode.h"
 #include "CanMessages.h"
+#include "Types.h"
 
 struct RudderData rudderSensorData;
 
 float GetRudderAngle(void)
 {
-	return rudderSensorData.RudderAngle.flData;
+	return rudderSensorData.RudderAngle;
 }
 
 uint8_t GetRudderStatus(void)
 {
 	return rudderSensorData.Enabled |
-               (rudderSensorData.Calibrated << 1) |
-               (rudderSensorData.Calibrating << 2);
-}
-
-void SetRudderAngle(const uint8_t data[2])
-{
-	rudderSensorData.RudderAngle.chData[0] = data[0];
-	rudderSensorData.RudderAngle.chData[1] = data[1];
+           (rudderSensorData.Calibrated << 1) |
+           (rudderSensorData.Calibrating << 2);
 }
 
 void ClearRudderAngle(void)
 {
-	rudderSensorData.RudderAngle.flData = 0.0;
+	rudderSensorData.RudderAngle = 0.0;
 }
 
 void RudderStartCalibration(void)

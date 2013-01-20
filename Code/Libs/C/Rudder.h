@@ -2,19 +2,18 @@
 #define RUDDER_H
 
 #include <stdbool.h>
-
-#include "Types.h"
+#include <stdint.h>
 
 struct RudderData {
-	tFloatToChar RudderAngle;
-	tUnsignedShortToChar RudderPotValue;
-	tUnsignedShortToChar RudderPotLimitStarboard;
-	tUnsignedShortToChar RudderPotLimitPort;
+	float RudderAngle;
+	uint16_t RudderPotValue;
+	uint16_t RudderPotLimitStarboard;
+	uint16_t RudderPotLimitPort;
 	bool LimitHitStarboard;
 	bool LimitHitPort;
-        bool Enabled;
-        bool Calibrated;
-        bool Calibrating;
+	bool Enabled;
+	bool Calibrated;
+	bool Calibrating;
 };
 extern struct RudderData rudderSensorData;
 
@@ -28,11 +27,6 @@ float GetRudderAngle(void);
  * from msg 0x8081 used with the rudder.
  */
 uint8_t GetRudderStatus(void);
-
-/**
- * Stores a recorded value of the rudder angle.
- */
-void SetRudderAngle(const uint8_t data[2]);
 
 /**
  * Clears the stored rudder data to all zeros.
