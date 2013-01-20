@@ -5,7 +5,7 @@
 #include "Uart1.h"
 #include "Ecan1.h"
 
-// Calculate the BRG register value necessary for 115200 baud with a 40MHz clock.
+// Calculate the BRG register value necessary for 115200 baud with a 80MHz clock.
 #define BAUD115200_BRG_REG 21
 
 void PrimaryNodeInit(void)
