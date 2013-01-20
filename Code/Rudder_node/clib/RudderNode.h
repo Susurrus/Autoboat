@@ -1,7 +1,7 @@
 #ifndef ECAN_RUDDER_H
 #define ECAN_RUDDER_H
 
-#include "Types.h"
+#include <stdint.h>
 
 struct RudderCalibrationData {
 	uint16_t PortLimitValue; // The lower limit on the rudder potentiometer.

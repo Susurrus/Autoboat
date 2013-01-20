@@ -7,9 +7,9 @@
 // Use Uart2ReadByte() to read bytes out of the buffer
 
 #include <stddef.h>
+#include <stdint.h>
 
 #include "CircularBuffer.h"
-#include "Common.h"
 
 /**
  * Initializes the UART1 peripheral according to the BRG SFR value passed to it.
