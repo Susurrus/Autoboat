@@ -407,6 +407,66 @@ uint8_t ParsePgn129026(const uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, u
 	return fieldStatus;
 }
 
+uint8_t ParsePgn129539(const uint8_t data[8], uint8_t *seqId, uint8_t *desiredMode, uint8_t *actualMode, float *hdop, float *vdop, float *tdop)
+{
+	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
+	uint8_t fieldStatus = 0;
+
+	// Field 0: Sequence ID. Links data together across PGNs that occured at the same timestep. If the sequence ID is 255, it's invalid.
+	if (seqId && data[0] != 0xFF) {
+		*seqId = data[0];
+		fieldStatus |= 0x01;
+	}
+
+	// Field 1: Desired mode. Indicates the desired operational mode of this GPS unit.
+	// @see PGN_129539_MODE
+	if (desiredMode) {
+		uint8_t desMode = data[1] & 0x07;
+		if (desMode != PGN_129539_MODE_RES1 && desMode != PGN_129539_MODE_RES2 &&
+		    desMode != PGN_129539_MODE_INV) {
+			*desiredMode = desMode;
+			fieldStatus |= 0x02;
+		}
+	}
+
+	// Field 2: Actual mode. Indicates the actual operational mode of this GPS unit.
+	// @see PGN_129539_MODE
+	if (actualMode) {
+		uint8_t actMode = (data[1] & 0x18) >> 3;
+		if (actMode != PGN_129539_MODE_RES1 && actMode != PGN_129539_MODE_RES2 &&
+		    actMode != PGN_129539_MODE_INV) {
+			*actualMode = actMode;
+			fieldStatus |= 0x04;
+		}
+	}
+
+	// Then 2 bits of reserved data
+
+	// Field 2: HDOP. Horizontal dilution of precision. Comes in as centimeters.
+	if (hdop && (data[2] != 0xFF || data[3] != 0xFF)) {
+		uint16_t x;
+		LEUnpackUint16(&x, &data[2]);
+		*hdop = (float)x / 100.0;
+		fieldStatus |= 0x08;
+	}
+
+	// Field 2: HDOP. Horizontal dilution of precision. Comes in as centimeters.
+	if (vdop && (data[4] != 0xFF || data[5] != 0xFF)) {
+		uint16_t x;
+		LEUnpackUint16(&x, &data[4]);
+		*vdop = (float)x / 100.0;
+		fieldStatus |= 0x10;
+	}
+
+	// Field 2: HDOP. Horizontal dilution of precision. Comes in as centiseconds.
+	if (tdop && (data[6] != 0xFF || data[7] != 0xFF)) {
+		int16_t x;
+		LEUnpackInt16(&x, &data[6]);
+		*tdop = (float)x / 100.0;
+		fieldStatus |= 0x20;
+	}
+}
+
 uint8_t ParsePgn130306(const uint8_t data[8], uint8_t *seqId, float *airSpeed, float *direction)
 {
 

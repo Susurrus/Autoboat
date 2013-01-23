@@ -84,12 +84,15 @@ uint8_t ParsePgn128259(const uint8_t data[8], uint8_t *seqId, float *waterSpeed)
 uint8_t ParsePgn128267(const uint8_t data[8], uint8_t *seqId, float *waterDepth, float *offset);
 
 // Units are seqId: none, latitude: radians (+ north), longitude: radians (+ east).
-// Latitude and longitude are both returned as int32s because there is loss of precision if real32
-// datatypes are used.
+// NOTE: Latitude and longitude are both returned as int32s because there is loss of precision if
+// real32 datatypes are used.
 uint8_t ParsePgn129025(const uint8_t data[8], int32_t *latitude, int32_t *longitude);
 
 // Units are seqId: none, cogRef: 0 (True), 1 (magnetic), cog: radians eastward from north, sog: m/s
 uint8_t ParsePgn129026(const uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, uint16_t *cog, uint16_t *sog);
+
+// Units are seqId: none, desiredMode: enum PGN_129539_MODE, actualMode: PGN_129539_MODE, hdop: m, vdop: m, tdop: s
+uint8_t ParsePgn129539(const uint8_t data[8], uint8_t *seqId, uint8_t *desiredMode, uint8_t *actualMode, float *hdop, float *vdop, float *tdop);
 
 // Units are seqId: none, airSpeed: m/s, direction: radians eastward from north.
 uint8_t ParsePgn130306(const uint8_t data[8], uint8_t *seqId, float *airSpeed, float *direction);
@@ -112,6 +115,7 @@ enum PGN {
     PGN_POSITION_RAP_UPD = 129025,
     PGN_COG_SOG_RAP_UPD  = 129026,
     PGN_TIME_DATE        = 129033,
+    PGN_GNSS_DOPS        = 129538,
     PGN_WIND_DATA        = 130306,
     PGN_ENV_PARAMETERS   = 130310,
     PGN_ENV_PARAMETERS2  = 130311
@@ -125,6 +129,19 @@ enum PGN_SID {
 };
 
 /**
+ * Define constants for PGN129539 indicating the GPS unit's operating mode.
+ */
+enum PGN_129539_MODE {
+	PGN_129539_MODE_1D    = 0,
+	PGN_129539_MODE_2D    = 1,
+	PGN_129539_MODE_3D    = 2,
+	PGN_129539_MODE_AUTO  = 3,
+	PGN_129539_MODE_RES1  = 4,
+	PGN_129539_MODE_RES2  = 5,
+	PGN_129539_MODE_ERROR = 6,
+	PGN_129539_MODE_INV   = 7,
+
+/**
  * Define constants for use with the temperature instance field of PGN 130311.
  */
 enum PGN_130311_TEMP_INST {
@@ -133,14 +150,14 @@ enum PGN_130311_TEMP_INST {
     PGN_130311_TEMP_INST_INSIDE      = 2,
     PGN_130311_TEMP_INST_ENGINE_ROOM = 3,
     PGN_130311_TEMP_INST_MAIN_CABIN  = 4,
-    PGN_130311_TEMP_INST_INVALID  = 0x3F
+    PGN_130311_TEMP_INST_INVALID     = 0x3F
 };
 
 /**
  * Define constants for use with the humidity instance field of PGN 130311.
  */
 enum PGN_130311_HUMID_INST {
-    PGN_130311_HUMID_INST_INSIDE = 0,
+    PGN_130311_HUMID_INST_INSIDE  = 0,
     PGN_130311_HUMID_INST_OUTSIDE = 1,
     PGN_130311_HUMID_INST_INVALID = 3,
 };
