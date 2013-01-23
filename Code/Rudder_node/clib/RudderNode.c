@@ -7,6 +7,7 @@
 #include "Nmea2000Encode.h"
 #include "Nvram.h"
 #include "CanMessages.h"
+#include "Types.h"
 
 // Declare some constants for use with the message scheduler
 // (don't use PGN or message ID as it must be a uint8)
