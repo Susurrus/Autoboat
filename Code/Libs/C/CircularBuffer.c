@@ -29,7 +29,6 @@
  * With gcc: `gcc CircularBuffer.c -DUNIT_TEST_CIRCULAR_BUFFER -Wall`
  */
 #include "CircularBuffer.h"
-#include <stdint.h>
 
 #include <stddef.h>
 #include <stdint.h>
