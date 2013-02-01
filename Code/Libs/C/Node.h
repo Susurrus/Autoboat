@@ -16,6 +16,7 @@
  */
 
 #include <stdint.h>
+#include <xc.h>
 
 /**
  * This enum declares the IDs for every node that is in this
@@ -30,6 +31,12 @@ enum CAN_NODE_ID {
     CAN_NODE_HIL                = 5,
     CAN_NODE_IMU_SENSOR         = 6
 };
+
+/**
+ * This macro provides a way to handle fatal errors on the CAN node, where a red error LED is
+ * available. This macro turns that LED on then sits and spins in a forever-loop.
+ */
+#define FATAL_ERROR() _TRISA3=0;_LATA3=1;while(1)
 
 /**
  * This bitfield stores the various status bits for each CAN node.
