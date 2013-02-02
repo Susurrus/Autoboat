@@ -1,5 +1,6 @@
 #include "Ecan1.h"
 #include "CircularBuffer.h"
+#include "Node.h"
 
 #include <string.h>
 #include <stdbool.h>
@@ -140,10 +141,10 @@ void Ecan1Init(void)
 
     // Initialize our circular buffers. If this fails, we crash and burn.
     if (!CB_Init(&ecan1TxCBuffer, txDataArray, ECAN1_BUFFERSIZE)) {
-        while (1);
+		FATAL_ERROR();
     }
     if (!CB_Init(&ecan1RxCBuffer, rxDataArray, ECAN1_BUFFERSIZE)) {
-        while (1);
+		FATAL_ERROR();
     }
 
     // Initialize our time quanta
