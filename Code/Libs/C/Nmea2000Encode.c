@@ -23,7 +23,7 @@ void PackagePgn127245(CanMessage *msg, uint8_t sourceDevice, uint8_t instance, u
 	if (angleOrder == angleOrder) {
 		angle = (int16_t)(angleOrder * 10000);
 	} else {
-		angle = 0xFFFF;
+		angle = 0x7FFF;
 	}
 	LEPackInt16(&msg->payload[2], angle);
 
@@ -32,7 +32,7 @@ void PackagePgn127245(CanMessage *msg, uint8_t sourceDevice, uint8_t instance, u
 	if (position == position) {
 		angle = (int16_t)(position * 10000);
 	} else {
-		angle = 0xFFFF;
+		angle = 0x7FFF;
 	}
 	LEPackInt16(&msg->payload[4], angle);
 }

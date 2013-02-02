@@ -91,8 +91,8 @@ uint8_t ParsePgn129025(const uint8_t data[8], int32_t *latitude, int32_t *longit
 // Units are seqId: none, cogRef: 0 (True), 1 (magnetic), cog: radians eastward from north, sog: m/s
 uint8_t ParsePgn129026(const uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, uint16_t *cog, uint16_t *sog);
 
-// Units are seqId: none, desiredMode: enum PGN_129539_MODE, actualMode: PGN_129539_MODE, hdop: m, vdop: m, tdop: s
-uint8_t ParsePgn129539(const uint8_t data[8], uint8_t *seqId, uint8_t *desiredMode, uint8_t *actualMode, float *hdop, float *vdop, float *tdop);
+// Units are seqId: none, desiredMode: enum PGN_129539_MODE, actualMode: PGN_129539_MODE, hdop: .01 unitless, vdop: .01 unitless, tdop: .01 unitless
+uint8_t ParsePgn129539(const uint8_t data[8], uint8_t *seqId, uint8_t *desiredMode, uint8_t *actualMode, int16_t *hdop, int16_t *vdop, int16_t *tdop);
 
 // Units are seqId: none, airSpeed: m/s, direction: radians eastward from north.
 uint8_t ParsePgn130306(const uint8_t data[8], uint8_t *seqId, float *airSpeed, float *direction);
@@ -115,7 +115,7 @@ enum PGN {
     PGN_POSITION_RAP_UPD = 129025,
     PGN_COG_SOG_RAP_UPD  = 129026,
     PGN_TIME_DATE        = 129033,
-    PGN_GNSS_DOPS        = 129538,
+    PGN_GNSS_DOPS        = 129539,
     PGN_WIND_DATA        = 130306,
     PGN_ENV_PARAMETERS   = 130310,
     PGN_ENV_PARAMETERS2  = 130311
@@ -139,7 +139,8 @@ enum PGN_129539_MODE {
 	PGN_129539_MODE_RES1  = 4,
 	PGN_129539_MODE_RES2  = 5,
 	PGN_129539_MODE_ERROR = 6,
-	PGN_129539_MODE_INV   = 7,
+	PGN_129539_MODE_INV   = 7
+};
 
 /**
  * Define constants for use with the temperature instance field of PGN 130311.

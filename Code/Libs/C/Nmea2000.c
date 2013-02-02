@@ -221,15 +221,16 @@ uint8_t ParsePgn127245(const uint8_t data[8], uint8_t *instance, uint8_t *direct
 		*direction = (data[1] & 0xC0) >> 6;
 		fieldStatus |= 0x02;
 	}
+
 	// Field 2: Angle Order. This is a 16-bit field that is used to command rudder angles. This field contains a signed value with the units of 0.0001 radians.
-	if (angleOrder && (data[2] != 0xFF || data[3] != 0xFF)) {
+	if (angleOrder && (data[2] != 0xFF || data[3] != 0x7F)) {
 		int x = (int)data[2] | ((int)data[3] << 8);
 		*angleOrder = (float)x / 10000.0;
 		fieldStatus |= 0x04;
 	}
 
 	//Field 3: Position. This is a 16-bit field that represents the current rudder angle. A value of all 1s (65535) means that the angle cannot be measured. This field contains a signed value with the units of 0.0001 radians.
-	if (position && (data[4] != 0xFF || data[5] != 0xFF)) {
+	if (position && (data[4] != 0xFF || data[5] != 0x7F)) {
 		int x = (int)data[4] | ((int)data[5] << 8);
 		*position = (float)x / 10000.0;
 		fieldStatus |= 0x8;
@@ -339,7 +340,7 @@ uint8_t ParsePgn128267(const uint8_t data[8], uint8_t *seqId, float *waterDepth,
 	}
 
 	// Field 2: Water depth offset (8-bits). Raw units are centimeters. Converted to meters for output.
-	if (offset && (data[5] != 0xFF || data[6] != 0xFF)) {
+	if (offset && (data[5] != 0xFF || data[6] != 0x7F)) {
 		int16_t x;
 		LEUnpackInt16 (&x, &data[5]);
 		*offset = (float)x / 100.0;
@@ -407,7 +408,7 @@ uint8_t ParsePgn129026(const uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, u
 	return fieldStatus;
 }
 
-uint8_t ParsePgn129539(const uint8_t data[8], uint8_t *seqId, uint8_t *desiredMode, uint8_t *actualMode, float *hdop, float *vdop, float *tdop)
+uint8_t ParsePgn129539(const uint8_t data[8], uint8_t *seqId, uint8_t *desiredMode, uint8_t *actualMode, int16_t *hdop, int16_t *vdop, int16_t *tdop)
 {
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
 	uint8_t fieldStatus = 0;
@@ -432,7 +433,7 @@ uint8_t ParsePgn129539(const uint8_t data[8], uint8_t *seqId, uint8_t *desiredMo
 	// Field 2: Actual mode. Indicates the actual operational mode of this GPS unit.
 	// @see PGN_129539_MODE
 	if (actualMode) {
-		uint8_t actMode = (data[1] & 0x18) >> 3;
+		uint8_t actMode = (data[1] & 0x38) >> 3;
 		if (actMode != PGN_129539_MODE_RES1 && actMode != PGN_129539_MODE_RES2 &&
 		    actMode != PGN_129539_MODE_INV) {
 			*actualMode = actMode;
@@ -442,29 +443,25 @@ uint8_t ParsePgn129539(const uint8_t data[8], uint8_t *seqId, uint8_t *desiredMo
 
 	// Then 2 bits of reserved data
 
-	// Field 2: HDOP. Horizontal dilution of precision. Comes in as centimeters.
-	if (hdop && (data[2] != 0xFF || data[3] != 0xFF)) {
-		uint16_t x;
-		LEUnpackUint16(&x, &data[2]);
-		*hdop = (float)x / 100.0;
+	// Field 2: HDOP. Horizontal dilution of precision. Comes in as .01.
+	if (hdop && (data[2] != 0xFF || data[3] != 0x7F)) {
+		LEUnpackInt16(hdop, &data[2]);
 		fieldStatus |= 0x08;
 	}
 
-	// Field 2: HDOP. Horizontal dilution of precision. Comes in as centimeters.
-	if (vdop && (data[4] != 0xFF || data[5] != 0xFF)) {
-		uint16_t x;
-		LEUnpackUint16(&x, &data[4]);
-		*vdop = (float)x / 100.0;
+	// Field 2: VDOP. Vertical dilution of precision. Comes in as .01.
+	if (vdop && (data[4] != 0xFF || data[5] != 0x7F)) {
+		LEUnpackInt16(vdop, &data[4]);
 		fieldStatus |= 0x10;
 	}
 
-	// Field 2: HDOP. Horizontal dilution of precision. Comes in as centiseconds.
-	if (tdop && (data[6] != 0xFF || data[7] != 0xFF)) {
-		int16_t x;
-		LEUnpackInt16(&x, &data[6]);
-		*tdop = (float)x / 100.0;
+	// Field 2: TDOP. Temporal dilution of precision. Comes in as .01.
+	if (tdop && (data[6] != 0xFF || data[7] != 0x7F)) {
+		LEUnpackInt16(tdop, &data[6]);
 		fieldStatus |= 0x20;
 	}
+
+	return fieldStatus;
 }
 
 uint8_t ParsePgn130306(const uint8_t data[8], uint8_t *seqId, float *airSpeed, float *direction)
