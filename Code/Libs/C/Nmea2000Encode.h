@@ -36,6 +36,8 @@ void PackagePgn129025(CanMessage *msg, uint8_t sourceDevice, int32_t latitude, i
 
 void PackagePgn129026(CanMessage *msg, uint8_t sourceDevice, uint8_t seqId, uint8_t cogRef, uint16_t cog, uint16_t sog);
 
+void PackagePgn129539(CanMessage *msg, uint8_t sourceDevice, uint8_t seqId, uint8_t desiredMode, uint8_t actualMode, int16_t hdop, int16_t vdop, int16_t tdop);
+
 /**
  *
  * @param msg The provided struct to store the encoded CAN message in

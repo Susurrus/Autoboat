@@ -108,6 +108,24 @@ void PackagePgn129026(CanMessage *msg, uint8_t sourceDevice, uint8_t seqId, uint
 	LEPackUint16(&msg->payload[4], sog);
 }
 
+void PackagePgn129539(CanMessage *msg, uint8_t sourceDevice, uint8_t seqId, uint8_t desiredMode, uint8_t actualMode, int16_t hdop, int16_t vdop, int16_t tdop)
+{
+    // Specify a new CAN message w/ metadata
+    msg->id = Iso11783Encode(PGN_GNSS_DOPS, sourceDevice, 0xFF, 2);
+    msg->buffer = 0;
+    msg->message_type = CAN_MSG_DATA;
+    msg->frame_type = CAN_FRAME_EXT;
+    msg->validBytes = 8;
+
+    msg->payload[0] = seqId;
+	msg->payload[1] = 0xC0;
+	msg->payload[1] |= desiredMode & 0x07;
+	msg->payload[1] |= (actualMode & 0x07) << 3;
+	LEPackInt16(&msg->payload[2], hdop);
+	LEPackInt16(&msg->payload[4], vdop);
+	LEPackInt16(&msg->payload[6], tdop);
+}
+
 void PackagePgn130311(CanMessage *msg, uint8_t sourceDevice, uint8_t sid, uint8_t tempInst, uint8_t humidInst, float temp, float humid, float press)
 {
     // Specify a new CAN message w/ metadata
