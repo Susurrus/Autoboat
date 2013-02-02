@@ -188,7 +188,7 @@ void HilNodeBlink(void)
 	static int timerCounter = 0;
 
 	// Check if it's time to toggle the status LED.
-	if (++timerCounter == (HIL_IS_ACTIVE()?1:4)) {
+	if (++timerCounter >= (HIL_IS_ACTIVE()?1:4)) {
 		_LATA4 ^= 1;
 		timerCounter = 0;
 	}
