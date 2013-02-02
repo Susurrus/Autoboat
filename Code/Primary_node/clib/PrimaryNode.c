@@ -17,7 +17,7 @@ void PrimaryNodeInit(void)
 
 	// Initialize the EEPROM for non-volatile data storage
 	DataEEInitAndClear();
-	
+
 	// Initialize the MAVLink communications channel
 	MavLinkInit();
 }

@@ -348,16 +348,22 @@ void MavLinkSendStatus(void)
 /**
  * Pull the raw GPS sensor data from the gpsDataStore struct within the GPS module and
  * transmit it via MAVLink over UART1.
- * TODO: Convert this message to a GLOBAL_POSITION_INT
  */
 void MavLinkSendRawGps(void)
 {
 	mavlink_message_t msg;
 
+	// We need to made the mode received from NMEA2000 messages to NMEA0183 fix type.
+	// NMEA2000    | NMEA0183 | Meaning
+	// 0,3,4,5,6,7 |   0      | invalid/no fix
+	//    2        |   3      | 3D fix
+	//    1        |   2      | 2D fix
+	uint8_t mavlinkGpsMode = gpsDataStore.mode == 2?3:(gpsDataStore.mode == 1?2:0);
+
 	mavlink_msg_gps_raw_int_pack(mavlink_system.sysid, mavlink_system.compid, &msg, ((uint64_t)nodeSystemTime)*10000,
-		sensorAvailability.gps.active?3:0, gpsDataStore.lat.lData, gpsDataStore.lon.lData, gpsDataStore.alt.lData,
-		0xFFFF, 0xFFFF,
-		gpsDataStore.sog.usData, (uint16_t)(((float)gpsDataStore.cog.usData) * 180 / M_PI / 100),
+		mavlinkGpsMode, gpsDataStore.lat, gpsDataStore.lon, gpsDataStore.alt,
+		gpsDataStore.hdop, gpsDataStore.vdop,
+		gpsDataStore.sog, (uint16_t)(((float)gpsDataStore.cog) * 180 / M_PI / 100),
 		0xFF);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
@@ -373,7 +379,7 @@ void MavLinkSendMainPower(void)
 	mavlink_message_t msg;
 
 	mavlink_msg_main_power_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-		(uint16_t)(powerDataStore.voltage.flData * 100.0f),(uint16_t)(powerDataStore.current.flData * 10.0f));
+		(uint16_t)(powerDataStore.voltage * 100.0f),(uint16_t)(powerDataStore.current * 10.0f));
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
@@ -472,9 +478,9 @@ void MavLinkSendGpsGlobalOrigin(void)
 {
 	mavlink_message_t msg;
 
-	int32_t latitude = gpsDataStore.lat.lData;
-	int32_t longitude = gpsDataStore.lon.lData;
-	int32_t altitude = gpsDataStore.alt.lData;
+	int32_t latitude = gpsDataStore.lat;
+	int32_t longitude = gpsDataStore.lon;
+	int32_t altitude = gpsDataStore.alt;
 
 	mavlink_msg_gps_global_origin_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                                   latitude, longitude, altitude);
@@ -619,8 +625,8 @@ void MavLinkSendWindAirData(void)
 {
 	mavlink_message_t msg;
 	mavlink_msg_wso100_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-		windDataStore.speed.flData, windDataStore.direction.flData,
-		airDataStore.temp.flData, airDataStore.pressure.flData, airDataStore.humidity.flData);
+		windDataStore.speed, windDataStore.direction,
+		airDataStore.temp, airDataStore.pressure, airDataStore.humidity);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	Uart1WriteData(buf, (uint8_t)len);
 }
@@ -629,7 +635,7 @@ void MavLinkSendDst800Data(void)
 {
 	mavlink_message_t msg;
 	mavlink_msg_dst800_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-	                        waterDataStore.speed.flData, waterDataStore.temp.flData, waterDataStore.depth.flData);
+	                        waterDataStore.speed, waterDataStore.temp, waterDataStore.depth);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	Uart1WriteData(buf, (uint8_t)len);
 }
@@ -638,10 +644,10 @@ void MavLinkSendRevoGsData(void)
 {
 	mavlink_message_t msg;
 	mavlink_msg_revo_gs_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-		revoGsDataStore.heading.flData, revoGsDataStore.magStatus,
-		revoGsDataStore.pitch.flData, revoGsDataStore.pitchStatus,
-		revoGsDataStore.roll.flData, revoGsDataStore.rollStatus,
-		revoGsDataStore.dip.flData, revoGsDataStore.magneticMagnitude.usData);
+		revoGsDataStore.heading, revoGsDataStore.magStatus,
+		revoGsDataStore.pitch, revoGsDataStore.pitchStatus,
+		revoGsDataStore.roll, revoGsDataStore.rollStatus,
+		revoGsDataStore.dip, revoGsDataStore.magneticMagnitude);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	Uart1WriteData(buf, (uint8_t)len);
 }

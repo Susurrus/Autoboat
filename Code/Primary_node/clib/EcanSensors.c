@@ -8,6 +8,7 @@
 #include "CanMessages.h"
 #include "Node.h"
 #include "Acs300.h"
+#include "Packing.h"
 
 struct PowerData powerDataStore = {};
 struct WindData windDataStore = {};
@@ -15,6 +16,7 @@ struct AirData airDataStore = {};
 struct WaterData waterDataStore = {};
 struct ThrottleData throttleDataStore = {};
 struct GpsData gpsDataStore = {};
+struct GpsDataBundle gpsNewDataStore = {};
 struct DateTimeData dateTimeDataStore = {};
 struct RevoGsData revoGsDataStore = {};
 
@@ -22,81 +24,44 @@ struct stc sensorAvailability = {};
 
 void GetWindDataPacked(uint8_t *data)
 {
-	data[0] = windDataStore.speed.chData[0];
-	data[1] = windDataStore.speed.chData[1];
-	data[2] = windDataStore.speed.chData[2];
-	data[3] = windDataStore.speed.chData[3];
-	data[4] = windDataStore.direction.chData[0];
-	data[5] = windDataStore.direction.chData[1];
-	data[6] = windDataStore.direction.chData[2];
-	data[7] = windDataStore.direction.chData[3];
+	LEPackReal32(&data[0], windDataStore.speed);
+	LEPackReal32(&data[4], windDataStore.direction);
 	data[8] = windDataStore.newData;
 	windDataStore.newData = false;
 }
 
 void GetAirDataPacked(uint8_t *data)
 {
-	data[0] = airDataStore.temp.chData[0];
-	data[1] = airDataStore.temp.chData[1];
-	data[2] = airDataStore.temp.chData[2];
-	data[3] = airDataStore.temp.chData[3];
-	data[4] = airDataStore.pressure.chData[0];
-	data[5] = airDataStore.pressure.chData[1];
-	data[6] = airDataStore.pressure.chData[2];
-	data[7] = airDataStore.pressure.chData[3];
-	data[8] = airDataStore.humidity.chData[0];
-	data[9] = airDataStore.humidity.chData[1];
-	data[10] = airDataStore.humidity.chData[2];
-	data[11] = airDataStore.humidity.chData[3];
+	LEPackReal32(&data[0], airDataStore.temp);
+	LEPackReal32(&data[4], airDataStore.pressure);
+	LEPackReal32(&data[8], airDataStore.humidity);
 	data[12] = airDataStore.newData;
 	airDataStore.newData = false;
 }
 
 void GetWaterDataPacked(uint8_t *data)
 {
-	data[0] = waterDataStore.speed.chData[0];
-	data[1] = waterDataStore.speed.chData[1];
-	data[2] = waterDataStore.speed.chData[2];
-	data[3] = waterDataStore.speed.chData[3];
-	data[4] = waterDataStore.temp.chData[0];
-	data[5] = waterDataStore.temp.chData[1];
-	data[6] = waterDataStore.temp.chData[2];
-	data[7] = waterDataStore.temp.chData[3];
-	data[8] = waterDataStore.depth.chData[0];
-	data[9] = waterDataStore.depth.chData[1];
-	data[10] = waterDataStore.depth.chData[2];
-	data[11] = waterDataStore.depth.chData[3];
+	LEPackReal32(&data[0], waterDataStore.speed);
+	LEPackReal32(&data[4], waterDataStore.temp);
+	LEPackReal32(&data[8], waterDataStore.depth);
 	data[12] = waterDataStore.newData;
 	waterDataStore.newData = false;
 }
 
 void GetThrottleDataPacked(uint8_t *data)
 {
-	data[0] = throttleDataStore.rpm.chData[0];
-	data[1] = throttleDataStore.rpm.chData[1];
+	LEPackInt16(&data[0], throttleDataStore.rpm);
 	data[2] = throttleDataStore.newData;
 	throttleDataStore.newData = false;
 }
 
 void GetGpsDataPacked(uint8_t *data)
 {
-	data[0] = gpsDataStore.lat.chData[0];
-	data[1] = gpsDataStore.lat.chData[1];
-	data[2] = gpsDataStore.lat.chData[2];
-	data[3] = gpsDataStore.lat.chData[3];
-	data[4] = gpsDataStore.lon.chData[0];
-	data[5] = gpsDataStore.lon.chData[1];
-	data[6] = gpsDataStore.lon.chData[2];
-	data[7] = gpsDataStore.lon.chData[3];
-	data[8] = gpsDataStore.alt.chData[0];
-	data[9] = gpsDataStore.alt.chData[1];
-	data[10] = gpsDataStore.alt.chData[2];
-	data[11] = gpsDataStore.alt.chData[3];
-
-	data[12] = gpsDataStore.cog.chData[0];
-	data[13] = gpsDataStore.cog.chData[1];
-	data[14] = gpsDataStore.sog.chData[0];
-	data[15] = gpsDataStore.sog.chData[1];
+	LEPackInt32(&data[0], gpsDataStore.lat);
+	LEPackInt32(&data[4], gpsDataStore.lon);
+	LEPackInt32(&data[8], gpsDataStore.alt);
+	LEPackUint16(&data[12], gpsDataStore.cog);
+	LEPackUint16(&data[14], gpsDataStore.sog);
 
 	data[16] = gpsDataStore.newData;
 
@@ -106,11 +71,11 @@ void GetGpsDataPacked(uint8_t *data)
 
 void ClearGpsData(void)
 {
-	gpsDataStore.lat.lData = 0.0;
-	gpsDataStore.lon.lData = 0.0;
-	gpsDataStore.alt.lData = 0.0;
-	gpsDataStore.cog.usData = 0;
-	gpsDataStore.sog.usData = 0;
+	gpsDataStore.lat = 0.0;
+	gpsDataStore.lon = 0.0;
+	gpsDataStore.alt = 0.0;
+	gpsDataStore.cog = 0;
+	gpsDataStore.sog = 0;
 	gpsDataStore.newData = 0;
 }
 
@@ -201,8 +166,7 @@ uint8_t ProcessAllEcanMessages(void)
 				if ((msg.payload[6] & 0x40) == 0) { // Checks the status bit to determine if the ACS300 is enabled.
 					sensorAvailability.prop.active_counter = 0;
 				}
-				throttleDataStore.rpm.chData[0] = msg.payload[1];
-				throttleDataStore.rpm.chData[1] = msg.payload[0];
+				Acs300DecodeHeartbeat(msg.payload, (uint16_t*)&throttleDataStore.rpm, NULL, NULL, NULL);
 				throttleDataStore.newData = true;
 			} else if (msg.id == CAN_MSG_ID_STATUS) {
 				uint8_t node;
@@ -232,9 +196,9 @@ uint8_t ProcessAllEcanMessages(void)
 				}
 			}else if (msg.id == CAN_MSG_ID_IMU_DATA) {
 				CanMessageDecodeImuData(&msg,
-										&revoGsDataStore.heading.flData,
-                                        &revoGsDataStore.pitch.flData,
-                                        &revoGsDataStore.roll.flData);
+										&revoGsDataStore.heading,
+                                        &revoGsDataStore.pitch,
+                                        &revoGsDataStore.roll);
 			} else {
 				pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
 				switch (pgn) {
@@ -254,7 +218,7 @@ uint8_t ProcessAllEcanMessages(void)
 				} break;
 				case PGN_BATTERY_STATUS: { // From the Power Node
 					sensorAvailability.power.enabled_counter = 0;
-					uint8_t rv = ParsePgn127508(msg.payload, NULL, NULL, &powerDataStore.voltage.flData, &powerDataStore.current.flData, &powerDataStore.temperature.flData);
+					uint8_t rv = ParsePgn127508(msg.payload, NULL, NULL, &powerDataStore.voltage, &powerDataStore.current, &powerDataStore.temperature);
 					if ((rv & 0x0C) == 0xC) {
 						sensorAvailability.power.active_counter = 0;
 						powerDataStore.newData = true;
@@ -262,7 +226,7 @@ uint8_t ProcessAllEcanMessages(void)
 				} break;
 				case PGN_SPEED: // From the WSO100
 					sensorAvailability.wso100.enabled_counter = 0;
-					if (ParsePgn128259(msg.payload, NULL, &waterDataStore.speed.flData)) {
+					if (ParsePgn128259(msg.payload, NULL, &waterDataStore.speed)) {
 						sensorAvailability.wso100.active_counter = 0;
 						waterDataStore.newData = true;
 					}
@@ -270,47 +234,144 @@ uint8_t ProcessAllEcanMessages(void)
 				case PGN_WATER_DEPTH: { // From the DST800
 					sensorAvailability.dst800.enabled_counter = 0;
 					// Only update the data in waterDataStore if an actual depth was returned.
-					uint8_t rv = ParsePgn128267(msg.payload, NULL, &waterDataStore.depth.flData, NULL);
+					uint8_t rv = ParsePgn128267(msg.payload, NULL, &waterDataStore.depth, NULL);
 					if ((rv & 0x02) == 0x02) {
 						sensorAvailability.dst800.active_counter = 0;
 						waterDataStore.newData = true;
 					}
 				} break;
-				case PGN_POSITION_RAP_UPD: { // From the GPS100
+				case PGN_POSITION_RAP_UPD: { // From the GPS200
 					sensorAvailability.gps.enabled_counter = 0;
-					uint8_t rv = ParsePgn129025(msg.payload, &gpsDataStore.lat.lData, &gpsDataStore.lon.lData);
-					// Only update if both latitude and longitude were parsed successfully.
+					uint8_t rv = ParsePgn129025(msg.payload, &gpsNewDataStore.lat, &gpsNewDataStore.lon);
+						LATBbits.LATB8 = 1;
+						LATBbits.LATB9 = 1;
+					// Only do something if both latitude and longitude were parsed successfully.
 					if ((rv & 0x03) == 0x03) {
-						sensorAvailability.gps.active_counter = 0;
-						gpsDataStore.newData = true;
+						// If there was already position data in there, assume this is the start of a new clustering and clear out old data.
+						if (gpsNewDataStore.receivedMessages & GPSDATA_POSITION) {
+							gpsNewDataStore.receivedMessages = GPSDATA_POSITION;
+						}
+						// Otherwise we...
+						else {
+							// Record that a position message was received.
+							gpsNewDataStore.receivedMessages |= GPSDATA_POSITION;
+
+							// And if it was the last message in this bundle, check that it's valid,
+							// and copy it over to the reading struct setting it as new data.
+							if (gpsNewDataStore.receivedMessages == GPSDATA_ALL) {
+								// Validity is checked by verifying that this had a valid 2D/3D fix,
+								// and lat/lon is not 0,
+								if ((gpsNewDataStore.mode == PGN_129539_MODE_2D || gpsNewDataStore.mode == PGN_129539_MODE_3D) &&
+								    (gpsNewDataStore.lat != 0 || gpsNewDataStore.lon != 0)) {
+
+									// Copy the entire struct over and then overwrite the newData
+									// field with a valid "true" value.
+									memcpy(&gpsDataStore, &gpsNewDataStore, sizeof(gpsNewDataStore));
+									gpsDataStore.newData = true;
+
+									// Also set our GPS as receiving good data.
+									sensorAvailability.gps.active_counter = 0;
+								}
+
+								// Regardless of whether this data was useful, we clear for next bundle.
+								gpsNewDataStore.receivedMessages = 0;
+							}
+						}
 					}
 				} break;
-				case PGN_COG_SOG_RAP_UPD: { // From the GPS100
+				case PGN_COG_SOG_RAP_UPD: { // From the GPS200
 					sensorAvailability.gps.enabled_counter = 0;
-					uint8_t rv = ParsePgn129026(msg.payload, NULL, NULL, &gpsDataStore.cog.usData, &gpsDataStore.sog.usData);
+					uint8_t rv = ParsePgn129026(msg.payload, NULL, NULL, &gpsNewDataStore.cog, &gpsNewDataStore.sog);
+						LATBbits.LATB8 = 1;
+						LATBbits.LATB9 = 1;
 					// Only update if both course-over-ground and speed-over-ground were parsed successfully.
 					if ((rv & 0x0C) == 0x0C) {
-						sensorAvailability.gps.active_counter = 0;
-						gpsDataStore.newData = true;
+						// If there was already heading data in there, assume this is the start of a new clustering and clear out old data.
+						if (gpsNewDataStore.receivedMessages & GPSDATA_HEADING) {
+							gpsNewDataStore.receivedMessages = GPSDATA_HEADING;
+						}
+						// Otherwise we...
+						else {
+							// Record that a position message was received.
+							gpsNewDataStore.receivedMessages |= GPSDATA_HEADING;
+
+							// And if it was the last message in this bundle, check that it's valid,
+							// and copy it over to the reading struct setting it as new data.
+							if (gpsNewDataStore.receivedMessages == GPSDATA_ALL) {
+								// Validity is checked by verifying that this had a valid 2D/3D fix,
+								// and lat/lon is not 0,
+								if ((gpsNewDataStore.mode == PGN_129539_MODE_2D || gpsNewDataStore.mode == PGN_129539_MODE_3D) &&
+								    (gpsNewDataStore.lat != 0 || gpsNewDataStore.lon != 0)) {
+
+									// Copy the entire struct over and then overwrite the newData
+									// field with a valid "true" value.
+									memcpy(&gpsDataStore, &gpsNewDataStore, sizeof(gpsNewDataStore));
+									gpsDataStore.newData = true;
+
+									// Also set our GPS as receiving good data.
+									sensorAvailability.gps.active_counter = 0;
+								}
+
+								// Regardless of whether this data was useful, we clear for next bundle.
+								gpsNewDataStore.receivedMessages = 0;
+							}
+						}
+					}
+				} break;
+				case PGN_GNSS_DOPS: { // From the GPS200
+					sensorAvailability.gps.enabled_counter = 0;
+					uint8_t rv = ParsePgn129539(msg.payload, NULL, NULL, &gpsNewDataStore.mode, &gpsNewDataStore.hdop, &gpsNewDataStore.vdop, NULL);
+						LATBbits.LATB8 = 1;
+						LATBbits.LATB9 = 1;
+					if ((rv & 0x1C) == 0x1C) {
+						// If there was already heading data in there, assume this is the start of a new clustering and clear out old data.
+						if (gpsNewDataStore.receivedMessages & GPSDATA_FIX) {
+							gpsNewDataStore.receivedMessages = GPSDATA_FIX;
+						}
+						// Otherwise we...
+						else {
+							// Record that a position message was received.
+							gpsNewDataStore.receivedMessages |= GPSDATA_FIX;
+
+							// And if it was the last message in this bundle, check that it's valid,
+							// and copy it over to the reading struct setting it as new data.
+							if (gpsNewDataStore.receivedMessages == GPSDATA_ALL) {
+								// Validity is checked by verifying that this had a valid 2D/3D fix,
+								// and lat/lon is not 0,
+								if ((gpsNewDataStore.mode == PGN_129539_MODE_2D || gpsNewDataStore.mode == PGN_129539_MODE_3D) &&
+								    (gpsNewDataStore.lat != 0 || gpsNewDataStore.lon != 0)) {
+
+									// Copy the entire struct over and then overwrite the newData
+									// field with a valid "true" value.
+									memcpy(&gpsDataStore, &gpsNewDataStore, sizeof(gpsNewDataStore));
+									gpsDataStore.newData = true;
+									// Also set our GPS as receiving good data.
+									sensorAvailability.gps.active_counter = 0;
+								}
+								
+								// Regardless of whether this data was useful, we clear for next bundle.
+								gpsNewDataStore.receivedMessages = 0;
+							}
+						}
 					}
 				} break;
 				case PGN_WIND_DATA: // From the WSO100
 					sensorAvailability.wso100.enabled_counter = 0;
-					if (ParsePgn130306(msg.payload, NULL, &windDataStore.speed.flData, &windDataStore.direction.flData)) {
+					if (ParsePgn130306(msg.payload, NULL, &windDataStore.speed, &windDataStore.direction)) {
 						sensorAvailability.wso100.active_counter = 0;
 						windDataStore.newData = true;
 					}
 				break;
 				case PGN_ENV_PARAMETERS: // From the DST800
 					sensorAvailability.dst800.enabled_counter = 0;
-					if (ParsePgn130310(msg.payload, NULL, &waterDataStore.temp.flData, NULL, NULL)) {
+					if (ParsePgn130310(msg.payload, NULL, &waterDataStore.temp, NULL, NULL)) {
 						// The DST800 is only considered active when a water depth is received
 						waterDataStore.newData = true;
 					}
 				break;
 				case PGN_ENV_PARAMETERS2: // From the WSO100
 					sensorAvailability.wso100.enabled_counter = 0;
-					if (ParsePgn130311(msg.payload, NULL, NULL, NULL, &airDataStore.temp.flData, &airDataStore.humidity.flData, &airDataStore.pressure.flData)) {
+					if (ParsePgn130311(msg.payload, NULL, NULL, NULL, &airDataStore.temp, &airDataStore.humidity, &airDataStore.pressure)) {
 						sensorAvailability.wso100.active_counter = 0;
 						airDataStore.newData = true;
 					}
@@ -319,6 +380,8 @@ uint8_t ProcessAllEcanMessages(void)
 			}
 
 			++messagesHandled;
+			LATBbits.LATB8 = 0;
+			LATBbits.LATB9 = 0;
 		}
 	} while (messagesLeft > 0);
 

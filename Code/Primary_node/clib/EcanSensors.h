@@ -7,69 +7,100 @@
 #include "Types.h"
 
 struct RudderCanData  {
-	tFloatToChar Position;
+	float Position;
 	bool         NewData;
 };
 extern struct RudderCanData rudderCanDataStore;
 
 struct PowerData {
-	tFloatToChar voltage;
-	tFloatToChar current;
-	tFloatToChar temperature;
+	float voltage;
+	float current;
+	float temperature;
 	bool         newData;
 };
 extern struct PowerData powerDataStore;
 
 struct WindData {
-	tFloatToChar speed;
-	tFloatToChar direction;
+	float speed;
+	float direction;
 	bool         newData;
 };
 extern struct WindData windDataStore;
 
 struct AirData {
-	tFloatToChar temp;
-	tFloatToChar pressure;
-	tFloatToChar humidity;
+	float temp;
+	float pressure;
+	float humidity;
 	bool         newData;
 };
 extern struct AirData airDataStore;
 
 struct WaterData {
-	tFloatToChar speed;
-	tFloatToChar temp;
-	tFloatToChar depth;
+	float speed;
+	float temp;
+	float depth;
 	bool         newData;
 };
 extern struct WaterData waterDataStore;
 
 struct ThrottleData {
-	tShortToChar rpm;
-	bool         newData;
+	int16_t rpm;
+	bool    newData;
 };
 extern struct ThrottleData throttleDataStore;
 
 struct RevoGsData {
-	tFloatToChar           heading; // In rads
-	char                   magStatus;
-	tFloatToChar           pitch; // In rads
-	char                   pitchStatus;
-	tFloatToChar           roll; // In rads
-	char                   rollStatus;
-	tFloatToChar           dip; // In rads
-	tUnsignedShortToChar   magneticMagnitude;
+	float    heading; // In rads
+	char     magStatus;
+	float    pitch; // In rads
+	char     pitchStatus;
+	float    roll; // In rads
+	char     rollStatus;
+	float    dip; // In rads
+	uint16_t magneticMagnitude;
 };
 extern struct RevoGsData revoGsDataStore;
 
+/**
+ * Declare bitflags for use with the GpsData struct's receivedMessages field.
+ */
+enum {
+	GPSDATA_POSITION = 0x01,
+	GPSDATA_HEADING  = 0x02,
+	GPSDATA_FIX      = 0x04,
+	GPSDATA_ALL      = 0x07
+};
+
 struct GpsData {
-	tLongToChar lat; // Latitude in units of 1e-7 degrees
-	tLongToChar lon; // Longitude in units of 1e-7 degrees
-	tLongToChar alt; // Altitude in 1e-6 meters
-	tUnsignedShortToChar cog; // Course over ground in degrees eastward from north.
-	tUnsignedShortToChar sog; // Speed over ground in m/s
-	bool         newData; // Flag for whether this struct stores new data
+	bool newData; // Flag for whether this struct stores new data
+	uint8_t mode; // The type of fix used by the GPS. @see Nmea2000.h:PGN_129539_MODE.
+	uint16_t cog; // Course over ground in degrees eastward from north.
+	uint16_t sog; // Speed over ground in m/s
+	int16_t hdop; // Horizontal dilation of precision. Units in m.
+	int16_t vdop; // Vertical dilation of precision. Units in m.
+	int32_t lat; // Latitude in units of 1e-7 degrees
+	int32_t lon; // Longitude in units of 1e-7 degrees
+	int32_t alt; // Altitude in 1e-6 meters
 };
 extern struct GpsData gpsDataStore;
+
+/**
+ * This struct should not be modified by external code. It is merely used as an aggregator for
+ * incoming GPS data. Once all three messages are aggregated, the data is checked for validity, and
+ * then it overwrites the gpsDataStore variable if it is.
+ */
+struct GpsDataBundle {
+	uint8_t receivedMessages; /// A bitfiled indicating which fields have been received for this timestep.
+	uint8_t mode; // The type of fix used by the GPS. @see Nmea2000.h:PGN_129539_MODE.
+	uint16_t cog; // Course over ground in degrees eastward from north.
+	uint16_t sog; // Speed over ground in m/s
+	int16_t hdop; // Horizontal dilation of precision. Units in m.
+	int16_t vdop; // Vertical dilation of precision. Units in m.
+	int32_t lat; // Latitude in units of 1e-7 degrees
+	int32_t lon; // Longitude in units of 1e-7 degrees
+	int32_t alt; // Altitude in 1e-6 meters
+};
+extern struct GpsDataBundle gpsNewDataStore;
 
 struct DateTimeData {
 	uint16_t year;
