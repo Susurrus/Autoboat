@@ -1,8 +1,14 @@
 #ifndef HIL_NODE_H
 #define HIL_NODE_H
 
-// Declare flags for use with checking the `nodeStatus` variable declared in `Node.h`
+/**
+ * Declare flags for use with checking the `nodeStatus` variable declared in `Node.h`
+ */
+// Set when HIL is active and receiving telemetry from the PC
 #define NODE_STATUS_FLAG_HIL_ACTIVE 0x0001
+// Set when the rudder subsystem is actively transmitting. This also indicates when sensor feedback
+// mode is engaged.
+#define NODE_STATUS_FLAG_RUDDER_ACTIVE 0x0002
 
 /**
  * Initialization function, configures everything the node needs.

@@ -56,6 +56,19 @@ enum {
     SCHED_ID_WATER_SPD
 };
 
+// This variable is for tracking the status of the rudder subsystem. It broadcats status messages @
+// 2Hz. Every time one of those messages is received, this counter is reset. The 100Hz Timer2 checks
+// the counter every time it runs and if it is >= RUDDER_TIMEOUT_PERIOD, turns off the RUDDER_ACTIVE
+// flag in `nodeStatus`. The timeout has been set to be 2 periods of time when the status message
+// should have been received. Whenever a status message is received, that flag is also turned high.
+// RUDDER_TIMEOUT_PERIOD is in units of the 100Hz timer, so 0.01s.
+#define RUDDER_TIMEOUT_PERIOD 100
+static uint16_t rudderTimeoutCounter = 0;
+
+// Track the status of the rudder subsystem. Used to check if it's calibrated. If not, calibration
+// is triggered when HIL mode is started. Bit 0 is 1 when it has been calibrated.
+static uint16_t rudderStatus = 0;
+
 // Set up the message scheduler's various data structures.
 #define ECAN_MSGS_SIZE 9
 static uint8_t ids[ECAN_MSGS_SIZE] = {
@@ -196,6 +209,12 @@ void HilNodeBlink(void)
 	// Update HIL status every .25s.
 	if (HIL_IS_ACTIVE()) {
 		nodeStatus |= NODE_STATUS_FLAG_HIL_ACTIVE;
+
+		// If the rudder is not calibrated, tell it to calibrate so that HIL can run properly.
+		if ((nodeStatus & NODE_STATUS_FLAG_RUDDER_ACTIVE) &&
+		    (rudderStatus & 0x0001)) {
+			RudderStartCalibration();
+		}
 	} else {
 		nodeStatus &= ~NODE_STATUS_FLAG_HIL_ACTIVE;
 	}
@@ -208,6 +227,11 @@ void HilNodeTimer100Hz(void)
 	// by the onboard sensors.
     static uint8_t msgs[ECAN_MSGS_SIZE];
 
+	// Check the status of the rudder, setting it if it's changed.
+	if (++rudderTimeoutCounter >= RUDDER_TIMEOUT_PERIOD) {
+		nodeStatus &= ~NODE_STATUS_FLAG_RUDDER_ACTIVE;
+	}
+
 	// We don't do any transmission of CAN messages if we're inactive.
 	if (!HIL_IS_ACTIVE()) {
 		return;
@@ -218,22 +242,30 @@ void HilNodeTimer100Hz(void)
     CanMessage msg;
     for (i = 0; i < messagesToSend; ++i) {
         switch (msgs[i]) {
+			// Emulate the RC node
             case SCHED_ID_RC_STATUS:
                 CanMessagePackageStatus(&msg, CAN_NODE_RC, 0, 0, 0);
                 Ecan1Transmit(&msg);
             break;
+			// Emulate the rudder node
             case SCHED_ID_RUDDER_ANGLE:
-                PackagePgn127245(&msg, nodeId, 0xFF, 0xF, NAN, hilReceivedData.data.rAngle);
-                Ecan1Transmit(&msg);
+				if (!(nodeStatus & NODE_STATUS_FLAG_RUDDER_ACTIVE)) {
+					PackagePgn127245(&msg, nodeId, 0xFF, 0xF, NAN, hilReceivedData.data.rAngle);
+					Ecan1Transmit(&msg);
+				}
             break;
             case SCHED_ID_RUDDER_LIMITS:
-                CanMessagePackageRudderDetails(&msg, 0, 0, 0, false, false, true, true, false);
-                Ecan1Transmit(&msg);
+				if (!(nodeStatus & NODE_STATUS_FLAG_RUDDER_ACTIVE)) {
+					CanMessagePackageRudderDetails(&msg, 0, 0, 0, false, false, true, true, false);
+					Ecan1Transmit(&msg);
+				}
             break;
+			// Emulate the ACS300
             case SCHED_ID_THROTTLE_STATUS:
                 Acs300PackageHeartbeat(&msg, (uint16_t)hilReceivedData.data.tSpeed, 0, 0, 0);
                 Ecan1Transmit(&msg);
             break;
+			// Emulate the GPS200
             case SCHED_ID_LAT_LON:
                 PackagePgn129025(&msg, nodeId, hilReceivedData.data.gpsLatitude, hilReceivedData.data.gpsLongitude);
                 Ecan1Transmit(&msg);
@@ -268,6 +300,19 @@ uint8_t CanReceiveMessages(void)
                 if (address == ACS300_PARAM_CC) {
                     hilDataToTransmit.data.tCommandSpeed = (float)(int16_t)data;
                 }
+			}
+			// Record when we receive status messages from the rudder. If the rudder is running,
+			// use it as part of the simulation instead of the simulated rudder data. Its status is
+			// recorded so that calibration can be checked/ran.
+			else if (msg.id == CAN_MSG_ID_STATUS) {
+				CanMessage msg;
+				uint8_t nodeId;
+				uint16_t status, error;
+				CanMessageDecodeStatus(&msg, &nodeId, &status, &error, NULL);
+				if (nodeId == CAN_NODE_RUDDER_CONTROLLER) {
+					rudderStatus = status;
+					nodeStatus |= NODE_STATUS_FLAG_RUDDER_ACTIVE;
+				}
 			} else {
 				pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
 				switch (pgn) {
@@ -277,12 +322,14 @@ uint8_t CanReceiveMessages(void)
 				case PGN_RUDDER: {
 					float angleCommand, angleActual;
 					uint8_t tmp = ParsePgn127245(msg.payload, NULL, NULL, &angleCommand, &angleActual);
-					// Record the commanded angle if it was decoded
+					// Record the commanded angle if it was decoded. This should be from the primary
+					// node or the RC node.
 					if (tmp & 0x4) {
 						hilDataToTransmit.data.rCommandAngle = angleCommand;
 					}
-					// Record the actual angle if it was decoded
-					if (tmp & 0x8) {
+					// Record the actual angle if it was decoded. This should only be in the case of
+					// the rudder subsystem transmitting the actual angle.
+					if ((nodeStatus & NODE_STATUS_FLAG_RUDDER_ACTIVE) && (tmp & 0x8)) {
 						hilDataToTransmit.data.rudderAngle = angleActual;
 					}
 				} break;
