@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <pps.h>
+#include <stddef.h>
 
 #include "Hil.h"
 #include "Acs300.h"
@@ -15,14 +16,19 @@
 #include "Timer2.h"
 #include "Timer4.h"
 #include "HilNode.h"
+#include "Ethernet.h"
 
-//Use internal RC
+#ifndef NAN
+#define NAN __builtin_nan("")
+#endif
+
+// Use internal RC to start; we then switch to PLL'd iRC.
 _FOSCSEL(FNOSC_FRC & IESO_OFF);
-//Clock Pragmas
+// Clock Pragmas
 _FOSC(FCKSM_CSECMD & OSCIOFNC_OFF & POSCMD_XT);
 // Disable watchdog timer
 _FWDT(FWDTEN_OFF);
-//ICD Pragmas
+// Disable JTAG and specify port 3 for ICD pins.
 _FICD(JTAGEN_OFF & ICS_PGD3);
 
 // Declare some constants for use with the message scheduler
@@ -73,6 +79,7 @@ static MessageSchedule sched = {
 
 int main()
 {
+	// Switch the clock over to 80MHz.
     PLLFBD = 63;            // M = 65
     CLKDIVbits.PLLPOST = 0; // N1 = 2
     CLKDIVbits.PLLPRE = 1;  // N2 = 3
@@ -88,11 +95,10 @@ int main()
     // Initialize everything
     HilNodeInit();
 
-    // We continually loop through processing serial data and CAN messages
-    // Transmission of both are handled by interrupts.
-    while (1) {
-        HilReceiveData();
+    // We continually loop through processing CAN messages and also HIL messages.
+    while (true) {
         CanReceiveMessages();
+		HilReceive();
     }
 }
 
@@ -110,21 +116,25 @@ void HilNodeInit(void)
 	// To enable UART1 pins: TX on 11, RX on 13
 	PPSOutput(OUT_FN_PPS_U1TX, OUT_PIN_PPS_RP11);
 	PPSInput(PPS_U1RX, PPS_RP13);
+
+	// Configure SPI1 so that:
+	//  * (input) SPI1.SDI = B8
+	PPSInput(PPS_SDI1, PPS_RP10);
+	//  * SPI1.SCK is output on B9
+	PPSOutput(OUT_FN_PPS_SCK1, OUT_PIN_PPS_RP9);
+	//  * (output) SPI1.SDO = B10
+	PPSOutput(OUT_FN_PPS_SDO1, OUT_PIN_PPS_RP8);
 	PPSLock;
 
-    // Finally enable pins B10/A4 as an digital output
-    TRISBbits.TRISB10 = 0;
-    TRISAbits.TRISA4 = 0;
+    // Enable pin A4, the amber LED on the CAN node, as an output. We'll blink this ever
+    _TRISA4 = 0;
 
     // Initialize communications for HIL.
     HilInit();
 
-    // Set up Timer2 for a 100Hz timer.
+    // Set up Timer2 for a 100Hz timer. This triggers CAN message transmission at the same frequency
+	// that the sensors actually do onboard the boat.
     Timer2Init(HilNodeTimer100Hz, 1562);
-
-	// Set up Timer4 to manage the blinking amber LED.
-	// Initially set it for 0.25s.
-	Timer4Init(HilNodeBlink, 39062);
 
     // Initialize ECAN1
     Ecan1Init();
@@ -132,51 +142,37 @@ void HilNodeInit(void)
 	// Set a schedule for outgoing CAN messages
     // Transmit the rudder angle at 10Hz
     if (!AddMessageRepeating(&sched, SCHED_ID_RUDDER_ANGLE, 10)) {
-            while (1);
+		FATAL_ERROR();
     }
 
     // Transmit the rudder status at 10Hz
     if (!AddMessageRepeating(&sched, SCHED_ID_RUDDER_LIMITS, 10)) {
-            while (1);
+		FATAL_ERROR();
     }
 
     // Transmit the throttle status at 100Hz
     if (!AddMessageRepeating(&sched, SCHED_ID_THROTTLE_STATUS, 10)) {
-            while (1);
+		FATAL_ERROR();
     }
 
     // Transmit the RC status at 2Hz
     if (!AddMessageRepeating(&sched, SCHED_ID_RC_STATUS, 2)) {
-            while (1);
+		FATAL_ERROR();
     }
 
     // Transmit latitude/longitude at 5Hz
     if (!AddMessageRepeating(&sched, SCHED_ID_LAT_LON, 5)) {
-            while (1);
+		FATAL_ERROR();
     }
 
     // Transmit heading & speed at 4Hz
     if (!AddMessageRepeating(&sched, SCHED_ID_COG_SOG, 4)) {
-            while (1);
-    }
-}
-
-void HilNodeBlink(void)
-{
-    // Keep a variable here for counting the 4Hz timer so that it can be used to blink an LED
-    // at 1Hz.
-    static int timerCounter = 0;
-
-    /// Toggle the amber LED at 1Hz when no in HIL and 4Hz otherwise.
-    if (++timerCounter >= ((HIL_ACTIVE)?1:4)) {
-        LATA ^= 0x0010;
-		timerCounter = 0;
+		FATAL_ERROR();
     }
 }
 
 void HilNodeTimer100Hz(void)
 {
-
     // Track the messages to be transmit for this timestep.
 	// Here we emulate the same transmission frequency of the messages actually transmit
 	// by the onboard sensors.
@@ -213,9 +209,6 @@ void HilNodeTimer100Hz(void)
             break;
         }
     }
-
-	// Transmit the HIL data at 100Hz
-	HilTransmitData();
 }
 
 uint8_t CanReceiveMessages(void)
@@ -239,9 +232,20 @@ uint8_t CanReceiveMessages(void)
 			} else {
 				pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
 				switch (pgn) {
-                // Decode the commanded rudder angle from the PGN127245 messages.
+                // Decode the commanded rudder angle from the PGN127245 messages. Either the actual
+				// angle or the commanded angle are decoded as appropriate. This is in order to
+				// support actual sensor mode where the real rudder is used in simulation.
 				case PGN_RUDDER: {
-					ParsePgn127245(msg.payload, NULL, NULL, NULL, &hilDataToTransmit.data.rCommandAngle, NULL);
+					float angleCommand, angleActual;
+					uint8_t tmp = ParsePgn127245(msg.payload, NULL, NULL, &angleCommand, &angleActual);
+					// Record the commanded angle if it was decoded
+					if (tmp & 0x4) {
+						hilDataToTransmit.data.rCommandAngle = angleCommand;
+					}
+					// Record the actual angle if it was decoded
+					if (tmp & 0x8) {
+						hilDataToTransmit.data.rudderAngle = angleActual;
+					}
 				} break;
 				}
 			}

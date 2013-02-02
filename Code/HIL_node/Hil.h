@@ -45,12 +45,13 @@ THE SOFTWARE.
 #ifndef HIL_H
 #define HIL_H
 
-#include "Types.h"
+#include <stdint.h>
 #include "Node.h"
 #include "HilNode.h"
 
 // Define some helper macros for use with the `nodeStatus` variable.
-#define HIL_ACTIVE (nodeStatus & NODE_STATUS_FLAG_HIL_ACTIVE)
+//#define HIL_ACTIVE (nodeStatus & NODE_STATUS_FLAG_HIL_ACTIVE)
+#define HIL_ACTIVE 1
 
 /**
  * Declare the struct that holds all the data transmit to the PC for HIL.
@@ -96,11 +97,15 @@ void HilInit(void);
  */
 void HilBuildMessage(uint8_t data);
 
-void HilReceiveData(void);
+void HilReceive(void);
+
+void HilProcessData(uint8_t *data, unsigned short dataLen);
 
 void HilTransmitData(void);
 
-void HilTimer5Hz(void);
+void HilSetActive(void);
+
+void HilSetInactive(void);
 
 /**
  * This function calculates the checksum of some bytes in an

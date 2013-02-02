@@ -43,7 +43,6 @@ THE SOFTWARE.
 // ==============================================================
 
 #include "Hil.h"
-#include "Uart1.h"
 #include "Rudder.h"
 #include "Timer2.h"
 #include "Timer3.h"
@@ -53,9 +52,7 @@ THE SOFTWARE.
 #include <string.h>
 #include <stdbool.h>
 
-// This is the value of the BRG register for configuring different baud
-// rates. These BRG values have been calculated based on a 40MHz system clock.
-#define BAUD115200_BRG_REG 21
+#include "Ethernet.h"
 
 // Here we declare a struct used to hold the HIL data that's ready for transmission.
 // We declare it module-level to prevent reallocation every time and so that it can
@@ -90,11 +87,12 @@ static uint8_t sameFailedMessageFlag = 0;
 
 void HilInit(void)
 {
-	// Initialize UART1 to 115200 for HIL communications.
-	Uart1Init(BAUD115200_BRG_REG);
+	// Set up timer3 for a 5Hz timer. This timer times out when HIL goes inactive. Once that happens,
+	// the timer is deactivated until the first new packet is received again.
+	Timer3Init(HilSetInactive, 31250);
 
-	// Set up timer3 for a 5Hz timer.
-	Timer3Init(HilTimer5Hz, 31250);
+	// Initialize Ethernet subsytem.
+	EthernetInit();
 }
 
 /**
@@ -178,76 +176,68 @@ void HilBuildMessage(uint8_t data)
 			sameFailedMessageFlag = 1;
 		}
 	} else if (messageState == 3) {
-            // If we don't find the necessary ampersand we continue
-            // recording data as we haven't found the footer yet until
-            // we've filled up the entire message (ends at 124 characters
-            // as we need room for the 2 footer chars).
-            message[messageIndex++] = data;
-            if (data == '&') {
-                message[messageIndex] = data;
+		// If we don't find the necessary ampersand we continue
+		// recording data as we haven't found the footer yet until
+		// we've filled up the entire message (ends at 124 characters
+		// as we need room for the 2 footer chars).
+		message[messageIndex++] = data;
+		if (data == '&') {
+			message[messageIndex] = data;
 
-                // The checksum is now verified and if successful the message
-                // is stored in the appropriate struct.
-                if (message[2] == HilCalculateChecksum(&message[4], sizeof(union HilDataFromPc))) {
-                    // We now memcpy all the data into our global data struct.
-                    receivedMessageCount++;
-                    memcpy(&hilReceivedData, &message[4], sizeof(union HilDataFromPc));
+			// The checksum is now verified and if successful the message
+			// is stored in the appropriate struct.
+			if (message[2] == HilCalculateChecksum(&message[4], sizeof(union HilDataFromPc))) {
+				// We now memcpy all the data into our global data struct.
+				receivedMessageCount++;
+				memcpy(&hilReceivedData, &message[4], sizeof(union HilDataFromPc));
 
-                    // Now that we've successfully parsed a message, clear the flag.
-                    sameFailedMessageFlag = 0;
-                } else {
-                    // Here we've failed parsing a message.
-                    failedMessageCount++;
-                    sameFailedMessageFlag = 1;
-                }
+				// Now that we've successfully parsed a message, clear the flag.
+				sameFailedMessageFlag = 0;
+			} else {
+				// Here we've failed parsing a message.
+				failedMessageCount++;
+				sameFailedMessageFlag = 1;
+			}
 
-                // We clear all state variables here regardless of success.
-                messageIndex = 0;
-                messageState = 0;
-                int b;
-                for (b = 0; b < sizeof(message); b++) {
-                    message[b] = 0;
-                }
-            } else {
-                messageIndex = 0;
-                messageState = 0;
-            }
+			// We clear all state variables here regardless of success.
+			messageIndex = 0;
+			messageState = 0;
+		} else {
+			messageIndex = 0;
+			messageState = 0;
+		}
 	}
 }
 
+void HilReceive(void)
+{
+	EthernetRun(HilProcessData);
+}
+
 /**
- * This function should be called continously. Each timestep
- * it runs through the most recently received data, parsing
- * it for sensor data. Once a complete message has been parsed
- * the data inside will be returned through the message
- * array.
+ * This function should be called continously. Each timestep it runs through the most recently
+ * received data, parsing it for sensor data. Once a complete message has been parsed the data
+ * inside will be returned through the message array.
  * This function also sets/clears the `hilStatus` variable which specifies whether HIL is currently
  * active or not. This uses a 20-sample timeout, which equates to 0.2s if this function is called
  * every 1/100th of a second.
  * It's input is a boolean that is true when generated actuator sensor data
  * should be overridden by real-world actuator sensor data.
  */
-void HilReceiveData(void)
+void HilProcessData(uint8_t *data, unsigned short int dataLen)
 {
-	uint8_t c;
-	bool newData = false;
-    while (Uart1ReadByte(&c)) {
-        HilBuildMessage(c);
-        newData = true; // Reset the HIL timeout counter
-    }
+	int i;
+	for (i = 0; i < dataLen; ++i) {
+		HilBuildMessage(data[i]);
+	}
 
-	// If we parsed new data, then HIL should be active.
-	// Clear timer3, set nodeStatus, and output a status pin.
-	// This also re-enabled Timer2 to allow for CAN messages to be transmit
-	if (newData) {
-		TIMER3_RESET;
-		if (!HIL_ACTIVE) {
-			TIMER3_ENABLE;
-			nodeStatus |= NODE_STATUS_FLAG_HIL_ACTIVE;
-			LATBbits.LATB10 = 1;
-			TIMER2_RESET;
-			TIMER2_ENABLE;
-		}
+	HilTransmitData();
+
+	// If we parsed new data, then HIL should be active, so we clear timer3 (once it expires, HIL is
+	// considered inactive. We also set the nodeStatus to indicate HIL is active.
+	TIMER3_RESET;
+	if (!HIL_ACTIVE) {
+		HilSetActive();
 	}
 }
 
@@ -263,20 +253,28 @@ void HilTransmitData(void)
     wrapper.checksum = HilCalculateChecksum((const uint8_t *)&wrapper.data, sizeof(union HilDataToPc));
 
     // And then enqueue the new data for transmission.
-    Uart1WriteData(&wrapper, sizeof(HilWrapper));
+	EthernetTransmit((uint8_t*)&wrapper, sizeof(wrapper));
 }
 
 /**
- * This function clears the HIL active flag when it's called and also disables Timer3, which called
- * it. This prevents the timer from being continually triggered. Also disables Timer2 so CAN
- * messages aren't transmit.
+ * This function sets HIL to inactive for the node. That means disabling the HIL check timer3 and
+ * clearing the HIL_ACTIVE status flag.
  */
-void HilTimer5Hz(void)
+void HilSetActive(void)
+{
+	TIMER3_ENABLE;
+	nodeStatus |= NODE_STATUS_FLAG_HIL_ACTIVE;
+}
+
+/**
+ * This function clears the HIL active flag when it's called signifying that HIL is inactive. It
+ * also disables Timer3, which called it. This prevents the timer from being continually triggered
+ * unnecessarily.
+ */
+void HilSetInactive(void)
 {
 	TIMER3_DISABLE;
 	nodeStatus &= ~NODE_STATUS_FLAG_HIL_ACTIVE;
-	LATBbits.LATB10 = 0;
-	TIMER2_DISABLE;
 }
 
 /**
@@ -285,7 +283,6 @@ void HilTimer5Hz(void)
  */
 uint8_t HilCalculateChecksum(const uint8_t *sentence, uint8_t size)
 {
-
 	uint8_t checkSum = 0;
 	uint8_t i;
 	for (i = 0; i < size; i++) {
