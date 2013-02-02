@@ -47,6 +47,7 @@ enum {
     // GPS messages
     SCHED_ID_LAT_LON,
     SCHED_ID_COG_SOG,
+    SCHED_ID_GPS_FIX,
 
     // IMU messages
     SCHED_ID_ATT_ANGLE,
@@ -56,7 +57,7 @@ enum {
 };
 
 // Set up the message scheduler's various data structures.
-#define ECAN_MSGS_SIZE 8
+#define ECAN_MSGS_SIZE 9
 static uint8_t ids[ECAN_MSGS_SIZE] = {
     SCHED_ID_RUDDER_ANGLE,
     SCHED_ID_RUDDER_LIMITS,
@@ -64,6 +65,7 @@ static uint8_t ids[ECAN_MSGS_SIZE] = {
     SCHED_ID_RC_STATUS,
     SCHED_ID_LAT_LON,
     SCHED_ID_COG_SOG,
+    SCHED_ID_GPS_FIX,
     SCHED_ID_ATT_ANGLE,
     SCHED_ID_WATER_SPD
 };
@@ -126,11 +128,15 @@ void HilNodeInit(void)
 	PPSOutput(OUT_FN_PPS_SDO1, OUT_PIN_PPS_RP8);
 	PPSLock;
 
-    // Enable pin A4, the amber LED on the CAN node, as an output. We'll blink this ever
+    // Enable pin A4, the amber LED on the CAN node, as an output. We'll blink this at 1Hz. It'll
+	// stay lit when in HIL mode with it turning off whenever packets are received.
     _TRISA4 = 0;
 
     // Initialize communications for HIL.
     HilInit();
+
+	// Set Timer4 to be a 4Hz timer. Used for blinking the amber status LED.
+	Timer4Init(HilNodeBlink, 39062);
 
     // Set up Timer2 for a 100Hz timer. This triggers CAN message transmission at the same frequency
 	// that the sensors actually do onboard the boat.
@@ -165,10 +171,26 @@ void HilNodeInit(void)
 		FATAL_ERROR();
     }
 
-    // Transmit heading & speed at 4Hz
-    if (!AddMessageRepeating(&sched, SCHED_ID_COG_SOG, 4)) {
+    // Transmit heading & speed at 5Hz
+    if (!AddMessageRepeating(&sched, SCHED_ID_COG_SOG, 5)) {
 		FATAL_ERROR();
     }
+
+    // Transmit heading & speed at 5Hz
+    if (!AddMessageRepeating(&sched, SCHED_ID_GPS_FIX, 5)) {
+		FATAL_ERROR();
+    }
+}
+
+void HilNodeBlink(void)
+{
+	// Keep a variable here for scaling the 4Hz timer to a 1Hz timer.
+	static int timerCounter = 0;
+
+	if (++timerCounter == ((HIL_ACTIVE)?1:4)) {
+		_LATA4 ^= 1;
+		timerCounter = 0;
+	}
 }
 
 void HilNodeTimer100Hz(void)
@@ -205,6 +227,10 @@ void HilNodeTimer100Hz(void)
             break;
             case SCHED_ID_COG_SOG:
                 PackagePgn129026(&msg, nodeId, 0xFF, 0x7, hilReceivedData.data.gpsCog, hilReceivedData.data.gpsSog);
+                Ecan1Transmit(&msg);
+            break;
+            case SCHED_ID_GPS_FIX:
+                PackagePgn129539(&msg, nodeId, 0xFF, PGN_129539_MODE_3D, PGN_129539_MODE_3D, 100, 100, 100);
                 Ecan1Transmit(&msg);
             break;
         }

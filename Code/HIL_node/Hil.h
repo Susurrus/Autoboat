@@ -50,8 +50,7 @@ THE SOFTWARE.
 #include "HilNode.h"
 
 // Define some helper macros for use with the `nodeStatus` variable.
-//#define HIL_ACTIVE (nodeStatus & NODE_STATUS_FLAG_HIL_ACTIVE)
-#define HIL_ACTIVE 1
+#define HIL_ACTIVE (nodeStatus & NODE_STATUS_FLAG_HIL_ACTIVE)
 
 /**
  * Declare the struct that holds all the data transmit to the PC for HIL.
