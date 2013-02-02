@@ -187,9 +187,17 @@ void HilNodeBlink(void)
 	// Keep a variable here for scaling the 4Hz timer to a 1Hz timer.
 	static int timerCounter = 0;
 
-	if (++timerCounter == ((HIL_ACTIVE)?1:4)) {
+	// Check if it's time to toggle the status LED.
+	if (++timerCounter == (HIL_IS_ACTIVE()?1:4)) {
 		_LATA4 ^= 1;
 		timerCounter = 0;
+	}
+
+	// Update HIL status every .25s.
+	if (HIL_IS_ACTIVE()) {
+		nodeStatus |= NODE_STATUS_FLAG_HIL_ACTIVE;
+	} else {
+		nodeStatus &= ~NODE_STATUS_FLAG_HIL_ACTIVE;
 	}
 }
 
@@ -199,6 +207,11 @@ void HilNodeTimer100Hz(void)
 	// Here we emulate the same transmission frequency of the messages actually transmit
 	// by the onboard sensors.
     static uint8_t msgs[ECAN_MSGS_SIZE];
+
+	// We don't do any transmission of CAN messages if we're inactive.
+	if (!HIL_IS_ACTIVE()) {
+		return;
+	}
 
     uint8_t messagesToSend = GetMessagesForTimestep(&sched, msgs);
     int i;

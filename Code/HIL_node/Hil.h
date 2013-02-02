@@ -45,12 +45,16 @@ THE SOFTWARE.
 #ifndef HIL_H
 #define HIL_H
 
-#include <stdint.h>
 #include "Node.h"
 #include "HilNode.h"
 
-// Define some helper macros for use with the `nodeStatus` variable.
-#define HIL_ACTIVE (nodeStatus & NODE_STATUS_FLAG_HIL_ACTIVE)
+#include <stdint.h>
+#include <stdbool.h>
+
+// Define a helper macro to check if HIL is currently active. This should be used instead of the
+// exposed global variable `hilActive` as a form of proper abstraction.
+extern bool hilActive;
+#define HIL_IS_ACTIVE() (hilActive != 0)
 
 /**
  * Declare the struct that holds all the data transmit to the PC for HIL.

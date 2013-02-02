@@ -43,16 +43,13 @@ THE SOFTWARE.
 // ==============================================================
 
 #include "Hil.h"
-#include "Rudder.h"
-#include "Timer2.h"
 #include "Timer3.h"
+#include "Ethernet.h"
 
 #include <xc.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdbool.h>
-
-#include "Ethernet.h"
 
 // Here we declare a struct used to hold the HIL data that's ready for transmission.
 // We declare it module-level to prevent reallocation every time and so that it can
@@ -84,6 +81,9 @@ static uint32_t receivedMessageCount = 0;
 // Keep track of how many fails we've run into
 static uint32_t failedMessageCount = 0;
 static uint8_t sameFailedMessageFlag = 0;
+
+// Track if HIL is active.
+bool hilActive = false;
 
 void HilInit(void)
 {
@@ -236,7 +236,7 @@ void HilProcessData(uint8_t *data, unsigned short int dataLen)
 	// If we parsed new data, then HIL should be active, so we clear timer3 (once it expires, HIL is
 	// considered inactive. We also set the nodeStatus to indicate HIL is active.
 	TIMER3_RESET;
-	if (!HIL_ACTIVE) {
+	if (!HIL_IS_ACTIVE()) {
 		HilSetActive();
 	}
 }
@@ -263,7 +263,7 @@ void HilTransmitData(void)
 void HilSetActive(void)
 {
 	TIMER3_ENABLE;
-	nodeStatus |= NODE_STATUS_FLAG_HIL_ACTIVE;
+	hilActive = true;
 }
 
 /**
@@ -274,7 +274,7 @@ void HilSetActive(void)
 void HilSetInactive(void)
 {
 	TIMER3_DISABLE;
-	nodeStatus &= ~NODE_STATUS_FLAG_HIL_ACTIVE;
+	hilActive = false;
 }
 
 /**
