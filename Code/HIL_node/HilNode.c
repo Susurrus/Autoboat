@@ -239,7 +239,7 @@ void HilNodeTimer100Hz(void)
 
     uint8_t messagesToSend = GetMessagesForTimestep(&sched, msgs);
     int i;
-    CanMessage msg;
+    CanMessage msg = {};
     for (i = 0; i < messagesToSend; ++i) {
         switch (msgs[i]) {
 			// Emulate the RC node
@@ -250,7 +250,7 @@ void HilNodeTimer100Hz(void)
 			// Emulate the rudder node
             case SCHED_ID_RUDDER_ANGLE:
 				if (!(nodeStatus & NODE_STATUS_FLAG_RUDDER_ACTIVE)) {
-					PackagePgn127245(&msg, nodeId, 0xFF, 0xF, NAN, hilReceivedData.data.rAngle);
+					PackagePgn127245(&msg, CAN_NODE_RUDDER_CONTROLLER, 0xFF, 0xF, NAN, hilReceivedData.data.rAngle);
 					Ecan1Transmit(&msg);
 				}
             break;
