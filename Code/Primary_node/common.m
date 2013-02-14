@@ -13,7 +13,7 @@ MaxPwmIn = .0025;
 % Stored as radians for a priori computations.
 ref_lla = [36.963765; -122.00191; 0] * pi / 180;
 % Stored as an int32 in 1e7 rads and 1e6 meters for dynamic computations.
-ref_lla_sense = int32([36.9543845 * 1e7; -122.0018435 * 1e7; 0 * 1e6]);
+ref_lla_sense = int32([36.963765 * 1e7; -122.00191 * 1e7; 0 * 1e6]);
 
 % Precompute some values for LLA -> LTP conversion
 a = 6378137; % Earth semi-major axis in WGS84.

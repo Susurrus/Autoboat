@@ -3,19 +3,23 @@
 % First import all necessary Bus objects
 Busses;
 
+% Declare an empty mission for us as an initialization value
+emptyMission = Simulink.Bus.createMATLABStruct('Mission');
+
 % Waypoints are all defined within a local tangent plane in meters North,
 % East, Down. Three waypoint tracks have been defined below in the
 % test_waypoints, figure8_waypoints, and sampling_waypoints matrices. The
 % commented-out matrices are the original test ones. Overrides are
 % implemented below for the in-harbor boat test.
 
-test_coordinates = [0    0    0;
-                    25   -36  0;
-                    145  -44  0;
-                    220  -37  0;
-                    253  -57  0;
-                    312  -56  0;
-                   ];
+% Create some test coordinates in the global frame. Useful for testing.
+test_coordinates = [36.9525669    -122.0102978    0;
+                    36.957368     -122.0102119    1;
+                    36.9577109    -121.9973373    2;
+                    36.9520867    -121.9976807    3;
+                    36.9488620    -122.0033455    4;
+                    36.9590826    -122.0042896    5;
+                    ];
 % The following line just initializes an array of structs
 test_waypoints(size(test_coordinates,1)) = Simulink.Bus.createMATLABStruct('Mission');
 for i = 1:size(test_coordinates,1)

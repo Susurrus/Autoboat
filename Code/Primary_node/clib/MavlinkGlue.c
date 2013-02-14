@@ -24,6 +24,14 @@
 #include "MavlinkGlue.h"
 #include "Node.h"
 
+/**
+ * This function converts latitude/longitude/altitude into a north/east/down local tangent plane. The
+ * code I use by default is auto-generated C code from a Simulink block in the autonomous controller.
+ * @param[in] lat/lon/alt in units of 1e7deg/1e7deg/1e3m.
+ * @param[out] Output in a north/east/down coordinate frame in units of meters.
+ */
+extern void lla2ltp(const int32_t[3], float[3]);
+
 #include <stdio.h>
 
 // Set up some state machine variables for the parameter protocol
@@ -122,6 +130,11 @@ static uint16_t parameterCount = 2;
 static uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 static uint16_t len;
 
+// This is a variable declared in Simulink that contains the GPS origin used for global/local
+// coordinate conversions. It's organized as latitude (1e7 degrees), longitude (1e7 degrees), and
+// altitude (1e6 meters). 
+extern int32_t gpsOrigin[3];
+
 // Track how well MAVLink decoding is going:
 // WARN: Possible overflow over long-enough duration
 uint16_t mavLinkMessagesReceived = 0;
@@ -213,11 +226,9 @@ void MavLinkScheduleCurrentMission(void)
  */
 void MavLinkScheduleGpsOrigin(void)
 {
-	// Commented out on 7/22/2012 because QGC doesn't handle these messages well,
-	// spawning a modal dialog whenever it's received.
-	//if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_GPS_GLOBAL_ORIGIN)) {
-	//	while (1);
-	//}
+	if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_GPS_GLOBAL_ORIGIN)) {
+		while (1);
+	}
 }
 
 /**
@@ -473,17 +484,14 @@ void MavLinkSendRcScaledData(void)
 /**
  * Transmits the current GPS position of the origin of the local coordinate frame that the North-East-Down
  * coordinates are all relative too. They should be in units of 1e-7 degrees.
+ * TODO: Change this to use the global origin from Matlab.
  */
 void MavLinkSendGpsGlobalOrigin(void)
 {
 	mavlink_message_t msg;
 
-	int32_t latitude = gpsDataStore.lat;
-	int32_t longitude = gpsDataStore.lon;
-	int32_t altitude = gpsDataStore.alt;
-
 	mavlink_msg_gps_global_origin_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-	                                   latitude, longitude, altitude);
+	                                   gpsOrigin[0], gpsOrigin[1], gpsOrigin[2]);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
@@ -532,6 +540,12 @@ void MavLinkSendMissionCount(void)
 	Uart1WriteData(buf, (uint8_t)len);
 }
 
+/**
+ * Only broadcast GLOBAL reference frame mission items. While missions are converted to LOCAL_NED
+ * when stored onboard the controller, the global coordinates are preserved in the otherCoordinates
+ * member.
+ * @param currentMissionIndex The 0-based index of the current mission.
+ */
 void MavLinkSendMissionItem(uint8_t currentMissionIndex)
 {
 	Mission m;
@@ -543,9 +557,9 @@ void MavLinkSendMissionItem(uint8_t currentMissionIndex)
 		GetCurrentMission(&missionManagerCurrentIndex);
 		mavlink_msg_mission_item_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 		                              groundStationSystemId, groundStationComponentId, currentMissionIndex,
-		                              m.refFrame, m.action, (currentMissionIndex == (uint8_t)missionManagerCurrentIndex),
+		                              MAV_FRAME_GLOBAL, m.action, (currentMissionIndex == (uint8_t)missionManagerCurrentIndex),
 		                              m.autocontinue, m.parameters[0], m.parameters[1], m.parameters[2], m.parameters[3],
-		                              m.coordinates[0], m.coordinates[1], m.coordinates[2]);
+		                              m.otherCoordinates[0], m.otherCoordinates[1], m.otherCoordinates[2]);
 		len = mavlink_msg_to_send_buffer(buf, &msg);
 		Uart1WriteData(buf, (uint8_t)len);
 	}
@@ -920,11 +934,18 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 				// Make sure that they're coming in in the right order, and if they don't return an error in
 				// the acknowledgment response.
 				if (currentMissionIndex == incomingMission.seq) {
+					// We first copy the incoming mission data into our version of a Mission struct,
+					// which does not have some fields that are unnecessary.
 					Mission m = {
 						{
 							incomingMission.x,
 							incomingMission.y,
 							incomingMission.z
+						},
+						{
+							0.0,
+							0.0,
+							0.0
 						},
 						incomingMission.frame,
 						incomingMission.command,
@@ -939,29 +960,25 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 
 					// Attempt to record this mission to the list, recording the result, which will be 0 for failure.
 					// We also map all incoming Global Lat/Long/Alt messages to North-East-Down here.
-					// These can be created in QGroundControl by just double-clicking on the Map. Once you write them
-					// to this controller, they'll pop back out as NED.
-					int8_t missionAddStatus;
-					if (m.refFrame == MAV_FRAME_GLOBAL) {
-						Mission convertedLocalMission = {
-							{0.0, 0.0, 0.0},
-							MAV_FRAME_LOCAL_NED,
-							m.action,
-							{m.parameters[0], m.parameters[1], m.parameters[2], m.parameters[3]},
-							m.autocontinue
-						};
+					// These can be created in QGroundControl by just double-clicking on the Map. While the NED coordinates
+					// are stored, the global coordinates are as well so that they can be transmit as global coordinates
+					// to QGC, which doesn't display local waypoints on the primary map.
+					if (m.refFrame == MAV_FRAME_GLOBAL || m.refFrame == MAV_FRAME_GLOBAL_RELATIVE_ALT) {
+						m.refFrame = MAV_FRAME_LOCAL_NED;
+						// Preserve the global coordinates in the "otherCoordinates" members.
+						m.otherCoordinates[0] = m.coordinates[0];
+						m.otherCoordinates[1] = m.coordinates[1];
+						m.otherCoordinates[2] = m.coordinates[2];
 						const int32_t x[3] = {
-							(int32_t)(m.coordinates[0] * 1e7),
-							(int32_t)(m.coordinates[1] * 1e7),
-							(int32_t)(m.coordinates[2] * 1e7)
+							(int32_t)(m.coordinates[0] * 1e7), // Stored in 1e-7 degrees
+							(int32_t)(m.coordinates[1] * 1e7), // Stored in 1e-7 degres
+							(int32_t)(m.coordinates[2] * 1e3)  // Stored in 1e-3 meters
 						};
-						primary_node_LLA2LTP(true, x, convertedLocalMission.coordinates);
-
-						AppendMission(&convertedLocalMission, &missionAddStatus);
-					} else {
-						AppendMission(&m, &missionAddStatus);
+						lla2ltp(x, m.coordinates);
 					}
 
+					int8_t missionAddStatus;
+					AppendMission(&m, &missionAddStatus);
 					if (missionAddStatus != -1) {
 						// If this is going to be the new current mission, then we should set it as such.
 						if (incomingMission.current) {
@@ -1103,8 +1120,11 @@ void MavLinkReceive(void)
 					MavLinkEvaluateMissionState(MISSION_EVENT_ITEM_RECEIVED, &currentMission);
 				} break;
 
-				// Responding to a mission request entails moving into the first active state and scheduling a MISSION_COUNT message
+				// Responding to a mission request entails moving into the first active state and scheduling a MISSION_COUNT message.
+				// Will also schedule a transmission of a GPS_ORIGIN message. This is used for translating global to local coordinates
+				// in QGC.
 				case MAVLINK_MSG_ID_MISSION_REQUEST_LIST:
+					MavLinkScheduleGpsOrigin();
 					MavLinkEvaluateMissionState(MISSION_EVENT_REQUEST_LIST_RECEIVED, NULL);
 				break;
 
