@@ -200,8 +200,20 @@ void HilNodeBlink(void)
 	// Keep a variable here for scaling the 4Hz timer to a 1Hz timer.
 	static int timerCounter = 0;
 
-	// Check if it's time to toggle the status LED.
-	if (++timerCounter >= (HIL_IS_ACTIVE()?1:4)) {
+	// Track the last HIL state. This is used for tracking a rising-edge on the HIL signal.
+	static bool lastHilState = 0;
+
+	// Check if it's time to toggle the status LED. The limit is decided based on whether HIL is
+	// active and if the rudder is detected.
+	int countLimit = 6;
+	if (HIL_IS_ACTIVE()) {
+		if (nodeStatus & NODE_STATUS_FLAG_RUDDER_ACTIVE) {
+			countLimit = 1;
+		} else {
+			countLimit = 2;
+		}
+	}
+	if (++timerCounter >= countLimit) {
 		_LATA4 ^= 1;
 		timerCounter = 0;
 	}
@@ -210,14 +222,18 @@ void HilNodeBlink(void)
 	if (HIL_IS_ACTIVE()) {
 		nodeStatus |= NODE_STATUS_FLAG_HIL_ACTIVE;
 
-		// If the rudder is not calibrated, tell it to calibrate so that HIL can run properly.
-		if ((nodeStatus & NODE_STATUS_FLAG_RUDDER_ACTIVE) &&
-		    (rudderStatus & 0x0001)) {
+		// If we've switched into an active HIL state, trigger a rudder calibration if necessary.
+		if (!lastHilState && HIL_IS_ACTIVE() &&
+		    (nodeStatus & NODE_STATUS_FLAG_RUDDER_ACTIVE) &&
+		    !((rudderStatus & 0x0002) || (rudderStatus & 0x0001))) {
 			RudderStartCalibration();
 		}
 	} else {
 		nodeStatus &= ~NODE_STATUS_FLAG_HIL_ACTIVE;
 	}
+
+	// Update the last known HIL state for finding rising-edges.
+	lastHilState = HIL_IS_ACTIVE();
 }
 
 void HilNodeTimer100Hz(void)
@@ -227,9 +243,10 @@ void HilNodeTimer100Hz(void)
 	// by the onboard sensors.
     static uint8_t msgs[ECAN_MSGS_SIZE];
 
-	// Check the status of the rudder, setting it if it's changed.
+	// Check the status of the rudder, setting it to inactive if the timer expired.
 	if (++rudderTimeoutCounter >= RUDDER_TIMEOUT_PERIOD) {
 		nodeStatus &= ~NODE_STATUS_FLAG_RUDDER_ACTIVE;
+		hilDataToTransmit.data.sensorOverride = false;
 	}
 
 	// We don't do any transmission of CAN messages if we're inactive.
@@ -293,30 +310,33 @@ uint8_t CanReceiveMessages(void)
 	do {
 		int foundOne = Ecan1Receive(&msg, &messagesLeft);
 		if (foundOne) {
-			// Process throttle messages here. Anything not explicitly handled is assumed to be a NMEA2000 message.
-			if (msg.id == ACS300_CAN_ID_WR_PARAM) { // From the ACS300
-                uint16_t address, data;
-                Acs300DecodeWriteParam(msg.payload, &address, &data);
-                if (address == ACS300_PARAM_CC) {
-                    hilDataToTransmit.data.tCommandSpeed = (float)(int16_t)data;
-                }
-			}
-			// Record when we receive status messages from the rudder. If the rudder is running,
-			// use it as part of the simulation instead of the simulated rudder data. Its status is
-			// recorded so that calibration can be checked/ran.
-			else if (msg.id == CAN_MSG_ID_STATUS) {
-				CanMessage msg;
-				uint8_t nodeId;
-				uint16_t status, error;
-				CanMessageDecodeStatus(&msg, &nodeId, &status, &error, NULL);
-				if (nodeId == CAN_NODE_RUDDER_CONTROLLER) {
-					rudderStatus = status;
-					nodeStatus |= NODE_STATUS_FLAG_RUDDER_ACTIVE;
+			if (msg.frame_type == CAN_FRAME_STD) {
+				// Process throttle messages here. Anything not explicitly handled is assumed to be a NMEA2000 message.
+				if (msg.id == ACS300_CAN_ID_WR_PARAM) { // From the ACS300
+					uint16_t address, data;
+					Acs300DecodeWriteParam(msg.payload, &address, &data);
+					if (address == ACS300_PARAM_CC) {
+						hilDataToTransmit.data.tCommandSpeed = (float)(int16_t)data;
+					}
 				}
-			} else {
+				// Record when we receive status messages from the rudder. If the rudder is running,
+				// use it as part of the simulation instead of the simulated rudder data. Its status is
+				// recorded so that calibration can be checked/ran.
+				else if (msg.id == CAN_MSG_ID_STATUS) {
+					uint8_t nodeId;
+					uint16_t status, error;
+					CanMessageDecodeStatus(&msg, &nodeId, &status, &error, NULL);
+					if (nodeId == CAN_NODE_RUDDER_CONTROLLER) {
+						rudderStatus = status;
+						rudderTimeoutCounter = 0;
+						nodeStatus |= NODE_STATUS_FLAG_RUDDER_ACTIVE;
+						hilDataToTransmit.data.sensorOverride = true;
+					}
+				}
+			} else if (msg.frame_type == CAN_FRAME_EXT) {
 				pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
 				switch (pgn) {
-                // Decode the commanded rudder angle from the PGN127245 messages. Either the actual
+				// Decode the commanded rudder angle from the PGN127245 messages. Either the actual
 				// angle or the commanded angle are decoded as appropriate. This is in order to
 				// support actual sensor mode where the real rudder is used in simulation.
 				case PGN_RUDDER: {
@@ -334,6 +354,8 @@ uint8_t CanReceiveMessages(void)
 					}
 				} break;
 				}
+			} else {
+				FATAL_ERROR();
 			}
 
 			++messagesHandled;
