@@ -53,7 +53,10 @@ enum {
     SCHED_ID_ATT_ANGLE,
 
     // DST800 messages
-    SCHED_ID_WATER_SPD
+    SCHED_ID_WATER_SPD,
+
+	// HIL messages, specifically the NODE_STATUS message
+	SCHED_ID_HIL_STATUS
 };
 
 // This variable is for tracking the status of the rudder subsystem. It broadcats status messages @
@@ -65,12 +68,24 @@ enum {
 #define RUDDER_TIMEOUT_PERIOD 100
 static uint16_t rudderTimeoutCounter = 0;
 
+// This variable is used for determining when the propeller is active. Everytime a message is
+// received, the counter is reset and if we haven't seem a prop message for 2 timesteps, we consider
+// it inactive. Note that the ACS300 also goes inactive if the e-stop has been pulled.
+#define PROP_TIMEOUT_PERIOD 2
+static uint16_t propTimeoutCounter = 0;
+
+// This variable is used for determining when the RC node is active. Everytime a status message is
+// received, the counter is reset and if we haven't seem a prop message for 2 transmission periods,
+// we consider it inactive.
+#define RC_TIMEOUT_PERIOD 100
+static uint16_t rcTimeoutCounter = 0;
+
 // Track the status of the rudder subsystem. Used to check if it's calibrated. If not, calibration
 // is triggered when HIL mode is started. Bit 0 is 1 when it has been calibrated.
 static uint16_t rudderStatus = 0;
 
 // Set up the message scheduler's various data structures.
-#define ECAN_MSGS_SIZE 9
+#define ECAN_MSGS_SIZE 10
 static uint8_t ids[ECAN_MSGS_SIZE] = {
     SCHED_ID_RUDDER_ANGLE,
     SCHED_ID_RUDDER_LIMITS,
@@ -80,7 +95,8 @@ static uint8_t ids[ECAN_MSGS_SIZE] = {
     SCHED_ID_COG_SOG,
     SCHED_ID_GPS_FIX,
     SCHED_ID_ATT_ANGLE,
-    SCHED_ID_WATER_SPD
+    SCHED_ID_WATER_SPD,
+    SCHED_ID_HIL_STATUS
 };
 static uint16_t tsteps[ECAN_MSGS_SIZE][2][8] = {};
 static uint8_t  mSizes[ECAN_MSGS_SIZE];
@@ -193,6 +209,11 @@ void HilNodeInit(void)
     if (!AddMessageRepeating(&sched, SCHED_ID_GPS_FIX, 5)) {
 		FATAL_ERROR();
     }
+
+    // Transmit HIL status at 2Hz
+    if (!AddMessageRepeating(&sched, SCHED_ID_HIL_STATUS, 2)) {
+		FATAL_ERROR();
+    }
 }
 
 void HilNodeBlink(void)
@@ -244,58 +265,73 @@ void HilNodeTimer100Hz(void)
     static uint8_t msgs[ECAN_MSGS_SIZE];
 
 	// Check the status of the rudder, setting it to inactive if the timer expired.
-	if (++rudderTimeoutCounter >= RUDDER_TIMEOUT_PERIOD) {
+	if (++rudderTimeoutCounter > RUDDER_TIMEOUT_PERIOD) {
 		nodeStatus &= ~NODE_STATUS_FLAG_RUDDER_ACTIVE;
 		hilDataToTransmit.data.sensorOverride = false;
 	}
 
-	// We don't do any transmission of CAN messages if we're inactive.
-	if (!HIL_IS_ACTIVE()) {
-		return;
+	// Check the status of the rudder, setting it to inactive if the timer expired.
+	if (++propTimeoutCounter > PROP_TIMEOUT_PERIOD) {
+		nodeStatus &= ~NODE_STATUS_FLAG_PROP_ACTIVE;
+	}
+
+	// Check the status of the RC node, setting it to inactive if the timer expired.
+	if (++rcTimeoutCounter > RC_TIMEOUT_PERIOD) {
+		nodeStatus &= ~NODE_STATUS_FLAG_RC_ACTIVE;
 	}
 
     uint8_t messagesToSend = GetMessagesForTimestep(&sched, msgs);
     int i;
     CanMessage msg = {};
     for (i = 0; i < messagesToSend; ++i) {
-        switch (msgs[i]) {
+		// Only transmit HIL-related messages if HIL is active.
+		if (HIL_IS_ACTIVE()) {
+			switch (msgs[i]) {
 			// Emulate the RC node
             case SCHED_ID_RC_STATUS:
-                CanMessagePackageStatus(&msg, CAN_NODE_RC, 0, 0, 0);
-                Ecan1Transmit(&msg);
-            break;
+				CanMessagePackageStatus(&msg, CAN_NODE_RC, 0, 0, 0);
+				Ecan1Transmit(&msg);
+				break;
 			// Emulate the rudder node
             case SCHED_ID_RUDDER_ANGLE:
 				if (!(nodeStatus & NODE_STATUS_FLAG_RUDDER_ACTIVE)) {
 					PackagePgn127245(&msg, CAN_NODE_RUDDER_CONTROLLER, 0xFF, 0xF, NAN, hilReceivedData.data.rAngle);
 					Ecan1Transmit(&msg);
 				}
-            break;
+				break;
             case SCHED_ID_RUDDER_LIMITS:
 				if (!(nodeStatus & NODE_STATUS_FLAG_RUDDER_ACTIVE)) {
 					CanMessagePackageRudderDetails(&msg, 0, 0, 0, false, false, true, true, false);
 					Ecan1Transmit(&msg);
 				}
-            break;
+				break;
 			// Emulate the ACS300
             case SCHED_ID_THROTTLE_STATUS:
-                Acs300PackageHeartbeat(&msg, (uint16_t)hilReceivedData.data.tSpeed, 0, 0, 0);
-                Ecan1Transmit(&msg);
-            break;
+				if (!(nodeStatus & NODE_STATUS_FLAG_PROP_ACTIVE)) {
+					Acs300PackageHeartbeat(&msg, (uint16_t)hilReceivedData.data.tSpeed, 0, 0, 0);
+					Ecan1Transmit(&msg);
+				}
+				break;
 			// Emulate the GPS200
             case SCHED_ID_LAT_LON:
                 PackagePgn129025(&msg, nodeId, hilReceivedData.data.gpsLatitude, hilReceivedData.data.gpsLongitude);
                 Ecan1Transmit(&msg);
-            break;
+				break;
             case SCHED_ID_COG_SOG:
                 PackagePgn129026(&msg, nodeId, 0xFF, 0x7, hilReceivedData.data.gpsCog, hilReceivedData.data.gpsSog);
                 Ecan1Transmit(&msg);
-            break;
+				break;
             case SCHED_ID_GPS_FIX:
                 PackagePgn129539(&msg, nodeId, 0xFF, PGN_129539_MODE_3D, PGN_129539_MODE_3D, 100, 100, 100);
                 Ecan1Transmit(&msg);
-            break;
+				break;
+			}
         }
+
+		// We always transmit the status of this HIL node.
+		if (msgs[i] == SCHED_ID_HIL_STATUS) {
+			NodeTransmitStatus();
+		}
     }
 }
 
@@ -311,13 +347,22 @@ uint8_t CanReceiveMessages(void)
 		int foundOne = Ecan1Receive(&msg, &messagesLeft);
 		if (foundOne) {
 			if (msg.frame_type == CAN_FRAME_STD) {
-				// Process throttle messages here. Anything not explicitly handled is assumed to be a NMEA2000 message.
+				// Process throttle command messages here that originate from the primary controller
+				// or the manual control node.
 				if (msg.id == ACS300_CAN_ID_WR_PARAM) { // From the ACS300
 					uint16_t address, data;
 					Acs300DecodeWriteParam(msg.payload, &address, &data);
 					if (address == ACS300_PARAM_CC) {
 						hilDataToTransmit.data.tCommandSpeed = (float)(int16_t)data;
 					}
+				}
+				// Log heartbeat messages from the ACS300. Primarily used to check if the ACS300 is
+				// connected. Eventually I will want to return the propeller speed to the PC.
+				else if (msg.id == ACS300_CAN_ID_HRTBT) {
+					uint16_t rpm, torque, voltage, status;
+					Acs300DecodeHeartbeat(msg.payload, &rpm, &torque, &voltage, &status);
+					propTimeoutCounter = 0;
+					nodeStatus |= NODE_STATUS_FLAG_PROP_ACTIVE;
 				}
 				// Record when we receive status messages from the rudder. If the rudder is running,
 				// use it as part of the simulation instead of the simulated rudder data. Its status is
@@ -331,6 +376,9 @@ uint8_t CanReceiveMessages(void)
 						rudderTimeoutCounter = 0;
 						nodeStatus |= NODE_STATUS_FLAG_RUDDER_ACTIVE;
 						hilDataToTransmit.data.sensorOverride = true;
+					} else if (nodeId == CAN_NODE_RC) {
+						rcTimeoutCounter = 0;
+						nodeStatus |= NODE_STATUS_FLAG_RC_ACTIVE;
 					}
 				}
 			} else if (msg.frame_type == CAN_FRAME_EXT) {

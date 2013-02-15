@@ -4,11 +4,17 @@
 /**
  * Declare flags for use with checking the `nodeStatus` variable declared in `Node.h`
  */
-// Set when HIL is active and receiving telemetry from the PC
-#define NODE_STATUS_FLAG_HIL_ACTIVE 0x0001
-// Set when the rudder subsystem is actively transmitting. This also indicates when sensor feedback
-// mode is engaged.
-#define NODE_STATUS_FLAG_RUDDER_ACTIVE 0x0002
+enum HIL_STATUS_FLAGS {
+	// If the node is currently receiving UDP telemetry from the PC.
+	NODE_STATUS_FLAG_HIL_ACTIVE    = 0x0001,
+	// Set when the rudder subsystem is actively transmitting. This also indicates when sensor
+	// feedback mode is engaged.
+	NODE_STATUS_FLAG_RUDDER_ACTIVE = 0x0002,
+	// This bit will be set if the ACS300 board is actively transmitting.
+	NODE_STATUS_FLAG_PROP_ACTIVE   = 0x0004,
+	// This bit will be set if the RC board is actively transmitting.
+	NODE_STATUS_FLAG_RC_ACTIVE     = 0x0008
+};
 
 /**
  * Initialization function, configures everything the node needs.
