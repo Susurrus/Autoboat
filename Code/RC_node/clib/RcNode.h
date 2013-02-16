@@ -26,8 +26,6 @@ void RcNodeInit(void);
 
 bool GetEstopStatus(void);
 
-void SendThrottleCommand(int16_t command);
-
 /**
  * This function restored the calibrated range for the RC receiver PWM signals if any exist.
  * Since the EEPROM is initialized to 0xFFFF for each uint16 we only restore the values if

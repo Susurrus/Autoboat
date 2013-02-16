@@ -68,20 +68,6 @@ bool GetEstopStatus(void)
     return estopActive;
 }
 
-void SendThrottleCommand(int16_t command)
-{
-	CanMessage msg;
-
-	// If the commanded current is non-zero, make sure we set the ACS300 into run mode.
-	if (command != 0) {
-		Acs300PackageVelocityCommand(&msg, 0, 0, ACS300_COMMAND_RUN);
-		Ecan1Transmit(&msg);
-	}
-
-	Acs300PackageWriteParam(&msg, ACS300_PARAM_CC, command);
-	Ecan1Transmit(&msg);
-}
-
 void InitCalibrationRange(void)
 {
 	uint16_t tmp;

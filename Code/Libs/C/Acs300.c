@@ -1,6 +1,20 @@
 #include "Acs300.h"
 #include "Packing.h"
 
+void Acs300SendThrottleCommand(int16_t command)
+{
+	CanMessage msg;
+
+	// If the commanded current is non-zero, make sure we set the ACS300 into run mode.
+	if (command != 0) {
+		Acs300PackageVelocityCommand(&msg, 0, 0, ACS300_COMMAND_RUN);
+		Ecan1Transmit(&msg);
+	}
+
+	Acs300PackageWriteParam(&msg, ACS300_PARAM_CC, command);
+	Ecan1Transmit(&msg);
+}
+
 void Acs300PackageVelocityCommand(CanMessage *msg, int16_t torqueFeedForward, int16_t velCommand, uint16_t status)
 {
     msg->id = ACS300_CAN_ID_VEL_CMD;

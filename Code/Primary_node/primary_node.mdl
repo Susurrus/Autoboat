@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2368"
+    ComputedModelVersion    "1.2370"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -29,9 +29,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Feb 13 17:39:18 2013"
-  RTWModifiedTimeStamp	  282671819
-  ModelVersionFormat	  "1.%<AutoIncrement:2368>"
+  LastModifiedDate	  "Sat Feb 16 13:46:26 2013"
+  RTWModifiedTimeStamp	  282919005
+  ModelVersionFormat	  "1.%<AutoIncrement:2370>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -677,7 +677,7 @@ Model {
 		Name			"OPTIM_GCC"
 		Value			"-mcpu=33fj128MC802 -O3 -fschedule-insns -fschedule-insns2                                                  "
 		"                                                                                                                    "
-		"                                      -fno-short-double"
+		"                                       -fno-short-double"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -1148,7 +1148,7 @@ Model {
   }
   System {
     Name		    "primary_node"
-    Location		    [202, 82, 1901, 1027]
+    Location		    [352, 132, 1796, 949]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1162,7 +1162,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "24453"
+    SIDHighWatermark	    "24460"
     Block {
       BlockType		      SubSystem
       Name		      "Actuator\nOutputs"
@@ -1407,7 +1407,7 @@ Model {
 	    }
 	    Block {
 	      BlockType		      Reference
-	      Name		      "Transmit throttle speed command\n[Rudder.c]"
+	      Name		      "Transmit throttle speed command\n[Acs300.c]"
 	      SID		      "23214"
 	      Tag		      "dsPIC_dsPIC_CFunctionCall"
 	      Ports		      [1]
@@ -1417,7 +1417,7 @@ Model {
 	      SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
 	      SourceType	      "C Function Call"
 	      FctUpdate		      "Output Function"
-	      fctName		      "SendThrottleCommand"
+	      fctName		      "Acs300SendThrottleCommand"
 	      INPUT_SIZE	      "1"
 	      INPUT1		      "int16"
 	      INPUT2		      "--"
@@ -1427,8 +1427,8 @@ Model {
 	      SampleTime	      "-1"
 	      InputType		      "[ 3 ]"
 	      OutputType	      "[ ]"
-	      FctDeclaration	      "extern void SendThrottleCommand(int16_T u1);"
-	      FctCall		      "SendThrottleCommand(%u1);"
+	      FctDeclaration	      "extern void Acs300SendThrottleCommand(int16_T u1);"
+	      FctCall		      "Acs300SendThrottleCommand(%u1);"
 	      OrderingInOutPopup      "None"
 	      FctStart		      "None"
 	      FctStart_Name	      "Init_onlyOnce"
@@ -1451,7 +1451,7 @@ Model {
 	    Line {
 	      SrcBlock		      "Data Type Conversion"
 	      SrcPort		      1
-	      DstBlock		      "Transmit throttle speed command\n[Rudder.c]"
+	      DstBlock		      "Transmit throttle speed command\n[Acs300.c]"
 	      DstPort		      1
 	    }
 	  }
@@ -13575,6 +13575,44 @@ Model {
 	}
 	Block {
 	  BlockType		  Reference
+	  Name			  "Check whether the ACS300 is\nbroadcasting valid messages, \ncause if it isn't that means\ne-stop was acti"
+	  "vated\n[EcanSensors.c]"
+	  SID			  "23234"
+	  Tag			  "dsPIC_dsPIC_CFunctionCall"
+	  Ports			  [0, 1]
+	  Position		  [625, 177, 775, 223]
+	  BackgroundColor	  "orange"
+	  LibraryVersion	  "3.84"
+	  SourceBlock		  "dsPICdrivers/OTHERS/C Function Call"
+	  SourceType		  "C Function Call"
+	  FctUpdate		  "Output Function"
+	  fctName		  "GetPropActive"
+	  INPUT_SIZE		  "1"
+	  INPUT1		  "--"
+	  INPUT2		  "--"
+	  INPUT3		  "--"
+	  OUTPUT_SIZE		  "1"
+	  OUTPUT1		  "uint8"
+	  SampleTime		  "T_step"
+	  InputType		  "[ ]"
+	  OutputType		  "[ 2 ]"
+	  FctDeclaration	  "extern uint8_T GetPropActive();"
+	  FctCall		  "%y1 = GetPropActive();"
+	  OrderingInOutPopup	  "None"
+	  FctStart		  "None"
+	  FctStart_Name		  "Init_onlyOnce"
+	  FctStart_Declaration	  "inline extern void Init_onlyOnce();"
+	  FctStart_Call		  "Init_onlyOnce();"
+	  FctInit		  "None"
+	  FctInit_Name		  "Init_Reset"
+	  FctInit_Declaration	  "inline extern void Init_Reset();"
+	  FctInit_Call		  "Init_Reset();"
+	  PinDigitalInput	  "[]"
+	  PinDigitalOutput	  "[]"
+	  AnalogueInput		  "[]"
+	}
+	Block {
+	  BlockType		  Reference
 	  Name			  "Check whether the GPS is\nbroadcasting valid messages\n[EcanSensors.c]"
 	  SID			  "23232"
 	  Tag			  "dsPIC_dsPIC_CFunctionCall"
@@ -13612,17 +13650,18 @@ Model {
 	}
 	Block {
 	  BlockType		  Reference
-	  Name			  "Check whether the GPS is\nbroadcasting valid messages\n[EcanSensors.c]1"
-	  SID			  "23234"
+	  Name			  "Check whether the RC node is\nactive and enabled. We set a status bit\nhere, but this is also used to dis"
+	  "able\nactuator outputs when manual control\nis on.\n[EcanSensors.c]"
+	  SID			  "24455"
 	  Tag			  "dsPIC_dsPIC_CFunctionCall"
 	  Ports			  [0, 1]
-	  Position		  [625, 177, 775, 223]
+	  Position		  [545, 377, 695, 423]
 	  BackgroundColor	  "orange"
 	  LibraryVersion	  "3.84"
 	  SourceBlock		  "dsPICdrivers/OTHERS/C Function Call"
 	  SourceType		  "C Function Call"
 	  FctUpdate		  "Output Function"
-	  fctName		  "GetPropActive"
+	  fctName		  "GetRcNodeEnabled"
 	  INPUT_SIZE		  "1"
 	  INPUT1		  "--"
 	  INPUT2		  "--"
@@ -13632,8 +13671,8 @@ Model {
 	  SampleTime		  "T_step"
 	  InputType		  "[ ]"
 	  OutputType		  "[ 2 ]"
-	  FctDeclaration	  "extern uint8_T GetPropActive();"
-	  FctCall		  "%y1 = GetPropActive();"
+	  FctDeclaration	  "extern uint8_T GetRcNodeEnabled();"
+	  FctCall		  "%y1 = GetRcNodeEnabled();"
 	  OrderingInOutPopup	  "None"
 	  FctStart		  "None"
 	  FctStart_Name		  "Init_onlyOnce"
@@ -14789,7 +14828,7 @@ Model {
 	  MaskIconUnits		  "autoscale"
 	  System {
 	    Name		    "Store reset lines"
-	    Location		    [580, 259, 1097, 690]
+	    Location		    [2141, 395, 2658, 826]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -15936,6 +15975,98 @@ Model {
 	  }
 	}
 	Block {
+	  BlockType		  SubSystem
+	  Name			  "Update nodeStatus"
+	  SID			  "24456"
+	  Ports			  [0, 0, 0, 1]
+	  Position		  [740, 424, 840, 466]
+	  ZOrder		  -23
+	  TreatAsAtomicUnit	  on
+	  MinAlgLoopOccurrences	  off
+	  PropExecContextOutsideSubsystem off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  Opaque		  off
+	  RequestExecContextInheritance	off
+	  MaskHideContents	  off
+	  System {
+	    Name		    "Update nodeStatus"
+	    Location		    [401, 346, 899, 646]
+	    Open		    off
+	    ModelBrowserVisibility  on
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      TriggerPort
+	      Name		      "Trigger"
+	      SID		      "24457"
+	      Ports		      []
+	      Position		      [225, 20, 245, 40]
+	      ZOrder		      -2
+	      ShowName		      off
+	      TriggerType	      "either"
+	      StatesWhenEnabling      "held"
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Bitwise\nOperator"
+	      SID		      "24458"
+	      Ports		      [1, 1]
+	      Position		      [215, 91, 255, 129]
+	      ZOrder		      -3
+	      ShowName		      off
+	      LibraryVersion	      "1.256"
+	      SourceBlock	      "simulink/Logic and Bit\nOperations/Bitwise\nOperator"
+	      SourceType	      "Bitwise Operator"
+	      logicop		      "XOR"
+	      UseBitMask	      on
+	      NumInputPorts	      "1"
+	      BitMask		      "hex2dec('40')"
+	      BitMaskRealWorld	      "Stored Integer"
+	    }
+	    Block {
+	      BlockType		      DataStoreRead
+	      Name		      "Data Store\nRead"
+	      SID		      "24459"
+	      Ports		      [0, 1]
+	      Position		      [65, 97, 145, 123]
+	      ZOrder		      -5
+	      ShowName		      off
+	      DataStoreName	      "nodeStatus"
+	    }
+	    Block {
+	      BlockType		      DataStoreWrite
+	      Name		      "Data Store\nWrite"
+	      SID		      "24460"
+	      Ports		      [1]
+	      Position		      [315, 94, 390, 126]
+	      ZOrder		      -6
+	      ShowName		      off
+	      DataStoreName	      "nodeStatus"
+	    }
+	    Line {
+	      SrcBlock		      "Bitwise\nOperator"
+	      SrcPort		      1
+	      DstBlock		      "Data Store\nWrite"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Data Store\nRead"
+	      SrcPort		      1
+	      DstBlock		      "Bitwise\nOperator"
+	      DstPort		      1
+	    }
+	  }
+	}
+	Block {
 	  BlockType		  Reference
 	  Name			  "automode status\n(automode LED)"
 	  SID			  "23216"
@@ -16036,7 +16167,8 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Check whether the GPS is\nbroadcasting valid messages\n[EcanSensors.c]1"
+	  SrcBlock		  "Check whether the ACS300 is\nbroadcasting valid messages, \ncause if it isn't that means\ne-stop was a"
+	  "ctivated\n[EcanSensors.c]"
 	  SrcPort		  1
 	  DstBlock		  "Logical\nOperator5"
 	  DstPort		  1
@@ -16322,6 +16454,14 @@ Model {
 	  SrcPort		  1
 	  DstBlock		  "automode status\n(automode LED)"
 	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Check whether the RC node is\nactive and enabled. We set a status bit\nhere, but this is also used to "
+	  "disable\nactuator outputs when manual control\nis on.\n[EcanSensors.c]"
+	  SrcPort		  1
+	  Points		  [90, 0]
+	  DstBlock		  "Update nodeStatus"
+	  DstPort		  trigger
 	}
 	Annotation {
 	  Name			  "This subsystem handles all of the sensor input and pipes out relevant input. Data can come\nfrom either H"
