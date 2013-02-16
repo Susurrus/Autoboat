@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2370"
+    ComputedModelVersion    "1.2372"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -29,9 +29,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sat Feb 16 13:46:26 2013"
+  LastModifiedDate	  "Sat Feb 16 15:33:01 2013"
   RTWModifiedTimeStamp	  282919005
-  ModelVersionFormat	  "1.%<AutoIncrement:2370>"
+  ModelVersionFormat	  "1.%<AutoIncrement:2372>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -677,7 +677,7 @@ Model {
 		Name			"OPTIM_GCC"
 		Value			"-mcpu=33fj128MC802 -O3 -fschedule-insns -fschedule-insns2                                                  "
 		"                                                                                                                    "
-		"                                       -fno-short-double"
+		"                                         -fno-short-double"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -1148,7 +1148,7 @@ Model {
   }
   System {
     Name		    "primary_node"
-    Location		    [352, 132, 1796, 949]
+    Location		    [299, 138, 1806, 955]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1162,12 +1162,12 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "24460"
+    SIDHighWatermark	    "24463"
     Block {
       BlockType		      SubSystem
       Name		      "Actuator\nOutputs"
       SID		      "12806"
-      Ports		      [2]
+      Ports		      [2, 0, 1]
       Position		      [880, 496, 985, 569]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
@@ -1207,6 +1207,15 @@ Model {
 	  BackgroundColor	  "darkGreen"
 	  Port			  "2"
 	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  EnablePort
+	  Name			  "Enable"
+	  SID			  "24461"
+	  Ports			  []
+	  Position		  [302, 20, 322, 40]
+	  ZOrder		  -2
+	  ShowName		  off
 	}
 	Block {
 	  BlockType		  Reference
@@ -12307,6 +12316,15 @@ Model {
     }
     Block {
       BlockType		      From
+      Name		      "From2"
+      SID		      "24462"
+      Position		      [750, 449, 805, 471]
+      BackgroundColor	      "magenta"
+      ShowName		      off
+      GotoTag		      "reset"
+    }
+    Block {
+      BlockType		      From
       Name		      "From5"
       SID		      "12791"
       Position		      [725, 504, 805, 526]
@@ -12483,6 +12501,18 @@ Model {
       PinDigitalInput	      "[]"
       PinDigitalOutput	      "[]"
       AnalogueInput	      "[]"
+    }
+    Block {
+      BlockType		      Logic
+      Name		      "Logical\nOperator"
+      SID		      "24463"
+      Ports		      [1, 1]
+      Position		      [855, 448, 885, 472]
+      ZOrder		      -17
+      ShowName		      off
+      Operator		      "NOT"
+      AllPortsSameDT	      off
+      OutDataTypeStr	      "boolean"
     }
     Block {
       BlockType		      SubSystem
@@ -13444,7 +13474,7 @@ Model {
 	      logicop		      "XOR"
 	      UseBitMask	      on
 	      NumInputPorts	      "1"
-	      BitMask		      "hex2dec('40')"
+	      BitMask		      "hex2dec('8')"
 	      BitMaskRealWorld	      "Stored Integer"
 	    }
 	    Block {
@@ -13536,7 +13566,7 @@ Model {
 	      logicop		      "XOR"
 	      UseBitMask	      on
 	      NumInputPorts	      "1"
-	      BitMask		      "hex2dec('20')"
+	      BitMask		      "hex2dec('4')"
 	      BitMaskRealWorld	      "Stored Integer"
 	    }
 	    Block {
@@ -13635,44 +13665,6 @@ Model {
 	  OutputType		  "[ 2 ]"
 	  FctDeclaration	  "extern uint8_T GetGpsEnabled();"
 	  FctCall		  "%y1 = GetGpsEnabled();"
-	  OrderingInOutPopup	  "None"
-	  FctStart		  "None"
-	  FctStart_Name		  "Init_onlyOnce"
-	  FctStart_Declaration	  "inline extern void Init_onlyOnce();"
-	  FctStart_Call		  "Init_onlyOnce();"
-	  FctInit		  "None"
-	  FctInit_Name		  "Init_Reset"
-	  FctInit_Declaration	  "inline extern void Init_Reset();"
-	  FctInit_Call		  "Init_Reset();"
-	  PinDigitalInput	  "[]"
-	  PinDigitalOutput	  "[]"
-	  AnalogueInput		  "[]"
-	}
-	Block {
-	  BlockType		  Reference
-	  Name			  "Check whether the RC node is\nactive and enabled. We set a status bit\nhere, but this is also used to dis"
-	  "able\nactuator outputs when manual control\nis on.\n[EcanSensors.c]"
-	  SID			  "24455"
-	  Tag			  "dsPIC_dsPIC_CFunctionCall"
-	  Ports			  [0, 1]
-	  Position		  [545, 377, 695, 423]
-	  BackgroundColor	  "orange"
-	  LibraryVersion	  "3.84"
-	  SourceBlock		  "dsPICdrivers/OTHERS/C Function Call"
-	  SourceType		  "C Function Call"
-	  FctUpdate		  "Output Function"
-	  fctName		  "GetRcNodeEnabled"
-	  INPUT_SIZE		  "1"
-	  INPUT1		  "--"
-	  INPUT2		  "--"
-	  INPUT3		  "--"
-	  OUTPUT_SIZE		  "1"
-	  OUTPUT1		  "uint8"
-	  SampleTime		  "T_step"
-	  InputType		  "[ ]"
-	  OutputType		  "[ 2 ]"
-	  FctDeclaration	  "extern uint8_T GetRcNodeEnabled();"
-	  FctCall		  "%y1 = GetRcNodeEnabled();"
 	  OrderingInOutPopup	  "None"
 	  FctStart		  "None"
 	  FctStart_Name		  "Init_onlyOnce"
@@ -13885,7 +13877,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From4"
 	  SID			  "23222"
-	  Position		  [1050, 222, 1160, 238]
+	  Position		  [1040, 222, 1160, 238]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "reset_GPS_discon"
@@ -14377,7 +14369,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Manual override\ndetection"
-	    Location		    [472, 123, 1464, 888]
+	    Location		    [239, 190, 1231, 955]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -14828,7 +14820,7 @@ Model {
 	  MaskIconUnits		  "autoscale"
 	  System {
 	    Name		    "Store reset lines"
-	    Location		    [2141, 395, 2658, 826]
+	    Location		    [701, 324, 1218, 755]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -15975,98 +15967,6 @@ Model {
 	  }
 	}
 	Block {
-	  BlockType		  SubSystem
-	  Name			  "Update nodeStatus"
-	  SID			  "24456"
-	  Ports			  [0, 0, 0, 1]
-	  Position		  [740, 424, 840, 466]
-	  ZOrder		  -23
-	  TreatAsAtomicUnit	  on
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  System {
-	    Name		    "Update nodeStatus"
-	    Location		    [401, 346, 899, 646]
-	    Open		    off
-	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "usletter"
-	    PaperUnits		    "inches"
-	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "100"
-	    Block {
-	      BlockType		      TriggerPort
-	      Name		      "Trigger"
-	      SID		      "24457"
-	      Ports		      []
-	      Position		      [225, 20, 245, 40]
-	      ZOrder		      -2
-	      ShowName		      off
-	      TriggerType	      "either"
-	      StatesWhenEnabling      "held"
-	    }
-	    Block {
-	      BlockType		      Reference
-	      Name		      "Bitwise\nOperator"
-	      SID		      "24458"
-	      Ports		      [1, 1]
-	      Position		      [215, 91, 255, 129]
-	      ZOrder		      -3
-	      ShowName		      off
-	      LibraryVersion	      "1.256"
-	      SourceBlock	      "simulink/Logic and Bit\nOperations/Bitwise\nOperator"
-	      SourceType	      "Bitwise Operator"
-	      logicop		      "XOR"
-	      UseBitMask	      on
-	      NumInputPorts	      "1"
-	      BitMask		      "hex2dec('40')"
-	      BitMaskRealWorld	      "Stored Integer"
-	    }
-	    Block {
-	      BlockType		      DataStoreRead
-	      Name		      "Data Store\nRead"
-	      SID		      "24459"
-	      Ports		      [0, 1]
-	      Position		      [65, 97, 145, 123]
-	      ZOrder		      -5
-	      ShowName		      off
-	      DataStoreName	      "nodeStatus"
-	    }
-	    Block {
-	      BlockType		      DataStoreWrite
-	      Name		      "Data Store\nWrite"
-	      SID		      "24460"
-	      Ports		      [1]
-	      Position		      [315, 94, 390, 126]
-	      ZOrder		      -6
-	      ShowName		      off
-	      DataStoreName	      "nodeStatus"
-	    }
-	    Line {
-	      SrcBlock		      "Bitwise\nOperator"
-	      SrcPort		      1
-	      DstBlock		      "Data Store\nWrite"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Data Store\nRead"
-	      SrcPort		      1
-	      DstBlock		      "Bitwise\nOperator"
-	      DstPort		      1
-	    }
-	  }
-	}
-	Block {
 	  BlockType		  Reference
 	  Name			  "automode status\n(automode LED)"
 	  SID			  "23216"
@@ -16455,14 +16355,6 @@ Model {
 	  DstBlock		  "automode status\n(automode LED)"
 	  DstPort		  1
 	}
-	Line {
-	  SrcBlock		  "Check whether the RC node is\nactive and enabled. We set a status bit\nhere, but this is also used to "
-	  "disable\nactuator outputs when manual control\nis on.\n[EcanSensors.c]"
-	  SrcPort		  1
-	  Points		  [90, 0]
-	  DstBlock		  "Update nodeStatus"
-	  DstPort		  trigger
-	}
 	Annotation {
 	  Name			  "This subsystem handles all of the sensor input and pipes out relevant input. Data can come\nfrom either H"
 	  "IL input over the serial port (UART2) or from the actual sensors and is routed\naccording to the current HIL enable"
@@ -16662,6 +16554,19 @@ Model {
       DstBlock		      "Data Store\nWrite1"
       DstPort		      1
     }
+    Line {
+      SrcBlock		      "From2"
+      SrcPort		      1
+      DstBlock		      "Logical\nOperator"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Logical\nOperator"
+      SrcPort		      1
+      Points		      [40, 0]
+      DstBlock		      "Actuator\nOutputs"
+      DstPort		      enable
+    }
     Annotation {
       Name		      "This model is designed to be compiled and uploaded to a dsPIC processor. \nSpecifically this model "
       "is for the CAN node designed by the ASL that runs a dsPIC33FJ128MC802.\nThe following pins are being used on the"
@@ -16688,6 +16593,12 @@ Model {
     Annotation {
       Name		      "Store the reference GPS position used for global/local\ncoordinate transformations."
       Position		      [351, 362]
+      HorizontalAlignment     "left"
+    }
+    Annotation {
+      Name		      "Actuator outputs are only enabled if the controller is not in reset, as that's really\nhow we're de"
+      "fining reset in the context of a node."
+      Position		      [703, 423]
       HorizontalAlignment     "left"
     }
   }

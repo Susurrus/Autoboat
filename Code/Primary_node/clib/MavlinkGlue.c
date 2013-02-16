@@ -23,6 +23,7 @@
 #include "Rudder.h"
 #include "MavlinkGlue.h"
 #include "Node.h"
+#include "PrimaryNode.h"
 
 /**
  * This function converts latitude/longitude/altitude into a north/east/down local tangent plane. The
@@ -125,7 +126,7 @@ static uint8_t groundStationComponentId = 0;
 
 // Globally declare here how many parameters we have.
 // TODO: Move into its own code section
-static uint16_t parameterCount = 2;
+static uint16_t parameterCount = 1;
 
 // Declare a character buffer here to prevent continual allocation/deallocation of MAVLink buffers.
 static uint8_t buf[MAVLINK_MAX_PACKET_LEN];
@@ -266,7 +267,7 @@ void MavLinkSendHeartbeat(void)
 	/// Then we update the system mode using MAV_MODE_FLAGs
 	// Set manual/autonomous mode. Note that they're not mutually exclusive within the MAVLink protocol,
 	// though I treat them as such for my autopilot.
-	if (nodeStatus & (1 << 0)) {
+	if (nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) {
 		mavlink_system.mode |= (MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
 		mavlink_system.mode &= ~MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
 	} else {
@@ -464,7 +465,7 @@ void MavLinkSendLocalPosition(void)
  */
 void MavLinkSendRcScaledData(void)
 {
-	if (!(nodeStatus & 1)) {
+	if (!(nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE)) {
 		mavlink_message_t msg;
 
 		mavlink_msg_rc_channels_scaled_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
@@ -592,16 +593,10 @@ void _transmitParameter(uint16_t id)
 
 	switch (id) {
 		case 0:
-			x.param_uint32 = (nodeStatus & (1 << 0))?1:0;
+			x.param_uint32 = (nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE)?1:0;
 			valueMsg.param_value = x.param_float;
 			valueMsg.param_index = 0;
 			strncpy(valueMsg.param_id, "MODE_AUTO", 16);
-		break;
-		case 1:
-			x.param_uint32 = (nodeStatus & (1 << 3))?1:0;
-			valueMsg.param_value = x.param_float;
-			valueMsg.param_index = 1;
-			strncpy(valueMsg.param_id, "MODE_RCDISCON", 16);
 		break;
 		default:
 			return; // Do nothing if there's no matching parameter.
@@ -682,7 +677,7 @@ void MavLinkReceiveManualControl(mavlink_manual_control_t *msg)
         // Here we process the buttons and update the relevant variables
         // If we detect a rise in the autoMode button press, toggle it.
         if (!(lastButtons & 0x2) && (msg->buttons & 0x2)) {
-            nodeStatus ^= 0x1;
+            nodeStatus ^= PRIMARY_NODE_STATUS_AUTOMODE;
         }
 
         // If the rudder calibration button has been pressed, send that command.
@@ -737,18 +732,11 @@ void MavLinkEvaluateParameterState(uint8_t event, void *data)
 				paramValue.param_float = x.param_value;
 				if (strcmp(x.param_id, "MODE_AUTO") == 0) {
 					if (paramValue.param_uint32) {
-						nodeStatus |= (1 << 0);
+						nodeStatus |= PRIMARY_NODE_STATUS_AUTOMODE;
 					} else {
-						nodeStatus &= ~(1 << 0);
+						nodeStatus &= ~PRIMARY_NODE_STATUS_AUTOMODE;
 					}
 					currentParameter = 0;
-				} else if (strcmp(x.param_id, "MODE_RCDISCON") == 0) {
-					if (paramValue.param_uint32) {
-						nodeStatus |= (1 << 3);
-					} else {
-						nodeStatus &= ~(1 << 3);
-					}
-					currentParameter = 1;
 				}
 				nextState = PARAM_STATE_SINGLETON_SEND_VALUE;
 			} else if (event == PARAM_EVENT_REQUEST_READ_RECEIVED) {
@@ -842,7 +830,7 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 				nextState = MISSION_STATE_SEND_MISSION_COUNT;
 			} else if (event == MISSION_EVENT_COUNT_RECEIVED) {
 				// Don't allow for writing of new missions if we're in autonomous mode.
-				if ((nodeStatus & 0x0001) > 0) {
+				if (nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) {
 					if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_ACK)) {
 						while (1);
 					}
@@ -877,7 +865,7 @@ void MavLinkEvaluateMissionState(uint8_t event, void *data)
 				}
 			} else if (event == MISSION_EVENT_CLEAR_ALL_RECEIVED) {
 				// If we're in autonomous mode, don't allow for clearing the mission list
-				if ((nodeStatus & 0x0001) > 0) {
+				if (nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) {
 					if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_ACK)) {
 						while (1);
 					}
