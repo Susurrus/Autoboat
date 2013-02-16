@@ -71,7 +71,7 @@ bool GetEstopStatus(void)
 void SendThrottleCommand(int16_t command)
 {
 	CanMessage msg;
-	Acs300PackageVelocityCommand(&msg, 0, command, 0);
+	Acs300PackageWriteParam(&msg, ACS300_PARAM_CC, command);
 	Ecan1Transmit(&msg);
 }
 
