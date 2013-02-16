@@ -287,9 +287,10 @@ void HilNodeTimer100Hz(void)
 		// Only transmit HIL-related messages if HIL is active.
 		if (HIL_IS_ACTIVE()) {
 			switch (msgs[i]) {
-			// Emulate the RC node
+			// Emulate the RC node by transmitting its status message.
+			// TODO: Don't transmit this if the RC node is actually broadcasting.
             case SCHED_ID_RC_STATUS:
-				CanMessagePackageStatus(&msg, CAN_NODE_RC, 0, 0, 0);
+				CanMessagePackageStatus(&msg, CAN_NODE_RC, UINT8_MAX, INT8_MAX, UINT8_MAX, 0, 0);
 				Ecan1Transmit(&msg);
 				break;
 			// Emulate the rudder node

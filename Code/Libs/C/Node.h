@@ -61,14 +61,28 @@ extern uint16_t nodeErrors;
 extern uint32_t nodeSystemTime;
 
 /**
- * The ID for the given node. see the CAN_NODE_ID enum.
+ * The ID for the given node.
+ * @see CAN_NODE_ID enum.
  */
 extern uint8_t nodeId;
 
 /**
- * The CPU load for a given node. Units are in percent, so valid values are from 0 to 100.
+ * The CPU load for a given node. Units are in percent, so valid values are from 0 to 100. UINT8_MAX
+ * indicates that this parameter is invalid/unmeasured.
  */
 extern uint8_t nodeCpuLoad;
+
+/**
+ * The temperature from the onboard temp sensor for a given node. Units are in degrees Celsius,
+ * with INT8_MAX being invalid/unmeasured.
+ */
+extern int8_t nodeTemp;
+
+/**
+ * The raw voltage input into the onboard 5V regulator. Units are 0.1V with UINT8_MAX meaning
+ * invalid/unmeasured.
+ */
+extern uint8_t nodeVoltage;
 
 /**
  * Transmit a CAN_MESSAGE_STATUS message using the status and error

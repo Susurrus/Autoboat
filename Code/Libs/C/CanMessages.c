@@ -2,7 +2,7 @@
 #include "EcanDefines.h"
 #include "Packing.h"
 
-void CanMessagePackageStatus(CanMessage *msg, uint8_t nodeId, uint16_t statusBitfield, uint16_t errorBitfield, uint8_t cpuLoad)
+void CanMessagePackageStatus(CanMessage *msg, uint8_t nodeId, uint8_t cpuLoad, int8_t temp, uint8_t voltage, uint16_t status, uint16_t errors)
 {
 	// Set CAN header information.
 	msg->buffer = 0; // Dependent on ECAN configuration.
@@ -16,30 +16,42 @@ void CanMessagePackageStatus(CanMessage *msg, uint8_t nodeId, uint16_t statusBit
 	// Now fill in the three fields:
 	// The node ID
 	msg->payload[0] = nodeId;
+	// And the CPU load
+	msg->payload[1] = cpuLoad;
+	// The onboard temp sensor readings. Units are in degrees celsius
+	msg->payload[2] = temp;
 	// The status bitfield
-	LEPackUint16(&msg->payload[1], statusBitfield);
+	msg->payload[3] = voltage;
+	// The status bitfield
+	LEPackUint16(&msg->payload[4], status);
 	// And the error bitfield
-	LEPackUint16(&msg->payload[3], errorBitfield);
-	// And finally the CPU load
-	msg->payload[5] = cpuLoad;
+	LEPackUint16(&msg->payload[6], errors);
 }
 
-void CanMessageDecodeStatus(const CanMessage *msg, uint8_t *nodeId, uint16_t *statusBitfield, uint16_t *errorBitfield, uint8_t *cpuLoad)
+void CanMessageDecodeStatus(const CanMessage *msg, uint8_t *nodeId, uint8_t *cpuLoad, int8_t *temp, uint8_t *voltage, uint16_t *status, uint16_t *errors)
 {
 	if (nodeId) {
 		*nodeId = msg->payload[0];
 	}
 
-	if (statusBitfield) {
-		LEUnpackUint16(statusBitfield, &msg->payload[1]);
-	}
-
-	if (errorBitfield) {
-		LEUnpackUint16(errorBitfield, &msg->payload[3]);
-	}
-
 	if (cpuLoad) {
-		*cpuLoad = msg->payload[5];
+		*cpuLoad = msg->payload[1];
+	}
+
+	if (temp) {
+		*temp = (int8_t)msg->payload[2];
+	}
+
+	if (voltage) {
+		*voltage = msg->payload[3];
+	}
+
+	if (status) {
+		LEUnpackUint16(status, &msg->payload[4]);
+	}
+
+	if (errors) {
+		LEUnpackUint16(errors, &msg->payload[6]);
 	}
 }
 

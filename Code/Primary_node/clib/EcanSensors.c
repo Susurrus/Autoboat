@@ -174,6 +174,8 @@ uint8_t ProcessAllEcanMessages(void)
 				CanMessageDecodeStatus(&msg, &node, &status, NULL, NULL);
 				if (node == CAN_NODE_RC) {
 					sensorAvailability.rcNode.enabled_counter = 0;
+					// Only if the RC transmitter is connected should the RC node be considered
+					// active.
 					if (status & 0x01) {
 						sensorAvailability.rcNode.active_counter = 0;
 					}

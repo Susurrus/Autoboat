@@ -34,7 +34,7 @@ enum {
     CAN_MSG_SIZE_RUDDER_SET_TX_RATE  = 2,
 
     // General messages
-    CAN_MSG_SIZE_STATUS              = 6,
+    CAN_MSG_SIZE_STATUS              = 8,
 
     // IMU messages (defined by the VSAS-2GM)
     CAN_MSG_SIZE_IMU_DATA            = 6
@@ -44,9 +44,9 @@ enum {
  * Package the data that makes up a STATUS CAN message.
  * @param cpuLoad This is in units of percent. 0-100 are valid, which any other value invalid. Use 255 (0xFF) to specify an invalid value.
  */
-void CanMessagePackageStatus(CanMessage *msg, uint8_t nodeId, uint16_t statusBitfield, uint16_t errorBitfield, uint8_t cpuLoad);
+void CanMessagePackageStatus(CanMessage *msg, uint8_t nodeId, uint8_t cpuLoad, int8_t temp, uint8_t voltage, uint16_t status, uint16_t errors);
 
-void CanMessageDecodeStatus(const CanMessage *msg, uint8_t *nodeId, uint16_t *statusBitfield, uint16_t *errorBitfield, uint8_t *cpuLoad);
+void CanMessageDecodeStatus(const CanMessage *msg, uint8_t *nodeId, uint8_t *cpuLoad, int8_t *temp, uint8_t *voltage, uint16_t *status, uint16_t *errors);
 /**
  * Package the data that makes up a RUDDER_SET_STATE message into a struct suitable for transmission.
  */
