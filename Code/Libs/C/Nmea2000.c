@@ -147,7 +147,8 @@ uint8_t ParsePgn126992(const uint8_t data[8], uint8_t *seqId, uint8_t *source, u
 	// Field 2: Date in days since Jan 1 1970.
 	// This field can be invalid if all 1's.
 	if (data[2] != 0xFF || data[3] != 0xFF) {
-		uint16_t days = (uint16_t)data[2] | ((uint16_t)data[3] << 8);
+		uint16_t days;
+		LEUnpackUint16(&days, &data[2]);
 
 		// Obtain the offset from epoch based on the number of days
 		// I use local variables here only for consistency with the yearOffset variable.
@@ -173,10 +174,8 @@ uint8_t ParsePgn126992(const uint8_t data[8], uint8_t *seqId, uint8_t *source, u
 
 	// Field 3: Seconds since midnight in units of 1e-4 second.
 	if (data[4] != 0xFF || data[5] != 0xFF || data[6] != 0xFF || data[7] != 0xFF) {
-		uint32_t x = data[4];
-		x |= (uint32_t)data[5] << 8;
-		x |= (uint32_t)data[6] << 8;
-		x |= (uint32_t)data[7] << 8;
+		uint32_t x;
+		LEUnpackUint32(&x, &data[4]);
 
 		uint32_t seconds = x / 1e4;
 		if (hour) {
@@ -224,14 +223,16 @@ uint8_t ParsePgn127245(const uint8_t data[8], uint8_t *instance, uint8_t *direct
 
 	// Field 2: Angle Order. This is a 16-bit field that is used to command rudder angles. This field contains a signed value with the units of 0.0001 radians.
 	if (angleOrder && (data[2] != 0xFF || data[3] != 0x7F)) {
-		int x = (int)data[2] | ((int)data[3] << 8);
+		int16_t x;
+		LEUnpackInt16(&x, &data[2]);
 		*angleOrder = (float)x / 10000.0;
 		fieldStatus |= 0x04;
 	}
 
 	//Field 3: Position. This is a 16-bit field that represents the current rudder angle. A value of all 1s (65535) means that the angle cannot be measured. This field contains a signed value with the units of 0.0001 radians.
 	if (position && (data[4] != 0xFF || data[5] != 0x7F)) {
-		int x = (int)data[4] | ((int)data[5] << 8);
+		int16_t x;
+		LEUnpackInt16(&x, &data[4]);
 		*position = (float)x / 10000.0;
 		fieldStatus |= 0x8;
 	}
