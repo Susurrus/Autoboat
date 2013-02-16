@@ -123,13 +123,13 @@ typedef struct {
 
 extern struct stc {
 	timeoutCounters gps; // GPS is enabled when any CAN messages have been received within the last second, active when enabled and the lat/lon are valid within the last second.
-	timeoutCounters revo_gs; // The Revo GS is enabled when any messages have been received within the last second, active whenever it's enabled.
+	timeoutCounters imu; // The IMU is enabled when any messages have been received within the last second, active whenever it's enabled.
 	timeoutCounters wso100; // The WSO100 is enabled when any messages have been received within the last second, active whenever it's enabled.
 	timeoutCounters dst800; // The DST800 is enabled when any messages have been received within the last second, active whenever depth is valid within the last second (this should only be true when it's in the water)
 	timeoutCounters power; // The power node is enabled when a messages has been received within the last second and active at the same time.
 	timeoutCounters prop; // The ACS300 outputs CAN messages quite frequently. It's enabled whenever one of these messages has been received within the last second and active when it's enabled and in run mode within the last second.
 	timeoutCounters rudder; // The rudder controller outputs messages quite frequently also. It's enabled whenever one of these messages has been received within the last second. It's active when it's enabled and calibrated and done calibrating.
-        timeoutCounters rcNode; // The RC CAN node that provides override manual control.
+	timeoutCounters rcNode; // The RC CAN node that provides override manual control.
 } sensorAvailability;
 
 

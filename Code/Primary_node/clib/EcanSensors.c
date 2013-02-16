@@ -114,11 +114,11 @@ uint8_t ProcessAllEcanMessages(void)
 	if (sensorAvailability.gps.active_counter < 100) {
 		++sensorAvailability.gps.active_counter;
 	}
-	if (sensorAvailability.revo_gs.enabled_counter < 100) {
-		++sensorAvailability.revo_gs.enabled_counter;
+	if (sensorAvailability.imu.enabled_counter < 100) {
+		++sensorAvailability.imu.enabled_counter;
 	}
-	if (sensorAvailability.revo_gs.active_counter < 100) {
-		++sensorAvailability.revo_gs.active_counter;
+	if (sensorAvailability.imu.active_counter < 100) {
+		++sensorAvailability.imu.active_counter;
 	}
 	if (sensorAvailability.wso100.enabled_counter < 100) {
 		++sensorAvailability.wso100.enabled_counter;
@@ -194,7 +194,9 @@ uint8_t ProcessAllEcanMessages(void)
 					!rudderSensorData.Calibrating) {
 					sensorAvailability.rudder.active_counter = 0;
 				}
-			}else if (msg.id == CAN_MSG_ID_IMU_DATA) {
+			} else if (msg.id == CAN_MSG_ID_IMU_DATA) {
+				sensorAvailability.imu.enabled_counter = 0;
+				sensorAvailability.imu.active_counter = 0;
 				CanMessageDecodeImuData(&msg,
 										&revoGsDataStore.heading,
                                         &revoGsDataStore.pitch,
@@ -397,15 +399,15 @@ void UpdateSensorsAvailability(void)
 	} else if (!sensorAvailability.gps.active && sensorAvailability.gps.active_counter == 0) {
 		sensorAvailability.gps.active = true;
 	}
-	if (sensorAvailability.revo_gs.enabled && sensorAvailability.revo_gs.enabled_counter >= 100) {
-		sensorAvailability.revo_gs.enabled = false;
-	} else if (!sensorAvailability.revo_gs.enabled && sensorAvailability.revo_gs.enabled_counter == 0) {
-		sensorAvailability.revo_gs.enabled = true;
+	if (sensorAvailability.imu.enabled && sensorAvailability.imu.enabled_counter >= 100) {
+		sensorAvailability.imu.enabled = false;
+	} else if (!sensorAvailability.imu.enabled && sensorAvailability.imu.enabled_counter == 0) {
+		sensorAvailability.imu.enabled = true;
 	}
-	if (sensorAvailability.revo_gs.active && sensorAvailability.revo_gs.active_counter >= 100) {
-		sensorAvailability.revo_gs.active = false;
-	} else if (!sensorAvailability.revo_gs.active && sensorAvailability.revo_gs.active_counter == 0) {
-		sensorAvailability.revo_gs.active = true;
+	if (sensorAvailability.imu.active && sensorAvailability.imu.active_counter >= 100) {
+		sensorAvailability.imu.active = false;
+	} else if (!sensorAvailability.imu.active && sensorAvailability.imu.active_counter == 0) {
+		sensorAvailability.imu.active = true;
 	}
 	if (sensorAvailability.wso100.enabled && sensorAvailability.wso100.enabled_counter >= 100) {
 		sensorAvailability.wso100.enabled = false;

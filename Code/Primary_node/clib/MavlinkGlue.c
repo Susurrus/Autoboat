@@ -74,6 +74,7 @@ enum {
 	MISSION_STATE_ACK_INVALID_SEQUENCE,
 	MISSION_STATE_ACK_ACCEPTED
 };
+
 // Set up the events necessary for the mission protocol state machine
 enum {
 	MISSION_EVENT_NONE = 0,
@@ -100,7 +101,7 @@ enum {
 // These flags are for use with the SYS_STATUS MAVLink message as a mapping from the Autoboat's
 // sensors to the sensors/controllers available in SYS_STATUS.
 enum {
-	ONBOARD_SENSORS_REVO_GS = (1 << 0) | (1 << 1) | (1 << 2),
+	ONBOARD_SENSORS_IMU = (1 << 0) | (1 << 1) | (1 << 2),
 	ONBOARD_SENSORS_WSO100 = 1 << 3,
 	ONBOARD_SENSORS_GPS = 1 << 5,
 	ONBOARD_CONTROL_YAW_POS = 1 << 12,
@@ -313,7 +314,7 @@ void MavLinkSendStatus(void)
 
 	// Declare that we have onboard sensors: 3D gyro, 3D accelerometer, 3D magnetometer, absolute pressure, GPS
 	// And that we have the following controllers: yaw position, x/y position control, motor outputs/control.
-	uint32_t systemsPresent = ONBOARD_SENSORS_REVO_GS |
+	uint32_t systemsPresent = ONBOARD_SENSORS_IMU |
 	                          ONBOARD_SENSORS_WSO100  |
 	                          ONBOARD_SENSORS_GPS     |
 	                          ONBOARD_CONTROL_YAW_POS |
@@ -322,7 +323,7 @@ void MavLinkSendStatus(void)
 
 	uint32_t systemsEnabled = ONBOARD_CONTROL_YAW_POS;
 	systemsEnabled |= sensorAvailability.gps.enabled?ONBOARD_SENSORS_GPS:0;
-	systemsEnabled |= sensorAvailability.revo_gs.enabled?ONBOARD_SENSORS_REVO_GS:0;
+	systemsEnabled |= sensorAvailability.imu.enabled?ONBOARD_SENSORS_IMU:0;
 	systemsEnabled |= sensorAvailability.wso100.enabled?ONBOARD_SENSORS_WSO100:0;
 	// The DST800 doesn't map into this bitfield.
 	// The power node doesn't map into this bitfield.
@@ -330,7 +331,7 @@ void MavLinkSendStatus(void)
 
 	uint32_t systemsActive = ONBOARD_CONTROL_YAW_POS;
 	systemsActive |= sensorAvailability.gps.active?ONBOARD_SENSORS_GPS:0;
-	systemsActive |= sensorAvailability.revo_gs.active?ONBOARD_SENSORS_REVO_GS:0;
+	systemsActive |= sensorAvailability.imu.active?ONBOARD_SENSORS_IMU:0;
 	systemsActive |= sensorAvailability.wso100.active?ONBOARD_SENSORS_WSO100:0;
 	// The DST800 doesn't map into this bitfield.
 	// The power node doesn't map into this bitfield.
