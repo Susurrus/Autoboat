@@ -107,7 +107,7 @@ uint8_t ProcessAllEcanMessages(void)
 			if (msg.id == CAN_MSG_ID_STATUS) {
 				uint8_t node;
 				uint16_t status, errors;
-				CanMessageDecodeStatus(&msg, &node, &status, &errors, NULL);
+				CanMessageDecodeStatus(&msg, &node, NULL, NULL, NULL, &status, &errors);
 				if (node == CAN_NODE_PRIMARY_CONTROLLER) {
 					if (errors & 0x80) {
 						estopActive = true;

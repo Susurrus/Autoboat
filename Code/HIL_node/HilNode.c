@@ -371,7 +371,7 @@ uint8_t CanReceiveMessages(void)
 				else if (msg.id == CAN_MSG_ID_STATUS) {
 					uint8_t nodeId;
 					uint16_t status, error;
-					CanMessageDecodeStatus(&msg, &nodeId, &status, &error, NULL);
+					CanMessageDecodeStatus(&msg, &nodeId, NULL, NULL, NULL, &status, &error);
 					if (nodeId == CAN_NODE_RUDDER_CONTROLLER) {
 						rudderStatus = status;
 						rudderTimeoutCounter = 0;
