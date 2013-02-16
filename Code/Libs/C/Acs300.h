@@ -29,18 +29,18 @@
 // Declare the command bits for use with the VelocityCommand message. These can be bitwise-ORed
 // together to combine multiple commands in certain cases.
 enum ACS300_COMMAND {
-	ACS300_COMMAND_CLEAR_FAULTS     = 0x0001,
-	ACS300_COMMAND_STANDBY          = 0x0002,
-	ACS300_COMMAND_RUN              = 0x0004,
-	ACS300_COMMAND_WRITE_TO_EEPROM  = 0x0008,
-	ACS300_COMMAND_READ_FROM_EEPROM = 0x0010
+	ACS300_COMMAND_CLEAR_FAULTS     = 0x8000,
+	ACS300_COMMAND_STANDBY          = 0x4000,
+	ACS300_COMMAND_RUN              = 0x2000,
+	ACS300_COMMAND_WRITE_TO_EEPROM  = 0x1000,
+	ACS300_COMMAND_READ_FROM_EEPROM = 0x0800
 };
 
 // Declare the status bits returned from the Heartbeat. Currently incomplete as I don't need every
 // value.
 enum ACS300_STATUS {
-	ACS300_STATUS_BOOTING = 0x0001,
-	ACS300_STATUS_STANDBY = 0x0002
+	ACS300_STATUS_BOOTING = 0x8000,
+	ACS300_STATUS_STANDBY = 0x4000
 };
 
 // The following two functions apply to ACS300_CAN_ID_VEL_CMD
