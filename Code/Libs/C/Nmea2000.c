@@ -240,6 +240,41 @@ uint8_t ParsePgn127245(const uint8_t data[8], uint8_t *instance, uint8_t *direct
 	return fieldStatus;
 }
 
+uint8_t ParsePgn127258(const uint8_t data[8], uint8_t *seqId, uint8_t *varSource, uint16_t *ageOfService, float *variation)
+{
+
+	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
+	uint8_t fieldStatus = 0;
+
+	// Field 0: Sequence ID. This field is used for grouping related PGNs together.
+	if (seqId && (data[0] != 0xFF)) {
+		*seqId = data[0];
+		fieldStatus |= 0x01;
+	}
+
+	// Field 1: Variation source: 4-bit enum, used to indicate the lookup source for the variation field.
+	if (varSource && ((data[1] & 0x0F) != 0x0F)) {
+		*varSource = data[1] & 0x0F;
+		fieldStatus |= 0x02;
+	}
+
+	// Field 2: Age of service: 16-bit unsigned integer indicating days since epoch.
+	if (ageOfService && (data[2] != 0xFF || data[3] != 0xFF)) {
+		LEUnpackUint16(ageOfService, &data[2]);
+		fieldStatus |= 0x04;
+	}
+
+	//Field 3: Position. This is a 16-bit field that represents the current rudder angle. A value of all 1s (65535) means that the angle cannot be measured. This field contains a signed value with the units of 0.0001 radians.
+	if (variation && (data[4] != 0xFF || data[5] != 0x7F)) {
+		int16_t x;
+		LEUnpackInt16(&x, &data[4]);
+		*variation = ((float)x) / 1e4;
+		fieldStatus |= 0x8;
+	}
+
+	return fieldStatus;
+}
+
 uint8_t ParsePgn127508(const uint8_t data[8], uint8_t *seqId, uint8_t *instance, float *voltage, float *current, float *temperature)
 {
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field in the same order as the output arguments to this function.

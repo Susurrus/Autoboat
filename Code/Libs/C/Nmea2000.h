@@ -53,7 +53,6 @@ uint32_t Iso11783Encode(uint32_t pgn, uint8_t src, uint8_t dest, uint8_t pri);
 // Given a number of days return the offset since January 1st 1970 in years, months, and days.
 void DaysSinceEpochToOffset(uint16_t days, uint8_t *offset_years, uint8_t *offset_months, uint8_t *offset_days);
 
-
 /***
  * PGN Parsers
  */
@@ -64,6 +63,9 @@ uint8_t ParsePgn126992(const uint8_t data[8], uint8_t *seqId, uint8_t *source, u
 
 // Units are instance: none, direction: none/enum, angleOrder: .0001 Radians, position: .0001 Radians.
 uint8_t ParsePgn127245(const uint8_t data[8], uint8_t *instance, uint8_t *direction, float *angleOrder, float *position);
+
+// Units are seqId: none, varSource: enum, ageInDays: days since epoch, variation: radians with positive Easterly.
+uint8_t ParsePgn127258(const uint8_t data[8], uint8_t *seqId, uint8_t *varSource, uint16_t *ageOfService, float *variation);
 
 /**
   * Decodes PGN 127508 - Battery Status
@@ -109,6 +111,7 @@ uint8_t ParsePgn130311(const uint8_t data[8], uint8_t *seqId, uint8_t *tempInsta
 enum PGN {
     PGN_SYSTEM_TIME      = 126992,
     PGN_RUDDER           = 127245,
+    PGN_MAG_VARIATION    = 127258,
     PGN_BATTERY_STATUS   = 127508,
     PGN_SPEED            = 128259,
     PGN_WATER_DEPTH      = 128267,
@@ -126,6 +129,21 @@ enum PGN {
  */
 enum PGN_SID {
     PGN_SID_INVALID = 0xFF
+};
+
+/**
+ * Defines the different possible values for the VARIATION_SOURCE field in PGN127258.
+ */
+enum PGN127258_VARIATION_SOURCE {
+	PGN127258_VARIATION_SOURCE_MANUAL     = 0,
+	PGN127258_VARIATION_SOURCE_AUTO_CHART = 1,
+	PGN127258_VARIATION_SOURCE_AUTO_TABLE = 2,
+	PGN127258_VARIATION_SOURCE_AUTO_CALC  = 3,
+	PGN127258_VARIATION_SOURCE_WMM2000    = 4,
+	PGN127258_VARIATION_SOURCE_WMM2005    = 5,
+	PGN127258_VARIATION_SOURCE_WMM2010    = 6,
+	PGN127258_VARIATION_SOURCE_WMM2015    = 7,
+	PGN127258_VARIATION_SOURCE_WMM2020    = 8
 };
 
 /**
