@@ -12,6 +12,16 @@
 //  * bit 2: the ECAN peripheral has reached an error state for transmission
 //  * bit 3: the ECAN peripheral has reached an error state for reception
 
+/**
+ * Define the locations in EEPROM memory for some values that we store there.
+ */
+enum RC_NODE_EEPROM_LOC {
+	RC_NODE_EEPROM_LOC_CAL_RUDD_RANGE_LO  = 10,
+	RC_NODE_EEPROM_LOC_CAL_RUDD_RANGE_HI  = 11,
+	RC_NODE_EEPROM_LOC_CAL_THROT_RANGE_LO = 12,
+	RC_NODE_EEPROM_LOC_CAL_THROT_RANGE_HI = 13
+};
+
 void RcNodeInit(void);
 
 bool GetEstopStatus(void);

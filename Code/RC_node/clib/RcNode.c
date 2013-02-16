@@ -50,6 +50,7 @@ THE SOFTWARE.
 #include "Node.h"
 #include "Rudder.h"
 #include "Acs300.h"
+#include "RcNode.h"
 
 // Store some values for calibrating the RC transmitter.
 uint16_t rcRudderRange[2];
@@ -79,21 +80,21 @@ void InitCalibrationRange(void)
 	uint16_t tmp;
 
 	// Initialize RC transmitter rudder range
-	if ((tmp = DataEERead(10)) != 0xFFFF) {
+	if ((tmp = DataEERead(RC_NODE_EEPROM_LOC_CAL_RUDD_RANGE_LO)) != 0xFFFF) {
 		rcRudderRange[0] = tmp;
 		restoredCalibration = true;
 	}
-	if ((tmp = DataEERead(11)) != 0xFFFF) {
+	if ((tmp = DataEERead(RC_NODE_EEPROM_LOC_CAL_RUDD_RANGE_HI)) != 0xFFFF) {
 		rcRudderRange[1] = tmp;
 		restoredCalibration = true;
 	}
 
 	// Initialize RC transmitter throttle range
-	if ((tmp = DataEERead(12)) != 0xFFFF) {
+	if ((tmp = DataEERead(RC_NODE_EEPROM_LOC_CAL_THROT_RANGE_LO)) != 0xFFFF) {
 		rcThrottleRange[0] = tmp;
 		restoredCalibration = true;
 	}
-	if ((tmp = DataEERead(13)) != 0xFFFF) {
+	if ((tmp = DataEERead(RC_NODE_EEPROM_LOC_CAL_THROT_RANGE_HI)) != 0xFFFF) {
 		rcThrottleRange[1] = tmp;
 		restoredCalibration = true;
 	}
