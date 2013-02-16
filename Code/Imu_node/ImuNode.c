@@ -65,7 +65,6 @@ static MessageSchedule sched = {
 	tsteps
 };
 
-int16_t _convertTo3fp13(float x);
 void ImuNodeEnableCanMessages(void);
 
 void ImuNodeInit(void)

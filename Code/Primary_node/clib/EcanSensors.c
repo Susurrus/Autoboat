@@ -243,8 +243,6 @@ uint8_t ProcessAllEcanMessages(void)
 				case PGN_POSITION_RAP_UPD: { // From the GPS200
 					sensorAvailability.gps.enabled_counter = 0;
 					uint8_t rv = ParsePgn129025(msg.payload, &gpsNewDataStore.lat, &gpsNewDataStore.lon);
-						LATBbits.LATB8 = 1;
-						LATBbits.LATB9 = 1;
 					// Only do something if both latitude and longitude were parsed successfully.
 					if ((rv & 0x03) == 0x03) {
 						// If there was already position data in there, assume this is the start of a new clustering and clear out old data.
@@ -282,8 +280,6 @@ uint8_t ProcessAllEcanMessages(void)
 				case PGN_COG_SOG_RAP_UPD: { // From the GPS200
 					sensorAvailability.gps.enabled_counter = 0;
 					uint8_t rv = ParsePgn129026(msg.payload, NULL, NULL, &gpsNewDataStore.cog, &gpsNewDataStore.sog);
-						LATBbits.LATB8 = 1;
-						LATBbits.LATB9 = 1;
 					// Only update if both course-over-ground and speed-over-ground were parsed successfully.
 					if ((rv & 0x0C) == 0x0C) {
 						// If there was already heading data in there, assume this is the start of a new clustering and clear out old data.
@@ -321,8 +317,6 @@ uint8_t ProcessAllEcanMessages(void)
 				case PGN_GNSS_DOPS: { // From the GPS200
 					sensorAvailability.gps.enabled_counter = 0;
 					uint8_t rv = ParsePgn129539(msg.payload, NULL, NULL, &gpsNewDataStore.mode, &gpsNewDataStore.hdop, &gpsNewDataStore.vdop, NULL);
-						LATBbits.LATB8 = 1;
-						LATBbits.LATB9 = 1;
 					if ((rv & 0x1C) == 0x1C) {
 						// If there was already heading data in there, assume this is the start of a new clustering and clear out old data.
 						if (gpsNewDataStore.receivedMessages & GPSDATA_FIX) {
