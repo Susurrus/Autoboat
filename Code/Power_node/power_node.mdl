@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.47"
+    ComputedModelVersion    "1.49"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -27,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Dec 17 16:08:51 2012"
-  RTWModifiedTimeStamp	  277657309
-  ModelVersionFormat	  "1.%<AutoIncrement:47>"
+  LastModifiedDate	  "Sat Feb 16 21:26:16 2013"
+  RTWModifiedTimeStamp	  282950173
+  ModelVersionFormat	  "1.%<AutoIncrement:49>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -67,6 +67,7 @@ Model {
     $ObjectID		    1
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "gps_node"
+    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -700,19 +701,19 @@ Model {
 	      CustomProperty {
 		DataType		"string"
 		Name			"LDPICTYPE"
-		Value			" -Xlinker --script=C:\\PROGRA~2\\MICROC~1\\xc16\\v1.10\\support\\dsPIC33F\\gld\\p33fj128MC802.gld"
+		Value			" -Xlinker --script=C:\\PROGRA~2\\MICROC~1\\xc16\\v1.11\\support\\dsPIC33F\\gld\\p33fj128MC802.gld"
 	      }
 	      CustomProperty {
 		DataType		"string"
 		Name			"LDLIBPIC"
-		Value			" C:\\PROGRA~2\\MICROC~1\\xc16\\v1.10\\lib\\libpic30-coff.a C:\\PROGRA~2\\MICROC~1\\xc16\\v1.10\\lib\\dsPIC3"
-		"3F\\libp33fj128MC802-coff.a C:\\PROGRA~2\\MICROC~1\\xc16\\v1.10\\lib\\libc-coff.a C:\\PROGRA~2\\MICROC~1\\xc16\\v1.1"
-		"0\\lib\\libm-coff.a"
+		Value			" C:\\PROGRA~2\\MICROC~1\\xc16\\v1.11\\lib\\libpic30-coff.a C:\\PROGRA~2\\MICROC~1\\xc16\\v1.11\\lib\\dsPIC3"
+		"3F\\libp33fj128MC802-coff.a C:\\PROGRA~2\\MICROC~1\\xc16\\v1.11\\lib\\libc-coff.a C:\\PROGRA~2\\MICROC~1\\xc16\\v1.1"
+		"1\\lib\\libm-coff.a"
 	      }
 	      CustomProperty {
 		DataType		"string"
 		Name			"PIC_INCLUDES"
-		Value			" -I C:\\PROGRA~2\\MICROC~1\\xc16\\v1.10\\include"
+		Value			" -I C:\\PROGRA~2\\MICROC~1\\xc16\\v1.11\\include"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -784,6 +785,53 @@ Model {
   }
   BlockParameterDefaults {
     Block {
+      BlockType		      Bias
+      Bias		      "0"
+      SaturateOnIntegerOverflow	on
+    }
+    Block {
+      BlockType		      Constant
+      Value		      "1"
+      VectorParams1D	      on
+      SamplingMode	      "Sample based"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Inherit from 'Constant value'"
+      LockScale		      off
+      SampleTime	      "inf"
+      FramePeriod	      "inf"
+      PreserveConstantTs      off
+    }
+    Block {
+      BlockType		      DataStoreMemory
+      DataStoreName	      "A"
+      ReadBeforeWriteMsg      "none"
+      WriteAfterWriteMsg      "none"
+      WriteAfterReadMsg	      "none"
+      InitialValue	      "0"
+      StateMustResolveToSignalObject off
+      RTWStateStorageClass    "Auto"
+      VectorParams1D	      on
+      ShowAdditionalParam     off
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: auto"
+      LockScale		      off
+      SignalType	      "auto"
+      Dimensions	      "-1"
+      DataLogging	      off
+      DataLoggingLimitDataPoints off
+      DataLoggingMaxPoints    "5000"
+      DataLoggingDecimateData off
+      DataLoggingDecimation   "2"
+      DataLoggingNameMode     "SignalName"
+    }
+    Block {
+      BlockType		      DataStoreWrite
+      DataStoreName	      "A"
+      SampleTime	      "-1"
+    }
+    Block {
       BlockType		      DataTypeConversion
       OutMin		      "[]"
       OutMax		      "[]"
@@ -810,6 +858,21 @@ Model {
       SampleTime	      "-1"
     }
     Block {
+      BlockType		      Product
+      Inputs		      "2"
+      Multiplication	      "Element-wise(.*)"
+      CollapseMode	      "All dimensions"
+      CollapseDim	      "1"
+      InputSameDT	      on
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Same as first input"
+      LockScale		      off
+      RndMeth		      "Zero"
+      SaturateOnIntegerOverflow	on
+      SampleTime	      "-1"
+    }
+    Block {
       BlockType		      SubSystem
       ShowPortLabels	      "FromPortIcon"
       Permissions	      "ReadWrite"
@@ -832,10 +895,25 @@ Model {
       Variant		      off
       GeneratePreprocessorConditionals off
     }
+    Block {
+      BlockType		      Switch
+      Criteria		      "u2 >= Threshold"
+      Threshold		      "0"
+      InputSameDT	      on
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      ZeroCross		      on
+      SampleTime	      "-1"
+      AllowDiffInputSizes     off
+    }
   }
   System {
     Name		    "power_node"
-    Location		    [2, 82, 1902, 1027]
+    Location		    [2, 82, 1527, 671]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -849,14 +927,14 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "64"
+    SIDHighWatermark	    "108"
     Block {
       BlockType		      Reference
       Name		      "ADC Input"
       SID		      "64"
       Tag		      "dsPIC_ADC"
-      Ports		      [0, 2]
-      Position		      [60, 276, 210, 334]
+      Ports		      [0, 4]
+      Position		      [60, 276, 145, 369]
       Priority		      "5"
       LibraryVersion	      "3.84"
       SourceBlock	      "dsPICdrivers/Peripheral I//O/ADC Input"
@@ -867,7 +945,7 @@ Model {
       VoltRefpopup	      "AVdd  -  AVss"
       OutFormatBitspopup      "0000 dddd dddd dddd : Integer"
       InterruptPriority	      "6"
-      ANCHANNELS	      "[0 3]"
+      ANCHANNELS	      "[0 3 1 5]"
       MaxName		      "ANmax = 4095"
       Rin		      "1"
       ADCS		      "53"
@@ -875,8 +953,19 @@ Model {
       Temperature	      "25"
       DMAChannel	      "7"
       SampleTime	      ".1"
-      Status		      "OK  |  Tsmp=6.749e-007 |  T/Channel=1.012e-005 |  Tall=2.025e-005"
+      Status		      "OK  |  Tsmp=6.749e-007 |  T/Channel=1.012e-005 |  Tall=4.049e-005"
       SSRC		      "auto convert"
+    }
+    Block {
+      BlockType		      Bias
+      Name		      "Bias"
+      SID		      "101"
+      Position		      [290, 220, 330, 250]
+      ZOrder		      -5
+      NamePlacement	      "alternate"
+      ShowName		      off
+      Bias		      "-0.5"
+      SaturateOnIntegerOverflow	off
     }
     Block {
       BlockType		      SubSystem
@@ -999,10 +1088,153 @@ Model {
       SaturateOnIntegerOverflow	off
     }
     Block {
+      BlockType		      Reference
+      Name		      "Counter\nFree-Running"
+      SID		      "99"
+      Ports		      [0, 1]
+      Position		      [1040, 210, 1070, 240]
+      ShowName		      off
+      LibraryVersion	      "1.256"
+      SourceBlock	      "simulink/Sources/Counter\nFree-Running"
+      SourceType	      "Counter Free-Running"
+      NumBits		      "32"
+      tsamp		      "T_step"
+    }
+    Block {
+      BlockType		      DataStoreMemory
+      Name		      "Data Store\nMemory"
+      SID		      "65"
+      Position		      [920, 150, 1015, 173]
+      ZOrder		      -4
+      ShowName		      off
+      DataStoreName	      "nodeStatus"
+      ReadBeforeWriteMsg      "warning"
+      WriteAfterWriteMsg      "warning"
+      WriteAfterReadMsg	      "warning"
+      RTWStateStorageClass    "ImportedExtern"
+      OutDataTypeStr	      "uint16"
+    }
+    Block {
+      BlockType		      DataStoreMemory
+      Name		      "Data Store\nMemory3"
+      SID		      "66"
+      Position		      [825, 150, 920, 173]
+      ZOrder		      -4
+      ShowName		      off
+      DataStoreName	      "nodeErrors"
+      ReadBeforeWriteMsg      "warning"
+      WriteAfterWriteMsg      "warning"
+      WriteAfterReadMsg	      "warning"
+      RTWStateStorageClass    "ImportedExtern"
+      OutDataTypeStr	      "uint16"
+    }
+    Block {
+      BlockType		      DataStoreMemory
+      Name		      "Data Store\nMemory4"
+      SID		      "67"
+      Position		      [1205, 150, 1300, 173]
+      ZOrder		      -4
+      ShowName		      off
+      DataStoreName	      "nodeCpuLoad"
+      ReadBeforeWriteMsg      "warning"
+      WriteAfterWriteMsg      "warning"
+      WriteAfterReadMsg	      "warning"
+      RTWStateStorageClass    "ImportedExtern"
+      OutDataTypeStr	      "uint8"
+    }
+    Block {
+      BlockType		      DataStoreMemory
+      Name		      "Data Store\nMemory5"
+      SID		      "68"
+      Position		      [1015, 150, 1110, 173]
+      ZOrder		      -4
+      ShowName		      off
+      DataStoreName	      "nodeId"
+      ReadBeforeWriteMsg      "warning"
+      WriteAfterWriteMsg      "warning"
+      WriteAfterReadMsg	      "warning"
+      RTWStateStorageClass    "ImportedExtern"
+      OutDataTypeStr	      "uint8"
+    }
+    Block {
+      BlockType		      DataStoreMemory
+      Name		      "Data Store\nMemory6"
+      SID		      "69"
+      Position		      [1110, 150, 1205, 173]
+      ZOrder		      -4
+      ShowName		      off
+      DataStoreName	      "nodeSystemTime"
+      ReadBeforeWriteMsg      "warning"
+      WriteAfterWriteMsg      "warning"
+      WriteAfterReadMsg	      "warning"
+      RTWStateStorageClass    "ImportedExtern"
+      OutDataTypeStr	      "uint32"
+    }
+    Block {
+      BlockType		      DataStoreMemory
+      Name		      "Data Store\nMemory7"
+      SID		      "70"
+      Position		      [1300, 150, 1395, 173]
+      ZOrder		      -4
+      ShowName		      off
+      DataStoreName	      "nodeTemp"
+      ReadBeforeWriteMsg      "warning"
+      WriteAfterWriteMsg      "warning"
+      WriteAfterReadMsg	      "warning"
+      RTWStateStorageClass    "ImportedExtern"
+      OutDataTypeStr	      "int8"
+    }
+    Block {
+      BlockType		      DataStoreMemory
+      Name		      "Data Store\nMemory8"
+      SID		      "71"
+      Position		      [1395, 150, 1490, 173]
+      ZOrder		      -4
+      ShowName		      off
+      DataStoreName	      "nodeVoltage"
+      ReadBeforeWriteMsg      "warning"
+      WriteAfterWriteMsg      "warning"
+      WriteAfterReadMsg	      "warning"
+      RTWStateStorageClass    "ImportedExtern"
+      OutDataTypeStr	      "uint8"
+    }
+    Block {
+      BlockType		      DataStoreWrite
+      Name		      "Data Store\nWrite"
+      SID		      "100"
+      Ports		      [1]
+      Position		      [1150, 211, 1230, 239]
+      ZOrder		      -6
+      ShowName		      off
+      DataStoreName	      "nodeSystemTime"
+    }
+    Block {
+      BlockType		      DataStoreWrite
+      Name		      "Data Store\nWrite3"
+      SID		      "102"
+      Ports		      [1]
+      Position		      [400, 218, 485, 252]
+      ZOrder		      -6
+      BackgroundColor	      "gray"
+      ShowName		      off
+      DataStoreName	      "nodeTemp"
+    }
+    Block {
+      BlockType		      DataStoreWrite
+      Name		      "Data Store\nWrite4"
+      SID		      "105"
+      Ports		      [1]
+      Position		      [385, 404, 460, 436]
+      ZOrder		      -6
+      BackgroundColor	      "gray"
+      ShowName		      off
+      DataStoreName	      "nodeVoltage"
+    }
+    Block {
       BlockType		      DataTypeConversion
       Name		      "Data Type Conversion"
       SID		      "45"
-      Position		      [235, 283, 280, 297]
+      Position		      [235, 278, 280, 292]
       ZOrder		      -7
       ShowName		      off
       OutDataTypeStr	      "single"
@@ -1013,10 +1245,46 @@ Model {
       BlockType		      DataTypeConversion
       Name		      "Data Type Conversion1"
       SID		      "46"
-      Position		      [235, 313, 280, 327]
+      Position		      [235, 328, 280, 342]
       ZOrder		      -7
       ShowName		      off
       OutDataTypeStr	      "single"
+      RndMeth		      "Simplest"
+      SaturateOnIntegerOverflow	off
+    }
+    Block {
+      BlockType		      DataTypeConversion
+      Name		      "Data Type Conversion4"
+      SID		      "106"
+      Position		      [310, 409, 365, 431]
+      ZOrder		      -7
+      ShowName		      off
+      RndMeth		      "Simplest"
+      SaturateOnIntegerOverflow	off
+    }
+    Block {
+      BlockType		      Gain
+      Name		      "Gain"
+      SID		      "103"
+      Position		      [235, 220, 265, 250]
+      ZOrder		      -11
+      ShowName		      off
+      Gain		      "3.3/ANmax"
+      ParamDataTypeStr	      "single"
+      OutDataTypeStr	      "single"
+      RndMeth		      "Simplest"
+      SaturateOnIntegerOverflow	off
+    }
+    Block {
+      BlockType		      Gain
+      Name		      "Gain3"
+      SID		      "104"
+      Position		      [350, 220, 380, 250]
+      ZOrder		      -11
+      ShowName		      off
+      Gain		      "100"
+      ParamDataTypeStr	      "single"
+      OutDataTypeStr	      "int8"
       RndMeth		      "Simplest"
       SaturateOnIntegerOverflow	off
     }
@@ -1119,7 +1387,7 @@ Model {
       tmr2345		      "[0  0  0  0]"
       tmr2345cfg	      "[-1 -1 -1 -1]"
       IOautoConf	      on
-      typePort		      "[ 8   0   0   0  10   0   0   0   0   0   0   0   0   0   0   0   0   8   0   0  22   0   0  23"
+      typePort		      "[ 8   8   0   0  10   0   0   0   0   0   0   0   0   0   0   0   0   8   0   8  22   0   0  23"
       "   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
       "   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
       "   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
@@ -1240,6 +1508,18 @@ Model {
     }
     Block {
       BlockType		      Gain
+      Name		      "To ADC V1"
+      SID		      "107"
+      Position		      [195, 405, 225, 435]
+      ZOrder		      -11
+      ShowName		      off
+      Gain		      "3.3/ANmax"
+      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
+      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      SaturateOnIntegerOverflow	off
+    }
+    Block {
+      BlockType		      Gain
       Name		      "To measured\nAmps"
       SID		      "48"
       Position		      [405, 325, 435, 355]
@@ -1259,6 +1539,18 @@ Model {
       Gain		      "1/.06369"
       ParamDataTypeStr	      "Inherit: Inherit via internal rule"
       OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      SaturateOnIntegerOverflow	off
+    }
+    Block {
+      BlockType		      Gain
+      Name		      "To supply voltage"
+      SID		      "108"
+      Position		      [255, 405, 285, 435]
+      ZOrder		      -11
+      Gain		      "23/2*10"
+      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
+      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      RndMeth		      "Simplest"
       SaturateOnIntegerOverflow	off
     }
     Block {
@@ -1298,6 +1590,206 @@ Model {
       PinDigitalOutput	      "[]"
       AnalogueInput	      "[]"
     }
+    Block {
+      BlockType		      SubSystem
+      Name		      "Update CPU Load"
+      SID		      "89"
+      Ports		      []
+      Position		      [855, 206, 954, 250]
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      MaskDisplay	      "disp('');"
+      MaskIconFrame	      on
+      MaskIconOpaque	      on
+      MaskIconRotate	      "none"
+      MaskPortRotate	      "default"
+      MaskIconUnits	      "autoscale"
+      System {
+	Name			"Update CPU Load"
+	Location		[739, 482, 1567, 707]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Reference
+	  Name			  "Calculus Time Step"
+	  SID			  "90"
+	  Tag			  "dsPIC_CalculusTimeStep"
+	  Ports			  [0, 2]
+	  Position		  [25, 25, 115, 60]
+	  ShowName		  off
+	  LibraryVersion	  "3.84"
+	  SourceBlock		  "dsPICdrivers/OTHERS/Calculus Time Step"
+	  SourceType		  "Calculation Time"
+	  SampleTime		  "1"
+	  PR1chk		  on
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Compare\nTo Zero"
+	  SID			  "91"
+	  Ports			  [1, 1]
+	  Position		  [210, 53, 240, 67]
+	  ShowName		  off
+	  LibraryVersion	  "1.256"
+	  SourceBlock		  "simulink/Logic and Bit\nOperations/Compare\nTo Zero"
+	  SourceType		  "Compare To Zero"
+	  relop			  "~="
+	  OutDataTypeStr	  "uint8"
+	  ZeroCross		  on
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant"
+	  SID			  "92"
+	  Position		  [210, 72, 240, 88]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	}
+	Block {
+	  BlockType		  DataStoreWrite
+	  Name			  "Data Store\nWrite"
+	  SID			  "93"
+	  Ports			  [1]
+	  Position		  [540, 29, 615, 61]
+	  ZOrder		  -6
+	  ShowName		  off
+	  DataStoreName		  "nodeCpuLoad"
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion6"
+	  SID			  "94"
+	  Position		  [135, 27, 180, 43]
+	  ShowName		  off
+	  OutDataTypeStr	  "single"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion7"
+	  SID			  "95"
+	  Position		  [135, 42, 180, 58]
+	  ShowName		  off
+	  OutDataTypeStr	  "single"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Gain
+	  Name			  "Gain"
+	  SID			  "96"
+	  Position		  [450, 28, 510, 62]
+	  ShowName		  off
+	  Gain			  "100"
+	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
+	  OutDataTypeStr	  "uint8"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Product
+	  Name			  "Product"
+	  SID			  "97"
+	  Ports			  [2, 1]
+	  Position		  [385, 27, 415, 58]
+	  ShowName		  off
+	  Inputs		  "*/"
+	  InputSameDT		  off
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Switch
+	  Name			  "Switch"
+	  SID			  "98"
+	  Position		  [300, 45, 330, 75]
+	  ShowName		  off
+	  Criteria		  "u2 ~= 0"
+	  InputSameDT		  off
+	  SaturateOnIntegerOverflow off
+	}
+	Line {
+	  SrcBlock		  "Constant"
+	  SrcPort		  1
+	  Points		  [30, 0; 0, -10]
+	  DstBlock		  "Switch"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Compare\nTo Zero"
+	  SrcPort		  1
+	  DstBlock		  "Switch"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Switch"
+	  SrcPort		  1
+	  Points		  [30, 0; 0, -10]
+	  DstBlock		  "Product"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Data Type Conversion7"
+	  SrcPort		  1
+	  Points		  [5, 0]
+	  Branch {
+	    Points		    [0, 10]
+	    DstBlock		    "Compare\nTo Zero"
+	    DstPort		    1
+	  }
+	  Branch {
+	    DstBlock		    "Switch"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  SrcBlock		  "Data Type Conversion6"
+	  SrcPort		  1
+	  DstBlock		  "Product"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Gain"
+	  SrcPort		  1
+	  DstBlock		  "Data Store\nWrite"
+	  DstPort		  1
+	}
+	Line {
+	  Labels		  [1, 0]
+	  SrcBlock		  "Product"
+	  SrcPort		  1
+	  DstBlock		  "Gain"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Calculus Time Step"
+	  SrcPort		  2
+	  DstBlock		  "Data Type Conversion7"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Calculus Time Step"
+	  SrcPort		  1
+	  DstBlock		  "Data Type Conversion6"
+	  DstPort		  1
+	}
+      }
+    }
     Line {
       SrcBlock		      "Data Type Conversion"
       SrcPort		      1
@@ -1308,7 +1800,7 @@ Model {
     Line {
       SrcBlock		      "Data Type Conversion1"
       SrcPort		      1
-      Points		      [15, 0]
+      Points		      [0, 5]
       DstBlock		      "Convert to\nreal Volts1"
       DstPort		      1
     }
@@ -1346,8 +1838,64 @@ Model {
     }
     Line {
       SrcBlock		      "ADC Input"
-      SrcPort		      2
+      SrcPort		      3
       DstBlock		      "Data Type Conversion1"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Counter\nFree-Running"
+      SrcPort		      1
+      DstBlock		      "Data Store\nWrite"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Gain"
+      SrcPort		      1
+      DstBlock		      "Bias"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Bias"
+      SrcPort		      1
+      DstBlock		      "Gain3"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Gain3"
+      SrcPort		      1
+      DstBlock		      "Data Store\nWrite3"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "ADC Input"
+      SrcPort		      2
+      Points		      [65, 0; 0, -75]
+      DstBlock		      "Gain"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "To ADC V1"
+      SrcPort		      1
+      DstBlock		      "To supply voltage"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "ADC Input"
+      SrcPort		      4
+      Points		      [0, 60]
+      DstBlock		      "To ADC V1"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "To supply voltage"
+      SrcPort		      1
+      DstBlock		      "Data Type Conversion4"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Data Type Conversion4"
+      SrcPort		      1
+      DstBlock		      "Data Store\nWrite4"
       DstPort		      1
     }
     Annotation {
