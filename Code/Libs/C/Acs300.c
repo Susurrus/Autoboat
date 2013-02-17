@@ -1,5 +1,6 @@
 #include "Acs300.h"
 #include "Packing.h"
+#include "Ecan1.h"
 
 void Acs300SendThrottleCommand(int16_t command)
 {
