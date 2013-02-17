@@ -156,7 +156,7 @@ struct {
 } mavlinkManualControlData;
 
 // Set up the message scheduler for MAVLink transmission
-#define MAVLINK_MSGS_SIZE 21
+#define MAVLINK_MSGS_SIZE 22
 uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_HEARTBEAT,
 	MAVLINK_MSG_ID_SYS_STATUS,
@@ -172,6 +172,7 @@ uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_DST800,
 	MAVLINK_MSG_ID_REVO_GS,
 	MAVLINK_MSG_ID_MAIN_POWER,
+	MAVLINK_MSG_ID_GPS200,
 	
 	// Only used for transient messages
 	MAVLINK_MSG_ID_MISSION_CURRENT,
@@ -205,7 +206,7 @@ void MavLinkInit(void)
 		mavlinkSchedule.MessageSizes[i] = mavMessageSizes[ids[i]];
 	}
 	
-	const uint8_t const periodicities[] = {2, 2, 1, 10, 10, 5, 4, 4, 2, 10, 4, 2, 2, 5};
+	const uint8_t const periodicities[] = {2, 2, 1, 10, 10, 5, 4, 4, 2, 10, 4, 2, 2, 5, 1};
 	for (i = 0; i < sizeof(periodicities); ++i) {
 		if (!AddMessageRepeating(&mavlinkSchedule, ids[i], periodicities[i])) {
 			while (1);
@@ -659,6 +660,15 @@ void MavLinkSendRevoGsData(void)
 		revoGsDataStore.pitch, revoGsDataStore.pitchStatus,
 		revoGsDataStore.roll, revoGsDataStore.rollStatus,
 		revoGsDataStore.dip, revoGsDataStore.magneticMagnitude);
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	Uart1WriteData(buf, (uint8_t)len);
+}
+
+void MavLinkSendGps200Data(void)
+{
+	mavlink_message_t msg;
+	mavlink_msg_gps200_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+	                        gpsDataStore.variation);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	Uart1WriteData(buf, (uint8_t)len);
 }
@@ -1273,6 +1283,10 @@ void MavLinkTransmit(void)
 
 			case MAVLINK_MSG_ID_REVO_GS:
 				MavLinkSendRevoGsData();
+			break;
+
+			case MAVLINK_MSG_ID_GPS200:
+				MavLinkSendGps200Data();
 			break;
 
 			case MAVLINK_MSG_ID_MAIN_POWER:

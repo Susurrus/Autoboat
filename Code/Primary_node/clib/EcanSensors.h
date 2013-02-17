@@ -81,6 +81,7 @@ struct GpsData {
 	int32_t lat; // Latitude in units of 1e-7 degrees
 	int32_t lon; // Longitude in units of 1e-7 degrees
 	int32_t alt; // Altitude in 1e-6 meters
+	float variation; // Magnetic variation at this GPS coordinate. Units in degrees.
 };
 extern struct GpsData gpsDataStore;
 

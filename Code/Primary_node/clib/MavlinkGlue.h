@@ -145,6 +145,8 @@ void MavLinkSendDst800Data(void);
 
 void MavLinkSendRevoGsData(void);
 
+void MavLinkSendGps200Data(void);
+
 /**
  * Receives a manual control message from QGC and stores the commands from it for use 
  * with the Simulink controller.

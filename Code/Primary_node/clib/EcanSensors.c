@@ -353,6 +353,8 @@ uint8_t ProcessAllEcanMessages(void)
 						}
 					}
 				} break;
+				case PGN_MAG_VARIATION: // From the GPS200
+					ParsePgn127258(msg.payload, NULL, NULL, NULL, &gpsDataStore.variation);
 				case PGN_WIND_DATA: // From the WSO100
 					sensorAvailability.wso100.enabled_counter = 0;
 					if (ParsePgn130306(msg.payload, NULL, &windDataStore.speed, &windDataStore.direction)) {
