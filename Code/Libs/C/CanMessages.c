@@ -177,7 +177,7 @@ void CanMessageDecodeImuData(const CanMessage *msg, float *direction, float *pit
     }
     if (roll) {
         int16_t tmp;
-		BEUnpackInt16(&tmp, &msg->payload[2]);
+		BEUnpackInt16(&tmp, &msg->payload[4]);
         *roll = (float)tmp / 8192.0;
     }
 }
