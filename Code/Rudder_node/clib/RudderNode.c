@@ -184,25 +184,6 @@ void RudderSendTemperature(void)
 	Ecan1Transmit(&msg);
 }
 
-/**
- * Transmits the STATUS message that every node should transmit at 2Hz.
- * TODO: convert this to use the global node* variables declared in Node.h.
- */
-void RudderSendStatus(void)
-{
-	// Specify a new CAN message w/ metadata
-	CanMessage msg;
-	uint16_t status = (rudderSensorData.PortLimit << 3) |
-	                  (rudderSensorData.StarLimit << 2) |
-	                  (rudderCalData.Calibrated << 0) |
-	                  (rudderCalData.Calibrating << 1);
-	uint16_t errors = 0;
-	CanMessagePackageStatus(&msg, nodeId, UINT8_MAX, INT8_MAX, UINT8_MAX, status, errors);
-
-	// And finally transmit it.
-	Ecan1Transmit(&msg);
-}
-
 void SendAndReceiveEcan(void)
 {
     uint8_t messagesLeft = 0;
@@ -255,7 +236,7 @@ void SendAndReceiveEcan(void)
             break;
 
             case SCHED_ID_STATUS:
-                RudderSendStatus();
+                NodeTransmitStatus();
             break;
         }
     }

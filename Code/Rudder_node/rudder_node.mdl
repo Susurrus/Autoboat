@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2446"
+    ComputedModelVersion    "1.2447"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -28,9 +28,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Dec 17 17:54:17 2012"
-  RTWModifiedTimeStamp	  277666837
-  ModelVersionFormat	  "1.%<AutoIncrement:2446>"
+  LastModifiedDate	  "Sat Feb 16 21:11:11 2013"
+  RTWModifiedTimeStamp	  282949716
+  ModelVersionFormat	  "1.%<AutoIncrement:2447>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -743,19 +743,19 @@ Model {
 	      CustomProperty {
 		DataType		"string"
 		Name			"LDPICTYPE"
-		Value			" -Xlinker --script=C:\\PROGRA~2\\MICROC~1\\xc16\\v1.10\\support\\dsPIC33F\\gld\\p33fj128MC802.gld"
+		Value			" -Xlinker --script=C:\\PROGRA~2\\MICROC~1\\xc16\\v1.11\\support\\dsPIC33F\\gld\\p33fj128MC802.gld"
 	      }
 	      CustomProperty {
 		DataType		"string"
 		Name			"LDLIBPIC"
-		Value			" C:\\PROGRA~2\\MICROC~1\\xc16\\v1.10\\lib\\libpic30-coff.a C:\\PROGRA~2\\MICROC~1\\xc16\\v1.10\\lib\\dsPIC3"
-		"3F\\libp33fj128MC802-coff.a C:\\PROGRA~2\\MICROC~1\\xc16\\v1.10\\lib\\libc-coff.a C:\\PROGRA~2\\MICROC~1\\xc16\\v1.1"
-		"0\\lib\\libm-coff.a"
+		Value			" C:\\PROGRA~2\\MICROC~1\\xc16\\v1.11\\lib\\libpic30-coff.a C:\\PROGRA~2\\MICROC~1\\xc16\\v1.11\\lib\\dsPIC3"
+		"3F\\libp33fj128MC802-coff.a C:\\PROGRA~2\\MICROC~1\\xc16\\v1.11\\lib\\libc-coff.a C:\\PROGRA~2\\MICROC~1\\xc16\\v1.1"
+		"1\\lib\\libm-coff.a"
 	      }
 	      CustomProperty {
 		DataType		"string"
 		Name			"PIC_INCLUDES"
-		Value			" -I C:\\PROGRA~2\\MICROC~1\\xc16\\v1.10\\include"
+		Value			" -I C:\\PROGRA~2\\MICROC~1\\xc16\\v1.11\\include"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -989,6 +989,21 @@ Model {
       InitialOutput	      "[]"
     }
     Block {
+      BlockType		      Product
+      Inputs		      "2"
+      Multiplication	      "Element-wise(.*)"
+      CollapseMode	      "All dimensions"
+      CollapseDim	      "1"
+      InputSameDT	      on
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Same as first input"
+      LockScale		      off
+      RndMeth		      "Zero"
+      SaturateOnIntegerOverflow	on
+      SampleTime	      "-1"
+    }
+    Block {
       BlockType		      RateTransition
       Integrity		      on
       Deterministic	      on
@@ -1074,7 +1089,7 @@ Model {
   }
   System {
     Name		    "rudder_node"
-    Location		    [202, 82, 1902, 1027]
+    Location		    [202, 74, 1918, 1019]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1088,14 +1103,14 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "22201"
+    SIDHighWatermark	    "22260"
     Block {
       BlockType		      Reference
       Name		      "Calculate the actual rudder\nangle using calibration data\n[RudderNode.c]"
       SID		      "22164"
       Tag		      "dsPIC_dsPIC_CFunctionCall"
       Ports		      [0, 1]
-      Position		      [265, 355, 430, 405]
+      Position		      [265, 390, 430, 440]
       BackgroundColor	      "orange"
       LibraryVersion	      "3.84"
       SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
@@ -1140,10 +1155,37 @@ Model {
       SourceType	      ""
     }
     Block {
+      BlockType		      Reference
+      Name		      "Counter\nFree-Running"
+      SID		      "22202"
+      Ports		      [0, 1]
+      Position		      [110, 485, 140, 515]
+      ShowName		      off
+      LibraryVersion	      "1.256"
+      SourceBlock	      "simulink/Sources/Counter\nFree-Running"
+      SourceType	      "Counter Free-Running"
+      NumBits		      "32"
+      tsamp		      "T_step"
+    }
+    Block {
+      BlockType		      DataStoreMemory
+      Name		      "Data Store\nMemory"
+      SID		      "22204"
+      Position		      [125, 220, 220, 243]
+      ZOrder		      -4
+      ShowName		      off
+      DataStoreName	      "nodeStatus"
+      ReadBeforeWriteMsg      "warning"
+      WriteAfterWriteMsg      "warning"
+      WriteAfterReadMsg	      "warning"
+      RTWStateStorageClass    "ImportedExtern"
+      OutDataTypeStr	      "uint16"
+    }
+    Block {
       BlockType		      DataStoreMemory
       Name		      "Data Store\nMemory1"
       SID		      "20731"
-      Position		      [315, 220, 414, 249]
+      Position		      [480, 290, 579, 319]
       ZOrder		      -4
       ShowName		      off
       DataStoreName	      "rudderSensorData"
@@ -1157,7 +1199,7 @@ Model {
       BlockType		      DataStoreMemory
       Name		      "Data Store\nMemory2"
       SID		      "22163"
-      Position		      [465, 220, 564, 249]
+      Position		      [580, 290, 679, 319]
       ZOrder		      -4
       ShowName		      off
       DataStoreName	      "rudderCalData"
@@ -1170,11 +1212,11 @@ Model {
     Block {
       BlockType		      DataStoreMemory
       Name		      "Data Store\nMemory3"
-      SID		      "22199"
-      Position		      [190, 220, 289, 249]
+      SID		      "22205"
+      Position		      [30, 220, 125, 243]
       ZOrder		      -4
       ShowName		      off
-      DataStoreName	      "status"
+      DataStoreName	      "nodeErrors"
       ReadBeforeWriteMsg      "warning"
       WriteAfterWriteMsg      "warning"
       WriteAfterReadMsg	      "warning"
@@ -1184,16 +1226,72 @@ Model {
     Block {
       BlockType		      DataStoreMemory
       Name		      "Data Store\nMemory4"
-      SID		      "22200"
-      Position		      [90, 220, 189, 249]
+      SID		      "22206"
+      Position		      [410, 220, 505, 243]
       ZOrder		      -4
       ShowName		      off
-      DataStoreName	      "errors"
+      DataStoreName	      "nodeCpuLoad"
       ReadBeforeWriteMsg      "warning"
       WriteAfterWriteMsg      "warning"
       WriteAfterReadMsg	      "warning"
       RTWStateStorageClass    "ImportedExtern"
-      OutDataTypeStr	      "uint16"
+      OutDataTypeStr	      "uint8"
+    }
+    Block {
+      BlockType		      DataStoreMemory
+      Name		      "Data Store\nMemory5"
+      SID		      "22207"
+      Position		      [220, 220, 315, 243]
+      ZOrder		      -4
+      ShowName		      off
+      DataStoreName	      "nodeId"
+      ReadBeforeWriteMsg      "warning"
+      WriteAfterWriteMsg      "warning"
+      WriteAfterReadMsg	      "warning"
+      RTWStateStorageClass    "ImportedExtern"
+      OutDataTypeStr	      "uint8"
+    }
+    Block {
+      BlockType		      DataStoreMemory
+      Name		      "Data Store\nMemory6"
+      SID		      "22208"
+      Position		      [315, 220, 410, 243]
+      ZOrder		      -4
+      ShowName		      off
+      DataStoreName	      "nodeSystemTime"
+      ReadBeforeWriteMsg      "warning"
+      WriteAfterWriteMsg      "warning"
+      WriteAfterReadMsg	      "warning"
+      RTWStateStorageClass    "ImportedExtern"
+      OutDataTypeStr	      "uint32"
+    }
+    Block {
+      BlockType		      DataStoreMemory
+      Name		      "Data Store\nMemory7"
+      SID		      "22209"
+      Position		      [505, 220, 600, 243]
+      ZOrder		      -4
+      ShowName		      off
+      DataStoreName	      "nodeTemp"
+      ReadBeforeWriteMsg      "warning"
+      WriteAfterWriteMsg      "warning"
+      WriteAfterReadMsg	      "warning"
+      RTWStateStorageClass    "ImportedExtern"
+      OutDataTypeStr	      "int8"
+    }
+    Block {
+      BlockType		      DataStoreMemory
+      Name		      "Data Store\nMemory8"
+      SID		      "22210"
+      Position		      [600, 220, 695, 243]
+      ZOrder		      -4
+      ShowName		      off
+      DataStoreName	      "nodeVoltage"
+      ReadBeforeWriteMsg      "warning"
+      WriteAfterWriteMsg      "warning"
+      WriteAfterReadMsg	      "warning"
+      RTWStateStorageClass    "ImportedExtern"
+      OutDataTypeStr	      "uint8"
     }
     Block {
       BlockType		      DataStoreRead
@@ -1236,7 +1334,7 @@ Model {
       Name		      "Data Store\nRead3"
       SID		      "22169"
       Ports		      [0, 1]
-      Position		      [700, 540, 795, 570]
+      Position		      [700, 520, 795, 550]
       ZOrder		      -5
       ShowName		      off
       DataStoreName	      "rudderCalData"
@@ -1266,6 +1364,16 @@ Model {
       DataStoreName	      "rudderSensorData"
       SampleTime	      "T_step"
       DataStoreElements	      "rudderSensorData.CommandedRudderAngle#rudderSensorData.RudderPositionAngle"
+    }
+    Block {
+      BlockType		      DataStoreWrite
+      Name		      "Data Store\nWrite"
+      SID		      "22203"
+      Ports		      [1]
+      Position		      [220, 486, 300, 514]
+      ZOrder		      -6
+      ShowName		      off
+      DataStoreName	      "nodeSystemTime"
     }
     Block {
       BlockType		      SubSystem
@@ -1429,7 +1537,7 @@ Model {
       BlockType		      From
       Name		      "From2"
       SID		      "22198"
-      Position		      [655, 588, 825, 612]
+      Position		      [655, 553, 825, 577]
       ZOrder		      -9
       BackgroundColor	      "magenta"
       ShowName		      off
@@ -1615,7 +1723,7 @@ Model {
       Name		      "LED Output"
       SID		      "22147"
       Ports		      [2]
-      Position		      [1005, 237, 1140, 308]
+      Position		      [970, 245, 1105, 300]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -1927,7 +2035,7 @@ Model {
       tmr2345		      "[8  0  0  0]"
       tmr2345cfg	      "[-1 -1 -1 -1]"
       IOautoConf	      on
-      typePort		      "[ 9   8   0   0  10   0   0   0   0   0   0   0   0   0   0   0   0   9   8   0  22   0   0  23"
+      typePort		      "[ 9   8   0   0  10   0   0   0   0   0   0   0   0   0   0   0   0   9   8   8  22   0   0  23"
       "   0  10  10   0  23   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
       "   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
       "   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
@@ -2364,7 +2472,7 @@ Model {
       Name		      "Record Rudder\nSensor Data"
       SID		      "20698"
       Ports		      []
-      Position		      [60, 352, 150, 408]
+      Position		      [60, 352, 159, 396]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -2389,11 +2497,11 @@ Model {
 	ZoomFactor		"100"
 	Block {
 	  BlockType		  Reference
-	  Name			  "ADC inputs:\nAN1 - Temp sensor\nAN4 - Rudder pot"
+	  Name			  "ADC inputs:\nAN1 - Temp sensor\nAN4 - Rudder pot\nAN5 - Supply voltage"
 	  SID			  "20708"
 	  Tag			  "dsPIC_ADC"
-	  Ports			  [0, 2]
-	  Position		  [40, 82, 125, 133]
+	  Ports			  [0, 3]
+	  Position		  [40, 80, 120, 160]
 	  Priority		  "5"
 	  LibraryVersion	  "3.84"
 	  SourceBlock		  "dsPICdrivers/Peripheral I//O/ADC Input"
@@ -2404,7 +2512,7 @@ Model {
 	  VoltRefpopup		  "AVdd  -  AVss"
 	  OutFormatBitspopup	  "0000 dddd dddd dddd : Integer"
 	  InterruptPriority	  "6"
-	  ANCHANNELS		  "[4 1]"
+	  ANCHANNELS		  "[4 5 1]"
 	  MaxName		  "ANmax = 4095"
 	  Rin			  "0"
 	  ADCS			  "53"
@@ -2412,7 +2520,7 @@ Model {
 	  Temperature		  "25"
 	  DMAChannel		  "1"
 	  SampleTime		  "T_step"
-	  Status		  "OK  |  Tsmp=6.749e-007 |  T/Channel=1.012e-005 |  Tall=2.025e-005"
+	  Status		  "OK  |  Tsmp=6.749e-007 |  T/Channel=1.012e-005 |  Tall=3.037e-005"
 	  SSRC			  "auto convert"
 	  Port {
 	    PortNumber		    2
@@ -2437,7 +2545,7 @@ Model {
 	  Name			  "Data Store\nWrite1"
 	  SID			  "22122"
 	  Ports			  [1]
-	  Position		  [350, 183, 435, 217]
+	  Position		  [350, 228, 435, 262]
 	  ZOrder		  -6
 	  BackgroundColor	  "gray"
 	  ShowName		  off
@@ -2449,7 +2557,7 @@ Model {
 	  Name			  "Data Store\nWrite2"
 	  SID			  "22123"
 	  Ports			  [1]
-	  Position		  [350, 238, 435, 272]
+	  Position		  [350, 283, 435, 317]
 	  ZOrder		  -6
 	  BackgroundColor	  "gray"
 	  ShowName		  off
@@ -2465,8 +2573,18 @@ Model {
 	  ZOrder		  -6
 	  BackgroundColor	  "gray"
 	  ShowName		  off
-	  DataStoreName		  "rudderSensorData"
-	  DataStoreElements	  "rudderSensorData.Temperature"
+	  DataStoreName		  "nodeTemp"
+	}
+	Block {
+	  BlockType		  DataStoreWrite
+	  Name			  "Data Store\nWrite4"
+	  SID			  "22221"
+	  Ports			  [1]
+	  Position		  [355, 154, 430, 186]
+	  ZOrder		  -6
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  DataStoreName		  "nodeVoltage"
 	}
 	Block {
 	  BlockType		  DataStoreWrite
@@ -2479,6 +2597,16 @@ Model {
 	  ShowName		  off
 	  DataStoreName		  "rudderSensorData"
 	  DataStoreElements	  "rudderSensorData.PotValue"
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion4"
+	  SID			  "22223"
+	  Position		  [280, 159, 335, 181]
+	  ZOrder		  -7
+	  ShowName		  off
+	  RndMeth		  "Simplest"
+	  SaturateOnIntegerOverflow off
 	}
 	Block {
 	  BlockType		  Gain
@@ -2502,7 +2630,7 @@ Model {
 	  ShowName		  off
 	  Gain			  "100"
 	  ParamDataTypeStr	  "single"
-	  OutDataTypeStr	  "single"
+	  OutDataTypeStr	  "int8"
 	  RndMeth		  "Simplest"
 	  SaturateOnIntegerOverflow off
 	}
@@ -2511,7 +2639,7 @@ Model {
 	  Name			  "Logical\nOperator"
 	  SID			  "20701"
 	  Ports			  [1, 1]
-	  Position		  [185, 239, 215, 271]
+	  Position		  [185, 284, 215, 316]
 	  ShowName		  off
 	  Operator		  "NOT"
 	  Inputs		  "1"
@@ -2529,7 +2657,7 @@ Model {
 	  Name			  "Logical\nOperator1"
 	  SID			  "20702"
 	  Ports			  [1, 1]
-	  Position		  [185, 184, 215, 216]
+	  Position		  [185, 229, 215, 261]
 	  ShowName		  off
 	  Operator		  "NOT"
 	  Inputs		  "1"
@@ -2548,7 +2676,7 @@ Model {
 	  SID			  "20704"
 	  Tag			  "dsPIC_Digital_Input"
 	  Ports			  [0, 1]
-	  Position		  [25, 235, 140, 275]
+	  Position		  [25, 280, 140, 320]
 	  LibraryVersion	  "3.84"
 	  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Input"
 	  SourceType		  ""
@@ -2563,7 +2691,7 @@ Model {
 	  SID			  "20706"
 	  Tag			  "dsPIC_Digital_Input"
 	  Ports			  [0, 1]
-	  Position		  [25, 180, 140, 220]
+	  Position		  [25, 225, 140, 265]
 	  LibraryVersion	  "3.84"
 	  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Input"
 	  SourceType		  ""
@@ -2571,6 +2699,30 @@ Model {
 	  Pin			  "[1]"
 	  SampleTime		  "T_step"
 	  OrderingInOutPopup	  "None"
+	}
+	Block {
+	  BlockType		  Gain
+	  Name			  "To ADC V1"
+	  SID			  "22224"
+	  Position		  [165, 155, 195, 185]
+	  ZOrder		  -11
+	  ShowName		  off
+	  Gain			  "3.3/ANmax"
+	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Gain
+	  Name			  "To supply voltage"
+	  SID			  "22225"
+	  Position		  [225, 155, 255, 185]
+	  ZOrder		  -11
+	  Gain			  "23/2*10"
+	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  RndMeth		  "Simplest"
+	  SaturateOnIntegerOverflow off
 	}
 	Line {
 	  Name			  "limit starboard"
@@ -2603,15 +2755,15 @@ Model {
 	Line {
 	  Name			  "position"
 	  Labels		  [0, 0]
-	  SrcBlock		  "ADC inputs:\nAN1 - Temp sensor\nAN4 - Rudder pot"
+	  SrcBlock		  "ADC inputs:\nAN1 - Temp sensor\nAN4 - Rudder pot\nAN5 - Supply voltage"
 	  SrcPort		  2
 	  DstBlock		  "Data Store\nWrite7"
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "ADC inputs:\nAN1 - Temp sensor\nAN4 - Rudder pot"
+	  SrcBlock		  "ADC inputs:\nAN1 - Temp sensor\nAN4 - Rudder pot\nAN5 - Supply voltage"
 	  SrcPort		  1
-	  Points		  [10, 0; 0, -25]
+	  Points		  [15, 0; 0, -25]
 	  DstBlock		  "Gain"
 	  DstPort		  1
 	}
@@ -2631,6 +2783,31 @@ Model {
 	  SrcBlock		  "Gain3"
 	  SrcPort		  1
 	  DstBlock		  "Data Store\nWrite3"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "To ADC V1"
+	  SrcPort		  1
+	  DstBlock		  "To supply voltage"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "ADC inputs:\nAN1 - Temp sensor\nAN4 - Rudder pot\nAN5 - Supply voltage"
+	  SrcPort		  3
+	  Points		  [0, 25]
+	  DstBlock		  "To ADC V1"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "To supply voltage"
+	  SrcPort		  1
+	  DstBlock		  "Data Type Conversion4"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Data Type Conversion4"
+	  SrcPort		  1
+	  DstBlock		  "Data Store\nWrite4"
 	  DstPort		  1
 	}
 	Annotation {
@@ -3278,7 +3455,7 @@ Model {
       SID		      "22162"
       Tag		      "dsPIC_dsPIC_CFunctionCall"
       Ports		      [1]
-      Position		      [465, 355, 630, 405]
+      Position		      [465, 390, 630, 440]
       BackgroundColor	      "orange"
       LibraryVersion	      "3.84"
       SourceBlock	      "dsPICdrivers/OTHERS/C Function Call"
@@ -3310,10 +3487,608 @@ Model {
       AnalogueInput	      "[]"
     }
     Block {
+      BlockType		      SubSystem
+      Name		      "Set nodeStatus"
+      SID		      "22260"
+      Ports		      []
+      Position		      [198, 274, 279, 317]
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      System {
+	Name			"Set nodeStatus"
+	Location		[1417, 386, 1887, 634]
+	Open			off
+	ModelBrowserVisibility	on
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "Bitwise-combine"
+	  SID			  "22228"
+	  Ports			  [8, 1]
+	  Position		  [185, 33, 250, 222]
+	  ShowName		  off
+	  MinAlgLoopOccurrences	  off
+	  PropExecContextOutsideSubsystem off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  Opaque		  off
+	  RequestExecContextInheritance	off
+	  MaskHideContents	  off
+	  System {
+	    Name		    "Bitwise-combine"
+	    Location		    [625, 515, 1057, 786]
+	    Open		    off
+	    ModelBrowserVisibility  on
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "bit0"
+	      SID		      "22229"
+	      Position		      [25, 38, 55, 52]
+	      BackgroundColor	      "darkGreen"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "bit1"
+	      SID		      "22230"
+	      Position		      [25, 58, 55, 72]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "bit2"
+	      SID		      "22231"
+	      Position		      [25, 78, 55, 92]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "3"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "bit3"
+	      SID		      "22232"
+	      Position		      [25, 98, 55, 112]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "4"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "bit4"
+	      SID		      "22233"
+	      Position		      [25, 118, 55, 132]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "5"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "bit5"
+	      SID		      "22234"
+	      Position		      [25, 138, 55, 152]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "6"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "bit6"
+	      SID		      "22235"
+	      Position		      [25, 158, 55, 172]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "7"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "bit7"
+	      SID		      "22236"
+	      Position		      [25, 178, 55, 192]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "8"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Bitwise\nOperator"
+	      SID		      "22237"
+	      Ports		      [8, 1]
+	      Position		      [245, 25, 290, 205]
+	      ShowName		      off
+	      LibraryVersion	      "1.256"
+	      SourceBlock	      "simulink/Logic and Bit\nOperations/Bitwise\nOperator"
+	      SourceType	      "Bitwise Operator"
+	      logicop		      "OR"
+	      UseBitMask	      off
+	      NumInputPorts	      "8"
+	      BitMask		      "bin2dec('11011001')"
+	      BitMaskRealWorld	      "Stored Integer"
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion"
+	      SID		      "22238"
+	      Position		      [80, 37, 120, 53]
+	      ShowName		      off
+	      OutDataTypeStr	      "uint8"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion1"
+	      SID		      "22239"
+	      Position		      [80, 57, 120, 73]
+	      ShowName		      off
+	      OutDataTypeStr	      "uint8"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion2"
+	      SID		      "22240"
+	      Position		      [80, 77, 120, 93]
+	      ShowName		      off
+	      OutDataTypeStr	      "uint8"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion3"
+	      SID		      "22241"
+	      Position		      [80, 97, 120, 113]
+	      ShowName		      off
+	      OutDataTypeStr	      "uint8"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion4"
+	      SID		      "22242"
+	      Position		      [80, 117, 120, 133]
+	      ShowName		      off
+	      OutDataTypeStr	      "uint8"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion5"
+	      SID		      "22243"
+	      Position		      [80, 137, 120, 153]
+	      ShowName		      off
+	      OutDataTypeStr	      "uint8"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion6"
+	      SID		      "22244"
+	      Position		      [80, 157, 120, 173]
+	      ShowName		      off
+	      OutDataTypeStr	      "uint8"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion7"
+	      SID		      "22245"
+	      Position		      [80, 177, 120, 193]
+	      ShowName		      off
+	      OutDataTypeStr	      "uint8"
+	      RndMeth		      "Floor"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      ArithShift
+	      Name		      "Shift\nArithmetic"
+	      SID		      "22246"
+	      Ports		      [1, 1]
+	      Position		      [145, 55, 225, 75]
+	      ShowName		      off
+	      InputPortMap	      "u0"
+	      BitShiftNumber	      "-1"
+	    }
+	    Block {
+	      BlockType		      ArithShift
+	      Name		      "Shift\nArithmetic1"
+	      SID		      "22247"
+	      Ports		      [1, 1]
+	      Position		      [145, 76, 225, 94]
+	      ShowName		      off
+	      InputPortMap	      "u0"
+	      BitShiftNumber	      "-2"
+	    }
+	    Block {
+	      BlockType		      ArithShift
+	      Name		      "Shift\nArithmetic2"
+	      SID		      "22248"
+	      Ports		      [1, 1]
+	      Position		      [145, 96, 225, 114]
+	      ShowName		      off
+	      InputPortMap	      "u0"
+	      BitShiftNumber	      "-3"
+	    }
+	    Block {
+	      BlockType		      ArithShift
+	      Name		      "Shift\nArithmetic3"
+	      SID		      "22249"
+	      Ports		      [1, 1]
+	      Position		      [145, 116, 225, 134]
+	      ShowName		      off
+	      InputPortMap	      "u0"
+	      BitShiftNumber	      "-4"
+	    }
+	    Block {
+	      BlockType		      ArithShift
+	      Name		      "Shift\nArithmetic4"
+	      SID		      "22250"
+	      Ports		      [1, 1]
+	      Position		      [145, 136, 225, 154]
+	      ShowName		      off
+	      InputPortMap	      "u0"
+	      BitShiftNumber	      "-5"
+	    }
+	    Block {
+	      BlockType		      ArithShift
+	      Name		      "Shift\nArithmetic5"
+	      SID		      "22251"
+	      Ports		      [1, 1]
+	      Position		      [145, 156, 225, 174]
+	      ShowName		      off
+	      InputPortMap	      "u0"
+	      BitShiftNumber	      "-6"
+	    }
+	    Block {
+	      BlockType		      ArithShift
+	      Name		      "Shift\nArithmetic6"
+	      SID		      "22252"
+	      Ports		      [1, 1]
+	      Position		      [145, 176, 225, 194]
+	      ShowName		      off
+	      InputPortMap	      "u0"
+	      BitShiftNumber	      "-7"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "Out1"
+	      SID		      "22253"
+	      Position		      [315, 108, 345, 122]
+	      BackgroundColor	      "yellow"
+	      IconDisplay	      "Port number"
+	    }
+	    Line {
+	      SrcBlock		      "Shift\nArithmetic"
+	      SrcPort		      1
+	      DstBlock		      "Bitwise\nOperator"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Shift\nArithmetic1"
+	      SrcPort		      1
+	      DstBlock		      "Bitwise\nOperator"
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "Shift\nArithmetic2"
+	      SrcPort		      1
+	      DstBlock		      "Bitwise\nOperator"
+	      DstPort		      4
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion"
+	      SrcPort		      1
+	      DstBlock		      "Bitwise\nOperator"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion1"
+	      SrcPort		      1
+	      DstBlock		      "Shift\nArithmetic"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion2"
+	      SrcPort		      1
+	      DstBlock		      "Shift\nArithmetic1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion3"
+	      SrcPort		      1
+	      DstBlock		      "Shift\nArithmetic2"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion4"
+	      SrcPort		      1
+	      DstBlock		      "Shift\nArithmetic3"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Shift\nArithmetic3"
+	      SrcPort		      1
+	      DstBlock		      "Bitwise\nOperator"
+	      DstPort		      5
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion5"
+	      SrcPort		      1
+	      DstBlock		      "Shift\nArithmetic4"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion6"
+	      SrcPort		      1
+	      DstBlock		      "Shift\nArithmetic5"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Shift\nArithmetic4"
+	      SrcPort		      1
+	      DstBlock		      "Bitwise\nOperator"
+	      DstPort		      6
+	    }
+	    Line {
+	      SrcBlock		      "Shift\nArithmetic5"
+	      SrcPort		      1
+	      DstBlock		      "Bitwise\nOperator"
+	      DstPort		      7
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion7"
+	      SrcPort		      1
+	      DstBlock		      "Shift\nArithmetic6"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Shift\nArithmetic6"
+	      SrcPort		      1
+	      DstBlock		      "Bitwise\nOperator"
+	      DstPort		      8
+	    }
+	    Line {
+	      SrcBlock		      "bit0"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "bit1"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "bit2"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion2"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "bit3"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion3"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Bitwise\nOperator"
+	      SrcPort		      1
+	      DstBlock		      "Out1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "bit4"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion4"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "bit5"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion5"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "bit6"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion6"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "bit7"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion7"
+	      DstPort		      1
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant"
+	  SID			  "22254"
+	  Position		  [105, 130, 145, 150]
+	  ZOrder		  -5
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "false"
+	  OutDataTypeStr	  "boolean"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant1"
+	  SID			  "22255"
+	  Position		  [105, 155, 145, 175]
+	  ZOrder		  -5
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "false"
+	  OutDataTypeStr	  "boolean"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant2"
+	  SID			  "22256"
+	  Position		  [105, 180, 145, 200]
+	  ZOrder		  -5
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "false"
+	  OutDataTypeStr	  "boolean"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant3"
+	  SID			  "22257"
+	  Position		  [105, 205, 145, 225]
+	  ZOrder		  -5
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "false"
+	  OutDataTypeStr	  "boolean"
+	}
+	Block {
+	  BlockType		  DataStoreRead
+	  Name			  "Data Store\nRead6"
+	  SID			  "22226"
+	  Ports			  [0, 2]
+	  Position		  [25, 29, 145, 76]
+	  ZOrder		  -5
+	  ShowName		  off
+	  DataStoreName		  "rudderCalData"
+	  SampleTime		  "T_step"
+	  DataStoreElements	  "rudderCalData.Calibrated#rudderCalData.Calibrating"
+	}
+	Block {
+	  BlockType		  DataStoreRead
+	  Name			  "Data Store\nRead7"
+	  SID			  "22227"
+	  Ports			  [0, 2]
+	  Position		  [25, 79, 145, 126]
+	  ZOrder		  -5
+	  ShowName		  off
+	  DataStoreName		  "rudderSensorData"
+	  SampleTime		  "T_step"
+	  DataStoreElements	  "rudderSensorData.StarLimit#rudderSensorData.PortLimit"
+	}
+	Block {
+	  BlockType		  DataStoreWrite
+	  Name			  "Data Store\nWrite1"
+	  SID			  "22258"
+	  Ports			  [1]
+	  Position		  [370, 114, 445, 146]
+	  ZOrder		  -6
+	  ShowName		  off
+	  DataStoreName		  "nodeStatus"
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion6"
+	  SID			  "22259"
+	  Position		  [285, 122, 330, 138]
+	  ShowName		  off
+	  OutDataTypeStr	  "uint16"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	}
+	Line {
+	  SrcBlock		  "Constant"
+	  SrcPort		  1
+	  DstBlock		  "Bitwise-combine"
+	  DstPort		  5
+	}
+	Line {
+	  SrcBlock		  "Constant1"
+	  SrcPort		  1
+	  DstBlock		  "Bitwise-combine"
+	  DstPort		  6
+	}
+	Line {
+	  SrcBlock		  "Constant2"
+	  SrcPort		  1
+	  DstBlock		  "Bitwise-combine"
+	  DstPort		  7
+	}
+	Line {
+	  SrcBlock		  "Constant3"
+	  SrcPort		  1
+	  DstBlock		  "Bitwise-combine"
+	  DstPort		  8
+	}
+	Line {
+	  SrcBlock		  "Data Store\nRead6"
+	  SrcPort		  1
+	  DstBlock		  "Bitwise-combine"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Data Store\nRead6"
+	  SrcPort		  2
+	  DstBlock		  "Bitwise-combine"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Data Store\nRead7"
+	  SrcPort		  1
+	  DstBlock		  "Bitwise-combine"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Data Store\nRead7"
+	  SrcPort		  2
+	  DstBlock		  "Bitwise-combine"
+	  DstPort		  4
+	}
+	Line {
+	  SrcBlock		  "Bitwise-combine"
+	  SrcPort		  1
+	  DstBlock		  "Data Type Conversion6"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Data Type Conversion6"
+	  SrcPort		  1
+	  DstBlock		  "Data Store\nWrite1"
+	  DstPort		  1
+	}
+      }
+    }
+    Block {
       BlockType		      Switch
       Name		      "Switch1"
       SID		      "22143"
-      Position		      [885, 535, 935, 575]
+      Position		      [890, 515, 940, 555]
       ZOrder		      -18
       ShowName		      off
       Criteria		      "u2 ~= 0"
@@ -3330,6 +4105,206 @@ Model {
       Criteria		      "u2 ~= 0"
       InputSameDT	      off
       SaturateOnIntegerOverflow	off
+    }
+    Block {
+      BlockType		      SubSystem
+      Name		      "Update CPU Load"
+      SID		      "22211"
+      Ports		      []
+      Position		      [60, 276, 159, 320]
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      MaskDisplay	      "disp('');"
+      MaskIconFrame	      on
+      MaskIconOpaque	      on
+      MaskIconRotate	      "none"
+      MaskPortRotate	      "default"
+      MaskIconUnits	      "autoscale"
+      System {
+	Name			"Update CPU Load"
+	Location		[739, 482, 1567, 707]
+	Open			off
+	ModelBrowserVisibility	on
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Reference
+	  Name			  "Calculus Time Step"
+	  SID			  "22212"
+	  Tag			  "dsPIC_CalculusTimeStep"
+	  Ports			  [0, 2]
+	  Position		  [25, 25, 115, 60]
+	  ShowName		  off
+	  LibraryVersion	  "3.84"
+	  SourceBlock		  "dsPICdrivers/OTHERS/Calculus Time Step"
+	  SourceType		  "Calculation Time"
+	  SampleTime		  "1"
+	  PR1chk		  on
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Compare\nTo Zero"
+	  SID			  "22213"
+	  Ports			  [1, 1]
+	  Position		  [210, 53, 240, 67]
+	  ShowName		  off
+	  LibraryVersion	  "1.256"
+	  SourceBlock		  "simulink/Logic and Bit\nOperations/Compare\nTo Zero"
+	  SourceType		  "Compare To Zero"
+	  relop			  "~="
+	  OutDataTypeStr	  "uint8"
+	  ZeroCross		  on
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Constant"
+	  SID			  "22214"
+	  Position		  [210, 72, 240, 88]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	}
+	Block {
+	  BlockType		  DataStoreWrite
+	  Name			  "Data Store\nWrite"
+	  SID			  "22215"
+	  Ports			  [1]
+	  Position		  [540, 29, 615, 61]
+	  ZOrder		  -6
+	  ShowName		  off
+	  DataStoreName		  "nodeCpuLoad"
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion6"
+	  SID			  "22216"
+	  Position		  [135, 27, 180, 43]
+	  ShowName		  off
+	  OutDataTypeStr	  "single"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion7"
+	  SID			  "22217"
+	  Position		  [135, 42, 180, 58]
+	  ShowName		  off
+	  OutDataTypeStr	  "single"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Gain
+	  Name			  "Gain"
+	  SID			  "22218"
+	  Position		  [450, 28, 510, 62]
+	  ShowName		  off
+	  Gain			  "100"
+	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
+	  OutDataTypeStr	  "uint8"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Product
+	  Name			  "Product"
+	  SID			  "22219"
+	  Ports			  [2, 1]
+	  Position		  [385, 27, 415, 58]
+	  ShowName		  off
+	  Inputs		  "*/"
+	  InputSameDT		  off
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Switch
+	  Name			  "Switch"
+	  SID			  "22220"
+	  Position		  [300, 45, 330, 75]
+	  ShowName		  off
+	  Criteria		  "u2 ~= 0"
+	  InputSameDT		  off
+	  SaturateOnIntegerOverflow off
+	}
+	Line {
+	  SrcBlock		  "Constant"
+	  SrcPort		  1
+	  Points		  [30, 0; 0, -10]
+	  DstBlock		  "Switch"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Compare\nTo Zero"
+	  SrcPort		  1
+	  DstBlock		  "Switch"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Switch"
+	  SrcPort		  1
+	  Points		  [30, 0; 0, -10]
+	  DstBlock		  "Product"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Data Type Conversion7"
+	  SrcPort		  1
+	  Points		  [5, 0]
+	  Branch {
+	    Points		    [0, 10]
+	    DstBlock		    "Compare\nTo Zero"
+	    DstPort		    1
+	  }
+	  Branch {
+	    DstBlock		    "Switch"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  SrcBlock		  "Data Type Conversion6"
+	  SrcPort		  1
+	  DstBlock		  "Product"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Gain"
+	  SrcPort		  1
+	  DstBlock		  "Data Store\nWrite"
+	  DstPort		  1
+	}
+	Line {
+	  Labels		  [1, 0]
+	  SrcBlock		  "Product"
+	  SrcPort		  1
+	  DstBlock		  "Gain"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Calculus Time Step"
+	  SrcPort		  2
+	  DstBlock		  "Data Type Conversion7"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Calculus Time Step"
+	  SrcPort		  1
+	  DstBlock		  "Data Type Conversion6"
+	  DstPort		  1
+	}
+      }
     }
     Line {
       SrcBlock		      "Data Store\nRead"
@@ -3364,7 +4339,7 @@ Model {
     Line {
       SrcBlock		      "From5"
       SrcPort		      1
-      Points		      [0, 35]
+      Points		      [0, 15]
       DstBlock		      "Switch1"
       DstPort		      1
     }
@@ -3396,14 +4371,12 @@ Model {
     Line {
       SrcBlock		      "Data Store\nRead1"
       SrcPort		      1
-      Points		      [55, 0]
       DstBlock		      "LED Output"
       DstPort		      1
     }
     Line {
       SrcBlock		      "Data Store\nRead1"
       SrcPort		      2
-      Points		      [55, 0]
       DstBlock		      "LED Output"
       DstPort		      2
     }
@@ -3452,16 +4425,22 @@ Model {
     Line {
       SrcBlock		      "Switch1"
       SrcPort		      1
-      Points		      [10, 0; 0, -65]
+      Points		      [5, 0; 0, -45]
       DstBlock		      "Switch2"
       DstPort		      3
     }
     Line {
       SrcBlock		      "From2"
       SrcPort		      1
-      Points		      [0, -30]
+      Points		      [0, -15]
       DstBlock		      "Switch1"
       DstPort		      3
+    }
+    Line {
+      SrcBlock		      "Counter\nFree-Running"
+      SrcPort		      1
+      DstBlock		      "Data Store\nWrite"
+      DstPort		      1
     }
     Annotation {
       Position		      [101, 56]
@@ -3471,13 +4450,13 @@ Model {
     }
     Annotation {
       Name		      "When in calibration mode, override the\ncontrol signals"
-      Position		      [872, 393]
+      Position		      [867, 418]
       HorizontalAlignment     "left"
     }
     Annotation {
       Name		      "Store rudder data calculated within Simulink into a rudderData struct.\nIt's stored globally and ma"
       "kes it easy to access this data from custom\nC code. (see Busses.m for more details)"
-      Position		      [431, 289]
+      Position		      [576, 359]
     }
   }
 }
