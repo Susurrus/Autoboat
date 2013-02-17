@@ -421,9 +421,8 @@ void MavLinkSendBasicState(void)
 }
 
 /**
- * Transmits the vehicle attitude. Right now just the yaw value.
- * Expects nodeSystemTime to be in centiseconds which are then converted
- * to ms for transmission.
+ * Transmits the vehicle attitude pulled from the Revolution GS 3-axis compass. This functions e
+ * xpects nodeSystemTime to be in centiseconds which are then converted to ms for transmission.
  * Yaw should be in radians where positive is eastward from north.
  */
 void MavLinkSendAttitude(void)
@@ -431,7 +430,9 @@ void MavLinkSendAttitude(void)
 	mavlink_message_t msg;
 
 	mavlink_msg_attitude_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-	                          nodeSystemTime*10, 0.0, 0.0, internalVariables.Heading, 0.0, 0.0, 0.0);
+	                          nodeSystemTime*10,
+							  revoGsDataStore.roll, revoGsDataStore.pitch, revoGsDataStore.heading,
+							  0.0, 0.0, 0.0);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
@@ -1248,7 +1249,7 @@ void MavLinkTransmit(void)
 				MavLinkEvaluateMissionState(MISSION_EVENT_ACK_DISPATCHED, NULL);
 			} break;
 
-			/** Sealion Messages **/
+			/** SeaSlug Messages **/
 
 			case MAVLINK_MSG_ID_STATUS_AND_ERRORS: {
 				MavLinkSendStatusAndErrors();
