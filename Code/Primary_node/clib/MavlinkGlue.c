@@ -25,6 +25,8 @@
 #include "Node.h"
 #include "PrimaryNode.h"
 
+#include <stdio.h>
+
 /**
  * This function converts latitude/longitude/altitude into a north/east/down local tangent plane. The
  * code I use by default is auto-generated C code from a Simulink block in the autonomous controller.
@@ -32,8 +34,6 @@
  * @param[out] Output in a north/east/down coordinate frame in units of meters.
  */
 extern void lla2ltp(const int32_t[3], float[3]);
-
-#include <stdio.h>
 
 // Set up some state machine variables for the parameter protocol
 enum {
@@ -165,7 +165,6 @@ uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_ATTITUDE,
 	MAVLINK_MSG_ID_GPS_RAW_INT,
 	MAVLINK_MSG_ID_RC_CHANNELS_SCALED,
-	MAVLINK_MSG_ID_STATUS_AND_ERRORS,
 	MAVLINK_MSG_ID_WSO100,
 	MAVLINK_MSG_ID_BASIC_STATE,
 	MAVLINK_MSG_ID_RUDDER_RAW,
@@ -173,6 +172,7 @@ uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_REVO_GS,
 	MAVLINK_MSG_ID_MAIN_POWER,
 	MAVLINK_MSG_ID_GPS200,
+	MAVLINK_MSG_ID_NODE_STATUS,
 	
 	// Only used for transient messages
 	MAVLINK_MSG_ID_MISSION_CURRENT,
@@ -206,7 +206,7 @@ void MavLinkInit(void)
 		mavlinkSchedule.MessageSizes[i] = mavMessageSizes[ids[i]];
 	}
 	
-	const uint8_t const periodicities[] = {2, 2, 1, 10, 10, 5, 4, 4, 2, 10, 4, 2, 2, 5, 1};
+	const uint8_t const periodicities[] = {2, 2, 1, 10, 10, 5, 4, 2, 10, 4, 2, 2, 5, 1, 1};
 	for (i = 0; i < sizeof(periodicities); ++i) {
 		if (!AddMessageRepeating(&mavlinkSchedule, ids[i], periodicities[i])) {
 			while (1);
@@ -625,14 +625,6 @@ void MavLinkSendRudderRaw(void)
 	Uart1WriteData(buf, (uint8_t)len);
 }
 
-void MavLinkSendStatusAndErrors(void)
-{
-	mavlink_message_t msg;
-	mavlink_msg_status_and_errors_pack(mavlink_system.sysid, mavlink_system.compid, &msg, nodeStatus, nodeErrors);
-	len = mavlink_msg_to_send_buffer(buf, &msg);
-	Uart1WriteData(buf, (uint8_t)len);
-}
-
 void MavLinkSendWindAirData(void)
 {
 	mavlink_message_t msg;
@@ -669,6 +661,49 @@ void MavLinkSendGps200Data(void)
 	mavlink_message_t msg;
 	mavlink_msg_gps200_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                        gpsDataStore.variation);
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	Uart1WriteData(buf, (uint8_t)len);
+}
+
+void MavLinkSendNodeStatusData(void)
+{
+	mavlink_message_t msg;
+	mavlink_msg_node_status_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+	                             nodeStatusDataStore[CAN_NODE_HIL - 1].status,
+								 nodeStatusDataStore[CAN_NODE_HIL - 1].errors,
+								 nodeStatusDataStore[CAN_NODE_HIL - 1].temp,
+								 nodeStatusDataStore[CAN_NODE_HIL - 1].load,
+								 nodeStatusDataStore[CAN_NODE_HIL - 1].voltage,
+
+	                             nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].status,
+								 nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].errors,
+								 nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].temp,
+								 nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].load,
+								 nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].voltage,
+
+	                             nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].status,
+								 nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].errors,
+								 nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].temp,
+								 nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].load,
+								 nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].voltage,
+
+	                             nodeStatus,
+								 nodeErrors,
+								 nodeTemp,
+								 nodeCpuLoad,
+								 nodeVoltage,
+
+	                             nodeStatusDataStore[CAN_NODE_RC - 1].status,
+								 nodeStatusDataStore[CAN_NODE_RC - 1].errors,
+								 nodeStatusDataStore[CAN_NODE_RC - 1].temp,
+								 nodeStatusDataStore[CAN_NODE_RC - 1].load,
+								 nodeStatusDataStore[CAN_NODE_RC - 1].voltage,
+
+	                             nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].status,
+								 nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].errors,
+								 nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].temp,
+								 nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].load,
+								 nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].voltage);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	Uart1WriteData(buf, (uint8_t)len);
 }
@@ -1261,8 +1296,8 @@ void MavLinkTransmit(void)
 
 			/** SeaSlug Messages **/
 
-			case MAVLINK_MSG_ID_STATUS_AND_ERRORS: {
-				MavLinkSendStatusAndErrors();
+			case MAVLINK_MSG_ID_NODE_STATUS: {
+				MavLinkSendNodeStatusData();
 			} break;
 
 			case MAVLINK_MSG_ID_WSO100: {

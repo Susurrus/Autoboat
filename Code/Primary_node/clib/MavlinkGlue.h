@@ -137,7 +137,7 @@ void _transmitParameter(uint16_t id);
 
 void MavLinkSendRudderRaw(void);
 
-void MavLinkSendStatusAndErrors(void);
+void MavLinkSendNodeStatusData(void);
 
 void MavLinkSendWindAirData(void);
 

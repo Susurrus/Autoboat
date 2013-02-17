@@ -19,6 +19,14 @@ struct GpsData gpsDataStore = {};
 struct GpsDataBundle gpsNewDataStore = {};
 struct DateTimeData dateTimeDataStore = {};
 struct RevoGsData revoGsDataStore = {};
+struct NodeStatusData nodeStatusDataStore[6] = {
+	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
+	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
+	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
+	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
+	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
+	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF}
+};
 
 struct stc sensorAvailability = {};
 
@@ -169,9 +177,15 @@ uint8_t ProcessAllEcanMessages(void)
 				Acs300DecodeHeartbeat(msg.payload, (uint16_t*)&throttleDataStore.rpm, NULL, NULL, NULL);
 				throttleDataStore.newData = true;
 			} else if (msg.id == CAN_MSG_ID_STATUS) {
-				uint8_t node;
-				uint16_t status;
-				CanMessageDecodeStatus(&msg, &node, NULL, NULL, NULL, &status, NULL);
+				uint8_t node, cpuLoad, voltage;
+				int8_t temp;
+				uint16_t status, errors;
+				CanMessageDecodeStatus(&msg, &node, &cpuLoad, &temp, &voltage, &status, &errors);
+				nodeStatusDataStore[node - 1].load = cpuLoad;
+				nodeStatusDataStore[node - 1].temp = temp;
+				nodeStatusDataStore[node - 1].voltage = voltage;
+				nodeStatusDataStore[node - 1].status = status;
+				nodeStatusDataStore[node - 1].errors = errors;
 				if (node == CAN_NODE_RC) {
 					sensorAvailability.rcNode.enabled_counter = 0;
 					// Only if the RC transmitter is connected should the RC node be considered

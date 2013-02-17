@@ -61,6 +61,15 @@ struct RevoGsData {
 };
 extern struct RevoGsData revoGsDataStore;
 
+struct NodeStatusData {
+	int8_t   temp;
+	uint8_t  voltage;
+	uint8_t  load;
+	uint16_t status;
+	uint16_t errors;
+};
+extern struct NodeStatusData nodeStatusDataStore[6];
+
 /**
  * Declare bitflags for use with the GpsData struct's receivedMessages field.
  */
