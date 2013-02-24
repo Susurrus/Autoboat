@@ -1245,9 +1245,9 @@ void MavLinkTransmit(void)
 {
 
 	// And now transmit all messages for this timestep
-        uint8_t msgs[MAVLINK_MSGS_SIZE];
-        uint8_t count = GetMessagesForTimestep(&mavlinkSchedule, msgs);
-        int i;
+	uint8_t msgs[MAVLINK_MSGS_SIZE];
+	uint8_t count = GetMessagesForTimestep(&mavlinkSchedule, msgs);
+	int i;
 	for (i = 0; i < count; ++i) {
 
 		switch(msgs[i]) {
