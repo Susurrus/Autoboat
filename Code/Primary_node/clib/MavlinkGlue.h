@@ -25,6 +25,41 @@
 #include "Types.h"
 #include "mavlink.h"
 
+// Events that trigger changes in the parameter protocol state machine.
+enum PARAM_EVENT {
+	PARAM_EVENT_NONE,
+	PARAM_EVENT_ENTER_STATE,
+	PARAM_EVENT_EXIT_STATE,
+
+	PARAM_EVENT_REQUEST_LIST_RECEIVED,
+	PARAM_EVENT_REQUEST_READ_RECEIVED,
+	PARAM_EVENT_SET_RECEIVED,
+	PARAM_EVENT_VALUE_DISPATCHED
+};
+
+// Set up the events necessary for the mission protocol state machine.
+enum MISSION_EVENT {
+	MISSION_EVENT_NONE = 0,
+	MISSION_EVENT_ENTER_STATE,
+	MISSION_EVENT_EXIT_STATE,
+
+	// Message reception events
+	MISSION_EVENT_COUNT_RECEIVED,
+	MISSION_EVENT_ACK_RECEIVED,
+	MISSION_EVENT_REQUEST_RECEIVED,
+	MISSION_EVENT_REQUEST_LIST_RECEIVED,
+	MISSION_EVENT_CLEAR_ALL_RECEIVED,
+	MISSION_EVENT_SET_CURRENT_RECEIVED,
+	MISSION_EVENT_ITEM_RECEIVED,
+
+	// Message transmission events
+	MISSION_EVENT_COUNT_DISPATCHED,
+	MISSION_EVENT_ACK_DISPATCHED,
+	MISSION_EVENT_REQUEST_DISPATCHED,
+	MISSION_EVENT_CURRENT_DISPATCHED,
+	MISSION_EVENT_ITEM_DISPATCHED
+};
+
 /**
  * Initialize MAVLink transmission. This just sets up the MAVLink scheduler with the basic
  * repeatedly-transmit messages.
@@ -157,7 +192,7 @@ void MatlabGetMavLinkManualControl(uint8_t *data);
 
 /** Core MAVLink functions handling transmission and state machines **/
 
-void MavLinkEvaluateParameterState(uint8_t event, void *data);
+void MavLinkEvaluateParameterState(enum PARAM_EVENT event, void *data);
 
 /**
  * This function implements the mission protocol state machine for the MAVLink protocol.
@@ -165,7 +200,7 @@ void MavLinkEvaluateParameterState(uint8_t event, void *data);
  * to data if there is any to be passed to the state logic. data is not guaranteed to persist
  * beyond the single call to this function.
  */
-void MavLinkEvaluateMissionState(uint8_t event, void *data);
+void MavLinkEvaluateMissionState(enum MISSION_EVENT event, void *data);
 
 /**
 * @brief Receive communication packets and handle them. Should be called at the system sample rate.
