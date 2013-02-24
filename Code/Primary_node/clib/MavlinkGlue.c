@@ -719,6 +719,7 @@ void MavLinkReceiveManualControl(mavlink_manual_control_t *msg)
 
 /**
  * Returns the throttle and rudder manual control commands received over MAVLink.
+ * TODO: Switch over to using Packing.h
  * @param data
  */
 void MatlabGetMavLinkManualControl(uint8_t *data)
