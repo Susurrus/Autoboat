@@ -27,58 +27,15 @@ tmp = zeros(wp_length, 3);
 for i=1:wp_length
     tmp(i,:) = double(test_waypoints(i).coordinates(:));
 end
-plot(tmp(:,2), tmp(:,1), 'r^', 'MarkerSize', 10);
-text(tmp(:,2)+10, tmp(:,1)-10, cellstr({int2str((1:wp_length)')}), 'Color', 'r');
+text(tmp(:,2), tmp(:,1), cellstr({int2str((1:wp_length)')}), 'Color', 'k');
 myLegend{end + 1} = 'Test waypoints';
-
-% The extra two tracks are offset by the current boat position when it
-% reset to properly illustrate where the boat thought the waypoints were.
-offsets = position(nextTrack > 0,:);
-if size(offsets,1) > 0
-    wp_length = length(figure8_waypoints);
-    tmp = zeros(wp_length, 3);
-    for i=1:wp_length
-        tmp(i,:) = double(figure8_waypoints(i).coordinates(:));
-    end
-    figure8_waypoints_offset = double(tmp) + repmat(offsets(1,:),wp_length,1);
-    plot(figure8_waypoints_offset(:,2)', figure8_waypoints_offset(:,1)', 'g^', 'MarkerSize', 10);
-    text(figure8_waypoints_offset(:,2)'+10, figure8_waypoints_offset(:,1)'-10, cellstr({int2str((1:wp_length)')}), 'Color', 'g');
-    myLegend{end + 1} = 'Figure-8 waypoints';
-end
-if size(offsets,1) > 1
-    wp_length = length(sampling_waypoints);
-    tmp = zeros(wp_length, 3);
-    for i=1:wp_length
-        tmp(i,:) = double(sampling_waypoints(i).coordinates(:));
-    end
-    sampling_waypoints_offset = double(tmp) + repmat(offsets(2,:),wp_length,1);
-    plot(sampling_waypoints_offset(:,2)', sampling_waypoints_offset(:,1)', 'b^', 'MarkerSize', 10);
-    text(sampling_waypoints_offset(:,2)'+10, sampling_waypoints_offset(:,1)'-10, cellstr({int2str((1:wp_length)')}), 'Color', 'b');
-    myLegend{end + 1} = 'Search waypoints';
-end
 
 % Add the boat path
 % TODO: This should be changed to iterate through a cells array of the
 % various waypoint arrays instead of this hackey code.
 title('Boat position');
-transitions = find(nextTrack > 0);
-switch size(transitions,1)
-    case 1
-        plot(position(1:transitions(1),2),position(1:transitions(1),1), 'r');
-        plot(position(transitions(1)+1:end,2),position(transitions(1)+1:end,1), 'g');
-    case 2
-        plot(position(1:transitions(1),2),position(1:transitions(1),1), 'r');
-        plot(position(transitions(1)+1:transitions(2),2),position(transitions(1)+1:transitions(2),1), 'g');
-        plot(position(transitions(2)+1:end,2),position(transitions(2)+1:end,1), 'b');
-    case 3
-        plot(position(1:transitions(1),2),position(1:transitions(1),1), 'r');
-        plot(position(transitions(1)+1:transitions(2),2),position(transitions(1)+1:transitions(2),1), 'g');
-        plot(position(transitions(2)+1:transitions(3),2),position(transitions(2)+1:transitions(3),1), 'b');
-        plot(position(transitions(3)+1:end,2),position(transitions(3)+1:end,1), 'r');
-    otherwise
-        plot(position(:,2),position(:,1), 'k');
-        myLegend{end + 1} = 'Position';
-end
+plot(double(globalPosition(:,2))*1e-7, double(globalPosition(:,1))*1e-7, 'k');
+myLegend{end + 1} = 'Position';
 grid on;
 %% Add additional decorations
 
