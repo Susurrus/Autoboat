@@ -175,7 +175,7 @@ void MavLinkInit(void)
 	const uint8_t const periodicities[] = {2, 2, 1, 10, 10, 5, 4, 2, 10, 4, 2, 2, 5, 1, 1};
 	for (i = 0; i < sizeof(periodicities); ++i) {
 		if (!AddMessageRepeating(&mavlinkSchedule, ids[i], periodicities[i])) {
-			while (1);
+			FATAL_ERROR();
 		}
 	}
 }
@@ -186,7 +186,7 @@ void MavLinkInit(void)
 void MavLinkScheduleCurrentMission(void)
 {
 	if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_CURRENT)) {
-		while (1);
+		FATAL_ERROR();
 	}
 }
 
@@ -196,7 +196,7 @@ void MavLinkScheduleCurrentMission(void)
 void MavLinkScheduleGpsOrigin(void)
 {
 	if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_GPS_GLOBAL_ORIGIN)) {
-		while (1);
+		FATAL_ERROR();
 	}
 }
 
@@ -765,7 +765,7 @@ void MavLinkEvaluateParameterState(enum PARAM_EVENT event, void *data)
 		case PARAM_STATE_SINGLETON_SEND_VALUE: {
 			if (event == PARAM_EVENT_ENTER_STATE) {
 				if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_PARAM_VALUE)) {
-					while (1);
+					FATAL_ERROR();
 				}
 			} else if (event == PARAM_EVENT_VALUE_DISPATCHED) {
 				_transmitParameter(currentParameter);
@@ -776,7 +776,7 @@ void MavLinkEvaluateParameterState(enum PARAM_EVENT event, void *data)
 		case PARAM_STATE_STREAM_SEND_VALUE: {
 			if (event == PARAM_EVENT_ENTER_STATE) {
 				if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_PARAM_VALUE)) {
-					while (1);
+					FATAL_ERROR();
 				}
 			} else if (event == PARAM_EVENT_VALUE_DISPATCHED) {
 				_transmitParameter(currentParameter);
@@ -841,7 +841,7 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, void *data)
 		case MISSION_STATE_INACTIVE:
 			if (event == MISSION_EVENT_REQUEST_LIST_RECEIVED) {
 				if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_COUNT)) {
-					while (1);
+					FATAL_ERROR();
 				}
 				currentMissionIndex = 0;
 				nextState = MISSION_STATE_SEND_MISSION_COUNT;
@@ -849,7 +849,7 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, void *data)
 				// Don't allow for writing of new missions if we're in autonomous mode.
 				if (nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) {
 					if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_ACK)) {
-						while (1);
+						FATAL_ERROR();
 					}
 					nextState = MISSION_STATE_ACK_ERROR;
 				} else {
@@ -860,12 +860,12 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, void *data)
 					// If we received a 0-length mission list, just respond with a MISSION_ACK error
 					if (newListSize == 0) {
 						if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_ACK)) {
-							while (1);
+							FATAL_ERROR();
 						}
 						nextState = MISSION_STATE_ACK_ERROR;
 					} else if (newListSize > mList.maxSize) {
 						if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_ACK)) {
-							while (1);
+							FATAL_ERROR();
 						}
 						nextState = MISSION_STATE_ACK_NO_SPACE;
 					}
@@ -875,7 +875,7 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, void *data)
 						ClearMissionList();
 						currentMissionIndex = 0;
 						if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_REQUEST)) {
-							while (1);
+							FATAL_ERROR();
 						}
 						nextState = MISSION_STATE_SEND_REQUEST;
 					}
@@ -884,7 +884,7 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, void *data)
 				// If we're in autonomous mode, don't allow for clearing the mission list
 				if (nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) {
 					if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_ACK)) {
-						while (1);
+						FATAL_ERROR();
 					}
 					nextState = MISSION_STATE_ACK_ERROR;
 				}
@@ -892,14 +892,14 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, void *data)
 				else {
 					ClearMissionList();
 					if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_ACK)) {
-						while (1);
+						FATAL_ERROR();
 					}
 					nextState = MISSION_STATE_ACK_ACCEPTED;
 				}
 			} else if (event == MISSION_EVENT_SET_CURRENT_RECEIVED) {
 				SetCurrentMission(*(uint8_t*)data);
 				if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_CURRENT)) {
-					while (1);
+					FATAL_ERROR();
 				}
 				nextState = MISSION_STATE_SEND_CURRENT;
 			}
@@ -927,7 +927,7 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, void *data)
 			} else if (event == MISSION_EVENT_REQUEST_RECEIVED) {
 				if (*(uint8_t *)data == currentMissionIndex) {
 					if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_ITEM)) {
-						while (1);
+						FATAL_ERROR();
 					}
 					nextState = MISSION_STATE_SEND_MISSION_ITEM;
 				}
@@ -995,13 +995,13 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, void *data)
 						// received the entire mission list. Otherwise we just increment and request the next mission.
 						if (currentMissionIndex == mavlinkNewMissionListSize - 1) {
 							if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_ACK)) {
-								while (1);
+								FATAL_ERROR();
 							}
 							nextState = MISSION_STATE_ACK_ACCEPTED;
 						} else {
 							++currentMissionIndex;
 							if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_REQUEST)) {
-								while (1);
+								FATAL_ERROR();
 							}
 							nextState = MISSION_STATE_SEND_REQUEST;
 						}
@@ -1009,7 +1009,7 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, void *data)
 					// If we've run out of space before the last message, respond saying so.
 					else {
 						if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_ACK)) {
-							while (1);
+							FATAL_ERROR();
 						}
 						nextState = MISSION_STATE_ACK_NO_SPACE;
 					}
