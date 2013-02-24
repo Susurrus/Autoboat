@@ -24,6 +24,7 @@
 #include "MavlinkGlue.h"
 #include "Node.h"
 #include "PrimaryNode.h"
+#include "Parameters.h"
 
 #include <stdio.h>
 
@@ -89,10 +90,6 @@ static mavlink_system_t mavlink_system = {
 // Latch onto the first groundstation unit and only receive and transmit to it.
 static uint8_t groundStationSystemId = 0;
 static uint8_t groundStationComponentId = 0;
-
-// Globally declare here how many parameters we have.
-// TODO: Move into its own code section
-static uint16_t parameterCount = 1;
 
 // Declare a character buffer here to prevent continual allocation/deallocation of MAVLink buffers.
 static uint8_t buf[MAVLINK_MAX_PACKET_LEN];
@@ -560,34 +557,24 @@ void MavLinkSendMissionRequest(uint8_t currentMissionIndex)
 
 /**
  * The following functions are helper functions for reading the various parameters aboard the boat.
+ * @param id The ID of this parameter.
  */
 void _transmitParameter(uint16_t id)
 {
-	mavlink_message_t msg;
-	mavlink_param_union_t x;
-	mavlink_param_value_t valueMsg = {
-		0.0,
-		parameterCount,
-		0,
-		"",
-		MAVLINK_TYPE_UINT32_T
-	};
+	if (id < PARAMETERS_TOTAL) {
+		// Then use the helper functions from Parameters.h to get the current value. If there was an
+		// error, just return having done nothing.
+		float param_value = 0.0;
+		ParameterGetValueById(id, &param_value);
 
-	switch (id) {
-		case 0:
-			x.param_uint32 = (nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE)?1:0;
-			valueMsg.param_value = x.param_float;
-			valueMsg.param_index = 0;
-			strncpy(valueMsg.param_id, "MODE_AUTO", 16);
-		break;
-		default:
-			return; // Do nothing if there's no matching parameter.
-		break;
+		// Finally encode the message and transmit.
+		mavlink_message_t msg;
+		mavlink_msg_param_value_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+			onboardParameters[id].name, param_value, onboardParameters[id].dataType,
+			PARAMETERS_TOTAL, id);
+		len = mavlink_msg_to_send_buffer(buf, &msg);
+		Uart1WriteData(buf, (uint8_t)len);
 	}
-
-	mavlink_msg_param_value_encode(mavlink_system.sysid, mavlink_system.compid, &msg, &valueMsg);
-	len = mavlink_msg_to_send_buffer(buf, &msg);
-	Uart1WriteData(buf, (uint8_t)len);
 }
 
 /** Custom Sealion Messages **/
@@ -759,20 +746,15 @@ void MavLinkEvaluateParameterState(enum PARAM_EVENT event, void *data)
 				currentParameter = 0;
 				nextState = PARAM_STATE_STREAM_SEND_VALUE;
 			} else if (event == PARAM_EVENT_SET_RECEIVED) {
-				mavlink_param_set_t x = *(mavlink_param_set_t *)data;
-				mavlink_param_union_t paramValue;
-				paramValue.param_float = x.param_value;
-				if (strcmp(x.param_id, "MODE_AUTO") == 0) {
-					if (paramValue.param_uint32) {
-						nodeStatus |= PRIMARY_NODE_STATUS_AUTOMODE;
-					} else {
-						nodeStatus &= ~PRIMARY_NODE_STATUS_AUTOMODE;
-					}
+				mavlink_param_set_t x = *(mavlink_param_set_t*)data;
+				currentParameter = ParameterSetValueByName(x.param_id, &x.param_value);
+				// If there was an error, just reset.
+				if (currentParameter == UINT16_MAX) {
 					currentParameter = 0;
 				}
 				nextState = PARAM_STATE_SINGLETON_SEND_VALUE;
 			} else if (event == PARAM_EVENT_REQUEST_READ_RECEIVED) {
-				currentParameter = *(uint16_t *)data;
+				currentParameter = *(uint16_t*)data;
 				nextState = PARAM_STATE_SINGLETON_SEND_VALUE;
 			}
 		break;
@@ -798,7 +780,7 @@ void MavLinkEvaluateParameterState(enum PARAM_EVENT event, void *data)
 
 				// And increment the current parameter index for the next iteration and
 				// we finish if we've hit the limit of parameters.
-				if (++currentParameter == parameterCount) {
+				if (++currentParameter == PARAMETERS_TOTAL) {
 					nextState = PARAM_STATE_INACTIVE;
 				} else {
 					nextState = PARAM_STATE_STREAM_DELAY;

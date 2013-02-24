@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2374"
+    ComputedModelVersion    "1.2380"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -29,9 +29,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sat Feb 16 17:55:56 2013"
-  RTWModifiedTimeStamp	  282934966
-  ModelVersionFormat	  "1.%<AutoIncrement:2374>"
+  LastModifiedDate	  "Sun Feb 24 12:53:26 2013"
+  RTWModifiedTimeStamp	  283611067
+  ModelVersionFormat	  "1.%<AutoIncrement:2380>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -413,10 +413,10 @@ Model {
 	  RTWUseLocalCustomCode	  off
 	  RTWUseSimCustomCode	  off
 	  CustomInclude		  "../../../mavlink/seaslug\n../../../mavlink/seaslug/seaslug\nclib\n../Libs/C"
-	  CustomSource		  "clib/PrimaryNode.c\nclib/EcanSensors.c\nclib/MavlinkGlue.c\n\n../Libs/C/Acs300.c\n../Libs/C/Messag"
-	  "eScheduler.c\n../Libs/C/Nmea2000.c\n../Libs/C/Nmea2000Encode.c\n../Libs/C/Rudder.c\n../Libs/C/Uart1.c\n../Libs/C/Ca"
-	  "nMessages.c\n../Libs/C/Traps.c\n../Libs/C/DEE.c\n../Libs/C/DEES.s\n../Libs/C/Node.c\n../Libs/C/CircularBuffer.c\n\n"
-	  "../Libs/C/Ecan1.c"
+	  CustomSource		  "clib/PrimaryNode.c\nclib/EcanSensors.c\nclib/MavlinkGlue.c\nclib/ParametersHelper.c\n\n../Libs/C/A"
+	  "cs300.c\n../Libs/C/CanMessages.c\n../Libs/C/CircularBuffer.c\n../Libs/C/DEE.c\n../Libs/C/DEES.s\n../Libs/C/Ecan1.c\n"
+	  "../Libs/C/Nmea2000.c\n../Libs/C/Nmea2000Encode.c\n../Libs/C/Node.c\n../Libs/C/MessageScheduler.c\n../Libs/C/Rudder."
+	  "c\n../Libs/C/Traps.c\n../Libs/C/Uart1.c\n../Libs/C/Parameters.c"
 	  IncludeHyperlinkInReport off
 	  LaunchReport		  off
 	  TargetLang		  "C"
@@ -677,7 +677,7 @@ Model {
 		Name			"OPTIM_GCC"
 		Value			"-mcpu=33fj128MC802 -O3 -fschedule-insns -fschedule-insns2                                                  "
 		"                                                                                                                    "
-		"                                            -fno-short-double"
+		"                                                                -fno-short-double"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -730,7 +730,7 @@ Model {
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=1 "
       CurrentDlgPage	      "Code Generation/Custom Code"
-      ConfigPrmDlgPosition     [ 430, 130, 1490, 888 ] 
+      ConfigPrmDlgPosition     [ 310, 2, 1434, 917 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -738,6 +738,7 @@ Model {
     $PropName		    "ActiveConfigurationSet"
     $ObjectID		    1
   }
+  WSDataSource		  "MATLAB File"
   BlockDefaults {
     ForegroundColor	    "black"
     BackgroundColor	    "white"
@@ -1148,7 +1149,7 @@ Model {
   }
   System {
     Name		    "primary_node"
-    Location		    [256, 134, 1763, 951]
+    Location		    [202, 74, 1901, 1019]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1162,7 +1163,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "24463"
+    SIDHighWatermark	    "24637"
     Block {
       BlockType		      SubSystem
       Name		      "Actuator\nOutputs"
@@ -1676,17 +1677,6 @@ Model {
       OutDataTypeStr	      "uint8"
     }
     Block {
-      BlockType		      Constant
-      Name		      "Constant1"
-      SID		      "23257"
-      Position		      [345, 380, 430, 410]
-      ZOrder		      -5
-      BackgroundColor	      "gray"
-      ShowName		      off
-      Value		      "ref_lla_sense"
-      OutDataTypeStr	      "int32"
-    }
-    Block {
       BlockType		      SubSystem
       Name		      "Controller"
       SID		      "12040"
@@ -1937,7 +1927,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Autonomous Controller"
-	    Location		    [431, 115, 1907, 1030]
+	    Location		    [472, 230, 1447, 850]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -2017,10 +2007,10 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Initialize MissionList"
-		Location		[905, 308, 1728, 876]
+		Location		[583, 329, 1389, 860]
 		Open			off
 		ModelBrowserVisibility	on
-		ModelBrowserWidth	373
+		ModelBrowserWidth	284
 		ScreenColor		"white"
 		PaperOrientation	"landscape"
 		PaperPositionMode	"auto"
@@ -2043,8 +2033,251 @@ Model {
 		  PortDimensions	  "1"
 		}
 		Block {
+		  BlockType		  Reference
+		  Name			  "AppendMission"
+		  SID			  "23038"
+		  Ports			  [1, 1]
+		  Position		  [355, 204, 455, 246]
+		  ZOrder		  -5
+		  ForegroundColor	  "cyan"
+		  LibraryVersion	  "1.137"
+		  SourceBlock		  "uSimLib/Mission Manager/AppendMission"
+		  SourceType		  ""
+		  sampleTime		  "-1"
+		}
+		Block {
+		  BlockType		  Reference
+		  Name			  "AppendMission1"
+		  SID			  "23039"
+		  Ports			  [1, 1]
+		  Position		  [355, 264, 455, 306]
+		  ZOrder		  -5
+		  ForegroundColor	  "cyan"
+		  LibraryVersion	  "1.137"
+		  SourceBlock		  "uSimLib/Mission Manager/AppendMission"
+		  SourceType		  ""
+		  sampleTime		  "-1"
+		}
+		Block {
+		  BlockType		  Reference
+		  Name			  "AppendMission2"
+		  SID			  "23040"
+		  Ports			  [1, 1]
+		  Position		  [355, 324, 455, 366]
+		  ZOrder		  -5
+		  ForegroundColor	  "cyan"
+		  LibraryVersion	  "1.137"
+		  SourceBlock		  "uSimLib/Mission Manager/AppendMission"
+		  SourceType		  ""
+		  sampleTime		  "-1"
+		}
+		Block {
+		  BlockType		  Reference
+		  Name			  "AppendMission3"
+		  SID			  "23041"
+		  Ports			  [1, 1]
+		  Position		  [355, 384, 455, 426]
+		  ZOrder		  -5
+		  ForegroundColor	  "cyan"
+		  LibraryVersion	  "1.137"
+		  SourceBlock		  "uSimLib/Mission Manager/AppendMission"
+		  SourceType		  ""
+		  sampleTime		  "-1"
+		}
+		Block {
+		  BlockType		  Reference
+		  Name			  "AppendMission4"
+		  SID			  "23042"
+		  Ports			  [1, 1]
+		  Position		  [355, 444, 455, 486]
+		  ZOrder		  -5
+		  ForegroundColor	  "cyan"
+		  LibraryVersion	  "1.137"
+		  SourceBlock		  "uSimLib/Mission Manager/AppendMission"
+		  SourceType		  ""
+		  sampleTime		  "-1"
+		}
+		Block {
+		  BlockType		  Reference
+		  Name			  "AppendMission5"
+		  SID			  "23043"
+		  Ports			  [1, 1]
+		  Position		  [355, 504, 455, 546]
+		  ZOrder		  -5
+		  ForegroundColor	  "cyan"
+		  LibraryVersion	  "1.137"
+		  SourceBlock		  "uSimLib/Mission Manager/AppendMission"
+		  SourceType		  ""
+		  sampleTime		  "-1"
+		}
+		Block {
+		  BlockType		  Reference
+		  Name			  "ClearMissionList"
+		  SID			  "23044"
+		  Ports			  []
+		  Position		  [195, 139, 295, 181]
+		  ZOrder		  -5
+		  ForegroundColor	  "cyan"
+		  Priority		  "1"
+		  LibraryVersion	  "1.137"
+		  SourceBlock		  "uSimLib/Mission Manager/ClearMissionList"
+		  SourceType		  ""
+		  sampleTime		  "-1"
+		}
+		Block {
+		  BlockType		  Constant
+		  Name			  "Constant"
+		  SID			  "23045"
+		  Position		  [30, 211, 160, 239]
+		  ZOrder		  -5
+		  BackgroundColor	  "gray"
+		  ShowName		  off
+		  Value			  "test_waypoints(1)"
+		  OutDataTypeStr	  "Bus: Mission"
+		}
+		Block {
+		  BlockType		  Constant
+		  Name			  "Constant1"
+		  SID			  "23046"
+		  Position		  [30, 271, 160, 299]
+		  ZOrder		  -5
+		  BackgroundColor	  "gray"
+		  ShowName		  off
+		  Value			  "test_waypoints(2)"
+		  OutDataTypeStr	  "Bus: Mission"
+		}
+		Block {
+		  BlockType		  Constant
+		  Name			  "Constant2"
+		  SID			  "23047"
+		  Position		  [30, 331, 160, 359]
+		  ZOrder		  -5
+		  BackgroundColor	  "gray"
+		  ShowName		  off
+		  Value			  "test_waypoints(3)"
+		  OutDataTypeStr	  "Bus: Mission"
+		}
+		Block {
+		  BlockType		  Constant
+		  Name			  "Constant3"
+		  SID			  "23048"
+		  Position		  [30, 391, 160, 419]
+		  ZOrder		  -5
+		  BackgroundColor	  "gray"
+		  ShowName		  off
+		  Value			  "test_waypoints(4)"
+		  OutDataTypeStr	  "Bus: Mission"
+		}
+		Block {
+		  BlockType		  Constant
+		  Name			  "Constant4"
+		  SID			  "23049"
+		  Position		  [30, 451, 160, 479]
+		  ZOrder		  -5
+		  BackgroundColor	  "gray"
+		  ShowName		  off
+		  Value			  "test_waypoints(5)"
+		  OutDataTypeStr	  "Bus: Mission"
+		}
+		Block {
+		  BlockType		  Constant
+		  Name			  "Constant5"
+		  SID			  "23050"
+		  Position		  [30, 511, 160, 539]
+		  ZOrder		  -5
+		  BackgroundColor	  "gray"
+		  ShowName		  off
+		  Value			  "test_waypoints(6)"
+		  OutDataTypeStr	  "Bus: Mission"
+		}
+		Block {
+		  BlockType		  DataTypeConversion
+		  Name			  "Data Type Conversion"
+		  SID			  "24307"
+		  Position		  [490, 213, 540, 237]
+		  ZOrder		  -7
+		  ShowName		  off
+		  OutDataTypeStr	  "uint8"
+		  RndMeth		  "Simplest"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Reference
+		  Name			  "Mission Init"
+		  SID			  "23052"
+		  Ports			  []
+		  Position		  [195, 69, 295, 111]
+		  ZOrder		  -4
+		  ForegroundColor	  "blue"
+		  BackgroundColor	  "cyan"
+		  Priority		  "0"
+		  LibraryVersion	  "1.137"
+		  SourceBlock		  "uSimLib/Mission Manager/Mission Init"
+		  SourceType		  ""
+		  maxMissions		  "16"
+		  sampleTime		  "-1"
+		}
+		Block {
+		  BlockType		  Reference
+		  Name			  "SetCurrentMission"
+		  SID			  "23053"
+		  Ports			  [1]
+		  Position		  [575, 204, 675, 246]
+		  ZOrder		  -5
+		  ForegroundColor	  "cyan"
+		  LibraryVersion	  "1.137"
+		  SourceBlock		  "uSimLib/Mission Manager/SetCurrentMission"
+		  SourceType		  ""
+		  sampleTime		  "-1"
+		}
+		Block {
+		  BlockType		  Terminator
+		  Name			  "Terminator1"
+		  SID			  "23054"
+		  Position		  [505, 275, 525, 295]
+		  ZOrder		  -5
+		  BackgroundColor	  "red"
+		  ShowName		  off
+		}
+		Block {
+		  BlockType		  Terminator
+		  Name			  "Terminator2"
+		  SID			  "23055"
+		  Position		  [505, 335, 525, 355]
+		  ZOrder		  -5
+		  BackgroundColor	  "red"
+		  ShowName		  off
+		}
+		Block {
+		  BlockType		  Terminator
+		  Name			  "Terminator3"
+		  SID			  "23056"
+		  Position		  [505, 395, 525, 415]
+		  ZOrder		  -5
+		  BackgroundColor	  "red"
+		  ShowName		  off
+		}
+		Block {
+		  BlockType		  Terminator
+		  Name			  "Terminator4"
+		  SID			  "23057"
+		  Position		  [505, 455, 525, 475]
+		  ZOrder		  -5
+		  BackgroundColor	  "red"
+		  ShowName		  off
+		}
+		Block {
+		  BlockType		  Terminator
+		  Name			  "Terminator5"
+		  SID			  "23058"
+		  Position		  [505, 515, 525, 535]
+		  ZOrder		  -5
+		  BackgroundColor	  "red"
+		  ShowName		  off
+		}
+		Block {
 		  BlockType		  SubSystem
-		  Name			  "Add local coordinates"
+		  Name			  "lla2ltp"
 		  SID			  "23261"
 		  Ports			  [1, 1]
 		  Position		  [215, 205, 280, 245]
@@ -2060,7 +2293,7 @@ Model {
 		  RequestExecContextInheritance	off
 		  MaskHideContents	  off
 		  System {
-		    Name		    "Add local coordinates"
+		    Name		    "lla2ltp"
 		    Location		    [511, 585, 1334, 885]
 		    Open		    off
 		    ModelBrowserVisibility  on
@@ -2251,7 +2484,7 @@ Model {
 		    MaskHideContents	    off
 		    System {
 		    Name		    "LLA2LTP"
-		    Location		    [1033, 358, 1609, 759]
+		    Location		    [1227, 431, 1803, 832]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -2295,7 +2528,7 @@ Model {
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
 		    ShowName		    off
-		    Value		    "ref_lla_sense"
+		    Value		    "gpsOrigin"
 		    OutDataTypeStr	    "int32"
 		    }
 		    Block {
@@ -2653,7 +2886,7 @@ Model {
 		}
 		Block {
 		  BlockType		  SubSystem
-		  Name			  "Add local coordinates1"
+		  Name			  "lla2ltp1"
 		  SID			  "24309"
 		  Ports			  [1, 1]
 		  Position		  [215, 265, 280, 305]
@@ -2669,7 +2902,7 @@ Model {
 		  RequestExecContextInheritance	off
 		  MaskHideContents	  off
 		  System {
-		    Name		    "Add local coordinates1"
+		    Name		    "lla2ltp1"
 		    Location		    [511, 585, 1334, 885]
 		    Open		    off
 		    ModelBrowserVisibility  on
@@ -2725,7 +2958,7 @@ Model {
 		    MaskHideContents	    off
 		    System {
 		    Name		    "Convert global coordinates\nto local as well"
-		    Location		    [575, 567, 1398, 867]
+		    Location		    [1125, 358, 1609, 742]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -2860,10 +3093,10 @@ Model {
 		    MaskHideContents	    off
 		    System {
 		    Name		    "LLA2LTP"
-		    Location		    [1033, 358, 1609, 759]
+		    Location		    [1125, 358, 1609, 759]
 		    Open		    off
 		    ModelBrowserVisibility  on
-		    ModelBrowserWidth	    200
+		    ModelBrowserWidth	    292
 		    ScreenColor		    "white"
 		    PaperOrientation	    "landscape"
 		    PaperPositionMode	    "auto"
@@ -2904,7 +3137,7 @@ Model {
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
 		    ShowName		    off
-		    Value		    "ref_lla_sense"
+		    Value		    "gpsOrigin"
 		    OutDataTypeStr	    "int32"
 		    }
 		    Block {
@@ -3262,8 +3495,8 @@ Model {
 		}
 		Block {
 		  BlockType		  SubSystem
-		  Name			  "Add local coordinates2"
-		  SID			  "24338"
+		  Name			  "lla2ltp2"
+		  SID			  "24464"
 		  Ports			  [1, 1]
 		  Position		  [215, 325, 280, 365]
 		  TreatAsAtomicUnit	  on
@@ -3278,8 +3511,8 @@ Model {
 		  RequestExecContextInheritance	off
 		  MaskHideContents	  off
 		  System {
-		    Name		    "Add local coordinates2"
-		    Location		    [511, 585, 1334, 885]
+		    Name		    "lla2ltp2"
+		    Location		    [1117, 358, 1609, 742]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -3295,7 +3528,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "24339"
+		    SID			    "24465"
 		    Position		    [25, 113, 55, 127]
 		    BackgroundColor	    "darkGreen"
 		    IconDisplay		    "Port number"
@@ -3303,7 +3536,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "24340"
+		    SID			    "24466"
 		    Ports		    [1, 1]
 		    Position		    [135, 101, 140, 139]
 		    ZOrder		    -3
@@ -3319,7 +3552,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Convert global coordinates\nto local as well"
-		    SID			    "24341"
+		    SID			    "24467"
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [360, 37, 430, 73]
 		    ZOrder		    -16
@@ -3334,7 +3567,7 @@ Model {
 		    MaskHideContents	    off
 		    System {
 		    Name		    "Convert global coordinates\nto local as well"
-		    Location		    [575, 567, 1398, 867]
+		    Location		    [1125, 358, 1609, 742]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -3350,7 +3583,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "24342"
+		    SID			    "24468"
 		    Position		    [15, 78, 45, 92]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -3359,7 +3592,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "24343"
+		    SID			    "24469"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "then"
@@ -3367,7 +3600,7 @@ Model {
 		    Block {
 		    BlockType		    BusAssignment
 		    Name		    "Bus\nAssignment"
-		    SID			    "24344"
+		    SID			    "24470"
 		    Ports		    [4, 1]
 		    Position		    [410, 97, 535, 213]
 		    ZOrder		    -1
@@ -3377,7 +3610,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "24345"
+		    SID			    "24471"
 		    Ports		    [1, 1]
 		    Position		    [85, 151, 90, 189]
 		    ZOrder		    -3
@@ -3393,7 +3626,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "24346"
+		    SID			    "24472"
 		    Position		    [180, 249, 210, 271]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -3403,7 +3636,7 @@ Model {
 		    Block {
 		    BlockType		    Demux
 		    Name		    "Demux"
-		    SID			    "24347"
+		    SID			    "24473"
 		    Ports		    [1, 3]
 		    Position		    [135, 134, 140, 206]
 		    ZOrder		    -7
@@ -3414,7 +3647,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain"
-		    SID			    "24348"
+		    SID			    "24474"
 		    Position		    [170, 130, 200, 160]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -3427,7 +3660,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain1"
-		    SID			    "24349"
+		    SID			    "24475"
 		    Position		    [170, 155, 200, 185]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -3440,7 +3673,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain2"
-		    SID			    "24350"
+		    SID			    "24476"
 		    Position		    [170, 180, 200, 210]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -3453,7 +3686,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "LLA2LTP"
-		    SID			    "24351"
+		    SID			    "24477"
 		    Ports		    [1, 1]
 		    Position		    [260, 149, 360, 191]
 		    ZOrder		    -5
@@ -3469,7 +3702,7 @@ Model {
 		    MaskHideContents	    off
 		    System {
 		    Name		    "LLA2LTP"
-		    Location		    [1033, 358, 1609, 759]
+		    Location		    [1125, 358, 1609, 759]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -3485,7 +3718,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "LLA"
-		    SID			    "24352"
+		    SID			    "24478"
 		    Position		    [65, 158, 95, 172]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -3494,7 +3727,7 @@ Model {
 		    Block {
 		    BlockType		    Sum
 		    Name		    "Add"
-		    SID			    "24353"
+		    SID			    "24479"
 		    Ports		    [2, 1]
 		    Position		    [175, 172, 205, 203]
 		    ZOrder		    -2
@@ -3508,18 +3741,18 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "24354"
+		    SID			    "24480"
 		    Position		    [30, 195, 130, 225]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
 		    ShowName		    off
-		    Value		    "ref_lla_sense"
+		    Value		    "gpsOrigin"
 		    OutDataTypeStr	    "int32"
 		    }
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant1"
-		    SID			    "24355"
+		    SID			    "24481"
 		    Position		    [30, 235, 130, 265]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -3530,7 +3763,7 @@ Model {
 		    Block {
 		    BlockType		    Product
 		    Name		    "Product"
-		    SID			    "24356"
+		    SID			    "24482"
 		    Ports		    [2, 1]
 		    Position		    [275, 202, 305, 233]
 		    ZOrder		    -19
@@ -3544,7 +3777,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "LTP"
-		    SID			    "24357"
+		    SID			    "24483"
 		    Position		    [350, 213, 380, 227]
 		    ZOrder		    -2
 		    BackgroundColor	    "yellow"
@@ -3591,7 +3824,7 @@ Model {
 		    Block {
 		    BlockType		    Mux
 		    Name		    "Mux"
-		    SID			    "24358"
+		    SID			    "24484"
 		    Ports		    [3, 1]
 		    Position		    [225, 132, 230, 208]
 		    ZOrder		    -16
@@ -3602,7 +3835,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "24359"
+		    SID			    "24485"
 		    Position		    [585, 148, 615, 162]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -3717,7 +3950,7 @@ Model {
 		    Block {
 		    BlockType		    If
 		    Name		    "If"
-		    SID			    "24360"
+		    SID			    "24486"
 		    Ports		    [1, 2]
 		    Position		    [215, 101, 315, 139]
 		    ZOrder		    -15
@@ -3728,7 +3961,7 @@ Model {
 		    Block {
 		    BlockType		    Merge
 		    Name		    "Merge"
-		    SID			    "24361"
+		    SID			    "24487"
 		    Ports		    [2, 1]
 		    Position		    [480, 100, 520, 140]
 		    ZOrder		    -14
@@ -3737,7 +3970,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Pass through local\ncoordinates"
-		    SID			    "24362"
+		    SID			    "24488"
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [360, 167, 430, 203]
 		    ZOrder		    -16
@@ -3767,7 +4000,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "24363"
+		    SID			    "24489"
 		    Position		    [75, 78, 105, 92]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -3776,7 +4009,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "24364"
+		    SID			    "24490"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "elseif"
@@ -3784,7 +4017,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "24365"
+		    SID			    "24491"
 		    Position		    [325, 78, 355, 92]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -3801,7 +4034,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "24366"
+		    SID			    "24492"
 		    Position		    [600, 113, 630, 127]
 		    BackgroundColor	    "yellow"
 		    IconDisplay		    "Port number"
@@ -3871,8 +4104,8 @@ Model {
 		}
 		Block {
 		  BlockType		  SubSystem
-		  Name			  "Add local coordinates3"
-		  SID			  "24367"
+		  Name			  "lla2ltp3"
+		  SID			  "24493"
 		  Ports			  [1, 1]
 		  Position		  [215, 385, 280, 425]
 		  TreatAsAtomicUnit	  on
@@ -3887,8 +4120,8 @@ Model {
 		  RequestExecContextInheritance	off
 		  MaskHideContents	  off
 		  System {
-		    Name		    "Add local coordinates3"
-		    Location		    [511, 585, 1334, 885]
+		    Name		    "lla2ltp3"
+		    Location		    [1117, 358, 1609, 742]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -3904,7 +4137,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "24368"
+		    SID			    "24494"
 		    Position		    [25, 113, 55, 127]
 		    BackgroundColor	    "darkGreen"
 		    IconDisplay		    "Port number"
@@ -3912,7 +4145,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "24369"
+		    SID			    "24495"
 		    Ports		    [1, 1]
 		    Position		    [135, 101, 140, 139]
 		    ZOrder		    -3
@@ -3928,7 +4161,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Convert global coordinates\nto local as well"
-		    SID			    "24370"
+		    SID			    "24496"
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [360, 37, 430, 73]
 		    ZOrder		    -16
@@ -3943,7 +4176,7 @@ Model {
 		    MaskHideContents	    off
 		    System {
 		    Name		    "Convert global coordinates\nto local as well"
-		    Location		    [575, 567, 1398, 867]
+		    Location		    [1125, 358, 1609, 742]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -3959,7 +4192,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "24371"
+		    SID			    "24497"
 		    Position		    [15, 78, 45, 92]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -3968,7 +4201,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "24372"
+		    SID			    "24498"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "then"
@@ -3976,7 +4209,7 @@ Model {
 		    Block {
 		    BlockType		    BusAssignment
 		    Name		    "Bus\nAssignment"
-		    SID			    "24373"
+		    SID			    "24499"
 		    Ports		    [4, 1]
 		    Position		    [410, 97, 535, 213]
 		    ZOrder		    -1
@@ -3986,7 +4219,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "24374"
+		    SID			    "24500"
 		    Ports		    [1, 1]
 		    Position		    [85, 151, 90, 189]
 		    ZOrder		    -3
@@ -4002,7 +4235,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "24375"
+		    SID			    "24501"
 		    Position		    [180, 249, 210, 271]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -4012,7 +4245,7 @@ Model {
 		    Block {
 		    BlockType		    Demux
 		    Name		    "Demux"
-		    SID			    "24376"
+		    SID			    "24502"
 		    Ports		    [1, 3]
 		    Position		    [135, 134, 140, 206]
 		    ZOrder		    -7
@@ -4023,7 +4256,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain"
-		    SID			    "24377"
+		    SID			    "24503"
 		    Position		    [170, 130, 200, 160]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -4036,7 +4269,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain1"
-		    SID			    "24378"
+		    SID			    "24504"
 		    Position		    [170, 155, 200, 185]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -4049,7 +4282,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain2"
-		    SID			    "24379"
+		    SID			    "24505"
 		    Position		    [170, 180, 200, 210]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -4062,7 +4295,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "LLA2LTP"
-		    SID			    "24380"
+		    SID			    "24506"
 		    Ports		    [1, 1]
 		    Position		    [260, 149, 360, 191]
 		    ZOrder		    -5
@@ -4078,7 +4311,7 @@ Model {
 		    MaskHideContents	    off
 		    System {
 		    Name		    "LLA2LTP"
-		    Location		    [1033, 358, 1609, 759]
+		    Location		    [1125, 358, 1609, 759]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -4094,7 +4327,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "LLA"
-		    SID			    "24381"
+		    SID			    "24507"
 		    Position		    [65, 158, 95, 172]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -4103,7 +4336,7 @@ Model {
 		    Block {
 		    BlockType		    Sum
 		    Name		    "Add"
-		    SID			    "24382"
+		    SID			    "24508"
 		    Ports		    [2, 1]
 		    Position		    [175, 172, 205, 203]
 		    ZOrder		    -2
@@ -4117,18 +4350,18 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "24383"
+		    SID			    "24509"
 		    Position		    [30, 195, 130, 225]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
 		    ShowName		    off
-		    Value		    "ref_lla_sense"
+		    Value		    "gpsOrigin"
 		    OutDataTypeStr	    "int32"
 		    }
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant1"
-		    SID			    "24384"
+		    SID			    "24510"
 		    Position		    [30, 235, 130, 265]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -4139,7 +4372,7 @@ Model {
 		    Block {
 		    BlockType		    Product
 		    Name		    "Product"
-		    SID			    "24385"
+		    SID			    "24511"
 		    Ports		    [2, 1]
 		    Position		    [275, 202, 305, 233]
 		    ZOrder		    -19
@@ -4153,7 +4386,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "LTP"
-		    SID			    "24386"
+		    SID			    "24512"
 		    Position		    [350, 213, 380, 227]
 		    ZOrder		    -2
 		    BackgroundColor	    "yellow"
@@ -4200,7 +4433,7 @@ Model {
 		    Block {
 		    BlockType		    Mux
 		    Name		    "Mux"
-		    SID			    "24387"
+		    SID			    "24513"
 		    Ports		    [3, 1]
 		    Position		    [225, 132, 230, 208]
 		    ZOrder		    -16
@@ -4211,7 +4444,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "24388"
+		    SID			    "24514"
 		    Position		    [585, 148, 615, 162]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -4326,7 +4559,7 @@ Model {
 		    Block {
 		    BlockType		    If
 		    Name		    "If"
-		    SID			    "24389"
+		    SID			    "24515"
 		    Ports		    [1, 2]
 		    Position		    [215, 101, 315, 139]
 		    ZOrder		    -15
@@ -4337,7 +4570,7 @@ Model {
 		    Block {
 		    BlockType		    Merge
 		    Name		    "Merge"
-		    SID			    "24390"
+		    SID			    "24516"
 		    Ports		    [2, 1]
 		    Position		    [480, 100, 520, 140]
 		    ZOrder		    -14
@@ -4346,7 +4579,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Pass through local\ncoordinates"
-		    SID			    "24391"
+		    SID			    "24517"
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [360, 167, 430, 203]
 		    ZOrder		    -16
@@ -4376,7 +4609,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "24392"
+		    SID			    "24518"
 		    Position		    [75, 78, 105, 92]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -4385,7 +4618,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "24393"
+		    SID			    "24519"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "elseif"
@@ -4393,7 +4626,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "24394"
+		    SID			    "24520"
 		    Position		    [325, 78, 355, 92]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -4410,7 +4643,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "24395"
+		    SID			    "24521"
 		    Position		    [600, 113, 630, 127]
 		    BackgroundColor	    "yellow"
 		    IconDisplay		    "Port number"
@@ -4480,8 +4713,8 @@ Model {
 		}
 		Block {
 		  BlockType		  SubSystem
-		  Name			  "Add local coordinates4"
-		  SID			  "24396"
+		  Name			  "lla2ltp4"
+		  SID			  "24522"
 		  Ports			  [1, 1]
 		  Position		  [215, 445, 280, 485]
 		  TreatAsAtomicUnit	  on
@@ -4496,8 +4729,8 @@ Model {
 		  RequestExecContextInheritance	off
 		  MaskHideContents	  off
 		  System {
-		    Name		    "Add local coordinates4"
-		    Location		    [511, 585, 1334, 885]
+		    Name		    "lla2ltp4"
+		    Location		    [1117, 358, 1609, 742]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -4513,7 +4746,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "24397"
+		    SID			    "24523"
 		    Position		    [25, 113, 55, 127]
 		    BackgroundColor	    "darkGreen"
 		    IconDisplay		    "Port number"
@@ -4521,7 +4754,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "24398"
+		    SID			    "24524"
 		    Ports		    [1, 1]
 		    Position		    [135, 101, 140, 139]
 		    ZOrder		    -3
@@ -4537,7 +4770,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Convert global coordinates\nto local as well"
-		    SID			    "24399"
+		    SID			    "24525"
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [360, 37, 430, 73]
 		    ZOrder		    -16
@@ -4552,7 +4785,7 @@ Model {
 		    MaskHideContents	    off
 		    System {
 		    Name		    "Convert global coordinates\nto local as well"
-		    Location		    [575, 567, 1398, 867]
+		    Location		    [1125, 358, 1609, 742]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -4568,7 +4801,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "24400"
+		    SID			    "24526"
 		    Position		    [15, 78, 45, 92]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -4577,7 +4810,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "24401"
+		    SID			    "24527"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "then"
@@ -4585,7 +4818,7 @@ Model {
 		    Block {
 		    BlockType		    BusAssignment
 		    Name		    "Bus\nAssignment"
-		    SID			    "24402"
+		    SID			    "24528"
 		    Ports		    [4, 1]
 		    Position		    [410, 97, 535, 213]
 		    ZOrder		    -1
@@ -4595,7 +4828,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "24403"
+		    SID			    "24529"
 		    Ports		    [1, 1]
 		    Position		    [85, 151, 90, 189]
 		    ZOrder		    -3
@@ -4611,7 +4844,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "24404"
+		    SID			    "24530"
 		    Position		    [180, 249, 210, 271]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -4621,7 +4854,7 @@ Model {
 		    Block {
 		    BlockType		    Demux
 		    Name		    "Demux"
-		    SID			    "24405"
+		    SID			    "24531"
 		    Ports		    [1, 3]
 		    Position		    [135, 134, 140, 206]
 		    ZOrder		    -7
@@ -4632,7 +4865,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain"
-		    SID			    "24406"
+		    SID			    "24532"
 		    Position		    [170, 130, 200, 160]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -4645,7 +4878,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain1"
-		    SID			    "24407"
+		    SID			    "24533"
 		    Position		    [170, 155, 200, 185]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -4658,7 +4891,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain2"
-		    SID			    "24408"
+		    SID			    "24534"
 		    Position		    [170, 180, 200, 210]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -4671,7 +4904,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "LLA2LTP"
-		    SID			    "24409"
+		    SID			    "24535"
 		    Ports		    [1, 1]
 		    Position		    [260, 149, 360, 191]
 		    ZOrder		    -5
@@ -4687,7 +4920,7 @@ Model {
 		    MaskHideContents	    off
 		    System {
 		    Name		    "LLA2LTP"
-		    Location		    [1033, 358, 1609, 759]
+		    Location		    [1125, 358, 1609, 759]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -4703,7 +4936,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "LLA"
-		    SID			    "24410"
+		    SID			    "24536"
 		    Position		    [65, 158, 95, 172]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -4712,7 +4945,7 @@ Model {
 		    Block {
 		    BlockType		    Sum
 		    Name		    "Add"
-		    SID			    "24411"
+		    SID			    "24537"
 		    Ports		    [2, 1]
 		    Position		    [175, 172, 205, 203]
 		    ZOrder		    -2
@@ -4726,18 +4959,18 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "24412"
+		    SID			    "24538"
 		    Position		    [30, 195, 130, 225]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
 		    ShowName		    off
-		    Value		    "ref_lla_sense"
+		    Value		    "gpsOrigin"
 		    OutDataTypeStr	    "int32"
 		    }
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant1"
-		    SID			    "24413"
+		    SID			    "24539"
 		    Position		    [30, 235, 130, 265]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -4748,7 +4981,7 @@ Model {
 		    Block {
 		    BlockType		    Product
 		    Name		    "Product"
-		    SID			    "24414"
+		    SID			    "24540"
 		    Ports		    [2, 1]
 		    Position		    [275, 202, 305, 233]
 		    ZOrder		    -19
@@ -4762,7 +4995,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "LTP"
-		    SID			    "24415"
+		    SID			    "24541"
 		    Position		    [350, 213, 380, 227]
 		    ZOrder		    -2
 		    BackgroundColor	    "yellow"
@@ -4809,7 +5042,7 @@ Model {
 		    Block {
 		    BlockType		    Mux
 		    Name		    "Mux"
-		    SID			    "24416"
+		    SID			    "24542"
 		    Ports		    [3, 1]
 		    Position		    [225, 132, 230, 208]
 		    ZOrder		    -16
@@ -4820,7 +5053,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "24417"
+		    SID			    "24543"
 		    Position		    [585, 148, 615, 162]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -4935,7 +5168,7 @@ Model {
 		    Block {
 		    BlockType		    If
 		    Name		    "If"
-		    SID			    "24418"
+		    SID			    "24544"
 		    Ports		    [1, 2]
 		    Position		    [215, 101, 315, 139]
 		    ZOrder		    -15
@@ -4946,7 +5179,7 @@ Model {
 		    Block {
 		    BlockType		    Merge
 		    Name		    "Merge"
-		    SID			    "24419"
+		    SID			    "24545"
 		    Ports		    [2, 1]
 		    Position		    [480, 100, 520, 140]
 		    ZOrder		    -14
@@ -4955,7 +5188,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Pass through local\ncoordinates"
-		    SID			    "24420"
+		    SID			    "24546"
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [360, 167, 430, 203]
 		    ZOrder		    -16
@@ -4985,7 +5218,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "24421"
+		    SID			    "24547"
 		    Position		    [75, 78, 105, 92]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -4994,7 +5227,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "24422"
+		    SID			    "24548"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "elseif"
@@ -5002,7 +5235,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "24423"
+		    SID			    "24549"
 		    Position		    [325, 78, 355, 92]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -5019,7 +5252,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "24424"
+		    SID			    "24550"
 		    Position		    [600, 113, 630, 127]
 		    BackgroundColor	    "yellow"
 		    IconDisplay		    "Port number"
@@ -5089,8 +5322,8 @@ Model {
 		}
 		Block {
 		  BlockType		  SubSystem
-		  Name			  "Add local coordinates5"
-		  SID			  "24425"
+		  Name			  "lla2ltp5"
+		  SID			  "24551"
 		  Ports			  [1, 1]
 		  Position		  [215, 505, 280, 545]
 		  TreatAsAtomicUnit	  on
@@ -5105,8 +5338,8 @@ Model {
 		  RequestExecContextInheritance	off
 		  MaskHideContents	  off
 		  System {
-		    Name		    "Add local coordinates5"
-		    Location		    [511, 585, 1334, 885]
+		    Name		    "lla2ltp5"
+		    Location		    [1117, 358, 1609, 742]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -5122,7 +5355,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "24426"
+		    SID			    "24552"
 		    Position		    [25, 113, 55, 127]
 		    BackgroundColor	    "darkGreen"
 		    IconDisplay		    "Port number"
@@ -5130,7 +5363,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "24427"
+		    SID			    "24553"
 		    Ports		    [1, 1]
 		    Position		    [135, 101, 140, 139]
 		    ZOrder		    -3
@@ -5146,7 +5379,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Convert global coordinates\nto local as well"
-		    SID			    "24428"
+		    SID			    "24554"
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [360, 37, 430, 73]
 		    ZOrder		    -16
@@ -5161,7 +5394,7 @@ Model {
 		    MaskHideContents	    off
 		    System {
 		    Name		    "Convert global coordinates\nto local as well"
-		    Location		    [575, 567, 1398, 867]
+		    Location		    [1125, 358, 1609, 742]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -5177,7 +5410,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "24429"
+		    SID			    "24555"
 		    Position		    [15, 78, 45, 92]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -5186,7 +5419,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "24430"
+		    SID			    "24556"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "then"
@@ -5194,7 +5427,7 @@ Model {
 		    Block {
 		    BlockType		    BusAssignment
 		    Name		    "Bus\nAssignment"
-		    SID			    "24431"
+		    SID			    "24557"
 		    Ports		    [4, 1]
 		    Position		    [410, 97, 535, 213]
 		    ZOrder		    -1
@@ -5204,7 +5437,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "24432"
+		    SID			    "24558"
 		    Ports		    [1, 1]
 		    Position		    [85, 151, 90, 189]
 		    ZOrder		    -3
@@ -5220,7 +5453,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "24433"
+		    SID			    "24559"
 		    Position		    [180, 249, 210, 271]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -5230,7 +5463,7 @@ Model {
 		    Block {
 		    BlockType		    Demux
 		    Name		    "Demux"
-		    SID			    "24434"
+		    SID			    "24560"
 		    Ports		    [1, 3]
 		    Position		    [135, 134, 140, 206]
 		    ZOrder		    -7
@@ -5241,7 +5474,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain"
-		    SID			    "24435"
+		    SID			    "24561"
 		    Position		    [170, 130, 200, 160]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -5254,7 +5487,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain1"
-		    SID			    "24436"
+		    SID			    "24562"
 		    Position		    [170, 155, 200, 185]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -5267,7 +5500,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain2"
-		    SID			    "24437"
+		    SID			    "24563"
 		    Position		    [170, 180, 200, 210]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -5280,7 +5513,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "LLA2LTP"
-		    SID			    "24438"
+		    SID			    "24564"
 		    Ports		    [1, 1]
 		    Position		    [260, 149, 360, 191]
 		    ZOrder		    -5
@@ -5296,7 +5529,7 @@ Model {
 		    MaskHideContents	    off
 		    System {
 		    Name		    "LLA2LTP"
-		    Location		    [1033, 358, 1609, 759]
+		    Location		    [1125, 358, 1609, 759]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -5312,7 +5545,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "LLA"
-		    SID			    "24439"
+		    SID			    "24565"
 		    Position		    [65, 158, 95, 172]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -5321,7 +5554,7 @@ Model {
 		    Block {
 		    BlockType		    Sum
 		    Name		    "Add"
-		    SID			    "24440"
+		    SID			    "24566"
 		    Ports		    [2, 1]
 		    Position		    [175, 172, 205, 203]
 		    ZOrder		    -2
@@ -5335,18 +5568,18 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "24441"
+		    SID			    "24567"
 		    Position		    [30, 195, 130, 225]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
 		    ShowName		    off
-		    Value		    "ref_lla_sense"
+		    Value		    "gpsOrigin"
 		    OutDataTypeStr	    "int32"
 		    }
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant1"
-		    SID			    "24442"
+		    SID			    "24568"
 		    Position		    [30, 235, 130, 265]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -5357,7 +5590,7 @@ Model {
 		    Block {
 		    BlockType		    Product
 		    Name		    "Product"
-		    SID			    "24443"
+		    SID			    "24569"
 		    Ports		    [2, 1]
 		    Position		    [275, 202, 305, 233]
 		    ZOrder		    -19
@@ -5371,7 +5604,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "LTP"
-		    SID			    "24444"
+		    SID			    "24570"
 		    Position		    [350, 213, 380, 227]
 		    ZOrder		    -2
 		    BackgroundColor	    "yellow"
@@ -5418,7 +5651,7 @@ Model {
 		    Block {
 		    BlockType		    Mux
 		    Name		    "Mux"
-		    SID			    "24445"
+		    SID			    "24571"
 		    Ports		    [3, 1]
 		    Position		    [225, 132, 230, 208]
 		    ZOrder		    -16
@@ -5429,7 +5662,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "24446"
+		    SID			    "24572"
 		    Position		    [585, 148, 615, 162]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -5544,7 +5777,7 @@ Model {
 		    Block {
 		    BlockType		    If
 		    Name		    "If"
-		    SID			    "24447"
+		    SID			    "24573"
 		    Ports		    [1, 2]
 		    Position		    [215, 101, 315, 139]
 		    ZOrder		    -15
@@ -5555,7 +5788,7 @@ Model {
 		    Block {
 		    BlockType		    Merge
 		    Name		    "Merge"
-		    SID			    "24448"
+		    SID			    "24574"
 		    Ports		    [2, 1]
 		    Position		    [480, 100, 520, 140]
 		    ZOrder		    -14
@@ -5564,7 +5797,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Pass through local\ncoordinates"
-		    SID			    "24449"
+		    SID			    "24575"
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [360, 167, 430, 203]
 		    ZOrder		    -16
@@ -5594,7 +5827,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "24450"
+		    SID			    "24576"
 		    Position		    [75, 78, 105, 92]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -5603,7 +5836,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "24451"
+		    SID			    "24577"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "elseif"
@@ -5611,7 +5844,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "24452"
+		    SID			    "24578"
 		    Position		    [325, 78, 355, 92]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -5628,7 +5861,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "24453"
+		    SID			    "24579"
 		    Position		    [600, 113, 630, 127]
 		    BackgroundColor	    "yellow"
 		    IconDisplay		    "Port number"
@@ -5696,253 +5929,10 @@ Model {
 		    }
 		  }
 		}
-		Block {
-		  BlockType		  Reference
-		  Name			  "AppendMission"
-		  SID			  "23038"
-		  Ports			  [1, 1]
-		  Position		  [355, 204, 455, 246]
-		  ZOrder		  -5
-		  ForegroundColor	  "cyan"
-		  LibraryVersion	  "1.137"
-		  SourceBlock		  "uSimLib/Mission Manager/AppendMission"
-		  SourceType		  ""
-		  sampleTime		  "-1"
-		}
-		Block {
-		  BlockType		  Reference
-		  Name			  "AppendMission1"
-		  SID			  "23039"
-		  Ports			  [1, 1]
-		  Position		  [355, 264, 455, 306]
-		  ZOrder		  -5
-		  ForegroundColor	  "cyan"
-		  LibraryVersion	  "1.137"
-		  SourceBlock		  "uSimLib/Mission Manager/AppendMission"
-		  SourceType		  ""
-		  sampleTime		  "-1"
-		}
-		Block {
-		  BlockType		  Reference
-		  Name			  "AppendMission2"
-		  SID			  "23040"
-		  Ports			  [1, 1]
-		  Position		  [355, 324, 455, 366]
-		  ZOrder		  -5
-		  ForegroundColor	  "cyan"
-		  LibraryVersion	  "1.137"
-		  SourceBlock		  "uSimLib/Mission Manager/AppendMission"
-		  SourceType		  ""
-		  sampleTime		  "-1"
-		}
-		Block {
-		  BlockType		  Reference
-		  Name			  "AppendMission3"
-		  SID			  "23041"
-		  Ports			  [1, 1]
-		  Position		  [355, 384, 455, 426]
-		  ZOrder		  -5
-		  ForegroundColor	  "cyan"
-		  LibraryVersion	  "1.137"
-		  SourceBlock		  "uSimLib/Mission Manager/AppendMission"
-		  SourceType		  ""
-		  sampleTime		  "-1"
-		}
-		Block {
-		  BlockType		  Reference
-		  Name			  "AppendMission4"
-		  SID			  "23042"
-		  Ports			  [1, 1]
-		  Position		  [355, 444, 455, 486]
-		  ZOrder		  -5
-		  ForegroundColor	  "cyan"
-		  LibraryVersion	  "1.137"
-		  SourceBlock		  "uSimLib/Mission Manager/AppendMission"
-		  SourceType		  ""
-		  sampleTime		  "-1"
-		}
-		Block {
-		  BlockType		  Reference
-		  Name			  "AppendMission5"
-		  SID			  "23043"
-		  Ports			  [1, 1]
-		  Position		  [355, 504, 455, 546]
-		  ZOrder		  -5
-		  ForegroundColor	  "cyan"
-		  LibraryVersion	  "1.137"
-		  SourceBlock		  "uSimLib/Mission Manager/AppendMission"
-		  SourceType		  ""
-		  sampleTime		  "-1"
-		}
-		Block {
-		  BlockType		  Reference
-		  Name			  "ClearMissionList"
-		  SID			  "23044"
-		  Ports			  []
-		  Position		  [195, 139, 295, 181]
-		  ZOrder		  -5
-		  ForegroundColor	  "cyan"
-		  Priority		  "1"
-		  LibraryVersion	  "1.137"
-		  SourceBlock		  "uSimLib/Mission Manager/ClearMissionList"
-		  SourceType		  ""
-		  sampleTime		  "-1"
-		}
-		Block {
-		  BlockType		  Constant
-		  Name			  "Constant"
-		  SID			  "23045"
-		  Position		  [30, 211, 160, 239]
-		  ZOrder		  -5
-		  BackgroundColor	  "gray"
-		  ShowName		  off
-		  Value			  "test_waypoints(1)"
-		  OutDataTypeStr	  "Bus: Mission"
-		}
-		Block {
-		  BlockType		  Constant
-		  Name			  "Constant1"
-		  SID			  "23046"
-		  Position		  [30, 271, 160, 299]
-		  ZOrder		  -5
-		  BackgroundColor	  "gray"
-		  ShowName		  off
-		  Value			  "test_waypoints(2)"
-		  OutDataTypeStr	  "Bus: Mission"
-		}
-		Block {
-		  BlockType		  Constant
-		  Name			  "Constant2"
-		  SID			  "23047"
-		  Position		  [30, 331, 160, 359]
-		  ZOrder		  -5
-		  BackgroundColor	  "gray"
-		  ShowName		  off
-		  Value			  "test_waypoints(3)"
-		  OutDataTypeStr	  "Bus: Mission"
-		}
-		Block {
-		  BlockType		  Constant
-		  Name			  "Constant3"
-		  SID			  "23048"
-		  Position		  [30, 391, 160, 419]
-		  ZOrder		  -5
-		  BackgroundColor	  "gray"
-		  ShowName		  off
-		  Value			  "test_waypoints(4)"
-		  OutDataTypeStr	  "Bus: Mission"
-		}
-		Block {
-		  BlockType		  Constant
-		  Name			  "Constant4"
-		  SID			  "23049"
-		  Position		  [30, 451, 160, 479]
-		  ZOrder		  -5
-		  BackgroundColor	  "gray"
-		  ShowName		  off
-		  Value			  "test_waypoints(5)"
-		  OutDataTypeStr	  "Bus: Mission"
-		}
-		Block {
-		  BlockType		  Constant
-		  Name			  "Constant5"
-		  SID			  "23050"
-		  Position		  [30, 511, 160, 539]
-		  ZOrder		  -5
-		  BackgroundColor	  "gray"
-		  ShowName		  off
-		  Value			  "test_waypoints(6)"
-		  OutDataTypeStr	  "Bus: Mission"
-		}
-		Block {
-		  BlockType		  DataTypeConversion
-		  Name			  "Data Type Conversion"
-		  SID			  "24307"
-		  Position		  [490, 213, 540, 237]
-		  ZOrder		  -7
-		  ShowName		  off
-		  OutDataTypeStr	  "uint8"
-		  RndMeth		  "Simplest"
-		  SaturateOnIntegerOverflow off
-		}
-		Block {
-		  BlockType		  Reference
-		  Name			  "Mission Init"
-		  SID			  "23052"
-		  Ports			  []
-		  Position		  [195, 69, 295, 111]
-		  ZOrder		  -4
-		  ForegroundColor	  "blue"
-		  BackgroundColor	  "cyan"
-		  Priority		  "0"
-		  LibraryVersion	  "1.137"
-		  SourceBlock		  "uSimLib/Mission Manager/Mission Init"
-		  SourceType		  ""
-		  maxMissions		  "16"
-		  sampleTime		  "-1"
-		}
-		Block {
-		  BlockType		  Reference
-		  Name			  "SetCurrentMission"
-		  SID			  "23053"
-		  Ports			  [1]
-		  Position		  [575, 204, 675, 246]
-		  ZOrder		  -5
-		  ForegroundColor	  "cyan"
-		  LibraryVersion	  "1.137"
-		  SourceBlock		  "uSimLib/Mission Manager/SetCurrentMission"
-		  SourceType		  ""
-		  sampleTime		  "-1"
-		}
-		Block {
-		  BlockType		  Terminator
-		  Name			  "Terminator1"
-		  SID			  "23054"
-		  Position		  [505, 275, 525, 295]
-		  ZOrder		  -5
-		  BackgroundColor	  "red"
-		  ShowName		  off
-		}
-		Block {
-		  BlockType		  Terminator
-		  Name			  "Terminator2"
-		  SID			  "23055"
-		  Position		  [505, 335, 525, 355]
-		  ZOrder		  -5
-		  BackgroundColor	  "red"
-		  ShowName		  off
-		}
-		Block {
-		  BlockType		  Terminator
-		  Name			  "Terminator3"
-		  SID			  "23056"
-		  Position		  [505, 395, 525, 415]
-		  ZOrder		  -5
-		  BackgroundColor	  "red"
-		  ShowName		  off
-		}
-		Block {
-		  BlockType		  Terminator
-		  Name			  "Terminator4"
-		  SID			  "23057"
-		  Position		  [505, 455, 525, 475]
-		  ZOrder		  -5
-		  BackgroundColor	  "red"
-		  ShowName		  off
-		}
-		Block {
-		  BlockType		  Terminator
-		  Name			  "Terminator5"
-		  SID			  "23058"
-		  Position		  [505, 515, 525, 535]
-		  ZOrder		  -5
-		  BackgroundColor	  "red"
-		  ShowName		  off
-		}
 		Line {
 		  SrcBlock		  "Constant5"
 		  SrcPort		  1
-		  DstBlock		  "Add local coordinates5"
+		  DstBlock		  "lla2ltp5"
 		  DstPort		  1
 		}
 		Line {
@@ -5954,7 +5944,7 @@ Model {
 		Line {
 		  SrcBlock		  "Constant4"
 		  SrcPort		  1
-		  DstBlock		  "Add local coordinates4"
+		  DstBlock		  "lla2ltp4"
 		  DstPort		  1
 		}
 		Line {
@@ -5966,7 +5956,7 @@ Model {
 		Line {
 		  SrcBlock		  "Constant3"
 		  SrcPort		  1
-		  DstBlock		  "Add local coordinates3"
+		  DstBlock		  "lla2ltp3"
 		  DstPort		  1
 		}
 		Line {
@@ -5978,7 +5968,7 @@ Model {
 		Line {
 		  SrcBlock		  "Constant2"
 		  SrcPort		  1
-		  DstBlock		  "Add local coordinates2"
+		  DstBlock		  "lla2ltp2"
 		  DstPort		  1
 		}
 		Line {
@@ -5990,7 +5980,7 @@ Model {
 		Line {
 		  SrcBlock		  "Constant1"
 		  SrcPort		  1
-		  DstBlock		  "Add local coordinates1"
+		  DstBlock		  "lla2ltp1"
 		  DstPort		  1
 		}
 		Line {
@@ -6003,7 +5993,7 @@ Model {
 		  Labels		  [0, 0]
 		  SrcBlock		  "Constant"
 		  SrcPort		  1
-		  DstBlock		  "Add local coordinates"
+		  DstBlock		  "lla2ltp"
 		  DstPort		  1
 		}
 		Line {
@@ -6013,37 +6003,37 @@ Model {
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Add local coordinates"
+		  SrcBlock		  "lla2ltp"
 		  SrcPort		  1
 		  DstBlock		  "AppendMission"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Add local coordinates1"
+		  SrcBlock		  "lla2ltp1"
 		  SrcPort		  1
 		  DstBlock		  "AppendMission1"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Add local coordinates2"
+		  SrcBlock		  "lla2ltp2"
 		  SrcPort		  1
 		  DstBlock		  "AppendMission2"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Add local coordinates3"
+		  SrcBlock		  "lla2ltp3"
 		  SrcPort		  1
 		  DstBlock		  "AppendMission3"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Add local coordinates4"
+		  SrcBlock		  "lla2ltp4"
 		  SrcPort		  1
 		  DstBlock		  "AppendMission4"
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Add local coordinates5"
+		  SrcBlock		  "lla2ltp5"
 		  SrcPort		  1
 		  DstBlock		  "AppendMission5"
 		  DstPort		  1
@@ -6071,7 +6061,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Rudder\nCommand"
-		Location		[407, 268, 1599, 722]
+		Location		[286, 74, 1918, 1019]
 		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
@@ -6160,7 +6150,6 @@ Model {
 		  BackgroundColor	  "gray"
 		  ShowName		  off
 		  Value			  "wheelbase"
-		  OutDataTypeStr	  "boolean"
 		}
 		Block {
 		  BlockType		  Goto
@@ -7936,7 +7925,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"State Keeper &\nEstimator"
-		Location		[1035, 105, 1783, 736]
+		Location		[286, 74, 1918, 1019]
 		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
@@ -8227,50 +8216,8 @@ Model {
 		    }
 		    }
 		    Block {
-		    BlockType		    Reference
-		    Name		    "Detect\nChange"
-		    SID			    "23153"
-		    Ports		    [1, 1]
-		    Position		    [315, 320, 375, 350]
-		    ZOrder		    -7
-		    LibraryVersion	    "1.256"
-		    SourceBlock		    "simulink/Logic and Bit\nOperations/Detect\nChange"
-		    SourceType		    "Detect Change"
-		    vinit		    "0"
-		    InputProcessing	    "Inherited"
-		    OutDataTypeStr	    "uint8"
-		    }
-		    Block {
-		    BlockType		    Reference
-		    Name		    "Detect\nChange1"
-		    SID			    "23154"
-		    Ports		    [1, 1]
-		    Position		    [315, 335, 375, 365]
-		    ZOrder		    -7
-		    LibraryVersion	    "1.256"
-		    SourceBlock		    "simulink/Logic and Bit\nOperations/Detect\nChange"
-		    SourceType		    "Detect Change"
-		    vinit		    "0"
-		    InputProcessing	    "Inherited"
-		    OutDataTypeStr	    "uint8"
-		    }
-		    Block {
-		    BlockType		    DiscreteIntegrator
-		    Name		    "Discrete-Time\nIntegrator4"
-		    SID			    "23155"
-		    Ports		    [2, 1]
-		    Position		    [795, 335, 830, 370]
-		    ShowName		    off
-		    IntegratorMethod	    "Integration: Forward Euler"
-		    ExternalReset	    "level"
-		    InitialConditionSource  "internal"
-		    SampleTime		    "-1"
-		    ICPrevOutput	    "DiscIntNeverNeededParam"
-		    ICPrevScaledInput	    "DiscIntNeverNeededParam"
-		    }
-		    Block {
 		    BlockType		    SubSystem
-		    Name		    "LLA2LTP"
+		    Name		    "Convert to local tangent\nplane coordinate frame"
 		    SID			    "23156"
 		    Ports		    [1, 1, 1]
 		    Position		    [760, 239, 860, 281]
@@ -8286,8 +8233,8 @@ Model {
 		    RequestExecContextInheritance off
 		    MaskHideContents	    off
 		    System {
-		    Name		    "LLA2LTP"
-		    Location		    [1218, 188, 1794, 589]
+		    Name		    "Convert to local tangent\nplane coordinate frame"
+		    Location		    [1033, 358, 1609, 759]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -8337,7 +8284,7 @@ Model {
 		    MaskHideContents	    off
 		    System {
 		    Name		    "LLA2LTP"
-		    Location		    [1033, 358, 1609, 759]
+		    Location		    [1112, 349, 1688, 750]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -8381,7 +8328,7 @@ Model {
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
 		    ShowName		    off
-		    Value		    "ref_lla_sense"
+		    Value		    "gpsOrigin"
 		    OutDataTypeStr	    "int32"
 		    }
 		    Block {
@@ -8480,6 +8427,48 @@ Model {
 		    DstPort		    1
 		    }
 		    }
+		    }
+		    Block {
+		    BlockType		    Reference
+		    Name		    "Detect\nChange"
+		    SID			    "23153"
+		    Ports		    [1, 1]
+		    Position		    [315, 320, 375, 350]
+		    ZOrder		    -7
+		    LibraryVersion	    "1.256"
+		    SourceBlock		    "simulink/Logic and Bit\nOperations/Detect\nChange"
+		    SourceType		    "Detect Change"
+		    vinit		    "0"
+		    InputProcessing	    "Inherited"
+		    OutDataTypeStr	    "uint8"
+		    }
+		    Block {
+		    BlockType		    Reference
+		    Name		    "Detect\nChange1"
+		    SID			    "23154"
+		    Ports		    [1, 1]
+		    Position		    [315, 335, 375, 365]
+		    ZOrder		    -7
+		    LibraryVersion	    "1.256"
+		    SourceBlock		    "simulink/Logic and Bit\nOperations/Detect\nChange"
+		    SourceType		    "Detect Change"
+		    vinit		    "0"
+		    InputProcessing	    "Inherited"
+		    OutDataTypeStr	    "uint8"
+		    }
+		    Block {
+		    BlockType		    DiscreteIntegrator
+		    Name		    "Discrete-Time\nIntegrator4"
+		    SID			    "23155"
+		    Ports		    [2, 1]
+		    Position		    [795, 335, 830, 370]
+		    ShowName		    off
+		    IntegratorMethod	    "Integration: Forward Euler"
+		    ExternalReset	    "level"
+		    InitialConditionSource  "internal"
+		    SampleTime		    "-1"
+		    ICPrevOutput	    "DiscIntNeverNeededParam"
+		    ICPrevScaledInput	    "DiscIntNeverNeededParam"
 		    }
 		    Block {
 		    BlockType		    Logic
@@ -8967,7 +8956,7 @@ Model {
 		    DstPort		    1
 		    }
 		    Branch {
-		    DstBlock		    "LLA2LTP"
+		    DstBlock		    "Convert to local tangent\nplane coordinate frame"
 		    DstPort		    1
 		    }
 		    Branch {
@@ -9003,7 +8992,7 @@ Model {
 		    DstPort		    3
 		    }
 		    Line {
-		    SrcBlock		    "LLA2LTP"
+		    SrcBlock		    "Convert to local tangent\nplane coordinate frame"
 		    SrcPort		    1
 		    Points		    [30, 0]
 		    DstBlock		    "Add"
@@ -9013,7 +9002,7 @@ Model {
 		    SrcBlock		    "Calculate local position from \nGPS data"
 		    SrcPort		    1
 		    Points		    [15, 0; 0, -96]
-		    DstBlock		    "LLA2LTP"
+		    DstBlock		    "Convert to local tangent\nplane coordinate frame"
 		    DstPort		    enable
 		    }
 		    Line {
@@ -12270,22 +12259,6 @@ Model {
       OutDataTypeStr	      "uint8"
     }
     Block {
-      BlockType		      DataStoreMemory
-      Name		      "Data Store\nMemory5"
-      SID		      "23256"
-      Position		      [420, 320, 515, 343]
-      ZOrder		      -4
-      ShowName		      off
-      DataStoreName	      "gpsOrigin"
-      ReadBeforeWriteMsg      "warning"
-      WriteAfterWriteMsg      "warning"
-      WriteAfterReadMsg	      "warning"
-      InitialValue	      "[0 0 0]"
-      RTWStateStorageClass    "ExportedGlobal"
-      OutDataTypeStr	      "int32"
-      Dimensions	      "3"
-    }
-    Block {
       BlockType		      DataStoreWrite
       Name		      "Data Store\nWrite"
       SID		      "19713"
@@ -12294,16 +12267,6 @@ Model {
       ZOrder		      -6
       ShowName		      off
       DataStoreName	      "nodeSystemTime"
-    }
-    Block {
-      BlockType		      DataStoreWrite
-      Name		      "Data Store\nWrite1"
-      SID		      "23255"
-      Ports		      [1]
-      Position		      [500, 381, 580, 409]
-      ZOrder		      -6
-      ShowName		      off
-      DataStoreName	      "gpsOrigin"
     }
     Block {
       BlockType		      From
@@ -16549,12 +16512,6 @@ Model {
       }
     }
     Line {
-      SrcBlock		      "Constant1"
-      SrcPort		      1
-      DstBlock		      "Data Store\nWrite1"
-      DstPort		      1
-    }
-    Line {
       SrcBlock		      "From2"
       SrcPort		      1
       DstBlock		      "Logical\nOperator"
@@ -16588,11 +16545,6 @@ Model {
     Annotation {
       Name		      "This block provides a uint32 counter for the system time in units of T_step."
       Position		      [26, 738]
-      HorizontalAlignment     "left"
-    }
-    Annotation {
-      Name		      "Store the reference GPS position used for global/local\ncoordinate transformations."
-      Position		      [351, 362]
       HorizontalAlignment     "left"
     }
     Annotation {
@@ -16998,55 +16950,54 @@ Stateflow {
       "the intercept\n%     angle even when the UAV is within L2 of the path.\n%     See L2PlusWP1.m for details\n%\n% "
       "        INPUTS\n%             wp0     Waypoint 0 position in North-East-Down meters\n%             wp1     Waypo"
       "int 1 position in North-East-Down meters\n%             Puav    Position of UAV in North-East-Down meters\n%    "
-      "         Vxyz    Inertial velocity in North-East-Down meters\n%             switchDistance distance from wp1 to "
-      "switch to WP2\n%\n%         PARAMETERS\n%             ISA_g   gravity\n%             tanIntercept  tangent of in"
-      "tercept angle\n%             MaxDwnPthStar L2 multiplier to determmine downpath aimpoint\n%             Turn2Tra"
-      "ck    true to turn toward T1 instead of L2\n%             InitialPoint  true if no line tracking at first--fly d"
-      "irect to some initial point\n%             IPStar        L2 multiplier to determing distance of IP from first wp"
-      "0\n%             Tstar         was called L2Base, time constant of response\n%             \n%         OUTPUTS\n"
-      "%             L2Vec   L2 vector toward aim point\n%             as_c    commanded lateral acceleration\n%       "
-      "      transition A boolean of whether to transition or not to the next waypoint\n\n    persistent IPActive;  %tr"
-      "ue if flying toward IP\n    persistent IP; % location of initial point\n\n    persistent direction; % Keep track"
-      " of the direction for patrol mode\n    if isempty(direction)\n        direction = int8(1);\n    end\n    \n    P"
-      "wp1 = single(zeros(3,1));\n    Pe_y = single(0);\n    Dist2wp1 = single(0);\n    MinDownPath = single(0);\n    D"
-      "ist2WPSwitch = single(0);\n    L2DownPath = single(0);\n    L2ToT = single(zeros(3,1));\n    L2Vec = single(zero"
-      "s(3,1));\n    IP1 = single([0; 0;-999]); %signal for no IP\n    as_c = single(0);\n    transition = false;\n    "
-      "\n    Pne = [Puav(1); Puav(2); 0]; %horizontal position\n    Vne = [Vxyz(1); Vxyz(2); 0]; % horizontal velocity\n"
-      "    Groundspeed = norm(Vne);\n    L2 = single(TStar*Groundspeed);\n    \n    % If neither waypoint is valid then"
-      " don't do anything\n    if ~wp0_found || ~wp1_found\n        return;\n    % Otherwise if the first two waypoints"
-      " are next to each other (as is\n    % common if the origin is the first waypoint and the boat latches that\n    "
-      "% as its start value) then transition to the next waypoint.\n    elseif norm(wp1 - wp0) < switchDistance\n      "
-      "  transition = true;\n        return;\n    end\n    \n    % Calculate N1 (right-hand orthogonal to T1) \n    % a"
-      "nd T1 (unit vector pointing from wp0 to wp1)\n    T1 = wp1 - wp0;\n    T1 = T1/norm(T1);\n    N1 = [-T1(2); T1(1"
-      "); 0];\n    \n%     initialize the initial point\n    if (isempty(IPActive))\n        if (InitialPoint)\n%      "
-      "       IP is set relative to the first \"from\" waypoint\n            IPActive = -1;\n            IP = [wp0(1); "
-      "wp0(2); 0] - L2*IPStar*T1;\n            \n            if (norm(IP-Pne) < .001)\n                IPActive = 0;\n "
-      "               IP = single([0; 0; -999]);\n            end\n        else\n            IPActive = 0;\n           "
-      " IP = single([0; 0;-999]); %signal for no IP\n        end\n    end\n    IP1 = IP;\n    \n    \n    if (IPActive)"
-      "\n%         no line tracking, direct to IP\n        L2Vec = L2*(IP - Pne)/norm(IP - Pne);\n%         check to se"
-      "e if at the IP to terminate this mode\n        if norm(IP - Pne) < .1*L2\n            IPActive = 0;\n        end"
-      "\n    else\n         if (Pne(1) < 2)\n             IP1 = IP1;\n         end\n%         IP not active, track WP l"
-      "ines\n        Pwp1 = Pne - [wp1(1); wp1(2); 0]; % position of UAV relative to wp1\n        Pe_y = single(Pwp1'*N"
-      "1); % cross track error\n        Dist2wp1 = -single(Pwp1'*T1); % distance to wp1\n\n%         minimum down path "
-      "distance for Aim Point intersection on T\n%         is determined by the intercept angle but limited \n%        "
-      " in case of very distant intecepts to MaxDwnPthStar*L2\n        MinDownPath = single ( min( abs(Pe_y)/tanInterce"
-      "pt, MaxDwnPthStar*L2)); \n        Dist2WPSwitch = Dist2wp1 - switchDistance;\n        if ( abs(Pe_y) > L2 )\n   "
-      " %             Make sure aimpoint is no closer to waypoint than calculated switch point.\n            L2DownPath"
-      " = MinDownPath;\n        else\n    %             within L2 of T and Dist2WPSwitch >= 0, but limit angle of L2 wr"
-      "t T\n            L2DownPath = (max(MinDownPath, (sqrt( L2^2 - Pe_y^2 ))));\n        end\n        \n        if ( "
-      "Dist2WPSwitch < 0 )\n            transition = true;\n        end\n        \n         % vector from Pwp1 to aim p"
-      "oint on T1\n         L2ToT = single(( Dist2wp1 - L2DownPath )*(-T1) - Pwp1);\n         if (norm(L2ToT) < .001)\n"
-      "             L2Vec = L2*T1;\n         else\n            L2Vec = single(L2*( L2ToT/norm(L2ToT) )); % limit size t"
-      "o L2\n         end\n    %         L2Vec = L2ToT;\n%         dummy statements\n    end\n    Zprod = single(Vxyz(1"
-      ")*L2Vec(2) - Vxyz(2)*L2Vec(1)); %Z component of cross product\n    sinEta = single(Zprod/(Groundspeed*L2));\n\n "
-      "   as_c = single(2*Groundspeed^2/(L2)*sinEta);\n\n%         now override bank angle if heading in the wrong dire"
-      "ction\n    if ( Turn2Track && Dist2WPSwitch > 0 && ~IPActive ) \n%             turn to track not L2, gives min d"
-      "isplacement from track\n        if ( T1'*Vxyz < 0 )\n            if ( Pe_y > 0 )\n                as_c = single("
-      "99);\n            else\n                as_c = single(-99);\n            end\n        end\n     else\n%         "
-      "  turn toward L2, give min displacement toward wp0\n        if ( L2Vec'*Vxyz < 0 )\n            if ( sinEta < 0 "
-      ")\n                as_c = single(-99);\n            else\n                as_c = single(99);\n            end\n "
-      "       end\n    end\nend"
-      editorLayout	      "100 M4x1[1672 489 1616 916]"
+      "         Vxyz    Inertial velocity in North-East-Down meters\n%\n%         PARAMETERS\n%             switchDista"
+      "nce distance from wp1 to switch to WP2\n%             tanIntercept  tangent of intercept angle\n%             Ma"
+      "xDwnPthStar L2 multiplier to determmine downpath aimpoint\n%             Turn2Track    true to turn toward T1 in"
+      "stead of L2\n%             InitialPoint  true if no line tracking at first--fly direct to some initial point\n% "
+      "            IPStar        L2 multiplier to determing distance of IP from first wp0\n%             Tstar         "
+      "was called L2Base, time constant of response\n%             \n%         OUTPUTS\n%             L2Vec   L2 vector"
+      " toward aim point\n%             as_c    commanded lateral acceleration\n%             transition A boolean of w"
+      "hether to transition or not to the next waypoint\n\n    persistent IPActive;  %true if flying toward IP\n    per"
+      "sistent IP; % location of initial point\n\n    persistent direction; % Keep track of the direction for patrol mo"
+      "de\n    if isempty(direction)\n        direction = int8(1);\n    end\n    \n    Pwp1 = single(zeros(3,1));\n    "
+      "Pe_y = single(0);\n    Dist2wp1 = single(0);\n    MinDownPath = single(0);\n    Dist2WPSwitch = single(0);\n    "
+      "L2DownPath = single(0);\n    L2ToT = single(zeros(3,1));\n    L2Vec = single(zeros(3,1));\n    IP1 = single([0; "
+      "0;-999]); %signal for no IP\n    as_c = single(0);\n    transition = false;\n    \n    Pne = [Puav(1); Puav(2); "
+      "0]; %horizontal position\n    Vne = [Vxyz(1); Vxyz(2); 0]; % horizontal velocity\n    Groundspeed = norm(Vne);\n"
+      "    L2 = single(TStar*Groundspeed);\n    \n    % If neither waypoint is valid then don't do anything\n    if ~wp"
+      "0_found || ~wp1_found\n        return;\n    % Otherwise if the first two waypoints are next to each other (as is"
+      "\n    % common if the origin is the first waypoint and the boat latches that\n    % as its start value) then tra"
+      "nsition to the next waypoint.\n    elseif norm(wp1 - wp0) < switchDistance\n        transition = true;\n        "
+      "return;\n    end\n    \n    % Calculate N1 (right-hand orthogonal to T1) \n    % and T1 (unit vector pointing fr"
+      "om wp0 to wp1)\n    T1 = wp1 - wp0;\n    T1 = T1/norm(T1);\n    N1 = [-T1(2); T1(1); 0];\n    \n%     initialize"
+      " the initial point\n    if (isempty(IPActive))\n        if (InitialPoint)\n%             IP is set relative to t"
+      "he first \"from\" waypoint\n            IPActive = -1;\n            IP = [wp0(1); wp0(2); 0] - L2*IPStar*T1;\n  "
+      "          \n            if (norm(IP-Pne) < .001)\n                IPActive = 0;\n                IP = single([0;"
+      " 0; -999]);\n            end\n        else\n            IPActive = 0;\n            IP = single([0; 0;-999]); %si"
+      "gnal for no IP\n        end\n    end\n    IP1 = IP;\n    \n    \n    if (IPActive)\n%         no line tracking, "
+      "direct to IP\n        L2Vec = L2*(IP - Pne)/norm(IP - Pne);\n%         check to see if at the IP to terminate th"
+      "is mode\n        if norm(IP - Pne) < .1*L2\n            IPActive = 0;\n        end\n    else\n         if (Pne(1"
+      ") < 2)\n             IP1 = IP1;\n         end\n%         IP not active, track WP lines\n        Pwp1 = Pne - [wp"
+      "1(1); wp1(2); 0]; % position of UAV relative to wp1\n        Pe_y = single(Pwp1'*N1); % cross track error\n     "
+      "   Dist2wp1 = -single(Pwp1'*T1); % distance to wp1\n\n%         minimum down path distance for Aim Point interse"
+      "ction on T\n%         is determined by the intercept angle but limited \n%         in case of very distant intec"
+      "epts to MaxDwnPthStar*L2\n        MinDownPath = single ( min( abs(Pe_y)/tanIntercept, MaxDwnPthStar*L2)); \n    "
+      "    Dist2WPSwitch = Dist2wp1 - switchDistance;\n        if ( abs(Pe_y) > L2 )\n    %             Make sure aimpo"
+      "int is no closer to waypoint than calculated switch point.\n            L2DownPath = MinDownPath;\n        else\n"
+      "    %             within L2 of T and Dist2WPSwitch >= 0, but limit angle of L2 wrt T\n            L2DownPath = ("
+      "max(MinDownPath, (sqrt( L2^2 - Pe_y^2 ))));\n        end\n        \n        if ( Dist2WPSwitch < 0 )\n          "
+      "  transition = true;\n        end\n        \n         % vector from Pwp1 to aim point on T1\n         L2ToT = si"
+      "ngle(( Dist2wp1 - L2DownPath )*(-T1) - Pwp1);\n         if (norm(L2ToT) < .001)\n             L2Vec = L2*T1;\n  "
+      "       else\n            L2Vec = single(L2*( L2ToT/norm(L2ToT) )); % limit size to L2\n         end\n    %      "
+      "   L2Vec = L2ToT;\n%         dummy statements\n    end\n    Zprod = single(Vxyz(1)*L2Vec(2) - Vxyz(2)*L2Vec(1));"
+      " %Z component of cross product\n    sinEta = single(Zprod/(Groundspeed*L2));\n\n    as_c = single(2*Groundspeed^"
+      "2/(L2)*sinEta);\n\n%         now override bank angle if heading in the wrong direction\n    if ( Turn2Track && D"
+      "ist2WPSwitch > 0 && ~IPActive ) \n%             turn to track not L2, gives min displacement from track\n       "
+      " if ( T1'*Vxyz < 0 )\n            if ( Pe_y > 0 )\n                as_c = single(99);\n            else\n       "
+      "         as_c = single(-99);\n            end\n        end\n     else\n%           turn toward L2, give min disp"
+      "lacement toward wp0\n        if ( L2Vec'*Vxyz < 0 )\n            if ( sinEta < 0 )\n                as_c = singl"
+      "e(-99);\n            else\n                as_c = single(99);\n            end\n        end\n    end\nend"
+      editorLayout	      "100 M4x1[308 217 1936 1056]"
       fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
       "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
       emlDefaultFimath	      FimathUserSpecified
@@ -17238,7 +17189,6 @@ Stateflow {
     linkNode		    [19 29 31]
     scope		    PARAMETER_DATA
     paramIndexForInitFromWorkspace 5
-    isNonTunable	    1
     machine		    1
     props {
       array {
@@ -17262,7 +17212,6 @@ Stateflow {
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 6
-    isNonTunable	    1
     machine		    1
     props {
       array {
@@ -17286,7 +17235,6 @@ Stateflow {
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 2
-    isNonTunable	    1
     machine		    1
     props {
       array {
@@ -17310,7 +17258,6 @@ Stateflow {
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 4
-    isNonTunable	    1
     machine		    1
     props {
       array {
@@ -17334,7 +17281,6 @@ Stateflow {
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 1
-    isNonTunable	    1
     machine		    1
     props {
       array {
@@ -17357,7 +17303,6 @@ Stateflow {
     linkNode		    [19 34 36]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
-    isNonTunable	    1
     machine		    1
     props {
       array {
@@ -17381,7 +17326,6 @@ Stateflow {
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 3
-    isNonTunable	    1
     machine		    1
     props {
       array {
