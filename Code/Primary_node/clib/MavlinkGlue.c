@@ -212,21 +212,29 @@ void MavLinkSendHeartbeat(void)
 
 	// Update MAVLink state and run mode based on the system state.
 
+	// If the vehicle is in ESTOP switch into emergency mode.
+	if (nodeErrors & PRIMARY_NODE_RESET_ESTOP) {
+		mavlink_system.state = MAV_STATE_EMERGENCY;
+		mavlink_system.mode &= ~MAV_MODE_FLAG_SAFETY_ARMED;
+	}
 	// If the startup reset line is triggered, indicate we're booting up. This is the only unarmed state
 	// although that's not technically true with this controller.
-	if (nodeErrors & (1 << 0)) {
+	else if (nodeErrors & PRIMARY_NODE_RESET_STARTUP) {
 		mavlink_system.state = MAV_STATE_BOOT;
 		mavlink_system.mode &= ~MAV_MODE_FLAG_SAFETY_ARMED;
+	}
 	// Otherwise if we're undergoing calibration indicate that
-	} else if (nodeErrors & (1 << 5)) {
+	else if (nodeErrors & PRIMARY_NODE_RESET_CALIBRATING) {
 		mavlink_system.state = MAV_STATE_CALIBRATING;
 		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
+	}
 	// Otherwise if there're any other errors we're in standby
-	} else if (nodeErrors > 0) {
+	else if (nodeErrors) {
 		mavlink_system.state = MAV_STATE_STANDBY;
 		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
+	}
 	// Finally we're active if there're no errors. Also indicate within the mode that we're armed.
-	} else {
+	else {
 		mavlink_system.state = MAV_STATE_ACTIVE;
 		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
 	}
