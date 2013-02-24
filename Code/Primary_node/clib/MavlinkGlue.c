@@ -1109,6 +1109,16 @@ void MavLinkReceive(void)
 	// Used for updating the number of MAVLink messages handled
 	bool processedData = false;
 
+	// Track if a mission message was processed in this call. This is used to determine if a
+	// NONE_EVENT should be sent to the mission manager. The manager needs to be called every
+	// timestep such that its internal state machine works properly.
+	bool processedMissionMessage = false;
+
+	// Track if a parameter message was processed in this call. This is used to determine if a
+	// NONE_EVENT should be sent to the parameter manager. The manager needs to be called every
+	// timestep such that its internal state machine works properly.
+	bool processedParameterMessage = false;
+
     uint8_t c;
 	while (Uart1ReadByte(&c)) {
 		processedData = true;
@@ -1135,6 +1145,7 @@ void MavLinkReceive(void)
 				case MAVLINK_MSG_ID_MISSION_COUNT: {
 					uint8_t mavlinkNewMissionListSize = mavlink_msg_mission_count_get_count(&msg);
 					MavLinkEvaluateMissionState(MISSION_EVENT_COUNT_RECEIVED, &mavlinkNewMissionListSize);
+					processedMissionMessage = true;
 				} break;
 
 				// Handle receiving a mission.
@@ -1142,6 +1153,7 @@ void MavLinkReceive(void)
 					mavlink_mission_item_t currentMission;
 					mavlink_msg_mission_item_decode(&msg, &currentMission);
 					MavLinkEvaluateMissionState(MISSION_EVENT_ITEM_RECEIVED, &currentMission);
+					processedMissionMessage = true;
 				} break;
 
 				// Responding to a mission request entails moving into the first active state and scheduling a MISSION_COUNT message.
@@ -1150,52 +1162,71 @@ void MavLinkReceive(void)
 				case MAVLINK_MSG_ID_MISSION_REQUEST_LIST:
 					MavLinkScheduleGpsOrigin();
 					MavLinkEvaluateMissionState(MISSION_EVENT_REQUEST_LIST_RECEIVED, NULL);
+					processedMissionMessage = true;
 				break;
 
 				// When a mission request message is received, respond with that mission information from the MissionManager
 				case MAVLINK_MSG_ID_MISSION_REQUEST: {
 					uint8_t receivedMissionIndex = mavlink_msg_mission_request_get_seq(&msg);
 					MavLinkEvaluateMissionState(MISSION_EVENT_REQUEST_RECEIVED, &receivedMissionIndex);
+					processedMissionMessage = true;
 				} break;
 
 				// Allow for clearing waypoints. Here we respond simply with an ACK message if we successfully
 				// cleared the mission list.
 				case MAVLINK_MSG_ID_MISSION_CLEAR_ALL:
 					MavLinkEvaluateMissionState(MISSION_EVENT_CLEAR_ALL_RECEIVED, NULL);
+					processedMissionMessage = true;
 				break;
 
 				// Allow for the groundstation to set the current mission. This requires a WAYPOINT_CURRENT response message agreeing with the received current message index.
 				case MAVLINK_MSG_ID_MISSION_SET_CURRENT: {
 					uint8_t newCurrentMission = mavlink_msg_mission_set_current_get_seq(&msg);
 					MavLinkEvaluateMissionState(MISSION_EVENT_SET_CURRENT_RECEIVED, &newCurrentMission);
+					processedMissionMessage = true;
 				} break;
 
 				case MAVLINK_MSG_ID_MISSION_ACK: {
 					mavlink_msg_mission_ack_get_type(&msg);
 					MavLinkEvaluateMissionState(MISSION_EVENT_ACK_RECEIVED, NULL);
+					processedMissionMessage = true;
 				} break;
 
 				// If they're requesting a list of all parameters, call a separate function that'll track the state and transmit the necessary messages.
 				// This reason that this is an external function is so that it can be run separately at 20Hz.
 				case MAVLINK_MSG_ID_PARAM_REQUEST_LIST: {
 					MavLinkEvaluateParameterState(PARAM_EVENT_REQUEST_LIST_RECEIVED, NULL);
+					processedParameterMessage = true;
 				} break;
 
 				// If a request comes for a single parameter then set that to be the current parameter and move into the proper state.
 				case MAVLINK_MSG_ID_PARAM_REQUEST_READ: {
 					uint16_t currentParameter = mavlink_msg_param_request_read_get_param_index(&msg);
 					MavLinkEvaluateParameterState(PARAM_EVENT_REQUEST_READ_RECEIVED, &currentParameter);
+					processedParameterMessage = true;
 				} break;
 
 				case MAVLINK_MSG_ID_PARAM_SET: {
 					mavlink_param_set_t x;
 					mavlink_msg_param_set_decode(&msg, &x);
 					MavLinkEvaluateParameterState(PARAM_EVENT_SET_RECEIVED, &x);
+					processedParameterMessage = true;
 				} break;
 
 				default: break;
 			}
 		}
+	}
+
+	// Now if no mission messages were received, trigger the Mission Manager anyways with a NONE
+	// event.
+	if (!processedMissionMessage) {
+		MavLinkEvaluateMissionState(MISSION_EVENT_NONE, NULL);
+	}
+	// Now if no parameter messages were received, trigger the Parameter Manager anyways with a NONE
+	// event.
+	if (!processedParameterMessage) {
+		MavLinkEvaluateParameterState(PARAM_EVENT_NONE, NULL);
 	}
 
 	// Update the number of messages received, both successful and not. Note that the 'status' variable
