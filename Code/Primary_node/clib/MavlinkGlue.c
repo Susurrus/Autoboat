@@ -744,7 +744,7 @@ void MavLinkEvaluateParameterState(enum PARAM_EVENT event, void *data)
 	static uint8_t state = PARAM_STATE_INACTIVE;
 
 	// Keep a record of the current parameter being used
-	static uint8_t currentParameter;
+	static uint16_t currentParameter;
 
 	// Used for the delaying parameter transmission
 	static uint8_t delayCountdown = 0;
