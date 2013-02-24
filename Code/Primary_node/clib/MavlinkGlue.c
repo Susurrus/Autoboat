@@ -108,6 +108,12 @@ extern int32_t gpsOrigin[3];
 uint16_t mavLinkMessagesReceived = 0;
 uint16_t mavLinkMessagesFailedParsing = 0;
 
+// Define a timeout (in units of main timesteps of MavlinkReceive())
+#define MISSION_REQUEST_TIMEOUT 100
+
+// Specify how long between transmitting parameters in a parameter transmission stream.
+#define INTRA_PARAM_DELAY 10
+
 // Track manual control data transmit via MAVLink
 struct {
 	union {
@@ -799,12 +805,12 @@ void MavLinkEvaluateParameterState(enum PARAM_EVENT event, void *data)
 			}
 		} break;
 
-		// Add a delay of 10 timesteps before attempting to schedule another one
+		// Add a delay of 2 timesteps before attempting to schedule another one
 		case PARAM_STATE_STREAM_DELAY: {
 			if (event == PARAM_EVENT_ENTER_STATE) {
 					delayCountdown = 0;
 			} else if (event == PARAM_EVENT_NONE) {
-				if (++delayCountdown == 10) {
+				if (++delayCountdown == INTRA_PARAM_DELAY) {
 					nextState = PARAM_STATE_STREAM_SEND_VALUE;
 				}
 			}
@@ -929,7 +935,9 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, void *data)
 			if (event == MISSION_EVENT_ENTER_STATE) {
 				counter = 0;
 			} else if (event == MISSION_EVENT_NONE) {
-				if (counter++ > 400) {
+				// Keep track of how long it's taking for a request to be received so we can timeout
+				// if necessary.
+				if (counter++ > MISSION_REQUEST_TIMEOUT) {
 					nextState = MISSION_STATE_INACTIVE;
 				}
 			} else if (event == MISSION_EVENT_REQUEST_RECEIVED) {
@@ -938,11 +946,12 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, void *data)
 						FATAL_ERROR();
 					}
 					nextState = MISSION_STATE_SEND_MISSION_ITEM;
+				} else {
+					nextState = MISSION_STATE_ACK_INVALID_SEQUENCE;
 				}
 			} else if (event == MISSION_EVENT_ACK_RECEIVED) {
 				nextState = MISSION_STATE_INACTIVE;
 			} else if (event == MISSION_EVENT_ITEM_RECEIVED) {
-
 				mavlink_mission_item_t incomingMission = *(mavlink_mission_item_t *)data;
 
 				// Make sure that they're coming in in the right order, and if they don't return an error in
