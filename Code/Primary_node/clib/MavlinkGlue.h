@@ -192,7 +192,7 @@ void MatlabGetMavLinkManualControl(uint8_t *data);
 
 /** Core MAVLink functions handling transmission and state machines **/
 
-void MavLinkEvaluateParameterState(enum PARAM_EVENT event, void *data);
+void MavLinkEvaluateParameterState(enum PARAM_EVENT event, const void *data);
 
 /**
  * This function implements the mission protocol state machine for the MAVLink protocol.
@@ -200,7 +200,7 @@ void MavLinkEvaluateParameterState(enum PARAM_EVENT event, void *data);
  * to data if there is any to be passed to the state logic. data is not guaranteed to persist
  * beyond the single call to this function.
  */
-void MavLinkEvaluateMissionState(enum MISSION_EVENT event, void *data);
+void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data);
 
 /**
 * @brief Receive communication packets and handle them. Should be called at the system sample rate.

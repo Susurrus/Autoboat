@@ -725,7 +725,7 @@ void MatlabGetMavLinkManualControl(uint8_t *data)
  * @param event An event from PARAM_EVENT.
  * @param data A pointer to data, its meaning depends on the current state of the parameter protocol.
  */
-void MavLinkEvaluateParameterState(enum PARAM_EVENT event, void *data)
+void MavLinkEvaluateParameterState(enum PARAM_EVENT event, const void *data)
 {
 	// Track the parameter protocol state
 	static uint8_t state = PARAM_STATE_INACTIVE;
@@ -816,7 +816,7 @@ void MavLinkEvaluateParameterState(enum PARAM_EVENT event, void *data)
  * to data if there is any to be passed to the state logic. data is not guaranteed to persist
  * beyond the single call to this function.
  */
-void MavLinkEvaluateMissionState(enum MISSION_EVENT event, void *data)
+void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 {
 	// Internal counter variable for use with the COUNTDOWN state
 	static uint16_t counter = 0;
