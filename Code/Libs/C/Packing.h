@@ -9,6 +9,15 @@
 
 #include <stdint.h>
 
+/**
+ * Define a union used for converting between the floating point types and their integer representation.
+ * This allows for 'proper' bitwise operations.
+ */
+typedef union {
+	float r32;
+	uint32_t u32;
+} conv_union;
+
 __attribute__((always_inline)) static inline void LEPackUint16(uint8_t container[2], uint16_t data)
 {
 	container[0] = (uint8_t)data;
@@ -39,10 +48,12 @@ __attribute__((always_inline)) static inline void LEPackInt32(uint8_t container[
 
 __attribute__((always_inline)) static inline void LEPackReal32(uint8_t container[4], float data)
 {
-	container[0] = (uint8_t)(uint32_t)data;
-	container[1] = (uint8_t)((uint32_t)data >> 8);
-	container[2] = (uint8_t)((uint32_t)data >> 16);
-	container[3] = (uint8_t)((uint32_t)data >> 24);
+	conv_union tmp;
+	tmp.r32 = data;
+	container[0] = (uint8_t)tmp.u32;
+	container[1] = (uint8_t)(tmp.u32 >> 8);
+	container[2] = (uint8_t)(tmp.u32 >> 16);
+	container[3] = (uint8_t)(tmp.u32 >> 24);
 }
 
 __attribute__((always_inline)) static inline void LEUnpackUint16(uint16_t *data, const uint8_t container[2])
@@ -69,9 +80,10 @@ __attribute__((always_inline)) static inline void LEUnpackUint32(uint32_t *data,
 
 __attribute__((always_inline)) static inline void LEUnpackReal32(float *data, const uint8_t container[4])
 {
-	uint32_t tmp = (uint32_t)container[0] | ((uint32_t)container[1] << 8) |
+	conv_union tmp;
+	tmp.u32 = (uint32_t)container[0] | ((uint32_t)container[1] << 8) |
 	               ((uint32_t)container[2] << 16) | ((uint32_t)container[3] << 24);
-	*data = (float)tmp;
+	*data = tmp.r32;
 }
 
 __attribute__((always_inline)) static inline void BEPackUint16(uint8_t container[2], uint16_t data)
