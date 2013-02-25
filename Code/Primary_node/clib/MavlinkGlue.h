@@ -186,7 +186,7 @@ void MavLinkSendGps200Data(void);
  * Receives a manual control message from QGC and stores the commands from it for use 
  * with the Simulink controller.
  */
-void MavLinkReceiveManualControl(mavlink_manual_control_t *msg);
+void MavLinkReceiveManualControl(const mavlink_manual_control_t *msg);
 
 void MatlabGetMavLinkManualControl(uint8_t *data);
 
