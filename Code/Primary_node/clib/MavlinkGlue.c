@@ -25,6 +25,7 @@
 #include "Node.h"
 #include "PrimaryNode.h"
 #include "Parameters.h"
+#include "DataStore.h"
 
 #include <stdio.h>
 
@@ -510,6 +511,19 @@ void MavLinkSendMissionAck(uint8_t type)
 	Uart1WriteData(buf, (uint8_t)len);
 }
 
+/**
+ * Transmit a command acknowledgement message. The type of message is the sole argument to this
+ * function (see enum MAV_RESULT).
+ */
+void MavLinkSendCommandAck(uint8_t command, uint8_t result)
+{
+	mavlink_message_t msg;
+	mavlink_msg_command_ack_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+	                             command, result);
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	Uart1WriteData(buf, (uint8_t)len);
+}
+
 void MavLinkSendMissionCount(void)
 {
 	uint8_t missionCount;
@@ -675,11 +689,33 @@ void MavLinkSendNodeStatusData(void)
 	Uart1WriteData(buf, (uint8_t)len);
 }
 
-/**
- * Receives a manual control message from QGC and stores the commands from it for use 
- * with the Simulink controller.
- */
-void MavLinkReceiveManualControl(mavlink_manual_control_t *msg)
+void MavLinkReceiveCommandLong(const mavlink_command_long_t *msg)
+{
+	if (msg->target_system == mavlink_system.sysid) {
+		switch (msg->command) {
+			case MAV_CMD_PREFLIGHT_STORAGE:
+				{
+					uint8_t result = MAV_RESULT_FAILED;
+					if (msg->param1) {
+						if (DataStoreStoreAllParameters()) {
+							result = MAV_RESULT_ACCEPTED;
+						}
+					} else {
+						if (DataStoreLoadAllParameters()) {
+							result = MAV_RESULT_ACCEPTED;
+						}
+					}
+					MavLinkSendCommandAck(msg->command, result);
+				}
+				break;
+			default:
+				MavLinkSendCommandAck(msg->command, MAV_RESULT_UNSUPPORTED);
+				break;
+		}
+	}
+}
+
+void MavLinkReceiveManualControl(const mavlink_manual_control_t *msg)
 {
     static uint16_t lastButtons = 0;
 	if (msg->target == mavlink_system.sysid) {
@@ -1114,6 +1150,13 @@ void MavLinkReceive(void)
 			}
 
 			switch(msg.msgid) {
+
+				// Check for commands like write data to EEPROM
+				case MAVLINK_MSG_ID_COMMAND_LONG: {
+					mavlink_command_long_t mavCommand;
+					mavlink_msg_command_long_decode(&msg, &mavCommand);
+					MavLinkReceiveCommandLong(&mavCommand);
+				} break;
 
 				// Check for manual commands via Joystick from QGC.
 				case MAVLINK_MSG_ID_MANUAL_CONTROL: {

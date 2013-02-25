@@ -183,6 +183,13 @@ void MavLinkSendRevoGsData(void);
 void MavLinkSendGps200Data(void);
 
 /**
+ * If a command is received, process it. Currently only handles the PREFLIGHT_STORAGE command. If
+ * any other messages are received, they're responded to as UNSUPPORTED.
+ * @param msg The received message.
+ */
+void MavLinkReceiveCommandLong(const mavlink_command_long_t *msg);
+
+/**
  * Receives a manual control message from QGC and stores the commands from it for use 
  * with the Simulink controller.
  */
