@@ -116,10 +116,12 @@ __attribute__((always_inline)) static inline void BEPackInt32(uint8_t container[
 
 __attribute__((always_inline)) static inline void BEPackReal32(uint8_t container[4], float data)
 {
-	container[0] = (uint8_t)((uint32_t)data >> 24);
-	container[1] = (uint8_t)((uint32_t)data >> 16);
-	container[2] = (uint8_t)((uint32_t)data >> 8);
-	container[3] = (uint8_t)(uint32_t)data;
+	conv_union tmp;
+	tmp.r32 = data;
+	container[3] = (uint8_t)tmp.u32;
+	container[2] = (uint8_t)(tmp.u32 >> 8);
+	container[1] = (uint8_t)(tmp.u32 >> 16);
+	container[0] = (uint8_t)(tmp.u32 >> 24);
 }
 
 __attribute__((always_inline)) static inline void BEUnpackUint16(uint16_t *data, const uint8_t container[2])
@@ -146,9 +148,10 @@ __attribute__((always_inline)) static inline void BEUnpackUint32(uint32_t *data,
 
 __attribute__((always_inline)) static inline void BEUnpackReal32(float *data, const uint8_t container[4])
 {
-	uint32_t tmp = (uint32_t)container[3] | ((uint32_t)container[2] << 8) |
+	conv_union tmp;
+	tmp.u32 = (uint32_t)container[3] | ((uint32_t)container[2] << 8) |
 	               ((uint32_t)container[1] << 16) | ((uint32_t)container[0] << 24);
-	*data = (float)tmp;
+	*data = tmp.r32;
 }
 
 #endif // PACKING_H
