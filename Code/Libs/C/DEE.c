@@ -606,18 +606,6 @@ unsigned char DataEEInit(void)
     }
 }
 
-/**
- * Used in Simulink. Wraps init function with a flag-clearing call.
- * This is the recommended way to use this library, so this is just
- * simplifying things.
- */
-unsigned char DataEEInitAndClear() {
-	unsigned char rv = DataEEInit();
-    dataEEFlags.val = 0;
-	
-	return rv;
-}
-
 
 /************************************************************************
 DataEEWrite
