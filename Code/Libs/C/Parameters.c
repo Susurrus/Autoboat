@@ -27,12 +27,6 @@ if (onboardParameters[id].data) { \
 	*(type*)value = GetParam(); \
 }
 
-/**
- * Given a parameter name and a new value, update that that specific parameter value.
- * @param id[in] The id of the parameter to set.
- * @param value[in] A pointer to the new data for the value.
- * @return The corresponding integer index of the set variable. Will be UINT16_MAX on error.
- */
 void ParameterSetValueById(uint16_t id, const void *value)
 {
 	if (id < PARAMETERS_TOTAL) {
@@ -74,12 +68,6 @@ void ParameterSetValueById(uint16_t id, const void *value)
 	}
 }
 
-/**
- * Given a parameter name and a new value, update that that specific parameter value.
- * @param name[in] The name of the parameter as a NULL-terminated C string.
- * @param value[in] A pointer to the new data for the value.
- * @return The corresponding integer index of the set variable. Will be UINT16_MAX on error.
- */
 uint16_t ParameterSetValueByName(const char *name, const void *value)
 {
 	uint16_t i;
@@ -94,12 +82,6 @@ uint16_t ParameterSetValueByName(const char *name, const void *value)
 	return UINT16_MAX;
 }
 
-/**
- * Retrieves the current value of a parameter by name. For accessing the parameter by index, use the
- * onboardParameters array directly.
- * @param id[in] The id of the parameter.
- * @param value[out] The location to store the data.
- */
 void ParameterGetValueById(uint16_t id, void *value)
 {
 	if (id < PARAMETERS_TOTAL) {
@@ -141,12 +123,6 @@ void ParameterGetValueById(uint16_t id, void *value)
 	}
 }
 
-/**
- * Retrieves the current value of a parameter by name. For accessing the parameter by index, use the
- * onboardParameters array directly.
- * @param name[in] The name of the parameter as a NULL-terminated C string.
- * @param value[out] The location to store the data.
- */
 uint16_t ParameterGetValueByName(const char *name, void *value)
 {
 	uint16_t i;
