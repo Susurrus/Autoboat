@@ -13,22 +13,11 @@ void PrimaryNodeInit(void)
 	// Initialize UART1 to 115200 for groundstation communications.
 	Uart1Init(BAUD115200_BRG_REG);
 
-	// Initialize the EEPROM for non-volatile data storage.
+	// Initialize the EEPROM for non-volatile data storage. DataStoreInit() also takes care of
+	// initializing the onboard data store to the current parameter values so all subsequent calls
+	// to DataStoreLoadAllParameters() should work.
 	if (!DataStoreInit()) {
 		FATAL_ERROR();
-	}
-
-	// And load all stored parameters in the EEPROM. If this errors out, assume its because the
-	// EEPROM is currently empty (like if the PIC was just flashed). So write the current parameters
-	// and try reading them again and only error out if either of those fail.
-	if (!DataStoreLoadAllParameters()) {
-		if (DataStoreStoreAllParameters()) {
-			if (!DataStoreLoadAllParameters()) {
-				FATAL_ERROR();
-			}
-		} else {
-			FATAL_ERROR();
-		}
 	}
 
 	// Initialize the MAVLink communications channel
