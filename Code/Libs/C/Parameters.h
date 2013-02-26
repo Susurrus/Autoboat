@@ -58,7 +58,7 @@ extern const uint16_t PARAMETERS_TOTAL;
 
 // The array of parameters stored onboard. This should be set by external code written by the user
 // of the library. Should have as many elements as PARAMETERS_TOTAL.
-extern Parameter *onboardParameters;
+extern const Parameter *onboardParameters;
 
 /**
  * Given a parameter name and a new value, update that specific parameter value.

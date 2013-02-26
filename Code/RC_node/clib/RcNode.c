@@ -109,6 +109,8 @@ uint8_t ProcessAllEcanMessages(void)
 				uint16_t status, errors;
 				CanMessageDecodeStatus(&msg, &node, NULL, NULL, NULL, &status, &errors);
 				if (node == CAN_NODE_PRIMARY_CONTROLLER) {
+					// TODO: Move all *Node.h files into /Libs/C and use the proper FLAG constant
+					// value here for the primary node.
 					if (errors & 0x80) {
 						estopActive = true;
 					} else {

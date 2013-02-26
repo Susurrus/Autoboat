@@ -28,7 +28,7 @@ void setAutoMode(uint8_t newMode)
     }
 }
 
-static Parameter params[] = {
+static const Parameter params[] = {
     {"ModeAuto", NULL, (void(*)())setAutoMode, (void(*)())getAutoMode, PARAMETERS_DATATYPE_UINT8},
     {"Wheelbase", &wheelbase, NULL, NULL, PARAMETERS_DATATYPE_REAL32},
     {"GpsOrigin_Lat", &gpsOrigin[0], NULL, NULL, PARAMETERS_DATATYPE_INT32},
@@ -44,5 +44,5 @@ static Parameter params[] = {
 };
 
 // Expose both the list of parameters and the total to the Parameters library.
-Parameter *onboardParameters = params;
+const Parameter *onboardParameters = params;
 const uint16_t PARAMETERS_TOTAL = sizeof(params)/sizeof(Parameter);
