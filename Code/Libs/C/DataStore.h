@@ -5,6 +5,11 @@
  * @file
  * @brief A EEPROM backend for the Parameters library.
  *
+ * # Dependencies
+ *  * Parameter library.
+ *  * Packing library.
+ *
+ * # Usage
  * This DataStore library implements an EEPROM backend for the Parameters library. Any values used
  * by the library (so declared as an array of `Parameter` structs and pointed to by the
  * `onboardParameters` variable) are automatically used by this library. Call `DataStoreInit()`

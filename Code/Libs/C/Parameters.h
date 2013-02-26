@@ -5,6 +5,9 @@
  * @file
  * @brief This implements a simple dictionary-like interface to onboard parameters.
  *
+ * # Dependencies
+ *  * [mavlink library](qgroundcontrol.com/mavlink/start) for the `MAV_PARAM_TYPE` enum.
+ *
  * # Usage
  * Implement a corresponding ParametersHelper.c file that defines both the PARAMETERS_TOTAL constant
  * as well as the onboardParameters array. The onboardParameters array will be an array of Parameter
