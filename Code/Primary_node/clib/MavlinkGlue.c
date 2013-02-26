@@ -697,11 +697,11 @@ void MavLinkReceiveCommandLong(const mavlink_command_long_t *msg)
 				{
 					uint8_t result = MAV_RESULT_FAILED;
 					if (msg->param1) {
-						if (DataStoreStoreAllParameters()) {
+						if (DataStoreSaveParameters()) {
 							result = MAV_RESULT_ACCEPTED;
 						}
 					} else {
-						if (DataStoreLoadAllParameters()) {
+						if (DataStoreLoadParameters()) {
 							result = MAV_RESULT_ACCEPTED;
 						}
 					}
