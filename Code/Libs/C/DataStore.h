@@ -22,12 +22,22 @@
 #include <stdbool.h>
 
 /**
+ * An enum for the return values of DataStoreInit(). Specifically it allows for distinguishing
+ * between Init() calls where there was valid data in the EEPROM and when there wasn't.
+ */
+enum DATASTORE_INIT {
+	DATASTORE_INIT_FAIL = 0, // Failed.
+	DATASTORE_INIT_SUCCESS,  // Succeeded with no qualifiers.
+	DATASTORE_INIT_PRELOADED // Succeeded, but the EEPROM was empty and was preloaded with current parameter data.
+};
+
+/**
  * Initializes the underlying storage medium (the EEPROM as of right now) and also makes sure that a
  * copy of the onboard parameters have been written to permanent storage. This ensures that all
  * subsequent calls to DataStoreLoadAllParameters() will fail only due to EEPROM issues.
  * @return true if it succeeded, false if it didn't. Probably a critical error.
  */
-bool DataStoreInit(void);
+enum DATASTORE_INIT DataStoreInit(void);
 
 /**
  * Retrieves the values of all parameters stored in the EEPROM and loads them into the global
@@ -37,7 +47,7 @@ bool DataStoreInit(void);
  * called as that function makes sure that there's data stored in the EEPROM.
  * @return true if loading succeeded and parameters were updated, false otherwise.
  */
-bool DataStoreLoadAllParameters(void);
+bool DataStoreSaveParameters(void);
 
 /**
  * This function stores all parameters that are exposed to the Parameters library to EEPROM. The
@@ -46,6 +56,6 @@ bool DataStoreLoadAllParameters(void);
  * way to segregate between failure and this situation.
  * @return true if the function succeeded, false if there was a problem restoring values from EEPROM.
  */
-bool DataStoreStoreAllParameters(void);
+bool DataStoreLoadParameters(void);
 
 #endif // DATA_STORE_H

@@ -13,6 +13,36 @@
 // This is the value of the data at HAS_BEEN_WRITTEN_LOCATION if there is good data stored there.
 #define GOOD_DATA 1
 
+enum DATASTORE_INIT DataStoreInit(void)
+{
+	// First attempt to initialize the EEPROM unit using Microchip's library.
+	if (DataEEInit() != 0) {
+		return DATASTORE_INIT_FAIL;
+	}
+
+	// Then attempt to load the onboard parameters. This can fail if:
+	//  a) There was a problem with the EEPROM OR
+	//  b) There are no saved onboard parameters.
+    // In that case we save the current values and load them again and make sure everything worked.
+
+	// And load all stored parameters in the EEPROM. If this errors out, assume its because the
+	// EEPROM is currently empty (like if the PIC was just flashed). So write the current parameters
+	// and try reading them again and only error out if either of those fail.
+	if (!DataStoreLoadParameters()) {
+		if (DataStoreSaveParameters()) {
+			if (!DataStoreLoadParameters()) {
+				return DATASTORE_INIT_FAIL;
+			} else {
+				return DATASTORE_INIT_PRELOADED;
+			}
+		} else {
+			return DATASTORE_INIT_FAIL;
+		}
+	}
+
+	return DATASTORE_INIT_SUCCESS;
+}
+
 bool _Write4BytesIntoMemory(const uint8_t data[4], uint8_t *addr)
 {
 	// And pack those into uint16s.
@@ -62,7 +92,7 @@ bool _Read4BytesFromMemory(uint8_t data[4], uint8_t *addr)
 	return true;
 }
 
-bool DataStoreStoreAllParameters(void)
+bool DataStoreSaveParameters(void)
 {
 	// The address to use for this parameter. Stored as some data types are larger than a single
 	// word.
@@ -139,7 +169,7 @@ bool DataStoreStoreAllParameters(void)
 	}
 }
 
-bool DataStoreLoadAllParameters(void)
+bool DataStoreLoadParameters(void)
 {
 	// First check the first memory location. If this value is 1 (instead of the 0xFFFFFFFF the
 	// EEPROM on the PICs defaults to), then there is good data stored here. Otherwise, we just
@@ -215,34 +245,6 @@ bool DataStoreLoadAllParameters(void)
 			} break;
 			default:
 				return false;
-		}
-	}
-
-	return true;
-}
-
-bool DataStoreInit(void)
-{
-	// First attempt to initialize the EEPROM unit using Microchip's library.
-	if (DataEEInit() != 0) {
-		return false;
-	}
-
-	// Then attempt to load the onboard parameters. This can fail if:
-	//  a) There was a problem with the EEPROM OR
-	//  b) There are no saved onboard parameters.
-    // In that case we save the current values and load them again and make sure everything worked.
-
-	// And load all stored parameters in the EEPROM. If this errors out, assume its because the
-	// EEPROM is currently empty (like if the PIC was just flashed). So write the current parameters
-	// and try reading them again and only error out if either of those fail.
-	if (!DataStoreLoadAllParameters()) {
-		if (DataStoreStoreAllParameters()) {
-			if (!DataStoreLoadAllParameters()) {
-				return false;
-			}
-		} else {
-			return false;
 		}
 	}
 
