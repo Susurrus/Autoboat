@@ -114,6 +114,19 @@ bool DataStoreSaveParameters(void)
 				// And increment the memory location for the next parameter.
 				++offset;
 			} break;
+			case PARAMETERS_DATATYPE_UINT16: {
+				// First grab the parameter data.
+				uint16_t param;
+				ParameterGetValueById(i, &param);
+
+				// And write it into EEPROM (non-zero values mean failure).
+				if (DataEEWrite(param, offset)) {
+					return false;
+				}
+
+				// And increment the memory location for the next parameter.
+				++offset;
+			} break;
 			case PARAMETERS_DATATYPE_UINT32: {
 				// First grab the parameter data.
 				uint32_t param;
@@ -189,6 +202,22 @@ bool DataStoreLoadParameters(void)
 				// Grab the byte from the EEPROM.
 				uint8_t param;
 				if ((param = DataEERead(offset)) == 0xFFFF) {
+					// Error out if an error actually occured. 0xFFFF can be a valid stored value.
+					if (dataEEFlags.val) {
+						return false;
+					}
+				}
+
+				// And finally handle writing it into the parameter.
+				ParameterSetValueById(i, &param);
+
+				// And increment the memory location for the next parameter.
+				++offset;
+			} break;
+			case PARAMETERS_DATATYPE_UINT16:	{
+				// Grab the byte from the EEPROM.
+				uint16_t param;
+				if ((param = DataEERead(offset)) == 0xFFFFFFFF) {
 					// Error out if an error actually occured. 0xFFFF can be a valid stored value.
 					if (dataEEFlags.val) {
 						return false;

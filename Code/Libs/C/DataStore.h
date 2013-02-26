@@ -17,6 +17,9 @@
  * first and then used DataStoreLoadAllParameters() to load parameters from the EEPROM into the
  * parameter data locations and DataStoreStoreAllParameters() to save the current parameters into
  * the EEPROM. So simple, you won't believe!
+ *
+ * NOTE: Only the datatypes UINT8, UINT16, UINT32, INT32, and REAL32 have been implemented as of
+ * right now!
  */
 
 #include <stdbool.h>

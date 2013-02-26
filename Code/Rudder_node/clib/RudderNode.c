@@ -5,9 +5,9 @@
 #include "Node.h"
 #include "Nmea2000.h"
 #include "Nmea2000Encode.h"
-#include "Nvram.h"
 #include "CanMessages.h"
 #include "Types.h"
+#include "DataStore.h"
 
 // Declare some constants for use with the message scheduler
 // (don't use PGN or message ID as it must be a uint8)
@@ -32,10 +32,10 @@ enum {
 };
 
 // Instantiate a struct to store calibration data.
-struct RudderCalibrationData rudderCalData = {0};
+struct RudderCalibrationData rudderCalData = {};
 
 // Instantiate a struct to store rudder input data.
-struct RudderSensorData rudderSensorData = {0};
+struct RudderSensorData rudderSensorData = {};
 
 // Initialize the message scheduler
 
@@ -60,6 +60,16 @@ static MessageSchedule sched = {
 void RudderNodeInit(void)
 {
 	nodeId = CAN_NODE_RUDDER_CONTROLLER;
+
+	// Initialize the EEPROM for storing the onboard parameters.
+	enum DATASTORE_INIT x = DataStoreInit();
+	if (x == DATASTORE_INIT_SUCCESS) {
+		rudderCalData.RestoredCalibration = true;
+		rudderCalData.Calibrated = true;
+		LATAbits.LATA3 = 1;
+	} else if (x == DATASTORE_INIT_FAIL) {
+		FATAL_ERROR();
+	}
 
 	// Transmit the rudder angle at 10Hz
 	if (!AddMessageRepeating(&sched, SCHED_ID_RUDDER_ANGLE, 10)) {
@@ -112,7 +122,7 @@ void RudderCalibrate(void)
 	} else if (rudderCalData.CalibrationState == RUDDER_CAL_STATE_SECOND_TO_PORT) {
 		if (rudderSensorData.PortLimit) {
 			rudderCalData.PortLimitValue = rudderSensorData.PotValue;
-			SaveRudderCalibrationRange();
+			DataStoreSaveParameters();
 			rudderCalData.CalibrationState = RUDDER_CAL_STATE_RECENTER;
 			rudderCalData.CommandedDirection = TO_STARBOARD;
 			rudderCalData.Calibrated = true;
@@ -120,7 +130,7 @@ void RudderCalibrate(void)
 	} else if (rudderCalData.CalibrationState == RUDDER_CAL_STATE_SECOND_TO_STARBOARD) {
 		if (rudderSensorData.StarLimit) {
 			rudderCalData.StarLimitValue = rudderSensorData.PotValue;
-			SaveRudderCalibrationRange();
+			DataStoreSaveParameters();
 			rudderCalData.CalibrationState = RUDDER_CAL_STATE_RECENTER;
 			rudderCalData.CommandedDirection = TO_PORT;
 			rudderCalData.Calibrated = true;
