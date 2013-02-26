@@ -6,7 +6,7 @@
  * @brief This implements a simple dictionary-like interface to onboard parameters.
  *
  * # Dependencies
- *  * [mavlink library](qgroundcontrol.com/mavlink/start) for the `MAV_PARAM_TYPE` enum.
+ *  * stdint.h - Possibly a C99 implementation, though most compilers support this now.
  *
  * # Usage
  * Implement a corresponding ParametersHelper.c file that defines both the PARAMETERS_TOTAL constant
@@ -14,8 +14,28 @@
  * structs. Note that all variables should either have a direct data pointer xor setter/getter
  * functions. For read-only parameters, not defining a Setter function is acceptable.
  */
-#include "mavlink.h"
 #include <stdint.h>
+
+/**
+ * Declare the various datatypes supported by the parameter interface. UINT refers to unsigned
+ * integers, INT to signed integers, REAL to floating point numbers. The numbers following refer to
+ * the size of the values in bits. REAL32/REAL64 map to the C float and double datatypes
+ * respectively and may have additional limitations because of that.
+ * Also note that the PARAMETERS_DATATPYE enum follows from the MAVLink MAV_PARAM enum, such that
+ * MAVLink PARAM_* packets can interface directly with this code.
+ */
+enum PARAMETERS_DATATYPE {
+	PARAMETERS_DATATYPE_UINT8=1,
+	PARAMETERS_DATATYPE_INT8=2,
+	PARAMETERS_DATATYPE_UINT16=3,
+	PARAMETERS_DATATYPE_INT16=4,
+	PARAMETERS_DATATYPE_UINT32=5,
+	PARAMETERS_DATATYPE_INT32=6,
+	PARAMETERS_DATATYPE_UINT64=7,
+	PARAMETERS_DATATYPE_INT64=8,
+	PARAMETERS_DATATYPE_REAL32=9,
+	PARAMETERS_DATATYPE_REAL64=10
+};
 
 /**
  * Declare a struct storing all necessary information for a parameter.
@@ -29,7 +49,7 @@ typedef struct Parameter {
     void *data;
     void (*Setter)(void);
     void (*Getter)(void);
-    const enum MAV_PARAM_TYPE dataType;
+    const enum PARAMETERS_DATATYPE dataType;
 } Parameter;
 
 // The total number of parameters onboard. This should be set by external code written by the user

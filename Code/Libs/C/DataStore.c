@@ -2,7 +2,6 @@
 #include "Parameters.h"
 #include "DEE.h"
 #include "Packing.h"
-#include "mavlink.h"
 
 #include <stdbool.h>
 
@@ -72,7 +71,7 @@ bool DataStoreStoreAllParameters(void)
 	int i;
 	for (i = 0; i < PARAMETERS_TOTAL; ++i) {
 		switch (onboardParameters[i].dataType) {
-			case MAV_PARAM_TYPE_UINT8: {
+			case PARAMETERS_DATATYPE_UINT8: {
 				// First grab the parameter data.
 				uint8_t param;
 				ParameterGetValueById(i, &param);
@@ -85,7 +84,7 @@ bool DataStoreStoreAllParameters(void)
 				// And increment the memory location for the next parameter.
 				++offset;
 			} break;
-			case MAV_PARAM_TYPE_UINT32: {
+			case PARAMETERS_DATATYPE_UINT32: {
 				// First grab the parameter data.
 				uint32_t param;
 				ParameterGetValueById(i, &param);
@@ -99,7 +98,7 @@ bool DataStoreStoreAllParameters(void)
 					return false;
 				}
 			} break;
-			case MAV_PARAM_TYPE_INT32: {
+			case PARAMETERS_DATATYPE_INT32: {
 				// First grab the parameter data.
 				int32_t param;
 				ParameterGetValueById(i, &param);
@@ -113,7 +112,7 @@ bool DataStoreStoreAllParameters(void)
 					return false;
 				}
 			} break;
-			case MAV_PARAM_TYPE_REAL32: {
+			case PARAMETERS_DATATYPE_REAL32: {
 				// First grab the parameter data.
 				float param;
 				ParameterGetValueById(i, &param);
@@ -156,7 +155,7 @@ bool DataStoreLoadAllParameters(void)
 	int i;
 	for (i = 0; i < PARAMETERS_TOTAL; ++i) {
 		switch (onboardParameters[i].dataType) {
-			case MAV_PARAM_TYPE_UINT8:	{
+			case PARAMETERS_DATATYPE_UINT8:	{
 				// Grab the byte from the EEPROM.
 				uint8_t param;
 				if ((param = DataEERead(offset)) == 0xFFFF) {
@@ -172,7 +171,7 @@ bool DataStoreLoadAllParameters(void)
 				// And increment the memory location for the next parameter.
 				++offset;
 			} break;
-			case MAV_PARAM_TYPE_UINT32:	{
+			case PARAMETERS_DATATYPE_UINT32:	{
 				// Grab the 4 bytes that make up this parameter from the EEPROM.
 				uint8_t tmp[4];
 				if (!_Read4BytesFromMemory(tmp, &offset)) {
@@ -186,7 +185,7 @@ bool DataStoreLoadAllParameters(void)
 				// And finally handle writing it into the parameter.
 				ParameterSetValueById(i, &param);
 			} break;
-			case MAV_PARAM_TYPE_INT32:	{
+			case PARAMETERS_DATATYPE_INT32:	{
 				// Grab the 4 bytes that make up this parameter from the EEPROM.
 				uint8_t tmp[4];
 				if (!_Read4BytesFromMemory(tmp, &offset)) {
@@ -200,7 +199,7 @@ bool DataStoreLoadAllParameters(void)
 				// And finally handle writing it into the parameter.
 				ParameterSetValueById(i, &param);
 			} break;
-			case MAV_PARAM_TYPE_REAL32:	{
+			case PARAMETERS_DATATYPE_REAL32:	{
 				// Grab the 4 bytes that make up this parameter from the EEPROM.
 				uint8_t tmp[4];
 				if (!_Read4BytesFromMemory(tmp, &offset)) {

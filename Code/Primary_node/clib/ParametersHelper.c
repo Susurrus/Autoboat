@@ -29,18 +29,18 @@ void setAutoMode(uint8_t newMode)
 }
 
 static Parameter params[] = {
-    {"ModeAuto", NULL, (void(*)())setAutoMode, (void(*)())getAutoMode, MAV_PARAM_TYPE_UINT8},
-    {"Wheelbase", &wheelbase, NULL, NULL, MAV_PARAM_TYPE_REAL32},
-    {"GpsOrigin_Lat", &gpsOrigin[0], NULL, NULL, MAV_PARAM_TYPE_INT32},
-    {"GpsOrigin_Lon", &gpsOrigin[1], NULL, NULL, MAV_PARAM_TYPE_INT32},
-    {"GpsOrigin_Alt", &gpsOrigin[2], NULL, NULL, MAV_PARAM_TYPE_INT32},
-    {"L2+_T*", &tStar, NULL, NULL, MAV_PARAM_TYPE_REAL32},
-    {"L2+_IP*", &ipStar, NULL, NULL, MAV_PARAM_TYPE_REAL32},
-    {"L2+_InitPoint", &initialPoint, NULL, NULL, MAV_PARAM_TYPE_UINT8},
-    {"L2+_T2T", &turn2Track, NULL, NULL, MAV_PARAM_TYPE_UINT8},
-    {"L2+_MaxDownPath*", &maxDwnPthStar, NULL, NULL, MAV_PARAM_TYPE_REAL32},
-    {"L2+_TanInter", &tanIntercept, NULL, NULL, MAV_PARAM_TYPE_REAL32},
-    {"L2+_SwitchDist", &switchDistance, NULL, NULL, MAV_PARAM_TYPE_REAL32}
+    {"ModeAuto", NULL, (void(*)())setAutoMode, (void(*)())getAutoMode, PARAMETERS_DATATYPE_UINT8},
+    {"Wheelbase", &wheelbase, NULL, NULL, PARAMETERS_DATATYPE_REAL32},
+    {"GpsOrigin_Lat", &gpsOrigin[0], NULL, NULL, PARAMETERS_DATATYPE_INT32},
+    {"GpsOrigin_Lon", &gpsOrigin[1], NULL, NULL, PARAMETERS_DATATYPE_INT32},
+    {"GpsOrigin_Alt", &gpsOrigin[2], NULL, NULL, PARAMETERS_DATATYPE_INT32},
+    {"L2+_T*", &tStar, NULL, NULL, PARAMETERS_DATATYPE_REAL32},
+    {"L2+_IP*", &ipStar, NULL, NULL, PARAMETERS_DATATYPE_REAL32},
+    {"L2+_InitPoint", &initialPoint, NULL, NULL, PARAMETERS_DATATYPE_UINT8},
+    {"L2+_T2T", &turn2Track, NULL, NULL, PARAMETERS_DATATYPE_UINT8},
+    {"L2+_MaxDownPath*", &maxDwnPthStar, NULL, NULL, PARAMETERS_DATATYPE_REAL32},
+    {"L2+_TanInter", &tanIntercept, NULL, NULL, PARAMETERS_DATATYPE_REAL32},
+    {"L2+_SwitchDist", &switchDistance, NULL, NULL, PARAMETERS_DATATYPE_REAL32}
 };
 
 // Expose both the list of parameters and the total to the Parameters library.

@@ -1,6 +1,7 @@
 #include "Parameters.h"
 
 #include <stdint.h>
+#include <string.h>
 
 /**
  * Defines all of the work necessary for updating a parameter based on the onboardParameters array.
@@ -31,37 +32,36 @@ void ParameterSetValueById(uint16_t id, const void *value)
 {
 	if (id < PARAMETERS_TOTAL) {
 		switch(onboardParameters[id].dataType) {
-			case MAV_PARAM_TYPE_UINT8:
+			case PARAMETERS_DATATYPE_UINT8:
 				SET_PARAM(uint8_t);
 				break;
-			case MAV_PARAM_TYPE_INT8:
+			case PARAMETERS_DATATYPE_INT8:
 				SET_PARAM(int8_t);
 				break;
-			case MAV_PARAM_TYPE_UINT16:
+			case PARAMETERS_DATATYPE_UINT16:
 				SET_PARAM(uint16_t);
 				break;
-			case MAV_PARAM_TYPE_INT16:
+			case PARAMETERS_DATATYPE_INT16:
 				SET_PARAM(int16_t);
 				break;
-			case MAV_PARAM_TYPE_UINT32:
+			case PARAMETERS_DATATYPE_UINT32:
 				SET_PARAM(uint32_t);
 				break;
-			case MAV_PARAM_TYPE_INT32:
+			case PARAMETERS_DATATYPE_INT32:
 				SET_PARAM(int32_t);
 				break;
-			case MAV_PARAM_TYPE_UINT64:
+			case PARAMETERS_DATATYPE_UINT64:
 				SET_PARAM(uint64_t);
 				break;
-			case MAV_PARAM_TYPE_INT64:
+			case PARAMETERS_DATATYPE_INT64:
 				SET_PARAM(int64_t);
 				break;
-			case MAV_PARAM_TYPE_REAL32:
+			case PARAMETERS_DATATYPE_REAL32:
 				SET_PARAM(float);
 				break;
-			case MAV_PARAM_TYPE_REAL64:
+			case PARAMETERS_DATATYPE_REAL64:
 				SET_PARAM(double);
 				break;
-			case MAV_PARAM_TYPE_ENUM_END:
 			default:
 				break;
 		}
@@ -86,37 +86,36 @@ void ParameterGetValueById(uint16_t id, void *value)
 {
 	if (id < PARAMETERS_TOTAL) {
 		switch(onboardParameters[id].dataType) {
-			case MAV_PARAM_TYPE_UINT8:
+			case PARAMETERS_DATATYPE_UINT8:
 				GET_PARAM(uint8_t);
 				break;
-			case MAV_PARAM_TYPE_INT8:
+			case PARAMETERS_DATATYPE_INT8:
 				GET_PARAM(int8_t);
 				break;
-			case MAV_PARAM_TYPE_UINT16:
+			case PARAMETERS_DATATYPE_UINT16:
 				GET_PARAM(uint16_t);
 				break;
-			case MAV_PARAM_TYPE_INT16:
+			case PARAMETERS_DATATYPE_INT16:
 				GET_PARAM(int16_t);
 				break;
-			case MAV_PARAM_TYPE_UINT32:
+			case PARAMETERS_DATATYPE_UINT32:
 				GET_PARAM(uint32_t);
 				break;
-			case MAV_PARAM_TYPE_INT32:
+			case PARAMETERS_DATATYPE_INT32:
 				GET_PARAM(int32_t);
 				break;
-			case MAV_PARAM_TYPE_UINT64:
+			case PARAMETERS_DATATYPE_UINT64:
 				GET_PARAM(uint64_t);
 				break;
-			case MAV_PARAM_TYPE_INT64:
+			case PARAMETERS_DATATYPE_INT64:
 				GET_PARAM(int64_t);
 				break;
-			case MAV_PARAM_TYPE_REAL32:
+			case PARAMETERS_DATATYPE_REAL32:
 				GET_PARAM(float);
 				break;
-			case MAV_PARAM_TYPE_REAL64:
+			case PARAMETERS_DATATYPE_REAL64:
 				GET_PARAM(double);
 				break;
-			case MAV_PARAM_TYPE_ENUM_END:
 			default:
 				break;
 		}

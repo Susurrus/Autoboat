@@ -6,6 +6,7 @@
  * @brief A EEPROM backend for the Parameters library.
  *
  * # Dependencies
+ *  * DEE library from Microchip (DEE.h, DEE.c, DEE.s)
  *  * Parameter library.
  *  * Packing library.
  *
