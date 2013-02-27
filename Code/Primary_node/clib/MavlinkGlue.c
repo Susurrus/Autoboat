@@ -410,7 +410,7 @@ void MavLinkSendAttitude(void)
 
 	mavlink_msg_attitude_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                          nodeSystemTime*10,
-							  revoGsDataStore.roll, revoGsDataStore.pitch, revoGsDataStore.heading,
+							  revoGsDataStore.roll, revoGsDataStore.pitch, internalVariables.Heading,
 							  0.0, 0.0, 0.0);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
