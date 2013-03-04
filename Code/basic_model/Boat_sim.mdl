@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2396"
+    ComputedModelVersion    "1.2399"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -28,9 +28,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun Mar 03 15:24:32 2013"
+  LastModifiedDate	  "Sun Mar 03 16:17:23 2013"
   RTWModifiedTimeStamp	  284224849
-  ModelVersionFormat	  "1.%<AutoIncrement:2396>"
+  ModelVersionFormat	  "1.%<AutoIncrement:2399>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1700,6 +1700,23 @@ Model {
       SampleTime	      "-1"
     }
     Block {
+      BlockType		      Delay
+      DelayLengthSource	      "Dialog"
+      DelayLength	      "2"
+      DelayLengthUpperLimit   "100"
+      InitialConditionSource  "Dialog"
+      InitialCondition	      "0.0"
+      ExternalReset	      "None"
+      PreventDirectFeedthrough off
+      DiagnosticForOutOfRangeDelayLength "None"
+      RemoveProtectionDelayLength off
+      InputProcessing	      "Elements as channels (sample based)"
+      UseCircularBuffer	      off
+      SampleTime	      "-1"
+      StateMustResolveToSignalObject off
+      CodeGenStateStorageClass "Auto"
+    }
+    Block {
       BlockType		      Demux
       Outputs		      "4"
       DisplayOption	      "none"
@@ -1888,6 +1905,14 @@ Model {
       SampleTime	      "-1"
     }
     Block {
+      BlockType		      RateLimiter
+      RisingSlewLimit	      "1"
+      FallingSlewLimit	      "-1"
+      SampleTimeMode	      "continuous"
+      InitialCondition	      "0"
+      LinearizeAsGain	      on
+    }
+    Block {
       BlockType		      RateTransition
       Integrity		      on
       Deterministic	      on
@@ -2055,7 +2080,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "141"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "10194"
+    SIDHighWatermark	    "10557"
     Block {
       BlockType		      Constant
       Name		      "Constant"
@@ -2063,7 +2088,6 @@ Model {
       Position		      [25, 1160, 55, 1190]
       BackgroundColor	      "gray"
       ShowName		      off
-      Value		      "0"
       OutDataTypeStr	      "boolean"
     }
     Block {
@@ -2655,7 +2679,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"HIL Interface"
-	Location		[1040, 143, 1634, 966]
+	Location		[360, 118, 1670, 958]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -3059,7 +3083,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From"
 	  SID			  "3017"
-	  Position		  [135, 60, 210, 90]
+	  Position		  [120, 70, 195, 100]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "HIL_enable"
@@ -4004,7 +4028,6 @@ Model {
 	Line {
 	  SrcBlock		  "From"
 	  SrcPort		  1
-	  Points		  [0, 29]
 	  DstBlock		  "Serial port receive"
 	  DstPort		  enable
 	}
@@ -4517,11 +4540,22 @@ Model {
 	      SaturateOnIntegerOverflow	off
 	    }
 	    Block {
+	      BlockType		      Delay
+	      Name		      "Delay"
+	      SID		      "10554"
+	      Ports		      [1, 1]
+	      Position		      [400, 333, 435, 367]
+	      ShowName		      off
+	      InputPortMap	      "u0"
+	      DelayLength	      "8"
+	      ExternalReset	      "None"
+	    }
+	    Block {
 	      BlockType		      Display
 	      Name		      "Display"
-	      SID		      "9059"
+	      SID		      "10557"
 	      Ports		      [1]
-	      Position		      [490, 440, 580, 470]
+	      Position		      [410, 90, 500, 120]
 	      ZOrder		      -1
 	      Decimation	      "1"
 	      Lockdown		      off
@@ -4579,216 +4613,43 @@ Model {
 	      OutDataTypeStr	      "boolean"
 	    }
 	    Block {
+	      BlockType		      RateLimiter
+	      Name		      "Rate Limiter"
+	      SID		      "10555"
+	      Position		      [460, 335, 490, 365]
+	      ZOrder		      -7
+	      ShowName		      off
+	      RisingSlewLimit	      "0.45"
+	      FallingSlewLimit	      "-0.45"
+	      SampleTimeMode	      "inherited"
+	    }
+	    Block {
 	      BlockType		      Saturate
 	      Name		      "Saturation"
 	      SID		      "2623"
 	      Ports		      [1, 1]
 	      Position		      [535, 335, 565, 365]
+	      ShowName		      off
 	      InputPortMap	      "u0"
 	      UpperLimit	      ".7854"
 	      LowerLimit	      "-.7854"
 	    }
 	    Block {
-	      BlockType		      SubSystem
-	      Name		      "Second Order Linear Actuator3"
-	      SID		      "3999"
+	      BlockType		      Saturate
+	      Name		      "Saturation1"
+	      SID		      "10556"
 	      Ports		      [1, 1]
-	      Position		      [330, 24, 430, 66]
+	      Position		      [320, 335, 350, 365]
 	      ShowName		      off
-	      AncestorBlock	      "aerolibactuator/Second Order Linear Actuator"
-	      LibraryVersion	      "*1.34"
-	      MinAlgLoopOccurrences   off
-	      PropExecContextOutsideSubsystem off
-	      RTWSystemCode	      "Auto"
-	      FunctionWithSeparateData off
-	      Opaque		      off
-	      RequestExecContextInheritance off
-	      MaskHideContents	      off
-	      MaskType		      "Second Order Linear Actuator"
-	      MaskDescription	      "Implement a second-order actuator model"
-	      MaskHelp		      "eval('asbhelp');"
-	      MaskPromptString	      "Natural frequency:|Damping ratio:|Initial position:"
-	      MaskStyleString	      "edit,edit,edit"
-	      MaskVariables	      "wn_fin=@1;z_fin=@2;fin_act_0=@3;"
-	      MaskTunableValueString  "on,on,on"
-	      MaskCallbackString      "||"
-	      MaskEnableString	      "on,on,on"
-	      MaskVisibilityString    "on,on,on"
-	      MaskToolTipString	      "on,on,on"
-	      MaskInitialization      "aeroicon('aeroblk');"
-	      MaskDisplay	      "port_label('input',1,'A_{demand}','texmode','on');\nport_label('output',1,'A_{actual}','texm"
-	      "ode','on');"
-	      MaskIconFrame	      on
-	      MaskIconOpaque	      on
-	      MaskIconRotate	      "none"
-	      MaskPortRotate	      "default"
-	      MaskIconUnits	      "autoscale"
-	      MaskValueString	      "15|0.8|0"
-	      System {
-		Name			"Second Order Linear Actuator3"
-		Location		[203, 180, 994, 397]
-		Open			off
-		ModelBrowserVisibility	off
-		ModelBrowserWidth	200
-		ScreenColor		"white"
-		PaperOrientation	"landscape"
-		PaperPositionMode	"auto"
-		PaperType		"usletter"
-		PaperUnits		"inches"
-		TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
-		TiledPageScale		1
-		ShowPageBoundaries	off
-		ZoomFactor		"100"
-		SIDHighWatermark	"12"
-		SIDPrevWatermark	"12"
-		Block {
-		  BlockType		  Inport
-		  Name			  "Ac_dem"
-		  SID			  "3999:2"
-		  Position		  [75, 53, 105, 67]
-		  IconDisplay		  "Port number"
-		}
-		Block {
-		  BlockType		  Gain
-		  Name			  "2*zeta * wn"
-		  SID			  "3999:3"
-		  Position		  [390, 117, 450, 143]
-		  BlockMirror		  on
-		  Gain			  "2.0 * z_fin* wn_fin"
-		}
-		Block {
-		  BlockType		  DiscreteIntegrator
-		  Name			  "Discrete-Time\nIntegrator1"
-		  SID			  "3999:11"
-		  Ports			  [1, 1]
-		  Position		  [505, 44, 540, 76]
-		  ShowName		  off
-		  IntegratorMethod	  "Integration: Forward Euler"
-		  ExternalReset		  "none"
-		  InitialConditionSource  "internal"
-		  SampleTime		  "-1"
-		  UpperSaturationLimit	  "1"
-		  LowerSaturationLimit	  "-1"
-		  ICPrevOutput		  "DiscIntNeverNeededParam"
-		  ICPrevScaledInput	  "DiscIntNeverNeededParam"
-		}
-		Block {
-		  BlockType		  DiscreteIntegrator
-		  Name			  "Discrete-Time\nIntegrator2"
-		  SID			  "3999:12"
-		  Ports			  [1, 1]
-		  Position		  [400, 44, 435, 76]
-		  ShowName		  off
-		  IntegratorMethod	  "Integration: Forward Euler"
-		  ExternalReset		  "none"
-		  InitialConditionSource  "internal"
-		  SampleTime		  "-1"
-		  UpperSaturationLimit	  "1"
-		  LowerSaturationLimit	  "-1"
-		  ICPrevOutput		  "DiscIntNeverNeededParam"
-		  ICPrevScaledInput	  "DiscIntNeverNeededParam"
-		}
-		Block {
-		  BlockType		  Sum
-		  Name			  "Sum2"
-		  SID			  "3999:6"
-		  Ports			  [2, 1]
-		  Position		  [330, 40, 360, 80]
-		  ShowName		  off
-		  IconShape		  "round"
-		  Inputs		  "|+-"
-		}
-		Block {
-		  BlockType		  Sum
-		  Name			  "Sum3"
-		  SID			  "3999:7"
-		  Ports			  [2, 1]
-		  Position		  [145, 40, 175, 80]
-		  ShowName		  off
-		  IconShape		  "round"
-		  Inputs		  "|+-"
-		}
-		Block {
-		  BlockType		  Gain
-		  Name			  "wn^2"
-		  SID			  "3999:8"
-		  Position		  [190, 40, 250, 80]
-		  Gain			  "wn_fin* wn_fin"
-		}
-		Block {
-		  BlockType		  Outport
-		  Name			  "Ac_ac"
-		  SID			  "3999:9"
-		  Position		  [655, 53, 685, 67]
-		  IconDisplay		  "Port number"
-		  InitialOutput		  "0"
-		}
-		Line {
-		  SrcBlock		  "Discrete-Time\nIntegrator1"
-		  SrcPort		  1
-		  Points		  [80, 0]
-		  Branch {
-		    DstBlock		    "Ac_ac"
-		    DstPort		    1
-		  }
-		  Branch {
-		    Points		    [0, 120; -465, 0]
-		    DstBlock		    "Sum3"
-		    DstPort		    2
-		  }
-		}
-		Line {
-		  SrcBlock		  "wn^2"
-		  SrcPort		  1
-		  DstBlock		  "Sum2"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Sum2"
-		  SrcPort		  1
-		  DstBlock		  "Discrete-Time\nIntegrator2"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Discrete-Time\nIntegrator2"
-		  SrcPort		  1
-		  Points		  [35, 0]
-		  Branch {
-		    Points		    [0, 70]
-		    DstBlock		    "2*zeta * wn"
-		    DstPort		    1
-		  }
-		  Branch {
-		    DstBlock		    "Discrete-Time\nIntegrator1"
-		    DstPort		    1
-		  }
-		}
-		Line {
-		  SrcBlock		  "2*zeta * wn"
-		  SrcPort		  1
-		  Points		  [-40, 0]
-		  DstBlock		  "Sum2"
-		  DstPort		  2
-		}
-		Line {
-		  SrcBlock		  "Ac_dem"
-		  SrcPort		  1
-		  DstBlock		  "Sum3"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Sum3"
-		  SrcPort		  1
-		  DstBlock		  "wn^2"
-		  DstPort		  1
-		}
-	      }
+	      InputPortMap	      "u0"
+	      UpperLimit	      ".7854"
+	      LowerLimit	      "-.7854"
 	    }
 	    Block {
 	      BlockType		      Switch
 	      Name		      "Switch"
 	      SID		      "8593"
-	      Position		      [285, 330, 335, 370]
+	      Position		      [235, 330, 285, 370]
 	      ZOrder		      -18
 	      NamePlacement	      "alternate"
 	      ShowName		      off
@@ -4854,12 +4715,6 @@ Model {
 	      DstPort		      2
 	    }
 	    Line {
-	      SrcBlock		      "Second Order Linear Actuator3"
-	      SrcPort		      1
-	      DstBlock		      "t_d"
-	      DstPort		      1
-	    }
-	    Line {
 	      SrcBlock		      "Saturation"
 	      SrcPort		      1
 	      DstBlock		      "r_d"
@@ -4868,7 +4723,7 @@ Model {
 	    Line {
 	      SrcBlock		      "Switch"
 	      SrcPort		      1
-	      DstBlock		      "Saturation"
+	      DstBlock		      "Saturation1"
 	      DstPort		      1
 	    }
 	    Line {
@@ -4880,30 +4735,45 @@ Model {
 	    Line {
 	      SrcBlock		      "Data Type Conversion1"
 	      SrcPort		      1
-	      Points		      [40, 0]
+	      Points		      [40, 0; 0, -50]
+	      DstBlock		      "Switch"
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "Gain"
+	      SrcPort		      1
+	      Points		      [85, 0]
 	      Branch {
-		Points			[45, 0; 0, -50]
-		DstBlock		"Switch"
-		DstPort			3
+		DstBlock		"t_d"
+		DstPort			1
 	      }
 	      Branch {
-		Points			[0, 40]
+		Points			[0, 60]
 		DstBlock		"Display"
 		DstPort			1
 	      }
 	    }
 	    Line {
-	      SrcBlock		      "Gain"
+	      SrcBlock		      "Delay"
 	      SrcPort		      1
-	      DstBlock		      "Second Order Linear Actuator3"
+	      DstBlock		      "Rate Limiter"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Rate Limiter"
+	      SrcPort		      1
+	      DstBlock		      "Saturation"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Saturation1"
+	      SrcPort		      1
+	      DstBlock		      "Delay"
 	      DstPort		      1
 	    }
 	    Annotation {
-	      Name		      "This subsystem adds 2nd-order dynamics to the actuator systems.\nThis includes the propeller, ball"
-	      "ast, and rudder.\n\nNOTE: The parameters of each system is uncalibrated, these are\npurely here to provide a ba"
-	      "seline estimate of dynamics."
-	      Position		      [506, 103]
-	      HorizontalAlignment     "left"
+	      Name		      "The rudder dynamics are modeled as a lag and slew-limit."
+	      Position		      [388, 309]
 	    }
 	  }
 	}
@@ -7189,7 +7059,7 @@ Model {
 	Block {
 	  BlockType		  SubSystem
 	  Name			  "Autonomous Controller"
-	  SID			  "9829"
+	  SID			  "10195"
 	  Ports			  [4, 2]
 	  Position		  [555, 96, 750, 229]
 	  NamePlacement		  "alternate"
@@ -7203,7 +7073,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Autonomous Controller"
-	    Location		    [1962, 271, 2937, 891]
+	    Location		    [472, 230, 1447, 850]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -7219,7 +7089,7 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "GPS"
-	      SID		      "9830"
+	      SID		      "10196"
 	      Position		      [60, 468, 90, 482]
 	      BackgroundColor	      "darkGreen"
 	      IconDisplay	      "Port number"
@@ -7227,7 +7097,7 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "sensors_t"
-	      SID		      "9831"
+	      SID		      "10197"
 	      Position		      [60, 343, 90, 357]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "2"
@@ -7236,7 +7106,7 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "sensors_r"
-	      SID		      "9832"
+	      SID		      "10198"
 	      Position		      [60, 378, 90, 392]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "3"
@@ -7245,7 +7115,7 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "reset"
-	      SID		      "9833"
+	      SID		      "10199"
 	      Position		      [60, 413, 90, 427]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "4"
@@ -7254,7 +7124,7 @@ Model {
 	    Block {
 	      BlockType		      Reference
 	      Name		      "Discrete step"
-	      SID		      "9834"
+	      SID		      "10200"
 	      Ports		      [0, 1]
 	      Position		      [75, 130, 110, 160]
 	      ForegroundColor	      "red"
@@ -7269,7 +7139,7 @@ Model {
 	    Block {
 	      BlockType		      SubSystem
 	      Name		      "Initialize MissionList"
-	      SID		      "9835"
+	      SID		      "10201"
 	      Ports		      [0, 0, 0, 1]
 	      Position		      [105, 169, 205, 211]
 	      ZOrder		      -7
@@ -7299,7 +7169,7 @@ Model {
 		Block {
 		  BlockType		  TriggerPort
 		  Name			  "Trigger"
-		  SID			  "9836"
+		  SID			  "10202"
 		  Ports			  []
 		  Position		  [237, 15, 257, 35]
 		  ZOrder		  -3
@@ -7311,7 +7181,7 @@ Model {
 		Block {
 		  BlockType		  Reference
 		  Name			  "AppendMission"
-		  SID			  "9837"
+		  SID			  "10203"
 		  Ports			  [1, 1]
 		  Position		  [355, 204, 455, 246]
 		  ZOrder		  -5
@@ -7324,7 +7194,7 @@ Model {
 		Block {
 		  BlockType		  Reference
 		  Name			  "AppendMission1"
-		  SID			  "9838"
+		  SID			  "10204"
 		  Ports			  [1, 1]
 		  Position		  [355, 264, 455, 306]
 		  ZOrder		  -5
@@ -7337,7 +7207,7 @@ Model {
 		Block {
 		  BlockType		  Reference
 		  Name			  "AppendMission2"
-		  SID			  "9839"
+		  SID			  "10205"
 		  Ports			  [1, 1]
 		  Position		  [355, 324, 455, 366]
 		  ZOrder		  -5
@@ -7350,7 +7220,7 @@ Model {
 		Block {
 		  BlockType		  Reference
 		  Name			  "AppendMission3"
-		  SID			  "9840"
+		  SID			  "10206"
 		  Ports			  [1, 1]
 		  Position		  [355, 384, 455, 426]
 		  ZOrder		  -5
@@ -7363,7 +7233,7 @@ Model {
 		Block {
 		  BlockType		  Reference
 		  Name			  "AppendMission4"
-		  SID			  "9841"
+		  SID			  "10207"
 		  Ports			  [1, 1]
 		  Position		  [355, 444, 455, 486]
 		  ZOrder		  -5
@@ -7376,7 +7246,7 @@ Model {
 		Block {
 		  BlockType		  Reference
 		  Name			  "AppendMission5"
-		  SID			  "9842"
+		  SID			  "10208"
 		  Ports			  [1, 1]
 		  Position		  [355, 504, 455, 546]
 		  ZOrder		  -5
@@ -7389,7 +7259,7 @@ Model {
 		Block {
 		  BlockType		  Reference
 		  Name			  "ClearMissionList"
-		  SID			  "9843"
+		  SID			  "10209"
 		  Ports			  []
 		  Position		  [195, 139, 295, 181]
 		  ZOrder		  -5
@@ -7403,7 +7273,7 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Constant"
-		  SID			  "9844"
+		  SID			  "10210"
 		  Position		  [30, 211, 160, 239]
 		  ZOrder		  -5
 		  BackgroundColor	  "gray"
@@ -7414,7 +7284,7 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Constant1"
-		  SID			  "9845"
+		  SID			  "10211"
 		  Position		  [30, 271, 160, 299]
 		  ZOrder		  -5
 		  BackgroundColor	  "gray"
@@ -7425,7 +7295,7 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Constant2"
-		  SID			  "9846"
+		  SID			  "10212"
 		  Position		  [30, 331, 160, 359]
 		  ZOrder		  -5
 		  BackgroundColor	  "gray"
@@ -7436,7 +7306,7 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Constant3"
-		  SID			  "9847"
+		  SID			  "10213"
 		  Position		  [30, 391, 160, 419]
 		  ZOrder		  -5
 		  BackgroundColor	  "gray"
@@ -7447,7 +7317,7 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Constant4"
-		  SID			  "9848"
+		  SID			  "10214"
 		  Position		  [30, 451, 160, 479]
 		  ZOrder		  -5
 		  BackgroundColor	  "gray"
@@ -7458,7 +7328,7 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Constant5"
-		  SID			  "9849"
+		  SID			  "10215"
 		  Position		  [30, 511, 160, 539]
 		  ZOrder		  -5
 		  BackgroundColor	  "gray"
@@ -7469,7 +7339,7 @@ Model {
 		Block {
 		  BlockType		  DataTypeConversion
 		  Name			  "Data Type Conversion"
-		  SID			  "9850"
+		  SID			  "10216"
 		  Position		  [490, 213, 540, 237]
 		  ZOrder		  -7
 		  ShowName		  off
@@ -7480,7 +7350,7 @@ Model {
 		Block {
 		  BlockType		  Reference
 		  Name			  "Mission Init"
-		  SID			  "9851"
+		  SID			  "10217"
 		  Ports			  []
 		  Position		  [195, 69, 295, 111]
 		  ZOrder		  -4
@@ -7496,7 +7366,7 @@ Model {
 		Block {
 		  BlockType		  Reference
 		  Name			  "SetCurrentMission"
-		  SID			  "9852"
+		  SID			  "10218"
 		  Ports			  [1]
 		  Position		  [575, 204, 675, 246]
 		  ZOrder		  -5
@@ -7509,7 +7379,7 @@ Model {
 		Block {
 		  BlockType		  Terminator
 		  Name			  "Terminator1"
-		  SID			  "9853"
+		  SID			  "10219"
 		  Position		  [505, 275, 525, 295]
 		  ZOrder		  -5
 		  BackgroundColor	  "red"
@@ -7518,7 +7388,7 @@ Model {
 		Block {
 		  BlockType		  Terminator
 		  Name			  "Terminator2"
-		  SID			  "9854"
+		  SID			  "10220"
 		  Position		  [505, 335, 525, 355]
 		  ZOrder		  -5
 		  BackgroundColor	  "red"
@@ -7527,7 +7397,7 @@ Model {
 		Block {
 		  BlockType		  Terminator
 		  Name			  "Terminator3"
-		  SID			  "9855"
+		  SID			  "10221"
 		  Position		  [505, 395, 525, 415]
 		  ZOrder		  -5
 		  BackgroundColor	  "red"
@@ -7536,7 +7406,7 @@ Model {
 		Block {
 		  BlockType		  Terminator
 		  Name			  "Terminator4"
-		  SID			  "9856"
+		  SID			  "10222"
 		  Position		  [505, 455, 525, 475]
 		  ZOrder		  -5
 		  BackgroundColor	  "red"
@@ -7545,7 +7415,7 @@ Model {
 		Block {
 		  BlockType		  Terminator
 		  Name			  "Terminator5"
-		  SID			  "9857"
+		  SID			  "10223"
 		  Position		  [505, 515, 525, 535]
 		  ZOrder		  -5
 		  BackgroundColor	  "red"
@@ -7554,7 +7424,7 @@ Model {
 		Block {
 		  BlockType		  SubSystem
 		  Name			  "lla2ltp"
-		  SID			  "9858"
+		  SID			  "10224"
 		  Ports			  [1, 1]
 		  Position		  [215, 205, 280, 245]
 		  TreatAsAtomicUnit	  on
@@ -7586,7 +7456,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "9859"
+		    SID			    "10225"
 		    Position		    [25, 113, 55, 127]
 		    BackgroundColor	    "darkGreen"
 		    IconDisplay		    "Port number"
@@ -7594,7 +7464,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "9860"
+		    SID			    "10226"
 		    Ports		    [1, 1]
 		    Position		    [135, 101, 140, 139]
 		    ZOrder		    -3
@@ -7610,7 +7480,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Convert global coordinates\nto local as well"
-		    SID			    "9861"
+		    SID			    "10227"
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [360, 37, 430, 73]
 		    ZOrder		    -16
@@ -7641,7 +7511,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "9862"
+		    SID			    "10228"
 		    Position		    [15, 78, 45, 92]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -7650,7 +7520,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "9863"
+		    SID			    "10229"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "then"
@@ -7658,7 +7528,7 @@ Model {
 		    Block {
 		    BlockType		    BusAssignment
 		    Name		    "Bus\nAssignment"
-		    SID			    "9864"
+		    SID			    "10230"
 		    Ports		    [4, 1]
 		    Position		    [410, 97, 535, 213]
 		    ZOrder		    -1
@@ -7668,7 +7538,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "9865"
+		    SID			    "10231"
 		    Ports		    [1, 1]
 		    Position		    [85, 151, 90, 189]
 		    ZOrder		    -3
@@ -7684,7 +7554,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "9866"
+		    SID			    "10232"
 		    Position		    [180, 249, 210, 271]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -7694,7 +7564,7 @@ Model {
 		    Block {
 		    BlockType		    Demux
 		    Name		    "Demux"
-		    SID			    "9867"
+		    SID			    "10233"
 		    Ports		    [1, 3]
 		    Position		    [135, 134, 140, 206]
 		    ZOrder		    -7
@@ -7705,7 +7575,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain"
-		    SID			    "9868"
+		    SID			    "10234"
 		    Position		    [170, 130, 200, 160]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -7718,7 +7588,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain1"
-		    SID			    "9869"
+		    SID			    "10235"
 		    Position		    [170, 155, 200, 185]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -7731,7 +7601,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain2"
-		    SID			    "9870"
+		    SID			    "10236"
 		    Position		    [170, 180, 200, 210]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -7744,7 +7614,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "LLA2LTP"
-		    SID			    "9871"
+		    SID			    "10237"
 		    Ports		    [1, 1]
 		    Position		    [260, 149, 360, 191]
 		    ZOrder		    -5
@@ -7776,7 +7646,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "LLA"
-		    SID			    "9872"
+		    SID			    "10238"
 		    Position		    [65, 158, 95, 172]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -7785,7 +7655,7 @@ Model {
 		    Block {
 		    BlockType		    Sum
 		    Name		    "Add"
-		    SID			    "9873"
+		    SID			    "10239"
 		    Ports		    [2, 1]
 		    Position		    [175, 172, 205, 203]
 		    ZOrder		    -2
@@ -7799,7 +7669,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "9874"
+		    SID			    "10240"
 		    Position		    [30, 195, 130, 225]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -7810,7 +7680,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant1"
-		    SID			    "9875"
+		    SID			    "10241"
 		    Position		    [30, 235, 130, 265]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -7821,7 +7691,7 @@ Model {
 		    Block {
 		    BlockType		    Product
 		    Name		    "Product"
-		    SID			    "9876"
+		    SID			    "10242"
 		    Ports		    [2, 1]
 		    Position		    [275, 202, 305, 233]
 		    ZOrder		    -19
@@ -7835,7 +7705,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "LTP"
-		    SID			    "9877"
+		    SID			    "10243"
 		    Position		    [350, 213, 380, 227]
 		    ZOrder		    -2
 		    BackgroundColor	    "yellow"
@@ -7882,7 +7752,7 @@ Model {
 		    Block {
 		    BlockType		    Mux
 		    Name		    "Mux"
-		    SID			    "9878"
+		    SID			    "10244"
 		    Ports		    [3, 1]
 		    Position		    [225, 132, 230, 208]
 		    ZOrder		    -16
@@ -7893,7 +7763,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "9879"
+		    SID			    "10245"
 		    Position		    [585, 148, 615, 162]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -8008,7 +7878,7 @@ Model {
 		    Block {
 		    BlockType		    If
 		    Name		    "If"
-		    SID			    "9880"
+		    SID			    "10246"
 		    Ports		    [1, 2]
 		    Position		    [215, 101, 315, 139]
 		    ZOrder		    -15
@@ -8019,7 +7889,7 @@ Model {
 		    Block {
 		    BlockType		    Merge
 		    Name		    "Merge"
-		    SID			    "9881"
+		    SID			    "10247"
 		    Ports		    [2, 1]
 		    Position		    [480, 100, 520, 140]
 		    ZOrder		    -14
@@ -8028,7 +7898,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Pass through local\ncoordinates"
-		    SID			    "9882"
+		    SID			    "10248"
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [360, 167, 430, 203]
 		    ZOrder		    -16
@@ -8058,7 +7928,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "9883"
+		    SID			    "10249"
 		    Position		    [75, 78, 105, 92]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -8067,7 +7937,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "9884"
+		    SID			    "10250"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "elseif"
@@ -8075,7 +7945,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "9885"
+		    SID			    "10251"
 		    Position		    [325, 78, 355, 92]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -8092,7 +7962,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "9886"
+		    SID			    "10252"
 		    Position		    [600, 113, 630, 127]
 		    BackgroundColor	    "yellow"
 		    IconDisplay		    "Port number"
@@ -8163,7 +8033,7 @@ Model {
 		Block {
 		  BlockType		  SubSystem
 		  Name			  "lla2ltp1"
-		  SID			  "9887"
+		  SID			  "10253"
 		  Ports			  [1, 1]
 		  Position		  [215, 265, 280, 305]
 		  TreatAsAtomicUnit	  on
@@ -8195,7 +8065,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "9888"
+		    SID			    "10254"
 		    Position		    [25, 113, 55, 127]
 		    BackgroundColor	    "darkGreen"
 		    IconDisplay		    "Port number"
@@ -8203,7 +8073,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "9889"
+		    SID			    "10255"
 		    Ports		    [1, 1]
 		    Position		    [135, 101, 140, 139]
 		    ZOrder		    -3
@@ -8219,7 +8089,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Convert global coordinates\nto local as well"
-		    SID			    "9890"
+		    SID			    "10256"
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [360, 37, 430, 73]
 		    ZOrder		    -16
@@ -8250,7 +8120,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "9891"
+		    SID			    "10257"
 		    Position		    [15, 78, 45, 92]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -8259,7 +8129,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "9892"
+		    SID			    "10258"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "then"
@@ -8267,7 +8137,7 @@ Model {
 		    Block {
 		    BlockType		    BusAssignment
 		    Name		    "Bus\nAssignment"
-		    SID			    "9893"
+		    SID			    "10259"
 		    Ports		    [4, 1]
 		    Position		    [410, 97, 535, 213]
 		    ZOrder		    -1
@@ -8277,7 +8147,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "9894"
+		    SID			    "10260"
 		    Ports		    [1, 1]
 		    Position		    [85, 151, 90, 189]
 		    ZOrder		    -3
@@ -8293,7 +8163,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "9895"
+		    SID			    "10261"
 		    Position		    [180, 249, 210, 271]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -8303,7 +8173,7 @@ Model {
 		    Block {
 		    BlockType		    Demux
 		    Name		    "Demux"
-		    SID			    "9896"
+		    SID			    "10262"
 		    Ports		    [1, 3]
 		    Position		    [135, 134, 140, 206]
 		    ZOrder		    -7
@@ -8314,7 +8184,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain"
-		    SID			    "9897"
+		    SID			    "10263"
 		    Position		    [170, 130, 200, 160]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -8327,7 +8197,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain1"
-		    SID			    "9898"
+		    SID			    "10264"
 		    Position		    [170, 155, 200, 185]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -8340,7 +8210,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain2"
-		    SID			    "9899"
+		    SID			    "10265"
 		    Position		    [170, 180, 200, 210]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -8353,7 +8223,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "LLA2LTP"
-		    SID			    "9900"
+		    SID			    "10266"
 		    Ports		    [1, 1]
 		    Position		    [260, 149, 360, 191]
 		    ZOrder		    -5
@@ -8385,7 +8255,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "LLA"
-		    SID			    "9901"
+		    SID			    "10267"
 		    Position		    [65, 158, 95, 172]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -8394,7 +8264,7 @@ Model {
 		    Block {
 		    BlockType		    Sum
 		    Name		    "Add"
-		    SID			    "9902"
+		    SID			    "10268"
 		    Ports		    [2, 1]
 		    Position		    [175, 172, 205, 203]
 		    ZOrder		    -2
@@ -8408,7 +8278,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "9903"
+		    SID			    "10269"
 		    Position		    [30, 195, 130, 225]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -8419,7 +8289,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant1"
-		    SID			    "9904"
+		    SID			    "10270"
 		    Position		    [30, 235, 130, 265]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -8430,7 +8300,7 @@ Model {
 		    Block {
 		    BlockType		    Product
 		    Name		    "Product"
-		    SID			    "9905"
+		    SID			    "10271"
 		    Ports		    [2, 1]
 		    Position		    [275, 202, 305, 233]
 		    ZOrder		    -19
@@ -8444,7 +8314,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "LTP"
-		    SID			    "9906"
+		    SID			    "10272"
 		    Position		    [350, 213, 380, 227]
 		    ZOrder		    -2
 		    BackgroundColor	    "yellow"
@@ -8491,7 +8361,7 @@ Model {
 		    Block {
 		    BlockType		    Mux
 		    Name		    "Mux"
-		    SID			    "9907"
+		    SID			    "10273"
 		    Ports		    [3, 1]
 		    Position		    [225, 132, 230, 208]
 		    ZOrder		    -16
@@ -8502,7 +8372,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "9908"
+		    SID			    "10274"
 		    Position		    [585, 148, 615, 162]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -8617,7 +8487,7 @@ Model {
 		    Block {
 		    BlockType		    If
 		    Name		    "If"
-		    SID			    "9909"
+		    SID			    "10275"
 		    Ports		    [1, 2]
 		    Position		    [215, 101, 315, 139]
 		    ZOrder		    -15
@@ -8628,7 +8498,7 @@ Model {
 		    Block {
 		    BlockType		    Merge
 		    Name		    "Merge"
-		    SID			    "9910"
+		    SID			    "10276"
 		    Ports		    [2, 1]
 		    Position		    [480, 100, 520, 140]
 		    ZOrder		    -14
@@ -8637,7 +8507,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Pass through local\ncoordinates"
-		    SID			    "9911"
+		    SID			    "10277"
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [360, 167, 430, 203]
 		    ZOrder		    -16
@@ -8667,7 +8537,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "9912"
+		    SID			    "10278"
 		    Position		    [75, 78, 105, 92]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -8676,7 +8546,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "9913"
+		    SID			    "10279"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "elseif"
@@ -8684,7 +8554,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "9914"
+		    SID			    "10280"
 		    Position		    [325, 78, 355, 92]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -8701,7 +8571,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "9915"
+		    SID			    "10281"
 		    Position		    [600, 113, 630, 127]
 		    BackgroundColor	    "yellow"
 		    IconDisplay		    "Port number"
@@ -8772,7 +8642,7 @@ Model {
 		Block {
 		  BlockType		  SubSystem
 		  Name			  "lla2ltp2"
-		  SID			  "9916"
+		  SID			  "10282"
 		  Ports			  [1, 1]
 		  Position		  [215, 325, 280, 365]
 		  TreatAsAtomicUnit	  on
@@ -8804,7 +8674,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "9917"
+		    SID			    "10283"
 		    Position		    [25, 113, 55, 127]
 		    BackgroundColor	    "darkGreen"
 		    IconDisplay		    "Port number"
@@ -8812,7 +8682,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "9918"
+		    SID			    "10284"
 		    Ports		    [1, 1]
 		    Position		    [135, 101, 140, 139]
 		    ZOrder		    -3
@@ -8828,7 +8698,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Convert global coordinates\nto local as well"
-		    SID			    "9919"
+		    SID			    "10285"
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [360, 37, 430, 73]
 		    ZOrder		    -16
@@ -8859,7 +8729,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "9920"
+		    SID			    "10286"
 		    Position		    [15, 78, 45, 92]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -8868,7 +8738,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "9921"
+		    SID			    "10287"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "then"
@@ -8876,7 +8746,7 @@ Model {
 		    Block {
 		    BlockType		    BusAssignment
 		    Name		    "Bus\nAssignment"
-		    SID			    "9922"
+		    SID			    "10288"
 		    Ports		    [4, 1]
 		    Position		    [410, 97, 535, 213]
 		    ZOrder		    -1
@@ -8886,7 +8756,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "9923"
+		    SID			    "10289"
 		    Ports		    [1, 1]
 		    Position		    [85, 151, 90, 189]
 		    ZOrder		    -3
@@ -8902,7 +8772,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "9924"
+		    SID			    "10290"
 		    Position		    [180, 249, 210, 271]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -8912,7 +8782,7 @@ Model {
 		    Block {
 		    BlockType		    Demux
 		    Name		    "Demux"
-		    SID			    "9925"
+		    SID			    "10291"
 		    Ports		    [1, 3]
 		    Position		    [135, 134, 140, 206]
 		    ZOrder		    -7
@@ -8923,7 +8793,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain"
-		    SID			    "9926"
+		    SID			    "10292"
 		    Position		    [170, 130, 200, 160]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -8936,7 +8806,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain1"
-		    SID			    "9927"
+		    SID			    "10293"
 		    Position		    [170, 155, 200, 185]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -8949,7 +8819,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain2"
-		    SID			    "9928"
+		    SID			    "10294"
 		    Position		    [170, 180, 200, 210]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -8962,7 +8832,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "LLA2LTP"
-		    SID			    "9929"
+		    SID			    "10295"
 		    Ports		    [1, 1]
 		    Position		    [260, 149, 360, 191]
 		    ZOrder		    -5
@@ -8994,7 +8864,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "LLA"
-		    SID			    "9930"
+		    SID			    "10296"
 		    Position		    [65, 158, 95, 172]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -9003,7 +8873,7 @@ Model {
 		    Block {
 		    BlockType		    Sum
 		    Name		    "Add"
-		    SID			    "9931"
+		    SID			    "10297"
 		    Ports		    [2, 1]
 		    Position		    [175, 172, 205, 203]
 		    ZOrder		    -2
@@ -9017,7 +8887,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "9932"
+		    SID			    "10298"
 		    Position		    [30, 195, 130, 225]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -9028,7 +8898,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant1"
-		    SID			    "9933"
+		    SID			    "10299"
 		    Position		    [30, 235, 130, 265]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -9039,7 +8909,7 @@ Model {
 		    Block {
 		    BlockType		    Product
 		    Name		    "Product"
-		    SID			    "9934"
+		    SID			    "10300"
 		    Ports		    [2, 1]
 		    Position		    [275, 202, 305, 233]
 		    ZOrder		    -19
@@ -9053,7 +8923,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "LTP"
-		    SID			    "9935"
+		    SID			    "10301"
 		    Position		    [350, 213, 380, 227]
 		    ZOrder		    -2
 		    BackgroundColor	    "yellow"
@@ -9100,7 +8970,7 @@ Model {
 		    Block {
 		    BlockType		    Mux
 		    Name		    "Mux"
-		    SID			    "9936"
+		    SID			    "10302"
 		    Ports		    [3, 1]
 		    Position		    [225, 132, 230, 208]
 		    ZOrder		    -16
@@ -9111,7 +8981,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "9937"
+		    SID			    "10303"
 		    Position		    [585, 148, 615, 162]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -9226,7 +9096,7 @@ Model {
 		    Block {
 		    BlockType		    If
 		    Name		    "If"
-		    SID			    "9938"
+		    SID			    "10304"
 		    Ports		    [1, 2]
 		    Position		    [215, 101, 315, 139]
 		    ZOrder		    -15
@@ -9237,7 +9107,7 @@ Model {
 		    Block {
 		    BlockType		    Merge
 		    Name		    "Merge"
-		    SID			    "9939"
+		    SID			    "10305"
 		    Ports		    [2, 1]
 		    Position		    [480, 100, 520, 140]
 		    ZOrder		    -14
@@ -9246,7 +9116,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Pass through local\ncoordinates"
-		    SID			    "9940"
+		    SID			    "10306"
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [360, 167, 430, 203]
 		    ZOrder		    -16
@@ -9276,7 +9146,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "9941"
+		    SID			    "10307"
 		    Position		    [75, 78, 105, 92]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -9285,7 +9155,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "9942"
+		    SID			    "10308"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "elseif"
@@ -9293,7 +9163,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "9943"
+		    SID			    "10309"
 		    Position		    [325, 78, 355, 92]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -9310,7 +9180,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "9944"
+		    SID			    "10310"
 		    Position		    [600, 113, 630, 127]
 		    BackgroundColor	    "yellow"
 		    IconDisplay		    "Port number"
@@ -9381,7 +9251,7 @@ Model {
 		Block {
 		  BlockType		  SubSystem
 		  Name			  "lla2ltp3"
-		  SID			  "9945"
+		  SID			  "10311"
 		  Ports			  [1, 1]
 		  Position		  [215, 385, 280, 425]
 		  TreatAsAtomicUnit	  on
@@ -9413,7 +9283,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "9946"
+		    SID			    "10312"
 		    Position		    [25, 113, 55, 127]
 		    BackgroundColor	    "darkGreen"
 		    IconDisplay		    "Port number"
@@ -9421,7 +9291,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "9947"
+		    SID			    "10313"
 		    Ports		    [1, 1]
 		    Position		    [135, 101, 140, 139]
 		    ZOrder		    -3
@@ -9437,7 +9307,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Convert global coordinates\nto local as well"
-		    SID			    "9948"
+		    SID			    "10314"
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [360, 37, 430, 73]
 		    ZOrder		    -16
@@ -9468,7 +9338,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "9949"
+		    SID			    "10315"
 		    Position		    [15, 78, 45, 92]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -9477,7 +9347,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "9950"
+		    SID			    "10316"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "then"
@@ -9485,7 +9355,7 @@ Model {
 		    Block {
 		    BlockType		    BusAssignment
 		    Name		    "Bus\nAssignment"
-		    SID			    "9951"
+		    SID			    "10317"
 		    Ports		    [4, 1]
 		    Position		    [410, 97, 535, 213]
 		    ZOrder		    -1
@@ -9495,7 +9365,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "9952"
+		    SID			    "10318"
 		    Ports		    [1, 1]
 		    Position		    [85, 151, 90, 189]
 		    ZOrder		    -3
@@ -9511,7 +9381,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "9953"
+		    SID			    "10319"
 		    Position		    [180, 249, 210, 271]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -9521,7 +9391,7 @@ Model {
 		    Block {
 		    BlockType		    Demux
 		    Name		    "Demux"
-		    SID			    "9954"
+		    SID			    "10320"
 		    Ports		    [1, 3]
 		    Position		    [135, 134, 140, 206]
 		    ZOrder		    -7
@@ -9532,7 +9402,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain"
-		    SID			    "9955"
+		    SID			    "10321"
 		    Position		    [170, 130, 200, 160]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -9545,7 +9415,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain1"
-		    SID			    "9956"
+		    SID			    "10322"
 		    Position		    [170, 155, 200, 185]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -9558,7 +9428,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain2"
-		    SID			    "9957"
+		    SID			    "10323"
 		    Position		    [170, 180, 200, 210]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -9571,7 +9441,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "LLA2LTP"
-		    SID			    "9958"
+		    SID			    "10324"
 		    Ports		    [1, 1]
 		    Position		    [260, 149, 360, 191]
 		    ZOrder		    -5
@@ -9603,7 +9473,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "LLA"
-		    SID			    "9959"
+		    SID			    "10325"
 		    Position		    [65, 158, 95, 172]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -9612,7 +9482,7 @@ Model {
 		    Block {
 		    BlockType		    Sum
 		    Name		    "Add"
-		    SID			    "9960"
+		    SID			    "10326"
 		    Ports		    [2, 1]
 		    Position		    [175, 172, 205, 203]
 		    ZOrder		    -2
@@ -9626,7 +9496,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "9961"
+		    SID			    "10327"
 		    Position		    [30, 195, 130, 225]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -9637,7 +9507,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant1"
-		    SID			    "9962"
+		    SID			    "10328"
 		    Position		    [30, 235, 130, 265]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -9648,7 +9518,7 @@ Model {
 		    Block {
 		    BlockType		    Product
 		    Name		    "Product"
-		    SID			    "9963"
+		    SID			    "10329"
 		    Ports		    [2, 1]
 		    Position		    [275, 202, 305, 233]
 		    ZOrder		    -19
@@ -9662,7 +9532,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "LTP"
-		    SID			    "9964"
+		    SID			    "10330"
 		    Position		    [350, 213, 380, 227]
 		    ZOrder		    -2
 		    BackgroundColor	    "yellow"
@@ -9709,7 +9579,7 @@ Model {
 		    Block {
 		    BlockType		    Mux
 		    Name		    "Mux"
-		    SID			    "9965"
+		    SID			    "10331"
 		    Ports		    [3, 1]
 		    Position		    [225, 132, 230, 208]
 		    ZOrder		    -16
@@ -9720,7 +9590,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "9966"
+		    SID			    "10332"
 		    Position		    [585, 148, 615, 162]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -9835,7 +9705,7 @@ Model {
 		    Block {
 		    BlockType		    If
 		    Name		    "If"
-		    SID			    "9967"
+		    SID			    "10333"
 		    Ports		    [1, 2]
 		    Position		    [215, 101, 315, 139]
 		    ZOrder		    -15
@@ -9846,7 +9716,7 @@ Model {
 		    Block {
 		    BlockType		    Merge
 		    Name		    "Merge"
-		    SID			    "9968"
+		    SID			    "10334"
 		    Ports		    [2, 1]
 		    Position		    [480, 100, 520, 140]
 		    ZOrder		    -14
@@ -9855,7 +9725,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Pass through local\ncoordinates"
-		    SID			    "9969"
+		    SID			    "10335"
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [360, 167, 430, 203]
 		    ZOrder		    -16
@@ -9885,7 +9755,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "9970"
+		    SID			    "10336"
 		    Position		    [75, 78, 105, 92]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -9894,7 +9764,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "9971"
+		    SID			    "10337"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "elseif"
@@ -9902,7 +9772,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "9972"
+		    SID			    "10338"
 		    Position		    [325, 78, 355, 92]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -9919,7 +9789,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "9973"
+		    SID			    "10339"
 		    Position		    [600, 113, 630, 127]
 		    BackgroundColor	    "yellow"
 		    IconDisplay		    "Port number"
@@ -9990,7 +9860,7 @@ Model {
 		Block {
 		  BlockType		  SubSystem
 		  Name			  "lla2ltp4"
-		  SID			  "9974"
+		  SID			  "10340"
 		  Ports			  [1, 1]
 		  Position		  [215, 445, 280, 485]
 		  TreatAsAtomicUnit	  on
@@ -10022,7 +9892,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "9975"
+		    SID			    "10341"
 		    Position		    [25, 113, 55, 127]
 		    BackgroundColor	    "darkGreen"
 		    IconDisplay		    "Port number"
@@ -10030,7 +9900,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "9976"
+		    SID			    "10342"
 		    Ports		    [1, 1]
 		    Position		    [135, 101, 140, 139]
 		    ZOrder		    -3
@@ -10046,7 +9916,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Convert global coordinates\nto local as well"
-		    SID			    "9977"
+		    SID			    "10343"
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [360, 37, 430, 73]
 		    ZOrder		    -16
@@ -10077,7 +9947,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "9978"
+		    SID			    "10344"
 		    Position		    [15, 78, 45, 92]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -10086,7 +9956,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "9979"
+		    SID			    "10345"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "then"
@@ -10094,7 +9964,7 @@ Model {
 		    Block {
 		    BlockType		    BusAssignment
 		    Name		    "Bus\nAssignment"
-		    SID			    "9980"
+		    SID			    "10346"
 		    Ports		    [4, 1]
 		    Position		    [410, 97, 535, 213]
 		    ZOrder		    -1
@@ -10104,7 +9974,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "9981"
+		    SID			    "10347"
 		    Ports		    [1, 1]
 		    Position		    [85, 151, 90, 189]
 		    ZOrder		    -3
@@ -10120,7 +9990,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "9982"
+		    SID			    "10348"
 		    Position		    [180, 249, 210, 271]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -10130,7 +10000,7 @@ Model {
 		    Block {
 		    BlockType		    Demux
 		    Name		    "Demux"
-		    SID			    "9983"
+		    SID			    "10349"
 		    Ports		    [1, 3]
 		    Position		    [135, 134, 140, 206]
 		    ZOrder		    -7
@@ -10141,7 +10011,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain"
-		    SID			    "9984"
+		    SID			    "10350"
 		    Position		    [170, 130, 200, 160]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -10154,7 +10024,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain1"
-		    SID			    "9985"
+		    SID			    "10351"
 		    Position		    [170, 155, 200, 185]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -10167,7 +10037,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain2"
-		    SID			    "9986"
+		    SID			    "10352"
 		    Position		    [170, 180, 200, 210]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -10180,7 +10050,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "LLA2LTP"
-		    SID			    "9987"
+		    SID			    "10353"
 		    Ports		    [1, 1]
 		    Position		    [260, 149, 360, 191]
 		    ZOrder		    -5
@@ -10212,7 +10082,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "LLA"
-		    SID			    "9988"
+		    SID			    "10354"
 		    Position		    [65, 158, 95, 172]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -10221,7 +10091,7 @@ Model {
 		    Block {
 		    BlockType		    Sum
 		    Name		    "Add"
-		    SID			    "9989"
+		    SID			    "10355"
 		    Ports		    [2, 1]
 		    Position		    [175, 172, 205, 203]
 		    ZOrder		    -2
@@ -10235,7 +10105,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "9990"
+		    SID			    "10356"
 		    Position		    [30, 195, 130, 225]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -10246,7 +10116,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant1"
-		    SID			    "9991"
+		    SID			    "10357"
 		    Position		    [30, 235, 130, 265]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -10257,7 +10127,7 @@ Model {
 		    Block {
 		    BlockType		    Product
 		    Name		    "Product"
-		    SID			    "9992"
+		    SID			    "10358"
 		    Ports		    [2, 1]
 		    Position		    [275, 202, 305, 233]
 		    ZOrder		    -19
@@ -10271,7 +10141,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "LTP"
-		    SID			    "9993"
+		    SID			    "10359"
 		    Position		    [350, 213, 380, 227]
 		    ZOrder		    -2
 		    BackgroundColor	    "yellow"
@@ -10318,7 +10188,7 @@ Model {
 		    Block {
 		    BlockType		    Mux
 		    Name		    "Mux"
-		    SID			    "9994"
+		    SID			    "10360"
 		    Ports		    [3, 1]
 		    Position		    [225, 132, 230, 208]
 		    ZOrder		    -16
@@ -10329,7 +10199,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "9995"
+		    SID			    "10361"
 		    Position		    [585, 148, 615, 162]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -10444,7 +10314,7 @@ Model {
 		    Block {
 		    BlockType		    If
 		    Name		    "If"
-		    SID			    "9996"
+		    SID			    "10362"
 		    Ports		    [1, 2]
 		    Position		    [215, 101, 315, 139]
 		    ZOrder		    -15
@@ -10455,7 +10325,7 @@ Model {
 		    Block {
 		    BlockType		    Merge
 		    Name		    "Merge"
-		    SID			    "9997"
+		    SID			    "10363"
 		    Ports		    [2, 1]
 		    Position		    [480, 100, 520, 140]
 		    ZOrder		    -14
@@ -10464,7 +10334,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Pass through local\ncoordinates"
-		    SID			    "9998"
+		    SID			    "10364"
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [360, 167, 430, 203]
 		    ZOrder		    -16
@@ -10494,7 +10364,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "9999"
+		    SID			    "10365"
 		    Position		    [75, 78, 105, 92]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -10503,7 +10373,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "10000"
+		    SID			    "10366"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "elseif"
@@ -10511,7 +10381,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "10001"
+		    SID			    "10367"
 		    Position		    [325, 78, 355, 92]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -10528,7 +10398,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "10002"
+		    SID			    "10368"
 		    Position		    [600, 113, 630, 127]
 		    BackgroundColor	    "yellow"
 		    IconDisplay		    "Port number"
@@ -10599,7 +10469,7 @@ Model {
 		Block {
 		  BlockType		  SubSystem
 		  Name			  "lla2ltp5"
-		  SID			  "10003"
+		  SID			  "10369"
 		  Ports			  [1, 1]
 		  Position		  [215, 505, 280, 545]
 		  TreatAsAtomicUnit	  on
@@ -10631,7 +10501,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "10004"
+		    SID			    "10370"
 		    Position		    [25, 113, 55, 127]
 		    BackgroundColor	    "darkGreen"
 		    IconDisplay		    "Port number"
@@ -10639,7 +10509,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "10005"
+		    SID			    "10371"
 		    Ports		    [1, 1]
 		    Position		    [135, 101, 140, 139]
 		    ZOrder		    -3
@@ -10655,7 +10525,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Convert global coordinates\nto local as well"
-		    SID			    "10006"
+		    SID			    "10372"
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [360, 37, 430, 73]
 		    ZOrder		    -16
@@ -10686,7 +10556,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "10007"
+		    SID			    "10373"
 		    Position		    [15, 78, 45, 92]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -10695,7 +10565,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "10008"
+		    SID			    "10374"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "then"
@@ -10703,7 +10573,7 @@ Model {
 		    Block {
 		    BlockType		    BusAssignment
 		    Name		    "Bus\nAssignment"
-		    SID			    "10009"
+		    SID			    "10375"
 		    Ports		    [4, 1]
 		    Position		    [410, 97, 535, 213]
 		    ZOrder		    -1
@@ -10713,7 +10583,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "10010"
+		    SID			    "10376"
 		    Ports		    [1, 1]
 		    Position		    [85, 151, 90, 189]
 		    ZOrder		    -3
@@ -10729,7 +10599,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "10011"
+		    SID			    "10377"
 		    Position		    [180, 249, 210, 271]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -10739,7 +10609,7 @@ Model {
 		    Block {
 		    BlockType		    Demux
 		    Name		    "Demux"
-		    SID			    "10012"
+		    SID			    "10378"
 		    Ports		    [1, 3]
 		    Position		    [135, 134, 140, 206]
 		    ZOrder		    -7
@@ -10750,7 +10620,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain"
-		    SID			    "10013"
+		    SID			    "10379"
 		    Position		    [170, 130, 200, 160]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -10763,7 +10633,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain1"
-		    SID			    "10014"
+		    SID			    "10380"
 		    Position		    [170, 155, 200, 185]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -10776,7 +10646,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain2"
-		    SID			    "10015"
+		    SID			    "10381"
 		    Position		    [170, 180, 200, 210]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -10789,7 +10659,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "LLA2LTP"
-		    SID			    "10016"
+		    SID			    "10382"
 		    Ports		    [1, 1]
 		    Position		    [260, 149, 360, 191]
 		    ZOrder		    -5
@@ -10821,7 +10691,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "LLA"
-		    SID			    "10017"
+		    SID			    "10383"
 		    Position		    [65, 158, 95, 172]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -10830,7 +10700,7 @@ Model {
 		    Block {
 		    BlockType		    Sum
 		    Name		    "Add"
-		    SID			    "10018"
+		    SID			    "10384"
 		    Ports		    [2, 1]
 		    Position		    [175, 172, 205, 203]
 		    ZOrder		    -2
@@ -10844,7 +10714,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "10019"
+		    SID			    "10385"
 		    Position		    [30, 195, 130, 225]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -10855,7 +10725,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant1"
-		    SID			    "10020"
+		    SID			    "10386"
 		    Position		    [30, 235, 130, 265]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -10866,7 +10736,7 @@ Model {
 		    Block {
 		    BlockType		    Product
 		    Name		    "Product"
-		    SID			    "10021"
+		    SID			    "10387"
 		    Ports		    [2, 1]
 		    Position		    [275, 202, 305, 233]
 		    ZOrder		    -19
@@ -10880,7 +10750,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "LTP"
-		    SID			    "10022"
+		    SID			    "10388"
 		    Position		    [350, 213, 380, 227]
 		    ZOrder		    -2
 		    BackgroundColor	    "yellow"
@@ -10927,7 +10797,7 @@ Model {
 		    Block {
 		    BlockType		    Mux
 		    Name		    "Mux"
-		    SID			    "10023"
+		    SID			    "10389"
 		    Ports		    [3, 1]
 		    Position		    [225, 132, 230, 208]
 		    ZOrder		    -16
@@ -10938,7 +10808,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "10024"
+		    SID			    "10390"
 		    Position		    [585, 148, 615, 162]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -11053,7 +10923,7 @@ Model {
 		    Block {
 		    BlockType		    If
 		    Name		    "If"
-		    SID			    "10025"
+		    SID			    "10391"
 		    Ports		    [1, 2]
 		    Position		    [215, 101, 315, 139]
 		    ZOrder		    -15
@@ -11064,7 +10934,7 @@ Model {
 		    Block {
 		    BlockType		    Merge
 		    Name		    "Merge"
-		    SID			    "10026"
+		    SID			    "10392"
 		    Ports		    [2, 1]
 		    Position		    [480, 100, 520, 140]
 		    ZOrder		    -14
@@ -11073,7 +10943,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Pass through local\ncoordinates"
-		    SID			    "10027"
+		    SID			    "10393"
 		    Ports		    [1, 1, 0, 0, 0, 0, 0, 1]
 		    Position		    [360, 167, 430, 203]
 		    ZOrder		    -16
@@ -11103,7 +10973,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "10028"
+		    SID			    "10394"
 		    Position		    [75, 78, 105, 92]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -11112,7 +10982,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "10029"
+		    SID			    "10395"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "elseif"
@@ -11120,7 +10990,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "10030"
+		    SID			    "10396"
 		    Position		    [325, 78, 355, 92]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -11137,7 +11007,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "10031"
+		    SID			    "10397"
 		    Position		    [600, 113, 630, 127]
 		    BackgroundColor	    "yellow"
 		    IconDisplay		    "Port number"
@@ -11325,7 +11195,7 @@ Model {
 	    Block {
 	      BlockType		      SubSystem
 	      Name		      "Rudder\nCommand"
-	      SID		      "10032"
+	      SID		      "10398"
 	      Ports		      [3, 1]
 	      Position		      [535, 409, 650, 481]
 	      MinAlgLoopOccurrences   off
@@ -11337,7 +11207,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Rudder\nCommand"
-		Location		[2000, 210, 3632, 1155]
+		Location		[286, 74, 1918, 1019]
 		Open			off
 		ModelBrowserVisibility	off
 		ModelBrowserWidth	200
@@ -11353,7 +11223,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "Velocity"
-		  SID			  "10033"
+		  SID			  "10399"
 		  Position		  [140, 233, 170, 247]
 		  BackgroundColor	  "darkGreen"
 		  IconDisplay		  "Port number"
@@ -11361,7 +11231,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "Reset"
-		  SID			  "10034"
+		  SID			  "10400"
 		  Position		  [890, 473, 920, 487]
 		  BackgroundColor	  "darkGreen"
 		  Port			  "2"
@@ -11370,7 +11240,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "Local pos"
-		  SID			  "10035"
+		  SID			  "10401"
 		  Position		  [140, 193, 170, 207]
 		  BackgroundColor	  "darkGreen"
 		  Port			  "3"
@@ -11379,7 +11249,7 @@ Model {
 		Block {
 		  BlockType		  BusSelector
 		  Name			  "Bus\nSelector"
-		  SID			  "10036"
+		  SID			  "10402"
 		  Ports			  [1, 1]
 		  Position		  [400, 21, 405, 59]
 		  ZOrder		  -3
@@ -11395,7 +11265,7 @@ Model {
 		Block {
 		  BlockType		  BusSelector
 		  Name			  "Bus\nSelector1"
-		  SID			  "10037"
+		  SID			  "10403"
 		  Ports			  [1, 1]
 		  Position		  [400, 81, 405, 119]
 		  ZOrder		  -3
@@ -11411,7 +11281,7 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Constant1"
-		  SID			  "10038"
+		  SID			  "10404"
 		  Position		  [955, 513, 1015, 537]
 		  BackgroundColor	  "gray"
 		  ShowName		  off
@@ -11421,7 +11291,7 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Constant5"
-		  SID			  "10039"
+		  SID			  "10405"
 		  Position		  [740, 103, 800, 127]
 		  BackgroundColor	  "gray"
 		  ShowName		  off
@@ -11430,7 +11300,7 @@ Model {
 		Block {
 		  BlockType		  Goto
 		  Name			  "Goto"
-		  SID			  "10040"
+		  SID			  "10406"
 		  Position		  [745, 52, 810, 78]
 		  BackgroundColor	  "cyan"
 		  ShowName		  off
@@ -11440,7 +11310,7 @@ Model {
 		Block {
 		  BlockType		  Goto
 		  Name			  "Goto1"
-		  SID			  "10041"
+		  SID			  "10407"
 		  Position		  [485, 297, 550, 323]
 		  BackgroundColor	  "cyan"
 		  ShowName		  off
@@ -11450,7 +11320,7 @@ Model {
 		Block {
 		  BlockType		  Goto
 		  Name			  "Goto2"
-		  SID			  "10042"
+		  SID			  "10408"
 		  Position		  [505, 12, 570, 38]
 		  BackgroundColor	  "cyan"
 		  ShowName		  off
@@ -11460,7 +11330,7 @@ Model {
 		Block {
 		  BlockType		  Goto
 		  Name			  "Goto3"
-		  SID			  "10043"
+		  SID			  "10409"
 		  Position		  [1190, 127, 1335, 153]
 		  BackgroundColor	  "cyan"
 		  ShowName		  off
@@ -11470,7 +11340,7 @@ Model {
 		Block {
 		  BlockType		  SubSystem
 		  Name			  "L2 Plus ref WP1"
-		  SID			  "10044"
+		  SID			  "10410"
 		  Ports			  [6, 3]
 		  Position		  [505, 24, 655, 256]
 		  ErrorFcn		  "Stateflow.Translate.translate"
@@ -11513,14 +11383,14 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "wp0"
-		    SID			    "10044::22"
+		    SID			    "10410::22"
 		    Position		    [20, 101, 40, 119]
 		    IconDisplay		    "Port number"
 		    }
 		    Block {
 		    BlockType		    Inport
 		    Name		    "wp0_found"
-		    SID			    "10044::25"
+		    SID			    "10410::25"
 		    Position		    [20, 136, 40, 154]
 		    Port		    "2"
 		    IconDisplay		    "Port number"
@@ -11528,7 +11398,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "wp1"
-		    SID			    "10044::23"
+		    SID			    "10410::23"
 		    Position		    [20, 171, 40, 189]
 		    Port		    "3"
 		    IconDisplay		    "Port number"
@@ -11536,7 +11406,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "wp1_found"
-		    SID			    "10044::26"
+		    SID			    "10410::26"
 		    Position		    [20, 206, 40, 224]
 		    Port		    "4"
 		    IconDisplay		    "Port number"
@@ -11544,7 +11414,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "Puav"
-		    SID			    "10044::3"
+		    SID			    "10410::3"
 		    Position		    [20, 246, 40, 264]
 		    Port		    "5"
 		    IconDisplay		    "Port number"
@@ -11552,7 +11422,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "Vxyz"
-		    SID			    "10044::4"
+		    SID			    "10410::4"
 		    Position		    [20, 281, 40, 299]
 		    Port		    "6"
 		    IconDisplay		    "Port number"
@@ -11560,7 +11430,7 @@ Model {
 		    Block {
 		    BlockType		    Demux
 		    Name		    " Demux "
-		    SID			    "10044::28"
+		    SID			    "10410::28"
 		    Ports		    [1, 1]
 		    Position		    [270, 245, 320, 285]
 		    Outputs		    "1"
@@ -11568,7 +11438,7 @@ Model {
 		    Block {
 		    BlockType		    S-Function
 		    Name		    " SFunction "
-		    SID			    "10044::27"
+		    SID			    "10410::27"
 		    Tag			    "Stateflow S-Function Boat_sim 7"
 		    Ports		    [6, 4]
 		    Position		    [180, 102, 230, 243]
@@ -11598,20 +11468,20 @@ Model {
 		    Block {
 		    BlockType		    Terminator
 		    Name		    " Terminator "
-		    SID			    "10044::30"
+		    SID			    "10410::30"
 		    Position		    [460, 256, 480, 274]
 		    }
 		    Block {
 		    BlockType		    Outport
 		    Name		    "L2Vec"
-		    SID			    "10044::10"
+		    SID			    "10410::10"
 		    Position		    [460, 101, 480, 119]
 		    IconDisplay		    "Port number"
 		    }
 		    Block {
 		    BlockType		    Outport
 		    Name		    "as_c"
-		    SID			    "10044::9"
+		    SID			    "10410::9"
 		    Position		    [460, 136, 480, 154]
 		    Port		    "2"
 		    IconDisplay		    "Port number"
@@ -11619,7 +11489,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "transition"
-		    SID			    "10044::24"
+		    SID			    "10410::24"
 		    Position		    [460, 171, 480, 189]
 		    Port		    "3"
 		    IconDisplay		    "Port number"
@@ -11701,7 +11571,7 @@ Model {
 		Block {
 		  BlockType		  Logic
 		  Name			  "Logical\nOperator1"
-		  SID			  "10045"
+		  SID			  "10411"
 		  Ports			  [1, 1]
 		  Position		  [970, 471, 1000, 489]
 		  ShowName		  off
@@ -11713,7 +11583,7 @@ Model {
 		Block {
 		  BlockType		  Math
 		  Name			  "Math\nFunction1"
-		  SID			  "10046"
+		  SID			  "10412"
 		  Ports			  [1, 1]
 		  Position		  [300, 345, 330, 375]
 		  ShowName		  off
@@ -11722,7 +11592,7 @@ Model {
 		Block {
 		  BlockType		  SubSystem
 		  Name			  "Mission Manager"
-		  SID			  "10047"
+		  SID			  "10413"
 		  Ports			  [0, 4]
 		  Position		  [165, 48, 235, 132]
 		  MinAlgLoopOccurrences	  off
@@ -11750,7 +11620,7 @@ Model {
 		    Block {
 		    BlockType		    DataTypeConversion
 		    Name		    "Data Type Conversion"
-		    SID			    "10048"
+		    SID			    "10414"
 		    Position		    [200, 299, 265, 321]
 		    ZOrder		    -7
 		    ShowName		    off
@@ -11761,7 +11631,7 @@ Model {
 		    Block {
 		    BlockType		    Reference
 		    Name		    "GetCurrentMission"
-		    SID			    "10049"
+		    SID			    "10415"
 		    Ports		    [0, 1]
 		    Position		    [25, 124, 125, 166]
 		    ZOrder		    -5
@@ -11774,7 +11644,7 @@ Model {
 		    Block {
 		    BlockType		    Reference
 		    Name		    "GetMission"
-		    SID			    "10050"
+		    SID			    "10416"
 		    Ports		    [1, 2]
 		    Position		    [295, 289, 395, 331]
 		    ZOrder		    -5
@@ -11788,7 +11658,7 @@ Model {
 		    Block {
 		    BlockType		    If
 		    Name		    "If"
-		    SID			    "10051"
+		    SID			    "10417"
 		    Ports		    [1, 2]
 		    Position		    [215, 126, 315, 164]
 		    ZOrder		    -15
@@ -11798,7 +11668,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "If Action\nSubsystem"
-		    SID			    "10052"
+		    SID			    "10418"
 		    Ports		    [0, 2, 0, 0, 0, 0, 0, 1]
 		    Position		    [335, 72, 405, 108]
 		    ZOrder		    -16
@@ -11830,7 +11700,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "10053"
+		    SID			    "10419"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "then"
@@ -11838,7 +11708,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "10054"
+		    SID			    "10420"
 		    Position		    [180, 137, 220, 163]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -11849,7 +11719,7 @@ Model {
 		    Block {
 		    BlockType		    Reference
 		    Name		    "GetStartingPoint"
-		    SID			    "10055"
+		    SID			    "10421"
 		    Ports		    [0, 1]
 		    Position		    [150, 69, 250, 111]
 		    ZOrder		    -4
@@ -11863,7 +11733,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "mission"
-		    SID			    "10056"
+		    SID			    "10422"
 		    Position		    [305, 83, 335, 97]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -11872,7 +11742,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "found"
-		    SID			    "10057"
+		    SID			    "10423"
 		    Position		    [305, 143, 335, 157]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -11896,7 +11766,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "If Action\nSubsystem1"
-		    SID			    "10058"
+		    SID			    "10424"
 		    Ports		    [1, 2, 0, 0, 0, 0, 0, 1]
 		    Position		    [335, 182, 405, 218]
 		    ZOrder		    -16
@@ -11927,7 +11797,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "i"
-		    SID			    "10059"
+		    SID			    "10425"
 		    Position		    [75, 93, 105, 107]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -11936,7 +11806,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "10060"
+		    SID			    "10426"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "else"
@@ -11944,7 +11814,7 @@ Model {
 		    Block {
 		    BlockType		    Bias
 		    Name		    "Bias"
-		    SID			    "10061"
+		    SID			    "10427"
 		    Position		    [160, 85, 200, 115]
 		    ZOrder		    -5
 		    ShowName		    off
@@ -11954,7 +11824,7 @@ Model {
 		    Block {
 		    BlockType		    DataTypeConversion
 		    Name		    "Data Type Conversion"
-		    SID			    "10062"
+		    SID			    "10428"
 		    Position		    [220, 89, 265, 111]
 		    ZOrder		    -7
 		    ShowName		    off
@@ -11965,7 +11835,7 @@ Model {
 		    Block {
 		    BlockType		    Reference
 		    Name		    "GetMission"
-		    SID			    "10063"
+		    SID			    "10429"
 		    Ports		    [1, 2]
 		    Position		    [295, 79, 395, 121]
 		    ZOrder		    -5
@@ -11979,7 +11849,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "mission"
-		    SID			    "10064"
+		    SID			    "10430"
 		    Position		    [445, 73, 475, 87]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -11988,7 +11858,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "found"
-		    SID			    "10065"
+		    SID			    "10431"
 		    Position		    [445, 103, 475, 117]
 		    ZOrder		    -3
 		    BackgroundColor	    "yellow"
@@ -12031,7 +11901,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Merge"
-		    SID			    "10066"
+		    SID			    "10432"
 		    Ports		    [4, 2]
 		    Position		    [510, 80, 570, 185]
 		    MinAlgLoopOccurrences   off
@@ -12059,7 +11929,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In1"
-		    SID			    "10067"
+		    SID			    "10433"
 		    Position		    [25, 28, 55, 42]
 		    BackgroundColor	    "darkGreen"
 		    IconDisplay		    "Port number"
@@ -12067,7 +11937,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In3"
-		    SID			    "10068"
+		    SID			    "10434"
 		    Position		    [25, 118, 55, 132]
 		    BackgroundColor	    "darkGreen"
 		    Port		    "2"
@@ -12076,7 +11946,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In2"
-		    SID			    "10069"
+		    SID			    "10435"
 		    Position		    [25, 48, 55, 62]
 		    BackgroundColor	    "darkGreen"
 		    Port		    "3"
@@ -12085,7 +11955,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "In4"
-		    SID			    "10070"
+		    SID			    "10436"
 		    Position		    [25, 138, 55, 152]
 		    BackgroundColor	    "darkGreen"
 		    Port		    "4"
@@ -12094,7 +11964,7 @@ Model {
 		    Block {
 		    BlockType		    Merge
 		    Name		    "Merge"
-		    SID			    "10071"
+		    SID			    "10437"
 		    Ports		    [2, 1]
 		    Position		    [80, 25, 120, 65]
 		    ZOrder		    -14
@@ -12103,7 +11973,7 @@ Model {
 		    Block {
 		    BlockType		    Merge
 		    Name		    "Merge1"
-		    SID			    "10072"
+		    SID			    "10438"
 		    Ports		    [2, 1]
 		    Position		    [80, 115, 120, 155]
 		    ZOrder		    -14
@@ -12112,7 +11982,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "mission"
-		    SID			    "10073"
+		    SID			    "10439"
 		    Position		    [145, 38, 175, 52]
 		    BackgroundColor	    "yellow"
 		    IconDisplay		    "Port number"
@@ -12120,7 +11990,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "found"
-		    SID			    "10074"
+		    SID			    "10440"
 		    Position		    [145, 128, 175, 142]
 		    BackgroundColor	    "yellow"
 		    Port		    "2"
@@ -12167,7 +12037,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "m0"
-		    SID			    "10075"
+		    SID			    "10441"
 		    Position		    [650, 103, 680, 117]
 		    BackgroundColor	    "yellow"
 		    IconDisplay		    "Port number"
@@ -12175,7 +12045,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "m0_f"
-		    SID			    "10076"
+		    SID			    "10442"
 		    Position		    [650, 153, 680, 167]
 		    BackgroundColor	    "yellow"
 		    Port		    "2"
@@ -12184,7 +12054,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "m1"
-		    SID			    "10077"
+		    SID			    "10443"
 		    Position		    [435, 273, 465, 287]
 		    BackgroundColor	    "yellow"
 		    Port		    "3"
@@ -12193,7 +12063,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "m1_f"
-		    SID			    "10078"
+		    SID			    "10444"
 		    Position		    [435, 313, 465, 327]
 		    BackgroundColor	    "yellow"
 		    Port		    "4"
@@ -12297,7 +12167,7 @@ Model {
 		Block {
 		  BlockType		  Product
 		  Name			  "Product"
-		  SID			  "10079"
+		  SID			  "10445"
 		  Ports			  [2, 1]
 		  Position		  [840, 104, 870, 151]
 		  ShowName		  off
@@ -12309,7 +12179,7 @@ Model {
 		Block {
 		  BlockType		  Sum
 		  Name			  "Sum of\nElements"
-		  SID			  "10080"
+		  SID			  "10446"
 		  Ports			  [1, 1]
 		  Position		  [360, 345, 390, 375]
 		  ZOrder		  -33
@@ -12322,7 +12192,7 @@ Model {
 		Block {
 		  BlockType		  Switch
 		  Name			  "Switch"
-		  SID			  "10081"
+		  SID			  "10447"
 		  Position		  [1090, 465, 1120, 495]
 		  ShowName		  off
 		  Criteria		  "u2 ~= 0"
@@ -12332,7 +12202,7 @@ Model {
 		Block {
 		  BlockType		  SubSystem
 		  Name			  "Switch to\nnext waypoint\n(wraparound)"
-		  SID			  "10082"
+		  SID			  "10448"
 		  Ports			  [1, 0, 0, 1]
 		  Position		  [685, 254, 785, 296]
 		  ZOrder		  -23
@@ -12362,7 +12232,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "localPosition"
-		    SID			    "10083"
+		    SID			    "10449"
 		    Position		    [25, 238, 55, 252]
 		    ZOrder		    -1
 		    IconDisplay		    "Port number"
@@ -12370,7 +12240,7 @@ Model {
 		    Block {
 		    BlockType		    TriggerPort
 		    Name		    "Trigger"
-		    SID			    "10084"
+		    SID			    "10450"
 		    Ports		    []
 		    Position		    [225, 30, 245, 50]
 		    ZOrder		    -2
@@ -12380,7 +12250,7 @@ Model {
 		    Block {
 		    BlockType		    Bias
 		    Name		    "Bias"
-		    SID			    "10085"
+		    SID			    "10451"
 		    Position		    [160, 90, 200, 120]
 		    ZOrder		    -5
 		    ShowName		    off
@@ -12390,7 +12260,7 @@ Model {
 		    Block {
 		    BlockType		    DataTypeConversion
 		    Name		    "Data Type Conversion"
-		    SID			    "10086"
+		    SID			    "10452"
 		    Position		    [145, 176, 190, 194]
 		    ZOrder		    -7
 		    ShowName		    off
@@ -12401,7 +12271,7 @@ Model {
 		    Block {
 		    BlockType		    Reference
 		    Name		    "GetCurrentMission"
-		    SID			    "10087"
+		    SID			    "10453"
 		    Ports		    [0, 1]
 		    Position		    [25, 84, 125, 126]
 		    ZOrder		    -5
@@ -12414,7 +12284,7 @@ Model {
 		    Block {
 		    BlockType		    Reference
 		    Name		    "GetMissionCount"
-		    SID			    "10088"
+		    SID			    "10454"
 		    Ports		    [0, 1]
 		    Position		    [25, 164, 125, 206]
 		    ZOrder		    -5
@@ -12427,7 +12297,7 @@ Model {
 		    Block {
 		    BlockType		    If
 		    Name		    "If"
-		    SID			    "10089"
+		    SID			    "10455"
 		    Ports		    [2, 2]
 		    Position		    [270, 96, 370, 134]
 		    ZOrder		    -15
@@ -12438,7 +12308,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "If Action\nSubsystem"
-		    SID			    "10090"
+		    SID			    "10456"
 		    Ports		    [1, 0, 0, 0, 0, 0, 0, 1]
 		    Position		    [445, 52, 515, 88]
 		    ZOrder		    -16
@@ -12470,7 +12340,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "newIndex"
-		    SID			    "10091"
+		    SID			    "10457"
 		    Position		    [75, 78, 105, 92]
 		    ZOrder		    -1
 		    IconDisplay		    "Port number"
@@ -12478,7 +12348,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "10092"
+		    SID			    "10458"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "then"
@@ -12486,7 +12356,7 @@ Model {
 		    Block {
 		    BlockType		    DataTypeConversion
 		    Name		    "Data Type Conversion"
-		    SID			    "10093"
+		    SID			    "10459"
 		    Position		    [135, 74, 190, 96]
 		    ZOrder		    -7
 		    ShowName		    off
@@ -12497,7 +12367,7 @@ Model {
 		    Block {
 		    BlockType		    Reference
 		    Name		    "SetCurrentMission"
-		    SID			    "10094"
+		    SID			    "10460"
 		    Ports		    [1]
 		    Position		    [235, 64, 335, 106]
 		    ZOrder		    -5
@@ -12524,7 +12394,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "If Action\nSubsystem1"
-		    SID			    "10095"
+		    SID			    "10461"
 		    Ports		    [1, 0, 0, 0, 0, 0, 0, 1]
 		    Position		    [445, 147, 515, 183]
 		    ZOrder		    -16
@@ -12555,7 +12425,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "lPos"
-		    SID			    "10096"
+		    SID			    "10462"
 		    Position		    [60, 178, 90, 192]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -12570,7 +12440,7 @@ Model {
 		    Block {
 		    BlockType		    ActionPort
 		    Name		    "Action Port"
-		    SID			    "10097"
+		    SID			    "10463"
 		    Position		    [170, 15, 229, 43]
 		    ZOrder		    -2
 		    ActionType		    "else"
@@ -12578,7 +12448,7 @@ Model {
 		    Block {
 		    BlockType		    BusCreator
 		    Name		    "Bus\nCreator"
-		    SID			    "10098"
+		    SID			    "10464"
 		    Ports		    [6, 1]
 		    Position		    [320, 174, 325, 296]
 		    ZOrder		    -2
@@ -12591,7 +12461,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "10099"
+		    SID			    "10465"
 		    Position		    [75, 70, 105, 100]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -12602,7 +12472,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant1"
-		    SID			    "10100"
+		    SID			    "10466"
 		    Position		    [160, 196, 230, 214]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -12613,7 +12483,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant3"
-		    SID			    "10101"
+		    SID			    "10467"
 		    Position		    [165, 217, 225, 233]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -12629,7 +12499,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant4"
-		    SID			    "10102"
+		    SID			    "10468"
 		    Position		    [165, 237, 225, 253]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -12646,7 +12516,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant5"
-		    SID			    "10103"
+		    SID			    "10469"
 		    Position		    [160, 256, 230, 274]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -12663,7 +12533,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant6"
-		    SID			    "10104"
+		    SID			    "10470"
 		    Position		    [170, 276, 215, 294]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -12680,7 +12550,7 @@ Model {
 		    Block {
 		    BlockType		    Reference
 		    Name		    "SetCurrentMission"
-		    SID			    "10105"
+		    SID			    "10471"
 		    Ports		    [1]
 		    Position		    [165, 64, 265, 106]
 		    ZOrder		    -5
@@ -12693,7 +12563,7 @@ Model {
 		    Block {
 		    BlockType		    Reference
 		    Name		    "SetStartingPoint"
-		    SID			    "10106"
+		    SID			    "10472"
 		    Ports		    [1]
 		    Position		    [370, 214, 470, 256]
 		    ZOrder		    -4
@@ -12833,7 +12703,7 @@ Model {
 		Block {
 		  BlockType		  Trigonometry
 		  Name			  "Trigonometric\nFunction"
-		  SID			  "10107"
+		  SID			  "10473"
 		  Ports			  [1, 1]
 		  Position		  [1015, 125, 1045, 155]
 		  ShowName		  off
@@ -12842,14 +12712,14 @@ Model {
 		Block {
 		  BlockType		  UnaryMinus
 		  Name			  "Unary Minus"
-		  SID			  "10108"
+		  SID			  "10474"
 		  Position		  [1080, 125, 1110, 155]
 		  ShowName		  off
 		}
 		Block {
 		  BlockType		  SubSystem
 		  Name			  "safe_divide"
-		  SID			  "10109"
+		  SID			  "10475"
 		  Ports			  [2, 1]
 		  Position		  [910, 119, 975, 161]
 		  ZOrder		  -5
@@ -12881,7 +12751,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "X"
-		    SID			    "10110"
+		    SID			    "10476"
 		    Position		    [50, 108, 80, 122]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -12890,7 +12760,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "div"
-		    SID			    "10111"
+		    SID			    "10477"
 		    Position		    [50, 153, 80, 167]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -12900,7 +12770,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant1"
-		    SID			    "10112"
+		    SID			    "10478"
 		    Position		    [160, 183, 195, 207]
 		    BackgroundColor	    "gray"
 		    ShowName		    off
@@ -12910,7 +12780,7 @@ Model {
 		    Block {
 		    BlockType		    Product
 		    Name		    "Product"
-		    SID			    "10113"
+		    SID			    "10479"
 		    Ports		    [2, 1]
 		    Position		    [165, 121, 195, 154]
 		    ShowName		    off
@@ -12922,7 +12792,7 @@ Model {
 		    Block {
 		    BlockType		    Switch
 		    Name		    "Switch"
-		    SID			    "10114"
+		    SID			    "10480"
 		    Position		    [250, 155, 280, 185]
 		    ShowName		    off
 		    Criteria		    "u2 ~= 0"
@@ -12932,7 +12802,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "Out1"
-		    SID			    "10115"
+		    SID			    "10481"
 		    Position		    [345, 163, 375, 177]
 		    ZOrder		    -2
 		    BackgroundColor	    "yellow"
@@ -12985,7 +12855,7 @@ Model {
 		Block {
 		  BlockType		  Outport
 		  Name			  "Command"
-		  SID			  "10116"
+		  SID			  "10482"
 		  Position		  [1170, 473, 1200, 487]
 		  BackgroundColor	  "yellow"
 		  IconDisplay		  "Port number"
@@ -13189,7 +13059,7 @@ Model {
 	    Block {
 	      BlockType		      SubSystem
 	      Name		      "State Keeper &\nEstimator"
-	      SID		      "10117"
+	      SID		      "10483"
 	      Ports		      [3, 3]
 	      Position		      [340, 335, 430, 505]
 	      MinAlgLoopOccurrences   off
@@ -13201,7 +13071,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"State Keeper &\nEstimator"
-		Location		[286, 74, 1918, 1019]
+		Location		[202, 82, 1918, 1027]
 		Open			off
 		ModelBrowserVisibility	off
 		ModelBrowserWidth	200
@@ -13217,7 +13087,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "throttle"
-		  SID			  "10118"
+		  SID			  "10484"
 		  Position		  [25, 463, 55, 477]
 		  BackgroundColor	  "darkGreen"
 		  IconDisplay		  "Port number"
@@ -13231,7 +13101,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "reset"
-		  SID			  "10119"
+		  SID			  "10485"
 		  Position		  [25, 163, 55, 177]
 		  BackgroundColor	  "darkGreen"
 		  Port			  "2"
@@ -13240,7 +13110,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "gps"
-		  SID			  "10120"
+		  SID			  "10486"
 		  Position		  [25, 88, 55, 102]
 		  BackgroundColor	  "darkGreen"
 		  Port			  "3"
@@ -13249,7 +13119,7 @@ Model {
 		Block {
 		  BlockType		  SubSystem
 		  Name			  "GPS Estimator"
-		  SID			  "10121"
+		  SID			  "10487"
 		  Ports			  [2, 4]
 		  Position		  [320, 53, 420, 207]
 		  MinAlgLoopOccurrences	  off
@@ -13261,7 +13131,7 @@ Model {
 		  MaskHideContents	  off
 		  System {
 		    Name		    "GPS Estimator"
-		    Location		    [1218, 188, 1864, 572]
+		    Location		    [202, 82, 1918, 1027]
 		    Open		    off
 		    ModelBrowserVisibility  off
 		    ModelBrowserWidth	    200
@@ -13277,16 +13147,16 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "gps"
-		    SID			    "10122"
-		    Position		    [25, 213, 55, 227]
+		    SID			    "10488"
+		    Position		    [25, 218, 55, 232]
 		    BackgroundColor	    "darkGreen"
 		    IconDisplay		    "Port number"
 		    }
 		    Block {
 		    BlockType		    Inport
 		    Name		    "reset"
-		    SID			    "10123"
-		    Position		    [25, 358, 55, 372]
+		    SID			    "10489"
+		    Position		    [25, 363, 55, 377]
 		    BackgroundColor	    "darkGreen"
 		    Port		    "2"
 		    IconDisplay		    "Port number"
@@ -13294,9 +13164,9 @@ Model {
 		    Block {
 		    BlockType		    Sum
 		    Name		    "Add"
-		    SID			    "10124"
+		    SID			    "10490"
 		    Ports		    [2, 1]
-		    Position		    [910, 332, 940, 363]
+		    Position		    [1015, 337, 1045, 368]
 		    ShowName		    off
 		    InputSameDT		    off
 		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
@@ -13305,20 +13175,14 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector1"
-		    SID			    "10125"
-		    Ports		    [1, 2]
-		    Position		    [245, 325, 250, 360]
+		    SID			    "10491"
+		    Ports		    [1, 1]
+		    Position		    [115, 320, 120, 350]
 		    ShowName		    off
-		    OutputSignals	    "latitude,longitude"
+		    OutputSignals	    "newData"
 		    Port {
 		    PortNumber		    1
-		    Name		    "<latitude>"
-		    RTWStorageClass	    "Auto"
-		    DataLoggingNameMode	    "SignalName"
-		    }
-		    Port {
-		    PortNumber		    2
-		    Name		    "<longitude>"
+		    Name		    "<newData>"
 		    RTWStorageClass	    "Auto"
 		    DataLoggingNameMode	    "SignalName"
 		    }
@@ -13326,9 +13190,9 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Calculate local position from \nGPS data"
-		    SID			    "10126"
+		    SID			    "10492"
 		    Ports		    [3, 2]
-		    Position		    [475, 301, 705, 379]
+		    Position		    [580, 306, 810, 384]
 		    LibraryVersion	    "1.31"
 		    ErrorFcn		    "Stateflow.Translate.translate"
 		    PermitHierarchicalResolution "ExplicitOnly"
@@ -13370,14 +13234,14 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "latLonAlt"
-		    SID			    "10126::22"
+		    SID			    "10492::22"
 		    Position		    [20, 101, 40, 119]
 		    IconDisplay		    "Port number"
 		    }
 		    Block {
 		    BlockType		    Inport
 		    Name		    "newData"
-		    SID			    "10126::18"
+		    SID			    "10492::18"
 		    Position		    [20, 136, 40, 154]
 		    Port		    "2"
 		    IconDisplay		    "Port number"
@@ -13385,7 +13249,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "reset"
-		    SID			    "10126::19"
+		    SID			    "10492::19"
 		    Position		    [20, 171, 40, 189]
 		    Port		    "3"
 		    IconDisplay		    "Port number"
@@ -13393,7 +13257,7 @@ Model {
 		    Block {
 		    BlockType		    Demux
 		    Name		    " Demux "
-		    SID			    "10126::26"
+		    SID			    "10492::26"
 		    Ports		    [1, 1]
 		    Position		    [270, 220, 320, 260]
 		    Outputs		    "1"
@@ -13401,7 +13265,7 @@ Model {
 		    Block {
 		    BlockType		    S-Function
 		    Name		    " SFunction "
-		    SID			    "10126::25"
+		    SID			    "10492::25"
 		    Tag			    "Stateflow S-Function Boat_sim 1"
 		    Ports		    [3, 3]
 		    Position		    [180, 100, 230, 220]
@@ -13424,20 +13288,20 @@ Model {
 		    Block {
 		    BlockType		    Terminator
 		    Name		    " Terminator "
-		    SID			    "10126::28"
+		    SID			    "10492::28"
 		    Position		    [460, 231, 480, 249]
 		    }
 		    Block {
 		    BlockType		    Outport
 		    Name		    "enableLLA2LTP"
-		    SID			    "10126::29"
+		    SID			    "10492::29"
 		    Position		    [460, 101, 480, 119]
 		    IconDisplay		    "Port number"
 		    }
 		    Block {
 		    BlockType		    Outport
 		    Name		    "resetIntegrator"
-		    SID			    "10126::20"
+		    SID			    "10492::20"
 		    Position		    [460, 136, 480, 154]
 		    Port		    "2"
 		    IconDisplay		    "Port number"
@@ -13493,9 +13357,9 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Convert to local tangent\nplane coordinate frame"
-		    SID			    "10127"
+		    SID			    "10493"
 		    Ports		    [1, 1, 1]
-		    Position		    [760, 239, 860, 281]
+		    Position		    [865, 244, 965, 286]
 		    ZOrder		    -5
 		    TreatAsAtomicUnit	    on
 		    MinAlgLoopOccurrences   off
@@ -13525,7 +13389,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "LLA"
-		    SID			    "10128"
+		    SID			    "10494"
 		    Position		    [80, 108, 110, 122]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -13534,7 +13398,7 @@ Model {
 		    Block {
 		    BlockType		    EnablePort
 		    Name		    "Enable"
-		    SID			    "10129"
+		    SID			    "10495"
 		    Ports		    []
 		    Position		    [240, 25, 260, 45]
 		    ZOrder		    -2
@@ -13543,7 +13407,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "LLA2LTP"
-		    SID			    "10130"
+		    SID			    "10496"
 		    Ports		    [1, 1]
 		    Position		    [200, 94, 300, 136]
 		    ZOrder		    -5
@@ -13575,7 +13439,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "LLA"
-		    SID			    "10131"
+		    SID			    "10497"
 		    Position		    [65, 158, 95, 172]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -13584,7 +13448,7 @@ Model {
 		    Block {
 		    BlockType		    Sum
 		    Name		    "Add"
-		    SID			    "10132"
+		    SID			    "10498"
 		    Ports		    [2, 1]
 		    Position		    [175, 172, 205, 203]
 		    ZOrder		    -2
@@ -13598,7 +13462,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "10133"
+		    SID			    "10499"
 		    Position		    [30, 195, 130, 225]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -13609,7 +13473,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant1"
-		    SID			    "10134"
+		    SID			    "10500"
 		    Position		    [30, 235, 130, 265]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -13620,7 +13484,7 @@ Model {
 		    Block {
 		    BlockType		    Product
 		    Name		    "Product"
-		    SID			    "10135"
+		    SID			    "10501"
 		    Ports		    [2, 1]
 		    Position		    [275, 202, 305, 233]
 		    ZOrder		    -19
@@ -13634,7 +13498,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "LTP"
-		    SID			    "10136"
+		    SID			    "10502"
 		    Position		    [350, 213, 380, 227]
 		    ZOrder		    -2
 		    BackgroundColor	    "yellow"
@@ -13681,7 +13545,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "LTP"
-		    SID			    "10137"
+		    SID			    "10503"
 		    Position		    [375, 108, 405, 122]
 		    ZOrder		    -2
 		    BackgroundColor	    "yellow"
@@ -13704,39 +13568,52 @@ Model {
 		    }
 		    }
 		    Block {
-		    BlockType		    Reference
-		    Name		    "Detect\nChange"
-		    SID			    "10138"
-		    Ports		    [1, 1]
-		    Position		    [315, 320, 375, 350]
+		    BlockType		    DataTypeConversion
+		    Name		    "Data Type Conversion1"
+		    SID			    "10504"
+		    Position		    [265, 322, 325, 348]
 		    ZOrder		    -7
-		    LibraryVersion	    "1.256"
-		    SourceBlock		    "simulink/Logic and Bit\nOperations/Detect\nChange"
-		    SourceType		    "Detect Change"
-		    vinit		    "0"
-		    InputProcessing	    "Inherited"
-		    OutDataTypeStr	    "uint8"
+		    ShowName		    off
+		    OutDataTypeStr	    "boolean"
+		    RndMeth		    "Floor"
+		    SaturateOnIntegerOverflow off
 		    }
 		    Block {
-		    BlockType		    Reference
-		    Name		    "Detect\nChange1"
-		    SID			    "10139"
-		    Ports		    [1, 1]
-		    Position		    [315, 335, 375, 365]
+		    BlockType		    DataTypeConversion
+		    Name		    "Data Type Conversion2"
+		    SID			    "10553"
+		    Position		    [140, 322, 185, 348]
 		    ZOrder		    -7
-		    LibraryVersion	    "1.256"
-		    SourceBlock		    "simulink/Logic and Bit\nOperations/Detect\nChange"
-		    SourceType		    "Detect Change"
-		    vinit		    "0"
-		    InputProcessing	    "Inherited"
+		    ShowName		    off
 		    OutDataTypeStr	    "uint8"
+		    RndMeth		    "Floor"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    DiscreteIntegrator
+		    Name		    "Discrete-Time\nIntegrator1"
+		    SID			    "10505"
+		    Ports		    [1, 1]
+		    Position		    [205, 320, 240, 350]
+		    ShowName		    off
+		    IntegratorMethod	    "Accumulation: Forward Euler"
+		    ExternalReset	    "none"
+		    InitialConditionSource  "internal"
+		    SampleTime		    "-1"
+		    OutDataTypeStr	    "uint8"
+		    RndMeth		    "Simplest"
+		    LimitOutput		    on
+		    UpperSaturationLimit    "1"
+		    LowerSaturationLimit    "0"
+		    ICPrevOutput	    "DiscIntNeverNeededParam"
+		    ICPrevScaledInput	    "DiscIntNeverNeededParam"
 		    }
 		    Block {
 		    BlockType		    DiscreteIntegrator
 		    Name		    "Discrete-Time\nIntegrator4"
-		    SID			    "10140"
+		    SID			    "10506"
 		    Ports		    [2, 1]
-		    Position		    [795, 335, 830, 370]
+		    Position		    [900, 340, 935, 375]
 		    ShowName		    off
 		    IntegratorMethod	    "Integration: Forward Euler"
 		    ExternalReset	    "level"
@@ -13746,22 +13623,166 @@ Model {
 		    ICPrevScaledInput	    "DiscIntNeverNeededParam"
 		    }
 		    Block {
-		    BlockType		    Logic
-		    Name		    "Logical\nOperator"
-		    SID			    "10141"
-		    Ports		    [2, 1]
-		    Position		    [410, 327, 440, 358]
-		    ZOrder		    -17
-		    Operator		    "OR"
-		    AllPortsSameDT	    off
-		    OutDataTypeStr	    "boolean"
+		    BlockType		    SubSystem
+		    Name		    "GPS slew-limit\nzero-order hold"
+		    SID			    "10507"
+		    Ports		    [2, 2]
+		    Position		    [360, 244, 540, 331]
+		    ZOrder		    -4
+		    LibraryVersion	    "1.32"
+		    ErrorFcn		    "Stateflow.Translate.translate"
+		    PermitHierarchicalResolution "ExplicitOnly"
+		    TreatAsAtomicUnit	    on
+		    MinAlgLoopOccurrences   off
+		    PropExecContextOutsideSubsystem off
+		    RTWSystemCode	    "Auto"
+		    FunctionWithSeparateData off
+		    Opaque		    off
+		    RequestExecContextInheritance off
+		    MaskHideContents	    off
+		    SFBlockType		    "MATLAB Function"
+		    MaskType		    "Stateflow"
+		    MaskDescription	    "Embedded MATLAB block"
+		    MaskSelfModifiable	    on
+		    MaskDisplay		    "bgColor = Simulink.Root.ColorString2Rgb(get_param(gcbh, 'BackgroundColor')); image(imread('pri"
+		    "vate/eml_membrane_16.png','png','BackgroundColor',bgColor(1:3)),'center'); disp([10 10 'limit_gps_rate']);"
+		    MaskIconFrame	    on
+		    MaskIconOpaque	    off
+		    MaskIconRotate	    "none"
+		    MaskPortRotate	    "default"
+		    MaskIconUnits	    "normalized"
+		    System {
+		    Name		    "GPS slew-limit\nzero-order hold"
+		    Location		    [257, 457, 812, 717]
+		    Open		    off
+		    ModelBrowserVisibility  off
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    SIDHighWatermark	    "21"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "current_gps_position"
+		    SID			    "10507::18"
+		    Position		    [20, 101, 40, 119]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "first_datapoint"
+		    SID			    "10507::19"
+		    Position		    [20, 136, 40, 154]
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Demux
+		    Name		    " Demux "
+		    SID			    "10507::15"
+		    Ports		    [1, 1]
+		    Position		    [270, 205, 320, 245]
+		    Outputs		    "1"
+		    }
+		    Block {
+		    BlockType		    S-Function
+		    Name		    " SFunction "
+		    SID			    "10507::14"
+		    Tag			    "Stateflow S-Function Boat_sim 3"
+		    Ports		    [2, 3]
+		    Position		    [180, 104, 230, 206]
+		    FunctionName	    "sf_sfun"
+		    Parameters		    "gps_leap_rate_limit"
+		    PortCounts		    "[2 3]"
+		    EnableBusSupport	    on
+		    Port {
+		    PortNumber		    2
+		    Name		    "position"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    Port {
+		    PortNumber		    3
+		    Name		    "valid"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    }
+		    Block {
+		    BlockType		    Terminator
+		    Name		    " Terminator "
+		    SID			    "10507::17"
+		    Position		    [460, 216, 480, 234]
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "position"
+		    SID			    "10507::5"
+		    Position		    [460, 101, 480, 119]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "valid"
+		    SID			    "10507::21"
+		    Position		    [460, 136, 480, 154]
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "current_gps_position"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "first_datapoint"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    2
+		    }
+		    Line {
+		    Name		    "position"
+		    Labels		    [0, 0]
+		    SrcBlock		    " SFunction "
+		    SrcPort		    2
+		    DstBlock		    "position"
+		    DstPort		    1
+		    }
+		    Line {
+		    Name		    "valid"
+		    Labels		    [0, 0]
+		    SrcBlock		    " SFunction "
+		    SrcPort		    3
+		    DstBlock		    "valid"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    " Demux "
+		    SrcPort		    1
+		    DstBlock		    " Terminator "
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    " SFunction "
+		    SrcPort		    1
+		    DstBlock		    " Demux "
+		    DstPort		    1
+		    }
+		    }
 		    }
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "Subsystem"
-		    SID			    "10142"
+		    SID			    "10508"
 		    Ports		    [1, 3]
-		    Position		    [115, 158, 185, 282]
+		    Position		    [115, 163, 185, 287]
 		    ShowName		    off
 		    MinAlgLoopOccurrences   off
 		    PropExecContextOutsideSubsystem off
@@ -13788,7 +13809,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "gps"
-		    SID			    "10143"
+		    SID			    "10509"
 		    Position		    [15, 143, 45, 157]
 		    BackgroundColor	    "darkGreen"
 		    IconDisplay		    "Port number"
@@ -13796,7 +13817,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "10144"
+		    SID			    "10510"
 		    Ports		    [1, 1]
 		    Position		    [110, 46, 115, 84]
 		    ShowName		    off
@@ -13811,7 +13832,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector1"
-		    SID			    "10145"
+		    SID			    "10511"
 		    Ports		    [1, 1]
 		    Position		    [110, 101, 115, 139]
 		    ShowName		    off
@@ -13826,7 +13847,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector2"
-		    SID			    "10146"
+		    SID			    "10512"
 		    Ports		    [1, 3]
 		    Position		    [110, 173, 115, 207]
 		    ShowName		    off
@@ -13853,7 +13874,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "10147"
+		    SID			    "10513"
 		    Position		    [525, 73, 555, 87]
 		    BackgroundColor	    "gray"
 		    ShowName		    off
@@ -13863,7 +13884,7 @@ Model {
 		    Block {
 		    BlockType		    DataTypeConversion
 		    Name		    "Data Type Conversion"
-		    SID			    "10148"
+		    SID			    "10514"
 		    Position		    [160, 55, 215, 75]
 		    ZOrder		    -7
 		    ShowName		    off
@@ -13874,7 +13895,7 @@ Model {
 		    Block {
 		    BlockType		    DataTypeConversion
 		    Name		    "Data Type Conversion1"
-		    SID			    "10149"
+		    SID			    "10515"
 		    Position		    [160, 110, 215, 130]
 		    ZOrder		    -7
 		    ShowName		    off
@@ -13885,7 +13906,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain"
-		    SID			    "10150"
+		    SID			    "10516"
 		    Position		    [245, 50, 275, 80]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -13897,7 +13918,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain1"
-		    SID			    "10151"
+		    SID			    "10517"
 		    Position		    [245, 105, 275, 135]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -13909,7 +13930,7 @@ Model {
 		    Block {
 		    BlockType		    Mux
 		    Name		    "Mux"
-		    SID			    "10152"
+		    SID			    "10518"
 		    Ports		    [3, 1]
 		    Position		    [585, 51, 590, 89]
 		    ShowName		    off
@@ -13919,7 +13940,7 @@ Model {
 		    Block {
 		    BlockType		    Mux
 		    Name		    "Mux1"
-		    SID			    "10153"
+		    SID			    "10519"
 		    Ports		    [3, 1]
 		    Position		    [280, 171, 285, 209]
 		    ShowName		    off
@@ -13929,7 +13950,7 @@ Model {
 		    Block {
 		    BlockType		    Product
 		    Name		    "Product"
-		    SID			    "10154"
+		    SID			    "10520"
 		    Ports		    [2, 1]
 		    Position		    [450, 72, 480, 103]
 		    ShowName		    off
@@ -13940,7 +13961,7 @@ Model {
 		    Block {
 		    BlockType		    Product
 		    Name		    "Product1"
-		    SID			    "10155"
+		    SID			    "10521"
 		    Ports		    [2, 1]
 		    Position		    [450, 42, 480, 73]
 		    ShowName		    off
@@ -13951,7 +13972,7 @@ Model {
 		    Block {
 		    BlockType		    Trigonometry
 		    Name		    "Trigonometric\nFunction"
-		    SID			    "10156"
+		    SID			    "10522"
 		    Ports		    [1, 1]
 		    Position		    [355, 86, 385, 104]
 		    ShowName		    off
@@ -13959,7 +13980,7 @@ Model {
 		    Block {
 		    BlockType		    Trigonometry
 		    Name		    "Trigonometric\nFunction1"
-		    SID			    "10157"
+		    SID			    "10523"
 		    Ports		    [1, 1]
 		    Position		    [355, 56, 385, 74]
 		    ShowName		    off
@@ -13968,7 +13989,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "velocity"
-		    SID			    "10158"
+		    SID			    "10524"
 		    Position		    [645, 63, 675, 77]
 		    BackgroundColor	    "yellow"
 		    IconDisplay		    "Port number"
@@ -13976,7 +13997,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "heading"
-		    SID			    "10159"
+		    SID			    "10525"
 		    Position		    [645, 113, 675, 127]
 		    BackgroundColor	    "yellow"
 		    Port		    "2"
@@ -13985,7 +14006,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "pos"
-		    SID			    "10160"
+		    SID			    "10526"
 		    Position		    [545, 183, 575, 197]
 		    BackgroundColor	    "yellow"
 		    Port		    "3"
@@ -14157,16 +14178,16 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "velocity"
-		    SID			    "10161"
-		    Position		    [795, 173, 825, 187]
+		    SID			    "10527"
+		    Position		    [900, 178, 930, 192]
 		    BackgroundColor	    "yellow"
 		    IconDisplay		    "Port number"
 		    }
 		    Block {
 		    BlockType		    Outport
 		    Name		    "pos"
-		    SID			    "10162"
-		    Position		    [1000, 343, 1030, 357]
+		    SID			    "10528"
+		    Position		    [1105, 348, 1135, 362]
 		    BackgroundColor	    "yellow"
 		    Port		    "2"
 		    IconDisplay		    "Port number"
@@ -14174,8 +14195,8 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "heading"
-		    SID			    "10163"
-		    Position		    [255, 213, 285, 227]
+		    SID			    "10529"
+		    Position		    [255, 218, 285, 232]
 		    BackgroundColor	    "yellow"
 		    Port		    "3"
 		    IconDisplay		    "Port number"
@@ -14183,8 +14204,8 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "lla"
-		    SID			    "10164"
-		    Position		    [255, 268, 285, 282]
+		    SID			    "10530"
+		    Position		    [255, 278, 285, 292]
 		    BackgroundColor	    "yellow"
 		    Port		    "4"
 		    IconDisplay		    "Port number"
@@ -14192,7 +14213,7 @@ Model {
 		    Line {
 		    SrcBlock		    "Subsystem"
 		    SrcPort		    1
-		    Points		    [555, 0]
+		    Points		    [660, 0]
 		    Branch {
 		    Points		    [0, 165]
 		    DstBlock		    "Discrete-Time\nIntegrator4"
@@ -14224,19 +14245,13 @@ Model {
 		    Line {
 		    SrcBlock		    "Subsystem"
 		    SrcPort		    3
-		    Points		    [35, 0]
+		    Points		    [50, 0]
 		    Branch {
-		    Points		    [15, 0]
 		    DstBlock		    "lla"
 		    DstPort		    1
 		    }
 		    Branch {
-		    DstBlock		    "Convert to local tangent\nplane coordinate frame"
-		    DstPort		    1
-		    }
-		    Branch {
-		    Points		    [0, 55]
-		    DstBlock		    "Calculate local position from \nGPS data"
+		    DstBlock		    "GPS slew-limit\nzero-order hold"
 		    DstPort		    1
 		    }
 		    }
@@ -14245,7 +14260,7 @@ Model {
 		    SrcPort		    1
 		    Points		    [30, 0]
 		    Branch {
-		    Points		    [0, 125]
+		    Points		    [0, 110]
 		    DstBlock		    "Bus\nSelector1"
 		    DstPort		    1
 		    }
@@ -14281,46 +14296,58 @@ Model {
 		    DstPort		    enable
 		    }
 		    Line {
-		    Name		    "<latitude>"
-		    Labels		    [0, 0]
-		    SrcBlock		    "Bus\nSelector1"
+		    SrcBlock		    "Discrete-Time\nIntegrator1"
 		    SrcPort		    1
-		    DstBlock		    "Detect\nChange"
+		    DstBlock		    "Data Type Conversion1"
 		    DstPort		    1
 		    }
 		    Line {
-		    Name		    "<longitude>"
-		    Labels		    [0, 0]
-		    SrcBlock		    "Bus\nSelector1"
+		    SrcBlock		    "GPS slew-limit\nzero-order hold"
+		    SrcPort		    1
+		    Points		    [20, 0]
+		    Branch {
+		    DstBlock		    "Calculate local position from \nGPS data"
+		    DstPort		    1
+		    }
+		    Branch {
+		    DstBlock		    "Convert to local tangent\nplane coordinate frame"
+		    DstPort		    1
+		    }
+		    }
+		    Line {
+		    SrcBlock		    "GPS slew-limit\nzero-order hold"
 		    SrcPort		    2
-		    DstBlock		    "Detect\nChange1"
-		    DstPort		    1
-		    }
-		    Line {
-		    SrcBlock		    "Detect\nChange"
-		    SrcPort		    1
-		    DstBlock		    "Logical\nOperator"
-		    DstPort		    1
-		    }
-		    Line {
-		    SrcBlock		    "Detect\nChange1"
-		    SrcPort		    1
-		    DstBlock		    "Logical\nOperator"
-		    DstPort		    2
-		    }
-		    Line {
-		    SrcBlock		    "Logical\nOperator"
-		    SrcPort		    1
-		    Points		    [0, -5]
+		    Points		    [10, 0; 0, 35]
 		    DstBlock		    "Calculate local position from \nGPS data"
 		    DstPort		    2
+		    }
+		    Line {
+		    Name		    "<newData>"
+		    Labels		    [0, 0]
+		    SrcBlock		    "Bus\nSelector1"
+		    SrcPort		    1
+		    DstBlock		    "Data Type Conversion2"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Data Type Conversion1"
+		    SrcPort		    1
+		    Points		    [5, 0; 0, -25]
+		    DstBlock		    "GPS slew-limit\nzero-order hold"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "Data Type Conversion2"
+		    SrcPort		    1
+		    DstBlock		    "Discrete-Time\nIntegrator1"
+		    DstPort		    1
 		    }
 		  }
 		}
 		Block {
 		  BlockType		  Goto
 		  Name			  "Goto"
-		  SID			  "10165"
+		  SID			  "10531"
 		  Position		  [525, 34, 640, 56]
 		  BackgroundColor	  "cyan"
 		  ShowName		  off
@@ -14330,7 +14357,7 @@ Model {
 		Block {
 		  BlockType		  Goto
 		  Name			  "Goto1"
-		  SID			  "10166"
+		  SID			  "10532"
 		  Position		  [525, 269, 640, 291]
 		  BackgroundColor	  "cyan"
 		  ShowName		  off
@@ -14340,7 +14367,7 @@ Model {
 		Block {
 		  BlockType		  Goto
 		  Name			  "Goto2"
-		  SID			  "10167"
+		  SID			  "10533"
 		  Position		  [525, 239, 640, 261]
 		  BackgroundColor	  "cyan"
 		  ShowName		  off
@@ -14350,7 +14377,7 @@ Model {
 		Block {
 		  BlockType		  Goto
 		  Name			  "Goto3"
-		  SID			  "10168"
+		  SID			  "10534"
 		  Position		  [525, 214, 640, 236]
 		  BackgroundColor	  "cyan"
 		  ShowName		  off
@@ -14360,7 +14387,7 @@ Model {
 		Block {
 		  BlockType		  SubSystem
 		  Name			  "Throttle Estimator"
-		  SID			  "10169"
+		  SID			  "10535"
 		  Ports			  [1, 1]
 		  Position		  [255, 440, 345, 500]
 		  MinAlgLoopOccurrences	  off
@@ -14388,7 +14415,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "t"
-		    SID			    "10170"
+		    SID			    "10536"
 		    Position		    [80, 48, 110, 62]
 		    BackgroundColor	    "darkGreen"
 		    IconDisplay		    "Port number"
@@ -14396,7 +14423,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "sensors_t"
-		    SID			    "10171"
+		    SID			    "10537"
 		    Position		    [165, 48, 195, 62]
 		    BackgroundColor	    "yellow"
 		    IconDisplay		    "Port number"
@@ -14415,7 +14442,7 @@ Model {
 		Block {
 		  BlockType		  Outport
 		  Name			  "sensors_t"
-		  SID			  "10172"
+		  SID			  "10538"
 		  Position		  [690, 463, 720, 477]
 		  BackgroundColor	  "yellow"
 		  IconDisplay		  "Port number"
@@ -14423,7 +14450,7 @@ Model {
 		Block {
 		  BlockType		  Outport
 		  Name			  "velocity"
-		  SID			  "10173"
+		  SID			  "10539"
 		  Position		  [690, 63, 720, 77]
 		  BackgroundColor	  "yellow"
 		  Port			  "2"
@@ -14432,7 +14459,7 @@ Model {
 		Block {
 		  BlockType		  Outport
 		  Name			  "pos"
-		  SID			  "10174"
+		  SID			  "10540"
 		  Position		  [690, 103, 720, 117]
 		  BackgroundColor	  "yellow"
 		  Port			  "3"
@@ -14511,14 +14538,14 @@ Model {
 	    Block {
 	      BlockType		      Terminator
 	      Name		      "Terminator1"
-	      SID		      "10175"
+	      SID		      "10541"
 	      Position		      [145, 375, 165, 395]
 	      ShowName		      off
 	    }
 	    Block {
 	      BlockType		      SubSystem
 	      Name		      "Throttle\nCommand"
-	      SID		      "10176"
+	      SID		      "10542"
 	      Ports		      [2, 1]
 	      Position		      [535, 282, 645, 333]
 	      MinAlgLoopOccurrences   off
@@ -14546,7 +14573,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "sensors"
-		  SID			  "10177"
+		  SID			  "10543"
 		  Position		  [35, 278, 65, 292]
 		  BackgroundColor	  "darkGreen"
 		  IconDisplay		  "Port number"
@@ -14554,7 +14581,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "reset"
-		  SID			  "10178"
+		  SID			  "10544"
 		  Position		  [35, 98, 65, 112]
 		  BackgroundColor	  "darkGreen"
 		  Port			  "2"
@@ -14563,7 +14590,7 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Constant1"
-		  SID			  "10179"
+		  SID			  "10545"
 		  Position		  [165, 45, 195, 75]
 		  BackgroundColor	  "gray"
 		  ShowName		  off
@@ -14573,7 +14600,7 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Constant5"
-		  SID			  "10180"
+		  SID			  "10546"
 		  Position		  [165, 140, 195, 170]
 		  BackgroundColor	  "gray"
 		  ShowName		  off
@@ -14583,7 +14610,7 @@ Model {
 		Block {
 		  BlockType		  Goto
 		  Name			  "Goto3"
-		  SID			  "10181"
+		  SID			  "10547"
 		  Position		  [345, 142, 490, 168]
 		  BackgroundColor	  "cyan"
 		  ShowName		  off
@@ -14593,7 +14620,7 @@ Model {
 		Block {
 		  BlockType		  Switch
 		  Name			  "Switch"
-		  SID			  "10182"
+		  SID			  "10548"
 		  Position		  [230, 90, 260, 120]
 		  ShowName		  off
 		  Criteria		  "u2 > Threshold"
@@ -14603,7 +14630,7 @@ Model {
 		Block {
 		  BlockType		  Terminator
 		  Name			  "Terminator"
-		  SID			  "10183"
+		  SID			  "10549"
 		  Position		  [110, 275, 130, 295]
 		  BackgroundColor	  "red"
 		  ShowName		  off
@@ -14611,7 +14638,7 @@ Model {
 		Block {
 		  BlockType		  Outport
 		  Name			  "command"
-		  SID			  "10184"
+		  SID			  "10550"
 		  Position		  [400, 98, 430, 112]
 		  BackgroundColor	  "yellow"
 		  IconDisplay		  "Port number"
@@ -14661,7 +14688,7 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "Rudder command"
-	      SID		      "10185"
+	      SID		      "10551"
 	      Position		      [725, 438, 755, 452]
 	      BackgroundColor	      "yellow"
 	      IconDisplay	      "Port number"
@@ -14669,7 +14696,7 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "Throttle command"
-	      SID		      "10186"
+	      SID		      "10552"
 	      Position		      [725, 303, 755, 317]
 	      BackgroundColor	      "yellow"
 	      Port		      "2"
@@ -15919,6 +15946,7 @@ Model {
 	  Name			  "Terminator1"
 	  SID			  "8821"
 	  Position		  [100, 205, 120, 225]
+	  BackgroundColor	  "red"
 	  ShowName		  off
 	}
 	Block {
@@ -16703,7 +16731,7 @@ Stateflow {
     name		    "Boat_sim"
     created		    "13-Apr-2010 16:50:36"
     isLibrary		    0
-    firstTarget		    95
+    firstTarget		    105
     sfVersion		    76014001.0002
   }
   chart {
@@ -16718,6 +16746,8 @@ Stateflow {
     firstJunction	    4
     viewObj		    2
     machine		    1
+    subviewS {
+    }
     ssIdHighWaterMark	    15
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
@@ -17051,24 +17081,27 @@ Stateflow {
   }
   chart {
     id			    20
-    name		    "HIL Interface/Parse HIL\ninput/Embedded\nMATLAB Function"
-    windowPosition	    [311.813 299.45 200.25 189.75]
+    name		    "Subsystem/Autonomous Controller/State Keeper &\nEstimator/GPS Estimator/GPS slew-limit\nzero-order hold"
+    windowPosition	    [405.75 173.25 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
-    screen		    [1 1 1280 1024 1.333333333333333]
+    screen		    [1 1 1920 1080 1.333333333333333]
     treeNode		    [0 21 0 0]
     firstTransition	    23
     firstJunction	    22
     viewObj		    20
     machine		    1
-    ssIdHighWaterMark	    11
+    subviewS {
+    }
+    ssIdHighWaterMark	    9
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
     firstData		    24
-    chartFileNumber	    5
+    chartFileNumber	    3
     disableImplicitCasting  1
     eml {
-      name		      "parseMessage"
+      name		      "limit_gps_rate"
     }
+    supportVariableSizing   0
   }
   state {
     id			    21
@@ -17079,6 +17112,198 @@ Stateflow {
     treeNode		    [20 0 0 0]
     superState		    SUBCHART
     subviewer		    20
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function [position, valid] = limit_gps_rate(current_gps_position, first_datapoint, gps_leap_rate_"
+      "limit)\n%% This function follows a GPS position 2-tuple of lat/lon values (stored as int32s as 1e-7 degrees).\n%"
+      "#codegen\n\n% Store the last GPS location, used for derivative calculations\npersistent last_gps_position last_t"
+      "imestep current_timestep\nif isempty(last_gps_position) || first_datapoint\n    last_gps_position = current_gps_"
+      "position;\n    current_timestep = int32(0);\n    last_timestep = current_timestep;\nend\n\n% If the slew limit w"
+      "as exceeded for either the latitude or longitude, only\n% output the last timestep. We ignore the altitude compl"
+      "etely.\nif (current_gps_position(1) - last_gps_position(1)) / (current_timestep - last_timestep) > gps_leap_rate"
+      "_limit ...\n    || (current_gps_position(2) - last_gps_position(2)) / (current_timestep - last_timestep) > gps_l"
+      "eap_rate_limit\n    position = last_gps_position;\n    valid = false;\nelse\n    % Update last timesteps data fo"
+      "r future calculations.\n    last_gps_position = current_gps_position;\n    last_timestep = current_timestep;\n  "
+      "  \n    % We can output the current position as it's within the slew limit.\n    position = current_gps_position"
+      ";\n    valid = true;\nend\n\n% Increment the current timestep handling wrap-arounds nicely. This WILL\n% NOT han"
+      "dle situations were the time between valid GPS position updates is\n% greater than INT32_MAX, but I can live wit"
+      "h that.\nif current_timestep == intmax('int32')\n    current_timestep = current_timestep - last_timestep;\n    l"
+      "ast_timestep = int32(0);\nelse\n    current_timestep = current_timestep + int32(1);\nend"
+      editorLayout	      "100 M4x1[513 203 1080 733]"
+    }
+  }
+  junction {
+    id			    22
+    position		    [23.5747 49.5747 7]
+    chart		    20
+    linkNode		    [20 0 0]
+    subviewer		    20
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    23
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      22
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    20
+    linkNode		    [20 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    20
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    24
+    ssIdNumber		    5
+    name		    "position"
+    linkNode		    [20 0 25]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"3"
+      }
+      type {
+	primitive		SF_INT32_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "int32"
+  }
+  data {
+    id			    25
+    ssIdNumber		    6
+    name		    "current_gps_position"
+    linkNode		    [20 24 26]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"3"
+      }
+      type {
+	primitive		SF_INT32_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "int32"
+  }
+  data {
+    id			    26
+    ssIdNumber		    7
+    name		    "first_datapoint"
+    linkNode		    [20 25 27]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_BOOLEAN_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "boolean"
+  }
+  data {
+    id			    27
+    ssIdNumber		    8
+    name		    "gps_leap_rate_limit"
+    linkNode		    [20 26 28]
+    scope		    PARAMETER_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_INT32_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "int32"
+  }
+  data {
+    id			    28
+    ssIdNumber		    9
+    name		    "valid"
+    linkNode		    [20 27 0]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_BOOLEAN_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "boolean"
+  }
+  instance {
+    id			    29
+    name		    "Subsystem/Autonomous Controller/State Keeper &\nEstimator/GPS Estimator/GPS slew-limit\nzero-order hold"
+    machine		    1
+    chart		    20
+  }
+  chart {
+    id			    30
+    name		    "HIL Interface/Parse HIL\ninput/Embedded\nMATLAB Function"
+    windowPosition	    [311.813 299.45 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1280 1024 1.333333333333333]
+    treeNode		    [0 31 0 0]
+    firstTransition	    33
+    firstJunction	    32
+    viewObj		    30
+    machine		    1
+    ssIdHighWaterMark	    11
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    34
+    chartFileNumber	    5
+    disableImplicitCasting  1
+    eml {
+      name		      "parseMessage"
+    }
+  }
+  state {
+    id			    31
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    30
+    treeNode		    [30 0 0 0]
+    superState		    SUBCHART
+    subviewer		    30
     ssIdNumber		    1
     type		    FUNC_STATE
     decomposition	    CLUSTER_STATE
@@ -17129,16 +17354,16 @@ Stateflow {
     }
   }
   junction {
-    id			    22
+    id			    32
     position		    [23.5747 49.5747 7]
-    chart		    20
-    linkNode		    [20 0 0]
-    subviewer		    20
+    chart		    30
+    linkNode		    [30 0 0]
+    subviewer		    30
     ssIdNumber		    3
     type		    CONNECTIVE_JUNCTION
   }
   transition {
-    id			    23
+    id			    33
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -17146,23 +17371,23 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      22
+      id		      32
       intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
-    chart		    20
-    linkNode		    [20 0 0]
+    chart		    30
+    linkNode		    [30 0 0]
     dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    20
+    subviewer		    30
     drawStyle		    SMART
     executionOrder	    1
     ssIdNumber		    2
   }
   data {
-    id			    24
+    id			    34
     ssIdNumber		    7
     name		    "successCount"
-    linkNode		    [20 0 25]
+    linkNode		    [30 0 35]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -17181,10 +17406,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    25
+    id			    35
     ssIdNumber		    9
     name		    "failCount"
-    linkNode		    [20 24 26]
+    linkNode		    [30 34 36]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -17203,10 +17428,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    26
+    id			    36
     ssIdNumber		    4
     name		    "in"
-    linkNode		    [20 25 27]
+    linkNode		    [30 35 37]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -17222,10 +17447,10 @@ Stateflow {
     dataType		    "uint8"
   }
   data {
-    id			    27
+    id			    37
     ssIdNumber		    5
     name		    "out"
-    linkNode		    [20 26 28]
+    linkNode		    [30 36 38]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -17241,10 +17466,10 @@ Stateflow {
     dataType		    "uint8"
   }
   data {
-    id			    28
+    id			    38
     ssIdNumber		    10
     name		    "new"
-    linkNode		    [20 27 29]
+    linkNode		    [30 37 39]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -17263,10 +17488,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    29
+    id			    39
     ssIdNumber		    11
     name		    "size"
-    linkNode		    [20 28 0]
+    linkNode		    [30 38 0]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -17285,26 +17510,28 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   instance {
-    id			    30
+    id			    40
     name		    "HIL Interface/Parse HIL\ninput/Embedded\nMATLAB Function"
     machine		    1
-    chart		    20
+    chart		    30
   }
   chart {
-    id			    31
+    id			    41
     name		    "Subsystem/Autonomous Controller/Rudder\nCommand/L2 Plus ref WP1"
     windowPosition	    [707.101 -171 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1920 1080 1.333333333333333]
-    treeNode		    [0 32 0 0]
-    firstTransition	    34
-    firstJunction	    33
-    viewObj		    31
+    treeNode		    [0 42 0 0]
+    firstTransition	    44
+    firstJunction	    43
+    viewObj		    41
     machine		    1
+    subviewS {
+    }
     ssIdHighWaterMark	    32
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
-    firstData		    35
+    firstData		    45
     chartFileNumber	    7
     disableImplicitCasting  1
     eml {
@@ -17313,14 +17540,14 @@ Stateflow {
     supportVariableSizing   0
   }
   state {
-    id			    32
+    id			    42
     labelString		    "eML_blk_kernel()"
     position		    [18 64.5 118 66]
     fontSize		    12
-    chart		    31
-    treeNode		    [31 0 0 0]
+    chart		    41
+    treeNode		    [41 0 0 0]
     superState		    SUBCHART
-    subviewer		    31
+    subviewer		    41
     ssIdNumber		    1
     type		    FUNC_STATE
     decomposition	    CLUSTER_STATE
@@ -17388,16 +17615,16 @@ Stateflow {
     }
   }
   junction {
-    id			    33
+    id			    43
     position		    [23.5747 49.5747 7]
-    chart		    31
-    linkNode		    [31 0 0]
-    subviewer		    31
+    chart		    41
+    linkNode		    [41 0 0]
+    subviewer		    41
     ssIdNumber		    3
     type		    CONNECTIVE_JUNCTION
   }
   transition {
-    id			    34
+    id			    44
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -17405,23 +17632,23 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      33
+      id		      43
       intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
-    chart		    31
-    linkNode		    [31 0 0]
+    chart		    41
+    linkNode		    [41 0 0]
     dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    31
+    subviewer		    41
     drawStyle		    SMART
     executionOrder	    1
     ssIdNumber		    2
   }
   data {
-    id			    35
+    id			    45
     ssIdNumber		    24
     name		    "wp0"
-    linkNode		    [31 0 36]
+    linkNode		    [41 0 46]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -17440,10 +17667,10 @@ Stateflow {
     dataType		    "single"
   }
   data {
-    id			    36
+    id			    46
     ssIdNumber		    31
     name		    "wp0_found"
-    linkNode		    [31 35 37]
+    linkNode		    [41 45 47]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -17467,10 +17694,10 @@ Stateflow {
     dataType		    "boolean"
   }
   data {
-    id			    37
+    id			    47
     ssIdNumber		    25
     name		    "wp1"
-    linkNode		    [31 36 38]
+    linkNode		    [41 46 48]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -17489,10 +17716,10 @@ Stateflow {
     dataType		    "single"
   }
   data {
-    id			    38
+    id			    48
     ssIdNumber		    32
     name		    "wp1_found"
-    linkNode		    [31 37 39]
+    linkNode		    [41 47 49]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -17510,10 +17737,10 @@ Stateflow {
     dataType		    "boolean"
   }
   data {
-    id			    39
+    id			    49
     ssIdNumber		    17
     name		    "L2Vec"
-    linkNode		    [31 38 40]
+    linkNode		    [41 48 50]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -17530,10 +17757,10 @@ Stateflow {
     dataType		    "single"
   }
   data {
-    id			    40
+    id			    50
     ssIdNumber		    6
     name		    "Puav"
-    linkNode		    [31 39 41]
+    linkNode		    [41 49 51]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -17547,10 +17774,10 @@ Stateflow {
     dataType		    "single"
   }
   data {
-    id			    41
+    id			    51
     ssIdNumber		    7
     name		    "Vxyz"
-    linkNode		    [31 40 42]
+    linkNode		    [41 50 52]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -17567,10 +17794,10 @@ Stateflow {
     dataType		    "single"
   }
   data {
-    id			    42
+    id			    52
     ssIdNumber		    8
     name		    "switchDistance"
-    linkNode		    [31 41 43]
+    linkNode		    [41 51 53]
     scope		    PARAMETER_DATA
     paramIndexForInitFromWorkspace 5
     machine		    1
@@ -17589,10 +17816,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    43
+    id			    53
     ssIdNumber		    10
     name		    "tanIntercept"
-    linkNode		    [31 42 44]
+    linkNode		    [41 52 54]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 6
@@ -17612,10 +17839,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    44
+    id			    54
     ssIdNumber		    11
     name		    "MaxDwnPthStar"
-    linkNode		    [31 43 45]
+    linkNode		    [41 53 55]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 2
@@ -17635,10 +17862,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    45
+    id			    55
     ssIdNumber		    12
     name		    "Turn2Track"
-    linkNode		    [31 44 46]
+    linkNode		    [41 54 56]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 4
@@ -17658,10 +17885,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    46
+    id			    56
     ssIdNumber		    13
     name		    "InitialPoint"
-    linkNode		    [31 45 47]
+    linkNode		    [41 55 57]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 1
@@ -17681,10 +17908,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    47
+    id			    57
     ssIdNumber		    14
     name		    "IPStar"
-    linkNode		    [31 46 48]
+    linkNode		    [41 56 58]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     machine		    1
@@ -17703,10 +17930,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    48
+    id			    58
     ssIdNumber		    15
     name		    "TStar"
-    linkNode		    [31 47 49]
+    linkNode		    [41 57 59]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 3
@@ -17726,10 +17953,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    49
+    id			    59
     ssIdNumber		    16
     name		    "as_c"
-    linkNode		    [31 48 50]
+    linkNode		    [41 58 60]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -17744,10 +17971,10 @@ Stateflow {
     dataType		    "single"
   }
   data {
-    id			    50
+    id			    60
     ssIdNumber		    26
     name		    "transition"
-    linkNode		    [31 49 0]
+    linkNode		    [41 59 0]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -17766,26 +17993,26 @@ Stateflow {
     dataType		    "boolean"
   }
   instance {
-    id			    51
+    id			    61
     name		    "Subsystem/Autonomous Controller/Rudder\nCommand/L2 Plus ref WP1"
     machine		    1
-    chart		    31
+    chart		    41
   }
   chart {
-    id			    52
+    id			    62
     name		    "Subsystem/Select current\nwaypoint track"
     windowPosition	    [281.813 329.45 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1280 1024 1.333333333333333]
-    treeNode		    [0 53 0 0]
-    firstTransition	    55
-    firstJunction	    54
-    viewObj		    52
+    treeNode		    [0 63 0 0]
+    firstTransition	    65
+    firstJunction	    64
+    viewObj		    62
     machine		    1
     ssIdHighWaterMark	    11
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
-    firstData		    56
+    firstData		    66
     chartFileNumber	    9
     disableImplicitCasting  1
     eml {
@@ -17794,14 +18021,14 @@ Stateflow {
     supportVariableSizing   0
   }
   state {
-    id			    53
+    id			    63
     labelString		    "eML_blk_kernel()"
     position		    [18 64.5 118 66]
     fontSize		    12
-    chart		    52
-    treeNode		    [52 0 0 0]
+    chart		    62
+    treeNode		    [62 0 0 0]
     superState		    SUBCHART
-    subviewer		    52
+    subviewer		    62
     ssIdNumber		    1
     type		    FUNC_STATE
     decomposition	    CLUSTER_STATE
@@ -17822,16 +18049,16 @@ Stateflow {
     }
   }
   junction {
-    id			    54
+    id			    64
     position		    [23.5747 49.5747 7]
-    chart		    52
-    linkNode		    [52 0 0]
-    subviewer		    52
+    chart		    62
+    linkNode		    [62 0 0]
+    subviewer		    62
     ssIdNumber		    3
     type		    CONNECTIVE_JUNCTION
   }
   transition {
-    id			    55
+    id			    65
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -17839,23 +18066,23 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      54
+      id		      64
       intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
-    chart		    52
-    linkNode		    [52 0 0]
+    chart		    62
+    linkNode		    [62 0 0]
     dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    52
+    subviewer		    62
     drawStyle		    SMART
     executionOrder	    1
     ssIdNumber		    2
   }
   data {
-    id			    56
+    id			    66
     ssIdNumber		    11
     name		    "reset"
-    linkNode		    [52 0 57]
+    linkNode		    [62 0 67]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -17874,10 +18101,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    57
+    id			    67
     ssIdNumber		    4
     name		    "nextTrack"
-    linkNode		    [52 56 58]
+    linkNode		    [62 66 68]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -17893,10 +18120,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    58
+    id			    68
     ssIdNumber		    6
     name		    "resetTrackNumber"
-    linkNode		    [52 57 59]
+    linkNode		    [62 67 69]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -17915,10 +18142,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    59
+    id			    69
     ssIdNumber		    7
     name		    "test_waypoints"
-    linkNode		    [52 58 60]
+    linkNode		    [62 68 70]
     scope		    PARAMETER_DATA
     paramIndexForInitFromWorkspace 2
     isNonTunable	    1
@@ -17939,10 +18166,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    60
+    id			    70
     ssIdNumber		    8
     name		    "figure8_waypoints"
-    linkNode		    [52 59 61]
+    linkNode		    [62 69 71]
     scope		    PARAMETER_DATA
     isNonTunable	    1
     machine		    1
@@ -17962,10 +18189,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    61
+    id			    71
     ssIdNumber		    9
     name		    "sampling_waypoints"
-    linkNode		    [52 60 0]
+    linkNode		    [62 70 0]
     scope		    PARAMETER_DATA
     paramIndexForInitFromWorkspace 1
     isNonTunable	    1
@@ -17986,26 +18213,26 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   instance {
-    id			    62
+    id			    72
     name		    "Subsystem/Select current\nwaypoint track"
     machine		    1
-    chart		    52
+    chart		    62
   }
   chart {
-    id			    63
+    id			    73
     name		    "Subsystem/Log state data\nto workspace/Build HIL\nsentence/Pack"
     windowPosition	    [356.813 254.45 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1680 1050 1.333333333333333]
-    treeNode		    [0 64 0 0]
-    firstTransition	    66
-    firstJunction	    65
-    viewObj		    63
+    treeNode		    [0 74 0 0]
+    firstTransition	    76
+    firstJunction	    75
+    viewObj		    73
     machine		    1
     ssIdHighWaterMark	    15
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
-    firstData		    67
+    firstData		    77
     chartFileNumber	    15
     disableImplicitCasting  1
     eml {
@@ -18013,14 +18240,14 @@ Stateflow {
     }
   }
   state {
-    id			    64
+    id			    74
     labelString		    "eML_blk_kernel()"
     position		    [18 64.5 118 66]
     fontSize		    12
-    chart		    63
-    treeNode		    [63 0 0 0]
+    chart		    73
+    treeNode		    [73 0 0 0]
     superState		    SUBCHART
-    subviewer		    63
+    subviewer		    73
     ssIdNumber		    1
     type		    FUNC_STATE
     decomposition	    CLUSTER_STATE
@@ -18031,16 +18258,16 @@ Stateflow {
     }
   }
   junction {
-    id			    65
+    id			    75
     position		    [23.5747 49.5747 7]
-    chart		    63
-    linkNode		    [63 0 0]
-    subviewer		    63
+    chart		    73
+    linkNode		    [73 0 0]
+    subviewer		    73
     ssIdNumber		    3
     type		    CONNECTIVE_JUNCTION
   }
   transition {
-    id			    66
+    id			    76
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -18048,23 +18275,23 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      65
+      id		      75
       intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
-    chart		    63
-    linkNode		    [63 0 0]
+    chart		    73
+    linkNode		    [73 0 0]
     dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    63
+    subviewer		    73
     drawStyle		    SMART
     executionOrder	    1
     ssIdNumber		    2
   }
   data {
-    id			    67
+    id			    77
     ssIdNumber		    4
     name		    "a"
-    linkNode		    [63 0 68]
+    linkNode		    [73 0 78]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -18080,10 +18307,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    68
+    id			    78
     ssIdNumber		    5
     name		    "y"
-    linkNode		    [63 67 69]
+    linkNode		    [73 77 79]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -18100,10 +18327,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    69
+    id			    79
     ssIdNumber		    6
     name		    "b"
-    linkNode		    [63 68 70]
+    linkNode		    [73 78 80]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -18120,206 +18347,12 @@ Stateflow {
       frame		      SF_FRAME_INHERITED
     }
     dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    70
-    ssIdNumber		    7
-    name		    "c"
-    linkNode		    [63 69 71]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    71
-    ssIdNumber		    8
-    name		    "d"
-    linkNode		    [63 70 72]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    72
-    ssIdNumber		    9
-    name		    "e"
-    linkNode		    [63 71 73]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    73
-    ssIdNumber		    10
-    name		    "f"
-    linkNode		    [63 72 74]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    74
-    ssIdNumber		    11
-    name		    "g"
-    linkNode		    [63 73 0]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  instance {
-    id			    75
-    name		    "Subsystem/Log state data\nto workspace/Build HIL\nsentence/Pack"
-    machine		    1
-    chart		    63
-  }
-  chart {
-    id			    76
-    name		    "Subsystem/Log state data\nto workspace/Pack"
-    windowPosition	    [341.813 269.45 200.25 189.75]
-    viewLimits		    [0 156.75 0 153.75]
-    screen		    [1 1 1680 1050 1.333333333333333]
-    treeNode		    [0 77 0 0]
-    firstTransition	    79
-    firstJunction	    78
-    viewObj		    76
-    machine		    1
-    ssIdHighWaterMark	    15
-    decomposition	    CLUSTER_CHART
-    type		    EML_CHART
-    firstData		    80
-    chartFileNumber	    16
-    disableImplicitCasting  1
-    eml {
-      name		      "fcn"
-    }
-  }
-  state {
-    id			    77
-    labelString		    "eML_blk_kernel()"
-    position		    [18 64.5 118 66]
-    fontSize		    12
-    chart		    76
-    treeNode		    [76 0 0 0]
-    superState		    SUBCHART
-    subviewer		    76
-    ssIdNumber		    1
-    type		    FUNC_STATE
-    decomposition	    CLUSTER_STATE
-    eml {
-      isEML		      1
-      script		      "function y = fcn(L2, gPos, head, lPos, vel)\n%#eml\n\ny = zeros(52, 1, 'uint8');\ny(1:4) = packUi"
-      "nt32BE(typecast(L2(1),'uint32'));\ny(5:8) = packUint32BE(typecast(L2(2),'uint32'));\ny(9:12) = packUint32BE(type"
-      "cast(L2(3),'uint32'));\ny(13:16) = packUint32BE(typecast(gPos(1),'uint32'));\ny(17:20) = packUint32BE(typecast(g"
-      "Pos(2),'uint32'));\ny(21:24) = packUint32BE(typecast(gPos(3),'uint32'));\ny(25:28) = packUint32BE(typecast(head,"
-      "'uint32'));\ny(29:32) = packUint32BE(typecast(lPos(1),'uint32'));\ny(33:36) = packUint32BE(typecast(lPos(2),'uin"
-      "t32'));\ny(37:40) = packUint32BE(typecast(lPos(3),'uint32'));\ny(41:44) = packUint32BE(typecast(vel(1),'uint32')"
-      ");\ny(45:48) = packUint32BE(typecast(vel(2),'uint32'));\ny(49:52) = packUint32BE(typecast(vel(3),'uint32'));\n\n"
-      "function out = packUint32BE(in)\nout = zeros(4, 1, 'uint8');\nout(1) = uint8(bitand(bitshift(in,-24),hex2dec('FF"
-      "')));\nout(2) = uint8(bitand(bitshift(in,-16),hex2dec('FF')));\nout(3) = uint8(bitand(bitshift(in,-8),hex2dec('F"
-      "F')));\nout(4) = uint8(bitand(in,hex2dec('FF')));"
-      editorLayout	      "100 M4x1[666 201 767 612]"
-    }
-  }
-  junction {
-    id			    78
-    position		    [23.5747 49.5747 7]
-    chart		    76
-    linkNode		    [76 0 0]
-    subviewer		    76
-    ssIdNumber		    3
-    type		    CONNECTIVE_JUNCTION
-  }
-  transition {
-    id			    79
-    labelString		    "{eML_blk_kernel();}"
-    labelPosition	    [32.125 19.875 102.544 14.964]
-    fontSize		    12
-    src {
-      intersection	      [0 0 1 0 23.5747 14.625 0 0]
-    }
-    dst {
-      id		      78
-      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
-    }
-    midPoint		    [23.5747 24.9468]
-    chart		    76
-    linkNode		    [76 0 0]
-    dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    76
-    drawStyle		    SMART
-    executionOrder	    1
-    ssIdNumber		    2
   }
   data {
     id			    80
-    ssIdNumber		    4
-    name		    "L2"
-    linkNode		    [76 0 81]
+    ssIdNumber		    7
+    name		    "c"
+    linkNode		    [73 79 81]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -18329,17 +18362,20 @@ Stateflow {
       type {
 	method			SF_INHERITED_TYPE
 	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
       }
       complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
     }
     dataType		    "Inherit: Same as Simulink"
   }
   data {
     id			    81
-    ssIdNumber		    5
-    name		    "y"
-    linkNode		    [76 80 82]
-    scope		    OUTPUT_DATA
+    ssIdNumber		    8
+    name		    "d"
+    linkNode		    [73 80 82]
+    scope		    INPUT_DATA
     machine		    1
     props {
       array {
@@ -18348,17 +18384,19 @@ Stateflow {
       type {
 	method			SF_INHERITED_TYPE
 	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
       }
       complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_NO
+      frame		      SF_FRAME_INHERITED
     }
     dataType		    "Inherit: Same as Simulink"
   }
   data {
     id			    82
-    ssIdNumber		    6
-    name		    "gPos"
-    linkNode		    [76 81 83]
+    ssIdNumber		    9
+    name		    "e"
+    linkNode		    [73 81 83]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -18378,9 +18416,9 @@ Stateflow {
   }
   data {
     id			    83
-    ssIdNumber		    7
-    name		    "head"
-    linkNode		    [76 82 84]
+    ssIdNumber		    10
+    name		    "f"
+    linkNode		    [73 82 84]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -18400,31 +18438,9 @@ Stateflow {
   }
   data {
     id			    84
-    ssIdNumber		    8
-    name		    "lPos"
-    linkNode		    [76 83 85]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      complexity	      SF_COMPLEX_INHERITED
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    85
-    ssIdNumber		    9
-    name		    "vel"
-    linkNode		    [76 84 0]
+    ssIdNumber		    11
+    name		    "g"
+    linkNode		    [73 83 0]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -18443,61 +18459,70 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   instance {
-    id			    86
-    name		    "Subsystem/Log state data\nto workspace/Pack"
+    id			    85
+    name		    "Subsystem/Log state data\nto workspace/Build HIL\nsentence/Pack"
     machine		    1
-    chart		    76
+    chart		    73
   }
   chart {
-    id			    87
-    name		    "HIL Interface/Parse HIL\ninput/Embedded\nMATLAB Function2"
-    windowPosition	    [367.266 338.766 200.25 189.75]
+    id			    86
+    name		    "Subsystem/Log state data\nto workspace/Pack"
+    windowPosition	    [341.813 269.45 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
-    screen		    [1 1 1600 900 1.333333333333333]
-    treeNode		    [0 88 0 0]
-    firstTransition	    90
-    firstJunction	    89
-    viewObj		    87
+    screen		    [1 1 1680 1050 1.333333333333333]
+    treeNode		    [0 87 0 0]
+    firstTransition	    89
+    firstJunction	    88
+    viewObj		    86
     machine		    1
-    ssIdHighWaterMark	    6
+    ssIdHighWaterMark	    15
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
-    firstData		    91
-    chartFileNumber	    17
+    firstData		    90
+    chartFileNumber	    16
     disableImplicitCasting  1
     eml {
-      name		      "safeDiv"
+      name		      "fcn"
     }
   }
   state {
-    id			    88
+    id			    87
     labelString		    "eML_blk_kernel()"
     position		    [18 64.5 118 66]
     fontSize		    12
-    chart		    87
-    treeNode		    [87 0 0 0]
+    chart		    86
+    treeNode		    [86 0 0 0]
     superState		    SUBCHART
-    subviewer		    87
+    subviewer		    86
     ssIdNumber		    1
     type		    FUNC_STATE
     decomposition	    CLUSTER_STATE
     eml {
       isEML		      1
-      script		      "function y = safeDiv(u1, u2)\n%#eml\n\nif u2 == 0\n    y = u1;\nelse\n    y = u1 / u2;\nend"
-      editorLayout	      "100 M4x1[205 227 1616 876]"
+      script		      "function y = fcn(L2, gPos, head, lPos, vel)\n%#eml\n\ny = zeros(52, 1, 'uint8');\ny(1:4) = packUi"
+      "nt32BE(typecast(L2(1),'uint32'));\ny(5:8) = packUint32BE(typecast(L2(2),'uint32'));\ny(9:12) = packUint32BE(type"
+      "cast(L2(3),'uint32'));\ny(13:16) = packUint32BE(typecast(gPos(1),'uint32'));\ny(17:20) = packUint32BE(typecast(g"
+      "Pos(2),'uint32'));\ny(21:24) = packUint32BE(typecast(gPos(3),'uint32'));\ny(25:28) = packUint32BE(typecast(head,"
+      "'uint32'));\ny(29:32) = packUint32BE(typecast(lPos(1),'uint32'));\ny(33:36) = packUint32BE(typecast(lPos(2),'uin"
+      "t32'));\ny(37:40) = packUint32BE(typecast(lPos(3),'uint32'));\ny(41:44) = packUint32BE(typecast(vel(1),'uint32')"
+      ");\ny(45:48) = packUint32BE(typecast(vel(2),'uint32'));\ny(49:52) = packUint32BE(typecast(vel(3),'uint32'));\n\n"
+      "function out = packUint32BE(in)\nout = zeros(4, 1, 'uint8');\nout(1) = uint8(bitand(bitshift(in,-24),hex2dec('FF"
+      "')));\nout(2) = uint8(bitand(bitshift(in,-16),hex2dec('FF')));\nout(3) = uint8(bitand(bitshift(in,-8),hex2dec('F"
+      "F')));\nout(4) = uint8(bitand(in,hex2dec('FF')));"
+      editorLayout	      "100 M4x1[666 201 767 612]"
     }
   }
   junction {
-    id			    89
+    id			    88
     position		    [23.5747 49.5747 7]
-    chart		    87
-    linkNode		    [87 0 0]
-    subviewer		    87
+    chart		    86
+    linkNode		    [86 0 0]
+    subviewer		    86
     ssIdNumber		    3
     type		    CONNECTIVE_JUNCTION
   }
   transition {
-    id			    90
+    id			    89
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -18505,23 +18530,23 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      89
+      id		      88
       intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
-    chart		    87
-    linkNode		    [87 0 0]
+    chart		    86
+    linkNode		    [86 0 0]
     dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    87
+    subviewer		    86
     drawStyle		    SMART
     executionOrder	    1
     ssIdNumber		    2
   }
   data {
-    id			    91
+    id			    90
     ssIdNumber		    4
-    name		    "u1"
-    linkNode		    [87 0 92]
+    name		    "L2"
+    linkNode		    [86 0 91]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -18537,10 +18562,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    92
+    id			    91
     ssIdNumber		    5
     name		    "y"
-    linkNode		    [87 91 93]
+    linkNode		    [86 90 92]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -18557,10 +18582,76 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    93
+    id			    92
     ssIdNumber		    6
-    name		    "u2"
-    linkNode		    [87 92 0]
+    name		    "gPos"
+    linkNode		    [86 91 93]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    93
+    ssIdNumber		    7
+    name		    "head"
+    linkNode		    [86 92 94]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    94
+    ssIdNumber		    8
+    name		    "lPos"
+    linkNode		    [86 93 95]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    95
+    ssIdNumber		    9
+    name		    "vel"
+    linkNode		    [86 94 0]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -18579,22 +18670,158 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   instance {
-    id			    94
+    id			    96
+    name		    "Subsystem/Log state data\nto workspace/Pack"
+    machine		    1
+    chart		    86
+  }
+  chart {
+    id			    97
+    name		    "HIL Interface/Parse HIL\ninput/Embedded\nMATLAB Function2"
+    windowPosition	    [367.266 338.766 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1600 900 1.333333333333333]
+    treeNode		    [0 98 0 0]
+    firstTransition	    100
+    firstJunction	    99
+    viewObj		    97
+    machine		    1
+    ssIdHighWaterMark	    6
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    101
+    chartFileNumber	    17
+    disableImplicitCasting  1
+    eml {
+      name		      "safeDiv"
+    }
+  }
+  state {
+    id			    98
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    97
+    treeNode		    [97 0 0 0]
+    superState		    SUBCHART
+    subviewer		    97
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function y = safeDiv(u1, u2)\n%#eml\n\nif u2 == 0\n    y = u1;\nelse\n    y = u1 / u2;\nend"
+      editorLayout	      "100 M4x1[205 227 1616 876]"
+    }
+  }
+  junction {
+    id			    99
+    position		    [23.5747 49.5747 7]
+    chart		    97
+    linkNode		    [97 0 0]
+    subviewer		    97
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    100
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      99
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    97
+    linkNode		    [97 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    97
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    101
+    ssIdNumber		    4
+    name		    "u1"
+    linkNode		    [97 0 102]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    102
+    ssIdNumber		    5
+    name		    "y"
+    linkNode		    [97 101 103]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    103
+    ssIdNumber		    6
+    name		    "u2"
+    linkNode		    [97 102 0]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  instance {
+    id			    104
     name		    "HIL Interface/Parse HIL\ninput/Embedded\nMATLAB Function2"
     machine		    1
-    chart		    87
+    chart		    97
   }
   target {
-    id			    95
+    id			    105
     name		    "sfun"
     codeFlags		    ""
     machine		    1
-    linkNode		    [1 0 96]
+    linkNode		    [1 0 106]
   }
   target {
-    id			    96
+    id			    106
     name		    "rtw"
     machine		    1
-    linkNode		    [1 95 0]
+    linkNode		    [1 105 0]
   }
 }

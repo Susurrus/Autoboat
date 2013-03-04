@@ -25,6 +25,12 @@ gpsOrigin.DocUnits = '1e-7deg,1e-7deg,1e-6m';
 gpsOrigin.RTWInfo.StorageClass = 'ExportedGlobal';
 gpsOrigin.RTWInfo.Alias = 'gpsOrigin';
 
+% Set a GPS rate limit of ~.1km per timestep. Used by limit_gps_rate() in
+% the autonomous controller.
+% http://www.offroaders.com/info/tech-corner/reading/GPS-Coordinates.htm
+% for details.
+gps_leap_rate_limit = int32(0.001 * 1e7);
+
 % Precompute some values for LLA -> LTP conversion
 a = 6378137; % Earth semi-major axis in WGS84.
 e2 = 0.00669437999014;
