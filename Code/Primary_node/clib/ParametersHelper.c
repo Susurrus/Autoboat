@@ -31,9 +31,10 @@ void setAutoMode(uint8_t newMode)
 static const Parameter params[] = {
     {"ModeAuto", NULL, (void(*)())setAutoMode, (void(*)())getAutoMode, PARAMETERS_DATATYPE_UINT8},
     {"Wheelbase", &wheelbase, NULL, NULL, PARAMETERS_DATATYPE_REAL32},
-    {"GpsOrigin_Lat", &gpsOrigin[0], NULL, NULL, PARAMETERS_DATATYPE_INT32},
-    {"GpsOrigin_Lon", &gpsOrigin[1], NULL, NULL, PARAMETERS_DATATYPE_INT32},
-    {"GpsOrigin_Alt", &gpsOrigin[2], NULL, NULL, PARAMETERS_DATATYPE_INT32},
+    {"Gps_SlewLimit", &gps_leap_rate_limit, NULL, NULL, PARAMETERS_DATATYPE_INT32},
+    {"Gps_OriginLat", &gpsOrigin[0], NULL, NULL, PARAMETERS_DATATYPE_INT32},
+    {"Gps_OriginLon", &gpsOrigin[1], NULL, NULL, PARAMETERS_DATATYPE_INT32},
+    {"Gps_OriginAlt", &gpsOrigin[2], NULL, NULL, PARAMETERS_DATATYPE_INT32},
     {"L2+_T*", &tStar, NULL, NULL, PARAMETERS_DATATYPE_REAL32},
     {"L2+_IP*", &ipStar, NULL, NULL, PARAMETERS_DATATYPE_REAL32},
     {"L2+_InitPoint", &initialPoint, NULL, NULL, PARAMETERS_DATATYPE_UINT8},
