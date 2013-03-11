@@ -4,7 +4,7 @@
 % Distance from mid-keel to mid-rudder (m)
 wheelbase = Simulink.Parameter;
 wheelbase.Description = 'A gain on how quickly the boat turns. Part of the inverted bicycle model.';
-wheelbase.Value = 3.27;
+wheelbase.Value = 5.95;
 wheelbase.DataType = 'single';
 wheelbase.DocUnits = 'm';
 wheelbase.RTWInfo.StorageClass = 'ExportedGlobal';
