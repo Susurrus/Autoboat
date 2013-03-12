@@ -126,7 +126,7 @@ struct {
 } mavlinkManualControlData;
 
 // Set up the message scheduler for MAVLink transmission
-#define MAVLINK_MSGS_SIZE 22
+#define MAVLINK_MSGS_SIZE 23
 uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_HEARTBEAT,
 	MAVLINK_MSG_ID_SYS_STATUS,
@@ -143,6 +143,7 @@ uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_MAIN_POWER,
 	MAVLINK_MSG_ID_GPS200,
 	MAVLINK_MSG_ID_NODE_STATUS,
+	MAVLINK_MSG_ID_WAYPOINT_STATUS,
 	
 	// Only used for transient messages
 	MAVLINK_MSG_ID_MISSION_CURRENT,
@@ -176,7 +177,7 @@ void MavLinkInit(void)
 		mavlinkSchedule.MessageSizes[i] = mavMessageSizes[ids[i]];
 	}
 	
-	const uint8_t const periodicities[] = {2, 2, 1, 10, 10, 5, 4, 2, 10, 4, 2, 2, 5, 1, 1};
+	const uint8_t const periodicities[] = {2, 2, 1, 10, 10, 5, 4, 2, 10, 4, 2, 2, 5, 1, 1, 1};
 	for (i = 0; i < sizeof(periodicities); ++i) {
 		if (!AddMessageRepeating(&mavlinkSchedule, ids[i], periodicities[i])) {
 			FATAL_ERROR();
@@ -689,6 +690,30 @@ void MavLinkSendNodeStatusData(void)
 	Uart1WriteData(buf, (uint8_t)len);
 }
 
+void MavLinkSendWaypointStatusData(void)
+{
+	mavlink_message_t msg;
+	int8_t missionIndex;
+	Mission cMission = {}, nMission;
+	boolean_T wasFound; // Using stupid Simulink datatypes to avoid errors
+	GetCurrentMission(&missionIndex);
+	GetMission(missionIndex, &nMission, &wasFound);
+	if (!wasFound) {
+		return; // Error out if we couldn't successfully fetch a mission.
+	}
+	// Fetch either the first waypoint or the starting point depending on what the next waypoint is.
+	if (missionIndex > 0) {
+		GetMission(missionIndex - 1, &cMission, &wasFound);
+	} else {
+		GetStartingPoint(&cMission);
+	}
+	mavlink_msg_waypoint_status_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+	                                 cMission.coordinates[0], cMission.coordinates[1], cMission.otherCoordinates[0], cMission.otherCoordinates[1],
+									 nMission.coordinates[0], nMission.coordinates[1], nMission.otherCoordinates[0], nMission.otherCoordinates[1]);
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	Uart1WriteData(buf, (uint8_t)len);
+}
+
 void MavLinkReceiveCommandLong(const mavlink_command_long_t *msg)
 {
 	if (msg->target_system == mavlink_system.sysid) {
@@ -847,6 +872,25 @@ void MavLinkEvaluateParameterState(enum PARAM_EVENT event, const void *data)
 }
 
 /**
+ * Set the starting point for the mission manager to the boat's current location.
+ */
+void SetStartingPointToCurrentLocation(void)
+{
+	// Update the starting point for the track to be the current vehicle position.
+	// We tack on GPS coordinates if we have some.
+	Mission newStartPoint = {};
+	newStartPoint.coordinates[0] = internalVariables.LocalPosition[0];
+	newStartPoint.coordinates[1] = internalVariables.LocalPosition[1];
+	newStartPoint.coordinates[2] = internalVariables.LocalPosition[2];
+	if (gpsDataStore.mode == 1 || gpsDataStore.mode == 2) {
+		newStartPoint.otherCoordinates[0] = gpsDataStore.lat;
+		newStartPoint.otherCoordinates[1] = gpsDataStore.lon;
+		newStartPoint.otherCoordinates[2] = gpsDataStore.alt;
+	}
+	SetStartingPoint(&newStartPoint);
+}
+
+/**
  * This function implements the mission protocol state machine for the MAVLink protocol.
  * events can be passed as the first argument, or NO_EVENT if desired. data is a pointer
  * to data if there is any to be passed to the state logic. data is not guaranteed to persist
@@ -904,9 +948,19 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 					}
 					// Otherwise we're set to start retrieving a new mission list so we request the first mission.
 					else {
+						// Update the size of the mission list to the new list size.
 						mavlinkNewMissionListSize = newListSize;
+
+						// Clear all the old waypoints.
 						ClearMissionList();
+
+						// Update the starting point to the vehicle's current location
+						SetStartingPointToCurrentLocation();
+
+						// And wait for info on the first mission.
 						currentMissionIndex = 0;
+
+						// And finally trigger the proper response.
 						if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_REQUEST)) {
 							FATAL_ERROR();
 						}
@@ -923,7 +977,13 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 				}
 				// But if we're in manual mode, go ahead and clear everything.
 				else {
+					// Clear the old list
 					ClearMissionList();
+
+					// Update the starting point to the vehicle's current location
+					SetStartingPointToCurrentLocation();
+
+					// And then schedule our acknowledgement.
 					if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_ACK)) {
 						FATAL_ERROR();
 					}
@@ -1343,6 +1403,10 @@ void MavLinkTransmit(void)
 
 			case MAVLINK_MSG_ID_NODE_STATUS: {
 				MavLinkSendNodeStatusData();
+			} break;
+
+			case MAVLINK_MSG_ID_WAYPOINT_STATUS: {
+				MavLinkSendWaypointStatusData();
 			} break;
 
 			case MAVLINK_MSG_ID_WSO100: {
