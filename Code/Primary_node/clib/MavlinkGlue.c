@@ -708,8 +708,8 @@ void MavLinkSendWaypointStatusData(void)
 		GetStartingPoint(&cMission);
 	}
 	mavlink_msg_waypoint_status_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-	                                 cMission.coordinates[0], cMission.coordinates[1], cMission.otherCoordinates[0], cMission.otherCoordinates[1],
-									 nMission.coordinates[0], nMission.coordinates[1], nMission.otherCoordinates[0], nMission.otherCoordinates[1]);
+	                                 cMission.otherCoordinates[0], cMission.otherCoordinates[1], cMission.coordinates[0], cMission.coordinates[1],
+									 nMission.otherCoordinates[0], nMission.otherCoordinates[1], nMission.coordinates[0], nMission.coordinates[1]);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	Uart1WriteData(buf, (uint8_t)len);
 }
