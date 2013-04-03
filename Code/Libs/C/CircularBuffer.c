@@ -215,7 +215,7 @@ int CB_PeekMany (const CircularBuffer *b, void *outData, uint16_t size)
 
 int CB_Remove(CircularBuffer *b, uint16_t size){
 	// If there are more elements in the buffer.
-	if (b->dataSize >= size) {
+	if (b->dataSize > size) {
 		// Checks to see if the buffer will wrap around.
 		if ((b->staticSize - b->readIndex) < size) {
 			b-> readIndex = size - (b->staticSize - b->readIndex);
@@ -817,6 +817,105 @@ int main()
 		CB_PeekMany(&c, (uint8_t*)&peekTest, sizeof(TestStruct));
 		assert(TestStructEqual(&t1, &peekTest));
 	}
+        {
+            // Test writing and reading from the circular buffer. Showed a failure mode of the CircularBuffer with regards to its read index.
+            CircularBuffer circBuf;
+            unsigned char data[20];
+            unsigned char testIn[20] = "Hey There This Test";
+            unsigned char testOut[20];
+
+            // Initialize the circular buffer
+            assert(CB_Init(&circBuf, data, 20));
+            assert(circBuf.readIndex == circBuf.writeIndex);
+            assert(circBuf.readIndex == 0);
+            assert(circBuf.writeIndex == 0);
+
+            // Write and read to the buffer multiple times
+            CB_WriteMany(&circBuf, testIn, 20, true);
+            assert(circBuf.readIndex == circBuf.writeIndex);
+            assert(circBuf.readIndex == 0);
+            assert(circBuf.writeIndex == 0);
+
+            CB_PeekMany(&circBuf, testOut, 20);
+            assert(circBuf.readIndex == circBuf.writeIndex);
+            assert(circBuf.readIndex == 0);
+            assert(circBuf.writeIndex == 0);
+
+            CB_Remove(&circBuf, 20);
+            assert(circBuf.readIndex == circBuf.writeIndex);
+            assert(circBuf.readIndex == 0);
+            assert(circBuf.writeIndex == 0);
+
+            assert(!memcmp(testIn, testOut, 20));
+
+            
+            CB_WriteMany(&circBuf, testIn, 20, true);
+            assert(circBuf.readIndex == circBuf.writeIndex);
+            assert(circBuf.readIndex == 0);
+            assert(circBuf.writeIndex == 0);
+
+            CB_PeekMany(&circBuf, testOut, 20);
+            assert(circBuf.readIndex == circBuf.writeIndex);
+            assert(circBuf.readIndex == 0);
+            assert(circBuf.writeIndex == 0);
+
+            CB_Remove(&circBuf, 20);
+            assert(circBuf.readIndex == circBuf.writeIndex);
+            assert(circBuf.readIndex == 0);
+            assert(circBuf.writeIndex == 0);
+
+            assert(!memcmp(testIn, testOut, 20));
+
+            //Test uneven data
+            CB_WriteMany(&circBuf, testIn, 7, true);
+            assert(circBuf.readIndex == 0);
+            assert(circBuf.writeIndex == 7);
+
+            CB_PeekMany(&circBuf, testOut, 7);
+            assert(circBuf.readIndex == 0);
+            assert(circBuf.writeIndex == 7);
+
+            CB_Remove(&circBuf, 7);
+            assert(circBuf.readIndex == circBuf.writeIndex);
+            assert(circBuf.readIndex == 7);
+            assert(circBuf.writeIndex == 7);
+
+            //Test the full data again
+            CB_WriteMany(&circBuf, testIn, 20, true);
+            assert(circBuf.readIndex == circBuf.writeIndex);
+            assert(circBuf.readIndex == 7);
+            assert(circBuf.writeIndex == 7);
+
+            CB_PeekMany(&circBuf, testOut, 20);
+            assert(circBuf.readIndex == circBuf.writeIndex);
+            assert(circBuf.readIndex == 7);
+            assert(circBuf.writeIndex == 7);
+
+            CB_Remove(&circBuf, 20);
+            assert(circBuf.readIndex == circBuf.writeIndex);
+            assert(circBuf.readIndex == 7);
+            assert(circBuf.writeIndex == 7);
+
+            assert(!memcmp(testIn, testOut, 20));
+
+
+            CB_WriteMany(&circBuf, testIn, 20, true);
+            assert(circBuf.readIndex == circBuf.writeIndex);
+            assert(circBuf.readIndex == 7);
+            assert(circBuf.writeIndex == 7);
+
+            CB_PeekMany(&circBuf, testOut, 20);
+            assert(circBuf.readIndex == circBuf.writeIndex);
+            assert(circBuf.readIndex == 7);
+            assert(circBuf.writeIndex == 7);
+
+            CB_Remove(&circBuf, 20);
+            assert(circBuf.readIndex == circBuf.writeIndex);
+            assert(circBuf.readIndex == 7);
+            assert(circBuf.writeIndex == 7);
+
+            assert(!memcmp(testIn, testOut, 20));
+        }
 
 	printf("All tests passed.\n");
 
