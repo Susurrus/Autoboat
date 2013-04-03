@@ -26,7 +26,7 @@
  * has been written for use with the dsPIC33f, but has been tested on x86.
  *
  * Unit testing has been completed on x86 by compiling with the UNIT_TEST_CIRCULAR_BUFFER macro.
- * With gcc: `gcc CircularBuffer.c -DUNIT_TEST_CIRCULAR_BUFFER -Wall`
+ * With gcc: `gcc CircularBuffer.c -DUNIT_TEST_CIRCULAR_BUFFER -Wall -g`
  */
 #include "CircularBuffer.h"
 
@@ -273,7 +273,7 @@ int TestStructEqual(const TestStruct *a, const TestStruct *b)
  *
  * To run (assuming all files in the same directory and that's your current directory):
  * ```
- * $ gcc CircularBuffer.c -DUNIT_TEST_CIRCULAR_BUFFER
+ * $ gcc CircularBuffer.c -DUNIT_TEST_CIRCULAR_BUFFER -Wall -g
  * $ a.out
  * Running unit tests.
  * All tests passed.
