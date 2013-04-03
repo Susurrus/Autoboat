@@ -123,11 +123,7 @@ int CB_WriteByte(CircularBuffer *b, uint8_t inData)
 		} else {
 			b->data[b->writeIndex] = inData;
 			// Now update the writeIndex taking into account wrap-around.
-			if (b->dataSize) {
-				b->writeIndex = b->writeIndex < (b->staticSize - 1) ? b->writeIndex + 1: 0;
-			} else {
-				b->writeIndex = b->writeIndex < (b->staticSize - 1) ? b->writeIndex + 1: 0;
-			}
+			b->writeIndex = b->writeIndex < (b->staticSize - 1) ? b->writeIndex + 1: 0;
 			++b->dataSize;
 			return true;
 		}
