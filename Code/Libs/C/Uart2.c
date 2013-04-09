@@ -3,9 +3,9 @@
 #include <xc.h>
 
 static CircularBuffer uart2RxBuffer;
-static uint8_t u2RxBuf[64];
+static uint8_t u2RxBuf[1024];
 static CircularBuffer uart2TxBuffer;
-static uint8_t u2TxBuf[64];
+static uint8_t u2TxBuf[1024];
 
 /*
  * Private functions.
