@@ -191,7 +191,9 @@ void MavLinkReceiveCommandLong(const mavlink_command_long_t *msg);
 
 /**
  * Receives a manual control message from QGC and stores the commands from it for use 
- * with the Simulink controller.
+ * with the Simulink controller. The X data and buttons data is stored unmodified. The Y data
+ * controls the throttle, but it is only updated if the trigger (button 0) is depressed when it's
+ * received. Other buttons presses are also handled within this function.
  */
 void MavLinkReceiveManualControl(const mavlink_manual_control_t *msg);
 

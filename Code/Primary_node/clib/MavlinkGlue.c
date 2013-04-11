@@ -107,17 +107,17 @@ uint16_t mavLinkMessagesReceived = 0;
 uint16_t mavLinkMessagesFailedParsing = 0;
 
 // Define a timeout (in units of main timesteps of MavlinkReceive())
-#define MISSION_REQUEST_TIMEOUT 100
+#define MISSION_REQUEST_TIMEOUT 10000
 
 // Specify how long between transmitting parameters in a parameter transmission stream.
-#define INTRA_PARAM_DELAY 10
+#define INTRA_PARAM_DELAY 50
 
 // Track manual control data transmit via MAVLink
 struct {
 	union {
 		struct {
-			int16_t X;
-			int16_t Z;
+			int16_t Rudder;
+			int16_t Throttle;
 			uint16_t Buttons; 
 			bool NewData;
 		} unpackedData;
@@ -744,8 +744,15 @@ void MavLinkReceiveManualControl(const mavlink_manual_control_t *msg)
 {
     static uint16_t lastButtons = 0;
 	if (msg->target == mavlink_system.sysid) {
-		mavlinkManualControlData.unpackedData.X = msg->x;
-		mavlinkManualControlData.unpackedData.Z = msg->z;
+		// Record the rudder angle
+		mavlinkManualControlData.unpackedData.Rudder = msg->x;
+
+		// If the trigger has been pulled was part of this data packet, update the throttle value.
+		if (msg->buttons & 0x01) {
+			mavlinkManualControlData.unpackedData.Throttle = msg->y;
+		}
+
+		// Record the buttons that are pressed
 		mavlinkManualControlData.unpackedData.Buttons = msg->buttons;
 
         // Here we process the buttons and update the relevant variables
@@ -759,6 +766,8 @@ void MavLinkReceiveManualControl(const mavlink_manual_control_t *msg)
             RudderStartCalibration();
         }
 
+		// Keep track of what buttons are currently pressed so that up- and down-events can be
+		// tracked.
         lastButtons = msg->buttons;
 
 		mavlinkManualControlData.unpackedData.NewData = true;
