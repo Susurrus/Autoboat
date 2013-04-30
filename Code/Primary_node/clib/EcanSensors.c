@@ -10,15 +10,15 @@
 #include "Acs300.h"
 #include "Packing.h"
 
-struct PowerData powerDataStore = {};
-struct WindData windDataStore = {};
-struct AirData airDataStore = {};
-struct WaterData waterDataStore = {};
-struct ThrottleData throttleDataStore = {};
-struct GpsData gpsDataStore = {};
-struct GpsDataBundle gpsNewDataStore = {};
-struct DateTimeData dateTimeDataStore = {};
-struct RevoGsData revoGsDataStore = {};
+struct PowerData powerDataStore = {0};
+struct WindData windDataStore = {0};
+struct AirData airDataStore = {0};
+struct WaterData waterDataStore = {0};
+struct ThrottleData throttleDataStore = {0};
+struct GpsData gpsDataStore = {0};
+struct GpsDataBundle gpsNewDataStore = {0};
+struct DateTimeData dateTimeDataStore = {0};
+struct RevoGsData revoGsDataStore = {0};
 struct NodeStatusData nodeStatusDataStore[6] = {
 	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
 	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
@@ -28,7 +28,7 @@ struct NodeStatusData nodeStatusDataStore[6] = {
 	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF}
 };
 
-struct stc sensorAvailability = {};
+struct stc sensorAvailability = {0};
 
 void GetWindDataPacked(uint8_t *data)
 {
