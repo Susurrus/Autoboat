@@ -20,7 +20,7 @@ void CanMessagePackageStatus(CanMessage *msg, uint8_t nodeId, uint8_t cpuLoad, i
 	msg->payload[1] = cpuLoad;
 	// The onboard temp sensor readings. Units are in degrees celsius
 	msg->payload[2] = temp;
-	// The status bitfield
+	// The node input voltage
 	msg->payload[3] = voltage;
 	// The status bitfield
 	LEPackUint16(&msg->payload[4], status);
