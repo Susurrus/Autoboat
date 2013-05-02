@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2378"
+    ComputedModelVersion    "1.2379"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -29,9 +29,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Apr 29 17:02:00 2013"
-  RTWModifiedTimeStamp	  289155551
-  ModelVersionFormat	  "1.%<AutoIncrement:2378>"
+  LastModifiedDate	  "Thu May 02 10:11:54 2013"
+  RTWModifiedTimeStamp	  289390311
+  ModelVersionFormat	  "1.%<AutoIncrement:2379>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -1135,7 +1135,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "22937"
+    SIDHighWatermark	    "22938"
     Block {
       BlockType		      SubSystem
       Name		      "Actuator\nOutputs"
@@ -1763,7 +1763,7 @@ Model {
       System {
 	Name			"Manual Control"
 	Location		[223, 82, 1902, 1027]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	221
 	ScreenColor		"white"
@@ -1843,7 +1843,7 @@ Model {
 	  SID			  "14991"
 	  Tag			  "dsPIC_Digital_Output"
 	  Ports			  [1]
-	  Position		  [385, 375, 500, 415]
+	  Position		  [380, 380, 495, 420]
 	  Priority		  "5"
 	  LibraryVersion	  "3.84"
 	  SourceBlock		  "dsPICdrivers/Digital I//O/Digital Output Write"
@@ -1947,7 +1947,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From1"
 	  SID			  "22896"
-	  Position		  [60, 390, 170, 410]
+	  Position		  [55, 395, 165, 415]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "manualCalState"
@@ -2003,7 +2003,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From5"
 	  SID			  "22392"
-	  Position		  [60, 295, 170, 315]
+	  Position		  [55, 360, 165, 380]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "manualDiscon"
@@ -8694,7 +8694,7 @@ Model {
 	  Name			  "State outputs"
 	  SID			  "21832"
 	  Ports			  [2, 1]
-	  Position		  [255, 377, 335, 408]
+	  Position		  [250, 382, 330, 413]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -9437,10 +9437,10 @@ Model {
 	}
 	Block {
 	  BlockType		  SubSystem
-	  Name			  "Toggle RC\ndisconnected mode"
+	  Name			  "Toggle manual\ncontrol mode"
 	  SID			  "20131"
 	  Ports			  [1]
-	  Position		  [260, 290, 330, 320]
+	  Position		  [265, 149, 335, 181]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -9449,7 +9449,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
 	  System {
-	    Name		    "Toggle RC\ndisconnected mode"
+	    Name		    "Toggle manual\ncontrol mode"
 	    Location		    [539, 604, 1509, 977]
 	    Open		    off
 	    ModelBrowserVisibility  on
@@ -9465,8 +9465,8 @@ Model {
 	    ZoomFactor		    "100"
 	    Block {
 	      BlockType		      Inport
-	      Name		      "discon"
-	      SID		      "20132"
+	      Name		      "autoMode"
+	      SID		      "22938"
 	      Position		      [15, 188, 45, 202]
 	      BackgroundColor	      "darkGreen"
 	      IconDisplay	      "Port number"
@@ -9724,7 +9724,7 @@ Model {
 	      }
 	    }
 	    Line {
-	      SrcBlock		      "discon"
+	      SrcBlock		      "autoMode"
 	      SrcPort		      1
 	      Points		      [40, 0]
 	      Branch {
@@ -9865,22 +9865,23 @@ Model {
 	Line {
 	  SrcBlock		  "From3"
 	  SrcPort		  1
-	  DstBlock		  "Data Type Conversion2"
-	  DstPort		  1
+	  Points		  [15, 0]
+	  Branch {
+	    DstBlock		    "Data Type Conversion2"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, -65]
+	    DstBlock		    "Toggle manual\ncontrol mode"
+	    DstPort		    1
+	  }
 	}
 	Line {
 	  SrcBlock		  "From5"
 	  SrcPort		  1
-	  Points		  [45, 0]
-	  Branch {
-	    DstBlock		    "Toggle RC\ndisconnected mode"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, 80]
-	    DstBlock		    "State outputs"
-	    DstPort		    1
-	  }
+	  Points		  [45, 0; 0, 20]
+	  DstBlock		  "State outputs"
+	  DstPort		  1
 	}
 	Line {
 	  Labels		  [0, 0]
@@ -9946,16 +9947,16 @@ Model {
 	}
 	Annotation {
 	  Name			  "boolean true or false"
-	  Position		  [110, 284]
+	  Position		  [105, 349]
 	}
 	Annotation {
 	  Name			  "0 => uncalibrated,\n1 => transitioning to calibration,\n2 => calibrating,\n3 => calibrated"
-	  Position		  [64, 447]
+	  Position		  [59, 452]
 	  HorizontalAlignment	  "left"
 	}
 	Annotation {
 	  Name			  "Calibration mode\n(Used to be LED D6)"
-	  Position		  [445, 354]
+	  Position		  [440, 359]
 	}
       }
     }
