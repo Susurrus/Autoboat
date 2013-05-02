@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2379"
+    ComputedModelVersion    "1.2380"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -29,9 +29,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu May 02 10:11:54 2013"
+  LastModifiedDate	  "Thu May 02 11:44:31 2013"
   RTWModifiedTimeStamp	  289390311
-  ModelVersionFormat	  "1.%<AutoIncrement:2379>"
+  ModelVersionFormat	  "1.%<AutoIncrement:2380>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -677,7 +677,7 @@ Model {
 		Name			"OPTIM_GCC"
 		Value			"-mcpu=33fj128MC802 -O3 -fschedule-insns -fschedule-insns2                                                  "
 		"                                                                                                                    "
-		"                      -fno-short-double"
+		"                          -fno-short-double"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -1135,7 +1135,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "22938"
+    SIDHighWatermark	    "22940"
     Block {
       BlockType		      SubSystem
       Name		      "Actuator\nOutputs"
@@ -1763,7 +1763,7 @@ Model {
       System {
 	Name			"Manual Control"
 	Location		[223, 82, 1902, 1027]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	221
 	ScreenColor		"white"
@@ -9439,8 +9439,8 @@ Model {
 	  BlockType		  SubSystem
 	  Name			  "Toggle manual\ncontrol mode"
 	  SID			  "20131"
-	  Ports			  [1]
-	  Position		  [265, 149, 335, 181]
+	  Ports			  [2]
+	  Position		  [265, 281, 335, 314]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -9450,7 +9450,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Toggle manual\ncontrol mode"
-	    Location		    [539, 604, 1509, 977]
+	    Location		    [281, 507, 1251, 880]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -9472,6 +9472,15 @@ Model {
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
+	      BlockType		      Inport
+	      Name		      "discon"
+	      SID		      "22939"
+	      Position		      [15, 233, 45, 247]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
 	      BlockType		      Reference
 	      Name		      "Detect\nChange"
 	      SID		      "20167"
@@ -9487,21 +9496,36 @@ Model {
 	      OutDataTypeStr	      "boolean"
 	    }
 	    Block {
+	      BlockType		      Reference
+	      Name		      "Detect\nChange1"
+	      SID		      "22940"
+	      Ports		      [1, 1]
+	      Position		      [105, 216, 165, 234]
+	      ZOrder		      -7
+	      ShowName		      off
+	      LibraryVersion	      "1.256"
+	      SourceBlock	      "simulink/Logic and Bit\nOperations/Detect\nChange"
+	      SourceType	      "Detect Change"
+	      vinit		      "0"
+	      InputProcessing	      "Inherited"
+	      OutDataTypeStr	      "boolean"
+	    }
+	    Block {
 	      BlockType		      If
 	      Name		      "If"
 	      SID		      "20156"
-	      Ports		      [2, 2]
-	      Position		      [215, 189, 300, 216]
+	      Ports		      [4, 2]
+	      Position		      [220, 183, 375, 252]
 	      ZOrder		      -15
 	      ShowName		      off
-	      NumInputs		      "2"
-	      IfExpression	      "u1 & u2"
-	      ElseIfExpressions	      "u1 & ~u2"
+	      NumInputs		      "4"
+	      IfExpression	      "(u1 | u3) & (u2 | u4)"
+	      ElseIfExpressions	      "(u1 | u3) & (~u2 & ~u4)"
 	      ShowElse		      off
 	    }
 	    Block {
 	      BlockType		      SubSystem
-	      Name		      "RC transmitter is connected, so\nmanual control is enabled."
+	      Name		      "RC transmitter is connected and\nthe manual switch is engaged,\nso manual control is enabled."
 	      SID		      "20168"
 	      Ports		      [0, 0, 0, 0, 0, 0, 0, 1]
 	      Position		      [410, 232, 480, 268]
@@ -9515,7 +9539,7 @@ Model {
 	      RequestExecContextInheritance off
 	      MaskHideContents	      off
 	      System {
-		Name			"RC transmitter is connected, so\nmanual control is enabled."
+		Name			"RC transmitter is connected and\nthe manual switch is engaged,\nso manual control is enabled."
 		Location		[965, 541, 1463, 841]
 		Open			off
 		ModelBrowserVisibility	on
@@ -9728,19 +9752,19 @@ Model {
 	      SrcPort		      1
 	      Points		      [40, 0]
 	      Branch {
-		DstBlock		"Detect\nChange"
-		DstPort			1
-	      }
-	      Branch {
 		Points			[0, 15]
 		DstBlock		"If"
 		DstPort			2
+	      }
+	      Branch {
+		DstBlock		"Detect\nChange"
+		DstPort			1
 	      }
 	    }
 	    Line {
 	      SrcBlock		      "If"
 	      SrcPort		      1
-	      Points		      [140, 0]
+	      Points		      [65, 0]
 	      DstBlock		      "RC transmitter is disconnected,\ntherefore manual control is disabled."
 	      DstPort		      ifaction
 	    }
@@ -9753,9 +9777,28 @@ Model {
 	    Line {
 	      SrcBlock		      "If"
 	      SrcPort		      2
-	      Points		      [140, 0]
-	      DstBlock		      "RC transmitter is connected, so\nmanual control is enabled."
+	      Points		      [65, 0]
+	      DstBlock		      "RC transmitter is connected and\nthe manual switch is engaged,\nso manual control is enabled."
 	      DstPort		      ifaction
+	    }
+	    Line {
+	      SrcBlock		      "Detect\nChange1"
+	      SrcPort		      1
+	      DstBlock		      "If"
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "discon"
+	      SrcPort		      1
+	      Points		      [40, 0]
+	      Branch {
+		DstBlock		"Detect\nChange1"
+		DstPort			1
+	      }
+	      Branch {
+		DstBlock		"If"
+		DstPort			4
+	      }
 	    }
 	    Annotation {
 	      Name		      "This block implements event checking on the manual control disconnected line.\nWhenever it changes"
@@ -9871,7 +9914,7 @@ Model {
 	    DstPort		    1
 	  }
 	  Branch {
-	    Points		    [0, -65]
+	    Points		    [0, 60]
 	    DstBlock		    "Toggle manual\ncontrol mode"
 	    DstPort		    1
 	  }
@@ -9879,9 +9922,17 @@ Model {
 	Line {
 	  SrcBlock		  "From5"
 	  SrcPort		  1
-	  Points		  [45, 0; 0, 20]
-	  DstBlock		  "State outputs"
-	  DstPort		  1
+	  Points		  [45, 0]
+	  Branch {
+	    Points		    [0, 20]
+	    DstBlock		    "State outputs"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, -65]
+	    DstBlock		    "Toggle manual\ncontrol mode"
+	    DstPort		    2
+	  }
 	}
 	Line {
 	  Labels		  [0, 0]
