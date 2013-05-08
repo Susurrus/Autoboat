@@ -204,6 +204,11 @@ void MatlabGetMavLinkManualControl(uint8_t *data);
 void MavLinkEvaluateParameterState(enum PARAM_EVENT event, const void *data);
 
 /**
+ * Set the starting point for the mission manager to the boat's current location.
+ */
+void SetStartingPointToCurrentLocation(void);
+
+/**
  * This function implements the mission protocol state machine for the MAVLink protocol.
  * events can be passed as the first argument, or NO_EVENT if desired. data is a pointer
  * to data if there is any to be passed to the state logic. data is not guaranteed to persist

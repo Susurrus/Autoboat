@@ -26,6 +26,7 @@
 #include "PrimaryNode.h"
 #include "Parameters.h"
 #include "DataStore.h"
+#include "ParametersHelper.h"
 
 #include <stdio.h>
 
@@ -758,7 +759,7 @@ void MavLinkReceiveManualControl(const mavlink_manual_control_t *msg)
         // Here we process the buttons and update the relevant variables
         // If we detect a rise in the autoMode button press, toggle it.
         if (!(lastButtons & 0x2) && (msg->buttons & 0x2)) {
-            nodeStatus ^= PRIMARY_NODE_STATUS_AUTOMODE;
+            ToggleAutoMode();
         }
 
         // If the rudder calibration button has been pressed, send that command.
@@ -1189,8 +1190,8 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 */
 void MavLinkReceive(void)
 {
-	mavlink_message_t msg;
-	mavlink_status_t status;
+	mavlink_message_t msg = {0};
+	mavlink_status_t status = {0};
 
 	// Track whether we actually handled any data in this function call.
 	// Used for updating the number of MAVLink messages handled
