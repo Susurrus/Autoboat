@@ -381,7 +381,6 @@ void MavLinkSendMainPower(void)
 	Uart1WriteData(buf, (uint8_t)len);
 }
 
-
 /**
  * Transmits the custom BASIC_STATE message. This just transmits a bunch of random variables
  * that are good to know but arbitrarily grouped.
@@ -1031,7 +1030,17 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 					nextState = MISSION_STATE_INACTIVE;
 				}
 			} else if (event == MISSION_EVENT_REQUEST_RECEIVED) {
+				// If the current mission is requested, schedule it for transmission.
 				if (*(uint8_t *)data == currentMissionIndex) {
+					if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_ITEM)) {
+						FATAL_ERROR();
+					}
+					nextState = MISSION_STATE_SEND_MISSION_ITEM;
+				}
+				// Otherwise if the last mission was requested, assume that the previous MISSION_ITEM
+				// was lost in transmission and reset to send it again.
+				else if (*(uint8_t *)data == currentMissionIndex - 1) {
+					--currentMissionIndex;
 					if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_MISSION_ITEM)) {
 						FATAL_ERROR();
 					}
