@@ -333,7 +333,7 @@ void MavLinkSendStatus(void)
 		systemsPresent, systemsEnabled, systemsActive,
 		(uint16_t)(nodeCpuLoad)*10,
 		voltage, amperage, -1,
-		dropRate, 0, 0, 0, 0, 0);
+		dropRate, mavLinkMessagesFailedParsing, 0, 0, 0, 0);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
 	Uart1WriteData(buf, (uint8_t)len);
@@ -1327,8 +1327,8 @@ void MavLinkReceive(void)
 	// Update the number of messages received, both successful and not. Note that the 'status' variable
 	// will be updated on every call to *_parse_char(), so this will always be a valid value.
 	if (processedData) {
-		mavLinkMessagesReceived = status.packet_rx_success_count;
-		mavLinkMessagesFailedParsing = status.packet_rx_drop_count;
+		mavLinkMessagesReceived += status.packet_rx_success_count;
+		mavLinkMessagesFailedParsing += status.packet_rx_drop_count;
 	}
 }
 
