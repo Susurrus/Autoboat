@@ -108,7 +108,8 @@ uint16_t mavLinkMessagesReceived = 0;
 uint16_t mavLinkMessagesFailedParsing = 0;
 
 // Define a timeout (in units of main timesteps of MavlinkReceive())
-#define MISSION_REQUEST_TIMEOUT 10000
+// Set to 5s for now.
+#define MISSION_REQUEST_TIMEOUT 500
 
 // Specify how long between transmitting parameters in a parameter transmission stream.
 #define INTRA_PARAM_DELAY 50
