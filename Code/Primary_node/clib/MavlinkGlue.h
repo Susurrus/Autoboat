@@ -50,14 +50,7 @@ enum MISSION_EVENT {
 	MISSION_EVENT_REQUEST_LIST_RECEIVED,
 	MISSION_EVENT_CLEAR_ALL_RECEIVED,
 	MISSION_EVENT_SET_CURRENT_RECEIVED,
-	MISSION_EVENT_ITEM_RECEIVED,
-
-	// Message transmission events
-	MISSION_EVENT_COUNT_DISPATCHED,
-	MISSION_EVENT_ACK_DISPATCHED,
-	MISSION_EVENT_REQUEST_DISPATCHED,
-	MISSION_EVENT_CURRENT_DISPATCHED,
-	MISSION_EVENT_ITEM_DISPATCHED
+	MISSION_EVENT_ITEM_RECEIVED
 };
 
 /**
@@ -65,11 +58,6 @@ enum MISSION_EVENT {
  * repeatedly-transmit messages.
  */
 void MavLinkInit(void);
-
-/**
- * Simulink helper function that schedules a one-off MISSION_CURRENT message.
- */
-void MavLinkScheduleCurrentMission(void);
 
 /**
  * Simulink helper function that scheduls a one-off GPS_GLOBAL_ORIGIN message.
@@ -108,7 +96,6 @@ void MavLinkSendRawGps(void);
   * Transmit the main battery state as obtained from the power node via the CAN bus.
   */
 void MavLinkSendMainPower(void);
-
 
 /**
  * Transmits the custom BASIC_STATE message. This just transmits a bunch of random variables
@@ -215,6 +202,14 @@ void SetStartingPointToCurrentLocation(void);
  * beyond the single call to this function.
  */
 void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data);
+
+/**
+ * This function receives a MAVLink mission message and stores it into the current mission list. The
+ * mission is modified before storage such that it has BOTH global and local coordinates using the
+ * current position of the boat and the local origin for translation.
+ * @param mission The mission to append.
+ */
+int MavLinkAppendMission(const mavlink_mission_item_t *mission);
 
 /**
 * @brief Receive communication packets and handle them. Should be called at the system sample rate.
