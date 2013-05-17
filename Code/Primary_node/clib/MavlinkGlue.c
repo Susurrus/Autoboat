@@ -18,6 +18,7 @@
  */
 
 #include "Uart1.h"
+#include "Uart2.h"
 #include "MessageScheduler.h"
 #include "EcanSensors.h"
 #include "Rudder.h"
@@ -125,14 +126,10 @@ uint16_t mavLinkMessagesFailedParsing = 0;
 // Define a timeout (in units of main timesteps of MavlinkReceive()) for transmitting
 // MAVLink messages as part of the PARAMETER and MISSION protocols. Messages will be retransmit
 // twice before it's considered hopeless.
-// Set to 5s for now.
 #define MAVLINK_RESEND_TIMEOUT 300
 
-// Define a timeout for receiving MAVLink messages with regards to the PARAMETER and MISSION protocol.
-#define MAVLINK_RECEIVE_TIMEOUT 500
-
 // Specify how long between transmitting parameters in a parameter transmission stream.
-#define INTRA_PARAM_DELAY 50
+#define INTRA_PARAM_DELAY 5
 
 // Track manual control data transmit via MAVLink
 struct {
@@ -148,7 +145,7 @@ struct {
 } mavlinkManualControlData;
 
 // Set up the message scheduler for MAVLink transmission
-#define MAVLINK_MSGS_SIZE 17
+#define MAVLINK_MSGS_SIZE 16
 uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_HEARTBEAT,
 	MAVLINK_MSG_ID_SYS_STATUS,
@@ -165,10 +162,7 @@ uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_MAIN_POWER,
 	MAVLINK_MSG_ID_GPS200,
 	MAVLINK_MSG_ID_NODE_STATUS,
-	MAVLINK_MSG_ID_WAYPOINT_STATUS,
-	
-	// Only used for transient messages
-	MAVLINK_MSG_ID_PARAM_VALUE,
+	MAVLINK_MSG_ID_WAYPOINT_STATUS
 };
 uint16_t tsteps[MAVLINK_MSGS_SIZE][2][8] = {};
 uint8_t  mSizes[MAVLINK_MSGS_SIZE];
@@ -578,6 +572,10 @@ void _transmitParameter(uint16_t id)
 		float param_value = 0.0;
 		ParameterGetValueById(id, &param_value);
 
+		char x[50];
+		sprintf(x, "SEN: PARAM_VALUE %d\n", id);
+		Uart2WriteData(x, strlen(x));
+
 		// Finally encode the message and transmit.
 		mavlink_message_t msg;
 		mavlink_msg_param_value_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
@@ -826,22 +824,14 @@ void MavLinkEvaluateParameterState(enum PARAM_EVENT event, const void *data)
 		break;
 
 		case PARAM_STATE_SINGLETON_SEND_VALUE: {
-			if (event == PARAM_EVENT_ENTER_STATE) {
-				if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_PARAM_VALUE)) {
-					FATAL_ERROR();
-				}
-			} else if (event == PARAM_EVENT_VALUE_DISPATCHED) {
+			if (event == PARAM_EVENT_NONE) {
 				_transmitParameter(currentParameter);
 				nextState = PARAM_STATE_INACTIVE;
 			}
 		} break;
 
 		case PARAM_STATE_STREAM_SEND_VALUE: {
-			if (event == PARAM_EVENT_ENTER_STATE) {
-				if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_PARAM_VALUE)) {
-					FATAL_ERROR();
-				}
-			} else if (event == PARAM_EVENT_VALUE_DISPATCHED) {
+			if (event == PARAM_EVENT_NONE) {
 				_transmitParameter(currentParameter);
 
 				// And increment the current parameter index for the next iteration and
@@ -854,12 +844,12 @@ void MavLinkEvaluateParameterState(enum PARAM_EVENT event, const void *data)
 			}
 		} break;
 
-		// Add a delay of 2 timesteps before attempting to schedule another one
+		// Add a delay of INTRA_PARAM_DELAY timesteps before attempting to schedule another one
 		case PARAM_STATE_STREAM_DELAY: {
 			if (event == PARAM_EVENT_ENTER_STATE) {
-					delayCountdown = 0;
+					delayCountdown = INTRA_PARAM_DELAY;
 			} else if (event == PARAM_EVENT_NONE) {
-				if (++delayCountdown == INTRA_PARAM_DELAY) {
+				if (delayCountdown-- == 0) {
 					nextState = PARAM_STATE_STREAM_SEND_VALUE;
 				}
 			}
@@ -1521,6 +1511,8 @@ void MavLinkReceive(void)
 				// If they're requesting a list of all parameters, call a separate function that'll track the state and transmit the necessary messages.
 				// This reason that this is an external function is so that it can be run separately at 20Hz.
 				case MAVLINK_MSG_ID_PARAM_REQUEST_LIST: {
+					char x[50] = "REC: PARAM_REQUEST_LIST\n";
+					Uart2WriteData(x, strlen(x));
 					MavLinkEvaluateParameterState(PARAM_EVENT_REQUEST_LIST_RECEIVED, NULL);
 					processedParameterMessage = true;
 				} break;
@@ -1528,14 +1520,20 @@ void MavLinkReceive(void)
 				// If a request comes for a single parameter then set that to be the current parameter and move into the proper state.
 				case MAVLINK_MSG_ID_PARAM_REQUEST_READ: {
 					uint16_t currentParameter = mavlink_msg_param_request_read_get_param_index(&msg);
+					char x[50];
+					sprintf(x, "REC: PARAM_REQUEST_READ %d\n", currentParameter);
+					Uart2WriteData(x, strlen(x));
 					MavLinkEvaluateParameterState(PARAM_EVENT_REQUEST_READ_RECEIVED, &currentParameter);
 					processedParameterMessage = true;
 				} break;
 
 				case MAVLINK_MSG_ID_PARAM_SET: {
-					mavlink_param_set_t x;
-					mavlink_msg_param_set_decode(&msg, &x);
-					MavLinkEvaluateParameterState(PARAM_EVENT_SET_RECEIVED, &x);
+					mavlink_param_set_t p;
+					mavlink_msg_param_set_decode(&msg, &p);
+					char x[50];
+					sprintf(x, "REC: PARAM_SET %d\n", p.param_id);
+					Uart2WriteData(x, strlen(x));
+					MavLinkEvaluateParameterState(PARAM_EVENT_SET_RECEIVED, &p);
 					processedParameterMessage = true;
 				} break;
 			}
@@ -1608,12 +1606,6 @@ void MavLinkTransmit(void)
 
 			case MAVLINK_MSG_ID_RC_CHANNELS_SCALED: {
 				MavLinkSendRcScaledData();
-			} break;
-
-			/** Parameter Protocol Messages **/
-
-			case MAVLINK_MSG_ID_PARAM_VALUE: {
-				MavLinkEvaluateParameterState(PARAM_EVENT_VALUE_DISPATCHED, NULL);
 			} break;
 
 			/** SeaSlug Messages **/
