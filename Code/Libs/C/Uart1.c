@@ -7,9 +7,6 @@ static uint8_t u1RxBuf[1024];
 static CircularBuffer uart1TxBuffer;
 static uint8_t u1TxBuf[1024];
 
-// A flag indicating if a transmission sequence is underway. Used to hold off on starting another
-// transmission sequence if one's active.
-static bool txFlag = false;
 /*
  * Private functions.
  */
@@ -81,22 +78,21 @@ void Uart1ChangeBaudRate(uint16_t brgRegister)
 }
 
 /**
- * This function actually initiates transmission. It attempts to start transmission with the first
- * element in the queue if transmission isn't already proceeding. Once transmission starts the
- * interrupt handler will keep things moving from there. The buffer is checked for new data and the
- * transmission buffer is checked that it has room for new data before attempting to transmit.
+ * This function actually initiates transmission. It
+ * attempts to start transmission with the first element
+ * in the queue if transmission isn't already proceeding.
+ * Once transmission starts the interrupt handler will
+ * keep things moving from there. The buffer is checked
+ * for new data and the transmission buffer is checked that
+ * it has room for new data before attempting to transmit.
  */
 void Uart1StartTransmission(void)
 {
-    if (uart1TxBuffer.dataSize > 0 && !txFlag) {
-		txFlag = true;
-        // A temporary variable is used here because writing directly into U1TXREG causes some
-		// weird issues.
-		if (!U1STAbits.UTXBF) {
-			uint8_t c;
-			CB_ReadByte(&uart1TxBuffer, &c);
-			U1TXREG = c;
-		}
+    if (uart1TxBuffer.dataSize > 0 && !U1STAbits.UTXBF) {
+        // A temporary variable is used here because writing directly into U1TXREG causes some weird issues.
+        uint8_t c;
+        CB_ReadByte(&uart1TxBuffer, &c);
+        U1TXREG = c;
     }
 }
 
@@ -154,14 +150,7 @@ void __attribute__((__interrupt__, no_auto_psv)) _U1RXInterrupt(void)
  */
 void __attribute__((__interrupt__, no_auto_psv)) _U1TXInterrupt(void)
 {
-    if (uart1TxBuffer.dataSize) {
-        // A temporary variable is used here because writing directly into U1TXREG causes some weird issues.
-        uint8_t c;
-        CB_ReadByte(&uart1TxBuffer, &c);
-        U1TXREG = c;
-    } else {
-		txFlag = false;
-	}
+    Uart1StartTransmission();
 
     // Clear the interrupt flag
     IFS0bits.U1TXIF = 0;

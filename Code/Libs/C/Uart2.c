@@ -7,10 +7,6 @@ static uint8_t u2RxBuf[1024];
 static CircularBuffer uart2TxBuffer;
 static uint8_t u2TxBuf[1024];
 
-// A flag indicating if a transmission sequence is underway. Used to hold off on starting another
-// transmission sequence if one's active.
-static bool txFlag = false;
-
 /*
  * Private functions.
  */
@@ -92,15 +88,11 @@ void Uart2ChangeBaudRate(uint16_t brgRegister)
  */
 void Uart2StartTransmission(void)
 {
-    if (uart2TxBuffer.dataSize > 0 && !txFlag) {
-		txFlag = true;
-        // A temporary variable is used here because writing directly into U2TXREG causes some
-		// weird issues.
-		if (!U2STAbits.UTXBF) {
-			uint8_t c;
-			CB_ReadByte(&uart2TxBuffer, &c);
-			U2TXREG = c;
-		}
+    if (uart2TxBuffer.dataSize > 0 && !U2STAbits.UTXBF) {
+        // A temporary variable is used here because writing directly into U1TXREG causes some weird issues.
+        uint8_t c;
+        CB_ReadByte(&uart2TxBuffer, &c);
+        U2TXREG = c;
     }
 }
 
@@ -158,14 +150,7 @@ void __attribute__((__interrupt__, no_auto_psv)) _U2RXInterrupt(void)
  */
 void __attribute__((__interrupt__, no_auto_psv)) _U2TXInterrupt(void)
 {
-    if (uart2TxBuffer.dataSize) {
-        // A temporary variable is used here because writing directly into U1TXREG causes some weird issues.
-        uint8_t c;
-        CB_ReadByte(&uart2TxBuffer, &c);
-        U2TXREG = c;
-    } else {
-		txFlag = false;
-	}
+    Uart2StartTransmission();
 
     // Clear the interrupt flag
     IFS1bits.U2TXIF = 0;
