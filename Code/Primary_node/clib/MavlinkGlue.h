@@ -60,11 +60,6 @@ enum MISSION_EVENT {
 void MavLinkInit(void);
 
 /**
- * Simulink helper function that scheduls a one-off GPS_GLOBAL_ORIGIN message.
- */
-void MavLinkScheduleGpsOrigin(void);
-
-/**
  * This function creates a MAVLink heartbeat message with some basic parameters and
  * caches that message (along with its size) in the module-level variables declared
  * above. This buffer should be transmit at 1Hz back to the groundstation.

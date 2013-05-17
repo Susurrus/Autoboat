@@ -148,7 +148,7 @@ struct {
 } mavlinkManualControlData;
 
 // Set up the message scheduler for MAVLink transmission
-#define MAVLINK_MSGS_SIZE 18
+#define MAVLINK_MSGS_SIZE 17
 uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_HEARTBEAT,
 	MAVLINK_MSG_ID_SYS_STATUS,
@@ -168,7 +168,6 @@ uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_WAYPOINT_STATUS,
 	
 	// Only used for transient messages
-	MAVLINK_MSG_ID_GPS_GLOBAL_ORIGIN,
 	MAVLINK_MSG_ID_PARAM_VALUE,
 };
 uint16_t tsteps[MAVLINK_MSGS_SIZE][2][8] = {};
@@ -199,16 +198,6 @@ void MavLinkInit(void)
 		if (!AddMessageRepeating(&mavlinkSchedule, ids[i], periodicities[i])) {
 			FATAL_ERROR();
 		}
-	}
-}
-
-/**
- * Simulink helper function that scheduls a one-off GPS_GLOBAL_ORIGIN message.
- */
-void MavLinkScheduleGpsOrigin(void)
-{
-	if (!AddMessageOnce(&mavlinkSchedule, MAVLINK_MSG_ID_GPS_GLOBAL_ORIGIN)) {
-		FATAL_ERROR();
 	}
 }
 
@@ -1497,7 +1486,7 @@ void MavLinkReceive(void)
 				// Will also schedule a transmission of a GPS_ORIGIN message. This is used for translating global to local coordinates
 				// in QGC.
 				case MAVLINK_MSG_ID_MISSION_REQUEST_LIST: {
-					MavLinkScheduleGpsOrigin();
+					MavLinkSendGpsGlobalOrigin();
 					MavLinkEvaluateMissionState(MISSION_EVENT_REQUEST_LIST_RECEIVED, NULL);
 					processedMissionMessage = true;
 				} break;
