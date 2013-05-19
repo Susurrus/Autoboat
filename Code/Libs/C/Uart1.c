@@ -45,6 +45,10 @@ void Uart1Init(uint16_t brgRegister)
     // U1STA Register
     // ==============
     U1STAbits.URXISEL	= 0;		// RX interrupt when 3 chars are in
+    U1STAbits.UTXISEL0	= 1;
+    U1STAbits.UTXISEL1	= 0;		// TX interrupt when FIFO buffer is empty. There's no reason to
+	                                // interrupt after every byte, so this reduces the number of
+	                                // interrupts.
     U1STAbits.OERR		= 0;		// clear overun error
 
     U1BRG = brgRegister;			// Set the baud rate register
@@ -88,7 +92,7 @@ void Uart1ChangeBaudRate(uint16_t brgRegister)
  */
 void Uart1StartTransmission(void)
 {
-    if (uart1TxBuffer.dataSize > 0 && !U1STAbits.UTXBF) {
+	while (uart1TxBuffer.dataSize > 0 && !U1STAbits.UTXBF) {
         // A temporary variable is used here because writing directly into U1TXREG causes some weird issues.
         uint8_t c;
         CB_ReadByte(&uart1TxBuffer, &c);
