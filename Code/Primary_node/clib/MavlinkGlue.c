@@ -768,6 +768,22 @@ void MavLinkReceiveManualControl(const mavlink_manual_control_t *msg)
 	}
 }
 
+void MavLinkReceiveSetMode(const mavlink_set_mode_t *msg)
+{
+    if (msg->target_system == mavlink_system.sysid) {
+        // Set autonomous mode
+        if ((msg->base_mode & MAV_MODE_FLAG_AUTO_ENABLED) &&
+            !(msg->base_mode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED)) {
+            nodeStatus |= PRIMARY_NODE_STATUS_AUTOMODE;
+        }
+        // Or set manual mode
+        else if (!(msg->base_mode & MAV_MODE_FLAG_AUTO_ENABLED) &&
+            (msg->base_mode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED)) {
+            nodeStatus &= ~PRIMARY_NODE_STATUS_AUTOMODE;
+        }
+    }
+}
+
 /**
  * Returns the throttle and rudder manual control commands received over MAVLink.
  * TODO: Switch over to using Packing.h
@@ -1449,6 +1465,12 @@ void MavLinkReceive(void)
 					MavLinkReceiveCommandLong(&mavCommand);
 				} break;
 
+                                case MAVLINK_MSG_ID_SET_MODE: {
+                                        mavlink_set_mode_t modeMessage;
+                                        mavlink_msg_set_mode_decode(&msg, &modeMessage);
+                                        MavLinkReceiveSetMode(&modeMessage);
+                                } break;
+
 				// Check for manual commands via Joystick from QGC.
 				case MAVLINK_MSG_ID_MANUAL_CONTROL: {
 					mavlink_manual_control_t manualControl;
@@ -1531,7 +1553,7 @@ void MavLinkReceive(void)
 					mavlink_param_set_t p;
 					mavlink_msg_param_set_decode(&msg, &p);
 					char x[50];
-					sprintf(x, "REC: PARAM_SET %d\n", p.param_id);
+					sprintf(x, "REC: PARAM_SET %s\n", p.param_id);
 					Uart2WriteData(x, strlen(x));
 					MavLinkEvaluateParameterState(PARAM_EVENT_SET_RECEIVED, &p);
 					processedParameterMessage = true;
