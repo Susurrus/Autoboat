@@ -104,6 +104,13 @@ static mavlink_system_t mavlink_system = {
 	0 // Unused and unsure of expected usage
 };
 
+/** manual control parameters **/
+// Specify the button that must be pressed for throttle values to be recorded.
+#define TRIGGER_ENABLE_BUTTON 0x0010
+// Specify the button that activates rudder calibration.
+#define RUDDER_CAL_BUTTON     0x0008
+// Autonomous/manual switching is done through QGC
+
 // Latch onto the first groundstation unit and only receive and transmit to it.
 static uint8_t groundStationSystemId = 0;
 static uint8_t groundStationComponentId = 0;
@@ -734,24 +741,20 @@ void MavLinkReceiveManualControl(const mavlink_manual_control_t *msg)
     static uint16_t lastButtons = 0;
 	if (msg->target == mavlink_system.sysid) {
 		// Record the rudder angle
-		mavlinkManualControlData.unpackedData.Rudder = msg->x;
+		if (msg->r != INT16_MAX) {
+			mavlinkManualControlData.unpackedData.Rudder = msg->r;
+		}
 
 		// If the trigger has been pulled was part of this data packet, update the throttle value.
-		if (msg->buttons & 0x01) {
-			mavlinkManualControlData.unpackedData.Throttle = msg->y;
+		if ((msg->buttons & TRIGGER_ENABLE_BUTTON) != 0 && msg->z != INT16_MAX) {
+			mavlinkManualControlData.unpackedData.Throttle = msg->z;
 		}
 
 		// Record the buttons that are pressed
 		mavlinkManualControlData.unpackedData.Buttons = msg->buttons;
 
-        // Here we process the buttons and update the relevant variables
-        // If we detect a rise in the autoMode button press, toggle it.
-        if (!(lastButtons & 0x2) && (msg->buttons & 0x2)) {
-            ToggleAutoMode();
-        }
-
         // If the rudder calibration button has been pressed, send that command.
-        if (!(lastButtons & 0x20) && (msg->buttons & 0x20)) {
+        if (!(lastButtons & RUDDER_CAL_BUTTON) && (msg->buttons & RUDDER_CAL_BUTTON)) {
             RudderStartCalibration();
         }
 
