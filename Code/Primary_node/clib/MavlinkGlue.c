@@ -18,7 +18,6 @@
  */
 
 #include "Uart1.h"
-#include "Uart2.h"
 #include "MessageScheduler.h"
 #include "EcanSensors.h"
 #include "Rudder.h"
@@ -571,10 +570,6 @@ void _transmitParameter(uint16_t id)
 		// error, just return having done nothing.
 		float param_value = 0.0;
 		ParameterGetValueById(id, &param_value);
-
-		char x[50];
-		sprintf(x, "SEN: PARAM_VALUE %d\n", id);
-		Uart2WriteData(x, strlen(x));
 
 		// Finally encode the message and transmit.
 		mavlink_message_t msg;
@@ -1533,8 +1528,6 @@ void MavLinkReceive(void)
 				// If they're requesting a list of all parameters, call a separate function that'll track the state and transmit the necessary messages.
 				// This reason that this is an external function is so that it can be run separately at 20Hz.
 				case MAVLINK_MSG_ID_PARAM_REQUEST_LIST: {
-					char x[50] = "REC: PARAM_REQUEST_LIST\n";
-					Uart2WriteData(x, strlen(x));
 					MavLinkEvaluateParameterState(PARAM_EVENT_REQUEST_LIST_RECEIVED, NULL);
 					processedParameterMessage = true;
 				} break;
@@ -1542,9 +1535,6 @@ void MavLinkReceive(void)
 				// If a request comes for a single parameter then set that to be the current parameter and move into the proper state.
 				case MAVLINK_MSG_ID_PARAM_REQUEST_READ: {
 					uint16_t currentParameter = mavlink_msg_param_request_read_get_param_index(&msg);
-					char x[50];
-					sprintf(x, "REC: PARAM_REQUEST_READ %d\n", currentParameter);
-					Uart2WriteData(x, strlen(x));
 					MavLinkEvaluateParameterState(PARAM_EVENT_REQUEST_READ_RECEIVED, &currentParameter);
 					processedParameterMessage = true;
 				} break;
@@ -1552,9 +1542,6 @@ void MavLinkReceive(void)
 				case MAVLINK_MSG_ID_PARAM_SET: {
 					mavlink_param_set_t p;
 					mavlink_msg_param_set_decode(&msg, &p);
-					char x[50];
-					sprintf(x, "REC: PARAM_SET %s\n", p.param_id);
-					Uart2WriteData(x, strlen(x));
 					MavLinkEvaluateParameterState(PARAM_EVENT_SET_RECEIVED, &p);
 					processedParameterMessage = true;
 				} break;
