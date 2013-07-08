@@ -6,9 +6,13 @@ void Acs300SendThrottleCommand(int16_t command)
 {
 	CanMessage msg;
 
-	// If the commanded current is non-zero, make sure we set the ACS300 into run mode.
+	// If the commanded current is != 0, also make sure the drive's in run mode. Otherwise if it's
+	// 0, put the ACS300 into standby.
 	if (command != 0) {
 		Acs300PackageVelocityCommand(&msg, 0, 0, ACS300_COMMAND_RUN);
+		Ecan1Transmit(&msg);
+	} else {
+		Acs300PackageVelocityCommand(&msg, 0, 0, ACS300_COMMAND_STANDBY);
 		Ecan1Transmit(&msg);
 	}
 
