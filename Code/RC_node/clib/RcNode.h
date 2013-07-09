@@ -8,7 +8,7 @@
 // status tracks various statuses of the node.
 //  * bit 0: Manual control enabled.
 enum RC_NODE_STATUS {
-	RC_NODE_STATUS_MANUAL_MODE    = 0x0001
+	RC_NODE_STATUS_MANUAL_MODE = 0x0001
 };
 
 // errors tracks the various flags that can put the node into a reset state.
