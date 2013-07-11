@@ -769,9 +769,12 @@ void MavLinkReceiveManualControl(const mavlink_manual_control_t *msg)
 void MavLinkReceiveSetMode(const mavlink_set_mode_t *msg)
 {
     if (msg->target_system == mavlink_system.sysid) {
-        // Set autonomous mode
+        // Set autonomous mode. Also latch the current vehicle location when this switch occurs. This
+		// will make the vehicle follow a line from this location to the next waypoint, which is expected
+		// behavior.
         if ((msg->base_mode & MAV_MODE_FLAG_AUTO_ENABLED) &&
             !(msg->base_mode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED)) {
+			SetStartingPointToCurrentLocation();
             nodeStatus |= PRIMARY_NODE_STATUS_AUTOMODE;
         }
         // Or set manual mode
@@ -1463,11 +1466,11 @@ void MavLinkReceive(void)
 					MavLinkReceiveCommandLong(&mavCommand);
 				} break;
 
-                                case MAVLINK_MSG_ID_SET_MODE: {
-                                        mavlink_set_mode_t modeMessage;
-                                        mavlink_msg_set_mode_decode(&msg, &modeMessage);
-                                        MavLinkReceiveSetMode(&modeMessage);
-                                } break;
+				case MAVLINK_MSG_ID_SET_MODE: {
+						mavlink_set_mode_t modeMessage;
+						mavlink_msg_set_mode_decode(&msg, &modeMessage);
+						MavLinkReceiveSetMode(&modeMessage);
+				} break;
 
 				// Check for manual commands via Joystick from QGC.
 				case MAVLINK_MSG_ID_MANUAL_CONTROL: {
