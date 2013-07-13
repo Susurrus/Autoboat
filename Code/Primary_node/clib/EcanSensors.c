@@ -19,7 +19,7 @@ struct GpsData gpsDataStore = {0};
 struct GpsDataBundle gpsNewDataStore = {0};
 struct DateTimeData dateTimeDataStore = {0};
 struct RevoGsData revoGsDataStore = {0};
-struct NodeStatusData nodeStatusDataStore[6] = {
+struct NodeStatusData nodeStatusDataStore[NUM_NODES] = {
 	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
 	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
 	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
@@ -168,55 +168,61 @@ uint8_t ProcessAllEcanMessages(void)
 	do {
 		int foundOne = Ecan1Receive(&msg, &messagesLeft);
 		if (foundOne) {
-			// Process throttle messages here. Anything not explicitly handled is assumed to be a NMEA2000 message.
-			if (msg.id == ACS300_CAN_ID_HRTBT) { // From the ACS300
-				sensorAvailability.prop.enabled_counter = 0;
-				if ((msg.payload[6] & 0x40) == 0) { // Checks the status bit to determine if the ACS300 is enabled.
-					sensorAvailability.prop.active_counter = 0;
-				}
-				Acs300DecodeHeartbeat(msg.payload, (uint16_t*)&throttleDataStore.rpm, NULL, NULL, NULL);
-				throttleDataStore.newData = true;
-			} else if (msg.id == CAN_MSG_ID_STATUS) {
-				uint8_t node, cpuLoad, voltage;
-				int8_t temp;
-				uint16_t status, errors;
-				CanMessageDecodeStatus(&msg, &node, &cpuLoad, &temp, &voltage, &status, &errors);
-				nodeStatusDataStore[node - 1].load = cpuLoad;
-				nodeStatusDataStore[node - 1].temp = temp;
-				nodeStatusDataStore[node - 1].voltage = voltage;
-				nodeStatusDataStore[node - 1].status = status;
-				nodeStatusDataStore[node - 1].errors = errors;
-				if (node == CAN_NODE_RC) {
-					sensorAvailability.rcNode.enabled_counter = 0;
-					// Only if the RC transmitter is connected should the RC node be considered
-					// active.
-					if (status & 0x01) {
-						sensorAvailability.rcNode.active_counter = 0;
+			// Process non-NMEA2000 messages here. They're distinguished by having standard frames.
+			if (msg.frame_type == CAN_FRAME_STD) {
+				if (msg.id == ACS300_CAN_ID_HRTBT) { // From the ACS300
+					sensorAvailability.prop.enabled_counter = 0;
+					if ((msg.payload[6] & 0x40) == 0) { // Checks the status bit to determine if the ACS300 is enabled.
+						sensorAvailability.prop.active_counter = 0;
 					}
+					Acs300DecodeHeartbeat(msg.payload, (uint16_t*)&throttleDataStore.rpm, NULL, NULL, NULL);
+					throttleDataStore.newData = true;
+				} else if (msg.id == CAN_MSG_ID_STATUS) {
+					uint8_t node, cpuLoad, voltage;
+					int8_t temp;
+					uint16_t status, errors;
+					CanMessageDecodeStatus(&msg, &node, &cpuLoad, &temp, &voltage, &status, &errors);
+
+					// If we've found a valid node, store the data for it.
+					if (node > 0 && node <= NUM_NODES) {
+						nodeStatusDataStore[node - 1].load = cpuLoad;
+						nodeStatusDataStore[node - 1].temp = temp;
+						nodeStatusDataStore[node - 1].voltage = voltage;
+						nodeStatusDataStore[node - 1].status = status;
+						nodeStatusDataStore[node - 1].errors = errors;
+						if (node == CAN_NODE_RC) {
+							sensorAvailability.rcNode.enabled_counter = 0;
+							// Only if the RC transmitter is connected should the RC node be considered
+							// active.
+							if (status & 0x01) {
+								sensorAvailability.rcNode.active_counter = 0;
+							}
+						}
+					}
+				} else if (msg.id == CAN_MSG_ID_RUDDER_DETAILS) {
+					sensorAvailability.rudder.enabled_counter = 0;
+					CanMessageDecodeRudderDetails(&msg,
+												  &rudderSensorData.RudderPotValue,
+												  &rudderSensorData.RudderPotLimitStarboard,
+												  &rudderSensorData.RudderPotLimitPort,
+												  &rudderSensorData.LimitHitStarboard,
+												  &rudderSensorData.LimitHitPort,
+												  &rudderSensorData.Enabled,
+												  &rudderSensorData.Calibrated,
+												  &rudderSensorData.Calibrating);
+					if (rudderSensorData.Enabled &&
+						rudderSensorData.Calibrated &&
+						!rudderSensorData.Calibrating) {
+						sensorAvailability.rudder.active_counter = 0;
+					}
+				} else if (msg.id == CAN_MSG_ID_IMU_DATA) {
+					sensorAvailability.imu.enabled_counter = 0;
+					sensorAvailability.imu.active_counter = 0;
+					CanMessageDecodeImuData(&msg,
+											&revoGsDataStore.heading,
+											&revoGsDataStore.pitch,
+											&revoGsDataStore.roll);
 				}
-			} else if (msg.id == CAN_MSG_ID_RUDDER_DETAILS) {
-				sensorAvailability.rudder.enabled_counter = 0;
-				CanMessageDecodeRudderDetails(&msg,
-											  &rudderSensorData.RudderPotValue,
-											  &rudderSensorData.RudderPotLimitStarboard,
-											  &rudderSensorData.RudderPotLimitPort,
-											  &rudderSensorData.LimitHitStarboard,
-											  &rudderSensorData.LimitHitPort,
-											  &rudderSensorData.Enabled,
-											  &rudderSensorData.Calibrated,
-											  &rudderSensorData.Calibrating);
-				if (rudderSensorData.Enabled &&
-					rudderSensorData.Calibrated &&
-					!rudderSensorData.Calibrating) {
-					sensorAvailability.rudder.active_counter = 0;
-				}
-			} else if (msg.id == CAN_MSG_ID_IMU_DATA) {
-				sensorAvailability.imu.enabled_counter = 0;
-				sensorAvailability.imu.active_counter = 0;
-				CanMessageDecodeImuData(&msg,
-										&revoGsDataStore.heading,
-                                        &revoGsDataStore.pitch,
-                                        &revoGsDataStore.roll);
 			} else {
 				pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
 				switch (pgn) {
