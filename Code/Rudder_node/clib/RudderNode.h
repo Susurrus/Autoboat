@@ -4,6 +4,23 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+/**
+ * This enum declares the bitflags used for the nodeStatus variable in Node.h.
+ */
+enum RUDDER_NODE_STATUS {
+	RUDDER_NODE_STATUS_CALIBRATED       = 0x0001, // Active when the rudder has been calibrated
+	RUDDER_NODE_STATUS_CALIBRATING      = 0x0002, // Active while the rudder is performing the calibration procedure
+	RUDDER_NODE_STATUS_STARBOARD_LIMIT  = 0x0004, // Active while the rudder is at the starboard limit
+	RUDDER_NODE_STATUS_PORT_LIMIT       = 0x0008  // Active while the rudder is at the port limit
+};
+
+/**
+ * This enum declares the bitflags used for the nodeErrors variable in Node.h.
+ */
+enum RUDDER_NODE_RESET {
+    // None exist
+};
+
 struct RudderCalibrationData {
 	uint16_t PortLimitValue; // The lower limit on the rudder potentiometer.
 	uint16_t StarLimitValue; // The upper limit on the rudder potentiometer.
