@@ -8,11 +8,12 @@
 // status tracks various statuses of the node.
 //  * bit 0: Manual control enabled.
 enum RC_NODE_STATUS {
-	RC_NODE_STATUS_MANUAL_MODE = 0x0001
+	RC_NODE_STATUS_MANUAL_MODE = 0x0001, // High when RC transmitter is in manual control mode (resets to off when transmitter is disconnected)
+	RC_NODE_STATUS_CONNECTED   = 0x0002  // High when the RC transmitter is connected
 };
 
 // errors tracks the various flags that can put the node into a reset state.
-//  * bit 0: eStop has been pushed.
+//  * bit 0: eStop has been pushed
 //  * bit 1: RC node is uncalibrated  (therefore also active during calibration)
 //  * bit 2: the ECAN peripheral has reached an error state for transmission
 //  * bit 3: the ECAN peripheral has reached an error state for reception
