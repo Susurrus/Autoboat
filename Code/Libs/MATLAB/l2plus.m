@@ -65,3 +65,12 @@ switchDistance.DataType = 'single';
 switchDistance.DocUnits = 'm';
 switchDistance.RTWInfo.StorageClass = 'ExportedGlobal';
 switchDistance.RTWInfo.Alias = 'switchDistance';
+
+% Distance before reaching a waypoint that you will then switch over to the next waypoint
+KPsiDot = Simulink.Parameter;
+KPsiDot.Description = 'Gain on the heading derivative feedback loop.';
+KPsiDot.Value = 1;
+KPsiDot.DataType = 'single';
+KPsiDot.DocUnits = '';
+KPsiDot.RTWInfo.StorageClass = 'ExportedGlobal';
+KPsiDot.RTWInfo.Alias = 'KPsiDot';
