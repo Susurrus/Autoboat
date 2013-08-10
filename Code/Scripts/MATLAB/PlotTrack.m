@@ -20,21 +20,11 @@ end
 % Keep track of what's on the plot for a legend() call
 myLegend = {};
 
-% Plot waypoints (red, green, and blue)
-% Here we do some predicate indexing to ignore the -1 values at the end
-wp_length = length(test_waypoints);
-tmp = zeros(wp_length, 3);
-for i=1:wp_length
-    tmp(i,:) = double(test_waypoints(i).coordinates(:));
-end
-text(tmp(:,2), tmp(:,1), cellstr({int2str((1:wp_length)')}), 'Color', 'k');
-myLegend{end + 1} = 'Test waypoints';
-
 % Add the boat path
 % TODO: This should be changed to iterate through a cells array of the
 % various waypoint arrays instead of this hackey code.
 title('Boat position');
-plot(double(globalPosition(:,2))*1e-7, double(globalPosition(:,1))*1e-7, 'k');
+plot(double(position(:,2)), double(position(:,1)), 'k');
 myLegend{end + 1} = 'Position';
 grid on;
 %% Add additional decorations
