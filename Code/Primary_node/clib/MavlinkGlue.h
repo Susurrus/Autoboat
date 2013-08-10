@@ -23,6 +23,8 @@
 #include "MissionManager.h"
 #include "primary_node.h"
 #include "Types.h"
+// Define M_PI_2 here for the MAVLink library as the XC16 doesn't provide this constant by default.
+#define M_PI_2 1.57079632679489661923
 #include "mavlink.h"
 
 // Events that trigger changes in the parameter protocol state machine.
