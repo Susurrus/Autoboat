@@ -44,7 +44,7 @@ void Uart2Init(uint16_t brgRegister)
 
     // U1STA Register
     // ==============
-    U2STAbits.URXISEL	= 2;		// RX interrupt when 3 chars are in
+    U2STAbits.URXISEL	= 0;		// RX interrupt when a single char enters the buffer.
     U1STAbits.UTXISEL0	= 1;
     U1STAbits.UTXISEL1	= 0;		// TX interrupt when FIFO buffer is empty. There's no reason to
 	                                // interrupt after every byte, so this reduces the number of
@@ -93,7 +93,7 @@ void Uart2ChangeBaudRate(uint16_t brgRegister)
 void Uart2StartTransmission(void)
 {
     while (uart2TxBuffer.dataSize > 0 && !U2STAbits.UTXBF) {
-        // A temporary variable is used here because writing directly into U1TXREG causes some weird issues.
+        // A temporary variable is used here because writing directly into U2TXREG causes some weird issues.
         uint8_t c;
         CB_ReadByte(&uart2TxBuffer, &c);
         U2TXREG = c;

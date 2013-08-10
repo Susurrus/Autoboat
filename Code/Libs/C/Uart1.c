@@ -44,7 +44,7 @@ void Uart1Init(uint16_t brgRegister)
 
     // U1STA Register
     // ==============
-    U1STAbits.URXISEL	= 0;		// RX interrupt when 3 chars are in
+    U1STAbits.URXISEL	= 0;		// RX interrupt when a single char enters the buffer.s
     U1STAbits.UTXISEL0	= 1;
     U1STAbits.UTXISEL1	= 0;		// TX interrupt when FIFO buffer is empty. There's no reason to
 	                                // interrupt after every byte, so this reduces the number of
