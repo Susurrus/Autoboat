@@ -5,6 +5,7 @@
 #include "Ecan1.h"
 #include "PrimaryNode.h"
 #include "DataStore.h"
+#include "EcanSensors.h"
 
 #include <pps.h>
 #include <adc.h>
@@ -56,6 +57,9 @@ void PrimaryNode100HzLoop(void)
 {
 	// Keep an internal counter around so that other processes can occur at less than 100Hz.
 	static uint8_t internalCounter = 0;
+
+	// Process incoming ECAN messages.
+	ProcessAllEcanMessages();
 
 	// Check for new MaVLink messages.
 	MavLinkReceive();
