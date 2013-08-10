@@ -7,6 +7,7 @@
 #include "DataStore.h"
 
 #include <pps.h>
+#include <adc.h>
 
 void PrimaryNodeInit(void)
 {
@@ -29,6 +30,9 @@ void PrimaryNodeInit(void)
 	// Initialize the MAVLink communications channel
 	MavLinkInit();
 
+	// Set up the ADC
+	PrimaryNodeAdcInit();
+
 	// Finally perform the necessary pin mappings:
 	PPSUnLock;
 	// To enable ECAN1 pins: TX on 7, RX on 4
@@ -43,4 +47,39 @@ void PrimaryNodeInit(void)
 	PPSOutput(OUT_FN_PPS_U2TX, OUT_PIN_PPS_RP8);
 	PPSInput(PPS_U2RX, PPS_RP9);
 	PPSLock;
+}
+
+/**
+ * Perform main timed loop at 100Hz.
+ */
+void PrimaryNode100HzLoop(void)
+{
+	// Keep an internal counter around so that other processes can occur at less than 100Hz.
+	static uint8_t internalCounter = 0;
+
+	// Check for new MaVLink messages.
+	MavLinkReceive();
+
+	// Send any necessary messages for this timestep.
+	MavLinkTransmit();
+
+	// At 2Hz transmit a NODE_STATUS ECAN message.
+	if (internalCounter == 0 || internalCounter == 50) {
+		NodeTransmitStatus();
+	}
+
+	// Update the onboard system time counter.
+	++nodeSystemTime;
+
+	// Update the internal counter.
+	if (internalCounter == 99) {
+		internalCounter = 0;
+	} else {
+		++internalCounter;
+	}
+}
+
+void PrimaryNodeAdcInit(void)
+{
+	// FIXME: Add ADC initialization here.
 }
