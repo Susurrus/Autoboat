@@ -45,7 +45,7 @@ enum PARAMETERS_DATATYPE {
  * getter functions should look like `DATATYPE F(void)`.
  */
 typedef struct Parameter {
-    const char name[16];
+    const char name[17];
     void *data;
     void (*Setter)(void);
     void (*Getter)(void);
