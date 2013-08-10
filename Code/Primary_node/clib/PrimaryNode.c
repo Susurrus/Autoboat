@@ -6,8 +6,11 @@
 #include "PrimaryNode.h"
 #include "DataStore.h"
 
+#include <pps.h>
+
 void PrimaryNodeInit(void)
 {
+	// Set the ID for the primary node.
 	nodeId = CAN_NODE_PRIMARY_CONTROLLER;
 
 	// Initialize UART1 to 115200 for groundstation communications.
@@ -20,6 +23,24 @@ void PrimaryNodeInit(void)
 		FATAL_ERROR();
 	}
 
+	// Initialize ECAN1
+	Ecan1Init();
+
 	// Initialize the MAVLink communications channel
 	MavLinkInit();
+
+	// Finally perform the necessary pin mappings:
+	PPSUnLock;
+	// To enable ECAN1 pins: TX on 7, RX on 4
+	PPSOutput(OUT_FN_PPS_C1TX, OUT_PIN_PPS_RP7);
+	PPSInput(PPS_C1RX, PPS_RP4);
+
+	// To enable UART1 pins: TX on 11, RX on 13
+	PPSOutput(OUT_FN_PPS_U1TX, OUT_PIN_PPS_RP11);
+	PPSInput(PPS_U1RX, PPS_RP13);
+
+	// To enable UART2 pins: TX on 8, RX on 9
+	PPSOutput(OUT_FN_PPS_U2TX, OUT_PIN_PPS_RP8);
+	PPSInput(PPS_U2RX, PPS_RP9);
+	PPSLock;
 }
