@@ -1615,10 +1615,6 @@ void MavLinkTransmit(void)
 				MavLinkSendRawGps();
 			} break;
 
-			case MAVLINK_MSG_ID_GPS_GLOBAL_ORIGIN:
-				MavLinkSendGpsGlobalOrigin();
-			break;
-
 			case MAVLINK_MSG_ID_RC_CHANNELS_SCALED: {
 				MavLinkSendRcScaledData();
 			} break;
