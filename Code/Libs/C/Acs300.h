@@ -43,6 +43,10 @@ enum ACS300_STATUS {
 	ACS300_STATUS_STANDBY = 0x4000
 };
 
+// Transmit the appropriate CAN messages to enable/disable the motor and set the throttle based on
+// the input.
+void Acs300SendThrottleCommand(int16_t command);
+
 // The following two functions apply to ACS300_CAN_ID_VEL_CMD
 void Acs300PackageVelocityCommand(CanMessage *msg, int16_t torqueFeedForward, int16_t velCommand, uint16_t status);
 
