@@ -192,7 +192,7 @@ uint8_t ProcessAllEcanMessages(void)
 						nodeStatusDataStore[node - 1].errors = errors;
 						if (node == CAN_NODE_RC) {
 							sensorAvailability.rcNode.enabled_counter = 0;
-							// Only if the RC transmitter is connected should the RC node be considered
+							// Only if the RC transmitter is connected and in override mode should the RC node be considered
 							// active.
 							if (status & 0x01) {
 								sensorAvailability.rcNode.active_counter = 0;
