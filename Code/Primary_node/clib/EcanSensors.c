@@ -433,6 +433,28 @@ uint8_t ProcessAllEcanMessages(void)
 		}
 	} while (messagesLeft > 0);
 
+	// Check for any errors on the ECAN peripheral:
+	uint8_t errors[2];
+	Ecan1GetErrorStatus(errors);
+	if (nodeStatus & PRIMARY_NODE_STATUS_ECAN_TX_ERR) {
+		if (!errors[0]) {
+			nodeStatus &= ~PRIMARY_NODE_STATUS_ECAN_TX_ERR;
+		}
+	} else {
+		if (errors[0]) {
+			nodeStatus |= PRIMARY_NODE_STATUS_ECAN_TX_ERR;
+		}
+	}
+	if (nodeStatus & PRIMARY_NODE_STATUS_ECAN_RX_ERR) {
+		if (!errors[1]) {
+			nodeStatus &= ~PRIMARY_NODE_STATUS_ECAN_RX_ERR;
+		}
+	} else {
+		if (errors[1]) {
+			nodeStatus |= PRIMARY_NODE_STATUS_ECAN_RX_ERR;
+		}
+	}
+
 	UpdateSensorsAvailability();
 
 	return messagesHandled;
