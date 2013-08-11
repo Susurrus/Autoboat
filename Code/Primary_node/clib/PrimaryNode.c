@@ -236,6 +236,8 @@ void PrimaryNodeMuxAndOutputControllerCommands(float rudderCommand, int16_t thro
 	if (nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) {
 		rc = rudderCommand;
 		// Throttle command is not managed by the autonomous controller yet
+		GetMavLinkManualControl(NULL, &tc);
+		tc = ProcessManualThrottleCommand(tc);
 	} else {
 		GetMavLinkManualControl(&rc, &tc);
 		
@@ -249,6 +251,10 @@ void PrimaryNodeMuxAndOutputControllerCommands(float rudderCommand, int16_t thro
 		// Process the throttle command as well.
 		tc = ProcessManualThrottleCommand(tc);
 	}
+
+	// Track what the commanded values were
+	internalVariables.RudderCommand = rc;
+	internalVariables.ThrottleCommand = tc;
 
 	// Only transmit these commands if there are no errors.
 	if (!nodeErrors) {

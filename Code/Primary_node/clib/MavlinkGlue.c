@@ -759,8 +759,12 @@ void MavLinkReceiveSetMode(const mavlink_set_mode_t *msg)
  */
 void GetMavLinkManualControl(float *rc, int16_t *tc)
 {
-	*rc = mavlinkManualControlData.Rudder;
-	*tc = mavlinkManualControlData.Throttle;
+	if (rc) {
+		*rc = mavlinkManualControlData.Rudder;
+	}
+	if (tc) {
+		*tc = mavlinkManualControlData.Throttle;
+	}
 }
 
 /** Core MAVLink functions handling transmission and state machines **/
