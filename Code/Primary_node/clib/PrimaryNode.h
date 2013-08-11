@@ -1,6 +1,8 @@
 #ifndef PRIMARY_NODE_H
 #define PRIMARY_NODE_H
 
+#include "primary_node_types.h"
+
 /**
  * This enum declares the bitflags used for the nodeStatus variable in Node.h.
  */
