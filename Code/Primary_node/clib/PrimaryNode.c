@@ -119,6 +119,9 @@ void PrimaryNode100HzLoop(void)
 		nodeErrors &= ~PRIMARY_NODE_RESET_STARTUP;
 	}
 
+	// If we've switched to a new waypoint, announce to QGC that we have.
+	CheckMissionStatus();
+
 	// Update the shield LEDs
 	SetResetModeLed();
 	SetAutoModeLed();
@@ -316,6 +319,18 @@ int16_t ProcessManualThrottleCommand(int16_t tc)
 	}
 	
 	return tc;
+}
+
+void CheckMissionStatus(void)
+{
+	static int8_t lastMission = 0;
+
+	int8_t currentMission;
+	GetCurrentMission(&currentMission);
+	if (currentMission != lastMission) {
+		MavLinkSendCurrentMission();
+		lastMission = currentMission;
+	}
 }
 
 void PrimaryNodeAdcInit(void)
