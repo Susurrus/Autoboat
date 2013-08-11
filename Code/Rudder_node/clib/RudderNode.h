@@ -1,5 +1,5 @@
-#ifndef ECAN_RUDDER_H
-#define ECAN_RUDDER_H
+#ifndef RUDDER_NODE_H
+#define RUDDER_NODE_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -101,4 +101,4 @@ float GetNewAngle(void);
  */
 float PotToRads(uint16_t input, uint16_t highSide, uint16_t lowSide);
 
-#endif // ECAN_RUDDER_H
+#endif // RUDDER_NODE_H

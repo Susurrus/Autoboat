@@ -6,6 +6,7 @@
 #include "PrimaryNode.h"
 #include "DataStore.h"
 #include "EcanSensors.h"
+#include "Rudder.h"
 
 #include <pps.h>
 #include <adc.h>
@@ -19,9 +20,6 @@
 // Specify how long after startup the node should stay in reset to let things stabilize. Units are
 // centiseconds.
 #define STARTUP_RESET_TIME 200
-
-// A counter used for tracking the blinking of the automode LED.
-static uint8_t autoModeBlinkCounter = 0;
 
 void PrimaryNodeInit(void)
 {
@@ -86,6 +84,9 @@ void PrimaryNode100HzLoop(void)
 	// Keep an internal counter around so that other processes can occur at less than 100Hz.
 	static uint8_t internalCounter = 0;
 
+	// Clear state on when errors
+	ClearStateWhenErrors();
+
 	// Process incoming ECAN messages.
 	ProcessAllEcanMessages();
 
@@ -109,17 +110,101 @@ void PrimaryNode100HzLoop(void)
 		nodeErrors &= ~PRIMARY_NODE_RESET_STARTUP;
 	}
 
-	// Set the autonomous mode LED dependent on whether we are in autonomous mode, manual override,
-	// or regular manual mode. LED is solid for autonomous mode, flashing for manual override, and
-	// off for regular manual control.
+	// Update the shield LEDs
+	SetResetModeLed();
+	SetAutoModeLed();
+
+	// And make sure the primary LED is blinking indicating that the node is operational
+	SetStatusModeLed();
+
+	// Update the onboard system time counter.
+	++nodeSystemTime;
+
+	// Update the internal counter.
+	if (internalCounter == 99) {
+		internalCounter = 0;
+	} else {
+		++internalCounter;
+	}
+}
+
+/**
+ * Clear the GPS and Rudder internal data structures when the system goes into reset mode. This is
+ * useful primarily when testing the primary controller and the node is left on through multiple
+ * test runs.
+ */
+void ClearStateWhenErrors(void)
+{
+	static uint16_t lastErrorState = 0;
+
+	if (!lastErrorState && nodeErrors) {
+		ClearGpsData();
+		ClearRudderAngle();
+	}
+	lastErrorState = nodeErrors;
+}
+
+/**
+ * Set the primary status indicator LED to always blink
+ */
+void SetStatusModeLed(void)
+{
+	static uint8_t statusModeBlinkCounter = 0;
+	
+	if (statusModeBlinkCounter == 0) {
+		_LATA4 = ON;
+		statusModeBlinkCounter = 1;
+	} else if (statusModeBlinkCounter == 100) {
+		_LATA4 = OFF;
+		++statusModeBlinkCounter;
+	} else if (statusModeBlinkCounter == 199) {
+		statusModeBlinkCounter = 0;
+	} else {
+		++statusModeBlinkCounter;
+	}
+}
+
+/**
+ * Set the reset indicator LED dependent on whether we are in a reset state or not
+ */
+void SetResetModeLed(void)
+{
+	static uint8_t resetModeBlinkCounter = 0;
+	if (nodeErrors) {
+		if (resetModeBlinkCounter == 0) {
+			_LATA3 = ON;
+			resetModeBlinkCounter = 1;
+		} else if (resetModeBlinkCounter == 50) {
+			_LATA3 = OFF;
+			++resetModeBlinkCounter;
+		} else if (resetModeBlinkCounter == 99) {
+			resetModeBlinkCounter = 0;
+		} else {
+			++resetModeBlinkCounter;
+		}
+	} else {
+		_LATA3 = OFF;
+		resetModeBlinkCounter = 0;
+	}
+}
+
+/**
+ * Set the autonomous mode LED dependent on whether we are in autonomous mode, manual override,
+ * or regular manual mode. LED is solid for autonomous mode, flashing for manual override, and
+ * off for regular manual control.
+ */
+void SetAutoModeLed(void)
+{
+	static uint8_t autoModeBlinkCounter = 0;
+	
 	if (nodeErrors & PRIMARY_NODE_RESET_MANUAL_OVERRIDE) {
 		if (autoModeBlinkCounter == 0) {
 			_LATB12 = ON;
 			autoModeBlinkCounter = 1;
-		} else if (autoModeBlinkCounter == 24) {
+		} else if (autoModeBlinkCounter == 25) {
 			_LATB12 = OFF;
 			++autoModeBlinkCounter;
-		} else if (autoModeBlinkCounter == 48) {
+		} else if (autoModeBlinkCounter == 49) {
 			autoModeBlinkCounter = 0;
 		} else {
 			++autoModeBlinkCounter;
@@ -130,16 +215,6 @@ void PrimaryNode100HzLoop(void)
 	} else {
 		_LATB12 = OFF;
 		autoModeBlinkCounter = 0;
-	}
-
-	// Update the onboard system time counter.
-	++nodeSystemTime;
-
-	// Update the internal counter.
-	if (internalCounter == 99) {
-		internalCounter = 0;
-	} else {
-		++internalCounter;
 	}
 }
 

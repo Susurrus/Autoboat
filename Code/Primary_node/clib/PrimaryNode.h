@@ -35,6 +35,28 @@ enum PRIMARY_NODE_RESET {
 void PrimaryNodeInit(void);
 
 /**
+ * Clear the GPS and Rudder internal data structures when the system goes into reset mode. This is
+ * useful primarily when testing the primary controller and the node is left on through multiple
+ * test runs.
+ */
+void ClearStateWhenErrors(void);
+
+/**
+ * Set the primary status indicator LED to always blink
+ */
+void SetStatusModeLed(void);
+
+/**
+ * Change the status of the reset mode LED depending on system state.
+ */
+void SetResetModeLed(void);
+
+/**
+ * Change the status of the autonomous mode LED depending on system state.
+ */
+void SetAutoModeLed(void);
+
+/**
  * Initialize ADC system for detecting power usage.
  */
 void PrimaryNodeAdcInit(void);
