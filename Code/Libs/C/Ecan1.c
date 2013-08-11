@@ -365,14 +365,18 @@ void Ecan1GetErrorStatus(uint8_t errors[2])
         errors[0] = 2;
     } else if (C1INTFbits.TXWAR) {
         errors[0] = 1;
-    }
+    } else {
+		errors[0] = 0;
+	}
 
     // Set reception errors in second array element.
     if (C1INTFbits.RXBP) {
         errors[1] = 2;
     } else if (C1INTFbits.RXWAR) {
         errors[1] = 1;
-    }
+    } else {
+		errors[1] = 0;
+	}
 }
 
 void dma_init(const uint16_t *parameters)
