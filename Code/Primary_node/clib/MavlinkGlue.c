@@ -380,7 +380,7 @@ void MavLinkSendBasicState(void)
 	mavlink_msg_basic_state_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 		internalVariables.RudderCommand, rudderSensorData.RudderAngle,
 		internalVariables.ThrottleCommand,
-		internalVariables.PropellerRpm,
+		0,
 		internalVariables.L2Vector[0], internalVariables.L2Vector[1]
 	);
 
@@ -432,7 +432,6 @@ void MavLinkSendLocalPosition(void)
 /**
  * Transmits the current GPS position of the origin of the local coordinate frame that the North-East-Down
  * coordinates are all relative too. They should be in units of 1e-7 degrees.
- * TODO: Change this to use the global origin from Matlab.
  */
 void MavLinkSendGpsGlobalOrigin(void)
 {
