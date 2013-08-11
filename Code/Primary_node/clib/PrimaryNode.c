@@ -12,6 +12,10 @@
 // Clearing the TRIS bit for a pin specifies it as an output
 #define OUTPUT 0
 
+// Specify how long after startup the node should stay in reset to let things stabilize. Units are
+// centiseconds.
+#define STARTUP_RESET_TIME 200
+
 void PrimaryNodeInit(void)
 {
 	// Set the ID for the primary node.
@@ -60,6 +64,11 @@ void PrimaryNodeInit(void)
 	TRISBbits.TRISB12 = OUTPUT;
 	// B15 (output): Amber GPS LED on the CANode Primary Shield, on when GPS is active & receiving good data.
 	TRISBbits.TRISB15 = OUTPUT;
+
+	// Now before we start everything, make sure we have our state correct given that we just started
+	// up. Every sensor is assumed to be online, but just expiring on initialization, so here we call
+	// the necessary code to trigger the timeout event for every sensor.
+	UpdateSensorsAvailability();
 }
 
 /**
@@ -82,6 +91,15 @@ void PrimaryNode100HzLoop(void)
 	// At 2Hz transmit a NODE_STATUS ECAN message.
 	if (internalCounter == 0 || internalCounter == 50) {
 		NodeTransmitStatus();
+	}
+
+	// Set a reset signal for the first 2 seconds, allowing things to stabilize a bit before the
+	// system responds. This is especially crucial because it can take up to a second for sensors to
+	// timeout and appear as offline.
+	if (nodeSystemTime == 0) {
+		nodeErrors |= PRIMARY_NODE_RESET_STARTUP;
+	} else if (nodeSystemTime == STARTUP_RESET_TIME) {
+		nodeErrors &= ~PRIMARY_NODE_RESET_STARTUP;
 	}
 
 	// Update the onboard system time counter.

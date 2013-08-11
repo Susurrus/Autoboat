@@ -9,6 +9,7 @@
 #include "Node.h"
 #include "Acs300.h"
 #include "Packing.h"
+#include "PrimaryNode.h"
 
 // Declare some macros for helping setting bit values
 #define ON  1
@@ -35,7 +36,17 @@ struct NodeStatusData nodeStatusDataStore[NUM_NODES] = {
 	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF}
 };
 
-struct stc sensorAvailability = {0};
+// At startup assume all sensors are disconnected.
+struct stc sensorAvailability = {
+	{1, SENSOR_TIMEOUT, 1, SENSOR_TIMEOUT},
+	{1, SENSOR_TIMEOUT, 1, SENSOR_TIMEOUT},
+	{1, SENSOR_TIMEOUT, 1, SENSOR_TIMEOUT},
+	{1, SENSOR_TIMEOUT, 1, SENSOR_TIMEOUT},
+	{1, SENSOR_TIMEOUT, 1, SENSOR_TIMEOUT},
+	{1, SENSOR_TIMEOUT, 1, SENSOR_TIMEOUT},
+	{1, SENSOR_TIMEOUT, 1, SENSOR_TIMEOUT},
+	{1, SENSOR_TIMEOUT, 1, SENSOR_TIMEOUT}
+};
 
 void GetWindDataPacked(uint8_t *data)
 {
@@ -92,11 +103,6 @@ void ClearGpsData(void)
 	gpsDataStore.cog = 0;
 	gpsDataStore.sog = 0;
 	gpsDataStore.newData = 0;
-}
-
-uint8_t GetPropActive(void)
-{
-    return sensorAvailability.prop.enabled;
 }
 
 /**
@@ -424,8 +430,10 @@ void UpdateSensorsAvailability(void)
 	}
 	if (sensorAvailability.gps.active && sensorAvailability.gps.active_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.gps.active = false;
+		nodeStatus |= PRIMARY_NODE_STATUS_GPS_DISCON;
 	} else if (!sensorAvailability.gps.active && sensorAvailability.gps.active_counter == 0) {
 		sensorAvailability.gps.active = true;
+		nodeStatus &= ~PRIMARY_NODE_STATUS_GPS_DISCON;
 	}
 	if (sensorAvailability.imu.enabled && sensorAvailability.imu.enabled_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.imu.enabled = false;
@@ -471,8 +479,10 @@ void UpdateSensorsAvailability(void)
 	// way to tell.
 	if (sensorAvailability.prop.enabled && sensorAvailability.prop.enabled_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.prop.enabled = false;
+		nodeErrors |= PRIMARY_NODE_RESET_ESTOP;
 	} else if (!sensorAvailability.prop.enabled && sensorAvailability.prop.enabled_counter == 0) {
 		sensorAvailability.prop.enabled = true;
+		nodeErrors &= ~PRIMARY_NODE_RESET_ESTOP;
 	}
 	if (sensorAvailability.prop.active && sensorAvailability.prop.active_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.prop.active = false;

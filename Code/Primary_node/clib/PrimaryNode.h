@@ -9,7 +9,7 @@ enum PRIMARY_NODE_STATUS {
 	PRIMARY_NODE_STATUS_UNUSED      = 0x0002,
 	PRIMARY_NODE_STATUS_ECAN_TX_ERR = 0x0004, // Error in CAN transmission
 	PRIMARY_NODE_STATUS_ECAN_RX_ERR = 0x0008, // ERROR in CAN reception
-	PRIMARY_NODE_STATUS_GPS_DISCON  = 0x0010  // GPS is disconnected/not locked on.
+	PRIMARY_NODE_STATUS_GPS_DISCON  = 0x0010  // GPS is disconnected or not locked on.
 };
 
 /**
@@ -33,5 +33,10 @@ enum PRIMARY_NODE_RESET {
  * Initialize all of the C-libraries necessary for the Primary Node.
  */
 void PrimaryNodeInit(void);
+
+/**
+ * Initialize ADC system for detecting power usage.
+ */
+void PrimaryNodeAdcInit(void);
 
 #endif // PRIMARY_NODE_H
