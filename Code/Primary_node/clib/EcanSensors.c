@@ -10,6 +10,10 @@
 #include "Acs300.h"
 #include "Packing.h"
 
+// Declare some macros for helping setting bit values
+#define ON  1
+#define OFF 0
+
 struct PowerData powerDataStore = {0};
 struct WindData windDataStore = {0};
 struct AirData airDataStore = {0};
@@ -85,11 +89,6 @@ void ClearGpsData(void)
 	gpsDataStore.cog = 0;
 	gpsDataStore.sog = 0;
 	gpsDataStore.newData = 0;
-}
-
-uint8_t GetGpsEnabled(void)
-{
-    return sensorAvailability.gps.enabled;
 }
 
 uint8_t GetPropActive(void)
@@ -415,8 +414,10 @@ void UpdateSensorsAvailability(void)
 	// Now disable or enable sensors as needed.
 	if (sensorAvailability.gps.enabled && sensorAvailability.gps.enabled_counter >= 100) {
 		sensorAvailability.gps.enabled = false;
+		LATBbits.LATB15 = OFF;
 	} else if (!sensorAvailability.gps.enabled && sensorAvailability.gps.enabled_counter == 0) {
 		sensorAvailability.gps.enabled = true;
+		LATBbits.LATB15 = ON;
 	}
 	if (sensorAvailability.gps.active && sensorAvailability.gps.active_counter >= 100) {
 		sensorAvailability.gps.active = false;

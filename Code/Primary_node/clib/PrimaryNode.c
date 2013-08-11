@@ -9,6 +9,8 @@
 
 #include <pps.h>
 #include <adc.h>
+// Clearing the TRIS bit for a pin specifies it as an output
+#define OUTPUT 0
 
 void PrimaryNodeInit(void)
 {
@@ -48,6 +50,16 @@ void PrimaryNodeInit(void)
 	PPSOutput(OUT_FN_PPS_U2TX, OUT_PIN_PPS_RP8);
 	PPSInput(PPS_U2RX, PPS_RP9);
 	PPSLock;
+
+	// And specify input/output settings for digital I/O ports:
+	// A3 (output): Red LED on the CANode, blinks at 2Hz when the system is in reset, and is solid when the system hit a fatal error, otherwise off.
+	TRISAbits.TRISA3 = OUTPUT;
+	// A4 (output): Amber LED on the CANode, blinks at 1Hz for status.
+	TRISAbits.TRISA4 = OUTPUT;
+	// B12 (output): Amber automode LED on the CANode Primary Shield, on when system is autonomous, blinking at 4Hz when in manual override, and off otherwise.
+	TRISBbits.TRISB12 = OUTPUT;
+	// B15 (output): Amber GPS LED on the CANode Primary Shield, on when GPS is active & receiving good data.
+	TRISBbits.TRISB15 = OUTPUT;
 }
 
 /**
