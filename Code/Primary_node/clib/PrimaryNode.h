@@ -29,6 +29,9 @@ enum PRIMARY_NODE_RESET {
 // Calculate the BRG register value necessary for 115200 baud with a 80MHz clock.
 #define BAUD115200_BRG_REG 21
 
+// Large data store of many internal/misc variables that are output via MAVLink.
+extern MavlinkData internalVariables;
+
 /**
  * Initialize all of the C-libraries necessary for the Primary Node.
  */
@@ -55,6 +58,18 @@ void SetResetModeLed(void);
  * Change the status of the autonomous mode LED depending on system state.
  */
 void SetAutoModeLed(void);
+
+/**
+ * Perform a bunch of processing on a manual rudder angle input including binning the final value.
+ * @param rc A rudder angle in radians.
+ */
+float ProcessManualRudderCommand(float rc);
+
+/**
+ * Perform a bunch of processing on a manual throttle input including binning the final value.
+ * @param tc The commanded throttle in units from -1000 (full reverse) to 1000 (full forward)
+ */
+int16_t ProcessManualThrottleCommand(int16_t tc);
 
 /**
  * Initialize ADC system for detecting power usage.

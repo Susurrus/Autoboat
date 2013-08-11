@@ -139,19 +139,13 @@ uint16_t mavLinkMessagesFailedParsing = 0;
 
 // Track manual control data transmit via MAVLink
 struct {
-	union {
-		struct {
-			int16_t Rudder;
-			int16_t Throttle;
-			uint16_t Buttons; 
-			bool NewData;
-		} unpackedData;
-		uint8_t packedData[7];
-	};
+	int16_t Rudder;
+	int16_t Throttle;
+	uint16_t Buttons; 
 } mavlinkManualControlData;
 
 // Set up the message scheduler for MAVLink transmission
-#define MAVLINK_MSGS_SIZE 16
+#define MAVLINK_MSGS_SIZE 15
 uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_HEARTBEAT,
 	MAVLINK_MSG_ID_SYS_STATUS,
@@ -159,7 +153,6 @@ uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_LOCAL_POSITION_NED,
 	MAVLINK_MSG_ID_ATTITUDE,
 	MAVLINK_MSG_ID_GPS_RAW_INT,
-	MAVLINK_MSG_ID_RC_CHANNELS_SCALED,
 	MAVLINK_MSG_ID_WSO100,
 	MAVLINK_MSG_ID_BASIC_STATE,
 	MAVLINK_MSG_ID_RUDDER_RAW,
@@ -193,7 +186,7 @@ void MavLinkInit(void)
 		mavlinkSchedule.MessageSizes[i] = mavMessageSizes[ids[i]];
 	}
 
-	const uint8_t const periodicities[] = {2, 2, 1, 10, 10, 5, 4, 2, 10, 4, 2, 2, 5, 1, 1, 1};
+	const uint8_t const periodicities[] = {2, 2, 1, 10, 10, 5, 2, 10, 4, 2, 2, 5, 1, 1, 1};
 	for (i = 0; i < sizeof(periodicities); ++i) {
 		if (!AddMessageRepeating(&mavlinkSchedule, ids[i], periodicities[i])) {
 			FATAL_ERROR();
@@ -434,30 +427,6 @@ void MavLinkSendLocalPosition(void)
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
 	Uart1WriteData(buf, (uint8_t)len);
-}
-
-/**
- * Only transmit scaled manual control data messages if manual control is enabled OR if 
- * the RC transmitter is enabled as the RC transmitter overrides everything.
- */
-void MavLinkSendRcScaledData(void)
-{
-	if (!(nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE)) {
-		mavlink_message_t msg;
-
-		mavlink_msg_rc_channels_scaled_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-		                                    nodeSystemTime*10,
-		                                    0,
-		                                    (int16_t)(signalRudderScaled * 10000),
-		                                    (int16_t)(signalThrottleScaled * 10000),
-		                                    INT16_MAX,
-		                                    INT16_MAX, INT16_MAX, INT16_MAX, INT16_MAX, INT16_MAX,
-		                                    UINT8_MAX);
-
-		len = mavlink_msg_to_send_buffer(buf, &msg);
-
-		Uart1WriteData(buf, (uint8_t)len);
-	}
 }
 
 /**
@@ -742,16 +711,16 @@ void MavLinkReceiveManualControl(const mavlink_manual_control_t *msg)
 	if (msg->target == mavlink_system.sysid) {
 		// Record the rudder angle
 		if (msg->r != INT16_MAX) {
-			mavlinkManualControlData.unpackedData.Rudder = msg->r;
+			mavlinkManualControlData.Rudder = msg->r;
 		}
 
 		// If the trigger has been pulled was part of this data packet, update the throttle value.
 		if ((msg->buttons & TRIGGER_ENABLE_BUTTON) != 0 && msg->z != INT16_MAX) {
-			mavlinkManualControlData.unpackedData.Throttle = msg->z;
+			mavlinkManualControlData.Throttle = msg->z;
 		}
 
 		// Record the buttons that are pressed
-		mavlinkManualControlData.unpackedData.Buttons = msg->buttons;
+		mavlinkManualControlData.Buttons = msg->buttons;
 
         // If the rudder calibration button has been pressed, send that command.
         if (!(lastButtons & RUDDER_CAL_BUTTON) && (msg->buttons & RUDDER_CAL_BUTTON)) {
@@ -761,8 +730,6 @@ void MavLinkReceiveManualControl(const mavlink_manual_control_t *msg)
 		// Keep track of what buttons are currently pressed so that up- and down-events can be
 		// tracked.
         lastButtons = msg->buttons;
-
-		mavlinkManualControlData.unpackedData.NewData = true;
 	}
 }
 
@@ -787,16 +754,13 @@ void MavLinkReceiveSetMode(const mavlink_set_mode_t *msg)
 
 /**
  * Returns the throttle and rudder manual control commands received over MAVLink.
- * TODO: Switch over to using Packing.h
- * @param data
+ * @param rc The rudder command (floating point radians)
+ * @param tc The throttle command (16-bit integer, -1000=full reverse, 1000=full forward)
  */
-void MatlabGetMavLinkManualControl(uint8_t *data)
+void GetMavLinkManualControl(float *rc, int16_t *tc)
 {
-	data[0] = mavlinkManualControlData.packedData[0];
-	data[1] = mavlinkManualControlData.packedData[1];
-	data[2] = mavlinkManualControlData.packedData[2];
-	data[3] = mavlinkManualControlData.packedData[3];
-	mavlinkManualControlData.unpackedData.NewData = 0;
+	*rc = mavlinkManualControlData.Rudder;
+	*tc = mavlinkManualControlData.Throttle;
 }
 
 /** Core MAVLink functions handling transmission and state machines **/
@@ -1613,10 +1577,6 @@ void MavLinkTransmit(void)
 
 			case MAVLINK_MSG_ID_GPS_RAW_INT: {
 				MavLinkSendRawGps();
-			} break;
-
-			case MAVLINK_MSG_ID_RC_CHANNELS_SCALED: {
-				MavLinkSendRcScaledData();
 			} break;
 
 			/** SeaSlug Messages **/

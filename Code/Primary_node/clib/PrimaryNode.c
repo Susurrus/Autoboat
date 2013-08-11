@@ -7,6 +7,9 @@
 #include "DataStore.h"
 #include "EcanSensors.h"
 #include "Rudder.h"
+#include "Actuators.h"
+
+#include <stdlib.h>
 
 #include <pps.h>
 #include <adc.h>
@@ -21,10 +24,16 @@
 // centiseconds.
 #define STARTUP_RESET_TIME 200
 
+// Track a bunch of variables for use with transmission over MAVLink.
+MavlinkData internalVariables;
+
 void PrimaryNodeInit(void)
 {
 	// Set the ID for the primary node.
 	nodeId = CAN_NODE_PRIMARY_CONTROLLER;
+
+	// We aren't calculating CPU load for the primary controller
+	nodeCpuLoad = UINT8_MAX;
 
 	// Initialize UART1 to 115200 for groundstation communications.
 	Uart1Init(BAUD115200_BRG_REG);
@@ -216,6 +225,91 @@ void SetAutoModeLed(void)
 		_LATB12 = OFF;
 		autoModeBlinkCounter = 0;
 	}
+}
+
+void PrimaryNodeMuxAndOutputControllerCommands(float rudderCommand, int16_t throttleCommand)
+{
+	float rc;
+	int16_t tc;
+
+	// Select actuator commands based on vehicle mode.
+	if (nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) {
+		rc = rudderCommand;
+		// Throttle command is not managed by the autonomous controller yet
+	} else {
+		GetMavLinkManualControl(&rc, &tc);
+		
+		// First process the rudder command adding filtering, a deadband, and unit conversion.
+		// First convert to radians:
+		rc = rc * 7.854e-4;
+
+		// Now perform some binning w/ hysteresis.
+		rc = ProcessManualRudderCommand(rc);
+
+		// Process the throttle command as well.
+		tc = ProcessManualThrottleCommand(tc);
+	}
+
+	// Only transmit these commands if there are no errors.
+	if (!nodeErrors) {
+		ActuatorsTransmitCommands(rc, tc);
+	}
+}
+
+float ProcessManualRudderCommand(float rc)
+{
+	static const int numBins = 9;
+	static const float transitions[] = {0.0, 6*M_PI/180, 11*M_PI/180, 16*M_PI/180, 21*M_PI/180, 26*M_PI/180, 31*M_PI/180, 36*M_PI/180, 40*M_PI/180};
+	static const float binAngles[] = {0.0, 6*M_PI/180, 12*M_PI/180, 18*M_PI/180, 23*M_PI/180, 28*M_PI/180, 33*M_PI/180, 39*M_PI/180, 45*M_PI/180};
+	static int bin = 0; // Track the current bin we're in.
+	static float lastRc;
+
+	// Cap the input to +- 45 degrees.
+	if (rc > 0.7854) {
+		rc = 0.7854;
+	} else if (rc < -0.7854) {
+		rc = -0.7854;
+	}
+
+	// Now average with the last sample
+	rc = (rc + lastRc) / 2.0;
+	lastRc = rc;
+
+	// And finally add the ~8% deadband
+	if (rc > -0.3 && rc < 0.3) {
+		rc = 0.0;
+	}
+
+	// Attempt to move up a bin.
+	if (bin + 1 < numBins)  {
+		if (fabs(rc) > (transitions[bin + 1] + 0.0349)) {
+			++bin;
+		}
+	}
+
+	// Attempt to step down a bin.
+	if (bin - 1 >= 0)  {
+		if (fabs(rc) < (transitions[bin] - 0.0436)) {
+			--bin;
+		}
+	}
+
+	// Finally return the mapped value accounting for sign.
+	if (rc < 0) {
+		return -binAngles[bin];
+	} else {
+		return binAngles[bin];
+	}
+}
+
+int16_t ProcessManualThrottleCommand(int16_t tc)
+{
+	// Add an 8% deadband
+	if (tc > -40 && tc < 40) {
+		tc = 0;
+	}
+	
+	return tc;
 }
 
 void PrimaryNodeAdcInit(void)

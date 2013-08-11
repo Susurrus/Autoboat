@@ -180,7 +180,7 @@ void MavLinkReceiveCommandLong(const mavlink_command_long_t *msg);
  */
 void MavLinkReceiveManualControl(const mavlink_manual_control_t *msg);
 
-void MatlabGetMavLinkManualControl(uint8_t *data);
+void GetMavLinkManualControl(float *rc, int16_t *tc);
 
 /** Core MAVLink functions handling transmission and state machines **/
 
