@@ -223,6 +223,26 @@ uint8_t ProcessAllEcanMessages(void)
 						!rudderSensorData.Calibrating) {
 						sensorAvailability.rudder.active_counter = 0;
 					}
+					// Track transitions in rudder calibrating state.
+					if (nodeErrors & PRIMARY_NODE_RESET_CALIBRATING) {
+						if (!rudderSensorData.Calibrating) {
+							nodeErrors &= ~PRIMARY_NODE_RESET_CALIBRATING;
+						}
+					} else {
+						if (rudderSensorData.Calibrating) {
+							nodeErrors |= PRIMARY_NODE_RESET_CALIBRATING;
+						}
+					}
+					// Track transitions in rudder calibrated state.
+					if (nodeErrors & PRIMARY_NODE_RESET_UNCALIBRATED) {
+						if (rudderSensorData.Calibrated) {
+							nodeErrors &= ~PRIMARY_NODE_RESET_UNCALIBRATED;
+						}
+					} else {
+						if (!rudderSensorData.Calibrated) {
+							nodeErrors |= PRIMARY_NODE_RESET_UNCALIBRATED;
+						}
+					}
 				} else if (msg.id == CAN_MSG_ID_IMU_DATA) {
 					sensorAvailability.imu.enabled_counter = 0;
 					sensorAvailability.imu.active_counter = 0;
@@ -489,8 +509,12 @@ void UpdateSensorsAvailability(void)
 	} else if (!sensorAvailability.prop.active && sensorAvailability.prop.active_counter == 0) {
 		sensorAvailability.prop.active = true;
 	}
+	// And if the rudder node disconnects, set the uncalibrated reset line. There's no need to peform
+	// the inverse check when it becomes active again, because that will be done when the CAN message
+	// is received.
 	if (sensorAvailability.rudder.enabled && sensorAvailability.rudder.enabled_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.rudder.enabled = false;
+		nodeErrors |= PRIMARY_NODE_RESET_UNCALIBRATED;
 	} else if (!sensorAvailability.rudder.enabled && sensorAvailability.rudder.enabled_counter == 0) {
 		sensorAvailability.rudder.enabled = true;
 	}
