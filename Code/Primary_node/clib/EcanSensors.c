@@ -14,6 +14,9 @@
 #define ON  1
 #define OFF 0
 
+// Set the timeout period for sensors (in units of centiseconds)
+#define SENSOR_TIMEOUT 100
+
 struct PowerData powerDataStore = {0};
 struct WindData windDataStore = {0};
 struct AirData airDataStore = {0};
@@ -115,52 +118,52 @@ uint8_t ProcessAllEcanMessages(void)
 	uint8_t messagesHandled = 0;
 
 	// Here we increment the timeout counters for each sensor/actuator we're tracking the status of. This function is assumed to be called at 100Hz and as such the timeout value is 100.
-	if (sensorAvailability.gps.enabled_counter < 100) {
+	if (sensorAvailability.gps.enabled_counter < SENSOR_TIMEOUT) {
 		++sensorAvailability.gps.enabled_counter;
 	}
-	if (sensorAvailability.gps.active_counter < 100) {
+	if (sensorAvailability.gps.active_counter < SENSOR_TIMEOUT) {
 		++sensorAvailability.gps.active_counter;
 	}
-	if (sensorAvailability.imu.enabled_counter < 100) {
+	if (sensorAvailability.imu.enabled_counter < SENSOR_TIMEOUT) {
 		++sensorAvailability.imu.enabled_counter;
 	}
-	if (sensorAvailability.imu.active_counter < 100) {
+	if (sensorAvailability.imu.active_counter < SENSOR_TIMEOUT) {
 		++sensorAvailability.imu.active_counter;
 	}
-	if (sensorAvailability.wso100.enabled_counter < 100) {
+	if (sensorAvailability.wso100.enabled_counter < SENSOR_TIMEOUT) {
 		++sensorAvailability.wso100.enabled_counter;
 	}
-	if (sensorAvailability.wso100.active_counter < 100) {
+	if (sensorAvailability.wso100.active_counter < SENSOR_TIMEOUT) {
 		++sensorAvailability.wso100.active_counter;
 	}
-	if (sensorAvailability.dst800.enabled_counter < 100) {
+	if (sensorAvailability.dst800.enabled_counter < SENSOR_TIMEOUT) {
 		++sensorAvailability.dst800.enabled_counter;
 	}
-	if (sensorAvailability.dst800.active_counter < 100) {
+	if (sensorAvailability.dst800.active_counter < SENSOR_TIMEOUT) {
 		++sensorAvailability.dst800.active_counter;
 	}
-	if (sensorAvailability.power.enabled_counter < 100) {
+	if (sensorAvailability.power.enabled_counter < SENSOR_TIMEOUT) {
 		++sensorAvailability.power.enabled_counter;
 	}
-	if (sensorAvailability.power.active_counter < 100) {
+	if (sensorAvailability.power.active_counter < SENSOR_TIMEOUT) {
 		++sensorAvailability.power.active_counter;
 	}
-	if (sensorAvailability.prop.enabled_counter < 100) {
+	if (sensorAvailability.prop.enabled_counter < SENSOR_TIMEOUT) {
 		++sensorAvailability.prop.enabled_counter;
 	}
-	if (sensorAvailability.prop.active_counter < 100) {
+	if (sensorAvailability.prop.active_counter < SENSOR_TIMEOUT) {
 		++sensorAvailability.prop.active_counter;
 	}
-	if (sensorAvailability.rudder.enabled_counter < 100) {
+	if (sensorAvailability.rudder.enabled_counter < SENSOR_TIMEOUT) {
 		++sensorAvailability.rudder.enabled_counter;
 	}
-	if (sensorAvailability.rudder.active_counter < 100) {
+	if (sensorAvailability.rudder.active_counter < SENSOR_TIMEOUT) {
 		++sensorAvailability.rudder.active_counter;
 	}
-	if (sensorAvailability.rcNode.enabled_counter < 100) {
+	if (sensorAvailability.rcNode.enabled_counter < SENSOR_TIMEOUT) {
 		++sensorAvailability.rcNode.enabled_counter;
 	}
-	if (sensorAvailability.rcNode.active_counter < 100) {
+	if (sensorAvailability.rcNode.active_counter < SENSOR_TIMEOUT) {
 		++sensorAvailability.rcNode.active_counter;
 	}
 
@@ -411,85 +414,87 @@ uint8_t ProcessAllEcanMessages(void)
 
 void UpdateSensorsAvailability(void)
 {
-	// Now disable or enable sensors as needed.
-	if (sensorAvailability.gps.enabled && sensorAvailability.gps.enabled_counter >= 100) {
+	// Turn on the GPS indicator LED depending on the GPS status.
+	if (sensorAvailability.gps.enabled && sensorAvailability.gps.enabled_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.gps.enabled = false;
 		LATBbits.LATB15 = OFF;
 	} else if (!sensorAvailability.gps.enabled && sensorAvailability.gps.enabled_counter == 0) {
 		sensorAvailability.gps.enabled = true;
 		LATBbits.LATB15 = ON;
 	}
-	if (sensorAvailability.gps.active && sensorAvailability.gps.active_counter >= 100) {
+	if (sensorAvailability.gps.active && sensorAvailability.gps.active_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.gps.active = false;
 	} else if (!sensorAvailability.gps.active && sensorAvailability.gps.active_counter == 0) {
 		sensorAvailability.gps.active = true;
 	}
-	if (sensorAvailability.imu.enabled && sensorAvailability.imu.enabled_counter >= 100) {
+	if (sensorAvailability.imu.enabled && sensorAvailability.imu.enabled_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.imu.enabled = false;
 	} else if (!sensorAvailability.imu.enabled && sensorAvailability.imu.enabled_counter == 0) {
 		sensorAvailability.imu.enabled = true;
 	}
-	if (sensorAvailability.imu.active && sensorAvailability.imu.active_counter >= 100) {
+	if (sensorAvailability.imu.active && sensorAvailability.imu.active_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.imu.active = false;
 	} else if (!sensorAvailability.imu.active && sensorAvailability.imu.active_counter == 0) {
 		sensorAvailability.imu.active = true;
 	}
-	if (sensorAvailability.wso100.enabled && sensorAvailability.wso100.enabled_counter >= 100) {
+	if (sensorAvailability.wso100.enabled && sensorAvailability.wso100.enabled_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.wso100.enabled = false;
 	} else if (!sensorAvailability.wso100.enabled && sensorAvailability.wso100.enabled_counter == 0) {
 		sensorAvailability.wso100.enabled = true;
 	}
-	if (sensorAvailability.wso100.active && sensorAvailability.wso100.active_counter >= 100) {
+	if (sensorAvailability.wso100.active && sensorAvailability.wso100.active_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.wso100.active = false;
 	} else if (!sensorAvailability.wso100.active && sensorAvailability.wso100.active_counter == 0) {
 		sensorAvailability.wso100.active = true;
 	}
-	if (sensorAvailability.dst800.enabled && sensorAvailability.dst800.enabled_counter >= 100) {
+	if (sensorAvailability.dst800.enabled && sensorAvailability.dst800.enabled_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.dst800.enabled = false;
 	} else if (!sensorAvailability.dst800.enabled && sensorAvailability.dst800.enabled_counter == 0) {
 		sensorAvailability.dst800.enabled = true;
 	}
-	if (sensorAvailability.dst800.active && sensorAvailability.dst800.active_counter >= 100) {
+	if (sensorAvailability.dst800.active && sensorAvailability.dst800.active_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.dst800.active = false;
 	} else if (!sensorAvailability.dst800.active && sensorAvailability.dst800.active_counter == 0) {
 		sensorAvailability.dst800.active = true;
 	}
-	if (sensorAvailability.power.enabled && sensorAvailability.power.enabled_counter >= 100) {
+	if (sensorAvailability.power.enabled && sensorAvailability.power.enabled_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.power.enabled = false;
 	} else if (!sensorAvailability.power.enabled && sensorAvailability.power.enabled_counter == 0) {
 		sensorAvailability.power.enabled = true;
 	}
-	if (sensorAvailability.power.active && sensorAvailability.power.active_counter >= 100) {
+	if (sensorAvailability.power.active && sensorAvailability.power.active_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.power.active = false;
 	} else if (!sensorAvailability.power.active && sensorAvailability.power.active_counter == 0) {
 		sensorAvailability.power.active = true;
 	}
-	if (sensorAvailability.prop.enabled && sensorAvailability.prop.enabled_counter >= 100) {
+	// Track the ACS300 board. If it's not transmitting, assume we're in e-stop as that's the only
+	// way to tell.
+	if (sensorAvailability.prop.enabled && sensorAvailability.prop.enabled_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.prop.enabled = false;
 	} else if (!sensorAvailability.prop.enabled && sensorAvailability.prop.enabled_counter == 0) {
 		sensorAvailability.prop.enabled = true;
 	}
-	if (sensorAvailability.prop.active && sensorAvailability.prop.active_counter >= 100) {
+	if (sensorAvailability.prop.active && sensorAvailability.prop.active_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.prop.active = false;
 	} else if (!sensorAvailability.prop.active && sensorAvailability.prop.active_counter == 0) {
 		sensorAvailability.prop.active = true;
 	}
-	if (sensorAvailability.rudder.enabled && sensorAvailability.rudder.enabled_counter >= 100) {
+	if (sensorAvailability.rudder.enabled && sensorAvailability.rudder.enabled_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.rudder.enabled = false;
 	} else if (!sensorAvailability.rudder.enabled && sensorAvailability.rudder.enabled_counter == 0) {
 		sensorAvailability.rudder.enabled = true;
 	}
-	if (sensorAvailability.rudder.active && sensorAvailability.rudder.active_counter >= 100) {
+	if (sensorAvailability.rudder.active && sensorAvailability.rudder.active_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.rudder.active = false;
 	} else if (!sensorAvailability.rudder.active && sensorAvailability.rudder.active_counter == 0) {
 		sensorAvailability.rudder.active = true;
 	}
-	if (sensorAvailability.rcNode.enabled && sensorAvailability.rcNode.enabled_counter >= 100) {
+	if (sensorAvailability.rcNode.enabled && sensorAvailability.rcNode.enabled_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.rcNode.enabled = false;
 	} else if (!sensorAvailability.rcNode.enabled && sensorAvailability.rcNode.enabled_counter == 0) {
 		sensorAvailability.rcNode.enabled = true;
 	}
-	if (sensorAvailability.rcNode.active && sensorAvailability.rcNode.active_counter >= 100) {
+	if (sensorAvailability.rcNode.active && sensorAvailability.rcNode.active_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.rcNode.active = false;
 	} else if (!sensorAvailability.rcNode.active && sensorAvailability.rcNode.active_counter == 0) {
 		sensorAvailability.rcNode.active = true;
