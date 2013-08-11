@@ -13,6 +13,7 @@
 
 #include <pps.h>
 #include <adc.h>
+#include <dma.h>
 // Clearing the TRIS bit for a pin specifies it as an output
 #define OUTPUT 0
 
@@ -26,6 +27,11 @@
 
 // Track a bunch of variables for use with transmission over MAVLink.
 MavlinkData internalVariables;
+
+// Set up DMA memory for the ADC. This is 16 words because the ADC is operated in scatter/gather
+// mode where all ADC channels get their own word, so even though I'm only collecting data on 4 pins,
+// every pin needs its own memory location.
+static volatile uint16_t adcBuf[16] __attribute__((space(dma), aligned(256))) = {};
 
 void PrimaryNodeInit(void)
 {
@@ -101,6 +107,12 @@ void PrimaryNode100HzLoop(void)
 
 	// Check for new MaVLink messages.
 	MavLinkReceive();
+
+	// Check ADC inputs
+	// Battery voltage = 1/.06369 * 3.3 / (1 << 12 - 1)
+	// Battery current = 1/.03660 * 3.3 / (1 << 12 - 1)
+	// Input power
+	// Onboard temperature
 
 	// Send any necessary messages for this timestep.
 	MavLinkTransmit();
@@ -333,7 +345,68 @@ void CheckMissionStatus(void)
 	}
 }
 
+/**
+ * Configure ADC1 for reading in 4 channels:
+ * AN0 - Power rail voltage
+ * AN1 - Analog temperature sensor (TC1047)
+ * AN3 - Power rail current
+ * AN5 - Input voltage (voltage divider)
+ * Relies on DMA
+ */
 void PrimaryNodeAdcInit(void)
 {
-	// FIXME: Add ADC initialization here.
+	// Enable ADC interrupts at lowest priority
+	ConfigIntADC1(ADC_INT_DISABLE & ADC_INT_PRI_7);
+
+	// Configure ADC1
+	uint16_t config1 = ADC_MODULE_ON & // Enable the ADC
+	                   ADC_IDLE_CONTINUE & // Operate even when in sleep mode
+	                   ADC_ADDMABM_SCATTR & // Put each pin's sample in their own location in memory
+			ADC_AD12B_12BIT &   // Set into 12-bit mode
+			ADC_FORMAT_INTG &   // Retrieve value as a standard integer
+			ADC_CLK_AUTO &      // Start new sample immediately after last one
+			ADC_AUTO_SAMPLING_ON & // Continually sample
+			ADC_MULTIPLE &     // Sample all channels simultaneously
+			ADC_SAMP_ON;           // Start sampling
+	uint16_t config2 = ADC_VREF_AVDD_AVSS & // Use GND & 3.3V as voltage references
+			ADC_SCAN_ON &                   // Scan all input pins for channel 0
+			ADC_SELECT_CHAN_0 &             // Only use the 1st input channel (ADC is broken into 4)
+			ADC_DMA_ADD_INC_1 &             // Use sequential DMA addresses
+			ADC_ALT_BUF_OFF &               // Always fill the buffers from the start address
+			ADC_ALT_INPUT_OFF;              // Don't use alternate sample modes
+	uint16_t config3 = ADC_SAMPLE_TIME_15 &  // Set sampling time to 15*T_AD. 14 is the fastest that 12-bit sampling can go.
+			ADC_CONV_CLK_SYSTEM &           // Base the sampling clock off the system clock
+			ADC_CONV_CLK_1Tcy;              // Run the ADC using 1* the system clock
+	uint16_t config4 = ADC_DMA_BUF_LOC_1;  // Store only one sample per analog input
+	uint16_t configport_h = ENABLE_ALL_DIG_16_31;  // Disable analog inputs for ports 16-31
+	uint16_t configport_l = ENABLE_AN0_ANA & // Sample AN0
+	                       ENABLE_AN1_ANA & // Sample AN1
+	                       ENABLE_AN3_ANA & // Sample AN3
+	                       ENABLE_AN5_ANA;  // Sample AN5
+	uint16_t configscan_h = SCAN_NONE_16_31;
+	uint16_t configscan_l = SKIP_SCAN_AN2 & SKIP_SCAN_AN4 & SKIP_SCAN_AN6 & SKIP_SCAN_AN7 & SKIP_SCAN_AN8 &
+	                        SKIP_SCAN_AN9 & SKIP_SCAN_AN10 & SKIP_SCAN_AN11 & SKIP_SCAN_AN12 & SKIP_SCAN_AN1 &
+	                        SKIP_SCAN_AN14 & SKIP_SCAN_AN15;
+	OpenADC1(config1, config2, config3, config4, configport_l, configport_h, configscan_h, configscan_l);
+
+	// Disable DMA1 interrupts and st them to the same priority as the ADC
+	ConfigIntDMA1(DMA1_INT_DISABLE & DMA1_INT_PRI_7);
+
+	// And configure DMA1 for use with the ADC.
+	uint16_t config = DMA1_MODULE_ON & // Enable DMA1
+	                  DMA1_SIZE_WORD & // Data is word-sized
+	                  PERIPHERAL_TO_DMA1 & // Data is coming in from the peripheral
+	                  DMA1_INTERRUPT_BLOCK & // Perform interrupt when all data has been moved
+	                  DMA1_NORMAL & // Unsure, but normal operation sounds right
+	                  DMA1_PERIPHERAL_INDIRECT & // Required for using the ADC in scatter/gather mode
+	                  DMA1_CONTINUOUS; // Continually operate the DMA
+
+    OpenDMA1(config, // Set a bunch of configuration values
+	         DMA1_AUTOMATIC, // Transfer interrupts are automatic
+	         __builtin_dmaoffset(adcBuf), // The stating address is where the adcBuf is.
+	         NULL, // There's no STB address in this case
+	         (volatile unsigned int)&ADC1BUF0, // Specify this is coming from the ADC1 sample buffer
+	         0 // Only transfer a single word per request
+	);
+	DMA1REQbits.IRQSEL = 13; // Attach this DMA to the ADC1 conversion done event
 }
