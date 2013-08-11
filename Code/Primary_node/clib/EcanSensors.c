@@ -428,8 +428,6 @@ uint8_t ProcessAllEcanMessages(void)
 			}
 
 			++messagesHandled;
-			LATBbits.LATB8 = 0;
-			LATBbits.LATB9 = 0;
 		}
 	} while (messagesLeft > 0);
 
@@ -465,10 +463,10 @@ void UpdateSensorsAvailability(void)
 	// Turn on the GPS indicator LED depending on the GPS status.
 	if (sensorAvailability.gps.enabled && sensorAvailability.gps.enabled_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.gps.enabled = false;
-		LATBbits.LATB15 = OFF;
+		_LATB15 = OFF;
 	} else if (!sensorAvailability.gps.enabled && sensorAvailability.gps.enabled_counter == 0) {
 		sensorAvailability.gps.enabled = true;
-		LATBbits.LATB15 = ON;
+		_LATB15 = ON;
 	}
 	if (sensorAvailability.gps.active && sensorAvailability.gps.active_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.gps.active = false;
@@ -545,14 +543,23 @@ void UpdateSensorsAvailability(void)
 	} else if (!sensorAvailability.rudder.active && sensorAvailability.rudder.active_counter == 0) {
 		sensorAvailability.rudder.active = true;
 	}
+	// Reset if the RC node is not enabled OR it's not active.
 	if (sensorAvailability.rcNode.enabled && sensorAvailability.rcNode.enabled_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.rcNode.enabled = false;
+		nodeErrors |= PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
 	} else if (!sensorAvailability.rcNode.enabled && sensorAvailability.rcNode.enabled_counter == 0) {
 		sensorAvailability.rcNode.enabled = true;
+		if (!sensorAvailability.rcNode.active) {
+			nodeErrors &= ~PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
+		}
 	}
 	if (sensorAvailability.rcNode.active && sensorAvailability.rcNode.active_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.rcNode.active = false;
+		if (sensorAvailability.rcNode.enabled) {
+			nodeErrors &= ~PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
+		}
 	} else if (!sensorAvailability.rcNode.active && sensorAvailability.rcNode.active_counter == 0) {
 		sensorAvailability.rcNode.active = true;
+		nodeErrors |= PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
 	}
 }
