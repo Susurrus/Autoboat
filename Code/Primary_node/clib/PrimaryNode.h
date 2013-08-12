@@ -83,4 +83,16 @@ void CheckMissionStatus(void);
  */
 void PrimaryNodeAdcInit(void);
 
+/**
+ * Returns the sensed power rail voltage. Accuracy should be about 1%.
+ * @return The measured power rail voltage in volts.
+ */
+float GetPowerRailVoltage(void);
+
+/**
+ * Returns the current draw on the attached power rain. Accuracy should be about 1%.
+ * @return The measured power rail current in Amperes.
+ */
+float GetPowerRailCurrent(void);
+
 #endif // PRIMARY_NODE_H

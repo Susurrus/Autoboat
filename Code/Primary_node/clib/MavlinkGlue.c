@@ -309,8 +309,8 @@ void MavLinkSendStatus(void)
 	systemsActive |= sensorAvailability.prop.active?(ONBOARD_CONTROL_XY_POS|ONBOARD_CONTROL_MOTOR):0;
 
 	// Grab the globally-declared battery sensor data and map into the values necessary for transmission.
-	uint16_t voltage = (uint16_t)(internalVariables.BatteryVoltage * 1000);
-	int16_t amperage = (int16_t)(internalVariables.BatteryAmperage * 100);
+	uint16_t voltage = (uint16_t)(GetPowerRailVoltage() * 1000);
+	int16_t amperage = (int16_t)(GetPowerRailCurrent() * 100);
 
 	// Calculate the drop rate
 	uint16_t dropRate = 0;

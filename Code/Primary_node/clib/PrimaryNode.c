@@ -28,6 +28,15 @@
 // Track a bunch of variables for use with transmission over MAVLink.
 MavlinkData internalVariables;
 
+// Specify the maximum value of the ADC
+#define ANmax ((1 << 12) - 1)
+
+// Store analog sensors here
+struct {
+	float powerRailVoltage;
+	float powerRailCurrent;
+} analogSensors;
+
 // Set up DMA memory for the ADC. This is 16 words because the ADC is operated in scatter/gather
 // mode where all ADC channels get their own word, so even though I'm only collecting data on 4 pins,
 // every pin needs its own memory location.
@@ -109,10 +118,17 @@ void PrimaryNode100HzLoop(void)
 	MavLinkReceive();
 
 	// Check ADC inputs
-	// Battery voltage = 1/.06369 * 3.3 / (1 << 12 - 1)
-	// Battery current = 1/.03660 * 3.3 / (1 << 12 - 1)
-	// Input power
-	// Onboard temperature
+	// Battery voltage = 1/.06369 * 3.3 / (1 << 12 - 1) (AN0)
+	analogSensors.powerRailVoltage = 3.3 / ANmax / .06369 * (float)adcBuf[0];
+
+	// Battery current = 1/.03660 * 3.3 / (1 << 12 - 1) (AN3)
+	analogSensors.powerRailCurrent = 3.3 / ANmax / .03660 * (float)adcBuf[3];
+
+	// Input voltage (AN5)
+	nodeVoltage = (uint8_t)(3.3 / ANmax * (21.0 + 2.0) / 2.0 * 10.0 * (float)adcBuf[5]);
+			
+	// Onboard temperature (AN1)
+	nodeTemp = (int8_t)((3.3 / ANmax * (float)adcBuf[1] - 0.5) * 100.0);
 
 	// Send any necessary messages for this timestep.
 	MavLinkTransmit();
@@ -355,6 +371,7 @@ void CheckMissionStatus(void)
  */
 void PrimaryNodeAdcInit(void)
 {
+	/// ADC1 Configuration
 	// Enable ADC interrupts at lowest priority
 	ConfigIntADC1(ADC_INT_DISABLE & ADC_INT_PRI_7);
 
@@ -371,12 +388,12 @@ void PrimaryNodeAdcInit(void)
 	uint16_t config2 = ADC_VREF_AVDD_AVSS & // Use GND & 3.3V as voltage references
 			ADC_SCAN_ON &                   // Scan all input pins for channel 0
 			ADC_SELECT_CHAN_0 &             // Only use the 1st input channel (ADC is broken into 4)
-			ADC_DMA_ADD_INC_1 &             // Use sequential DMA addresses
+			ADC_DMA_ADD_INC_4 &             // Trigger a DMA transfer every 4 samples (which should be equal to the number of inputs you have)
 			ADC_ALT_BUF_OFF &               // Always fill the buffers from the start address
 			ADC_ALT_INPUT_OFF;              // Don't use alternate sample modes
 	uint16_t config3 = ADC_SAMPLE_TIME_15 &  // Set sampling time to 15*T_AD. 14 is the fastest that 12-bit sampling can go.
 			ADC_CONV_CLK_SYSTEM &           // Base the sampling clock off the system clock
-			ADC_CONV_CLK_1Tcy;              // Run the ADC using 1* the system clock
+			ADC_CONV_CLK_32Tcy;              // Run the ADC using 1* the system clock
 	uint16_t config4 = ADC_DMA_BUF_LOC_1;  // Store only one sample per analog input
 	uint16_t configport_h = ENABLE_ALL_DIG_16_31;  // Disable analog inputs for ports 16-31
 	uint16_t configport_l = ENABLE_AN0_ANA & // Sample AN0
@@ -385,11 +402,12 @@ void PrimaryNodeAdcInit(void)
 	                       ENABLE_AN5_ANA;  // Sample AN5
 	uint16_t configscan_h = SCAN_NONE_16_31;
 	uint16_t configscan_l = SKIP_SCAN_AN2 & SKIP_SCAN_AN4 & SKIP_SCAN_AN6 & SKIP_SCAN_AN7 & SKIP_SCAN_AN8 &
-	                        SKIP_SCAN_AN9 & SKIP_SCAN_AN10 & SKIP_SCAN_AN11 & SKIP_SCAN_AN12 & SKIP_SCAN_AN1 &
+	                        SKIP_SCAN_AN9 & SKIP_SCAN_AN10 & SKIP_SCAN_AN11 & SKIP_SCAN_AN12 & SKIP_SCAN_AN13 &
 	                        SKIP_SCAN_AN14 & SKIP_SCAN_AN15;
 	OpenADC1(config1, config2, config3, config4, configport_l, configport_h, configscan_h, configscan_l);
 
-	// Disable DMA1 interrupts and st them to the same priority as the ADC
+	/// DMA1 Configuration
+	// Disable DMA1 interrupts and set them to the same priority as the ADC
 	ConfigIntDMA1(DMA1_INT_DISABLE & DMA1_INT_PRI_7);
 
 	// And configure DMA1 for use with the ADC.
@@ -409,4 +427,14 @@ void PrimaryNodeAdcInit(void)
 	         0 // Only transfer a single word per request
 	);
 	DMA1REQbits.IRQSEL = 13; // Attach this DMA to the ADC1 conversion done event
+}
+
+float GetPowerRailVoltage(void)
+{
+	return analogSensors.powerRailVoltage;
+}
+
+float GetPowerRailCurrent(void)
+{
+	return analogSensors.powerRailCurrent;
 }

@@ -70,8 +70,8 @@ elems(6).Min = [];
 elems(6).Max = [];
 
 elems(7) = Simulink.BusElement;
-elems(7).Name = 'BatteryVoltage';
-elems(7).Dimensions = 1;
+elems(7).Name = 'L2Vector';
+elems(7).Dimensions = 3;
 elems(7).DimensionsMode = 'Fixed';
 elems(7).DataType = 'single';
 elems(7).SampleTime = -1;
@@ -79,39 +79,6 @@ elems(7).Complexity = 'real';
 elems(7).SamplingMode = 'Sample based';
 elems(7).Min = [];
 elems(7).Max = [];
-
-elems(8) = Simulink.BusElement;
-elems(8).Name = 'BatteryAmperage';
-elems(8).Dimensions = 1;
-elems(8).DimensionsMode = 'Fixed';
-elems(8).DataType = 'single';
-elems(8).SampleTime = -1;
-elems(8).Complexity = 'real';
-elems(8).SamplingMode = 'Sample based';
-elems(8).Min = [];
-elems(8).Max = [];
-
-elems(9) = Simulink.BusElement;
-elems(9).Name = 'L2Vector';
-elems(9).Dimensions = 3;
-elems(9).DimensionsMode = 'Fixed';
-elems(9).DataType = 'single';
-elems(9).SampleTime = -1;
-elems(9).Complexity = 'real';
-elems(9).SamplingMode = 'Sample based';
-elems(9).Min = [];
-elems(9).Max = [];
-
-elems(10) = Simulink.BusElement;
-elems(10).Name = 'GpsOrigin';
-elems(10).Dimensions = 3;
-elems(10).DimensionsMode = 'Fixed';
-elems(10).DataType = 'single';
-elems(10).SampleTime = -1;
-elems(10).Complexity = 'real';
-elems(10).SamplingMode = 'Sample based';
-elems(10).Min = [];
-elems(10).Max = [];
 
 MavlinkData = Simulink.Bus;
 MavlinkData.HeaderFile = '';
