@@ -186,7 +186,7 @@ void MavLinkInit(void)
 		mavlinkSchedule.MessageSizes[i] = mavMessageSizes[ids[i]];
 	}
 
-	const uint8_t const periodicities[] = {2, 2, 1, 10, 10, 5, 2, 10, 4, 2, 2, 5, 1, 1, 1};
+	const uint8_t const periodicities[] = {2, 2, 1, 10, 10, 5, 2, 10, 1, 5, 2, 5, 1, 1, 1};
 	for (i = 0; i < sizeof(periodicities); ++i) {
 		if (!AddMessageRepeating(&mavlinkSchedule, ids[i], periodicities[i])) {
 			FATAL_ERROR();

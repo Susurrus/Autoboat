@@ -8,7 +8,7 @@
 
 struct RudderCanData  {
 	float Position;
-	bool         NewData;
+	bool  NewData;
 };
 extern struct RudderCanData rudderCanDataStore;
 
@@ -16,14 +16,14 @@ struct PowerData {
 	float voltage;
 	float current;
 	float temperature;
-	bool         newData;
+	bool  newData;
 };
 extern struct PowerData powerDataStore;
 
 struct WindData {
 	float speed;
 	float direction;
-	bool         newData;
+	bool  newData;
 };
 extern struct WindData windDataStore;
 
@@ -31,15 +31,15 @@ struct AirData {
 	float temp;
 	float pressure;
 	float humidity;
-	bool         newData;
+	bool  newData;
 };
 extern struct AirData airDataStore;
 
 struct WaterData {
-	float speed;
-	float temp;
-	float depth;
-	bool         newData;
+	float speed; // Speed through the water in m/s
+	float temp;  // Water temperature in degrees Celsius
+	float depth; // Water depth in m
+	bool  newData;
 };
 extern struct WaterData waterDataStore;
 

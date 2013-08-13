@@ -48,30 +48,10 @@ struct stc sensorAvailability = {
 	{1, SENSOR_TIMEOUT, 1, SENSOR_TIMEOUT}
 };
 
-void GetWindDataPacked(uint8_t *data)
+float GetWaterSpeed(void)
 {
-	LEPackReal32(&data[0], windDataStore.speed);
-	LEPackReal32(&data[4], windDataStore.direction);
-	data[8] = windDataStore.newData;
-	windDataStore.newData = false;
-}
-
-void GetAirDataPacked(uint8_t *data)
-{
-	LEPackReal32(&data[0], airDataStore.temp);
-	LEPackReal32(&data[4], airDataStore.pressure);
-	LEPackReal32(&data[8], airDataStore.humidity);
-	data[12] = airDataStore.newData;
-	airDataStore.newData = false;
-}
-
-void GetWaterDataPacked(uint8_t *data)
-{
-	LEPackReal32(&data[0], waterDataStore.speed);
-	LEPackReal32(&data[4], waterDataStore.temp);
-	LEPackReal32(&data[8], waterDataStore.depth);
-	data[12] = waterDataStore.newData;
 	waterDataStore.newData = false;
+	return waterDataStore.speed;
 }
 
 void GetThrottleDataPacked(uint8_t *data)
@@ -287,10 +267,10 @@ uint8_t ProcessAllEcanMessages(void)
 						powerDataStore.newData = true;
 					}
 				} break;
-				case PGN_SPEED: // From the WSO100
-					sensorAvailability.wso100.enabled_counter = 0;
+				case PGN_SPEED: // From the DST800
+					sensorAvailability.dst800.enabled_counter = 0;
 					if (ParsePgn128259(msg.payload, NULL, &waterDataStore.speed)) {
-						sensorAvailability.wso100.active_counter = 0;
+						sensorAvailability.dst800.active_counter = 0;
 						waterDataStore.newData = true;
 					}
 				break;
@@ -414,6 +394,7 @@ uint8_t ProcessAllEcanMessages(void)
 				} break;
 				case PGN_MAG_VARIATION: // From the GPS200
 					ParsePgn127258(msg.payload, NULL, NULL, NULL, &gpsDataStore.variation);
+				break;
 				case PGN_WIND_DATA: // From the WSO100
 					sensorAvailability.wso100.enabled_counter = 0;
 					if (ParsePgn130306(msg.payload, NULL, &windDataStore.speed, &windDataStore.direction)) {
