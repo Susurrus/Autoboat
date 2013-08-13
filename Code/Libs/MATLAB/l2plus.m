@@ -4,7 +4,7 @@
 % Velocity. Larger values imply lower-gain.
 TStar = Simulink.Parameter;
 TStar.Description = 'The time-constant for the L2+ controller';
-TStar.Value = 12;
+TStar.Value = 15;
 TStar.DataType = 'single';
 TStar.DocUnits = 's';
 TStar.RTWInfo.StorageClass = 'ExportedGlobal';
@@ -69,7 +69,7 @@ switchDistance.RTWInfo.Alias = 'switchDistance';
 % Distance before reaching a waypoint that you will then switch over to the next waypoint
 KPsiDot = Simulink.Parameter;
 KPsiDot.Description = 'Gain on the heading derivative feedback loop.';
-KPsiDot.Value = 1;
+KPsiDot.Value = .7;
 KPsiDot.DataType = 'single';
 KPsiDot.DocUnits = '';
 KPsiDot.RTWInfo.StorageClass = 'ExportedGlobal';
