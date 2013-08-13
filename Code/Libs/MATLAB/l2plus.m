@@ -4,7 +4,7 @@
 % Velocity. Larger values imply lower-gain.
 TStar = Simulink.Parameter;
 TStar.Description = 'The time-constant for the L2+ controller';
-TStar.Value = 2;
+TStar.Value = 12;
 TStar.DataType = 'single';
 TStar.DocUnits = 's';
 TStar.RTWInfo.StorageClass = 'ExportedGlobal';

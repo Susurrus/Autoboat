@@ -6,7 +6,7 @@
 % derivative.
 cogDotDerivativeDelay = Simulink.Parameter;
 cogDotDerivativeDelay.Description = 'Delay between derivative samples for course-over-ground.';
-cogDotDerivativeDelay.Value = 1.2;
+cogDotDerivativeDelay.Value = 0.8;
 cogDotDerivativeDelay.DataType = 'single';
 cogDotDerivativeDelay.DocUnits = 's';
 cogDotDerivativeDelay.RTWInfo.StorageClass = 'ExportedGlobal';
