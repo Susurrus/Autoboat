@@ -34,6 +34,16 @@ enum PRIMARY_NODE_RESET {
 // Large data store of many internal/misc variables that are output via MAVLink.
 extern MavlinkData internalVariables;
 
+typedef struct {
+	float primaryManualRudderCommand;
+	float secondaryManualRudderCommand;
+	float autonomousRudderCommand;
+	int16_t primaryManualThrottleCommand;
+	int16_t secondaryManualThrottleCommand;
+	int16_t autonomousThrottleCommand;
+} ActuatorCommands;
+extern ActuatorCommands currentCommands;
+
 /**
  * Initialize all of the C-libraries necessary for the Primary Node.
  */

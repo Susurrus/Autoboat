@@ -48,10 +48,10 @@ elems(4).Min = [];
 elems(4).Max = [];
 
 elems(5) = Simulink.BusElement;
-elems(5).Name = 'ThrottleCommand';
-elems(5).Dimensions = 1;
+elems(5).Name = 'L2Vector';
+elems(5).Dimensions = 3;
 elems(5).DimensionsMode = 'Fixed';
-elems(5).DataType = 'int16';
+elems(5).DataType = 'single';
 elems(5).SampleTime = -1;
 elems(5).Complexity = 'real';
 elems(5).SamplingMode = 'Sample based';
@@ -59,7 +59,7 @@ elems(5).Min = [];
 elems(5).Max = [];
 
 elems(6) = Simulink.BusElement;
-elems(6).Name = 'RudderCommand';
+elems(6).Name = 'Acmd';
 elems(6).Dimensions = 1;
 elems(6).DimensionsMode = 'Fixed';
 elems(6).DataType = 'single';
@@ -68,17 +68,6 @@ elems(6).Complexity = 'real';
 elems(6).SamplingMode = 'Sample based';
 elems(6).Min = [];
 elems(6).Max = [];
-
-elems(7) = Simulink.BusElement;
-elems(7).Name = 'L2Vector';
-elems(7).Dimensions = 3;
-elems(7).DimensionsMode = 'Fixed';
-elems(7).DataType = 'single';
-elems(7).SampleTime = -1;
-elems(7).Complexity = 'real';
-elems(7).SamplingMode = 'Sample based';
-elems(7).Min = [];
-elems(7).Max = [];
 
 MavlinkData = Simulink.Bus;
 MavlinkData.HeaderFile = '';

@@ -185,6 +185,17 @@ uint8_t ProcessAllEcanMessages(void)
 					}
 					Acs300DecodeHeartbeat(msg.payload, (uint16_t*)&throttleDataStore.rpm, NULL, NULL, NULL);
 					throttleDataStore.newData = true;
+				} else if (msg.id == ACS300_CAN_ID_WR_PARAM) {
+					// Track the current velocity from the secondary controller.
+					uint16_t address;
+					union {
+						uint16_t param_u16;
+						int16_t param_i16;
+					} value;
+					Acs300DecodeWriteParam(msg.payload, &address, &value.param_u16);
+					if (address == ACS300_PARAM_CC) {
+						currentCommands.secondaryManualThrottleCommand = value.param_i16;
+					}
 				} else if (msg.id == CAN_MSG_ID_STATUS) {
 					uint8_t node, cpuLoad, voltage;
 					int8_t temp;
@@ -264,9 +275,9 @@ uint8_t ProcessAllEcanMessages(void)
 					}
 				} break;
 				case PGN_RUDDER: { // From the Rudder Controller
-					if (ParsePgn127245(msg.payload, NULL, NULL, NULL, &rudderSensorData.RudderAngle) == 0x10){
-						// No action necessary.
-					}
+					// Track rudder messages that are either rudder commands OR actual rudder angles. Since the Parse* function only
+					// stores valid data, we can just pass in both variables to be written to.
+					ParsePgn127245(msg.payload, NULL, NULL, &currentCommands.secondaryManualRudderCommand, &rudderSensorData.RudderAngle);
 				} break;
 				case PGN_BATTERY_STATUS: { // From the Power Node
 					sensorAvailability.power.enabled_counter = 0;

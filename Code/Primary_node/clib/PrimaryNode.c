@@ -37,6 +37,9 @@ struct {
 	float powerRailCurrent;
 } analogSensors;
 
+// Store actuator commmands here. Used by the MAVLink code
+ActuatorCommands currentCommands;
+
 // Set up DMA memory for the ADC. This is 16 words because the ADC is operated in scatter/gather
 // mode where all ADC channels get their own word, so even though I'm only collecting data on 4 pins,
 // every pin needs its own memory location.
@@ -260,36 +263,35 @@ void SetAutoModeLed(void)
 
 void PrimaryNodeMuxAndOutputControllerCommands(float rudderCommand, int16_t throttleCommand)
 {
-	float rc;
-	int16_t tc;
+	float muxedRc;
+	int16_t muxedTc;
+
+	// Obtain and filter the manual control inputs
+	float manRc;
+	int16_t manTc;
+	GetMavLinkManualControl(&manRc, &manTc);
+	manRc = ProcessManualRudderCommand(manRc * 7.854e-4);
+	manTc = ProcessManualThrottleCommand(manTc);
+	currentCommands.primaryManualRudderCommand = manRc;
+	currentCommands.primaryManualThrottleCommand = manTc;
+
+	// Track autonomous actuator commands
+	currentCommands.autonomousRudderCommand = rudderCommand;
+	currentCommands.autonomousThrottleCommand = throttleCommand;
 
 	// Select actuator commands based on vehicle mode.
 	if (nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) {
-		rc = rudderCommand;
+		muxedRc = rudderCommand;
 		// Throttle command is not managed by the autonomous controller yet
-		GetMavLinkManualControl(NULL, &tc);
-		tc = ProcessManualThrottleCommand(tc);
+		muxedTc = manTc;
 	} else {
-		GetMavLinkManualControl(&rc, &tc);
-		
-		// First process the rudder command adding filtering, a deadband, and unit conversion.
-		// First convert to radians:
-		rc = rc * 7.854e-4;
-
-		// Now perform some binning w/ hysteresis.
-		rc = ProcessManualRudderCommand(rc);
-
-		// Process the throttle command as well.
-		tc = ProcessManualThrottleCommand(tc);
+		muxedRc = manRc;
+		muxedTc = manTc;
 	}
-
-	// Track what the commanded values were
-	internalVariables.RudderCommand = rc;
-	internalVariables.ThrottleCommand = tc;
 
 	// Only transmit these commands if there are no errors.
 	if (!nodeErrors) {
-		ActuatorsTransmitCommands(rc, tc);
+		ActuatorsTransmitCommands(muxedRc, muxedTc);
 	}
 }
 

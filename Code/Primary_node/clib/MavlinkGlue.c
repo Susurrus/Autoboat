@@ -378,9 +378,9 @@ void MavLinkSendBasicState(void)
 	mavlink_message_t msg;
 
 	mavlink_msg_basic_state_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-		internalVariables.RudderCommand, rudderSensorData.RudderAngle,
-		internalVariables.ThrottleCommand,
-		0,
+		currentCommands.autonomousRudderCommand, currentCommands.primaryManualRudderCommand, currentCommands.secondaryManualRudderCommand, rudderSensorData.RudderAngle,
+		currentCommands.autonomousThrottleCommand, currentCommands.primaryManualThrottleCommand, currentCommands.secondaryManualThrottleCommand, 0,
+		internalVariables.Acmd,
 		internalVariables.L2Vector[0], internalVariables.L2Vector[1]
 	);
 

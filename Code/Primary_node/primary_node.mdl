@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2412"
+    ComputedModelVersion    "1.2414"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -29,9 +29,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Aug 12 09:12:45 2013"
+  LastModifiedDate	  "Mon Aug 12 19:11:49 2013"
   RTWModifiedTimeStamp	  298198235
-  ModelVersionFormat	  "1.%<AutoIncrement:2412>"
+  ModelVersionFormat	  "1.%<AutoIncrement:2414>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -412,7 +412,7 @@ Model {
 	  ConfigAtBuild		  off
 	  RTWUseLocalCustomCode	  off
 	  RTWUseSimCustomCode	  off
-	  CustomInclude		  "../../../mavlink/sealion/sealion\nclib\n../Libs/C"
+	  CustomInclude		  "../../../mavlink/seaslug/seaslug\nclib\n../Libs/C"
 	  CustomSource		  "clib/PrimaryNode.c\nclib/EcanSensors.c\nclib/MavlinkGlue.c\nclib/ParametersHelper.c\n\n../Libs/C/A"
 	  "cs300.c\n../Libs/C/CanMessages.c\n../Libs/C/CircularBuffer.c\n../Libs/C/DEE.c\n../Libs/C/DEES.s\n../Libs/C/Ecan1.c\n"
 	  "../Libs/C/Nmea2000.c\n../Libs/C/Nmea2000Encode.c\n../Libs/C/Node.c\n../Libs/C/MessageScheduler.c\n../Libs/C/Rudder."
@@ -678,7 +678,7 @@ Model {
 		Value			"-mcpu=33fj128MC802 -O3 -fschedule-insns -fschedule-insns2                                                  "
 		"                                                                                                                    "
 		"                                                                                                                    "
-		"    -fno-short-double"
+		"        -fno-short-double"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -731,7 +731,7 @@ Model {
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=1 "
       CurrentDlgPage	      "Code Generation/Custom Code"
-      ConfigPrmDlgPosition     [ 422, 100, 1498, 896 ] 
+      ConfigPrmDlgPosition     [ 406, 40, 1514, 912 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -1148,7 +1148,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "25056"
+    SIDHighWatermark	    "25058"
     Block {
       BlockType		      SubSystem
       Name		      "Actuator\nOutputs"
@@ -5490,7 +5490,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Rudder\nCommand"
-		Location		[803, 316, 1550, 802]
+		Location		[566, 316, 1818, 819]
 		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
@@ -5618,6 +5618,16 @@ Model {
 		  BackgroundColor	  "cyan"
 		  ShowName		  off
 		  GotoTag		  "autoRudderAngleCommand"
+		  TagVisibility		  "global"
+		}
+		Block {
+		  BlockType		  Goto
+		  Name			  "Goto4"
+		  SID			  "25057"
+		  Position		  [745, 102, 810, 128]
+		  BackgroundColor	  "cyan"
+		  ShowName		  off
+		  GotoTag		  "a_cmd"
 		  TagVisibility		  "global"
 		}
 		Block {
@@ -7478,8 +7488,15 @@ Model {
 		Line {
 		  SrcBlock		  "L2 Plus ref WP1"
 		  SrcPort		  2
-		  DstBlock		  "Translate a_cmd to\nrudder angle"
-		  DstPort		  1
+		  Points		  [70, 0]
+		  Branch {
+		    DstBlock		    "Translate a_cmd to\nrudder angle"
+		    DstPort		    1
+		  }
+		  Branch {
+		    DstBlock		    "Goto4"
+		    DstPort		    1
+		  }
 		}
 		Line {
 		  SrcBlock		  "cog_dot"
@@ -7513,7 +7530,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"State Keeper &\nEstimator"
-		Location		[314, 581, 1004, 864]
+		Location		[314, 257, 1502, 881]
 		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
@@ -7574,7 +7591,7 @@ Model {
 		  MaskHideContents	  off
 		  System {
 		    Name		    "GPS Estimator"
-		    Location		    [419, 230, 1485, 865]
+		    Location		    [419, 230, 1683, 865]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -7645,7 +7662,7 @@ Model {
 		    MaskHideContents	    off
 		    System {
 		    Name		    "Calculate\ncourse-over-ground\nderivative"
-		    Location		    [714, 437, 1206, 625]
+		    Location		    [714, 437, 1370, 642]
 		    Open		    off
 		    ModelBrowserVisibility  on
 		    ModelBrowserWidth	    200
@@ -8017,7 +8034,7 @@ Model {
 		    MaskIconRotate	    "none"
 		    MaskPortRotate	    "default"
 		    MaskIconUnits	    "autoscale"
-		    MaskValueString	    "0.5|10|.01|1"
+		    MaskValueString	    "0.5|10|.01|.3"
 		    System {
 		    Name		    "Smoothing\nFilter"
 		    Location		    [803, 316, 1550, 819]
@@ -10436,7 +10453,7 @@ Model {
       System {
 	Name			"MAVLink Interface"
 	Location		[222, 82, 1698, 997]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -10463,19 +10480,29 @@ Model {
 	  BlockType		  DataStoreWrite
 	  Name			  "Data Store\nWrite"
 	  SID			  "20232"
-	  Ports			  [4]
-	  Position		  [350, 82, 550, 353]
+	  Ports			  [5]
+	  Position		  [340, 99, 540, 371]
 	  ZOrder		  -6
 	  ShowName		  off
 	  DataStoreName		  "internalVariables"
 	  DataStoreElements	  "internalVariables.LocalPosition(:)#internalVariables.Velocity(:)#internalVariables.Heading#int"
-	  "ernalVariables.L2Vector"
+	  "ernalVariables.L2Vector(:)#internalVariables.Acmd"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "From1"
+	  SID			  "25058"
+	  Position		  [115, 334, 155, 356]
+	  BackgroundColor	  "magenta"
+	  ShowName		  off
+	  GotoTag		  "a_cmd"
+	  TagVisibility		  "global"
 	}
 	Block {
 	  BlockType		  From
 	  Name			  "From13"
 	  SID			  "16168"
-	  Position		  [115, 304, 155, 326]
+	  Position		  [115, 279, 155, 301]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "L2"
@@ -10485,7 +10512,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From15"
 	  SID			  "17891"
-	  Position		  [115, 239, 235, 261]
+	  Position		  [115, 224, 235, 246]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "SensedHeading"
@@ -10495,7 +10522,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From16"
 	  SID			  "17866"
-	  Position		  [115, 109, 235, 131]
+	  Position		  [115, 114, 235, 136]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "SensedLocalPosition"
@@ -10505,7 +10532,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From17"
 	  SID			  "17867"
-	  Position		  [115, 175, 235, 195]
+	  Position		  [115, 170, 235, 190]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "SensedVelocity"
@@ -10534,6 +10561,12 @@ Model {
 	  SrcPort		  1
 	  DstBlock		  "Data Store\nWrite"
 	  DstPort		  4
+	}
+	Line {
+	  SrcBlock		  "From1"
+	  SrcPort		  1
+	  DstBlock		  "Data Store\nWrite"
+	  DstPort		  5
 	}
       }
     }
