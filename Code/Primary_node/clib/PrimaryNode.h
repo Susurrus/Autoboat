@@ -1,8 +1,6 @@
 #ifndef PRIMARY_NODE_H
 #define PRIMARY_NODE_H
 
-#include "primary_node_types.h"
-
 /**
  * This enum declares the bitflags used for the nodeStatus variable in Node.h.
  */
@@ -30,9 +28,6 @@ enum PRIMARY_NODE_RESET {
 
 // Calculate the BRG register value necessary for 115200 baud with a 80MHz clock.
 #define BAUD115200_BRG_REG 21
-
-// Large data store of many internal/misc variables that are output via MAVLink.
-extern MavlinkData internalVariables;
 
 typedef struct {
 	float primaryManualRudderCommand;

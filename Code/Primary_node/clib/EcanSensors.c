@@ -1,5 +1,4 @@
 #include "EcanSensors.h"
-#include "primary_node.h"
 
 #include "Ecan1.h"
 #include "Nmea2000.h"
@@ -10,6 +9,8 @@
 #include "Acs300.h"
 #include "Packing.h"
 #include "PrimaryNode.h"
+
+#include <string.h>
 
 // Declare some macros for helping setting bit values
 #define ON  1

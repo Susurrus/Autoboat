@@ -21,7 +21,6 @@
 #define MAVLINK_GLUE_H
 
 #include "MissionManager.h"
-#include "primary_node.h"
 #include "Types.h"
 // Define M_PI_2 here for the MAVLink library as the XC16 doesn't provide this constant by default.
 #define M_PI_2 1.57079632679489661923
@@ -53,6 +52,46 @@ enum MISSION_EVENT {
 	MISSION_EVENT_SET_CURRENT_RECEIVED,
 	MISSION_EVENT_ITEM_RECEIVED
 };
+
+// Use this struct to track missions
+typedef struct {
+  real32_T coordinates[3];
+  real32_T otherCoordinates[3];
+  uint8_T refFrame;
+  uint8_T action;
+  real32_T parameters[4];
+  boolean_T autocontinue;
+} Mission;
+
+// Store a bunch of them as our list of missions.
+#define MAX_MISSIONS 16
+typedef struct {
+  uint8_T currentIndex;
+  uint8_T size;
+  boolean_T updated;
+  uint8_T maxSize;
+  Mission startingPoint;
+  Mission missions[MAX_MISSIONS];
+} MissionList;
+
+// Large data store of many internal/misc variables that are output via MAVLink.
+typedef struct {
+  real32_T LocalPosition[3];
+  real32_T Velocity[3];
+  real32_T Heading;
+  real32_T Speed;
+  int16_T ThrottleCommand;
+  real32_T RudderCommand;
+  real32_T RudderPositionAngle;
+  uint16_T RudderCalLimitStarboard;
+  uint16_T RudderCalLimitPort;
+  int16_T PropellerRpm;
+  real32_T BatteryVoltage;
+  real32_T BatteryAmperage;
+  real32_T L2Vector[3];
+  real32_T GpsOrigin[3];
+} MavlinkData;
+extern MavlinkData internalVariables;
 
 /**
  * Initialize MAVLink transmission. This just sets up the MAVLink scheduler with the basic
