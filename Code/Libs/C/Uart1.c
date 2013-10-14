@@ -1,6 +1,7 @@
 #include "CircularBuffer.h"
 #include "Uart1.h"
 #include <xc.h>
+#include <uart.h>
 
 static CircularBuffer uart1RxBuffer;
 static uint8_t u1RxBuf[1024];
@@ -21,53 +22,25 @@ void Uart1StartTransmission(void);
  */
 void Uart1Init(uint16_t brgRegister)
 {
-
     // First initialize the necessary circular buffers.
     CB_Init(&uart1RxBuffer, u1RxBuf, sizeof(u1RxBuf));
     CB_Init(&uart1TxBuffer, u1TxBuf, sizeof(u1TxBuf));
 
-    // Configure and open the port;
-    // U1MODE Register
-    // ==============
-    U1MODEbits.UARTEN	= 0;		// Disable the port
-    U1MODEbits.USIDL 	= 0;		// Stop on idle
-    U1MODEbits.IREN		= 0;		// No IR decoder
-    U1MODEbits.RTSMD	= 0;		// Ready to send mode (irrelevant)
-    U1MODEbits.UEN		= 0;		// Only RX and TX
-    U1MODEbits.WAKE		= 1;		// Enable at startup
-    U1MODEbits.LPBACK	= 0;		// Disable loopback
-    U1MODEbits.ABAUD	= 0;		// Disable autobaud
-    U1MODEbits.URXINV	= 0;		// Normal operation (high is idle)
-    U1MODEbits.PDSEL	= 0;		// No parity 8 bit
-    U1MODEbits.STSEL	= 0;		// 1 stop bit
-    U1MODEbits.BRGH 	= 0;		// Low speed mode
+    // Configure and open the port.
+	OpenUART1(
+		UART_EN & UART_IDLE_CON & UART_IrDA_DISABLE & UART_MODE_FLOW & UART_UEN_00 & UART_EN_WAKE & UART_DIS_LOOPBACK & UART_DIS_ABAUD & UART_NO_PAR_8BIT & UART_UXRX_IDLE_ONE & UART_BRGH_SIXTEEN & UART_1STOPBIT,
+		UART_INT_TX_LAST_CH & UART_IrDA_POL_INV_ZERO & UART_SYNC_BREAK_DISABLED & UART_TX_ENABLE & UART_INT_RX_CHAR & UART_ADR_DETECT_DIS & UART_RX_OVERRUN_CLEAR,
+		brgRegister
+	);
 
-    // U1STA Register
-    // ==============
-    U1STAbits.URXISEL	= 0;		// RX interrupt when a single char enters the buffer.s
-    U1STAbits.UTXISEL0	= 1;
-    U1STAbits.UTXISEL1	= 0;		// TX interrupt when FIFO buffer is empty. There's no reason to
-	                                // interrupt after every byte, so this reduces the number of
-	                                // interrupts.
-    U1STAbits.OERR		= 0;		// clear overun error
-
-    U1BRG = brgRegister;			// Set the baud rate register
-
-    // Finally setup interrupts for proper UART communication.
-    IPC3bits.U1TXIP = 6;    		// Interrupt priority 6
-    IPC2bits.U1RXIP = 6;    		// Interrupt priority 6
-    IEC0bits.U1TXIE = 1; 			// Enable transmission interrupt
-    IEC0bits.U1RXIE = 1; 			// Enable reception interrupt
-
-    // Enable the port;
-    U1MODEbits.UARTEN	= 1;		// Enable the port
-    U1STAbits.UTXEN		= 1;		// Enable TX
-
+    // Finally setup interrupts for proper UART communication. Enable both TX and RX interrupts at
+	// priority level 6 (arbitrary).
+    ConfigIntUART1(UART_RX_INT_EN & UART_RX_INT_PR6 &
+                   UART_TX_INT_EN & UART_TX_INT_PR6);
 }
 
 void Uart1ChangeBaudRate(uint16_t brgRegister)
 {
-
     uint8_t utxen = U1STAbits.UTXEN;
 
     // Disable the port;
