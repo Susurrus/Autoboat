@@ -16,12 +16,12 @@
  * custom messages and switch the transmission from uart1EnqueueData() it should
  * be almost exclusively relient on modules like MissionManager and the scheduler.
  */
-
 #include "Uart1.h"
 #include "MessageScheduler.h"
 #include "EcanSensors.h"
 #include "Rudder.h"
 #include "MavlinkGlue.h"
+#include "MissionManager.h"
 #include "Node.h"
 #include "PrimaryNode.h"
 #include "Parameters.h"
@@ -29,6 +29,11 @@
 #include "ParametersHelper.h"
 
 #include <stdio.h>
+
+// FIXME: Remove this call and get the code compiling correctly. Unsure why just including MissionManager.h doesn't work.
+#define MISSION_MANAGER_MAX_MISSIONS 16
+
+MavlinkData internalVariables;
 
 /**
  * This function converts latitude/longitude/altitude into a north/east/down local tangent plane. The
@@ -380,7 +385,7 @@ void MavLinkSendBasicState(void)
 	mavlink_msg_basic_state_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 		currentCommands.autonomousRudderCommand, currentCommands.primaryManualRudderCommand, currentCommands.secondaryManualRudderCommand, rudderSensorData.RudderAngle,
 		currentCommands.autonomousThrottleCommand, currentCommands.primaryManualThrottleCommand, currentCommands.secondaryManualThrottleCommand, 0,
-		internalVariables.Acmd,
+		0,
 		internalVariables.L2Vector[0], internalVariables.L2Vector[1]
 	);
 
@@ -917,7 +922,7 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 					nextState = MISSION_STATE_INACTIVE;
 				}
 				// If there isn't enough room, respond with a MISSION_ACK error.
-				else if (newListSize > mList.maxSize) {
+				else if (newListSize > MISSION_MANAGER_MAX_MISSIONS) {
 					MavLinkSendMissionAck(MAV_MISSION_NO_SPACE);
 					nextState = MISSION_STATE_INACTIVE;
 				}

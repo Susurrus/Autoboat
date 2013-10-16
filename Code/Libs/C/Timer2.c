@@ -1,5 +1,6 @@
 #include <xc.h>
 #include <stdint.h>
+#include <timer.h>
 
 // Store the timer callback used by timer2.
 static void (*timer2Callback)(void);
@@ -14,12 +15,8 @@ static void (*timer2Callback)(void);
  */
 void Timer2Init(void (*timerCallbackFcn)(void), uint16_t prescalar)
 {
-    T2CON = 0;
-    IFS0bits.T2IF = 0;
-    IPC1bits.T2IP2 = 1;
-    IEC0bits.T2IE = 1;
-    PR2 = prescalar;
-    T2CON = 0x8030;
+	OpenTimer2(T2_ON & T2_IDLE_CON & T2_GATE_OFF & T2_PS_1_256 & T2_32BIT_MODE_OFF & T2_SOURCE_INT, prescalar);
+	ConfigIntTimer2(T2_INT_PRIOR_4 & T2_INT_ON);
 
     timer2Callback = timerCallbackFcn;
 }

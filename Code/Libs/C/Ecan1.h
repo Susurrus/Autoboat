@@ -18,7 +18,7 @@
 #include "EcanDefines.h"
 #include "CircularBuffer.h"
 
-void Ecan1Init(void);
+void Ecan1Init(uint32_t f_osc);
 
 /**
  * Pops the top message from the ECAN1 reception buffer.

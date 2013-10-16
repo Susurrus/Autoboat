@@ -20,7 +20,6 @@
 #ifndef MAVLINK_GLUE_H
 #define MAVLINK_GLUE_H
 
-#include "MissionManager.h"
 #include "Types.h"
 // Define M_PI_2 here for the MAVLink library as the XC16 doesn't provide this constant by default.
 #define M_PI_2 1.57079632679489661923
@@ -55,42 +54,45 @@ enum MISSION_EVENT {
 
 // Use this struct to track missions
 typedef struct {
-  real32_T coordinates[3];
-  real32_T otherCoordinates[3];
-  uint8_T refFrame;
-  uint8_T action;
-  real32_T parameters[4];
-  boolean_T autocontinue;
+  float coordinates[3];
+  float otherCoordinates[3];
+  uint8_t refFrame;
+  uint8_t action;
+  float parameters[4];
+  bool autocontinue;
 } Mission;
 
 // Store a bunch of them as our list of missions.
 #define MAX_MISSIONS 16
 typedef struct {
-  uint8_T currentIndex;
-  uint8_T size;
-  boolean_T updated;
-  uint8_T maxSize;
+  uint8_t currentIndex;
+  uint8_t size;
+  bool updated;
+  uint8_t maxSize;
   Mission startingPoint;
   Mission missions[MAX_MISSIONS];
 } MissionList;
 
 // Large data store of many internal/misc variables that are output via MAVLink.
+#ifndef _DEFINED_TYPEDEF_FOR_MavlinkData_
+#define _DEFINED_TYPEDEF_FOR_MavlinkData_
 typedef struct {
-  real32_T LocalPosition[3];
-  real32_T Velocity[3];
-  real32_T Heading;
-  real32_T Speed;
-  int16_T ThrottleCommand;
-  real32_T RudderCommand;
-  real32_T RudderPositionAngle;
-  uint16_T RudderCalLimitStarboard;
-  uint16_T RudderCalLimitPort;
-  int16_T PropellerRpm;
-  real32_T BatteryVoltage;
-  real32_T BatteryAmperage;
-  real32_T L2Vector[3];
-  real32_T GpsOrigin[3];
+  float LocalPosition[3];
+  float Velocity[3];
+  float Heading;
+  float Speed;
+  int16_t ThrottleCommand;
+  float RudderCommand;
+  float RudderPositionAngle;
+  uint16_t RudderCalLimitStarboard;
+  uint16_t RudderCalLimitPort;
+  int16_t PropellerRpm;
+  float BatteryVoltage;
+  float BatteryAmperage;
+  float L2Vector[3];
+  float GpsOrigin[3];
 } MavlinkData;
+#endif
 extern MavlinkData internalVariables;
 
 /**

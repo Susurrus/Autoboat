@@ -2,7 +2,13 @@
 #define TYPES_H
 
 #include <stdint.h>
+#ifdef _MSC_VER
+typedef int bool
+#define true 1
+#define false 0
+#else
 #include <stdbool.h>
+#endif
 
 typedef union {
 	uint16_t usData;

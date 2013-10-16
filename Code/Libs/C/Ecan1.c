@@ -22,9 +22,13 @@
 #endif
 
 // Declare space for our message buffer in DMA
-// NOTE: This DMA space is aligned along 256-byte boundaries due to Lubin's blockset aligning it's
-// DMA variables to this same boundaries. If you don't you'll end up with memory collisions.
-static volatile uint16_t ecan1MsgBuf[4][8] __attribute__((space(dma), aligned(256)));
+// NOTE: This DMA space is aligned along 64-byte boundaries to make sure there's enough room for
+// all 64-bytes of memory required.
+#ifdef __dsPIC33FJ128MC802__
+static volatile uint16_t ecan1MsgBuf[4][8] __attribute__((space(dma),aligned(64)));
+#elif __dsPIC33EP256MC502__
+static volatile uint16_t ecan1MsgBuf[4][8] __attribute__((aligned(64)));
+#endif
 
 // Initialize our circular buffers and data arrays for transreceiving CAN messages
 static CircularBuffer ecan1RxCBuffer;
@@ -38,7 +42,7 @@ static bool currentlyTransmitting = 0;
 // Also track how many messages are pending for reading.
 static uint8_t receivedMessagesPending = 0;
 
-void Ecan1Init(void)
+void Ecan1Init(uint32_t f_osc)
 {
     // Initialize our circular buffers. If this fails, we crash and burn.
     if (!CB_Init(&ecan1TxCBuffer, txDataArray, ECAN1_BUFFERSIZE)) {
@@ -58,7 +62,7 @@ void Ecan1Init(void)
 	const uint16_t phaseSegment2Length = 6;
     const uint64_t f_baud = 250000L;
     const uint64_t f_tq = (propagationSegmentLength + phaseSegment1Length + phaseSegment2Length + 1) * f_baud;
-    const uint64_t f_cy = 80000000L / 2L;
+	const uint64_t f_cy = f_osc / 2;
     const uint8_t BRP = (uint8_t)(f_cy / (2L * f_tq));
 
     CAN1Initialize(CAN_SYNC_JUMP_WIDTH4 & CAN_BAUD_PRE_SCALE(BRP),
@@ -88,7 +92,7 @@ void Ecan1Init(void)
     C1CTRL1bits.WIN = 0;
 
     // Return the modules to specified operating mode.
-	CAN1SetOperationMode(CAN_IDLE_CON & CAN_CAPTURE_DISABLE & CAN_REQ_OPERMODE_NOR & CAN_SFR_BUFFER_WIN,
+	CAN1SetOperationMode(CAN_IDLE_CON & CAN_MASTERCLK_FOSC & CAN_CAPTURE_DISABLE & CAN_REQ_OPERMODE_NOR & CAN_SFR_BUFFER_WIN,
 			             CAN_DO_NOT_CMP_DATABYTES);
 
     // Enable interrupts for ECAN1
@@ -104,7 +108,11 @@ void Ecan1Init(void)
 	// ECAN1 transmission over DMA2
 	OpenDMA2(DMA2_MODULE_ON & DMA2_SIZE_WORD & DMA2_TO_PERIPHERAL & DMA2_INTERRUPT_BLOCK & DMA2_NORMAL & DMA2_PERIPHERAL_INDIRECT & DMA2_CONTINUOUS,
 		 DMA2_AUTOMATIC,
-		 __builtin_dmaoffset(ecan1MsgBuf),
+#ifdef __dsPIC33FJ128MC802__
+		  __builtin_dmaoffset(ecan1MsgBuf),
+#elif __dsPIC33EP256MC502__
+		  (unsigned long int)ecan1MsgBuf,
+#endif
 		 NULL,
 		 (uint16_t)&C1TXD,
 		 7);
@@ -113,7 +121,11 @@ void Ecan1Init(void)
 	// ECAN1 reception over DMA0
 	OpenDMA0(DMA0_MODULE_ON & DMA0_SIZE_WORD & PERIPHERAL_TO_DMA0 & DMA0_INTERRUPT_BLOCK & DMA0_NORMAL & DMA0_PERIPHERAL_INDIRECT & DMA0_CONTINUOUS,
 		  DMA0_AUTOMATIC,
+#ifdef __dsPIC33FJ128MC802__
 		  __builtin_dmaoffset(ecan1MsgBuf),
+#elif __dsPIC33EP256MC502__
+		  (unsigned long int)ecan1MsgBuf,
+#endif
 		  NULL,
 		  (uint16_t)&C1RXD,
 		  7);
@@ -144,7 +156,7 @@ void _ecan1TransmitHelper(const CanMessage *message)
 {
     uint16_t word0 = 0, word1 = 0, word2 = 0;
     uint16_t sid10_0 = 0, eid5_0 = 0, eid17_6 = 0;
-    uint16_t *ecan_msg_buf_ptr = ecan1MsgBuf[message->buffer];
+    volatile uint16_t *ecan_msg_buf_ptr = ecan1MsgBuf[message->buffer];
 
     // Variables for setting correct TXREQ bit
     uint16_t bit_to_set;
@@ -243,7 +255,7 @@ void __attribute__((interrupt, no_auto_psv))_C1Interrupt(void)
     uint8_t ide = 0;
     uint8_t srr = 0;
     uint32_t id = 0;
-    uint16_t *ecan_msg_buf_ptr;
+    volatile uint16_t *ecan_msg_buf_ptr;
 
     // If the interrupt was set because of a transmit, check to
     // see if more messages are in the circular buffer and start

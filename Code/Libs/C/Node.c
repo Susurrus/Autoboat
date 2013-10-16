@@ -13,9 +13,11 @@ uint16_t nodeStatus = 0;
 uint16_t nodeErrors = 0;
 uint32_t nodeSystemTime = 0;
 
+// Declare our CanMessage here so it's not re-allocated constantly.
+static CanMessage msg;
+
 void NodeTransmitStatus(void)
 {
-	CanMessage msg;
 	CanMessagePackageStatus(&msg, nodeId, nodeCpuLoad, nodeTemp, nodeVoltage, nodeStatus,
 	                        nodeErrors);
 	Ecan1Transmit(&msg);

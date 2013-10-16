@@ -2,6 +2,9 @@
 #include "EcanDefines.h"
 #include "Packing.h"
 
+// Declare a temporary variable module-scope to avoid duplicate allocations.
+static int16_t tmp;
+
 void CanMessagePackageStatus(CanMessage *msg, uint8_t nodeId, uint8_t cpuLoad, int8_t temp, uint8_t voltage, uint16_t status, uint16_t errors)
 {
 	// Set CAN header information.
@@ -166,17 +169,14 @@ void CanMessagePackageImuData(CanMessage *msg, float direction, float pitch, flo
 void CanMessageDecodeImuData(const CanMessage *msg, float *direction, float *pitch, float *roll)
 {
     if (direction) {
-        int16_t tmp;
 		BEUnpackInt16(&tmp, &msg->payload[0]);
         *direction = (float)tmp / 8192.0;
     }
     if (pitch) {
-        int16_t tmp;
 		BEUnpackInt16(&tmp, &msg->payload[2]);
         *pitch = (float)tmp / 8192.0;
     }
     if (roll) {
-        int16_t tmp;
 		BEUnpackInt16(&tmp, &msg->payload[4]);
         *roll = (float)tmp / 8192.0;
     }

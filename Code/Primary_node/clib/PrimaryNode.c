@@ -8,12 +8,14 @@
 #include "EcanSensors.h"
 #include "Rudder.h"
 #include "Actuators.h"
+#include "MissionManager.h"
 
 #include <stdlib.h>
 
 #include <pps.h>
 #include <adc.h>
 #include <dma.h>
+
 // Clearing the TRIS bit for a pin specifies it as an output
 #define OUTPUT 0
 
@@ -25,11 +27,11 @@
 // centiseconds.
 #define STARTUP_RESET_TIME 200
 
-// Track a bunch of variables for use with transmission over MAVLink.
-MavlinkData internalVariables;
+// Keep track of the processor's operating frequency.
+#define F_OSC 80000000L
 
-// Specify the maximum value of the ADC
-#define ANmax ((1 << 12) - 1)
+// Define the maximum value of the ADC input
+#define ANmax 4095.0f
 
 // Store analog sensors here
 struct {
@@ -37,13 +39,22 @@ struct {
 	float powerRailCurrent;
 } analogSensors;
 
+// Track a bunch of variables for use with transmission over MAVLink.
+extern MavlinkData internalVariables;
+
 // Store actuator commmands here. Used by the MAVLink code
 ActuatorCommands currentCommands;
 
-// Set up DMA memory for the ADC. This is 16 words because the ADC is operated in scatter/gather
-// mode where all ADC channels get their own word, so even though I'm only collecting data on 4 pins,
-// every pin needs its own memory location.
-static volatile uint16_t adcBuf[16] __attribute__((space(dma), aligned(256))) = {};
+// Set up DMA memory for the ADC. But with the scatter- gather mode enabled on the ADC, we reserve
+// an array for all 16 possible inputs, so we align to 32-byte boundaries instead.
+#ifdef __dsPIC33FJ128MC802__
+static volatile uint16_t adcDmaBuffer[16] __attribute__((space(dma),aligned(32)));
+#elif __dsPIC33EP256MC502__
+static volatile uint16_t adcDmaBuffer[16] __attribute__((aligned(32)));
+#endif
+
+// Declare some function prototypes.
+void Adc1Init(void);
 
 void PrimaryNodeInit(void)
 {
@@ -64,16 +75,18 @@ void PrimaryNodeInit(void)
 	}
 
 	// Initialize ECAN1
-	Ecan1Init();
+	Ecan1Init(F_OSC);
 
 	// Initialize the MAVLink communications channel
 	MavLinkInit();
 
 	// Set up the ADC
-	PrimaryNodeAdcInit();
+	Adc1Init();
 
 	// Finally perform the necessary pin mappings:
 	PPSUnLock;
+
+#ifdef __dsPIC33FJ128MC802__
 	// To enable ECAN1 pins: TX on 7, RX on 4
 	PPSOutput(OUT_FN_PPS_C1TX, OUT_PIN_PPS_RP7);
 	PPSInput(PPS_C1RX, PPS_RP4);
@@ -85,6 +98,19 @@ void PrimaryNodeInit(void)
 	// To enable UART2 pins: TX on 8, RX on 9
 	PPSOutput(OUT_FN_PPS_U2TX, OUT_PIN_PPS_RP8);
 	PPSInput(PPS_U2RX, PPS_RP9);
+#elif __dsPIC33EP256MC502__
+	// To enable ECAN1 pins: TX on 39, RX on 36
+	PPSOutput(OUT_FN_PPS_C1TX, OUT_PIN_PPS_RP39);
+	PPSInput(PPS_C1RX, PPS_RP36);
+
+	// To enable UART1 pins: TX on 43, RX on 45
+	PPSOutput(OUT_FN_PPS_U1TX, OUT_PIN_PPS_RP43);
+	PPSInput(PPS_U1RX, PPS_RPI45);
+
+	// To enable UART2 pins: TX on 40, RX on 41
+	PPSOutput(OUT_FN_PPS_U2TX, OUT_PIN_PPS_RP40);
+	PPSInput(PPS_U2RX, PPS_RP41);
+#endif
 	PPSLock;
 
 	// And specify input/output settings for digital I/O ports:
@@ -121,17 +147,17 @@ void PrimaryNode100HzLoop(void)
 	MavLinkReceive();
 
 	// Check ADC inputs
-	// Battery voltage = 1/.06369 * 3.3 / (1 << 12 - 1) (AN0)
-	analogSensors.powerRailVoltage = 3.3 / ANmax / .06369 * (float)adcBuf[0];
+	// Battery voltage in Volts
+	analogSensors.powerRailVoltage = (3.3 / ANmax) / .06369 * (float)adcDmaBuffer[0];
 
-	// Battery current = 1/.03660 * 3.3 / (1 << 12 - 1) (AN3)
-	analogSensors.powerRailCurrent = 3.3 / ANmax / .03660 * (float)adcBuf[3];
+	// Battery current in Amps
+	analogSensors.powerRailCurrent = (3.3 / ANmax) / .03660 * (float)adcDmaBuffer[3];
 
-	// Input voltage (AN5)
-	nodeVoltage = (uint8_t)(3.3 / ANmax * (21.0 + 2.0) / 2.0 * 10.0 * (float)adcBuf[5]);
+	// Input voltage in dV (AN5)
+	nodeVoltage = (uint8_t)((3.3 / ANmax) * ((21.0 + 2.0) / 2.0) * 10.0 * (float)adcDmaBuffer[5]);
 			
-	// Onboard temperature (AN1)
-	nodeTemp = (int8_t)((3.3 / ANmax * (float)adcBuf[1] - 0.5) * 100.0);
+	// Onboard temperature in degrees C (AN1)
+	nodeTemp = (int8_t)((3.3 / ANmax * (float)adcDmaBuffer[1] - 0.5) * 100.0);
 
 	// Send any necessary messages for this timestep.
 	MavLinkTransmit();
@@ -369,66 +395,66 @@ void CheckMissionStatus(void)
  * AN1 - Analog temperature sensor (TC1047)
  * AN3 - Power rail current
  * AN5 - Input voltage (voltage divider)
- * Relies on DMA
+ * Relies on DMA1
  */
-void PrimaryNodeAdcInit(void)
+void Adc1Init(void)
 {
-	/// ADC1 Configuration
-	// Enable ADC interrupts at lowest priority
-	ConfigIntADC1(ADC_INT_DISABLE & ADC_INT_PRI_7);
-
-	// Configure ADC1
-	uint16_t config1 = ADC_MODULE_ON & // Enable the ADC
-	                   ADC_IDLE_CONTINUE & // Operate even when in sleep mode
-	                   ADC_ADDMABM_SCATTR & // Put each pin's sample in their own location in memory
-			ADC_AD12B_12BIT &   // Set into 12-bit mode
-			ADC_FORMAT_INTG &   // Retrieve value as a standard integer
-			ADC_CLK_AUTO &      // Start new sample immediately after last one
-			ADC_AUTO_SAMPLING_ON & // Continually sample
-			ADC_MULTIPLE &     // Sample all channels simultaneously
-			ADC_SAMP_ON;           // Start sampling
-	uint16_t config2 = ADC_VREF_AVDD_AVSS & // Use GND & 3.3V as voltage references
-			ADC_SCAN_ON &                   // Scan all input pins for channel 0
-			ADC_SELECT_CHAN_0 &             // Only use the 1st input channel (ADC is broken into 4)
-			ADC_DMA_ADD_INC_4 &             // Trigger a DMA transfer every 4 samples (which should be equal to the number of inputs you have)
-			ADC_ALT_BUF_OFF &               // Always fill the buffers from the start address
-			ADC_ALT_INPUT_OFF;              // Don't use alternate sample modes
-	uint16_t config3 = ADC_SAMPLE_TIME_15 &  // Set sampling time to 15*T_AD. 14 is the fastest that 12-bit sampling can go.
-			ADC_CONV_CLK_SYSTEM &           // Base the sampling clock off the system clock
-			ADC_CONV_CLK_32Tcy;              // Run the ADC using 1* the system clock
-	uint16_t config4 = ADC_DMA_BUF_LOC_1;  // Store only one sample per analog input
-	uint16_t configport_h = ENABLE_ALL_DIG_16_31;  // Disable analog inputs for ports 16-31
-	uint16_t configport_l = ENABLE_AN0_ANA & // Sample AN0
-	                       ENABLE_AN1_ANA & // Sample AN1
-	                       ENABLE_AN3_ANA & // Sample AN3
-	                       ENABLE_AN5_ANA;  // Sample AN5
-	uint16_t configscan_h = SCAN_NONE_16_31;
-	uint16_t configscan_l = SKIP_SCAN_AN2 & SKIP_SCAN_AN4 & SKIP_SCAN_AN6 & SKIP_SCAN_AN7 & SKIP_SCAN_AN8 &
-	                        SKIP_SCAN_AN9 & SKIP_SCAN_AN10 & SKIP_SCAN_AN11 & SKIP_SCAN_AN12 & SKIP_SCAN_AN13 &
-	                        SKIP_SCAN_AN14 & SKIP_SCAN_AN15;
-	OpenADC1(config1, config2, config3, config4, configport_l, configport_h, configscan_h, configscan_l);
-
-	/// DMA1 Configuration
-	// Disable DMA1 interrupts and set them to the same priority as the ADC
-	ConfigIntDMA1(DMA1_INT_DISABLE & DMA1_INT_PRI_7);
-
-	// And configure DMA1 for use with the ADC.
-	uint16_t config = DMA1_MODULE_ON & // Enable DMA1
-	                  DMA1_SIZE_WORD & // Data is word-sized
-	                  PERIPHERAL_TO_DMA1 & // Data is coming in from the peripheral
-	                  DMA1_INTERRUPT_BLOCK & // Perform interrupt when all data has been moved
-	                  DMA1_NORMAL & // Unsure, but normal operation sounds right
-	                  DMA1_PERIPHERAL_INDIRECT & // Required for using the ADC in scatter/gather mode
-	                  DMA1_CONTINUOUS; // Continually operate the DMA
-
-    OpenDMA1(config, // Set a bunch of configuration values
-	         DMA1_AUTOMATIC, // Transfer interrupts are automatic
-	         __builtin_dmaoffset(adcBuf), // The stating address is where the adcBuf is.
-	         NULL, // There's no STB address in this case
-	         (volatile unsigned int)&ADC1BUF0, // Specify this is coming from the ADC1 sample buffer
-	         0 // Only transfer a single word per request
+	// Initialize ADC for reading temperature, 2x power rail voltage, and current draw.
+	// Use standard V_ref+/V_ref- voltage references.
+	SetChanADC1(
+		ADC_CH123_NEG_SAMPLEA_VREFN & ADC_CH123_NEG_SAMPLEB_VREFN & ADC_CH123_POS_SAMPLEA_0_1_2 & ADC_CH123_POS_SAMPLEB_0_1_2,
+		ADC_CH0_POS_SAMPLEA_AN0 & ADC_CH0_NEG_SAMPLEA_VREFN & ADC_CH0_POS_SAMPLEB_AN0 & ADC_CH0_NEG_SAMPLEB_VREFN
 	);
-	DMA1REQbits.IRQSEL = 13; // Attach this DMA to the ADC1 conversion done event
+	// Open AN1 (temperature) and AN5 (voltage) pins for 12-bit unsigned integer readings. Also note
+	// that this will only store one sample per analog input.
+#ifdef __dsPIC33FJ128MC802__
+	OpenADC1(
+		ADC_MODULE_ON & ADC_IDLE_CONTINUE & ADC_ADDMABM_SCATTR & ADC_AD12B_12BIT & ADC_FORMAT_INTG & ADC_CLK_AUTO & ADC_AUTO_SAMPLING_ON & ADC_SIMULTANEOUS & ADC_SAMP_ON,
+		ADC_VREF_AVDD_AVSS & ADC_SCAN_ON & ADC_SELECT_CHAN_0 & ADC_DMA_ADD_INC_4 & ADC_ALT_BUF_OFF & ADC_ALT_INPUT_OFF,
+		ADC_SAMPLE_TIME_31 & ADC_CONV_CLK_INTERNAL_RC & ADC_CONV_CLK_32Tcy,
+		ADC_DMA_BUF_LOC_1,
+		ENABLE_AN0_ANA & ENABLE_AN1_ANA & ENABLE_AN3_ANA & ENABLE_AN5_ANA,
+		ENABLE_ALL_DIG_16_31,
+		SCAN_NONE_16_31,
+		SKIP_SCAN_AN2 & SKIP_SCAN_AN4 & SKIP_SCAN_AN6 & SKIP_SCAN_AN7 &
+		SKIP_SCAN_AN8 & SKIP_SCAN_AN9 & SKIP_SCAN_AN10 & SKIP_SCAN_AN11 & SKIP_SCAN_AN12 & SKIP_SCAN_AN13 &
+		SKIP_SCAN_AN14 & SKIP_SCAN_AN15
+	);
+#elif __dsPIC33EP256MC502__
+	OpenADC1(
+		ADC_MODULE_ON & ADC_IDLE_CONTINUE & ADC_ADDMABM_SCATTR & ADC_AD12B_12BIT & ADC_FORMAT_INTG & ADC_SSRC_AUTO & ADC_AUTO_SAMPLING_ON & ADC_SIMULTANEOUS & ADC_SAMP_ON,
+		ADC_VREF_AVDD_AVSS & ADC_SCAN_ON & ADC_SELECT_CHAN_0 & ADC_DMA_ADD_INC_4 & ADC_ALT_BUF_OFF & ADC_ALT_INPUT_OFF,
+		ADC_SAMPLE_TIME_31 & ADC_CONV_CLK_INTERNAL_RC & ADC_CONV_CLK_32Tcy,
+		ADC_DMA_BUF_LOC_1,
+		0, // Don't read any pins in porta
+		ENABLE_AN0_ANA & ENABLE_AN1_ANA & ENABLE_AN3_ANA & ENABLE_AN5_ANA, // Enable our specific pins
+		0, // Don't read any pins in portc
+		0, // Don't read any pins in portd
+		0, // Don't read any pins in porte
+		0, // Don't read any pins in portf
+		0, // Don't read any pins in portg
+		0, // Don't read any pins in porth
+		0, // Don't read any pins in porti
+		0, // Don't read any pins in portj
+		0, // Don't read any pins in portk
+		SCAN_NONE_16_31,
+		SKIP_SCAN_AN2 & SKIP_SCAN_AN4 & SKIP_SCAN_AN6 & SKIP_SCAN_AN7 &
+		SKIP_SCAN_AN8 & SKIP_SCAN_AN9 & SKIP_SCAN_AN10 & SKIP_SCAN_AN11 & SKIP_SCAN_AN12 & SKIP_SCAN_AN13 &
+		SKIP_SCAN_AN14 & SKIP_SCAN_AN15
+	);
+#endif
+	// Open DMA1 for receiving ADC values
+	OpenDMA1(DMA1_MODULE_ON & DMA1_SIZE_WORD & PERIPHERAL_TO_DMA1 & DMA1_INTERRUPT_BLOCK & DMA1_NORMAL & DMA1_PERIPHERAL_INDIRECT & DMA1_CONTINUOUS,
+		  DMA1_AUTOMATIC,
+#ifdef __dsPIC33FJ128MC802__
+		  __builtin_dmaoffset(adcDmaBuffer),
+#elif __dsPIC33EP256MC502__
+		  (unsigned long int)adcDmaBuffer,
+#endif
+		  NULL,
+		  (uint16_t)&ADC1BUF0,
+		  3); // Specify the number of pins being measured (n) as n-1 here. Must match ADC_DMA_ADD_INC_n setting.
+	DMA1REQbits.IRQSEL = 0x0D; // Attach this DMA to the ADC1 conversion done event
 }
 
 float GetPowerRailVoltage(void)
