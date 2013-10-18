@@ -80,19 +80,19 @@ enum {
 	GPSDATA_ALL      = 0x07
 };
 
-struct GpsData {
+typedef struct {
 	bool newData; // Flag for whether this struct stores new data
 	uint8_t mode; // The type of fix used by the GPS. @see Nmea2000.h:PGN_129539_MODE.
 	uint16_t cog; // Course over ground in degrees eastward from north.
 	uint16_t sog; // Speed over ground in m/s
 	int16_t hdop; // Horizontal dilation of precision. Units in m.
 	int16_t vdop; // Vertical dilation of precision. Units in m.
-	int32_t lat; // Latitude in units of 1e-7 degrees
-	int32_t lon; // Longitude in units of 1e-7 degrees
-	int32_t alt; // Altitude in 1e-6 meters
+	int32_t latitude; // Latitude in units of 1e-7 degrees
+	int32_t longitude; // Longitude in units of 1e-7 degrees
+	int32_t altitude; // Altitude in 1e-6 meters
 	float variation; // Magnetic variation at this GPS coordinate. Units in degrees.
-};
-extern struct GpsData gpsDataStore;
+} GpsData;
+extern GpsData gpsDataStore;
 
 /**
  * This struct should not be modified by external code. It is merely used as an aggregator for

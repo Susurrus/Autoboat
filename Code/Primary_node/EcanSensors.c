@@ -24,7 +24,7 @@ struct WindData windDataStore = {0};
 struct AirData airDataStore = {0};
 struct WaterData waterDataStore = {0};
 struct ThrottleData throttleDataStore = {0};
-struct GpsData gpsDataStore = {0};
+GpsData gpsDataStore = {0};
 struct GpsDataBundle gpsNewDataStore = {0};
 struct DateTimeData dateTimeDataStore = {0};
 struct RevoGsData revoGsDataStore = {0};
@@ -64,9 +64,9 @@ void GetThrottleDataPacked(uint8_t *data)
 
 void GetGpsDataPacked(uint8_t *data)
 {
-	LEPackInt32(&data[0], gpsDataStore.lat);
-	LEPackInt32(&data[4], gpsDataStore.lon);
-	LEPackInt32(&data[8], gpsDataStore.alt);
+	LEPackInt32(&data[0], gpsDataStore.latitude);
+	LEPackInt32(&data[4], gpsDataStore.longitude);
+	LEPackInt32(&data[8], gpsDataStore.altitude);
 	LEPackUint16(&data[12], gpsDataStore.cog);
 	LEPackUint16(&data[14], gpsDataStore.sog);
 
@@ -78,9 +78,9 @@ void GetGpsDataPacked(uint8_t *data)
 
 void ClearGpsData(void)
 {
-	gpsDataStore.lat = 0.0;
-	gpsDataStore.lon = 0.0;
-	gpsDataStore.alt = 0.0;
+	gpsDataStore.latitude = 0.0;
+	gpsDataStore.longitude = 0.0;
+	gpsDataStore.altitude = 0.0;
 	gpsDataStore.cog = 0;
 	gpsDataStore.sog = 0;
 	gpsDataStore.newData = 0;

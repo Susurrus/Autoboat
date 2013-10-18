@@ -52,47 +52,15 @@ enum MISSION_EVENT {
 	MISSION_EVENT_ITEM_RECEIVED
 };
 
-// Use this struct to track missions
-typedef struct {
-  float coordinates[3];
-  float otherCoordinates[3];
-  uint8_t refFrame;
-  uint8_t action;
-  float parameters[4];
-  bool autocontinue;
-} Mission;
-
-// Store a bunch of them as our list of missions.
-#define MAX_MISSIONS 16
-typedef struct {
-  uint8_t currentIndex;
-  uint8_t size;
-  bool updated;
-  uint8_t maxSize;
-  Mission startingPoint;
-  Mission missions[MAX_MISSIONS];
-} MissionList;
-
 // Large data store of many internal/misc variables that are output via MAVLink.
-#ifndef _DEFINED_TYPEDEF_FOR_MavlinkData_
-#define _DEFINED_TYPEDEF_FOR_MavlinkData_
 typedef struct {
   float LocalPosition[3];
   float Velocity[3];
   float Heading;
   float Speed;
-  int16_t ThrottleCommand;
-  float RudderCommand;
-  float RudderPositionAngle;
-  uint16_t RudderCalLimitStarboard;
-  uint16_t RudderCalLimitPort;
-  int16_t PropellerRpm;
-  float BatteryVoltage;
-  float BatteryAmperage;
   float L2Vector[3];
-  float GpsOrigin[3];
+  float Acmd;
 } MavlinkData;
-#endif
 extern MavlinkData internalVariables;
 
 /**

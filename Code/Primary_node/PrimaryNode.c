@@ -1,3 +1,12 @@
+// C standard library includes
+#include <stdlib.h>
+
+// Microchip standard library includes
+#include <pps.h>
+#include <adc.h>
+#include <dma.h>
+
+// Project includes
 #include "Node.h"
 #include "MavlinkGlue.h"
 #include "Acs300.h"
@@ -9,12 +18,10 @@
 #include "Rudder.h"
 #include "Actuators.h"
 #include "MissionManager.h"
+#include "Timer2.h"
 
-#include <stdlib.h>
-
-#include <pps.h>
-#include <adc.h>
-#include <dma.h>
+// MATLAB-generate code includes
+#include "controller.h"
 
 // Clearing the TRIS bit for a pin specifies it as an output
 #define OUTPUT 0
@@ -33,14 +40,14 @@
 // Define the maximum value of the ADC input
 #define ANmax 4095.0f
 
+// Flag for triggering a run of the primary loop. Set by the timer interrupt.
+bool runTasks = false;
+
 // Store analog sensors here
 struct {
 	float powerRailVoltage;
 	float powerRailCurrent;
 } analogSensors;
-
-// Track a bunch of variables for use with transmission over MAVLink.
-extern MavlinkData internalVariables;
 
 // Store actuator commmands here. Used by the MAVLink code
 ActuatorCommands currentCommands;
@@ -55,9 +62,49 @@ static volatile uint16_t adcDmaBuffer[16] __attribute__((aligned(32)));
 
 // Declare some function prototypes.
 void Adc1Init(void);
+void PrimaryNode100HzLoop(void);
+void PrimaryNodeMuxAndOutputControllerCommands(float rudderCommand, int16_t throttleCommand);
+void SetTaskFlag(void);
 
-void PrimaryNodeInit(void)
+// Set processor configuration settings
+#ifdef __dsPIC33FJ128MC802__
+	// Use internal RC to start; we then switch to PLL'd iRC.
+	_FOSCSEL(FNOSC_FRC & IESO_OFF);
+	// Clock Pragmas
+	_FOSC(FCKSM_CSECMD & OSCIOFNC_ON & POSCMD_NONE);
+	// Disable watchdog timer
+	_FWDT(FWDTEN_OFF);
+	// Disable JTAG and specify port 3 for ICD pins.
+	_FICD(JTAGEN_OFF & ICS_PGD3);
+#elif __dsPIC33EP256MC502__
+	// Use internal RC to start; we then switch to PLL'd iRC.
+	_FOSCSEL(FNOSC_FRC & IESO_OFF);
+	// Clock Pragmas
+	_FOSC(FCKSM_CSECMD & OSCIOFNC_ON & POSCMD_NONE);
+	// Disable watchdog timer
+	_FWDT(FWDTEN_OFF);
+	// Disable JTAG and specify port 2 for ICD pins.
+	_FICD(JTAGEN_OFF & ICS_PGD2);
+#endif
+
+int main(void)
 {
+	/// First step is to move over to the FRC w/ PLL clock from the default FRC clock.
+	// Set the clock to 79.84MHz.
+    PLLFBD = 63;            // M = 65
+    CLKDIVbits.PLLPOST = 0; // N1 = 2
+    CLKDIVbits.PLLPRE = 1;  // N2 = 3
+
+	// Initiate Clock Switch to FRM oscillator with PLL.
+    __builtin_write_OSCCONH(0x01);
+    __builtin_write_OSCCONL(OSCCON | 0x01);
+
+	// Wait for Clock switch to occur.
+	while (OSCCONbits.COSC != 1);
+
+	// And finally wait for the PLL to lock.
+    while (OSCCONbits.LOCK != 1);
+	
 	// Set the ID for the primary node.
 	nodeId = CAN_NODE_PRIMARY_CONTROLLER;
 
@@ -82,6 +129,9 @@ void PrimaryNodeInit(void)
 
 	// Set up the ADC
 	Adc1Init();
+
+	// Set up a timer at 100.0320Hz, where F_timer = F_CY / 256 / prescalar.
+	Timer2Init(PrimaryNode100HzLoop, F_OSC / 2 / 256 / 100);
 
 	// Finally perform the necessary pin mappings:
 	PPSUnLock;
@@ -127,6 +177,17 @@ void PrimaryNodeInit(void)
 	// up. Every sensor is assumed to be online, but just expiring on initialization, so here we call
 	// the necessary code to trigger the timeout event for every sensor.
 	UpdateSensorsAvailability();
+
+	// Finally initialize the controller model
+	controller_initialize();
+
+	// Run system tasks when a timer interrupt has been triggered.
+	while (true) {
+		if (runTasks) {
+			PrimaryNode100HzLoop();
+			runTasks = false;
+		}
+	}
 }
 
 /**
@@ -170,6 +231,8 @@ void PrimaryNode100HzLoop(void)
 	// Set a reset signal for the first 2 seconds, allowing things to stabilize a bit before the
 	// system responds. This is especially crucial because it can take up to a second for sensors to
 	// timeout and appear as offline.
+	// FIXME: Note that this variable wrapping around will cause problems. This shouldn't be an issue
+	// as it goes until 500 days before this will happen.
 	if (nodeSystemTime == 0) {
 		nodeErrors |= PRIMARY_NODE_RESET_STARTUP;
 	} else if (nodeSystemTime == STARTUP_RESET_TIME) {
@@ -185,6 +248,16 @@ void PrimaryNode100HzLoop(void)
 
 	// And make sure the primary LED is blinking indicating that the node is operational
 	SetStatusModeLed();
+
+	// Run the next timestep of the controller.
+	float rCommand;
+	int16_t tCommand;
+	bool reset = (nodeErrors != 0);
+	controller_custom(&gpsDataStore, &throttleDataStore.rpm, &rudderSensorData.RudderAngle,
+		&reset, &waterDataStore.speed, &rCommand, &tCommand);
+
+	// And output the necessary control outputs.
+	PrimaryNodeMuxAndOutputControllerCommands(rCommand, tCommand);
 
 	// Update the onboard system time counter.
 	++nodeSystemTime;
@@ -465,4 +538,12 @@ float GetPowerRailVoltage(void)
 float GetPowerRailCurrent(void)
 {
 	return analogSensors.powerRailCurrent;
+}
+
+/**
+ * Timer interrupt callback. Sets a flag that the main execution loop waits on to do everything.
+ */
+void SetTaskFlag(void)
+{
+	runTasks = true;
 }

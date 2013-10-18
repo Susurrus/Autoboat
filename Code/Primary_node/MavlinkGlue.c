@@ -16,6 +16,10 @@
  * custom messages and switch the transmission from uart1EnqueueData() it should
  * be almost exclusively relient on modules like MissionManager and the scheduler.
  */
+// C standard library includes
+#include <stdio.h>
+
+// User code includes
 #include "Uart1.h"
 #include "MessageScheduler.h"
 #include "EcanSensors.h"
@@ -28,11 +32,10 @@
 #include "DataStore.h"
 #include "ParametersHelper.h"
 
-#include <stdio.h>
+// MATLAB-generated code includes
+#include "controller.h"
 
-// FIXME: Remove this call and get the code compiling correctly. Unsure why just including MissionManager.h doesn't work.
-#define MISSION_MANAGER_MAX_MISSIONS 16
-
+// Declare our internal variable data store for some miscellaneous data output over MAVLink.
 MavlinkData internalVariables;
 
 /**
@@ -349,7 +352,7 @@ void MavLinkSendRawGps(void)
 	uint8_t mavlinkGpsMode = gpsDataStore.mode == 2?3:(gpsDataStore.mode == 1?2:0);
 
 	mavlink_msg_gps_raw_int_pack(mavlink_system.sysid, mavlink_system.compid, &msg, ((uint64_t)nodeSystemTime)*10000,
-		mavlinkGpsMode, gpsDataStore.lat, gpsDataStore.lon, gpsDataStore.alt,
+		mavlinkGpsMode, gpsDataStore.latitude, gpsDataStore.longitude, gpsDataStore.altitude,
 		gpsDataStore.hdop, gpsDataStore.vdop,
 		gpsDataStore.sog, (uint16_t)(((float)gpsDataStore.cog) * 180 / M_PI / 100),
 		0xFF);
@@ -385,7 +388,7 @@ void MavLinkSendBasicState(void)
 	mavlink_msg_basic_state_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 		currentCommands.autonomousRudderCommand, currentCommands.primaryManualRudderCommand, currentCommands.secondaryManualRudderCommand, rudderSensorData.RudderAngle,
 		currentCommands.autonomousThrottleCommand, currentCommands.primaryManualThrottleCommand, currentCommands.secondaryManualThrottleCommand, 0,
-		0,
+		internalVariables.Acmd,
 		internalVariables.L2Vector[0], internalVariables.L2Vector[1]
 	);
 
@@ -867,9 +870,9 @@ void SetStartingPointToCurrentLocation(void)
 	newStartPoint.coordinates[1] = internalVariables.LocalPosition[1];
 	newStartPoint.coordinates[2] = internalVariables.LocalPosition[2];
 	if (gpsDataStore.mode == 1 || gpsDataStore.mode == 2) {
-		newStartPoint.otherCoordinates[0] = gpsDataStore.lat;
-		newStartPoint.otherCoordinates[1] = gpsDataStore.lon;
-		newStartPoint.otherCoordinates[2] = gpsDataStore.alt;
+		newStartPoint.otherCoordinates[0] = gpsDataStore.latitude;
+		newStartPoint.otherCoordinates[1] = gpsDataStore.longitude;
+		newStartPoint.otherCoordinates[2] = gpsDataStore.altitude;
 	}
 	SetStartingPoint(&newStartPoint);
 }
@@ -922,7 +925,7 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 					nextState = MISSION_STATE_INACTIVE;
 				}
 				// If there isn't enough room, respond with a MISSION_ACK error.
-				else if (newListSize > MISSION_MANAGER_MAX_MISSIONS) {
+				else if (newListSize > mList.maxSize) { // mList is exported by MATLAB code.
 					MavLinkSendMissionAck(MAV_MISSION_NO_SPACE);
 					nextState = MISSION_STATE_INACTIVE;
 				}
