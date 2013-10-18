@@ -1,33 +1,10 @@
-/*
-The MIT License
-
-Copyright (c) 2010 UCSC Autonomous Systems Lab
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-*/
-
+// Microchip standard library includes
 #include <xc.h>
 #include <pps.h>
 #include <adc.h>
 #include <dma.h>
 
+// Project includes
 #include "Ecan1.h"
 #include "Nmea2000Encode.h"
 #include "CanMessages.h"
@@ -71,6 +48,9 @@ MessageSchedule taskSchedule = {
 	taskTimeSteps
 };
 
+// Flag for triggering a run of the primary loop. Set by the timer interrupt.
+bool runTasks = false;
+
 // Keep track of the processor's operating frequency.
 #define F_OSC 80000000L
 
@@ -80,6 +60,7 @@ MessageSchedule taskSchedule = {
 // Set some function prototypes.
 void RunTasks(void);
 void Adc1Init(void);
+void SetTaskFlag(void);
 
 // Set processor configuration settings
 #ifdef __dsPIC33FJ128MC802__
@@ -136,7 +117,7 @@ int main()
     Ecan1Init(F_OSC);
 
 	// Set up a timer at 100.0320Hz, where F_timer = F_CY / 256 / prescalar.
-	Timer2Init(RunTasks, F_OSC / 2 / 256 / 100);
+	Timer2Init(SetTaskFlag, F_OSC / 2 / 256 / 100);
 	
 	// Set up all of our tasks.
 	// Blink at 1Hz
@@ -167,8 +148,13 @@ int main()
 
 	PPSLock;
 
-	// Do nothing because the timer interrupt handles everything.
-	while (1);
+	// Run system tasks when a timer interrupt has been triggered.
+	while (true) {
+		if (runTasks) {
+			RunTasks();
+			runTasks = false;
+		}
+	}
 }
 
 void RunTasks(void)
@@ -264,4 +250,12 @@ void Adc1Init(void)
 		  (uint16_t)&ADC1BUF0,
 		  3); // Specify the number of pins being measured (n) as n-1 here. Must match ADC_DMA_ADD_INC_n setting.
 	DMA1REQbits.IRQSEL = 0x0D; // Attach this DMA to the ADC1 conversion done event
+}
+
+/**
+ * Timer interrupt callback. Sets a flag that the main execution loop waits on to do everything.
+ */
+void SetTaskFlag(void)
+{
+	runTasks = true;
 }
