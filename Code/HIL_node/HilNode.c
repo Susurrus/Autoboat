@@ -22,14 +22,29 @@
 #define NAN __builtin_nan("")
 #endif
 
-// Use internal RC to start; we then switch to PLL'd iRC.
-_FOSCSEL(FNOSC_FRC & IESO_OFF);
-// Clock Pragmas
-_FOSC(FCKSM_CSECMD & OSCIOFNC_OFF & POSCMD_XT);
-// Disable watchdog timer
-_FWDT(FWDTEN_OFF);
-// Disable JTAG and specify port 3 for ICD pins.
-_FICD(JTAGEN_OFF & ICS_PGD3);
+// Keep track of the processor's operating frequency.
+#define F_OSC 80000000L
+
+// Set processor configuration settings
+#ifdef __dsPIC33FJ128MC802__
+	// Use internal RC to start; we then switch to PLL'd iRC.
+	_FOSCSEL(FNOSC_FRC & IESO_OFF);
+	// Clock Pragmas
+	_FOSC(FCKSM_CSECMD & OSCIOFNC_ON & POSCMD_NONE);
+	// Disable watchdog timer
+	_FWDT(FWDTEN_OFF);
+	// Disable JTAG and specify port 3 for ICD pins.
+	_FICD(JTAGEN_OFF & ICS_PGD3);
+#elif __dsPIC33EP256MC502__
+	// Use internal RC to start; we then switch to PLL'd iRC.
+	_FOSCSEL(FNOSC_FRC & IESO_OFF);
+	// Clock Pragmas
+	_FOSC(FCKSM_CSECMD & OSCIOFNC_ON & POSCMD_NONE);
+	// Disable watchdog timer
+	_FWDT(FWDTEN_OFF);
+	// Disable JTAG and specify port 2 for ICD pins.
+	_FICD(JTAGEN_OFF & ICS_PGD2);
+#endif
 
 // Declare some constants for use with the message scheduler
 // (don't use PGN or message ID as it must be a uint8)
@@ -84,6 +99,9 @@ static uint16_t rcTimeoutCounter = 0;
 // is triggered when HIL mode is started. Bit 0 is 1 when it has been calibrated.
 static uint16_t rudderStatus = 0;
 
+// Flag for triggering a run of the primary loop. Set by the timer interrupt.
+static bool runPrimaryLoop = false;
+
 // Set up the message scheduler's various data structures.
 #define ECAN_MSGS_SIZE 10
 static uint8_t ids[ECAN_MSGS_SIZE] = {
@@ -108,19 +126,25 @@ static MessageSchedule sched = {
 	tsteps
 };
 
+// Declare some function prototypes
+void SetPrimaryLoopFlag(void);
+
 int main()
 {
-	// Switch the clock over to 80MHz.
+	/// First step is to move over to the FRC w/ PLL clock from the default FRC clock.
+	// Set the clock to 79.84MHz.
     PLLFBD = 63;            // M = 65
     CLKDIVbits.PLLPOST = 0; // N1 = 2
     CLKDIVbits.PLLPRE = 1;  // N2 = 3
 
-    __builtin_write_OSCCONH(0x01); // Initiate Clock Switch to
+	// Initiate Clock Switch to FRM oscillator with PLL.
+    __builtin_write_OSCCONH(0x01);
+    __builtin_write_OSCCONL(OSCCON | 0x01);
 
-    __builtin_write_OSCCONL(OSCCON | 0x01); // Start clock switching
+	// Wait for Clock switch to occur.
+	while (OSCCONbits.COSC != 1);
 
-    while (OSCCONbits.COSC != 1); // Wait for Clock switch to occur
-
+	// And finally wait for the PLL to lock.
     while (OSCCONbits.LOCK != 1);
 
     // Initialize everything
@@ -130,6 +154,12 @@ int main()
     while (true) {
         CanReceiveMessages();
 		HilReceive();
+
+		// Also execute the main execution loop at 100Hz.
+		if (runPrimaryLoop) {
+			HilNodeTimer100Hz();
+			runPrimaryLoop = false;
+		}
     }
 }
 
@@ -140,6 +170,8 @@ void HilNodeInit(void)
 
 	// And configure the Peripheral Pin Select pins:
 	PPSUnLock;
+
+#ifdef __dsPIC33FJ128MC802__
 	// To enable ECAN1 pins: TX on 7, RX on 4
 	PPSOutput(OUT_FN_PPS_C1TX, OUT_PIN_PPS_RP7);
 	PPSInput(PPS_C1RX, PPS_RP4);
@@ -148,13 +180,30 @@ void HilNodeInit(void)
 	PPSOutput(OUT_FN_PPS_U1TX, OUT_PIN_PPS_RP11);
 	PPSInput(PPS_U1RX, PPS_RP13);
 
-	// Configure SPI1 so that:
-	//  * (input) SPI1.SDI = B8
-	PPSInput(PPS_SDI1, PPS_RP10);
-	//  * SPI1.SCK is output on B9
-	PPSOutput(OUT_FN_PPS_SCK1, OUT_PIN_PPS_RP9);
-	//  * (output) SPI1.SDO = B10
-	PPSOutput(OUT_FN_PPS_SDO1, OUT_PIN_PPS_RP8);
+	// Configure SPI2 so that:
+	//  * (input) SPI2.SDI = B8
+	PPSInput(PPS_SDI2, PPS_RP10);
+	//  * SPI2.SCK is output on B9
+	PPSOutput(OUT_FN_PPS_SCK2, OUT_PIN_PPS_RP9);
+	//  * (output) SPI2.SDO = B10
+	PPSOutput(OUT_FN_PPS_SDO2, OUT_PIN_PPS_RP8);
+#elif __dsPIC33EP256MC502__
+	// To enable ECAN1 pins: TX on 39, RX on 36
+	PPSOutput(OUT_FN_PPS_C1TX, OUT_PIN_PPS_RP39);
+	PPSInput(PPS_C1RX, PPS_RP36);
+
+	// To enable UART1 pins: TX on 43, RX on 45
+	PPSOutput(OUT_FN_PPS_U1TX, OUT_PIN_PPS_RP43);
+	PPSInput(PPS_U1RX, PPS_RPI45);
+
+	// Configure SPI2 so that:
+	//  * (input) SPI2.SDI = B10
+	PPSInput(PPS_SDI2, PPS_RP42);
+	//  * SPI2.SCK is output on B9
+	PPSOutput(OUT_FN_PPS_SCK2, OUT_PIN_PPS_RP41);
+	//  * (output) SPI2.SDO = B8
+	PPSOutput(OUT_FN_PPS_SDO2, OUT_PIN_PPS_RP40);
+#endif
 	PPSLock;
 
     // Enable pin A4, the amber LED on the CAN node, as an output. We'll blink this at 1Hz. It'll
@@ -169,10 +218,10 @@ void HilNodeInit(void)
 
     // Set up Timer2 for a 100Hz timer. This triggers CAN message transmission at the same frequency
 	// that the sensors actually do onboard the boat.
-    Timer2Init(HilNodeTimer100Hz, 1562);
+    Timer2Init(SetPrimaryLoopFlag, 1562);
 
     // Initialize ECAN1
-    Ecan1Init();
+    Ecan1Init(F_OSC);
 
 	// Set a schedule for outgoing CAN messages
     // Transmit the rudder angle at 10Hz
@@ -210,12 +259,21 @@ void HilNodeInit(void)
 		FATAL_ERROR();
     }
 
+    // Transmit water speed at 1Hz
+    if (!AddMessageRepeating(&sched, SCHED_ID_WATER_SPD, 1)) {
+		FATAL_ERROR();
+    }
+
     // Transmit HIL status at 2Hz
     if (!AddMessageRepeating(&sched, SCHED_ID_HIL_STATUS, 2)) {
 		FATAL_ERROR();
     }
 }
 
+/**
+ * Blink the status LED at < 1Hz when disconnected, 2Hz when connected, and 1Hz when the rudder
+ * subsystem is active as well.
+ */
 void HilNodeBlink(void)
 {
 	// Keep a variable here for scaling the 4Hz timer to a 1Hz timer.
@@ -326,6 +384,12 @@ void HilNodeTimer100Hz(void)
                 PackagePgn129539(&msg, nodeId, 0xFF, PGN_129539_MODE_3D, PGN_129539_MODE_3D, 100, 100, 100);
                 Ecan1Transmit(&msg);
 				break;
+			// Emulate the DST800 water speed sensor
+			// TODO: Don't broadcast this is the sensor exists.
+            case SCHED_ID_WATER_SPD:
+                PackagePgn128259(&msg, nodeId, 0xFF, hilReceivedData.data.waterSpeed, NAN, WATER_REFERENCE_PADDLE_WHEEL);
+                Ecan1Transmit(&msg);
+				break;
 			}
         }
 
@@ -412,4 +476,12 @@ uint8_t CanReceiveMessages(void)
 	} while (messagesLeft > 0);
 
 	return messagesHandled;
+}
+
+/**
+ * Timer interrupt callback. Sets a flag that the main execution loop waits on to do everything.
+ */
+void SetPrimaryLoopFlag(void)
+{
+	runPrimaryLoop = true;
 }

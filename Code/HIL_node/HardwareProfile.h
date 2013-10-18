@@ -17,13 +17,13 @@
 #define ENC_CS_TRIS			(TRISBbits.TRISB15)
 #define ENC_CS_IO			(LATBbits.LATB15)
 
-// SPI SCK, SDI, SDO pins are automatically controlled by the SPI module
-#define ENC_SPI_IF			(IFS0bits.SPI1IF)
-#define ENC_SSPBUF			(SPI1BUF)
-#define ENC_SPISTAT			(SPI1STAT)
-#define ENC_SPISTATbits		(SPI1STATbits)
-#define ENC_SPICON1			(SPI1CON1)
-#define ENC_SPICON1bits		(SPI1CON1bits)
-#define ENC_SPICON2			(SPI1CON2)
+// SPI SCK, SDI, SDO pins are automatically controlled by the SPI2 module
+#define ENC_SPI_IF			(IFS2bits.SPI2IF)
+#define ENC_SSPBUF			(SPI2BUF)
+#define ENC_SPISTAT			(SPI2STAT)
+#define ENC_SPISTATbits		(SPI2STATbits)
+#define ENC_SPICON1			(SPI2CON1)
+#define ENC_SPICON1bits		(SPI2CON1bits)
+#define ENC_SPICON2			(SPI2CON2)
 
 #endif // HARDWARE_PROFILE_H
