@@ -82,6 +82,7 @@ union HilDataFromPc {
         int32_t gpsLongitude;
         uint16_t gpsCog;
         uint16_t gpsSog;
+        float waterSpeed;
         uint16_t timestamp;
     } data;
     uint8_t bytes[sizeof(struct y)];

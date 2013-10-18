@@ -189,6 +189,7 @@ void HilBuildMessage(uint8_t data)
 			if (message[2] == HilCalculateChecksum(&message[4], sizeof(union HilDataFromPc))) {
 				// We now memcpy all the data into our global data struct.
 				receivedMessageCount++;
+				HilSetActive();
 				memcpy(&hilReceivedData, &message[4], sizeof(union HilDataFromPc));
 
 				// Now that we've successfully parsed a message, clear the flag.
@@ -221,24 +222,21 @@ void HilReceive(void)
  * This function also sets/clears the `hilStatus` variable which specifies whether HIL is currently
  * active or not. This uses a 20-sample timeout, which equates to 0.2s if this function is called
  * every 1/100th of a second.
- * It's input is a boolean that is true when generated actuator sensor data
- * should be overridden by real-world actuator sensor data.
+ * It's input is a boolean that is true when generated actuator sensor data should be overridden by
+ * real-world actuator sensor data.
  */
 void HilProcessData(uint8_t *data, unsigned short int dataLen)
 {
 	int i;
+
+	// Build and process any incoming HIL messages. The hilActive flag is set when messages are
+	// successfully decoded.
 	for (i = 0; i < dataLen; ++i) {
 		HilBuildMessage(data[i]);
 	}
 
+	// Finally respond with data for the simulator as well.
 	HilTransmitData();
-
-	// If we parsed new data, then HIL should be active, so we clear timer3 (once it expires, HIL is
-	// considered inactive. We also set the nodeStatus to indicate HIL is active.
-	TIMER3_RESET;
-	if (!HIL_IS_ACTIVE()) {
-		HilSetActive();
-	}
 }
 
 void HilTransmitData(void)
@@ -257,11 +255,12 @@ void HilTransmitData(void)
 }
 
 /**
- * This function sets HIL to inactive for the node. That means disabling the HIL check timer3 and
- * clearing the HIL_ACTIVE status flag.
+ * This function sets HIL to active for the node. That means clearing and enabling the timer to check
+ * for HIL timeout, as well as setting the hilActive flag.
  */
 void HilSetActive(void)
 {
+	TIMER3_RESET;
 	TIMER3_ENABLE;
 	hilActive = true;
 }
@@ -278,8 +277,7 @@ void HilSetInactive(void)
 }
 
 /**
- * This function calculates the checksum of some bytes in an
- * array by XORing all of them.
+ * This function calculates the checksum of some bytes in an array by XORing all of them.
  */
 uint8_t HilCalculateChecksum(const uint8_t *sentence, uint8_t size)
 {
