@@ -148,7 +148,7 @@ elems(6).Max = [];
 Mission = Simulink.Bus;
 Mission.Description = sprintf('Contains all of the parameters necessary for fully defining missions (aka waypoints) for the autopilot. Follows directly from how MAVLink implements missions.');
 Mission.DataScope = 'Imported';
-Mission.HeaderFile = 'MavlinkGlue.h';
+Mission.HeaderFile = 'Missions.h';
 Mission.Alignment = -1;
 Mission.Elements = elems;
 assignin('base', 'Mission', Mission)
@@ -223,8 +223,8 @@ elems(6).Max = [];
 
 MissionList = Simulink.Bus;
 MissionList.Description = sprintf('This is the central data store for the various Missions that will be used by the autopilot.');
-MissionList.DataScope = 'Imported';
-MissionList.HeaderFile = 'MavlinkGlue.h';
+MissionList.DataScope = 'Exported';
+MissionList.HeaderFile = 'MissionManager.h';
 MissionList.Alignment = -1;
 MissionList.Elements = elems;
 assignin('base', 'MissionList', MissionList)
