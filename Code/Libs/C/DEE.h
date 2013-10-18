@@ -5,12 +5,12 @@
 *
 *************************************************************************
 * FileName:     DEE Emulation 16-bit.h
-* Compiler:     MPLAB C30, v2.01 or higher
+* Compiler:     MPLAB C30, v3.30 or higher
 * Company:      Microchip Technology, Inc.
 *
 * Software License Agreement
 *
-* Copyright © 2007 Microchip Technology Inc. All rights reserved.
+* Copyright Â© 2007 Microchip Technology Inc. All rights reserved.
 *
 * Microchip licenses to you the right to use, modify, copy and distribute
 * Software only when embedded on a Microchip microcontroller or digital
@@ -33,36 +33,41 @@
 * SERVICES, OR ANY CLAIMS BY THIRD PARTIES (INCLUDING BUT NOT LIMITED TO
 * ANY DEFENSE THEREOF), OR OTHER SIMILAR COSTS.
 *
-* Author        Date        Comment
+* Author            Date        Comment
 *************************************************************************
-* D. Otten      2007/05/01  Version 1.0.0 - Initial Release
-* D. Otten      2007/05/15  Version 1.0.1 - First publication release
+* D. Otten          2007/05/01  Version 1.0.0 - Initial Release
+* D. Otten          2007/05/15  Version 1.0.1 - First publication release
+* Pradeep Budagutta 2008/04/02  Version 1.1.0 - Multi EEPROM banks included
+* Priyabrata Sinha  2011/01/20  Version 2.0.0 - Added dsPIC33E/PIC24E support
+* Priyabrata Sinha  2012/04/19  Version 2.2.0 - Removed absolute path
 ************************************************************************/
-    
-/***********************************************************************
-    Code Slightly modified by Mariano I. Lizararga to make it compatible
-    with Lubin's dsPIC Embedded Target
-************************************************************************/
-
-
-
-#ifndef DEE_H
-#define DEE_H
-    
-#include <xc.h>
-
 // User defined constants
+#define DATA_EE_BANKS       2
 #define DATA_EE_SIZE        255
+#define DATA_EE_TOTAL_SIZE  (DATA_EE_BANKS * DATA_EE_SIZE)
+#define NUM_DATA_EE_PAGES   3
+#if defined(__dsPIC33E__) || defined(__PIC24E__)
+#define ERASE               0x4003
+#define PROGRAM_ROW         0x4002
+#define PROGRAM_WORD        0x4001
+// Uncomment the following line if using Auxiliary Flash for EEPROM Emulation
+//#define __AUXFLASH          1
+#else
 #define ERASE               0x4042
-#define NUM_DATA_EE_PAGES   4
 #define PROGRAM_ROW         0x4001
 #define PROGRAM_WORD        0x4003
+#endif
 
 // Internal constants
-#define ERASE_WRITE_CYCLE_MAX           10000
+#if defined(__dsPIC33E__) || defined(__PIC24E__)
+#define	NUMBER_OF_INSTRUCTIONS_IN_PAGE  1024
+#define	NUMBER_OF_INSTRUCTIONS_IN_ROW   128
+#else
 #define	NUMBER_OF_INSTRUCTIONS_IN_PAGE  512
 #define	NUMBER_OF_INSTRUCTIONS_IN_ROW   64
-#define NUMBER_OF_ROWS_IN_PAGE          (NUMBER_OF_INSTRUCTIONS_IN_PAGE \ NUMBER_OF_INSTRUCTIONS_IN_ROW)
+#endif
+#define ERASE_WRITE_CYCLE_MAX           5
+#define NUMBER_OF_ROWS_IN_PAGE          (NUMBER_OF_INSTRUCTIONS_IN_PAGE / NUMBER_OF_INSTRUCTIONS_IN_ROW)
 #define PAGE_AVAILABLE                  1
 #define PAGE_CURRENT                    0
 #define PAGE_EXPIRED                    0
@@ -124,14 +129,12 @@ extern int  WritePMLow(int, int);
 extern int  WritePMLowB(int, int);
 
 void            UnlockWrite         (void);
-int		        GetPageStatus       (unsigned char page, unsigned volatile char field);
-void            ErasePage           (unsigned char page);
+int             GetPageStatus       (unsigned char bank, unsigned volatile char page, unsigned volatile char field);
+void            ErasePage           (unsigned char bank, unsigned char page);
 char            IncEWCount          (unsigned char *index);
-unsigned int    GetNextAvailCount   (void);
-int             PackEE              (void);
+unsigned int    GetNextAvailCount   (unsigned char bank);
+int             PackEE              (unsigned char bank);
 unsigned char   DataEEInit          (void);
-unsigned int    DataEERead          (unsigned char addr);
-unsigned char   DataEEWrite         (unsigned int data, unsigned char addr);
-unsigned char   DataEEInitAndClear  (void);
+unsigned int    DataEERead          (unsigned int addr);
+unsigned char   DataEEWrite         (unsigned int data, unsigned int addr);
 
-#endif // DEE_H
