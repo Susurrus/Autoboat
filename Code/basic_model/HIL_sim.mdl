@@ -1871,7 +1871,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "141"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "12038"
+    SIDHighWatermark	    "12041"
     Block {
       BlockType		      Display
       Name		      "Display1"
@@ -2003,7 +2003,7 @@ Model {
       BlockType		      From
       Name		      "From25"
       SID		      "1896"
-      Position		      [95, 778, 165, 802]
+      Position		      [90, 763, 160, 787]
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "sensors_t"
@@ -2012,7 +2012,7 @@ Model {
       BlockType		      From
       Name		      "From26"
       SID		      "1897"
-      Position		      [90, 823, 160, 847]
+      Position		      [90, 798, 160, 822]
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "sensors_r"
@@ -2097,6 +2097,15 @@ Model {
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "throttle_c"
+    }
+    Block {
+      BlockType		      From
+      Name		      "From6"
+      SID		      "12041"
+      Position		      [90, 832, 155, 858]
+      BackgroundColor	      "magenta"
+      ShowName		      off
+      GotoTag		      "sensors_w"
     }
     Block {
       BlockType		      From
@@ -2501,18 +2510,8 @@ Model {
 	  LibraryVersion	  "1.202"
 	  SourceBlock		  "etargetslib/Byte Pack"
 	  SourceType		  "Byte pack"
-	  datatypes		  "{'single','single','int32','int32','uint16','uint16','uint16','uint16'}"
+	  datatypes		  "{'single','single','int32','int32','uint16','uint16','single','uint16'}"
 	  byteAlign		  "1"
-	}
-	Block {
-	  BlockType		  Gain
-	  Name			  "Convert to cm/s"
-	  SID			  "12038"
-	  Position		  [145, 660, 175, 690]
-	  Gain			  "100"
-	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
 	}
 	Block {
 	  BlockType		  Gain
@@ -2541,16 +2540,6 @@ Model {
 	  Position		  [245, 308, 305, 322]
 	  ShowName		  off
 	  OutDataTypeStr	  "single"
-	  RndMeth		  "Simplest"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  DataTypeConversion
-	  Name			  "Data Type Conversion2"
-	  SID			  "12037"
-	  Position		  [220, 668, 280, 682]
-	  ShowName		  off
-	  OutDataTypeStr	  "uint16"
 	  RndMeth		  "Simplest"
 	  SaturateOnIntegerOverflow off
 	}
@@ -3549,20 +3538,8 @@ Model {
 	Line {
 	  SrcBlock		  "sensors_w"
 	  SrcPort		  1
-	  DstBlock		  "Convert to cm/s"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Data Type Conversion2"
-	  SrcPort		  1
 	  DstBlock		  "Byte Pack"
 	  DstPort		  7
-	}
-	Line {
-	  SrcBlock		  "Convert to cm/s"
-	  SrcPort		  1
-	  DstBlock		  "Data Type Conversion2"
-	  DstPort		  1
 	}
 	Annotation {
 	  Name			  "This subsystem handles 2-way communication with a dsPIC running \nthe autocaptain. World input and output"
@@ -3790,18 +3767,8 @@ Model {
 	port2			"off"
 	port3			"off"
       }
-      List {
-	ListType		InputPortLatchByCopyingInsideSignal
-	port0			"off"
-	port1			"off"
-      }
       CopyOfModelName	      "Plant"
       DefaultDataLogging      on
-      List {
-	ListType		InputPortLatchByDelayingOutsideSignal
-	port0			"off"
-	port1			"off"
-      }
     }
     Block {
       BlockType		      SubSystem
@@ -3908,8 +3875,8 @@ Model {
       BlockType		      SubSystem
       Name		      "Raw sensors\ndisplay"
       SID		      "1898"
-      Ports		      [3]
-      Position		      [190, 721, 285, 859]
+      Ports		      [4]
+      Position		      [190, 723, 285, 862]
       NamePlacement	      "alternate"
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
@@ -3921,7 +3888,7 @@ Model {
       System {
 	Name			"Raw sensors\ndisplay"
 	Location		[202, 82, 1270, 871]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -3964,6 +3931,15 @@ Model {
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "sensors_w"
+	  SID			  "12039"
+	  Position		  [485, 313, 515, 327]
+	  BackgroundColor	  "darkGreen"
+	  Port			  "4"
+	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  BusSelector
@@ -4050,6 +4026,16 @@ Model {
 	  SID			  "1907"
 	  Ports			  [1]
 	  Position		  [220, 257, 310, 283]
+	  ShowName		  off
+	  Decimation		  "1"
+	  Lockdown		  off
+	}
+	Block {
+	  BlockType		  Display
+	  Name			  "Display3"
+	  SID			  "12040"
+	  Ports			  [1]
+	  Position		  [595, 307, 685, 333]
 	  ShowName		  off
 	  Decimation		  "1"
 	  Lockdown		  off
@@ -4150,6 +4136,12 @@ Model {
 	  SrcBlock		  "Bus\nSelector3"
 	  SrcPort		  5
 	  DstBlock		  "Display16"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "sensors_w"
+	  SrcPort		  1
+	  DstBlock		  "Display3"
 	  DstPort		  1
 	}
       }
@@ -4473,7 +4465,7 @@ Model {
 	DstPort			1
       }
       Branch {
-	Points			[0, 65; -110, 0; 0, 325]
+	Points			[0, 65; -110, 0; 0, 320]
 	DstBlock		"Raw sensors\ndisplay"
 	DstPort			1
       }
@@ -4622,6 +4614,12 @@ Model {
       SrcBlock		      "From3"
       SrcPort		      1
       DstBlock		      "HIL Interface"
+      DstPort		      4
+    }
+    Line {
+      SrcBlock		      "From6"
+      SrcPort		      1
+      DstBlock		      "Raw sensors\ndisplay"
       DstPort		      4
     }
     Annotation {
