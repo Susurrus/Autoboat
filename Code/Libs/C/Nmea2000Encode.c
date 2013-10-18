@@ -80,6 +80,41 @@ void PackagePgn127508(CanMessage *msg, uint8_t sourceDevice, uint8_t battInstanc
 	msg->payload[7] = sid;
 }
 
+void PackagePgn128259(CanMessage *msg, uint8_t sourceDevice, uint8_t sid, float waterSpeed, float groundSpeed, WaterReferenceType waterRefType)
+{
+	msg->id = Iso11783Encode(PGN_SPEED, sourceDevice, 0xFF, 3);
+	msg->message_type = CAN_MSG_DATA;
+	msg->frame_type = CAN_FRAME_EXT;
+	msg->buffer = 0;
+	msg->validBytes = 8;
+
+	// Field 0: Battery instance
+	msg->payload[0] = sid;
+
+	// Field 1: Waterspeed (in .01m/s). Check that it's NOT NaN.
+	uint16_t x = 0xFFFF;
+	if (waterSpeed == waterSpeed) {
+		waterSpeed *= 100.0f;
+		x = (uint16_t)waterSpeed;
+	}
+	LEPackUint16(&msg->payload[1], x);
+
+	// Field 2: Groundspeed (in .01m/s). Check that it's NOT NaN.
+	x = 0xFFFF;
+	if (groundSpeed == groundSpeed) {
+		groundSpeed *= 10.0f;
+		x = (uint16_t)groundSpeed;
+	}
+	LEPackUint16(&msg->payload[3], x);
+
+	// Field 3: Speed water referenced type
+	msg->payload[5] = waterRefType;
+
+	// Null values pack the rest of the message
+	msg->payload[6] = 0xFF;
+	msg->payload[7] = 0xFF;
+}
+
 void PackagePgn129025(CanMessage *msg, uint8_t sourceDevice, int32_t latitude, int32_t longitude)
 {
     // Specify a new CAN message w/ metadata

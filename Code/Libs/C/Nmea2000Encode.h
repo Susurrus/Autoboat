@@ -32,6 +32,16 @@ void PackagePgn127245(CanMessage *msg, uint8_t sourceDevice, uint8_t instance, u
  */
 void PackagePgn127508(CanMessage *msg, uint8_t sourceDevice, uint8_t battInstance, float voltage, float amperage, float temp, uint8_t sid);
 
+typedef enum {
+    WATER_REFERENCE_PADDLE_WHEEL,
+    WATER_REFERENCE_PITOT_TUBE,
+    WATER_REFERENCE_DOPPLER_LOG,
+    WATER_REFERENCE_CORRELATION_LOG,
+    WATER_REFERENCE_EM_LOG
+} WaterReferenceType;
+
+void PackagePgn128259(CanMessage *msg, uint8_t sourceDevice, uint8_t sid, float waterSpeed, float groundSpeed, WaterReferenceType waterRefType);
+
 void PackagePgn129025(CanMessage *msg, uint8_t sourceDevice, int32_t latitude, int32_t longitude);
 
 void PackagePgn129026(CanMessage *msg, uint8_t sourceDevice, uint8_t seqId, uint8_t cogRef, uint16_t cog, uint16_t sog);
