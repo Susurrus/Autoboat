@@ -15,3 +15,9 @@ This project requires both the '/Code/Libs/MATLAB' folder and the MicroSimulink-
  3. Add all *.c and *.h files under `controller_no_lib_ert_rtw' to the project.
  4. Add all *.c and *.h files in `/Code/primary_node`.
  5. Add missing files as reported by the compiler in `/Code/Libs/C`
+ 
+### dsPIC33E versus dsPIC33F
+
+Switching between these processors requires two different changes:
+ 1. When compiling for the dsPIC33E, make sure to include the Stack.s file. This means that you can ignore all warnings about extended pointers.
+ 2. Choose the proper DEES_*.s file based on the processor type selected.
