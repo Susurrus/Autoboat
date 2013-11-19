@@ -12,6 +12,7 @@ Software:
      * Embedded coder, MATLAB coder, Simulink coder
      * [uSimLib](https://github.com/Susurrus/MicroSimulink-Library) and in the path
      * [Lubin Kerhuel's Simulink blockset](http://www.kerhuel.eu/wiki/Simulink_-_Embedded_Target_for_PIC) and in the path
+     * Added to the path: `/Code/Libs/MATLAB`, `/Code/primary_node`, `/Code/basic_model`, `/Code/Scripts/MATLAB`
  * Microchip's MPLAB X (newest)
  * Microchip's XC16 (newest)
 
