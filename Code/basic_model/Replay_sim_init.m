@@ -1,6 +1,12 @@
 %% User-configurable variables here
-datafile = 'tstar-10-wheelbase-4-kpsidot-0.csv'; % Select dataset file (CSV file)
-auto_run = 1; % Select which autonomous run within this dataset to animate
+[fname, pname] = uigetfile('*.csv', 'Select CSV file to replay'); % Select dataset file (CSV file)
+datafile = fullfile(pname, fname);
+auto_run = inputdlg('Autonomous run #', 'Input', 1, {'1'}) % Select which autonomous run within this dataset to animate
+if ~isempty(auto_run)
+    auto_run = str2num(auto_run{1})
+else
+    error('Invalid run # specified')
+end
 
 % Load up various Simulink Busses that we need.
 Busses;
@@ -104,9 +110,18 @@ ranged_rudder = data.BASIC_STATE.rudder_angle(valid_range);
 valid_rudder_data = ~isnan(ranged_rudder);
 rudder_time = valid_range_time(valid_rudder_data);
 rudder = Simulink.Timeseries;
-rudder.Name = 'throttle';
+rudder.Name = 'rudder';
 rudder.Time = rudder_time;
 rudder.Data = single(ranged_rudder(valid_rudder_data));
+
+% And the system's commanded rudder angle from BASIC_STATE @ 10Hz.
+ranged_auto_rudder = data.BASIC_STATE.commanded_auto_rudder_angle(valid_range);
+valid_auto_rudder_data = ~isnan(ranged_auto_rudder);
+autorudder_time = valid_range_time(valid_auto_rudder_data);
+auto_rudder = Simulink.Timeseries;
+auto_rudder.Name = 'auto_rudder';
+auto_rudder.Time = autorudder_time;
+auto_rudder.Data = single(ranged_auto_rudder(valid_auto_rudder_data));
 
 % And the system's prop speed from BASIC_STATE @ 10Hz.
 ranged_throttle = data.BASIC_STATE.prop_speed(valid_range);

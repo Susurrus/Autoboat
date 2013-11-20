@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.11"
+    ComputedModelVersion    "1.14"
     NumModelReferences	    1
     ModelReference {
       ModelRefBlockPath	      "Replay_sim/Model|controller"
@@ -29,11 +29,11 @@ Model {
   Creator		  "Bryant"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "susurrus"
+  LastModifiedBy	  "root"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Nov 19 10:19:45 2013"
-  RTWModifiedTimeStamp	  306754325
-  ModelVersionFormat	  "1.%<AutoIncrement:11>"
+  LastModifiedDate	  "Wed Nov 20 11:06:16 2013"
+  RTWModifiedTimeStamp	  306846013
+  ModelVersionFormat	  "1.%<AutoIncrement:14>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -71,7 +71,6 @@ Model {
     $ObjectID		    1
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "Replay_sim"
-    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -689,6 +688,14 @@ Model {
       CopyOfModelProtected    off
     }
     Block {
+      BlockType		      Mux
+      Inputs		      "4"
+      DisplayOption	      "none"
+      UseBusObject	      off
+      BusObject		      "BusObject"
+      NonVirtualBus	      off
+    }
+    Block {
       BlockType		      Scope
       ModelBased	      off
       TickLabels	      "OneTimeTick"
@@ -717,7 +724,7 @@ Model {
   }
   System {
     Name		    "Replay_sim"
-    Location		    [347, 560, 1180, 1044]
+    Location		    [66, 351, 1186, 835]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -731,7 +738,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "32"
+    SIDHighWatermark	    "35"
     Block {
       BlockType		      BusCreator
       Name		      "Bus\nCreator"
@@ -866,6 +873,23 @@ Model {
       }
       CopyOfModelName	      "controller"
       DefaultDataLogging      on
+      Port {
+	PortNumber		1
+	Name			"command_r"
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
+    }
+    Block {
+      BlockType		      Mux
+      Name		      "Mux"
+      SID		      "33"
+      Ports		      [2, 1]
+      Position		      [880, 81, 885, 119]
+      ZOrder		      -16
+      ShowName		      off
+      Inputs		      "2"
+      DisplayOption	      "bar"
     }
     Block {
       BlockType		      Scope
@@ -1020,7 +1044,7 @@ Model {
       Name		      "Scope5"
       SID		      "31"
       Ports		      [1]
-      Position		      [605, 279, 635, 311]
+      Position		      [660, 289, 690, 321]
       ZOrder		      -3
       Floating		      off
       Location		      [152, 358, 476, 597]
@@ -1076,11 +1100,42 @@ Model {
       SampleTime	      "0"
     }
     Block {
+      BlockType		      Scope
+      Name		      "Scope7"
+      SID		      "34"
+      Ports		      [1]
+      Position		      [940, 84, 970, 116]
+      ZOrder		      -3
+      ShowName		      off
+      Floating		      off
+      Location		      [143, 350, 767, 589]
+      Open		      off
+      NumInputPorts	      "1"
+      List {
+	ListType		AxesTitles
+	axes1			"%<SignalLabel>"
+      }
+      List {
+	ListType		ScopeGraphics
+	FigureColor		"[0.5 0.5 0.5]"
+	AxesColor		"[0 0 0]"
+	AxesTickColor		"[1 1 1]"
+	LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	LineStyles		"-|-|-|-|-|-"
+	LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
+	MarkerStyles		"none|none|none|none|none|none"
+      }
+      SaveName		      "ScopeData7"
+      DataFormat	      "StructureWithTime"
+      LimitDataPoints	      off
+      SampleTime	      "0"
+    }
+    Block {
       BlockType		      ToWorkspace
       Name		      "To Workspace"
       SID		      "5"
       Ports		      [1]
-      Position		      [740, 145, 800, 175]
+      Position		      [1010, 145, 1070, 175]
       ZOrder		      -7
       VariableName	      "command_r"
       MaxDataPoints	      "inf"
@@ -1092,7 +1147,7 @@ Model {
       Name		      "To Workspace1"
       SID		      "6"
       Ports		      [1]
-      Position		      [740, 215, 800, 245]
+      Position		      [1010, 215, 1070, 245]
       ZOrder		      -7
       VariableName	      "command_t"
       MaxDataPoints	      "inf"
@@ -1261,6 +1316,24 @@ Model {
 	DataLoggingNameMode	"SignalName"
       }
     }
+    Block {
+      BlockType		      FromWorkspace
+      Name		      "reset8"
+      SID		      "35"
+      Position		      [680, 77, 780, 103]
+      ZOrder		      -10
+      ShowName		      off
+      VariableName	      "auto_rudder"
+      SampleTime	      "T_step"
+      ZeroCross		      on
+      OutputAfterFinalValue   "Holding final value"
+      Port {
+	PortNumber		1
+	Name			"auto_rudder"
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
+    }
     Line {
       Name		      "water_speed"
       SrcBlock		      "Water Speed"
@@ -1284,10 +1357,20 @@ Model {
       DstPort		      1
     }
     Line {
+      Name		      "command_r"
+      Labels		      [0, 0]
       SrcBlock		      "Model"
       SrcPort		      1
-      DstBlock		      "To Workspace"
-      DstPort		      1
+      Points		      [140, 0]
+      Branch {
+	DstBlock		"To Workspace"
+	DstPort			1
+      }
+      Branch {
+	Points			[0, -50]
+	DstBlock		"Mux"
+	DstPort			2
+      }
     }
     Line {
       Name		      "reset"
@@ -1316,7 +1399,7 @@ Model {
       }
       Branch {
 	Labels			[2, 0]
-	Points			[0, 100]
+	Points			[0, 110]
 	DstBlock		"Scope5"
 	DstPort			1
       }
@@ -1449,6 +1532,20 @@ Model {
       SrcBlock		      "Constant5"
       SrcPort		      1
       DstBlock		      "Bus\nCreator"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Mux"
+      SrcPort		      1
+      DstBlock		      "Scope7"
+      DstPort		      1
+    }
+    Line {
+      Name		      "auto_rudder"
+      Labels		      [0, 0]
+      SrcBlock		      "reset8"
+      SrcPort		      1
+      DstBlock		      "Mux"
       DstPort		      1
     }
   }
