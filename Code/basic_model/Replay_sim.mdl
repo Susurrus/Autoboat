@@ -6,11 +6,8 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.14"
-    NumModelReferences	    1
-    ModelReference {
-      ModelRefBlockPath	      "Replay_sim/Model|controller"
-    }
+    ComputedModelVersion    "1.22"
+    NumModelReferences	    0
     NumTestPointedSignals   0
   }
   SavedCharacterEncoding  "windows-1252"
@@ -29,11 +26,11 @@ Model {
   Creator		  "Bryant"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "root"
+  LastModifiedBy	  "susurrus"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Nov 20 11:06:16 2013"
-  RTWModifiedTimeStamp	  306846013
-  ModelVersionFormat	  "1.%<AutoIncrement:14>"
+  LastModifiedDate	  "Thu Nov 21 09:43:44 2013"
+  RTWModifiedTimeStamp	  306927736
+  ModelVersionFormat	  "1.%<AutoIncrement:22>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -70,12 +67,12 @@ Model {
     $PropName		    "DataLoggingOverride"
     $ObjectID		    1
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
-    model_		    "Replay_sim"
+    model_		    "Replay_sim2"
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
       Dimension		      1
-      Cell		      "Replay_sim"
+      Cell		      "Replay_sim2"
       PropName		      "logAsSpecifiedByModels_"
     }
     Array {
@@ -612,8 +609,8 @@ Model {
 	PropName		"Components"
       }
       Name		      "Configuration"
-      CurrentDlgPage	      "Solver"
-      ConfigPrmDlgPosition     [ 135, 49, 1051, 763 ] 
+      CurrentDlgPage	      "Data Import//Export"
+      ConfigPrmDlgPosition     [ 37, 121, 993, 927 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -661,6 +658,10 @@ Model {
       NonVirtualBus	      off
     }
     Block {
+      BlockType		      BusSelector
+      OutputAsBus	      off
+    }
+    Block {
       BlockType		      Constant
       Value		      "1"
       VectorParams1D	      on
@@ -674,6 +675,77 @@ Model {
       PreserveConstantTs      off
     }
     Block {
+      BlockType		      DataTypeConversion
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Inherit via back propagation"
+      LockScale		      off
+      ConvertRealWorld	      "Real World Value (RWV)"
+      RndMeth		      "Zero"
+      SaturateOnIntegerOverflow	on
+      SampleTime	      "-1"
+    }
+    Block {
+      BlockType		      Delay
+      DelayLengthSource	      "Dialog"
+      DelayLength	      "2"
+      DelayLengthUpperLimit   "100"
+      InitialConditionSource  "Dialog"
+      InitialCondition	      "0.0"
+      ExternalReset	      "None"
+      PreventDirectFeedthrough off
+      DiagnosticForOutOfRangeDelayLength "None"
+      RemoveProtectionDelayLength off
+      InputProcessing	      "Elements as channels (sample based)"
+      UseCircularBuffer	      off
+      SampleTime	      "-1"
+      StateMustResolveToSignalObject off
+      CodeGenStateStorageClass "Auto"
+    }
+    Block {
+      BlockType		      Demux
+      Outputs		      "4"
+      DisplayOption	      "none"
+      BusSelectionMode	      off
+    }
+    Block {
+      BlockType		      DiscreteIntegrator
+      IntegratorMethod	      "Integration: Forward Euler"
+      gainval		      "1.0"
+      ExternalReset	      "none"
+      InitialConditionSource  "internal"
+      InitialCondition	      "0"
+      InitialConditionMode    "State and output"
+      SampleTime	      "1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	off
+      LimitOutput	      off
+      UpperSaturationLimit    "inf"
+      LowerSaturationLimit    "-inf"
+      ShowSaturationPort      off
+      ShowStatePort	      off
+      IgnoreLimit	      off
+      StateMustResolveToSignalObject off
+      RTWStateStorageClass    "Auto"
+    }
+    Block {
+      BlockType		      EnablePort
+      StatesWhenEnabling      "held"
+      PropagateVarSize	      "Only when enabling"
+      ShowOutputPort	      off
+      ZeroCross		      on
+      PortDimensions	      "1"
+      SampleTime	      "-1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "double"
+      Interpolate	      on
+    }
+    Block {
       BlockType		      FromWorkspace
       VariableName	      "simulink_input"
       SampleTime	      "-1"
@@ -682,10 +754,65 @@ Model {
       OutputAfterFinalValue   "Extrapolation"
     }
     Block {
-      BlockType		      ModelReference
-      Variant		      off
-      GeneratePreprocessorConditionals off
-      CopyOfModelProtected    off
+      BlockType		      Gain
+      Gain		      "1"
+      Multiplication	      "Element-wise(K.*u)"
+      ParamMin		      "[]"
+      ParamMax		      "[]"
+      ParamDataTypeStr	      "Inherit: Same as input"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Same as input"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      SampleTime	      "-1"
+    }
+    Block {
+      BlockType		      Goto
+      IconDisplay	      "Tag"
+    }
+    Block {
+      BlockType		      Inport
+      Port		      "1"
+      OutputFunctionCall      off
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: auto"
+      LockScale		      off
+      BusOutputAsStruct	      off
+      PortDimensions	      "-1"
+      VarSizeSig	      "Inherit"
+      SampleTime	      "-1"
+      SignalType	      "auto"
+      SamplingMode	      "auto"
+      LatchByDelayingOutsideSignal off
+      LatchInputForFeedbackSignals off
+      Interpolate	      on
+    }
+    Block {
+      BlockType		      Logic
+      Operator		      "AND"
+      Inputs		      "2"
+      IconShape		      "rectangular"
+      AllPortsSameDT	      on
+      OutDataTypeStr	      "Inherit: Logical (see Configuration Parameters: Optimization)"
+      SampleTime	      "-1"
+    }
+    Block {
+      BlockType		      Math
+      Operator		      "exp"
+      OutputSignalType	      "auto"
+      SampleTime	      "-1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Same as first input"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      IntermediateResultsDataTypeStr "Inherit: Inherit via internal rule"
+      AlgorithmType	      "Newton-Raphson"
+      Iterations	      "3"
     }
     Block {
       BlockType		      Mux
@@ -694,6 +821,45 @@ Model {
       UseBusObject	      off
       BusObject		      "BusObject"
       NonVirtualBus	      off
+    }
+    Block {
+      BlockType		      Outport
+      Port		      "1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: auto"
+      LockScale		      off
+      BusOutputAsStruct	      off
+      PortDimensions	      "-1"
+      VarSizeSig	      "Inherit"
+      SampleTime	      "-1"
+      SignalType	      "auto"
+      SamplingMode	      "auto"
+      SourceOfInitialOutputValue "Dialog"
+      OutputWhenDisabled      "held"
+      InitialOutput	      "[]"
+    }
+    Block {
+      BlockType		      Product
+      Inputs		      "2"
+      Multiplication	      "Element-wise(.*)"
+      CollapseMode	      "All dimensions"
+      CollapseDim	      "1"
+      InputSameDT	      on
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Same as first input"
+      LockScale		      off
+      RndMeth		      "Zero"
+      SaturateOnIntegerOverflow	on
+      SampleTime	      "-1"
+    }
+    Block {
+      BlockType		      S-Function
+      FunctionName	      "system"
+      SFunctionModules	      "''"
+      PortCounts	      "[]"
+      SFunctionDeploymentMode off
     }
     Block {
       BlockType		      Scope
@@ -713,6 +879,78 @@ Model {
       SampleTime	      "-1"
     }
     Block {
+      BlockType		      Sqrt
+      Operator		      "sqrt"
+      OutputSignalType	      "auto"
+      SampleTime	      "-1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Same as first input"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      IntermediateResultsDataTypeStr "Inherit: Inherit via internal rule"
+      AlgorithmType	      "Exact"
+      Iterations	      "3"
+    }
+    Block {
+      BlockType		      SubSystem
+      ShowPortLabels	      "FromPortIcon"
+      Permissions	      "ReadWrite"
+      PermitHierarchicalResolution "All"
+      TreatAsAtomicUnit	      off
+      CheckFcnCallInpInsideContextMsg off
+      SystemSampleTime	      "-1"
+      RTWFcnNameOpts	      "Auto"
+      RTWFileNameOpts	      "Auto"
+      RTWMemSecFuncInitTerm   "Inherit from model"
+      RTWMemSecFuncExecute    "Inherit from model"
+      RTWMemSecDataConstants  "Inherit from model"
+      RTWMemSecDataInternal   "Inherit from model"
+      RTWMemSecDataParameters "Inherit from model"
+      SimViewingDevice	      off
+      DataTypeOverride	      "UseLocalSettings"
+      DataTypeOverrideAppliesTo	"AllNumericTypes"
+      MinMaxOverflowLogging   "UseLocalSettings"
+      SFBlockType	      "NONE"
+      Variant		      off
+      GeneratePreprocessorConditionals off
+    }
+    Block {
+      BlockType		      Sum
+      IconShape		      "rectangular"
+      Inputs		      "++"
+      CollapseMode	      "All dimensions"
+      CollapseDim	      "1"
+      InputSameDT	      on
+      AccumDataTypeStr	      "Inherit: Inherit via internal rule"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Same as first input"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      SampleTime	      "-1"
+    }
+    Block {
+      BlockType		      Switch
+      Criteria		      "u2 >= Threshold"
+      Threshold		      "0"
+      InputSameDT	      on
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      ZeroCross		      on
+      SampleTime	      "-1"
+      AllowDiffInputSizes     off
+    }
+    Block {
+      BlockType		      Terminator
+    }
+    Block {
       BlockType		      ToWorkspace
       VariableName	      "simulink_output"
       MaxDataPoints	      "1000"
@@ -721,10 +959,23 @@ Model {
       FixptAsFi		      off
       NumInputs		      "1"
     }
+    Block {
+      BlockType		      Trigonometry
+      Operator		      "sin"
+      ApproximationMethod     "None"
+      NumberOfIterations      "11"
+      OutputSignalType	      "auto"
+      SampleTime	      "-1"
+    }
+    Block {
+      BlockType		      UnaryMinus
+      SampleTime	      "-1"
+      SaturateOnIntegerOverflow	off
+    }
   }
   System {
     Name		    "Replay_sim"
-    Location		    [66, 351, 1186, 835]
+    Location		    [86, 267, 1206, 977]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -738,13 +989,3827 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "35"
+    SIDHighWatermark	    "451"
+    Block {
+      BlockType		      SubSystem
+      Name		      "Autonomous Controller"
+      SID		      "41"
+      Ports		      [7, 2]
+      Position		      [495, 223, 690, 387]
+      NamePlacement	      "alternate"
+      Priority		      "1"
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      Port {
+	PortNumber		1
+	Name			"command_r"
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
+      System {
+	Name			"Autonomous Controller"
+	Location		[703, 104, 1547, 836]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Inport
+	  Name			  "GPS"
+	  SID			  "42"
+	  Position		  [60, 468, 90, 482]
+	  BackgroundColor	  "darkGreen"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "sensors_t"
+	  SID			  "43"
+	  Position		  [60, 343, 90, 357]
+	  BackgroundColor	  "darkGreen"
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "sensors_r"
+	  SID			  "44"
+	  Position		  [60, 378, 90, 392]
+	  BackgroundColor	  "darkGreen"
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "reset"
+	  SID			  "45"
+	  Position		  [60, 413, 90, 427]
+	  BackgroundColor	  "darkGreen"
+	  Port			  "4"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "sensors_w"
+	  SID			  "46"
+	  Position		  [60, 538, 90, 552]
+	  BackgroundColor	  "darkGreen"
+	  Port			  "5"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "wp0"
+	  SID			  "446"
+	  Position		  [60, 573, 90, 587]
+	  BackgroundColor	  "darkGreen"
+	  Port			  "6"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "wp1"
+	  SID			  "447"
+	  Position		  [60, 608, 90, 622]
+	  BackgroundColor	  "darkGreen"
+	  Port			  "7"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "Rudder\nCommand"
+	  SID			  "245"
+	  Ports			  [7, 1]
+	  Position		  [535, 394, 650, 466]
+	  MinAlgLoopOccurrences	  off
+	  PropExecContextOutsideSubsystem off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  Opaque		  off
+	  RequestExecContextInheritance	off
+	  MaskHideContents	  off
+	  System {
+	    Name		    "Rudder\nCommand"
+	    Location		    [637, 214, 1842, 821]
+	    Open		    on
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "Velocity"
+	      SID		      "246"
+	      Position		      [140, 233, 170, 247]
+	      BackgroundColor	      "darkGreen"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "Reset"
+	      SID		      "247"
+	      Position		      [960, 268, 990, 282]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "Local pos"
+	      SID		      "248"
+	      Position		      [140, 193, 170, 207]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "3"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "cog_dot"
+	      SID		      "249"
+	      Position		      [140, 368, 170, 382]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "4"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "waterspeed"
+	      SID		      "250"
+	      Position		      [140, 408, 170, 422]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "5"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "wp0"
+	      SID		      "443"
+	      Position		      [140, 33, 170, 47]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "6"
+	      IconDisplay	      "Port number"
+	      Port {
+		PortNumber		1
+		ShowPropagatedSignals	"on"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "wp1"
+	      SID		      "442"
+	      Position		      [140, 113, 170, 127]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "7"
+	      IconDisplay	      "Port number"
+	      Port {
+		PortNumber		1
+		ShowPropagatedSignals	"on"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant1"
+	      SID		      "253"
+	      Position		      [960, 303, 1020, 327]
+	      BackgroundColor	      "gray"
+	      ShowName		      off
+	      Value		      "0"
+	      OutDataTypeStr	      "single"
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant2"
+	      SID		      "444"
+	      Position		      [340, 148, 400, 172]
+	      BackgroundColor	      "gray"
+	      ShowName		      off
+	      OutDataTypeStr	      "boolean"
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant3"
+	      SID		      "445"
+	      Position		      [340, 68, 400, 92]
+	      BackgroundColor	      "gray"
+	      ShowName		      off
+	      OutDataTypeStr	      "boolean"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto"
+	      SID		      "254"
+	      Position		      [745, 52, 810, 78]
+	      BackgroundColor	      "cyan"
+	      ShowName		      off
+	      GotoTag		      "L2"
+	      TagVisibility	      "global"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto1"
+	      SID		      "255"
+	      Position		      [485, 297, 550, 323]
+	      BackgroundColor	      "cyan"
+	      ShowName		      off
+	      GotoTag		      "wp1"
+	      TagVisibility	      "global"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto2"
+	      SID		      "256"
+	      Position		      [485, 12, 550, 38]
+	      BackgroundColor	      "cyan"
+	      ShowName		      off
+	      GotoTag		      "wp0"
+	      TagVisibility	      "global"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto3"
+	      SID		      "257"
+	      Position		      [1095, 152, 1240, 178]
+	      BackgroundColor	      "cyan"
+	      ShowName		      off
+	      GotoTag		      "autoRudderAngleCommand"
+	      TagVisibility	      "global"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto4"
+	      SID		      "258"
+	      Position		      [745, 102, 810, 128]
+	      BackgroundColor	      "cyan"
+	      ShowName		      off
+	      GotoTag		      "a_cmd"
+	      TagVisibility	      "global"
+	    }
+	    Block {
+	      BlockType		      SubSystem
+	      Name		      "L2 Plus ref WP1"
+	      SID		      "259"
+	      Ports		      [6, 3]
+	      Position		      [505, 24, 655, 256]
+	      ErrorFcn		      "Stateflow.Translate.translate"
+	      PermitHierarchicalResolution "ExplicitOnly"
+	      TreatAsAtomicUnit	      on
+	      MinAlgLoopOccurrences   off
+	      PropExecContextOutsideSubsystem off
+	      RTWSystemCode	      "Auto"
+	      FunctionWithSeparateData off
+	      Opaque		      off
+	      RequestExecContextInheritance off
+	      MaskHideContents	      off
+	      SFBlockType	      "MATLAB Function"
+	      MaskType		      "Stateflow"
+	      MaskDescription	      "Embedded MATLAB block"
+	      MaskSelfModifiable      on
+	      MaskDisplay	      "bgColor = Simulink.Root.ColorString2Rgb(get_param(gcbh, 'BackgroundColor')); image(imread('p"
+	      "rivate/eml_membrane_16.png','png','BackgroundColor',bgColor(1:3)),'center'); disp([10 10 'L2PlusWP1']);"
+	      MaskIconFrame	      on
+	      MaskIconOpaque	      off
+	      MaskIconRotate	      "none"
+	      MaskPortRotate	      "default"
+	      MaskIconUnits	      "normalized"
+	      System {
+		Name			"L2 Plus ref WP1"
+		Location		[257, 457, 812, 717]
+		Open			off
+		ModelBrowserVisibility	off
+		ModelBrowserWidth	200
+		ScreenColor		"white"
+		PaperOrientation	"landscape"
+		PaperPositionMode	"auto"
+		PaperType		"usletter"
+		PaperUnits		"inches"
+		TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+		TiledPageScale		1
+		ShowPageBoundaries	off
+		ZoomFactor		"100"
+		SIDHighWatermark	"30"
+		Block {
+		  BlockType		  Inport
+		  Name			  "wp0"
+		  SID			  "259::22"
+		  Position		  [20, 101, 40, 119]
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "wp0_found"
+		  SID			  "259::25"
+		  Position		  [20, 136, 40, 154]
+		  Port			  "2"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "wp1"
+		  SID			  "259::23"
+		  Position		  [20, 171, 40, 189]
+		  Port			  "3"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "wp1_found"
+		  SID			  "259::26"
+		  Position		  [20, 206, 40, 224]
+		  Port			  "4"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "Puav"
+		  SID			  "259::3"
+		  Position		  [20, 246, 40, 264]
+		  Port			  "5"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "Vxyz"
+		  SID			  "259::4"
+		  Position		  [20, 281, 40, 299]
+		  Port			  "6"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Demux
+		  Name			  " Demux "
+		  SID			  "259::28"
+		  Ports			  [1, 1]
+		  Position		  [270, 245, 320, 285]
+		  Outputs		  "1"
+		}
+		Block {
+		  BlockType		  S-Function
+		  Name			  " SFunction "
+		  SID			  "259::27"
+		  Tag			  "Stateflow S-Function Replay_sim 7"
+		  Ports			  [6, 4]
+		  Position		  [180, 102, 230, 243]
+		  FunctionName		  "sf_sfun"
+		  Parameters		  "IPStar,InitialPoint,MaxDwnPthStar,TStar,Turn2Track,switchDistance,tanIntercept"
+		  PortCounts		  "[6 4]"
+		  EnableBusSupport	  on
+		  Port {
+		    PortNumber		    2
+		    Name		    "L2Vec"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		  }
+		  Port {
+		    PortNumber		    3
+		    Name		    "as_c"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		  }
+		  Port {
+		    PortNumber		    4
+		    Name		    "transition"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		  }
+		}
+		Block {
+		  BlockType		  Terminator
+		  Name			  " Terminator "
+		  SID			  "259::30"
+		  Position		  [460, 256, 480, 274]
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "L2Vec"
+		  SID			  "259::10"
+		  Position		  [460, 101, 480, 119]
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "as_c"
+		  SID			  "259::9"
+		  Position		  [460, 136, 480, 154]
+		  Port			  "2"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "transition"
+		  SID			  "259::24"
+		  Position		  [460, 171, 480, 189]
+		  Port			  "3"
+		  IconDisplay		  "Port number"
+		}
+		Line {
+		  SrcBlock		  " SFunction "
+		  SrcPort		  1
+		  DstBlock		  " Demux "
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  " Demux "
+		  SrcPort		  1
+		  DstBlock		  " Terminator "
+		  DstPort		  1
+		}
+		Line {
+		  Name			  "transition"
+		  Labels		  [0, 0]
+		  SrcBlock		  " SFunction "
+		  SrcPort		  4
+		  DstBlock		  "transition"
+		  DstPort		  1
+		}
+		Line {
+		  Name			  "as_c"
+		  Labels		  [0, 0]
+		  SrcBlock		  " SFunction "
+		  SrcPort		  3
+		  DstBlock		  "as_c"
+		  DstPort		  1
+		}
+		Line {
+		  Name			  "L2Vec"
+		  Labels		  [0, 0]
+		  SrcBlock		  " SFunction "
+		  SrcPort		  2
+		  DstBlock		  "L2Vec"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Vxyz"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  6
+		}
+		Line {
+		  SrcBlock		  "Puav"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  5
+		}
+		Line {
+		  SrcBlock		  "wp1_found"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  4
+		}
+		Line {
+		  SrcBlock		  "wp1"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  3
+		}
+		Line {
+		  SrcBlock		  "wp0_found"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "wp0"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  1
+		}
+	      }
+	    }
+	    Block {
+	      BlockType		      Logic
+	      Name		      "Logical\nOperator1"
+	      SID		      "260"
+	      Ports		      [1, 1]
+	      Position		      [1020, 266, 1050, 284]
+	      ShowName		      off
+	      Operator		      "NOT"
+	      Inputs		      "1"
+	      AllPortsSameDT	      off
+	      OutDataTypeStr	      "boolean"
+	    }
+	    Block {
+	      BlockType		      Switch
+	      Name		      "Switch"
+	      SID		      "293"
+	      Position		      [1095, 260, 1125, 290]
+	      ShowName		      off
+	      Criteria		      "u2 ~= 0"
+	      InputSameDT	      off
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      SubSystem
+	      Name		      "Translate a_cmd to\nrudder angle"
+	      SID		      "319"
+	      Ports		      [4, 1]
+	      Position		      [905, 135, 1050, 190]
+	      MinAlgLoopOccurrences   off
+	      PropExecContextOutsideSubsystem off
+	      RTWSystemCode	      "Auto"
+	      FunctionWithSeparateData off
+	      Opaque		      off
+	      RequestExecContextInheritance off
+	      MaskHideContents	      off
+	      System {
+		Name			"Translate a_cmd to\nrudder angle"
+		Location		[801, 353, 1781, 867]
+		Open			off
+		ModelBrowserVisibility	off
+		ModelBrowserWidth	200
+		ScreenColor		"white"
+		PaperOrientation	"landscape"
+		PaperPositionMode	"auto"
+		PaperType		"usletter"
+		PaperUnits		"inches"
+		TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+		TiledPageScale		1
+		ShowPageBoundaries	off
+		ZoomFactor		"100"
+		Block {
+		  BlockType		  Inport
+		  Name			  "a_cmd"
+		  SID			  "320"
+		  Position		  [35, 63, 65, 77]
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "v_ground"
+		  SID			  "321"
+		  Position		  [35, 198, 65, 212]
+		  Port			  "2"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "psi_dot"
+		  SID			  "322"
+		  Position		  [35, 133, 65, 147]
+		  Port			  "3"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "water_speed"
+		  SID			  "323"
+		  Position		  [35, 233, 65, 247]
+		  Port			  "4"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Sum
+		  Name			  "Add6"
+		  SID			  "324"
+		  Ports			  [2, 1]
+		  Position		  [175, 55, 205, 85]
+		  ZOrder		  -2
+		  ShowName		  off
+		  IconShape		  "round"
+		  Inputs		  "|+-"
+		  InputSameDT		  off
+		  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Constant
+		  Name			  "Constant1"
+		  SID			  "325"
+		  Position		  [60, 103, 120, 127]
+		  BackgroundColor	  "gray"
+		  ShowName		  off
+		  Value			  "KPsiDot"
+		}
+		Block {
+		  BlockType		  Constant
+		  Name			  "Constant5"
+		  SID			  "326"
+		  Position		  [160, 23, 220, 47]
+		  BackgroundColor	  "gray"
+		  ShowName		  off
+		  Value			  "wheelbase"
+		}
+		Block {
+		  BlockType		  Math
+		  Name			  "Math\nFunction1"
+		  SID			  "327"
+		  Ports			  [1, 1]
+		  Position		  [95, 190, 125, 220]
+		  ShowName		  off
+		  Operator		  "square"
+		}
+		Block {
+		  BlockType		  Product
+		  Name			  "Product"
+		  SID			  "328"
+		  Ports			  [2, 1]
+		  Position		  [260, 24, 290, 71]
+		  ShowName		  off
+		  Inputs		  "**"
+		  InputSameDT		  off
+		  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Product
+		  Name			  "Product1"
+		  SID			  "329"
+		  Ports			  [2, 1]
+		  Position		  [140, 104, 170, 151]
+		  ShowName		  off
+		  Inputs		  "**"
+		  InputSameDT		  off
+		  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Product
+		  Name			  "Product2"
+		  SID			  "330"
+		  Ports			  [2, 1]
+		  Position		  [260, 194, 290, 241]
+		  ShowName		  off
+		  Inputs		  "**"
+		  InputSameDT		  off
+		  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Sqrt
+		  Name			  "Sqrt"
+		  SID			  "331"
+		  Position		  [205, 190, 235, 220]
+		  ZOrder		  -29
+		  ShowName		  off
+		}
+		Block {
+		  BlockType		  Sum
+		  Name			  "Sum of\nElements"
+		  SID			  "332"
+		  Ports			  [1, 1]
+		  Position		  [150, 190, 180, 220]
+		  ZOrder		  -33
+		  ShowName		  off
+		  Inputs		  "+"
+		  InputSameDT		  off
+		  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Trigonometry
+		  Name			  "Trigonometric\nFunction"
+		  SID			  "333"
+		  Ports			  [1, 1]
+		  Position		  [435, 45, 465, 75]
+		  ShowName		  off
+		  Operator		  "atan"
+		}
+		Block {
+		  BlockType		  UnaryMinus
+		  Name			  "Unary Minus"
+		  SID			  "334"
+		  Position		  [500, 45, 530, 75]
+		  ShowName		  off
+		}
+		Block {
+		  BlockType		  SubSystem
+		  Name			  "safe_divide"
+		  SID			  "335"
+		  Ports			  [2, 1]
+		  Position		  [330, 39, 395, 81]
+		  ZOrder		  -5
+		  TreatAsAtomicUnit	  on
+		  MinAlgLoopOccurrences	  off
+		  PropExecContextOutsideSubsystem off
+		  RTWSystemCode		  "Reusable function"
+		  RTWFcnNameOpts	  "Use subsystem name"
+		  RTWFileNameOpts	  "Use function name"
+		  FunctionWithSeparateData off
+		  Opaque		  off
+		  RequestExecContextInheritance	off
+		  MaskHideContents	  off
+		  System {
+		    Name		    "safe_divide"
+		    Location		    [314, 581, 1021, 881]
+		    Open		    off
+		    ModelBrowserVisibility  off
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "X"
+		    SID			    "336"
+		    Position		    [50, 108, 80, 122]
+		    ZOrder		    -1
+		    BackgroundColor	    "darkGreen"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "div"
+		    SID			    "337"
+		    Position		    [50, 153, 80, 167]
+		    ZOrder		    -1
+		    BackgroundColor	    "darkGreen"
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "Constant1"
+		    SID			    "338"
+		    Position		    [160, 183, 195, 207]
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    Value		    "0"
+		    OutDataTypeStr	    "Inherit: Inherit via back propagation"
+		    }
+		    Block {
+		    BlockType		    Product
+		    Name		    "Product"
+		    SID			    "339"
+		    Ports		    [2, 1]
+		    Position		    [165, 121, 195, 154]
+		    ShowName		    off
+		    Inputs		    "*/"
+		    InputSameDT		    off
+		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Switch
+		    Name		    "Switch"
+		    SID			    "340"
+		    Position		    [250, 155, 280, 185]
+		    ShowName		    off
+		    Criteria		    "u2 ~= 0"
+		    InputSameDT		    off
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "Out1"
+		    SID			    "341"
+		    Position		    [345, 163, 375, 177]
+		    ZOrder		    -2
+		    BackgroundColor	    "yellow"
+		    ShowName		    off
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "X"
+		    SrcPort		    1
+		    Points		    [65, 0]
+		    DstBlock		    "Product"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "div"
+		    SrcPort		    1
+		    Points		    [65, 0]
+		    Branch {
+		    DstBlock		    "Product"
+		    DstPort		    2
+		    }
+		    Branch {
+		    Points		    [0, 10]
+		    DstBlock		    "Switch"
+		    DstPort		    2
+		    }
+		    }
+		    Line {
+		    SrcBlock		    "Product"
+		    SrcPort		    1
+		    Points		    [15, 0; 0, 20]
+		    DstBlock		    "Switch"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Constant1"
+		    SrcPort		    1
+		    Points		    [25, 0; 0, -15]
+		    DstBlock		    "Switch"
+		    DstPort		    3
+		    }
+		    Line {
+		    SrcBlock		    "Switch"
+		    SrcPort		    1
+		    DstBlock		    "Out1"
+		    DstPort		    1
+		    }
+		  }
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "rudder_cmd"
+		  SID			  "342"
+		  Position		  [555, 53, 585, 67]
+		  IconDisplay		  "Port number"
+		}
+		Line {
+		  SrcBlock		  "Constant5"
+		  SrcPort		  1
+		  DstBlock		  "Product"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Product"
+		  SrcPort		  1
+		  DstBlock		  "safe_divide"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Trigonometric\nFunction"
+		  SrcPort		  1
+		  DstBlock		  "Unary Minus"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Math\nFunction1"
+		  SrcPort		  1
+		  DstBlock		  "Sum of\nElements"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Sum of\nElements"
+		  SrcPort		  1
+		  DstBlock		  "Sqrt"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "safe_divide"
+		  SrcPort		  1
+		  DstBlock		  "Trigonometric\nFunction"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Add6"
+		  SrcPort		  1
+		  Points		  [15, 0; 0, -10]
+		  DstBlock		  "Product"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "Product1"
+		  SrcPort		  1
+		  Points		  [15, 0]
+		  DstBlock		  "Add6"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "v_ground"
+		  SrcPort		  1
+		  DstBlock		  "Math\nFunction1"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Unary Minus"
+		  SrcPort		  1
+		  DstBlock		  "rudder_cmd"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "a_cmd"
+		  SrcPort		  1
+		  DstBlock		  "Add6"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "psi_dot"
+		  SrcPort		  1
+		  DstBlock		  "Product1"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "Constant1"
+		  SrcPort		  1
+		  DstBlock		  "Product1"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Sqrt"
+		  SrcPort		  1
+		  DstBlock		  "Product2"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Product2"
+		  SrcPort		  1
+		  Points		  [0, -150]
+		  DstBlock		  "safe_divide"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "water_speed"
+		  SrcPort		  1
+		  Points		  [85, 0; 0, -10]
+		  DstBlock		  "Product2"
+		  DstPort		  2
+		}
+		Annotation {
+		  Name			  "Implements a translation between the L2+ lateral acceleration command\nand the rudder angle command."
+		  Position		  [216, 303]
+		}
+	      }
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "Command"
+	      SID		      "343"
+	      Position		      [1175, 268, 1205, 282]
+	      BackgroundColor	      "yellow"
+	      IconDisplay	      "Port number"
+	    }
+	    Line {
+	      Labels		      [1, 0]
+	      SrcBlock		      "wp0"
+	      SrcPort		      1
+	      Points		      [260, 0]
+	      Branch {
+		DstBlock		"L2 Plus ref WP1"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, -15]
+		DstBlock		"Goto2"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      Labels		      [1, 0]
+	      SrcBlock		      "wp1"
+	      SrcPort		      1
+	      Points		      [245, 0]
+	      Branch {
+		DstBlock		"L2 Plus ref WP1"
+		DstPort			3
+	      }
+	      Branch {
+		Points			[0, 190]
+		DstBlock		"Goto1"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "Local pos"
+	      SrcPort		      1
+	      DstBlock		      "L2 Plus ref WP1"
+	      DstPort		      5
+	    }
+	    Line {
+	      SrcBlock		      "Velocity"
+	      SrcPort		      1
+	      Points		      [85, 0]
+	      Branch {
+		DstBlock		"L2 Plus ref WP1"
+		DstPort			6
+	      }
+	      Branch {
+		Labels			[0, 0]
+		Points			[0, 105; 605, 0; 0, -190]
+		DstBlock		"Translate a_cmd to\nrudder angle"
+		DstPort			2
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "L2 Plus ref WP1"
+	      SrcPort		      1
+	      DstBlock		      "Goto"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Translate a_cmd to\nrudder angle"
+	      SrcPort		      1
+	      Points		      [25, 0]
+	      Branch {
+		DstBlock		"Goto3"
+		DstPort			1
+	      }
+	      Branch {
+		DstBlock		"Switch"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "Reset"
+	      SrcPort		      1
+	      DstBlock		      "Logical\nOperator1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Constant1"
+	      SrcPort		      1
+	      Points		      [35, 0; 0, -30]
+	      DstBlock		      "Switch"
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "Switch"
+	      SrcPort		      1
+	      DstBlock		      "Command"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Logical\nOperator1"
+	      SrcPort		      1
+	      DstBlock		      "Switch"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "L2 Plus ref WP1"
+	      SrcPort		      2
+	      Points		      [70, 0]
+	      Branch {
+		DstBlock		"Goto4"
+		DstPort			1
+	      }
+	      Branch {
+		DstBlock		"Translate a_cmd to\nrudder angle"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "cog_dot"
+	      SrcPort		      1
+	      Points		      [705, 0; 0, -205]
+	      DstBlock		      "Translate a_cmd to\nrudder angle"
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "waterspeed"
+	      SrcPort		      1
+	      Points		      [715, 0]
+	      DstBlock		      "Translate a_cmd to\nrudder angle"
+	      DstPort		      4
+	    }
+	    Line {
+	      SrcBlock		      "Constant3"
+	      SrcPort		      1
+	      DstBlock		      "L2 Plus ref WP1"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "Constant2"
+	      SrcPort		      1
+	      DstBlock		      "L2 Plus ref WP1"
+	      DstPort		      4
+	    }
+	    Annotation {
+	      Position		      [1180, 271]
+	    }
+	    Annotation {
+	      Name		      "Implements the L_2^+ to rudder angle command logic as shared on pages 171"
+	      Position		      [1011, 109]
+	      Interpreter	      "tex"
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "State Keeper &\nEstimator"
+	  SID			  "344"
+	  Ports			  [3, 4]
+	  Position		  [340, 335, 430, 505]
+	  MinAlgLoopOccurrences	  off
+	  PropExecContextOutsideSubsystem off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  Opaque		  off
+	  RequestExecContextInheritance	off
+	  MaskHideContents	  off
+	  System {
+	    Name		    "State Keeper &\nEstimator"
+	    Location		    [594, 261, 1782, 885]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "125"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "throttle"
+	      SID		      "345"
+	      Position		      [25, 283, 55, 297]
+	      BackgroundColor	      "darkGreen"
+	      IconDisplay	      "Port number"
+	      Port {
+		PortNumber		1
+		PropagatedSignals	"throttle"
+		ShowPropagatedSignals	"on"
+		RTWStorageClass		"Auto"
+		DataLoggingNameMode	"SignalName"
+	      }
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "reset"
+	      SID		      "346"
+	      Position		      [25, 163, 55, 177]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "gps"
+	      SID		      "347"
+	      Position		      [25, 88, 55, 102]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "3"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      SubSystem
+	      Name		      "GPS Estimator"
+	      SID		      "348"
+	      Ports		      [2, 5]
+	      Position		      [320, 53, 420, 207]
+	      MinAlgLoopOccurrences   off
+	      PropExecContextOutsideSubsystem off
+	      RTWSystemCode	      "Auto"
+	      FunctionWithSeparateData off
+	      Opaque		      off
+	      RequestExecContextInheritance off
+	      MaskHideContents	      off
+	      System {
+		Name			"GPS Estimator"
+		Location		[1, 57, 1919, 1174]
+		Open			off
+		ModelBrowserVisibility	off
+		ModelBrowserWidth	200
+		ScreenColor		"white"
+		PaperOrientation	"landscape"
+		PaperPositionMode	"auto"
+		PaperType		"usletter"
+		PaperUnits		"inches"
+		TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+		TiledPageScale		1
+		ShowPageBoundaries	off
+		ZoomFactor		"111"
+		Block {
+		  BlockType		  Inport
+		  Name			  "gps"
+		  SID			  "349"
+		  Position		  [25, 218, 55, 232]
+		  BackgroundColor	  "darkGreen"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "reset"
+		  SID			  "350"
+		  Position		  [25, 363, 55, 377]
+		  BackgroundColor	  "darkGreen"
+		  Port			  "2"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Sum
+		  Name			  "Add"
+		  SID			  "351"
+		  Ports			  [2, 1]
+		  Position		  [1015, 337, 1045, 368]
+		  ShowName		  off
+		  InputSameDT		  off
+		  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  BusSelector
+		  Name			  "Bus\nSelector1"
+		  SID			  "352"
+		  Ports			  [1, 1]
+		  Position		  [105, 320, 110, 350]
+		  ShowName		  off
+		  OutputSignals		  "newData"
+		  Port {
+		    PortNumber		    1
+		    Name		    "<newData>"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		  }
+		}
+		Block {
+		  BlockType		  SubSystem
+		  Name			  "Calculate\ncourse-over-ground\nderivative"
+		  SID			  "353"
+		  Ports			  [2, 1]
+		  Position		  [1010, 400, 1050, 460]
+		  MinAlgLoopOccurrences	  off
+		  PropExecContextOutsideSubsystem off
+		  RTWSystemCode		  "Auto"
+		  FunctionWithSeparateData off
+		  Opaque		  off
+		  RequestExecContextInheritance	off
+		  MaskHideContents	  off
+		  System {
+		    Name		    "Calculate\ncourse-over-ground\nderivative"
+		    Location		    [714, 437, 1370, 642]
+		    Open		    off
+		    ModelBrowserVisibility  off
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "cog"
+		    SID			    "354"
+		    Position		    [25, 43, 55, 57]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "new"
+		    SID			    "355"
+		    Position		    [185, 73, 215, 87]
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    SubSystem
+		    Name		    "Correct for jumps of\n2pi when wrapping\naround"
+		    SID			    "356"
+		    Ports		    [1, 1]
+		    Position		    [80, 27, 150, 73]
+		    ZOrder		    -4
+		    LibraryVersion	    "1.32"
+		    ErrorFcn		    "Stateflow.Translate.translate"
+		    PermitHierarchicalResolution "ExplicitOnly"
+		    TreatAsAtomicUnit	    on
+		    MinAlgLoopOccurrences   off
+		    PropExecContextOutsideSubsystem off
+		    RTWSystemCode	    "Auto"
+		    FunctionWithSeparateData off
+		    Opaque		    off
+		    RequestExecContextInheritance off
+		    MaskHideContents	    off
+		    SFBlockType		    "MATLAB Function"
+		    MaskType		    "Stateflow"
+		    MaskDescription	    "Embedded MATLAB block"
+		    MaskSelfModifiable	    on
+		    MaskDisplay		    "bgColor = Simulink.Root.ColorString2Rgb(get_param(gcbh, 'BackgroundColor')); image(imread('pri"
+		    "vate/eml_membrane_16.png','png','BackgroundColor',bgColor(1:3)),'center'); disp([10 10 'jumpfix']);"
+		    MaskIconFrame	    on
+		    MaskIconOpaque	    off
+		    MaskIconRotate	    "none"
+		    MaskPortRotate	    "default"
+		    MaskIconUnits	    "normalized"
+		    System {
+		    Name		    "Correct for jumps of\n2pi when wrapping\naround"
+		    Location		    [257, 457, 812, 717]
+		    Open		    off
+		    ModelBrowserVisibility  off
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    SIDHighWatermark	    "17"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "u"
+		    SID			    "356::1"
+		    Position		    [20, 101, 40, 119]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Demux
+		    Name		    " Demux "
+		    SID			    "356::15"
+		    Ports		    [1, 1]
+		    Position		    [270, 160, 320, 200]
+		    Outputs		    "1"
+		    }
+		    Block {
+		    BlockType		    S-Function
+		    Name		    " SFunction "
+		    SID			    "356::14"
+		    Tag			    "Stateflow S-Function Replay_sim 1"
+		    Ports		    [1, 2]
+		    Position		    [180, 100, 230, 160]
+		    FunctionName	    "sf_sfun"
+		    PortCounts		    "[1 2]"
+		    EnableBusSupport	    on
+		    Port {
+		    PortNumber		    2
+		    Name		    "y"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    }
+		    Block {
+		    BlockType		    Terminator
+		    Name		    " Terminator "
+		    SID			    "356::17"
+		    Position		    [460, 171, 480, 189]
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "y"
+		    SID			    "356::5"
+		    Position		    [460, 101, 480, 119]
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "u"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    1
+		    }
+		    Line {
+		    Name		    "y"
+		    Labels		    [0, 0]
+		    SrcBlock		    " SFunction "
+		    SrcPort		    2
+		    DstBlock		    "y"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    " Demux "
+		    SrcPort		    1
+		    DstBlock		    " Terminator "
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    " SFunction "
+		    SrcPort		    1
+		    DstBlock		    " Demux "
+		    DstPort		    1
+		    }
+		    }
+		    }
+		    Block {
+		    BlockType		    SubSystem
+		    Name		    "Delayed\nderivative"
+		    SID			    "357"
+		    Ports		    [1, 1]
+		    Position		    [410, 46, 480, 84]
+		    MinAlgLoopOccurrences   off
+		    PropExecContextOutsideSubsystem off
+		    RTWSystemCode	    "Auto"
+		    FunctionWithSeparateData off
+		    Opaque		    off
+		    RequestExecContextInheritance off
+		    MaskHideContents	    off
+		    MaskPromptString	    "Delay (s)|Sample time"
+		    MaskStyleString	    "edit,edit"
+		    MaskVariables	    "delay=@1;Ts=@2;"
+		    MaskTunableValueString  "on,on"
+		    MaskCallbackString	    "|"
+		    MaskEnableString	    "on,on"
+		    MaskVisibilityString    "on,on"
+		    MaskToolTipString	    "on,on"
+		    MaskDisplay		    "text(0.5,0.5,'Der');"
+		    MaskIconFrame	    on
+		    MaskIconOpaque	    on
+		    MaskIconRotate	    "none"
+		    MaskPortRotate	    "default"
+		    MaskIconUnits	    "normalized"
+		    MaskValueString	    "cogDotDerivativeDelay|.01"
+		    System {
+		    Name		    "Delayed\nderivative"
+		    Location		    [714, 437, 1206, 642]
+		    Open		    off
+		    ModelBrowserVisibility  off
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "In1"
+		    SID			    "358"
+		    Position		    [25, 33, 55, 47]
+		    ShowName		    off
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Sum
+		    Name		    "Add"
+		    SID			    "359"
+		    Ports		    [2, 1]
+		    Position		    [260, 47, 290, 78]
+		    ZOrder		    -2
+		    ShowName		    off
+		    Inputs		    "-+"
+		    InputSameDT		    off
+		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "Constant1"
+		    SID			    "360"
+		    Position		    [15, 97, 110, 123]
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    Value		    "delay"
+		    OutDataTypeStr	    "single"
+		    SampleTime		    ".01"
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "Constant2"
+		    SID			    "361"
+		    Position		    [25, 138, 85, 162]
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    Value		    "Ts"
+		    OutDataTypeStr	    "single"
+		    }
+		    Block {
+		    BlockType		    Delay
+		    Name		    "Delay"
+		    SID			    "362"
+		    Ports		    [2, 1]
+		    Position		    [195, 30, 230, 65]
+		    ShowName		    off
+		    InputPortMap	    "u0,p1"
+		    DelayLengthSource	    "Input port"
+		    DelayLength		    "delay/Ts"
+		    DelayLengthUpperLimit   "1000"
+		    ExternalReset	    "None"
+		    DiagnosticForOutOfRangeDelayLength "Error"
+		    RemoveProtectionDelayLength	on
+		    UseCircularBuffer	    on
+		    SampleTime		    ".01"
+		    }
+		    Block {
+		    BlockType		    Product
+		    Name		    "Divide"
+		    SID			    "363"
+		    Ports		    [2, 1]
+		    Position		    [140, 112, 170, 143]
+		    ZOrder		    -8
+		    Inputs		    "*/"
+		    InputSameDT		    off
+		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
+		    RndMeth		    "Floor"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Product
+		    Name		    "Divide1"
+		    SID			    "364"
+		    Ports		    [2, 1]
+		    Position		    [305, 57, 335, 88]
+		    ZOrder		    -8
+		    Inputs		    "*/"
+		    InputSameDT		    off
+		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
+		    RndMeth		    "Floor"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "Out1"
+		    SID			    "365"
+		    Position		    [365, 68, 395, 82]
+		    ShowName		    off
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "Delay"
+		    SrcPort		    1
+		    Points		    [0, 5]
+		    DstBlock		    "Add"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Add"
+		    SrcPort		    1
+		    DstBlock		    "Divide1"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "In1"
+		    SrcPort		    1
+		    Points		    [15, 0]
+		    Branch {
+		    DstBlock		    "Delay"
+		    DstPort		    1
+		    }
+		    Branch {
+		    Points		    [0, 30]
+		    DstBlock		    "Add"
+		    DstPort		    2
+		    }
+		    }
+		    Line {
+		    SrcBlock		    "Divide1"
+		    SrcPort		    1
+		    DstBlock		    "Out1"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Divide"
+		    SrcPort		    1
+		    Points		    [0, -75]
+		    DstBlock		    "Delay"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "Constant1"
+		    SrcPort		    1
+		    Points		    [5, 0]
+		    Branch {
+		    Points		    [0, -30]
+		    DstBlock		    "Divide1"
+		    DstPort		    2
+		    }
+		    Branch {
+		    Points		    [5, 0]
+		    DstBlock		    "Divide"
+		    DstPort		    1
+		    }
+		    }
+		    Line {
+		    SrcBlock		    "Constant2"
+		    SrcPort		    1
+		    Points		    [30, 0; 0, -15]
+		    DstBlock		    "Divide"
+		    DstPort		    2
+		    }
+		    }
+		    }
+		    Block {
+		    BlockType		    SubSystem
+		    Name		    "Smoothing\nFilter"
+		    SID			    "366"
+		    Ports		    [2, 1]
+		    Position		    [240, 34, 340, 96]
+		    MinAlgLoopOccurrences   off
+		    PropExecContextOutsideSubsystem off
+		    RTWSystemCode	    "Auto"
+		    FunctionWithSeparateData off
+		    Opaque		    off
+		    RequestExecContextInheritance off
+		    MaskHideContents	    off
+		    MaskPromptString	    "Gain|Limit|Sample time|Lowpass frequency"
+		    MaskStyleString	    "edit,edit,edit,edit"
+		    MaskVariables	    "gain=@1;limit=@2;Ts=@3;freq=@4;"
+		    MaskTunableValueString  "on,on,on,on"
+		    MaskCallbackString	    "|||"
+		    MaskEnableString	    "on,on,on,on"
+		    MaskVisibilityString    "on,on,on,on"
+		    MaskToolTipString	    "on,on,on,on"
+		    MaskIconFrame	    on
+		    MaskIconOpaque	    on
+		    MaskIconRotate	    "none"
+		    MaskPortRotate	    "default"
+		    MaskIconUnits	    "autoscale"
+		    MaskValueString	    "0.5|8|.01|.3"
+		    System {
+		    Name		    "Smoothing\nFilter"
+		    Location		    [803, 316, 1550, 819]
+		    Open		    off
+		    ModelBrowserVisibility  off
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "u"
+		    SID			    "367"
+		    Position		    [25, 13, 55, 27]
+		    BackgroundColor	    "darkGreen"
+		    IconDisplay		    "Port number"
+		    OutDataTypeStr	    "single"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "new"
+		    SID			    "368"
+		    Position		    [25, 43, 55, 57]
+		    BackgroundColor	    "darkGreen"
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    OutDataTypeStr	    "boolean"
+		    }
+		    Block {
+		    BlockType		    SubSystem
+		    Name		    "Embedded\nMATLAB Function2"
+		    SID			    "369"
+		    Ports		    [4, 1]
+		    Position		    [150, 47, 265, 118]
+		    ShowName		    off
+		    ErrorFcn		    "Stateflow.Translate.translate"
+		    PermitHierarchicalResolution "ExplicitOnly"
+		    TreatAsAtomicUnit	    on
+		    MinAlgLoopOccurrences   off
+		    PropExecContextOutsideSubsystem off
+		    RTWSystemCode	    "Auto"
+		    FunctionWithSeparateData off
+		    Opaque		    off
+		    RequestExecContextInheritance off
+		    MaskHideContents	    off
+		    SFBlockType		    "MATLAB Function"
+		    MaskType		    "Stateflow"
+		    MaskDescription	    "Embedded MATLAB block"
+		    MaskSelfModifiable	    on
+		    MaskDisplay		    "bgColor = Simulink.Root.ColorString2Rgb(get_param(gcbh, 'BackgroundColor')); image(imread('pri"
+		    "vate/eml_membrane_16.png','png','BackgroundColor',bgColor(1:3)),'center'); disp([10 10 'RateAid']);"
+		    MaskIconFrame	    on
+		    MaskIconOpaque	    off
+		    MaskIconRotate	    "none"
+		    MaskPortRotate	    "default"
+		    MaskIconUnits	    "normalized"
+		    System {
+		    Name		    "Embedded\nMATLAB Function2"
+		    Location		    [257, 457, 812, 717]
+		    Open		    off
+		    ModelBrowserVisibility  off
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    SIDHighWatermark	    "12"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "u"
+		    SID			    "369::1"
+		    Position		    [20, 101, 40, 119]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "NewGPS"
+		    SID			    "369::2"
+		    Position		    [20, 136, 40, 154]
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "rateLimit"
+		    SID			    "369::11"
+		    Position		    [20, 171, 40, 189]
+		    Port		    "3"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "KF_Gain"
+		    SID			    "369::12"
+		    Position		    [20, 206, 40, 224]
+		    Port		    "4"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Demux
+		    Name		    " Demux "
+		    SID			    "369::8"
+		    Ports		    [1, 1]
+		    Position		    [270, 205, 320, 245]
+		    Outputs		    "1"
+		    }
+		    Block {
+		    BlockType		    S-Function
+		    Name		    " SFunction "
+		    SID			    "369::7"
+		    Tag			    "Stateflow S-Function Replay_sim 11"
+		    Ports		    [4, 2]
+		    Position		    [180, 102, 230, 203]
+		    FunctionName	    "sf_sfun"
+		    Parameters		    "Ts"
+		    PortCounts		    "[4 2]"
+		    EnableBusSupport	    on
+		    Port {
+		    PortNumber		    2
+		    Name		    "y"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    }
+		    Block {
+		    BlockType		    Terminator
+		    Name		    " Terminator "
+		    SID			    "369::10"
+		    Position		    [460, 216, 480, 234]
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "y"
+		    SID			    "369::6"
+		    Position		    [460, 101, 480, 119]
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "u"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "NewGPS"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "rateLimit"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    3
+		    }
+		    Line {
+		    SrcBlock		    "KF_Gain"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    4
+		    }
+		    Line {
+		    Name		    "y"
+		    Labels		    [0, 0]
+		    SrcBlock		    " SFunction "
+		    SrcPort		    2
+		    DstBlock		    "y"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    " Demux "
+		    SrcPort		    1
+		    DstBlock		    " Terminator "
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    " SFunction "
+		    SrcPort		    1
+		    DstBlock		    " Demux "
+		    DstPort		    1
+		    }
+		    }
+		    }
+		    Block {
+		    BlockType		    SubSystem
+		    Name		    "Tustin low-pass"
+		    SID			    "370"
+		    Ports		    [3, 1]
+		    Position		    [305, 109, 530, 231]
+		    ErrorFcn		    "Stateflow.Translate.translate"
+		    PermitHierarchicalResolution "ExplicitOnly"
+		    TreatAsAtomicUnit	    on
+		    MinAlgLoopOccurrences   off
+		    PropExecContextOutsideSubsystem off
+		    RTWSystemCode	    "Auto"
+		    FunctionWithSeparateData off
+		    Opaque		    off
+		    RequestExecContextInheritance off
+		    MaskHideContents	    off
+		    SFBlockType		    "MATLAB Function"
+		    MaskType		    "Stateflow"
+		    MaskDescription	    "Embedded MATLAB block"
+		    MaskSelfModifiable	    on
+		    MaskDisplay		    "bgColor = Simulink.Root.ColorString2Rgb(get_param(gcbh, 'BackgroundColor')); image(imread('pri"
+		    "vate/eml_membrane_16.png','png','BackgroundColor',bgColor(1:3)),'center'); disp([10 10 'fcn']);"
+		    MaskIconFrame	    on
+		    MaskIconOpaque	    off
+		    MaskIconRotate	    "none"
+		    MaskPortRotate	    "default"
+		    MaskIconUnits	    "normalized"
+		    System {
+		    Name		    "Tustin low-pass"
+		    Location		    [257, 457, 812, 717]
+		    Open		    off
+		    ModelBrowserVisibility  off
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    SIDHighWatermark	    "11"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "u"
+		    SID			    "370::1"
+		    Position		    [20, 101, 40, 119]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "T"
+		    SID			    "370::2"
+		    Position		    [20, 136, 40, 154]
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "f"
+		    SID			    "370::3"
+		    Position		    [20, 171, 40, 189]
+		    Port		    "3"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Demux
+		    Name		    " Demux "
+		    SID			    "370::9"
+		    Ports		    [1, 1]
+		    Position		    [270, 180, 320, 220]
+		    Outputs		    "1"
+		    }
+		    Block {
+		    BlockType		    S-Function
+		    Name		    " SFunction "
+		    SID			    "370::8"
+		    Tag			    "Stateflow S-Function Replay_sim 12"
+		    Ports		    [3, 2]
+		    Position		    [180, 100, 230, 180]
+		    FunctionName	    "sf_sfun"
+		    PortCounts		    "[3 2]"
+		    EnableBusSupport	    on
+		    Port {
+		    PortNumber		    2
+		    Name		    "y"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    }
+		    Block {
+		    BlockType		    Terminator
+		    Name		    " Terminator "
+		    SID			    "370::11"
+		    Position		    [460, 191, 480, 209]
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "y"
+		    SID			    "370::7"
+		    Position		    [460, 101, 480, 119]
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    " SFunction "
+		    SrcPort		    1
+		    DstBlock		    " Demux "
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    " Demux "
+		    SrcPort		    1
+		    DstBlock		    " Terminator "
+		    DstPort		    1
+		    }
+		    Line {
+		    Name		    "y"
+		    Labels		    [0, 0]
+		    SrcBlock		    " SFunction "
+		    SrcPort		    2
+		    DstBlock		    "y"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "f"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    3
+		    }
+		    Line {
+		    SrcBlock		    "T"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "u"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    1
+		    }
+		    }
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "gain"
+		    SID			    "371"
+		    Position		    [25, 115, 55, 145]
+		    ZOrder		    -5
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    Value		    "gain"
+		    OutDataTypeStr	    "Inherit: Inherit via back propagation"
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "gain1"
+		    SID			    "372"
+		    Position		    [25, 195, 55, 225]
+		    ZOrder		    -5
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    Value		    "freq"
+		    OutDataTypeStr	    "Inherit: Inherit via back propagation"
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "gain2"
+		    SID			    "373"
+		    Position		    [25, 155, 55, 185]
+		    ZOrder		    -5
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    Value		    "Ts"
+		    OutDataTypeStr	    "Inherit: Inherit via back propagation"
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "limit"
+		    SID			    "374"
+		    Position		    [25, 75, 55, 105]
+		    ZOrder		    -5
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    Value		    "limit"
+		    OutDataTypeStr	    "Inherit: Inherit via back propagation"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "y"
+		    SID			    "375"
+		    Position		    [565, 163, 595, 177]
+		    BackgroundColor	    "yellow"
+		    IconDisplay		    "Port number"
+		    OutputWhenDisabled	    "reset"
+		    InitialOutput	    "0"
+		    }
+		    Line {
+		    SrcBlock		    "Embedded\nMATLAB Function2"
+		    SrcPort		    1
+		    Points		    [20, 0]
+		    DstBlock		    "Tustin low-pass"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "u"
+		    SrcPort		    1
+		    Points		    [75, 0]
+		    DstBlock		    "Embedded\nMATLAB Function2"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "new"
+		    SrcPort		    1
+		    Points		    [60, 0; 0, 25]
+		    DstBlock		    "Embedded\nMATLAB Function2"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "limit"
+		    SrcPort		    1
+		    DstBlock		    "Embedded\nMATLAB Function2"
+		    DstPort		    3
+		    }
+		    Line {
+		    SrcBlock		    "gain"
+		    SrcPort		    1
+		    Points		    [75, 0]
+		    DstBlock		    "Embedded\nMATLAB Function2"
+		    DstPort		    4
+		    }
+		    Line {
+		    SrcBlock		    "Tustin low-pass"
+		    SrcPort		    1
+		    DstBlock		    "y"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "gain2"
+		    SrcPort		    1
+		    DstBlock		    "Tustin low-pass"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "gain1"
+		    SrcPort		    1
+		    DstBlock		    "Tustin low-pass"
+		    DstPort		    3
+		    }
+		    }
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "cog_dot"
+		    SID			    "376"
+		    Position		    [505, 58, 535, 72]
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "Smoothing\nFilter"
+		    SrcPort		    1
+		    DstBlock		    "Delayed\nderivative"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Correct for jumps of\n2pi when wrapping\naround"
+		    SrcPort		    1
+		    DstBlock		    "Smoothing\nFilter"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "cog"
+		    SrcPort		    1
+		    DstBlock		    "Correct for jumps of\n2pi when wrapping\naround"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Delayed\nderivative"
+		    SrcPort		    1
+		    DstBlock		    "cog_dot"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "new"
+		    SrcPort		    1
+		    DstBlock		    "Smoothing\nFilter"
+		    DstPort		    2
+		    }
+		  }
+		}
+		Block {
+		  BlockType		  SubSystem
+		  Name			  "Calculate local position from \nGPS data"
+		  SID			  "377"
+		  Ports			  [3, 2]
+		  Position		  [580, 306, 810, 384]
+		  LibraryVersion	  "1.31"
+		  ErrorFcn		  "Stateflow.Translate.translate"
+		  PermitHierarchicalResolution "ExplicitOnly"
+		  TreatAsAtomicUnit	  on
+		  MinAlgLoopOccurrences	  off
+		  PropExecContextOutsideSubsystem off
+		  RTWSystemCode		  "Auto"
+		  FunctionWithSeparateData off
+		  Opaque		  off
+		  RequestExecContextInheritance	off
+		  MaskHideContents	  off
+		  SFBlockType		  "MATLAB Function"
+		  MaskType		  "Stateflow"
+		  MaskDescription	  "Embedded MATLAB block"
+		  MaskSelfModifiable	  on
+		  MaskDisplay		  "bgColor = Simulink.Root.ColorString2Rgb(get_param(gcbh, 'BackgroundColor')); image(imread('private"
+		  "/eml_membrane_16.png','png','BackgroundColor',bgColor(1:3)),'center'); disp([10 10 'estimateGPS']);"
+		  MaskIconFrame		  on
+		  MaskIconOpaque	  off
+		  MaskIconRotate	  "none"
+		  MaskPortRotate	  "default"
+		  MaskIconUnits		  "normalized"
+		  System {
+		    Name		    "Calculate local position from \nGPS data"
+		    Location		    [257, 457, 812, 717]
+		    Open		    off
+		    ModelBrowserVisibility  off
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    SIDHighWatermark	    "29"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "latLonAlt"
+		    SID			    "377::22"
+		    Position		    [20, 101, 40, 119]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "newData"
+		    SID			    "377::18"
+		    Position		    [20, 136, 40, 154]
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "reset"
+		    SID			    "377::19"
+		    Position		    [20, 171, 40, 189]
+		    Port		    "3"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Demux
+		    Name		    " Demux "
+		    SID			    "377::26"
+		    Ports		    [1, 1]
+		    Position		    [270, 220, 320, 260]
+		    Outputs		    "1"
+		    }
+		    Block {
+		    BlockType		    S-Function
+		    Name		    " SFunction "
+		    SID			    "377::25"
+		    Tag			    "Stateflow S-Function Replay_sim 3"
+		    Ports		    [3, 3]
+		    Position		    [180, 100, 230, 220]
+		    FunctionName	    "sf_sfun"
+		    PortCounts		    "[3 3]"
+		    EnableBusSupport	    on
+		    Port {
+		    PortNumber		    2
+		    Name		    "enableLLA2LTP"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    Port {
+		    PortNumber		    3
+		    Name		    "resetIntegrator"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    }
+		    Block {
+		    BlockType		    Terminator
+		    Name		    " Terminator "
+		    SID			    "377::28"
+		    Position		    [460, 231, 480, 249]
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "enableLLA2LTP"
+		    SID			    "377::29"
+		    Position		    [460, 101, 480, 119]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "resetIntegrator"
+		    SID			    "377::20"
+		    Position		    [460, 136, 480, 154]
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "latLonAlt"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "newData"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "reset"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    3
+		    }
+		    Line {
+		    Name		    "enableLLA2LTP"
+		    Labels		    [0, 0]
+		    SrcBlock		    " SFunction "
+		    SrcPort		    2
+		    DstBlock		    "enableLLA2LTP"
+		    DstPort		    1
+		    }
+		    Line {
+		    Name		    "resetIntegrator"
+		    Labels		    [0, 0]
+		    SrcBlock		    " SFunction "
+		    SrcPort		    3
+		    DstBlock		    "resetIntegrator"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    " Demux "
+		    SrcPort		    1
+		    DstBlock		    " Terminator "
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    " SFunction "
+		    SrcPort		    1
+		    DstBlock		    " Demux "
+		    DstPort		    1
+		    }
+		  }
+		}
+		Block {
+		  BlockType		  SubSystem
+		  Name			  "Convert to local tangent\nplane coordinate frame"
+		  SID			  "378"
+		  Ports			  [1, 1, 1]
+		  Position		  [865, 244, 965, 286]
+		  ZOrder		  -5
+		  TreatAsAtomicUnit	  on
+		  MinAlgLoopOccurrences	  off
+		  PropExecContextOutsideSubsystem off
+		  RTWSystemCode		  "Auto"
+		  RTWFcnNameOpts	  "User specified"
+		  RTWFcnName		  "lla2ltp"
+		  FunctionWithSeparateData off
+		  Opaque		  off
+		  RequestExecContextInheritance	off
+		  MaskHideContents	  off
+		  System {
+		    Name		    "Convert to local tangent\nplane coordinate frame"
+		    Location		    [1033, 358, 1609, 759]
+		    Open		    off
+		    ModelBrowserVisibility  off
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "LLA"
+		    SID			    "379"
+		    Position		    [80, 108, 110, 122]
+		    ZOrder		    -1
+		    BackgroundColor	    "darkGreen"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    EnablePort
+		    Name		    "Enable"
+		    SID			    "380"
+		    Ports		    []
+		    Position		    [240, 25, 260, 45]
+		    ZOrder		    -2
+		    ShowName		    off
+		    }
+		    Block {
+		    BlockType		    SubSystem
+		    Name		    "LLA2LTP"
+		    SID			    "381"
+		    Ports		    [1, 1]
+		    Position		    [200, 94, 300, 136]
+		    ZOrder		    -5
+		    TreatAsAtomicUnit	    on
+		    MinAlgLoopOccurrences   off
+		    PropExecContextOutsideSubsystem off
+		    RTWSystemCode	    "Reusable function"
+		    RTWFcnNameOpts	    "User specified"
+		    RTWFcnName		    "lla2ltp"
+		    FunctionWithSeparateData off
+		    Opaque		    off
+		    RequestExecContextInheritance off
+		    MaskHideContents	    off
+		    System {
+		    Name		    "LLA2LTP"
+		    Location		    [1112, 349, 1688, 750]
+		    Open		    off
+		    ModelBrowserVisibility  off
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "LLA"
+		    SID			    "382"
+		    Position		    [65, 158, 95, 172]
+		    ZOrder		    -1
+		    BackgroundColor	    "darkGreen"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Sum
+		    Name		    "Add"
+		    SID			    "383"
+		    Ports		    [2, 1]
+		    Position		    [175, 172, 205, 203]
+		    ZOrder		    -2
+		    ShowName		    off
+		    Inputs		    "+-"
+		    InputSameDT		    off
+		    OutDataTypeStr	    "double"
+		    RndMeth		    "Simplest"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "Constant"
+		    SID			    "384"
+		    Position		    [30, 195, 130, 225]
+		    ZOrder		    -5
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    Value		    "gpsOrigin"
+		    OutDataTypeStr	    "int32"
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "Constant1"
+		    SID			    "385"
+		    Position		    [30, 235, 130, 265]
+		    ZOrder		    -5
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    Value		    "lla_ltp_gain"
+		    OutDataTypeStr	    "double"
+		    }
+		    Block {
+		    BlockType		    Product
+		    Name		    "Product"
+		    SID			    "386"
+		    Ports		    [2, 1]
+		    Position		    [275, 202, 305, 233]
+		    ZOrder		    -19
+		    ShowName		    off
+		    InputSameDT		    off
+		    OutDataTypeStr	    "single"
+		    LockScale		    on
+		    RndMeth		    "Simplest"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "LTP"
+		    SID			    "387"
+		    Position		    [350, 213, 380, 227]
+		    ZOrder		    -2
+		    BackgroundColor	    "yellow"
+		    IconDisplay		    "Port number"
+		    OutDataTypeStr	    "single"
+		    InitialOutput	    "[0, 0, 0]"
+		    }
+		    Line {
+		    SrcBlock		    "Add"
+		    SrcPort		    1
+		    Points		    [25, 0; 0, 20]
+		    DstBlock		    "Product"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Constant1"
+		    SrcPort		    1
+		    Points		    [100, 0; 0, -25]
+		    DstBlock		    "Product"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "Product"
+		    SrcPort		    1
+		    DstBlock		    "LTP"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Constant"
+		    SrcPort		    1
+		    Points		    [10, 0; 0, -15]
+		    DstBlock		    "Add"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "LLA"
+		    SrcPort		    1
+		    Points		    [45, 0; 0, 15]
+		    DstBlock		    "Add"
+		    DstPort		    1
+		    }
+		    }
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "LTP"
+		    SID			    "388"
+		    Position		    [375, 108, 405, 122]
+		    ZOrder		    -2
+		    BackgroundColor	    "yellow"
+		    IconDisplay		    "Port number"
+		    OutDataTypeStr	    "single"
+		    InitialOutput	    "[0, 0, 0]"
+		    }
+		    Line {
+		    SrcBlock		    "LLA"
+		    SrcPort		    1
+		    DstBlock		    "LLA2LTP"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "LLA2LTP"
+		    SrcPort		    1
+		    DstBlock		    "LTP"
+		    DstPort		    1
+		    }
+		  }
+		}
+		Block {
+		  BlockType		  DataTypeConversion
+		  Name			  "Data Type Conversion1"
+		  SID			  "389"
+		  Position		  [265, 322, 325, 348]
+		  ZOrder		  -7
+		  ShowName		  off
+		  OutDataTypeStr	  "boolean"
+		  RndMeth		  "Floor"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  DataTypeConversion
+		  Name			  "Data Type Conversion2"
+		  SID			  "390"
+		  Position		  [140, 322, 185, 348]
+		  ZOrder		  -7
+		  ShowName		  off
+		  OutDataTypeStr	  "uint8"
+		  RndMeth		  "Floor"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  DiscreteIntegrator
+		  Name			  "Discrete-Time\nIntegrator1"
+		  SID			  "391"
+		  Ports			  [1, 1]
+		  Position		  [205, 320, 240, 350]
+		  ShowName		  off
+		  IntegratorMethod	  "Accumulation: Forward Euler"
+		  ExternalReset		  "none"
+		  InitialConditionSource  "internal"
+		  SampleTime		  "-1"
+		  OutDataTypeStr	  "uint8"
+		  RndMeth		  "Simplest"
+		  LimitOutput		  on
+		  UpperSaturationLimit	  "1"
+		  LowerSaturationLimit	  "0"
+		  ICPrevOutput		  "DiscIntNeverNeededParam"
+		  ICPrevScaledInput	  "DiscIntNeverNeededParam"
+		}
+		Block {
+		  BlockType		  DiscreteIntegrator
+		  Name			  "Discrete-Time\nIntegrator4"
+		  SID			  "392"
+		  Ports			  [2, 1]
+		  Position		  [900, 340, 935, 375]
+		  ShowName		  off
+		  IntegratorMethod	  "Integration: Forward Euler"
+		  ExternalReset		  "level"
+		  InitialConditionSource  "internal"
+		  SampleTime		  "-1"
+		  ICPrevOutput		  "DiscIntNeverNeededParam"
+		  ICPrevScaledInput	  "DiscIntNeverNeededParam"
+		}
+		Block {
+		  BlockType		  SubSystem
+		  Name			  "GPS slew-limit\nzero-order hold"
+		  SID			  "393"
+		  Ports			  [2, 2]
+		  Position		  [360, 244, 540, 331]
+		  ZOrder		  -4
+		  LibraryVersion	  "1.32"
+		  ErrorFcn		  "Stateflow.Translate.translate"
+		  PermitHierarchicalResolution "ExplicitOnly"
+		  TreatAsAtomicUnit	  on
+		  MinAlgLoopOccurrences	  off
+		  PropExecContextOutsideSubsystem off
+		  RTWSystemCode		  "Auto"
+		  FunctionWithSeparateData off
+		  Opaque		  off
+		  RequestExecContextInheritance	off
+		  MaskHideContents	  off
+		  SFBlockType		  "MATLAB Function"
+		  MaskType		  "Stateflow"
+		  MaskDescription	  "Embedded MATLAB block"
+		  MaskSelfModifiable	  on
+		  MaskDisplay		  "bgColor = Simulink.Root.ColorString2Rgb(get_param(gcbh, 'BackgroundColor')); image(imread('private"
+		  "/eml_membrane_16.png','png','BackgroundColor',bgColor(1:3)),'center'); disp([10 10 'limit_gps_rate']);"
+		  MaskIconFrame		  on
+		  MaskIconOpaque	  off
+		  MaskIconRotate	  "none"
+		  MaskPortRotate	  "default"
+		  MaskIconUnits		  "normalized"
+		  System {
+		    Name		    "GPS slew-limit\nzero-order hold"
+		    Location		    [257, 457, 812, 717]
+		    Open		    off
+		    ModelBrowserVisibility  off
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    SIDHighWatermark	    "21"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "current_gps_position"
+		    SID			    "393::18"
+		    Position		    [20, 101, 40, 119]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "first_datapoint"
+		    SID			    "393::19"
+		    Position		    [20, 136, 40, 154]
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Demux
+		    Name		    " Demux "
+		    SID			    "393::15"
+		    Ports		    [1, 1]
+		    Position		    [270, 205, 320, 245]
+		    Outputs		    "1"
+		    }
+		    Block {
+		    BlockType		    S-Function
+		    Name		    " SFunction "
+		    SID			    "393::14"
+		    Tag			    "Stateflow S-Function Replay_sim 4"
+		    Ports		    [2, 3]
+		    Position		    [180, 104, 230, 206]
+		    FunctionName	    "sf_sfun"
+		    Parameters		    "gps_leap_rate_limit"
+		    PortCounts		    "[2 3]"
+		    EnableBusSupport	    on
+		    Port {
+		    PortNumber		    2
+		    Name		    "position"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    Port {
+		    PortNumber		    3
+		    Name		    "valid"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    }
+		    Block {
+		    BlockType		    Terminator
+		    Name		    " Terminator "
+		    SID			    "393::17"
+		    Position		    [460, 216, 480, 234]
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "position"
+		    SID			    "393::5"
+		    Position		    [460, 101, 480, 119]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "valid"
+		    SID			    "393::21"
+		    Position		    [460, 136, 480, 154]
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "current_gps_position"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "first_datapoint"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    2
+		    }
+		    Line {
+		    Name		    "position"
+		    Labels		    [0, 0]
+		    SrcBlock		    " SFunction "
+		    SrcPort		    2
+		    DstBlock		    "position"
+		    DstPort		    1
+		    }
+		    Line {
+		    Name		    "valid"
+		    Labels		    [0, 0]
+		    SrcBlock		    " SFunction "
+		    SrcPort		    3
+		    DstBlock		    "valid"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    " Demux "
+		    SrcPort		    1
+		    DstBlock		    " Terminator "
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    " SFunction "
+		    SrcPort		    1
+		    DstBlock		    " Demux "
+		    DstPort		    1
+		    }
+		  }
+		}
+		Block {
+		  BlockType		  SubSystem
+		  Name			  "Subsystem"
+		  SID			  "394"
+		  Ports			  [1, 3]
+		  Position		  [115, 163, 185, 287]
+		  ShowName		  off
+		  MinAlgLoopOccurrences	  off
+		  PropExecContextOutsideSubsystem off
+		  RTWSystemCode		  "Auto"
+		  FunctionWithSeparateData off
+		  Opaque		  off
+		  RequestExecContextInheritance	off
+		  MaskHideContents	  off
+		  System {
+		    Name		    "Subsystem"
+		    Location		    [258, 116, 1186, 865]
+		    Open		    off
+		    ModelBrowserVisibility  off
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "gps"
+		    SID			    "395"
+		    Position		    [15, 143, 45, 157]
+		    BackgroundColor	    "darkGreen"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    BusSelector
+		    Name		    "Bus\nSelector"
+		    SID			    "396"
+		    Ports		    [1, 1]
+		    Position		    [110, 46, 115, 84]
+		    ShowName		    off
+		    OutputSignals	    "sog"
+		    Port {
+		    PortNumber		    1
+		    Name		    "<sog>"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    }
+		    Block {
+		    BlockType		    BusSelector
+		    Name		    "Bus\nSelector1"
+		    SID			    "397"
+		    Ports		    [1, 1]
+		    Position		    [110, 101, 115, 139]
+		    ShowName		    off
+		    OutputSignals	    "cog"
+		    Port {
+		    PortNumber		    1
+		    Name		    "<cog>"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    }
+		    Block {
+		    BlockType		    BusSelector
+		    Name		    "Bus\nSelector2"
+		    SID			    "398"
+		    Ports		    [1, 3]
+		    Position		    [110, 173, 115, 207]
+		    ShowName		    off
+		    OutputSignals	    "latitude,longitude,altitude"
+		    Port {
+		    PortNumber		    1
+		    Name		    "<latitude>"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    Port {
+		    PortNumber		    2
+		    Name		    "<longitude>"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    Port {
+		    PortNumber		    3
+		    Name		    "<altitude>"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "Constant"
+		    SID			    "399"
+		    Position		    [525, 73, 555, 87]
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    Value		    "0"
+		    OutDataTypeStr	    "single"
+		    }
+		    Block {
+		    BlockType		    DataTypeConversion
+		    Name		    "Data Type Conversion"
+		    SID			    "400"
+		    Position		    [160, 55, 215, 75]
+		    ZOrder		    -7
+		    ShowName		    off
+		    OutDataTypeStr	    "single"
+		    RndMeth		    "Simplest"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    DataTypeConversion
+		    Name		    "Data Type Conversion1"
+		    SID			    "401"
+		    Position		    [160, 110, 215, 130]
+		    ZOrder		    -7
+		    ShowName		    off
+		    OutDataTypeStr	    "single"
+		    RndMeth		    "Simplest"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Gain
+		    Name		    "Gain"
+		    SID			    "402"
+		    Position		    [245, 50, 275, 80]
+		    ZOrder		    -11
+		    ShowName		    off
+		    Gain		    "1e-2"
+		    ParamDataTypeStr	    "Inherit: Inherit via internal rule"
+		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Gain
+		    Name		    "Gain1"
+		    SID			    "403"
+		    Position		    [245, 105, 275, 135]
+		    ZOrder		    -11
+		    ShowName		    off
+		    Gain		    "1e-4"
+		    ParamDataTypeStr	    "Inherit: Inherit via internal rule"
+		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Mux
+		    Name		    "Mux"
+		    SID			    "404"
+		    Ports		    [3, 1]
+		    Position		    [585, 51, 590, 89]
+		    ShowName		    off
+		    Inputs		    "3"
+		    DisplayOption	    "bar"
+		    }
+		    Block {
+		    BlockType		    Mux
+		    Name		    "Mux1"
+		    SID			    "405"
+		    Ports		    [3, 1]
+		    Position		    [280, 171, 285, 209]
+		    ShowName		    off
+		    Inputs		    "3"
+		    DisplayOption	    "bar"
+		    }
+		    Block {
+		    BlockType		    Product
+		    Name		    "Product"
+		    SID			    "406"
+		    Ports		    [2, 1]
+		    Position		    [450, 72, 480, 103]
+		    ShowName		    off
+		    InputSameDT		    off
+		    OutDataTypeStr	    "single"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Product
+		    Name		    "Product1"
+		    SID			    "407"
+		    Ports		    [2, 1]
+		    Position		    [450, 42, 480, 73]
+		    ShowName		    off
+		    InputSameDT		    off
+		    OutDataTypeStr	    "single"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Scope
+		    Name		    "Scope"
+		    SID			    "408"
+		    Ports		    [1]
+		    Position		    [770, 204, 800, 236]
+		    ZOrder		    -3
+		    Floating		    off
+		    Location		    [170, 374, 2090, 1491]
+		    Open		    off
+		    NumInputPorts	    "1"
+		    List {
+		    ListType		    AxesTitles
+		    axes1		    "%<SignalLabel>"
+		    }
+		    List {
+		    ListType		    ScopeGraphics
+		    FigureColor		    "[0.5 0.5 0.5]"
+		    AxesColor		    "[0 0 0]"
+		    AxesTickColor	    "[1 1 1]"
+		    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+		    LineStyles		    "-|-|-|-|-|-"
+		    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
+		    MarkerStyles	    "none|none|none|none|none|none"
+		    }
+		    YMin		    "1.6"
+		    YMax		    "1.825"
+		    DataFormat		    "StructureWithTime"
+		    LimitDataPoints	    off
+		    SampleTime		    "0"
+		    }
+		    Block {
+		    BlockType		    Trigonometry
+		    Name		    "Trigonometric\nFunction"
+		    SID			    "409"
+		    Ports		    [1, 1]
+		    Position		    [355, 86, 385, 104]
+		    ShowName		    off
+		    }
+		    Block {
+		    BlockType		    Trigonometry
+		    Name		    "Trigonometric\nFunction1"
+		    SID			    "410"
+		    Ports		    [1, 1]
+		    Position		    [355, 56, 385, 74]
+		    ShowName		    off
+		    Operator		    "cos"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "velocity"
+		    SID			    "411"
+		    Position		    [645, 63, 675, 77]
+		    BackgroundColor	    "yellow"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "heading"
+		    SID			    "412"
+		    Position		    [645, 113, 675, 127]
+		    BackgroundColor	    "yellow"
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "pos"
+		    SID			    "413"
+		    Position		    [545, 183, 575, 197]
+		    BackgroundColor	    "yellow"
+		    Port		    "3"
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "gps"
+		    SrcPort		    1
+		    Points		    [40, 0]
+		    Branch {
+		    Points		    [0, -30]
+		    Branch {
+		    Points		    [0, -55]
+		    DstBlock		    "Bus\nSelector"
+		    DstPort		    1
+		    }
+		    Branch {
+		    DstBlock		    "Bus\nSelector1"
+		    DstPort		    1
+		    }
+		    }
+		    Branch {
+		    Points		    [0, 40]
+		    DstBlock		    "Bus\nSelector2"
+		    DstPort		    1
+		    }
+		    }
+		    Line {
+		    Name		    "<cog>"
+		    Labels		    [0, 0]
+		    SrcBlock		    "Bus\nSelector1"
+		    SrcPort		    1
+		    DstBlock		    "Data Type Conversion1"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Trigonometric\nFunction"
+		    SrcPort		    1
+		    DstBlock		    "Product"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "Trigonometric\nFunction1"
+		    SrcPort		    1
+		    DstBlock		    "Product1"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "Product1"
+		    SrcPort		    1
+		    DstBlock		    "Mux"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Product"
+		    SrcPort		    1
+		    Points		    [35, 0; 0, -20]
+		    DstBlock		    "Mux"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "Constant"
+		    SrcPort		    1
+		    DstBlock		    "Mux"
+		    DstPort		    3
+		    }
+		    Line {
+		    SrcBlock		    "Mux"
+		    SrcPort		    1
+		    DstBlock		    "velocity"
+		    DstPort		    1
+		    }
+		    Line {
+		    Name		    "<sog>"
+		    Labels		    [0, 0]
+		    SrcBlock		    "Bus\nSelector"
+		    SrcPort		    1
+		    DstBlock		    "Data Type Conversion"
+		    DstPort		    1
+		    }
+		    Line {
+		    Name		    "<longitude>"
+		    Labels		    [0, 0]
+		    SrcBlock		    "Bus\nSelector2"
+		    SrcPort		    2
+		    DstBlock		    "Mux1"
+		    DstPort		    2
+		    }
+		    Line {
+		    Name		    "<altitude>"
+		    Labels		    [0, 0]
+		    SrcBlock		    "Bus\nSelector2"
+		    SrcPort		    3
+		    DstBlock		    "Mux1"
+		    DstPort		    3
+		    }
+		    Line {
+		    SrcBlock		    "Mux1"
+		    SrcPort		    1
+		    DstBlock		    "pos"
+		    DstPort		    1
+		    }
+		    Line {
+		    Name		    "<latitude>"
+		    Labels		    [0, 0]
+		    SrcBlock		    "Bus\nSelector2"
+		    SrcPort		    1
+		    DstBlock		    "Mux1"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Data Type Conversion"
+		    SrcPort		    1
+		    DstBlock		    "Gain"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Data Type Conversion1"
+		    SrcPort		    1
+		    DstBlock		    "Gain1"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Gain"
+		    SrcPort		    1
+		    Points		    [40, 0]
+		    Branch {
+		    Points		    [0, -15]
+		    DstBlock		    "Product1"
+		    DstPort		    1
+		    }
+		    Branch {
+		    Points		    [0, 15]
+		    DstBlock		    "Product"
+		    DstPort		    1
+		    }
+		    }
+		    Line {
+		    SrcBlock		    "Gain1"
+		    SrcPort		    1
+		    Points		    [55, 0]
+		    Branch {
+		    Points		    [0, -25]
+		    Branch {
+		    DstBlock		    "Trigonometric\nFunction"
+		    DstPort		    1
+		    }
+		    Branch {
+		    Points		    [0, -30]
+		    DstBlock		    "Trigonometric\nFunction1"
+		    DstPort		    1
+		    }
+		    }
+		    Branch {
+		    Points		    [155, 0]
+		    Branch {
+		    DstBlock		    "heading"
+		    DstPort		    1
+		    }
+		    Branch {
+		    Points		    [0, 100]
+		    DstBlock		    "Scope"
+		    DstPort		    1
+		    }
+		    }
+		    }
+		    Annotation {
+		    Name		    "Convert to m/s"
+		    Position		    [290, 27]
+		    }
+		  }
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "velocity"
+		  SID			  "414"
+		  Position		  [1105, 178, 1135, 192]
+		  BackgroundColor	  "yellow"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "pos"
+		  SID			  "415"
+		  Position		  [1105, 348, 1135, 362]
+		  BackgroundColor	  "yellow"
+		  Port			  "2"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "heading"
+		  SID			  "416"
+		  Position		  [255, 218, 285, 232]
+		  BackgroundColor	  "yellow"
+		  Port			  "3"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "lla"
+		  SID			  "417"
+		  Position		  [255, 278, 285, 292]
+		  BackgroundColor	  "yellow"
+		  Port			  "4"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "cog_dot"
+		  SID			  "418"
+		  Position		  [1105, 423, 1135, 437]
+		  BackgroundColor	  "yellow"
+		  Port			  "5"
+		  IconDisplay		  "Port number"
+		}
+		Line {
+		  SrcBlock		  "Subsystem"
+		  SrcPort		  1
+		  Points		  [660, 0]
+		  Branch {
+		    Points		    [0, 165]
+		    DstBlock		    "Discrete-Time\nIntegrator4"
+		    DstPort		    1
+		  }
+		  Branch {
+		    DstBlock		    "velocity"
+		    DstPort		    1
+		  }
+		}
+		Line {
+		  SrcBlock		  "Calculate local position from \nGPS data"
+		  SrcPort		  2
+		  DstBlock		  "Discrete-Time\nIntegrator4"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "Add"
+		  SrcPort		  1
+		  DstBlock		  "pos"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Discrete-Time\nIntegrator4"
+		  SrcPort		  1
+		  DstBlock		  "Add"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "Subsystem"
+		  SrcPort		  3
+		  Points		  [50, 0]
+		  Branch {
+		    DstBlock		    "lla"
+		    DstPort		    1
+		  }
+		  Branch {
+		    DstBlock		    "GPS slew-limit\nzero-order hold"
+		    DstPort		    1
+		  }
+		}
+		Line {
+		  SrcBlock		  "gps"
+		  SrcPort		  1
+		  Points		  [30, 0]
+		  Branch {
+		    DstBlock		    "Bus\nSelector1"
+		    DstPort		    1
+		  }
+		  Branch {
+		    DstBlock		    "Subsystem"
+		    DstPort		    1
+		  }
+		}
+		Line {
+		  SrcBlock		  "Subsystem"
+		  SrcPort		  2
+		  Points		  [30, 0]
+		  Branch {
+		    DstBlock		    "heading"
+		    DstPort		    1
+		  }
+		  Branch {
+		    Points		    [0, 190]
+		    DstBlock		    "Calculate\ncourse-over-ground\nderivative"
+		    DstPort		    1
+		  }
+		}
+		Line {
+		  SrcBlock		  "reset"
+		  SrcPort		  1
+		  DstBlock		  "Calculate local position from \nGPS data"
+		  DstPort		  3
+		}
+		Line {
+		  SrcBlock		  "Convert to local tangent\nplane coordinate frame"
+		  SrcPort		  1
+		  Points		  [30, 0]
+		  DstBlock		  "Add"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Calculate local position from \nGPS data"
+		  SrcPort		  1
+		  Points		  [15, 0; 0, -96]
+		  DstBlock		  "Convert to local tangent\nplane coordinate frame"
+		  DstPort		  enable
+		}
+		Line {
+		  SrcBlock		  "Discrete-Time\nIntegrator1"
+		  SrcPort		  1
+		  DstBlock		  "Data Type Conversion1"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "GPS slew-limit\nzero-order hold"
+		  SrcPort		  1
+		  Points		  [20, 0]
+		  Branch {
+		    DstBlock		    "Calculate local position from \nGPS data"
+		    DstPort		    1
+		  }
+		  Branch {
+		    DstBlock		    "Convert to local tangent\nplane coordinate frame"
+		    DstPort		    1
+		  }
+		}
+		Line {
+		  SrcBlock		  "GPS slew-limit\nzero-order hold"
+		  SrcPort		  2
+		  Points		  [10, 0; 0, 35]
+		  DstBlock		  "Calculate local position from \nGPS data"
+		  DstPort		  2
+		}
+		Line {
+		  Name			  "<newData>"
+		  Labels		  [0, 0]
+		  SrcBlock		  "Bus\nSelector1"
+		  SrcPort		  1
+		  Points		  [5, 0]
+		  Branch {
+		    Points		    [0, 0; 0, 110]
+		    DstBlock		    "Calculate\ncourse-over-ground\nderivative"
+		    DstPort		    2
+		  }
+		  Branch {
+		    DstBlock		    "Data Type Conversion2"
+		    DstPort		    1
+		  }
+		}
+		Line {
+		  SrcBlock		  "Data Type Conversion1"
+		  SrcPort		  1
+		  Points		  [5, 0; 0, -25]
+		  DstBlock		  "GPS slew-limit\nzero-order hold"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "Data Type Conversion2"
+		  SrcPort		  1
+		  DstBlock		  "Discrete-Time\nIntegrator1"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Calculate\ncourse-over-ground\nderivative"
+		  SrcPort		  1
+		  DstBlock		  "cog_dot"
+		  DstPort		  1
+		}
+	      }
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto"
+	      SID		      "419"
+	      Position		      [525, 44, 640, 66]
+	      BackgroundColor	      "cyan"
+	      ShowName		      off
+	      GotoTag		      "SensedVelocity"
+	      TagVisibility	      "global"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto1"
+	      SID		      "420"
+	      Position		      [525, 149, 640, 171]
+	      BackgroundColor	      "cyan"
+	      ShowName		      off
+	      GotoTag		      "SensedGlobalPosition"
+	      TagVisibility	      "global"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto2"
+	      SID		      "421"
+	      Position		      [525, 119, 640, 141]
+	      BackgroundColor	      "cyan"
+	      ShowName		      off
+	      GotoTag		      "SensedHeading"
+	      TagVisibility	      "global"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto3"
+	      SID		      "422"
+	      Position		      [525, 74, 640, 96]
+	      BackgroundColor	      "cyan"
+	      ShowName		      off
+	      GotoTag		      "SensedLocalPosition"
+	      TagVisibility	      "global"
+	    }
+	    Block {
+	      BlockType		      SubSystem
+	      Name		      "Throttle Estimator"
+	      SID		      "423"
+	      Ports		      [1, 1]
+	      Position		      [325, 260, 415, 320]
+	      MinAlgLoopOccurrences   off
+	      PropExecContextOutsideSubsystem off
+	      RTWSystemCode	      "Auto"
+	      FunctionWithSeparateData off
+	      Opaque		      off
+	      RequestExecContextInheritance off
+	      MaskHideContents	      off
+	      System {
+		Name			"Throttle Estimator"
+		Location		[202, 82, 1270, 871]
+		Open			off
+		ModelBrowserVisibility	off
+		ModelBrowserWidth	200
+		ScreenColor		"white"
+		PaperOrientation	"landscape"
+		PaperPositionMode	"auto"
+		PaperType		"usletter"
+		PaperUnits		"inches"
+		TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+		TiledPageScale		1
+		ShowPageBoundaries	off
+		ZoomFactor		"100"
+		Block {
+		  BlockType		  Inport
+		  Name			  "t"
+		  SID			  "424"
+		  Position		  [80, 48, 110, 62]
+		  BackgroundColor	  "darkGreen"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "sensors_t"
+		  SID			  "425"
+		  Position		  [165, 48, 195, 62]
+		  BackgroundColor	  "yellow"
+		  IconDisplay		  "Port number"
+		}
+		Line {
+		  SrcBlock		  "t"
+		  SrcPort		  1
+		  DstBlock		  "sensors_t"
+		  DstPort		  1
+		}
+		Annotation {
+		  Position		  [601, 460]
+		}
+	      }
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "sensors_t"
+	      SID		      "426"
+	      Position		      [690, 283, 720, 297]
+	      BackgroundColor	      "yellow"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "velocity"
+	      SID		      "427"
+	      Position		      [690, 63, 720, 77]
+	      BackgroundColor	      "yellow"
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "pos"
+	      SID		      "428"
+	      Position		      [690, 93, 720, 107]
+	      BackgroundColor	      "yellow"
+	      Port		      "3"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "psi_dot"
+	      SID		      "429"
+	      Position		      [690, 183, 720, 197]
+	      BackgroundColor	      "yellow"
+	      Port		      "4"
+	      IconDisplay	      "Port number"
+	    }
+	    Line {
+	      SrcBlock		      "Throttle Estimator"
+	      SrcPort		      1
+	      DstBlock		      "sensors_t"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "GPS Estimator"
+	      SrcPort		      4
+	      DstBlock		      "Goto1"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "GPS Estimator"
+	      SrcPort		      3
+	      DstBlock		      "Goto2"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "GPS Estimator"
+	      SrcPort		      2
+	      Points		      [65, 0]
+	      Branch {
+		Points			[0, -15]
+		DstBlock		"Goto3"
+		DstPort			1
+	      }
+	      Branch {
+		DstBlock		"pos"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      Labels		      [0, 0]
+	      SrcBlock		      "gps"
+	      SrcPort		      1
+	      DstBlock		      "GPS Estimator"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "GPS Estimator"
+	      SrcPort		      1
+	      Points		      [65, 0]
+	      Branch {
+		Points			[0, -15]
+		DstBlock		"Goto"
+		DstPort			1
+	      }
+	      Branch {
+		DstBlock		"velocity"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      Labels		      [1, 0]
+	      SrcBlock		      "reset"
+	      SrcPort		      1
+	      DstBlock		      "GPS Estimator"
+	      DstPort		      2
+	    }
+	    Line {
+	      Labels		      [0, 0]
+	      SrcBlock		      "throttle"
+	      SrcPort		      1
+	      DstBlock		      "Throttle Estimator"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "GPS Estimator"
+	      SrcPort		      5
+	      DstBlock		      "psi_dot"
+	      DstPort		      1
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  Terminator
+	  Name			  "Terminator1"
+	  SID			  "430"
+	  Position		  [145, 375, 165, 395]
+	  ShowName		  off
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "Throttle\nCommand"
+	  SID			  "431"
+	  Ports			  [2, 1]
+	  Position		  [535, 282, 645, 333]
+	  MinAlgLoopOccurrences	  off
+	  PropExecContextOutsideSubsystem off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  Opaque		  off
+	  RequestExecContextInheritance	off
+	  MaskHideContents	  off
+	  System {
+	    Name		    "Throttle\nCommand"
+	    Location		    [298, 82, 1598, 847]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "sensors"
+	      SID		      "432"
+	      Position		      [35, 278, 65, 292]
+	      BackgroundColor	      "darkGreen"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "reset"
+	      SID		      "433"
+	      Position		      [35, 98, 65, 112]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant1"
+	      SID		      "434"
+	      Position		      [165, 45, 195, 75]
+	      BackgroundColor	      "gray"
+	      ShowName		      off
+	      Value		      "0"
+	      OutDataTypeStr	      "int16"
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant5"
+	      SID		      "435"
+	      Position		      [165, 140, 195, 170]
+	      BackgroundColor	      "gray"
+	      ShowName		      off
+	      Value		      "1000"
+	      OutDataTypeStr	      "int16"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto3"
+	      SID		      "436"
+	      Position		      [345, 142, 490, 168]
+	      BackgroundColor	      "cyan"
+	      ShowName		      off
+	      GotoTag		      "autoThrottleCommand"
+	      TagVisibility	      "global"
+	    }
+	    Block {
+	      BlockType		      Switch
+	      Name		      "Switch"
+	      SID		      "437"
+	      Position		      [230, 90, 260, 120]
+	      ShowName		      off
+	      Criteria		      "u2 > Threshold"
+	      InputSameDT	      off
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Terminator
+	      Name		      "Terminator"
+	      SID		      "438"
+	      Position		      [110, 275, 130, 295]
+	      BackgroundColor	      "red"
+	      ShowName		      off
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "command"
+	      SID		      "439"
+	      Position		      [400, 98, 430, 112]
+	      BackgroundColor	      "yellow"
+	      IconDisplay	      "Port number"
+	    }
+	    Line {
+	      SrcBlock		      "Constant5"
+	      SrcPort		      1
+	      Points		      [0, -40]
+	      DstBlock		      "Switch"
+	      DstPort		      3
+	    }
+	    Line {
+	      SrcBlock		      "Constant1"
+	      SrcPort		      1
+	      Points		      [15, 0]
+	      DstBlock		      "Switch"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "reset"
+	      SrcPort		      1
+	      DstBlock		      "Switch"
+	      DstPort		      2
+	    }
+	    Line {
+	      SrcBlock		      "sensors"
+	      SrcPort		      1
+	      DstBlock		      "Terminator"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Switch"
+	      SrcPort		      1
+	      Points		      [45, 0]
+	      Branch {
+		Points			[0, 50]
+		DstBlock		"Goto3"
+		DstPort			1
+	      }
+	      Branch {
+		DstBlock		"command"
+		DstPort			1
+	      }
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "Rudder command"
+	  SID			  "440"
+	  Position		  [725, 423, 755, 437]
+	  BackgroundColor	  "yellow"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "Throttle command"
+	  SID			  "441"
+	  Position		  [725, 303, 755, 317]
+	  BackgroundColor	  "yellow"
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Line {
+	  SrcBlock		  "reset"
+	  SrcPort		  1
+	  Points		  [210, 0]
+	  Branch {
+	    Labels		    [2, 0]
+	    Points		    [0, 5; 215, 0]
+	    DstBlock		    "Rudder\nCommand"
+	    DstPort		    2
+	  }
+	  Branch {
+	    Labels		    [2, 0]
+	    Points		    [0, -100]
+	    DstBlock		    "Throttle\nCommand"
+	    DstPort		    2
+	  }
+	  Branch {
+	    DstBlock		    "State Keeper &\nEstimator"
+	    DstPort		    2
+	  }
+	}
+	Line {
+	  SrcBlock		  "State Keeper &\nEstimator"
+	  SrcPort		  3
+	  Points		  [85, 0]
+	  DstBlock		  "Rudder\nCommand"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "State Keeper &\nEstimator"
+	  SrcPort		  1
+	  Points		  [40, 0; 0, -65]
+	  DstBlock		  "Throttle\nCommand"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "State Keeper &\nEstimator"
+	  SrcPort		  2
+	  DstBlock		  "Rudder\nCommand"
+	  DstPort		  1
+	}
+	Line {
+	  Labels		  [0, 0]
+	  SrcBlock		  "GPS"
+	  SrcPort		  1
+	  DstBlock		  "State Keeper &\nEstimator"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Throttle\nCommand"
+	  SrcPort		  1
+	  DstBlock		  "Throttle command"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Rudder\nCommand"
+	  SrcPort		  1
+	  DstBlock		  "Rudder command"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "sensors_r"
+	  SrcPort		  1
+	  DstBlock		  "Terminator1"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "sensors_t"
+	  SrcPort		  1
+	  Points		  [230, 0]
+	  DstBlock		  "State Keeper &\nEstimator"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "State Keeper &\nEstimator"
+	  SrcPort		  4
+	  Points		  [40, 0; 0, -50]
+	  DstBlock		  "Rudder\nCommand"
+	  DstPort		  4
+	}
+	Line {
+	  SrcBlock		  "sensors_w"
+	  SrcPort		  1
+	  Points		  [400, 0; 0, -105]
+	  DstBlock		  "Rudder\nCommand"
+	  DstPort		  5
+	}
+	Line {
+	  SrcBlock		  "wp0"
+	  SrcPort		  1
+	  Points		  [410, 0; 0, -130]
+	  DstBlock		  "Rudder\nCommand"
+	  DstPort		  6
+	}
+	Line {
+	  SrcBlock		  "wp1"
+	  SrcPort		  1
+	  Points		  [425, 0]
+	  DstBlock		  "Rudder\nCommand"
+	  DstPort		  7
+	}
+	Annotation {
+	  Name			  "This subsystem currently provides autonomous control of the boat. It utilizes simple PID control\non the "
+	  "throttle and rudder based on desired location and bearing. Calculations are performed\nto compute a straight-line p"
+	  "ath between current location and the programmed waypoint. The\nboat then sets out to achieve this course."
+	  Position		  [25, 52]
+	  HorizontalAlignment	  "left"
+	}
+      }
+    }
     Block {
       BlockType		      BusCreator
       Name		      "Bus\nCreator"
       SID		      "11"
       Ports		      [10, 1]
-      Position		      [285, 13, 290, 182]
+      Position		      [285, 108, 290, 277]
       ZOrder		      -2
       ShowName		      off
       Inputs		      "10"
@@ -755,7 +4820,7 @@ Model {
       BlockType		      Constant
       Name		      "Constant1"
       SID		      "18"
-      Position		      [45, 139, 85, 161]
+      Position		      [45, 234, 85, 256]
       ZOrder		      -5
       BackgroundColor	      "gray"
       ShowName		      off
@@ -772,7 +4837,7 @@ Model {
       BlockType		      Constant
       Name		      "Constant2"
       SID		      "19"
-      Position		      [150, 154, 190, 176]
+      Position		      [150, 249, 190, 271]
       ZOrder		      -5
       BackgroundColor	      "gray"
       ShowName		      off
@@ -789,7 +4854,7 @@ Model {
       BlockType		      Constant
       Name		      "Constant3"
       SID		      "17"
-      Position		      [45, 79, 85, 101]
+      Position		      [45, 174, 85, 196]
       ZOrder		      -5
       BackgroundColor	      "gray"
       ShowName		      off
@@ -806,7 +4871,7 @@ Model {
       BlockType		      Constant
       Name		      "Constant4"
       SID		      "20"
-      Position		      [150, 94, 190, 116]
+      Position		      [150, 189, 190, 211]
       ZOrder		      -5
       BackgroundColor	      "gray"
       ShowName		      off
@@ -822,8 +4887,8 @@ Model {
     Block {
       BlockType		      Constant
       Name		      "Constant5"
-      SID		      "25"
-      Position		      [45, 19, 85, 41]
+      SID		      "38"
+      Position		      [45, 114, 85, 136]
       ZOrder		      -5
       BackgroundColor	      "gray"
       ShowName		      off
@@ -836,56 +4901,22 @@ Model {
       }
     }
     Block {
-      BlockType		      ModelReference
-      Name		      "Model"
-      SID		      "1"
-      Ports		      [5, 2]
-      Position		      [485, 127, 705, 263]
-      ZOrder		      -17
-      ModelNameDialog	      "controller"
-      SimulationMode	      "Normal"
-      ModelReferenceVersion   "1.2431"
-      List {
-	ListType		InputPortNames
-	port0			"sensors_GPS"
-	port1			"sensors_t"
-	port2			"sensors_r"
-	port3			"reset"
-	port4			"sensors_w"
-      }
-      List {
-	ListType		OutputPortNames
-	port0			"command_r"
-	port1			"command_t"
-      }
-      List {
-	ListType		InputPortBusObjects
-	port0			"GpsData"
-	port1			""
-	port2			""
-	port3			""
-	port4			""
-      }
-      List {
-	ListType		OutputPortOutputBusAsStructs
-	port0			"off"
-	port1			"off"
-      }
-      CopyOfModelName	      "controller"
-      DefaultDataLogging      on
-      Port {
-	PortNumber		1
-	Name			"command_r"
-	RTWStorageClass		"Auto"
-	DataLoggingNameMode	"SignalName"
-      }
+      BlockType		      Gain
+      Name		      "Gain"
+      SID		      "451"
+      Position		      [905, 180, 935, 210]
+      ZOrder		      -11
+      Gain		      "180/pi"
+      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
+      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      SaturateOnIntegerOverflow	off
     }
     Block {
       BlockType		      Mux
       Name		      "Mux"
       SID		      "33"
       Ports		      [2, 1]
-      Position		      [880, 81, 885, 119]
+      Position		      [880, 176, 885, 214]
       ZOrder		      -16
       ShowName		      off
       Inputs		      "2"
@@ -893,222 +4924,14 @@ Model {
     }
     Block {
       BlockType		      Scope
-      Name		      "Scope"
-      SID		      "26"
-      Ports		      [1]
-      Position		      [605, 59, 635, 91]
-      ZOrder		      -3
-      Floating		      off
-      Location		      [152, 358, 476, 597]
-      Open		      off
-      NumInputPorts	      "1"
-      List {
-	ListType		AxesTitles
-	axes1			"%<SignalLabel>"
-      }
-      List {
-	ListType		ScopeGraphics
-	FigureColor		"[0.5 0.5 0.5]"
-	AxesColor		"[0 0 0]"
-	AxesTickColor		"[1 1 1]"
-	LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	LineStyles		"-|-|-|-|-|-"
-	LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
-	MarkerStyles		"none|none|none|none|none|none"
-      }
-      DataFormat	      "StructureWithTime"
-      LimitDataPoints	      off
-      SampleTime	      "0"
-    }
-    Block {
-      BlockType		      Scope
-      Name		      "Scope1"
-      SID		      "27"
-      Ports		      [1]
-      Position		      [565, 14, 595, 46]
-      ZOrder		      -3
-      Floating		      off
-      Location		      [152, 358, 476, 597]
-      Open		      off
-      NumInputPorts	      "1"
-      List {
-	ListType		AxesTitles
-	axes1			"%<SignalLabel>"
-      }
-      List {
-	ListType		ScopeGraphics
-	FigureColor		"[0.5 0.5 0.5]"
-	AxesColor		"[0 0 0]"
-	AxesTickColor		"[1 1 1]"
-	LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	LineStyles		"-|-|-|-|-|-"
-	LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
-	MarkerStyles		"none|none|none|none|none|none"
-      }
-      SaveName		      "ScopeData1"
-      DataFormat	      "StructureWithTime"
-      LimitDataPoints	      off
-      SampleTime	      "0"
-    }
-    Block {
-      BlockType		      Scope
-      Name		      "Scope2"
-      SID		      "28"
-      Ports		      [1]
-      Position		      [485, 44, 515, 76]
-      ZOrder		      -3
-      Floating		      off
-      Location		      [179, 382, 503, 621]
-      Open		      off
-      NumInputPorts	      "1"
-      List {
-	ListType		AxesTitles
-	axes1			"%<SignalLabel>"
-      }
-      List {
-	ListType		ScopeGraphics
-	FigureColor		"[0.5 0.5 0.5]"
-	AxesColor		"[0 0 0]"
-	AxesTickColor		"[1 1 1]"
-	LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	LineStyles		"-|-|-|-|-|-"
-	LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
-	MarkerStyles		"none|none|none|none|none|none"
-      }
-      SaveName		      "ScopeData2"
-      DataFormat	      "StructureWithTime"
-      SampleTime	      "0"
-    }
-    Block {
-      BlockType		      Scope
-      Name		      "Scope3"
-      SID		      "29"
-      Ports		      [1]
-      Position		      [485, 84, 515, 116]
-      ZOrder		      -3
-      Floating		      off
-      Location		      [170, 374, 494, 613]
-      Open		      off
-      NumInputPorts	      "1"
-      List {
-	ListType		AxesTitles
-	axes1			"%<SignalLabel>"
-      }
-      List {
-	ListType		ScopeGraphics
-	FigureColor		"[0.5 0.5 0.5]"
-	AxesColor		"[0 0 0]"
-	AxesTickColor		"[1 1 1]"
-	LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	LineStyles		"-|-|-|-|-|-"
-	LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
-	MarkerStyles		"none|none|none|none|none|none"
-      }
-      SaveName		      "ScopeData3"
-      DataFormat	      "StructureWithTime"
-      LimitDataPoints	      off
-      SampleTime	      "0"
-    }
-    Block {
-      BlockType		      Scope
-      Name		      "Scope4"
-      SID		      "30"
-      Ports		      [1]
-      Position		      [515, 319, 545, 351]
-      ZOrder		      -3
-      Floating		      off
-      Location		      [143, 350, 467, 589]
-      Open		      off
-      NumInputPorts	      "1"
-      List {
-	ListType		AxesTitles
-	axes1			"%<SignalLabel>"
-      }
-      List {
-	ListType		ScopeGraphics
-	FigureColor		"[0.5 0.5 0.5]"
-	AxesColor		"[0 0 0]"
-	AxesTickColor		"[1 1 1]"
-	LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	LineStyles		"-|-|-|-|-|-"
-	LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
-	MarkerStyles		"none|none|none|none|none|none"
-      }
-      SaveName		      "ScopeData4"
-      DataFormat	      "StructureWithTime"
-      LimitDataPoints	      off
-      SampleTime	      "0"
-    }
-    Block {
-      BlockType		      Scope
-      Name		      "Scope5"
-      SID		      "31"
-      Ports		      [1]
-      Position		      [660, 289, 690, 321]
-      ZOrder		      -3
-      Floating		      off
-      Location		      [152, 358, 476, 597]
-      Open		      off
-      NumInputPorts	      "1"
-      List {
-	ListType		AxesTitles
-	axes1			"%<SignalLabel>"
-      }
-      List {
-	ListType		ScopeGraphics
-	FigureColor		"[0.5 0.5 0.5]"
-	AxesColor		"[0 0 0]"
-	AxesTickColor		"[1 1 1]"
-	LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	LineStyles		"-|-|-|-|-|-"
-	LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
-	MarkerStyles		"none|none|none|none|none|none"
-      }
-      SaveName		      "ScopeData5"
-      DataFormat	      "StructureWithTime"
-      LimitDataPoints	      off
-      SampleTime	      "0"
-    }
-    Block {
-      BlockType		      Scope
-      Name		      "Scope6"
-      SID		      "32"
-      Ports		      [1]
-      Position		      [620, 394, 650, 426]
-      ZOrder		      -3
-      Floating		      off
-      Location		      [179, 382, 503, 621]
-      Open		      off
-      NumInputPorts	      "1"
-      List {
-	ListType		AxesTitles
-	axes1			"%<SignalLabel>"
-      }
-      List {
-	ListType		ScopeGraphics
-	FigureColor		"[0.5 0.5 0.5]"
-	AxesColor		"[0 0 0]"
-	AxesTickColor		"[1 1 1]"
-	LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	LineStyles		"-|-|-|-|-|-"
-	LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
-	MarkerStyles		"none|none|none|none|none|none"
-      }
-      SaveName		      "ScopeData6"
-      DataFormat	      "StructureWithTime"
-      LimitDataPoints	      off
-      SampleTime	      "0"
-    }
-    Block {
-      BlockType		      Scope
       Name		      "Scope7"
       SID		      "34"
       Ports		      [1]
-      Position		      [940, 84, 970, 116]
+      Position		      [965, 179, 995, 211]
       ZOrder		      -3
       ShowName		      off
       Floating		      off
-      Location		      [143, 350, 767, 589]
+      Location		      [2, 57, 1920, 1173]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -1135,7 +4958,7 @@ Model {
       Name		      "To Workspace"
       SID		      "5"
       Ports		      [1]
-      Position		      [1010, 145, 1070, 175]
+      Position		      [1010, 250, 1070, 280]
       ZOrder		      -7
       VariableName	      "command_r"
       MaxDataPoints	      "inf"
@@ -1147,7 +4970,7 @@ Model {
       Name		      "To Workspace1"
       SID		      "6"
       Ports		      [1]
-      Position		      [1010, 215, 1070, 245]
+      Position		      [1010, 330, 1070, 360]
       ZOrder		      -7
       VariableName	      "command_t"
       MaxDataPoints	      "inf"
@@ -1158,11 +4981,12 @@ Model {
       BlockType		      FromWorkspace
       Name		      "Water Speed"
       SID		      "4"
-      Position		      [315, 232, 415, 258]
+      Position		      [315, 317, 415, 343]
       ZOrder		      -10
       ShowName		      off
       VariableName	      "water_speed"
       SampleTime	      "T_step"
+      Interpolate	      off
       ZeroCross		      on
       OutputAfterFinalValue   "Holding final value"
       Port {
@@ -1174,13 +4998,40 @@ Model {
     }
     Block {
       BlockType		      FromWorkspace
+      Name		      "Water Speed1"
+      SID		      "449"
+      Position		      [315, 342, 415, 368]
+      ZOrder		      -10
+      ShowName		      off
+      VariableName	      "wp0"
+      SampleTime	      "T_step"
+      Interpolate	      off
+      ZeroCross		      on
+      OutputAfterFinalValue   "Holding final value"
+    }
+    Block {
+      BlockType		      FromWorkspace
+      Name		      "Water Speed2"
+      SID		      "450"
+      Position		      [315, 367, 415, 393]
+      ZOrder		      -10
+      ShowName		      off
+      VariableName	      "wp1"
+      SampleTime	      "T_step"
+      Interpolate	      off
+      ZeroCross		      on
+      OutputAfterFinalValue   "Holding final value"
+    }
+    Block {
+      BlockType		      FromWorkspace
       Name		      "reset"
       SID		      "7"
-      Position		      [315, 207, 415, 233]
+      Position		      [315, 292, 415, 318]
       ZOrder		      -10
       ShowName		      off
       VariableName	      "reset"
       SampleTime	      "T_step"
+      Interpolate	      off
       ZeroCross		      on
       OutputAfterFinalValue   "Holding final value"
       Port {
@@ -1194,11 +5045,12 @@ Model {
       BlockType		      FromWorkspace
       Name		      "reset1"
       SID		      "8"
-      Position		      [315, 182, 415, 208]
+      Position		      [315, 267, 415, 293]
       ZOrder		      -10
       ShowName		      off
       VariableName	      "rudder"
       SampleTime	      "T_step"
+      Interpolate	      off
       ZeroCross		      on
       OutputAfterFinalValue   "Holding final value"
       Port {
@@ -1212,11 +5064,12 @@ Model {
       BlockType		      FromWorkspace
       Name		      "reset2"
       SID		      "9"
-      Position		      [315, 157, 415, 183]
+      Position		      [315, 242, 415, 268]
       ZOrder		      -10
       ShowName		      off
       VariableName	      "throttle"
       SampleTime	      "T_step"
+      Interpolate	      off
       ZeroCross		      on
       OutputAfterFinalValue   "Holding final value"
       Port {
@@ -1230,11 +5083,12 @@ Model {
       BlockType		      FromWorkspace
       Name		      "reset3"
       SID		      "10"
-      Position		      [15, 107, 115, 133]
+      Position		      [15, 202, 115, 228]
       ZOrder		      -10
       ShowName		      off
       VariableName	      "latitude"
       SampleTime	      "T_step"
+      Interpolate	      off
       ZeroCross		      on
       OutputAfterFinalValue   "Holding final value"
       Port {
@@ -1248,11 +5102,12 @@ Model {
       BlockType		      FromWorkspace
       Name		      "reset4"
       SID		      "12"
-      Position		      [120, 122, 220, 148]
+      Position		      [120, 217, 220, 243]
       ZOrder		      -10
       ShowName		      off
       VariableName	      "longitude"
       SampleTime	      "T_step"
+      Interpolate	      off
       ZeroCross		      on
       OutputAfterFinalValue   "Holding final value"
       Port {
@@ -1266,11 +5121,12 @@ Model {
       BlockType		      FromWorkspace
       Name		      "reset5"
       SID		      "21"
-      Position		      [120, 62, 220, 88]
+      Position		      [120, 157, 220, 183]
       ZOrder		      -10
       ShowName		      off
       VariableName	      "sog"
       SampleTime	      "T_step"
+      Interpolate	      off
       ZeroCross		      on
       OutputAfterFinalValue   "Holding final value"
       Port {
@@ -1284,11 +5140,12 @@ Model {
       BlockType		      FromWorkspace
       Name		      "reset6"
       SID		      "22"
-      Position		      [15, 47, 115, 73]
+      Position		      [15, 142, 115, 168]
       ZOrder		      -10
       ShowName		      off
       VariableName	      "cog"
       SampleTime	      "T_step"
+      Interpolate	      off
       ZeroCross		      on
       OutputAfterFinalValue   "Holding final value"
       Port {
@@ -1302,11 +5159,12 @@ Model {
       BlockType		      FromWorkspace
       Name		      "reset7"
       SID		      "23"
-      Position		      [120, 32, 220, 58]
+      Position		      [120, 127, 220, 153]
       ZOrder		      -10
       ShowName		      off
       VariableName	      "mode"
       SampleTime	      "T_step"
+      Interpolate	      off
       ZeroCross		      on
       OutputAfterFinalValue   "Holding final value"
       Port {
@@ -1320,11 +5178,12 @@ Model {
       BlockType		      FromWorkspace
       Name		      "reset8"
       SID		      "35"
-      Position		      [680, 77, 780, 103]
+      Position		      [700, 172, 800, 198]
       ZOrder		      -10
       ShowName		      off
       VariableName	      "auto_rudder"
       SampleTime	      "T_step"
+      Interpolate	      off
       ZeroCross		      on
       OutputAfterFinalValue   "Holding final value"
       Port {
@@ -1336,22 +5195,14 @@ Model {
     }
     Line {
       Name		      "water_speed"
+      Labels		      [0, 0]
       SrcBlock		      "Water Speed"
       SrcPort		      1
-      Points		      [15, 0]
-      Branch {
-	DstBlock		"Model"
-	DstPort			5
-      }
-      Branch {
-	Labels			[2, 0]
-	Points			[0, 165]
-	DstBlock		"Scope6"
-	DstPort			1
-      }
+      DstBlock		      "Autonomous Controller"
+      DstPort		      5
     }
     Line {
-      SrcBlock		      "Model"
+      SrcBlock		      "Autonomous Controller"
       SrcPort		      2
       DstBlock		      "To Workspace1"
       DstPort		      1
@@ -1359,88 +5210,56 @@ Model {
     Line {
       Name		      "command_r"
       Labels		      [0, 0]
-      SrcBlock		      "Model"
+      SrcBlock		      "Autonomous Controller"
       SrcPort		      1
-      Points		      [140, 0]
+      Points		      [155, 0]
       Branch {
 	DstBlock		"To Workspace"
 	DstPort			1
       }
       Branch {
-	Points			[0, -50]
+	Points			[0, -60]
 	DstBlock		"Mux"
 	DstPort			2
       }
     }
     Line {
       Name		      "reset"
+      Labels		      [0, 0]
       SrcBlock		      "reset"
       SrcPort		      1
-      Points		      [25, 0]
-      Branch {
-	DstBlock		"Model"
-	DstPort			4
-      }
-      Branch {
-	Labels			[2, 0]
-	Points			[0, 115]
-	DstBlock		"Scope4"
-	DstPort			1
-      }
+      DstBlock		      "Autonomous Controller"
+      DstPort		      4
     }
     Line {
       Name		      "rudder"
+      Labels		      [0, 0]
       SrcBlock		      "reset1"
       SrcPort		      1
-      Points		      [45, 0]
-      Branch {
-	DstBlock		"Model"
-	DstPort			3
-      }
-      Branch {
-	Labels			[2, 0]
-	Points			[0, 110]
-	DstBlock		"Scope5"
-	DstPort			1
-      }
+      DstBlock		      "Autonomous Controller"
+      DstPort		      3
     }
     Line {
       Name		      "throttle"
+      Labels		      [0, 0]
       SrcBlock		      "reset2"
       SrcPort		      1
-      Points		      [25, 0]
-      Branch {
-	DstBlock		"Model"
-	DstPort			2
-      }
-      Branch {
-	Labels			[2, 0]
-	Points			[0, -95]
-	DstBlock		"Scope"
-	DstPort			1
-      }
+      DstBlock		      "Autonomous Controller"
+      DstPort		      2
     }
     Line {
       Name		      "latitude"
       Labels		      [1, 0]
       SrcBlock		      "reset3"
       SrcPort		      1
-      Points		      [120, 0]
-      Branch {
-	DstBlock		"Bus\nCreator"
-	DstPort			7
-      }
-      Branch {
-	Points			[0, -60]
-	DstBlock		"Scope2"
-	DstPort			1
-      }
+      DstBlock		      "Bus\nCreator"
+      DstPort		      7
     }
     Line {
       SrcBlock		      "Bus\nCreator"
       SrcPort		      1
-      Points		      [85, 0; 0, 45]
-      DstBlock		      "Model"
+      Points		      [85, 0; 0, 35]
+      DstBlock		      "Autonomous Controller"
       DstPort		      1
     }
     Line {
@@ -1448,17 +5267,8 @@ Model {
       Labels		      [0, 0]
       SrcBlock		      "reset4"
       SrcPort		      1
-      Points		      [25, 0]
-      Branch {
-	DstBlock		"Bus\nCreator"
-	DstPort			8
-      }
-      Branch {
-	Labels			[2, 0]
-	Points			[0, -35]
-	DstBlock		"Scope3"
-	DstPort			1
-      }
+      DstBlock		      "Bus\nCreator"
+      DstPort		      8
     }
     Line {
       Name		      "variation"
@@ -1494,21 +5304,11 @@ Model {
     }
     Line {
       Name		      "sog"
-      Labels		      [0, 0]
+      Labels		      [0, 0; 1, 0]
       SrcBlock		      "reset5"
       SrcPort		      1
-      Points		      [15, 0]
-      Branch {
-	Labels			[1, 0]
-	DstBlock		"Bus\nCreator"
-	DstPort			4
-      }
-      Branch {
-	Labels			[2, 0]
-	Points			[0, -45]
-	DstBlock		"Scope1"
-	DstPort			1
-      }
+      DstBlock		      "Bus\nCreator"
+      DstPort		      4
     }
     Line {
       Name		      "cog"
@@ -1537,7 +5337,7 @@ Model {
     Line {
       SrcBlock		      "Mux"
       SrcPort		      1
-      DstBlock		      "Scope7"
+      DstBlock		      "Gain"
       DstPort		      1
     }
     Line {
@@ -1548,5 +5348,1430 @@ Model {
       DstBlock		      "Mux"
       DstPort		      1
     }
+    Line {
+      SrcBlock		      "Water Speed2"
+      SrcPort		      1
+      DstBlock		      "Autonomous Controller"
+      DstPort		      7
+    }
+    Line {
+      SrcBlock		      "Water Speed1"
+      SrcPort		      1
+      DstBlock		      "Autonomous Controller"
+      DstPort		      6
+    }
+    Line {
+      SrcBlock		      "Gain"
+      SrcPort		      1
+      DstBlock		      "Scope7"
+      DstPort		      1
+    }
+  }
+}
+# Finite State Machines
+#
+#    Stateflow Version 7.6 (R2011b) dated Aug  6 2011, 03:32:36
+#
+#
+
+
+Stateflow {
+  machine {
+    id			    1
+    name		    "Replay_sim"
+    created		    "21-Nov-2013 09:12:19"
+    isLibrary		    0
+    firstTarget		    70
+    sfVersion		    76014001.0002
+  }
+  chart {
+    id			    2
+    name		    "Autonomous Controller/State Keeper &\nEstimator/GPS Estimator/Calculate\ncourse-over-ground\nderivative"
+    "/Correct for jumps of\n2pi when wrapping\naround"
+    windowPosition	    [495.75 83.25 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1920 1200 1.25]
+    treeNode		    [0 3 0 0]
+    firstTransition	    5
+    firstJunction	    4
+    viewObj		    2
+    machine		    1
+    ssIdHighWaterMark	    5
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    6
+    chartFileNumber	    1
+    disableImplicitCasting  1
+    eml {
+      name		      "jumpfix"
+    }
+    supportVariableSizing   0
+  }
+  state {
+    id			    3
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    2
+    treeNode		    [2 0 0 0]
+    superState		    SUBCHART
+    subviewer		    2
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function y = jumpfix(u)\n%#codegen\n\n% Initialize values\npersistent lastU offset firstDatum;\ni"
+      "f isempty(lastU)\n    lastU = single(0);\n    offset = single(0);\n    firstDatum = true;\nend\n\n% Latch the fi"
+      "rst input so we don't have a huge step going from 0 to the\n% first input.\nif firstDatum\n    lastU = u;\n    f"
+      "irstDatum = false;\nend\n\n% Wrap the values depending on the \nif u - lastU > pi\n    offset = offset - 2*pi;\n"
+      "elseif u -lastU < -pi\n    offset = offset + 2*pi;\nend\n\n% And store the current data point for next time.\nla"
+      "stU = u;\n\n% Output the corrected value\ny = u + offset;"
+      editorLayout	      "100 M4x1[87 199 679 733]"
+      saturateOnIntegerOverflow	0
+    }
+  }
+  junction {
+    id			    4
+    position		    [23.5747 49.5747 7]
+    chart		    2
+    linkNode		    [2 0 0]
+    subviewer		    2
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    5
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      4
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    2
+    linkNode		    [2 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    2
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    6
+    ssIdNumber		    4
+    name		    "u"
+    linkNode		    [2 0 7]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    7
+    ssIdNumber		    5
+    name		    "y"
+    linkNode		    [2 6 0]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "single"
+  }
+  instance {
+    id			    8
+    name		    "Autonomous Controller/State Keeper &\nEstimator/GPS Estimator/Calculate\ncourse-over-ground\nderivative"
+    "/Correct for jumps of\n2pi when wrapping\naround"
+    machine		    1
+    chart		    2
+  }
+  chart {
+    id			    9
+    name		    "Autonomous Controller/State Keeper &\nEstimator/GPS Estimator/Calculate local position from \nGPS data"
+    windowPosition	    [787.266 -81.234 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1920 1200 1.25]
+    treeNode		    [0 10 0 0]
+    firstTransition	    12
+    firstJunction	    11
+    viewObj		    9
+    machine		    1
+    ssIdHighWaterMark	    15
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    13
+    chartFileNumber	    3
+    disableImplicitCasting  1
+    eml {
+      name		      "estimateGPS"
+    }
+    supportVariableSizing   0
+  }
+  state {
+    id			    10
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    9
+    treeNode		    [9 0 0 0]
+    superState		    SUBCHART
+    subviewer		    9
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function [enableLLA2LTP, resetIntegrator]  = estimateGPS(latLonAlt, newData, reset)\n%#codegen\n\n"
+      "% This function watches an incoming stream of GPS data and waits for 5\n% valid LLA values before it enables LLA"
+      " to LTP conversion. It also watches\n% for updates to a GPS stream in order to reset a velocity integrator for\n"
+      "% position estimation.\n\n% INPUTS:\n% latLonAlt - the latitude, longitude, and altitude of the vehicle from GPS"
+      "\n% in radians/meters.\n% newData - A boolean signal specifying whether latLonAlt holds new data\n% reset - A gl"
+      "obal reset boolean trigger.\n\n% OUTPUTS:\n% enableLLA2LTP - A boolean specifying whether LLA to LTP conversion "
+      "should\n% occur. The only reason it shouldn't is if the GPS hasn't latched valid\n% positions yet.\n% resetInteg"
+      "rator - Indicates that the velocity integrator, which is\n% calculating position in between GPS fixes, should be"
+      " reset.\n\npersistent newDataCounter;\n\n% Reset everything on first startup or when a global reset is triggered"
+      "\nif isempty(newDataCounter) || reset\n    newDataCounter = uint8(0);\nend\n\n% Pass through the global reset to"
+      " the velocity integrator\nif reset\n    resetIntegrator = true;\nelse\n    resetIntegrator = false;\nend\n\n% Wa"
+      "it for 5 valid GPS inputs before outputting the current position.\n% This allows the GPS to stabilize.\nif newDa"
+      "taCounter < 5\n    if newData && latLonAlt(1) ~= 0 && latLonAlt(2) ~= 0\n        newDataCounter = newDataCounter"
+      " + 1;\n    end\n    enableLLA2LTP = false;\nelse\n    % Reset the integrator if new data has been received for t"
+      "his timestep\n    % as we have a \"truth\" position now.\n    if newData\n        resetIntegrator = true;\n    e"
+      "nd\n    enableLLA2LTP = true;\nend"
+      editorLayout	      "100 M4x1[19 72 1047 876]"
+    }
+  }
+  junction {
+    id			    11
+    position		    [23.5747 49.5747 7]
+    chart		    9
+    linkNode		    [9 0 0]
+    subviewer		    9
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    12
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      11
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    9
+    linkNode		    [9 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    9
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    13
+    ssIdNumber		    15
+    name		    "enableLLA2LTP"
+    linkNode		    [9 0 14]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_BOOLEAN_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "boolean"
+  }
+  data {
+    id			    14
+    ssIdNumber		    4
+    name		    "latLonAlt"
+    linkNode		    [9 13 15]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"3"
+      }
+      type {
+	primitive		SF_INT32_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+    }
+    dataType		    "int32"
+  }
+  data {
+    id			    15
+    ssIdNumber		    6
+    name		    "newData"
+    linkNode		    [9 14 16]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_BOOLEAN_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "boolean"
+  }
+  data {
+    id			    16
+    ssIdNumber		    7
+    name		    "reset"
+    linkNode		    [9 15 17]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_BOOLEAN_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "boolean"
+  }
+  data {
+    id			    17
+    ssIdNumber		    8
+    name		    "resetIntegrator"
+    linkNode		    [9 16 0]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_BOOLEAN_TYPE
+	isSigned		1
+	wordLength		"16"
+	fixpt {
+	  scalingMode		  SF_FIXPT_BINARY_POINT
+	  fractionLength	  "0"
+	  slope			  "2^0"
+	  bias			  "0"
+	}
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "boolean"
+  }
+  instance {
+    id			    18
+    name		    "Autonomous Controller/State Keeper &\nEstimator/GPS Estimator/Calculate local position from \nGPS data"
+    machine		    1
+    chart		    9
+  }
+  chart {
+    id			    19
+    name		    "Autonomous Controller/State Keeper &\nEstimator/GPS Estimator/GPS slew-limit\nzero-order hold"
+    windowPosition	    [480.75 98.25 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1920 1200 1.25]
+    treeNode		    [0 20 0 0]
+    firstTransition	    22
+    firstJunction	    21
+    viewObj		    19
+    machine		    1
+    ssIdHighWaterMark	    9
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    23
+    chartFileNumber	    4
+    disableImplicitCasting  1
+    eml {
+      name		      "limit_gps_rate"
+    }
+    supportVariableSizing   0
+  }
+  state {
+    id			    20
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    19
+    treeNode		    [19 0 0 0]
+    superState		    SUBCHART
+    subviewer		    19
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function [position, valid] = limit_gps_rate(current_gps_position, first_datapoint, gps_leap_rate_"
+      "limit)\n%% This function follows a GPS position 2-tuple of lat/lon values (stored as int32s as 1e-7 degrees).\n%"
+      "#codegen\n\n% Store the last GPS location, used for derivative calculations\npersistent last_gps_position last_t"
+      "imestep current_timestep\nif isempty(last_gps_position) || first_datapoint\n    last_gps_position = current_gps_"
+      "position;\n    current_timestep = int32(0);\n    last_timestep = current_timestep;\nend\n\n% If the slew limit w"
+      "as exceeded for either the latitude or longitude, only\n% output the last timestep. We ignore the altitude compl"
+      "etely.\nif (current_gps_position(1) - last_gps_position(1)) / (current_timestep - last_timestep) > gps_leap_rate"
+      "_limit ...\n    || (current_gps_position(2) - last_gps_position(2)) / (current_timestep - last_timestep) > gps_l"
+      "eap_rate_limit\n    position = last_gps_position;\n    valid = false;\nelse\n    % Update last timesteps data fo"
+      "r future calculations.\n    last_gps_position = current_gps_position;\n    last_timestep = current_timestep;\n  "
+      "  \n    % We can output the current position as it's within the slew limit.\n    position = current_gps_position"
+      ";\n    valid = true;\nend\n\n% Increment the current timestep handling wrap-arounds nicely. This WILL\n% NOT han"
+      "dle situations were the time between valid GPS position updates is\n% greater than INT32_MAX, but I can live wit"
+      "h that.\nif current_timestep == intmax('int32')\n    current_timestep = current_timestep - last_timestep;\n    l"
+      "ast_timestep = int32(0);\nelse\n    current_timestep = current_timestep + int32(1);\nend"
+      editorLayout	      "100 M4x1[495 187 1080 733]"
+    }
+  }
+  junction {
+    id			    21
+    position		    [23.5747 49.5747 7]
+    chart		    19
+    linkNode		    [19 0 0]
+    subviewer		    19
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    22
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      21
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    19
+    linkNode		    [19 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    19
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    23
+    ssIdNumber		    5
+    name		    "position"
+    linkNode		    [19 0 24]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"3"
+      }
+      type {
+	primitive		SF_INT32_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "int32"
+  }
+  data {
+    id			    24
+    ssIdNumber		    6
+    name		    "current_gps_position"
+    linkNode		    [19 23 25]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"3"
+      }
+      type {
+	primitive		SF_INT32_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "int32"
+  }
+  data {
+    id			    25
+    ssIdNumber		    7
+    name		    "first_datapoint"
+    linkNode		    [19 24 26]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_BOOLEAN_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "boolean"
+  }
+  data {
+    id			    26
+    ssIdNumber		    8
+    name		    "gps_leap_rate_limit"
+    linkNode		    [19 25 27]
+    scope		    PARAMETER_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_INT32_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "int32"
+  }
+  data {
+    id			    27
+    ssIdNumber		    9
+    name		    "valid"
+    linkNode		    [19 26 0]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_BOOLEAN_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "boolean"
+  }
+  instance {
+    id			    28
+    name		    "Autonomous Controller/State Keeper &\nEstimator/GPS Estimator/GPS slew-limit\nzero-order hold"
+    machine		    1
+    chart		    19
+  }
+  chart {
+    id			    29
+    name		    "Autonomous Controller/Rudder\nCommand/L2 Plus ref WP1"
+    windowPosition	    [782.101 -169.75 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1920 1200 1.25]
+    treeNode		    [0 30 0 0]
+    firstTransition	    32
+    firstJunction	    31
+    viewObj		    29
+    machine		    1
+    ssIdHighWaterMark	    32
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    33
+    chartFileNumber	    7
+    disableImplicitCasting  1
+    eml {
+      name		      "L2PlusWP1"
+    }
+    supportVariableSizing   0
+  }
+  state {
+    id			    30
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    29
+    treeNode		    [29 0 0 0]
+    superState		    SUBCHART
+    subviewer		    29
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function [L2Vec, as_c, transition] = L2PlusWP1(wp0, wp0_found, wp1, wp1_found, Puav, Vxyz, switch"
+      "Distance, ...\n    tanIntercept, MaxDwnPthStar,Turn2Track,...\n    InitialPoint, IPStar, TStar)\n%=============="
+      "================\n%     computes bank angle command for following a straight line\n%     by creating an aim poin"
+      "t that may be more than L2 away \n%     from the UAV. The aim point is (usually) farther along the path \n%     "
+      "toward wp1 than the UAV, and the intercept\n%     angle is less than or equal to a specified value. This limits "
+      "the intercept\n%     angle even when the UAV is within L2 of the path.\n%     See L2PlusWP1.m for details\n%\n% "
+      "        INPUTS\n%             wp0     Waypoint 0 position in North-East-Down meters\n%             wp1     Waypo"
+      "int 1 position in North-East-Down meters\n%             Puav    Position of UAV in North-East-Down meters\n%    "
+      "         Vxyz    Inertial velocity in North-East-Down meters\n%\n%         PARAMETERS\n%             switchDista"
+      "nce distance from wp1 to switch to WP2\n%             tanIntercept  tangent of intercept angle\n%             Ma"
+      "xDwnPthStar L2 multiplier to determmine downpath aimpoint\n%             Turn2Track    true to turn toward T1 in"
+      "stead of L2\n%             InitialPoint  true if no line tracking at first--fly direct to some initial point\n% "
+      "            IPStar        L2 multiplier to determing distance of IP from first wp0\n%             Tstar         "
+      "was called L2Base, time constant of response\n%             \n%         OUTPUTS\n%             L2Vec   L2 vector"
+      " toward aim point\n%             as_c    commanded lateral acceleration\n%             transition A boolean of w"
+      "hether to transition or not to the next waypoint\n\n    persistent IPActive;  %true if flying toward IP\n    per"
+      "sistent IP; % location of initial point\n\n    persistent direction; % Keep track of the direction for patrol mo"
+      "de\n    if isempty(direction)\n        direction = int8(1);\n    end\n    \n    Pwp1 = single(zeros(3,1));\n    "
+      "Pe_y = single(0);\n    Dist2wp1 = single(0);\n    MinDownPath = single(0);\n    Dist2WPSwitch = single(0);\n    "
+      "L2DownPath = single(0);\n    L2ToT = single(zeros(3,1));\n    L2Vec = single(zeros(3,1));\n    IP1 = single([0; "
+      "0;-999]); %signal for no IP\n    as_c = single(0);\n    transition = false;\n    \n    Pne = [Puav(1); Puav(2); "
+      "0]; %horizontal position\n    Vne = [Vxyz(1); Vxyz(2); 0]; % horizontal velocity\n    Groundspeed = norm(Vne);\n"
+      "    L2 = single(TStar*Groundspeed);\n    \n    % If neither waypoint is valid then don't do anything\n    if ~wp"
+      "0_found || ~wp1_found\n        return;\n    % Otherwise if the first two waypoints are next to each other (as is"
+      "\n    % common if the origin is the first waypoint and the boat latches that\n    % as its start value) then tra"
+      "nsition to the next waypoint.\n    elseif norm(wp1 - wp0) < switchDistance\n        transition = true;\n        "
+      "return;\n    end\n    \n    % Calculate N1 (right-hand orthogonal to T1) \n    % and T1 (unit vector pointing fr"
+      "om wp0 to wp1)\n    T1 = wp1 - wp0;\n    T1 = T1/norm(T1);\n    N1 = [-T1(2); T1(1); 0];\n    \n%     initialize"
+      " the initial point\n    if (isempty(IPActive))\n        if (InitialPoint)\n%             IP is set relative to t"
+      "he first \"from\" waypoint\n            IPActive = -1;\n            IP = [wp0(1); wp0(2); 0] - L2*IPStar*T1;\n  "
+      "          \n            if (norm(IP-Pne) < .001)\n                IPActive = 0;\n                IP = single([0;"
+      " 0; -999]);\n            end\n        else\n            IPActive = 0;\n            IP = single([0; 0;-999]); %si"
+      "gnal for no IP\n        end\n    end\n    IP1 = IP;\n    \n    \n    if (IPActive)\n%         no line tracking, "
+      "direct to IP\n        L2Vec = L2*(IP - Pne)/norm(IP - Pne);\n%         check to see if at the IP to terminate th"
+      "is mode\n        if norm(IP - Pne) < .1*L2\n            IPActive = 0;\n        end\n    else\n         if (Pne(1"
+      ") < 2)\n             IP1 = IP1;\n         end\n%         IP not active, track WP lines\n        Pwp1 = Pne - [wp"
+      "1(1); wp1(2); 0]; % position of UAV relative to wp1\n        Pe_y = single(Pwp1'*N1); % cross track error\n     "
+      "   Dist2wp1 = -single(Pwp1'*T1); % distance to wp1\n\n%         minimum down path distance for Aim Point interse"
+      "ction on T\n%         is determined by the intercept angle but limited \n%         in case of very distant intec"
+      "epts to MaxDwnPthStar*L2\n        MinDownPath = single ( min( abs(Pe_y)/tanIntercept, MaxDwnPthStar*L2)); \n    "
+      "    Dist2WPSwitch = Dist2wp1 - switchDistance;\n        if ( abs(Pe_y) > L2 )\n    %             Make sure aimpo"
+      "int is no closer to waypoint than calculated switch point.\n            L2DownPath = MinDownPath;\n        else\n"
+      "    %             within L2 of T and Dist2WPSwitch >= 0, but limit angle of L2 wrt T\n            L2DownPath = ("
+      "max(MinDownPath, (sqrt( L2^2 - Pe_y^2 ))));\n        end\n        \n        if ( Dist2WPSwitch < 0 )\n          "
+      "  transition = true;\n        end\n        \n         % vector from Pwp1 to aim point on T1\n         L2ToT = si"
+      "ngle(( Dist2wp1 - L2DownPath )*(-T1) - Pwp1);\n         if (norm(L2ToT) < .001)\n             L2Vec = L2*T1;\n  "
+      "       else\n            L2Vec = single(L2*( L2ToT/norm(L2ToT) )); % limit size to L2\n         end\n    %      "
+      "   L2Vec = L2ToT;\n%         dummy statements\n    end\n    Zprod = single(Vxyz(1)*L2Vec(2) - Vxyz(2)*L2Vec(1));"
+      " %Z component of cross product\n    \n    % Now if the groundspeed of the vessel is zero, we make sure we don't\n"
+      "    % get a division-by-zero error and instead handle it gracefully.\n    if Groundspeed > 0\n        sinEta = s"
+      "ingle(Zprod/(Groundspeed*L2));\n        as_c = single(2*Groundspeed^2/(L2)*sinEta);\n    else\n        sinEta = "
+      "single(0.0);\n        as_c = single(0.0);\n    end\n\n%         now override bank angle if heading in the wrong "
+      "direction\n    if ( Turn2Track && Dist2WPSwitch > 0 && ~IPActive ) \n%             turn to track not L2, gives m"
+      "in displacement from track\n        if ( T1'*Vxyz < 0 )\n            if ( Pe_y > 0 )\n                as_c = sin"
+      "gle(99);\n            else\n                as_c = single(-99);\n            end\n        end\n     else\n%     "
+      "      turn toward L2, give min displacement toward wp0\n        if ( L2Vec'*Vxyz < 0 )\n            if ( sinEta "
+      "< 0 )\n                as_c = single(-99);\n            else\n                as_c = single(99);\n            en"
+      "d\n        end\n    end\nend"
+      editorLayout	      "100 M4x1[308 104 1936 1056]"
+      fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
+      "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
+      emlDefaultFimath	      FimathUserSpecified
+    }
+  }
+  junction {
+    id			    31
+    position		    [23.5747 49.5747 7]
+    chart		    29
+    linkNode		    [29 0 0]
+    subviewer		    29
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    32
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      31
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    29
+    linkNode		    [29 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    29
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    33
+    ssIdNumber		    24
+    name		    "wp0"
+    linkNode		    [29 0 34]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"3"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+	busObject		"Mission"
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    34
+    ssIdNumber		    31
+    name		    "wp0_found"
+    linkNode		    [29 33 35]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_BOOLEAN_TYPE
+	isSigned		1
+	wordLength		"16"
+	fixpt {
+	  scalingMode		  SF_FIXPT_BINARY_POINT
+	  fractionLength	  "0"
+	  slope			  "2^0"
+	  bias			  "0"
+	}
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "boolean"
+  }
+  data {
+    id			    35
+    ssIdNumber		    25
+    name		    "wp1"
+    linkNode		    [29 34 36]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"3"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+	busObject		"Mission"
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    36
+    ssIdNumber		    32
+    name		    "wp1_found"
+    linkNode		    [29 35 37]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_BOOLEAN_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "boolean"
+  }
+  data {
+    id			    37
+    ssIdNumber		    17
+    name		    "L2Vec"
+    linkNode		    [29 36 38]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"3"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    38
+    ssIdNumber		    6
+    name		    "Puav"
+    linkNode		    [29 37 39]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"3"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+      }
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    39
+    ssIdNumber		    7
+    name		    "Vxyz"
+    linkNode		    [29 38 40]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"3"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    40
+    ssIdNumber		    8
+    name		    "switchDistance"
+    linkNode		    [29 39 41]
+    scope		    PARAMETER_DATA
+    paramIndexForInitFromWorkspace 5
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    41
+    ssIdNumber		    10
+    name		    "tanIntercept"
+    linkNode		    [29 40 42]
+    scope		    PARAMETER_DATA
+    initFromWorkspace	    1
+    paramIndexForInitFromWorkspace 6
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    42
+    ssIdNumber		    11
+    name		    "MaxDwnPthStar"
+    linkNode		    [29 41 43]
+    scope		    PARAMETER_DATA
+    initFromWorkspace	    1
+    paramIndexForInitFromWorkspace 2
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    43
+    ssIdNumber		    12
+    name		    "Turn2Track"
+    linkNode		    [29 42 44]
+    scope		    PARAMETER_DATA
+    initFromWorkspace	    1
+    paramIndexForInitFromWorkspace 4
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    44
+    ssIdNumber		    13
+    name		    "InitialPoint"
+    linkNode		    [29 43 45]
+    scope		    PARAMETER_DATA
+    initFromWorkspace	    1
+    paramIndexForInitFromWorkspace 1
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    45
+    ssIdNumber		    14
+    name		    "IPStar"
+    linkNode		    [29 44 46]
+    scope		    PARAMETER_DATA
+    initFromWorkspace	    1
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    46
+    ssIdNumber		    15
+    name		    "TStar"
+    linkNode		    [29 45 47]
+    scope		    PARAMETER_DATA
+    initFromWorkspace	    1
+    paramIndexForInitFromWorkspace 3
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    47
+    ssIdNumber		    16
+    name		    "as_c"
+    linkNode		    [29 46 48]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+      }
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    48
+    ssIdNumber		    26
+    name		    "transition"
+    linkNode		    [29 47 0]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_BOOLEAN_TYPE
+	enumType		"<class name>"
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "boolean"
+  }
+  instance {
+    id			    49
+    name		    "Autonomous Controller/Rudder\nCommand/L2 Plus ref WP1"
+    machine		    1
+    chart		    29
+  }
+  chart {
+    id			    50
+    name		    "Autonomous Controller/State Keeper &\nEstimator/GPS Estimator/Calculate\ncourse-over-ground\nderivative"
+    "/Smoothing\nFilter/Embedded\nMATLAB Function2"
+    windowPosition	    [446.586 190.937 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1920 1200 1.25]
+    treeNode		    [0 51 0 0]
+    firstTransition	    53
+    firstJunction	    52
+    viewObj		    50
+    machine		    1
+    ssIdHighWaterMark	    9
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    54
+    chartFileNumber	    11
+    disableImplicitCasting  1
+    eml {
+      name		      "RateAid"
+    }
+    supportVariableSizing   0
+  }
+  state {
+    id			    51
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    50
+    treeNode		    [50 0 0 0]
+    superState		    SUBCHART
+    subviewer		    50
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function y = RateAid(u,NewGPS,Ts, rateLimit,KF_Gain)\n% This function does a smoothing of the dif"
+      "ferences of input u\n% to use as a rate estimate of the output until the next sample\n% That output estimate is "
+      "smoothed with the new measurement\n% In other words, a heuristic Kalman Filter\n% \n% INPUTS\n%     u           "
+      "    signal to be filtered\n%     NewGPS          pulse indicating a new GPS reading is availble\n%     apSampleT"
+      "ime    sample time of the system\n%     rateLimit       used to discard outliers\n%     KF_Gain         Kalman g"
+      "ain for the filter (valid values are between\n%                     0 and 1.0\n% OUTPUTS\n%     y        velocit"
+      "y estimate between updates. It is a sawtooth pattern, so\n%             this routine is followed by a low pass f"
+      "ilter\n             \n             \npersistent TimeSinceLast;\npersistent rate;\npersistent rateHat;\npersisten"
+      "t yHat;\npersistent firstGPS;\npersistent LastU;\n\nif (isempty(LastU))\n    LastU = single(0.);\n    TimeSinceL"
+      "ast = single(Ts);\n    rate = single(0);\n    rateHat = single(0);\n    yHat = single(0);\n    firstGPS= single("
+      "1);\nend\n\nyHat = yHat + rateHat*Ts;\nif (NewGPS && TimeSinceLast > 3*Ts) %needed for long GPS pulse\n    if fi"
+      "rstGPS == 1\n%         initialize to first input\n        yHat = u;\n        y = u;\n        firstGPS = single(0"
+      ");\n        return;\n    end\n    rateOld = rate;\n    rate = single((u - LastU)/TimeSinceLast);\n%     return w"
+      "ith no change if outside accel limit\n    if ( rate < -rateLimit || rate > rateLimit )\n        rate = single(0)"
+      ";\n        y = yHat; %no change to yHat\n        return;\n    end\n%     rateHat = rateHat + .9*(rate - rateHat)"
+      "; %first order filter\n    rateHat = .7*rate + .3*rateOld; %FIR filter\n    TimeSinceLast = single(0);\n    Last"
+      "U = u;\n    yHat = yHat +KF_Gain*( u - yHat ); \nend\ny = yHat;\nTimeSinceLast = TimeSinceLast + Ts;"
+      editorLayout	      "100 M4x1[278 230 1080 733]"
+      fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
+      "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
+      emlDefaultFimath	      FimathUserSpecified
+    }
+  }
+  junction {
+    id			    52
+    position		    [23.5747 49.5747 7]
+    chart		    50
+    linkNode		    [50 0 0]
+    subviewer		    50
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    53
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      52
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    50
+    linkNode		    [50 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    50
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    54
+    ssIdNumber		    4
+    name		    "u"
+    linkNode		    [50 0 55]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    55
+    ssIdNumber		    5
+    name		    "y"
+    linkNode		    [50 54 56]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    56
+    ssIdNumber		    6
+    name		    "NewGPS"
+    linkNode		    [50 55 57]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_BOOLEAN_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "boolean"
+  }
+  data {
+    id			    57
+    ssIdNumber		    7
+    name		    "Ts"
+    linkNode		    [50 56 58]
+    scope		    PARAMETER_DATA
+    initFromWorkspace	    1
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    58
+    ssIdNumber		    8
+    name		    "rateLimit"
+    linkNode		    [50 57 59]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    59
+    ssIdNumber		    9
+    name		    "KF_Gain"
+    linkNode		    [50 58 0]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "single"
+  }
+  instance {
+    id			    60
+    name		    "Autonomous Controller/State Keeper &\nEstimator/GPS Estimator/Calculate\ncourse-over-ground\nderivative"
+    "/Smoothing\nFilter/Embedded\nMATLAB Function2"
+    machine		    1
+    chart		    50
+  }
+  chart {
+    id			    61
+    name		    "Autonomous Controller/State Keeper &\nEstimator/GPS Estimator/Calculate\ncourse-over-ground\nderivative"
+    "/Smoothing\nFilter/Tustin low-pass"
+    windowPosition	    [631.813 -38.394 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1920 1200 1.25]
+    treeNode		    [0 62 0 0]
+    firstTransition	    64
+    firstJunction	    63
+    viewObj		    61
+    machine		    1
+    ssIdHighWaterMark	    7
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    65
+    chartFileNumber	    12
+    disableImplicitCasting  1
+    eml {
+      name		      "fcn"
+    }
+    supportVariableSizing   0
+  }
+  state {
+    id			    62
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    61
+    treeNode		    [61 0 0 0]
+    superState		    SUBCHART
+    subviewer		    61
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function y = fcn(u,T,f)\n% This block supports an embeddable subset of the MATLAB language.\n% Se"
+      "e the help menu for details. \n\npersistent a\npersistent b\npersistent y_km1\npersistent u_km1\nif isempty(a)\n"
+      "    %tf = [T*omega/(2+T*omega) T*omega/(2+T*omega)],[1 (T*omega-2)/(T*omega+2)]\n    %tf = [a a],[1 -b]\n    ome"
+      "ga = 2*pi*f;\n    a=T*omega/(2+T*omega);\n    b=-(T*omega-2)/(T*omega+2);\n    y_km1=u;\n    u_km1=u;\nend\n\ny "
+      "= single(a*(u+u_km1)+b*y_km1);\ny_km1=y;\nu_km1=u;"
+      editorLayout	      "100 M4x1[65 65 1200 693]"
+      fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
+      "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
+      emlDefaultFimath	      FimathUserSpecified
+    }
+  }
+  junction {
+    id			    63
+    position		    [23.5747 49.5747 7]
+    chart		    61
+    linkNode		    [61 0 0]
+    subviewer		    61
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    64
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      63
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    61
+    linkNode		    [61 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    61
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    65
+    ssIdNumber		    4
+    name		    "u"
+    linkNode		    [61 0 66]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    66
+    ssIdNumber		    5
+    name		    "y"
+    linkNode		    [61 65 67]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    67
+    ssIdNumber		    6
+    name		    "T"
+    linkNode		    [61 66 68]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    68
+    ssIdNumber		    7
+    name		    "f"
+    linkNode		    [61 67 0]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  instance {
+    id			    69
+    name		    "Autonomous Controller/State Keeper &\nEstimator/GPS Estimator/Calculate\ncourse-over-ground\nderivative"
+    "/Smoothing\nFilter/Tustin low-pass"
+    machine		    1
+    chart		    61
+  }
+  target {
+    id			    70
+    name		    "sfun"
+    description		    "Default Simulink S-Function Target."
+    machine		    1
+    linkNode		    [1 0 0]
   }
 }

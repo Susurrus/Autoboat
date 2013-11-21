@@ -1,9 +1,9 @@
 %% User-configurable variables here
 [fname, pname] = uigetfile('*.csv', 'Select CSV file to replay'); % Select dataset file (CSV file)
 datafile = fullfile(pname, fname);
-auto_run = inputdlg('Autonomous run #', 'Input', 1, {'1'}) % Select which autonomous run within this dataset to animate
+auto_run = inputdlg('Autonomous run #', 'Input', 1, {'1'}); % Select which autonomous run within this dataset to animate
 if ~isempty(auto_run)
-    auto_run = str2num(auto_run{1})
+    auto_run = str2double(auto_run{1});
 else
     error('Invalid run # specified')
 end
@@ -11,16 +11,22 @@ end
 % Load up various Simulink Busses that we need.
 Busses;
 
+% Import some standard variables
+common;
+physical_constants;
+
 % L2+ variables
-TStar = single(15);
+TStar = single(10);
 IPStar = single(0);
 InitialPoint = single(0);
 Turn2Track = false;
 MaxDwnPthStar = single(1);
 tanIntercept = tan(45*pi/180);
 switchDistance = single(4);
-KPsiDot = single(0.7);
-wheelbase = single(4);
+KPsiDot = single(0);
+wheelbase.Value = single(4);
+cogDotDerivativeDelay = single(0.8);
+T_step = 0.01;
 
 %% Grab some values based on file and autonomous run number
 % Acquire data from run
@@ -91,7 +97,7 @@ mode.Data = uint8(ranged_fix_type(valid_gps_data));
 cog = Simulink.Timeseries;
 cog.Name = 'cog';
 cog.Time = gps_time;
-cog.Data = uint16(ranged_cog(valid_gps_data));
+cog.Data = uint16(ranged_cog(valid_gps_data)*100*pi/180); % Comes in as centi-degrees, but controller expects it in .0001 rads.
 sog = Simulink.Timeseries;
 sog.Name = 'sog';
 sog.Time = gps_time;
@@ -140,6 +146,22 @@ reset = Simulink.Timeseries;
 reset.Name = 'reset';
 reset.Time = reset_time;
 reset.Data = logical(ranged_reset(valid_reset_data) ~= 0);
+
+% And the from- and to-waypoints
+ranged_from_wp_n = data.WAYPOINT_STATUS.last_wp_north(valid_range);
+ranged_from_wp_e = data.WAYPOINT_STATUS.last_wp_east(valid_range);
+ranged_to_wp_n = data.WAYPOINT_STATUS.next_wp_north(valid_range);
+ranged_to_wp_e = data.WAYPOINT_STATUS.next_wp_east(valid_range);
+valid_waypoint_data = ~isnan(ranged_from_wp_n);
+waypoint_time = valid_range_time(valid_waypoint_data);
+wp0 = Simulink.Timeseries;
+wp0.Name = 'wp0';
+wp0.Time = waypoint_time;
+wp0.Data = single([ranged_from_wp_n(valid_waypoint_data) ranged_from_wp_e(valid_waypoint_data) zeros(size(ranged_to_wp_e(valid_waypoint_data)))]);
+wp1 = Simulink.Timeseries;
+wp1.Name = 'wp1';
+wp1.Time = waypoint_time;
+wp1.Data = single([ranged_to_wp_n(valid_waypoint_data) ranged_to_wp_e(valid_waypoint_data) zeros(size(ranged_to_wp_e(valid_waypoint_data)))]);
 
 % And water velocity (m/s) from DST800 @ 2Hz.
 ranged_water_speed = data.DST800.speed(valid_range);
