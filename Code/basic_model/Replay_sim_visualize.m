@@ -88,7 +88,11 @@ valid_basic_state_data = ~isnan(data.BASIC_STATE.rudder_angle);
 basic_state_time = timestampsFromZero(valid_basic_state_data);
 [basic_state_time, valid_basic_state_data2] = unique(basic_state_time);
 clear tmp;
-act_rudder_angle = data.BASIC_STATE.commanded_auto_rudder_angle(valid_basic_state_data);
+if isfield(data.BASIC_STATE, 'commanded_auto_rudder_angle')
+    act_rudder_angle = data.BASIC_STATE.commanded_auto_rudder_angle(valid_basic_state_data);
+else
+    act_rudder_angle = data.BASIC_STATE.commanded_rudder_angle(valid_basic_state_data);
+end
 act_rudder_angle = 180/pi*interp1(basic_state_time, act_rudder_angle(valid_basic_state_data2), pos_time);
 l2_north = data.BASIC_STATE.L2_north(valid_basic_state_data);
 l2_north = interp1(basic_state_time, l2_north(valid_basic_state_data2), pos_time);
@@ -176,7 +180,7 @@ rudder_coords_rot = rudder_coords;
 for i = 1:length(rudder_coords_rot)
     rudder_coords_rot(i,:) = boat_rotmat*rudder_rotmat*rudder_coords_rot(i,:)';
 end
-rudder_sim = patch(y(valid_range(1)) + boat_coords_rot(8,1) + rudder_coords_rot(:,1), x(valid_range(1)) + boat_coords_rot(8,2) + rudder_coords_rot(:,2), 'y');
+rudder_sim = patch(y(valid_range(1)) + boat_coords_rot(8,1) + rudder_coords_rot(:,1), x(valid_range(1)) + boat_coords_rot(8,2) + rudder_coords_rot(:,2), 'r');
 
 % And plot the rudder with the actual rudder angle from the launch.
 rudder_rotmat = rotmat2(-pi/180*act_rudder_angle(valid_range(1)));
@@ -184,7 +188,7 @@ rudder_coords_rot = rudder_coords;
 for i = 1:length(rudder_coords_rot)
     rudder_coords_rot(i,:) = boat_rotmat*rudder_rotmat*rudder_coords_rot(i,:)';
 end
-rudder_true = patch(y(valid_range(1)) + boat_coords_rot(8,1) + rudder_coords_rot(:,1), x(valid_range(1)) + boat_coords_rot(8,2) + rudder_coords_rot(:,2), 'r');
+rudder_true = patch(y(valid_range(1)) + boat_coords_rot(8,1) + rudder_coords_rot(:,1), x(valid_range(1)) + boat_coords_rot(8,2) + rudder_coords_rot(:,2), 'y');
 
 % And the boat itself (done after the rudder to get ordering right)
 boat = patch(y(valid_range(1)) + boat_coords_rot(:,1), x(valid_range(1)) + boat_coords_rot(:,2), 'y');

@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.22"
+    ComputedModelVersion    "1.23"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -26,11 +26,11 @@ Model {
   Creator		  "Bryant"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "susurrus"
+  LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Nov 21 09:43:44 2013"
-  RTWModifiedTimeStamp	  306927736
-  ModelVersionFormat	  "1.%<AutoIncrement:22>"
+  LastModifiedDate	  "Thu Nov 21 14:08:39 2013"
+  RTWModifiedTimeStamp	  306943695
+  ModelVersionFormat	  "1.%<AutoIncrement:23>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -68,6 +68,7 @@ Model {
     $ObjectID		    1
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "Replay_sim2"
+    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -1103,7 +1104,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Rudder\nCommand"
-	    Location		    [637, 214, 1842, 821]
+	    Location		    [464, 171, 1669, 778]
 	    Open		    on
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -5370,7 +5371,7 @@ Model {
 }
 # Finite State Machines
 #
-#    Stateflow Version 7.6 (R2011b) dated Aug  6 2011, 03:32:36
+#    Stateflow Version 7.6 (R2011b) dated Aug  6 2011, 13:17:15
 #
 #
 
@@ -5947,50 +5948,50 @@ Stateflow {
       "stead of L2\n%             InitialPoint  true if no line tracking at first--fly direct to some initial point\n% "
       "            IPStar        L2 multiplier to determing distance of IP from first wp0\n%             Tstar         "
       "was called L2Base, time constant of response\n%             \n%         OUTPUTS\n%             L2Vec   L2 vector"
-      " toward aim point\n%             as_c    commanded lateral acceleration\n%             transition A boolean of w"
-      "hether to transition or not to the next waypoint\n\n    persistent IPActive;  %true if flying toward IP\n    per"
-      "sistent IP; % location of initial point\n\n    persistent direction; % Keep track of the direction for patrol mo"
-      "de\n    if isempty(direction)\n        direction = int8(1);\n    end\n    \n    Pwp1 = single(zeros(3,1));\n    "
-      "Pe_y = single(0);\n    Dist2wp1 = single(0);\n    MinDownPath = single(0);\n    Dist2WPSwitch = single(0);\n    "
-      "L2DownPath = single(0);\n    L2ToT = single(zeros(3,1));\n    L2Vec = single(zeros(3,1));\n    IP1 = single([0; "
-      "0;-999]); %signal for no IP\n    as_c = single(0);\n    transition = false;\n    \n    Pne = [Puav(1); Puav(2); "
-      "0]; %horizontal position\n    Vne = [Vxyz(1); Vxyz(2); 0]; % horizontal velocity\n    Groundspeed = norm(Vne);\n"
-      "    L2 = single(TStar*Groundspeed);\n    \n    % If neither waypoint is valid then don't do anything\n    if ~wp"
-      "0_found || ~wp1_found\n        return;\n    % Otherwise if the first two waypoints are next to each other (as is"
-      "\n    % common if the origin is the first waypoint and the boat latches that\n    % as its start value) then tra"
-      "nsition to the next waypoint.\n    elseif norm(wp1 - wp0) < switchDistance\n        transition = true;\n        "
-      "return;\n    end\n    \n    % Calculate N1 (right-hand orthogonal to T1) \n    % and T1 (unit vector pointing fr"
-      "om wp0 to wp1)\n    T1 = wp1 - wp0;\n    T1 = T1/norm(T1);\n    N1 = [-T1(2); T1(1); 0];\n    \n%     initialize"
-      " the initial point\n    if (isempty(IPActive))\n        if (InitialPoint)\n%             IP is set relative to t"
-      "he first \"from\" waypoint\n            IPActive = -1;\n            IP = [wp0(1); wp0(2); 0] - L2*IPStar*T1;\n  "
-      "          \n            if (norm(IP-Pne) < .001)\n                IPActive = 0;\n                IP = single([0;"
-      " 0; -999]);\n            end\n        else\n            IPActive = 0;\n            IP = single([0; 0;-999]); %si"
-      "gnal for no IP\n        end\n    end\n    IP1 = IP;\n    \n    \n    if (IPActive)\n%         no line tracking, "
-      "direct to IP\n        L2Vec = L2*(IP - Pne)/norm(IP - Pne);\n%         check to see if at the IP to terminate th"
-      "is mode\n        if norm(IP - Pne) < .1*L2\n            IPActive = 0;\n        end\n    else\n         if (Pne(1"
-      ") < 2)\n             IP1 = IP1;\n         end\n%         IP not active, track WP lines\n        Pwp1 = Pne - [wp"
-      "1(1); wp1(2); 0]; % position of UAV relative to wp1\n        Pe_y = single(Pwp1'*N1); % cross track error\n     "
-      "   Dist2wp1 = -single(Pwp1'*T1); % distance to wp1\n\n%         minimum down path distance for Aim Point interse"
-      "ction on T\n%         is determined by the intercept angle but limited \n%         in case of very distant intec"
-      "epts to MaxDwnPthStar*L2\n        MinDownPath = single ( min( abs(Pe_y)/tanIntercept, MaxDwnPthStar*L2)); \n    "
-      "    Dist2WPSwitch = Dist2wp1 - switchDistance;\n        if ( abs(Pe_y) > L2 )\n    %             Make sure aimpo"
-      "int is no closer to waypoint than calculated switch point.\n            L2DownPath = MinDownPath;\n        else\n"
-      "    %             within L2 of T and Dist2WPSwitch >= 0, but limit angle of L2 wrt T\n            L2DownPath = ("
-      "max(MinDownPath, (sqrt( L2^2 - Pe_y^2 ))));\n        end\n        \n        if ( Dist2WPSwitch < 0 )\n          "
-      "  transition = true;\n        end\n        \n         % vector from Pwp1 to aim point on T1\n         L2ToT = si"
-      "ngle(( Dist2wp1 - L2DownPath )*(-T1) - Pwp1);\n         if (norm(L2ToT) < .001)\n             L2Vec = L2*T1;\n  "
-      "       else\n            L2Vec = single(L2*( L2ToT/norm(L2ToT) )); % limit size to L2\n         end\n    %      "
-      "   L2Vec = L2ToT;\n%         dummy statements\n    end\n    Zprod = single(Vxyz(1)*L2Vec(2) - Vxyz(2)*L2Vec(1));"
-      " %Z component of cross product\n    \n    % Now if the groundspeed of the vessel is zero, we make sure we don't\n"
-      "    % get a division-by-zero error and instead handle it gracefully.\n    if Groundspeed > 0\n        sinEta = s"
-      "ingle(Zprod/(Groundspeed*L2));\n        as_c = single(2*Groundspeed^2/(L2)*sinEta);\n    else\n        sinEta = "
-      "single(0.0);\n        as_c = single(0.0);\n    end\n\n%         now override bank angle if heading in the wrong "
-      "direction\n    if ( Turn2Track && Dist2WPSwitch > 0 && ~IPActive ) \n%             turn to track not L2, gives m"
-      "in displacement from track\n        if ( T1'*Vxyz < 0 )\n            if ( Pe_y > 0 )\n                as_c = sin"
-      "gle(99);\n            else\n                as_c = single(-99);\n            end\n        end\n     else\n%     "
-      "      turn toward L2, give min displacement toward wp0\n        if ( L2Vec'*Vxyz < 0 )\n            if ( sinEta "
-      "< 0 )\n                as_c = single(-99);\n            else\n                as_c = single(99);\n            en"
-      "d\n        end\n    end\nend"
+      " toward aim point\n%             as_c    commanded lateral acceleration. Values of 99/-99\n%                    "
+      " indicate saturated maximum/minimum.\n%             transition A boolean of whether to transition or not to the "
+      "next waypoint\n\n    persistent IPActive;  %true if flying toward IP\n    persistent IP; % location of initial p"
+      "oint\n\n    persistent direction; % Keep track of the direction for patrol mode\n    if isempty(direction)\n    "
+      "    direction = int8(1);\n    end\n    \n    Pwp1 = single(zeros(3,1));\n    Pe_y = single(0);\n    Dist2wp1 = s"
+      "ingle(0);\n    MinDownPath = single(0);\n    Dist2WPSwitch = single(0);\n    L2DownPath = single(0);\n    L2ToT "
+      "= single(zeros(3,1));\n    L2Vec = single(zeros(3,1));\n    IP1 = single([0; 0;-999]); %signal for no IP\n    as"
+      "_c = single(0);\n    transition = false;\n    \n    Pne = [Puav(1); Puav(2); 0]; %horizontal position\n    Vne ="
+      " [Vxyz(1); Vxyz(2); 0]; % horizontal velocity\n    Groundspeed = norm(Vne);\n    L2 = single(TStar*Groundspeed);"
+      "\n    \n    % If neither waypoint is valid then don't do anything\n    if ~wp0_found || ~wp1_found\n        retu"
+      "rn;\n    % Otherwise if the first two waypoints are next to each other (as is\n    % common if the origin is the"
+      " first waypoint and the boat latches that\n    % as its start value) then transition to the next waypoint.\n    "
+      "elseif norm(wp1 - wp0) < switchDistance\n        transition = true;\n        return;\n    end\n    \n    % Calcu"
+      "late N1 (right-hand orthogonal to T1) \n    % and T1 (unit vector pointing from wp0 to wp1)\n    T1 = wp1 - wp0;"
+      "\n    T1 = T1/norm(T1);\n    N1 = [-T1(2); T1(1); 0];\n    \n%     initialize the initial point\n    if (isempty"
+      "(IPActive))\n        if (InitialPoint)\n%             IP is set relative to the first \"from\" waypoint\n       "
+      "     IPActive = -1;\n            IP = [wp0(1); wp0(2); 0] - L2*IPStar*T1;\n            \n            if (norm(IP"
+      "-Pne) < .001)\n                IPActive = 0;\n                IP = single([0; 0; -999]);\n            end\n     "
+      "   else\n            IPActive = 0;\n            IP = single([0; 0;-999]); %signal for no IP\n        end\n    en"
+      "d\n    IP1 = IP;\n    \n    \n    if (IPActive)\n%         no line tracking, direct to IP\n        L2Vec = L2*(I"
+      "P - Pne)/norm(IP - Pne);\n%         check to see if at the IP to terminate this mode\n        if norm(IP - Pne) "
+      "< .1*L2\n            IPActive = 0;\n        end\n    else\n         if (Pne(1) < 2)\n             IP1 = IP1;\n  "
+      "       end\n%         IP not active, track WP lines\n        Pwp1 = Pne - [wp1(1); wp1(2); 0]; % position of UAV"
+      " relative to wp1\n        Pe_y = single(Pwp1'*N1); % cross track error\n        Dist2wp1 = -single(Pwp1'*T1); % "
+      "distance to wp1\n\n%         minimum down path distance for Aim Point intersection on T\n%         is determined"
+      " by the intercept angle but limited \n%         in case of very distant intecepts to MaxDwnPthStar*L2\n        M"
+      "inDownPath = single ( min( abs(Pe_y)/tanIntercept, MaxDwnPthStar*L2)); \n        Dist2WPSwitch = Dist2wp1 - swit"
+      "chDistance;\n        if ( abs(Pe_y) > L2 )\n    %             Make sure aimpoint is no closer to waypoint than c"
+      "alculated switch point.\n            L2DownPath = MinDownPath;\n        else\n    %             within L2 of T a"
+      "nd Dist2WPSwitch >= 0, but limit angle of L2 wrt T\n            L2DownPath = (max(MinDownPath, (sqrt( L2^2 - Pe_"
+      "y^2 ))));\n        end\n        \n        if ( Dist2WPSwitch < 0 )\n            transition = true;\n        end\n"
+      "        \n         % vector from Pwp1 to aim point on T1\n         L2ToT = single(( Dist2wp1 - L2DownPath )*(-T1"
+      ") - Pwp1);\n         if (norm(L2ToT) < .001)\n             L2Vec = L2*T1;\n         else\n            L2Vec = si"
+      "ngle(L2*( L2ToT/norm(L2ToT) )); % limit size to L2\n         end\n    %         L2Vec = L2ToT;\n%         dummy "
+      "statements\n    end\n    Zprod = single(Vxyz(1)*L2Vec(2) - Vxyz(2)*L2Vec(1)); %Z component of cross product\n   "
+      " \n    % Now if the groundspeed of the vessel is zero, we make sure we don't\n    % get a division-by-zero error"
+      " and instead handle it gracefully.\n    if Groundspeed > 0\n        sinEta = single(Zprod/(Groundspeed*L2));\n  "
+      "      as_c = single(2*Groundspeed^2/(L2)*sinEta);\n    else\n        sinEta = single(0.0);\n        as_c = singl"
+      "e(0.0);\n    end\n\n%         now override bank angle if heading in the wrong direction\n    if ( Turn2Track && "
+      "Dist2WPSwitch > 0 && ~IPActive ) \n%             turn to track not L2, gives min displacement from track\n      "
+      "  if ( T1'*Vxyz < 0 )\n            if ( Pe_y > 0 )\n                as_c = single(99);\n            else\n      "
+      "          as_c = single(-99);\n            end\n        end\n     else\n%           turn toward L2, give min dis"
+      "placement toward wp0\n        if ( L2Vec'*Vxyz < 0 )\n            if ( sinEta < 0 )\n                as_c = sing"
+      "le(-99);\n            else\n                as_c = single(99);\n            end\n        end\n    end\nend"
       editorLayout	      "100 M4x1[308 104 1936 1056]"
       fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
       "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"

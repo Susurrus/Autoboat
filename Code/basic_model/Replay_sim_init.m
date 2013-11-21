@@ -121,7 +121,11 @@ rudder.Time = rudder_time;
 rudder.Data = single(ranged_rudder(valid_rudder_data));
 
 % And the system's commanded rudder angle from BASIC_STATE @ 10Hz.
-ranged_auto_rudder = data.BASIC_STATE.commanded_auto_rudder_angle(valid_range);
+if isfield(data.BASIC_STATE, 'commanded_auto_rudder_angle')
+    ranged_auto_rudder = data.BASIC_STATE.commanded_auto_rudder_angle(valid_range);
+else
+    ranged_auto_rudder = data.BASIC_STATE.commanded_rudder_angle(valid_range);
+end
 valid_auto_rudder_data = ~isnan(ranged_auto_rudder);
 autorudder_time = valid_range_time(valid_auto_rudder_data);
 auto_rudder = Simulink.Timeseries;
