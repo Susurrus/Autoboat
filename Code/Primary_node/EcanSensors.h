@@ -83,8 +83,8 @@ enum {
 typedef struct {
 	bool newData; // Flag for whether this struct stores new data
 	uint8_t mode; // The type of fix used by the GPS. @see Nmea2000.h:PGN_129539_MODE.
-	uint16_t cog; // Course over ground in degrees eastward from north.
-	uint16_t sog; // Speed over ground in m/s
+	uint16_t cog; // Course over ground in .0001 radians eastward from north.
+	uint16_t sog; // Speed over ground in cm/s
 	int16_t hdop; // Horizontal dilation of precision. Units in m.
 	int16_t vdop; // Vertical dilation of precision. Units in m.
 	int32_t latitude; // Latitude in units of 1e-7 degrees

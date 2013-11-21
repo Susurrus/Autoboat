@@ -427,7 +427,7 @@ uint8_t ParsePgn129026(const uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, u
 
 	// 6-bits reserved
 
-	// Field 2: Course over ground (16-bits). Units are .0001 degrees eastward from north.
+	// Field 2: Course over ground (16-bits). Units are .0001 radians eastward from north.
 	if (cog && (data[2] != 0xFF || data[3] != 0xFF)) {
 		LEUnpackUint16(cog, &data[2]);
 		fieldStatus |= 0x04;
