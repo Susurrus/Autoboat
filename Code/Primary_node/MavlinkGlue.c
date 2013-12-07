@@ -32,7 +32,8 @@
 #include "DataStore.h"
 #include "ParametersHelper.h"
 
-// MATLAB-generated code includes
+// MATLAB-generated code is included here, really only required for the declaration of the
+// InternalVariables struct.
 #include "controller.h"
 
 // Declare our internal variable data store for some miscellaneous data output over MAVLink.
