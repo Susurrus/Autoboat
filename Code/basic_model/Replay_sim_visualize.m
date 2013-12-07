@@ -67,6 +67,10 @@ clear mode_with_pos;
 valid_range = start_indices(auto_run):end_indices(auto_run);
 clear start_indices end_indices;
 
+% Now grab a starting-from-0 range of the current range of time
+pos_time = pos_time(valid_range);
+pos_time = pos_time - pos_time(1);
+
 % Then grab waypoint and desired path data
 valid_waypoint_data = ~isnan(data.WAYPOINT_STATUS.last_wp_north);
 from_wp_n = data.WAYPOINT_STATUS.last_wp_north(valid_waypoint_data);
