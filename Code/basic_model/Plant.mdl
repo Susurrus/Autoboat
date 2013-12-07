@@ -12,7 +12,7 @@ Model {
       BusObject		      ""
       Name		      "Commanded Throttle"
     }
-    NumRootOutports	    4
+    NumRootOutports	    5
     Outport {
       BusObject		      "GpsData"
       BusOutputAsStruct	      "off"
@@ -21,20 +21,25 @@ Model {
     Outport {
       BusObject		      ""
       BusOutputAsStruct	      "off"
-      Name		      "sensors_t"
+      Name		      "throttle"
     }
     Outport {
       BusObject		      ""
       BusOutputAsStruct	      "off"
-      Name		      "sensors_r"
+      Name		      "rudder"
     }
     Outport {
       BusObject		      ""
       BusOutputAsStruct	      "off"
       Name		      "sensors_waterspeed"
     }
+    Outport {
+      BusObject		      ""
+      BusOutputAsStruct	      "off"
+      Name		      "heading"
+    }
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.15"
+    ComputedModelVersion    "1.24"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -56,9 +61,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Oct 18 14:17:56 2013"
-  RTWModifiedTimeStamp	  304005652
-  ModelVersionFormat	  "1.%<AutoIncrement:15>"
+  LastModifiedDate	  "Fri Dec 06 17:00:55 2013"
+  RTWModifiedTimeStamp	  308250053
+  ModelVersionFormat	  "1.%<AutoIncrement:24>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -161,7 +166,7 @@ Model {
 	  $ObjectID		  3
 	  Version		  "1.11.1"
 	  StartTime		  "0.0"
-	  StopTime		  "10.0"
+	  StopTime		  "10"
 	  AbsTol		  "auto"
 	  FixedStep		  ".01"
 	  InitialStep		  "auto"
@@ -208,8 +213,8 @@ Model {
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  on
 	  SaveState		  off
-	  SignalLogging		  on
-	  DSMLogging		  on
+	  SignalLogging		  off
+	  DSMLogging		  off
 	  InspectSignalLogs	  off
 	  SaveTime		  on
 	  ReturnWorkspaceOutputs  off
@@ -637,8 +642,8 @@ Model {
 	PropName		"Components"
       }
       Name		      "Configuration"
-      CurrentDlgPage	      "Optimization"
-      ConfigPrmDlgPosition     [ 57, 2, 1319, 912 ] 
+      CurrentDlgPage	      "Data Import//Export"
+      ConfigPrmDlgPosition     [ 55, 36, 1333, 984 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -969,8 +974,8 @@ Model {
   }
   System {
     Name		    "Plant"
-    Location		    [748, 226, 1848, 843]
-    Open		    off
+    Location		    [123, 259, 1223, 876]
+    Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -983,7 +988,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "120"
+    SIDHighWatermark	    "130"
     Block {
       BlockType		      Inport
       Name		      "Commanded Rudder"
@@ -2066,6 +2071,16 @@ Model {
     }
     Block {
       BlockType		      From
+      Name		      "From3"
+      SID		      "129"
+      Position		      [185, 349, 245, 371]
+      BackgroundColor	      "cyan"
+      ShowName		      off
+      GotoTag		      "Heading"
+      TagVisibility	      "global"
+    }
+    Block {
+      BlockType		      From
       Name		      "From8"
       SID		      "66"
       Position		      [475, 134, 535, 156]
@@ -2073,204 +2088,6 @@ Model {
       ShowName		      off
       GotoTag		      "Rudder"
       TagVisibility	      "global"
-    }
-    Block {
-      BlockType		      SubSystem
-      Name		      "Generate sensor data\nfrom actuator position"
-      SID		      "67"
-      Ports		      [2, 2]
-      Position		      [280, 268, 455, 337]
-      LibraryVersion	      "1.216"
-      MinAlgLoopOccurrences   off
-      PropExecContextOutsideSubsystem off
-      RTWSystemCode	      "Auto"
-      FunctionWithSeparateData off
-      Opaque		      off
-      RequestExecContextInheritance off
-      MaskHideContents	      off
-      System {
-	Name			"Generate sensor data\nfrom actuator position"
-	Location		[865, 198, 1527, 791]
-	Open			off
-	ModelBrowserVisibility	off
-	ModelBrowserWidth	200
-	ScreenColor		"white"
-	PaperOrientation	"landscape"
-	PaperPositionMode	"auto"
-	PaperType		"usletter"
-	PaperUnits		"inches"
-	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
-	TiledPageScale		1
-	ShowPageBoundaries	off
-	ZoomFactor		"100"
-	Block {
-	  BlockType		  Inport
-	  Name			  "throttle"
-	  SID			  "68"
-	  Position		  [80, 103, 110, 117]
-	  BackgroundColor	  "darkGreen"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Inport
-	  Name			  "rudder"
-	  SID			  "69"
-	  Position		  [80, 313, 110, 327]
-	  BackgroundColor	  "darkGreen"
-	  Port			  "2"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  DataTypeConversion
-	  Name			  "Data Type Conversion1"
-	  SID			  "70"
-	  Position		  [270, 308, 330, 332]
-	  ZOrder		  -7
-	  ShowName		  off
-	  OutDataTypeStr	  "single"
-	  RndMeth		  "Simplest"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  SubSystem
-	  Name			  "Map from -1..1 to -1023..1023"
-	  SID			  "71"
-	  Ports			  [1, 1]
-	  Position		  [160, 101, 235, 119]
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  System {
-	    Name		    "Map from -1..1 to -1023..1023"
-	    Location		    [698, 445, 1104, 725]
-	    Open		    off
-	    ModelBrowserVisibility  off
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "usletter"
-	    PaperUnits		    "inches"
-	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "100"
-	    Block {
-	      BlockType		      Inport
-	      Name		      "In1"
-	      SID		      "72"
-	      Position		      [25, 33, 55, 47]
-	      IconDisplay	      "Port number"
-	    }
-	    Block {
-	      BlockType		      DataTypeConversion
-	      Name		      "Data Type Conversion"
-	      SID		      "73"
-	      Position		      [230, 32, 290, 48]
-	      ShowName		      off
-	      OutDataTypeStr	      "int16"
-	      RndMeth		      "Simplest"
-	      SaturateOnIntegerOverflow	off
-	    }
-	    Block {
-	      BlockType		      Gain
-	      Name		      "Gain"
-	      SID		      "74"
-	      Position		      [110, 24, 165, 56]
-	      ShowName		      off
-	      Gain		      "1023"
-	      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
-	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
-	      SaturateOnIntegerOverflow	off
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "Out1"
-	      SID		      "75"
-	      Position		      [325, 33, 355, 47]
-	      IconDisplay	      "Port number"
-	    }
-	    Line {
-	      SrcBlock		      "Gain"
-	      SrcPort		      1
-	      DstBlock		      "Data Type Conversion"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "In1"
-	      SrcPort		      1
-	      DstBlock		      "Gain"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Data Type Conversion"
-	      SrcPort		      1
-	      DstBlock		      "Out1"
-	      DstPort		      1
-	    }
-	  }
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "Throttle sensors"
-	  SID			  "76"
-	  Position		  [530, 103, 560, 117]
-	  BackgroundColor	  "yellow"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Outport
-	  Name			  "Rudder sensors"
-	  SID			  "77"
-	  Position		  [530, 313, 560, 327]
-	  BackgroundColor	  "yellow"
-	  Port			  "2"
-	  IconDisplay		  "Port number"
-	}
-	Line {
-	  SrcBlock		  "throttle"
-	  SrcPort		  1
-	  DstBlock		  "Map from -1..1 to -1023..1023"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "rudder"
-	  SrcPort		  1
-	  DstBlock		  "Data Type Conversion1"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Map from -1..1 to -1023..1023"
-	  SrcPort		  1
-	  DstBlock		  "Throttle sensors"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Data Type Conversion1"
-	  SrcPort		  1
-	  DstBlock		  "Rudder sensors"
-	  DstPort		  1
-	}
-	Annotation {
-	  Name			  "Rudder sensor data is generated here. Given the ADC configuration onboard the dsPIC\nas well as the range"
-	  " of voltage values for the rudder pot. the output range should be \n<=313 for starboard, >=620 for port, and 475<=c"
-	  "enter<=505. It's mapped from the -+.7854\n(45deg) range that is used in calculations. The rudder follow the standar"
-	  "d right-hand-rule\nconvention and as such +1 corresponds to port and -1 corresponds to starboard."
-	  Position		  [51, 467]
-	  HorizontalAlignment	  "left"
-	}
-	Annotation {
-	  Name			  "Limits are set to within 2.5% of the real physical limits. This should \nprovide enough buffer for the re"
-	  "al system to handle it. These might want to be changed\nto actually be closer to the real limit. The potentiometer "
-	  "data gives the controller a good\nsense of where the actuators are so the limits are just emergency triggers."
-	  Position		  [51, 540]
-	  HorizontalAlignment	  "left"
-	}
-      }
     }
     Block {
       BlockType		      SubSystem
@@ -2288,7 +2105,7 @@ Model {
       System {
 	Name			"Get GPS"
 	Location		[82, 173, 1033, 938]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -2322,7 +2139,7 @@ Model {
 	  Name			  "Bus\nCreator"
 	  SID			  "81"
 	  Ports			  [10, 1]
-	  Position		  [625, 144, 630, 501]
+	  Position		  [810, 144, 815, 501]
 	  ShowName		  off
 	  Inputs		  "10"
 	  DisplayOption		  "bar"
@@ -2330,11 +2147,31 @@ Model {
 	  NonVirtualBus		  on
 	}
 	Block {
+	  BlockType		  Delay
+	  Name			  "Delay"
+	  SID			  "125"
+	  Ports			  [1, 1]
+	  Position		  [170, 233, 205, 267]
+	  InputPortMap		  "u0"
+	  DelayLength		  "500"
+	  ExternalReset		  "None"
+	}
+	Block {
+	  BlockType		  Delay
+	  Name			  "Delay1"
+	  SID			  "126"
+	  Ports			  [1, 1]
+	  Position		  [170, 408, 205, 442]
+	  InputPortMap		  "u0"
+	  DelayLength		  "500"
+	  ExternalReset		  "None"
+	}
+	Block {
 	  BlockType		  Demux
 	  Name			  "Demux1"
 	  SID			  "82"
 	  Ports			  [1, 2]
-	  Position		  [215, 214, 220, 256]
+	  Position		  [400, 214, 405, 256]
 	  BackgroundColor	  "black"
 	  ShowName		  off
 	  Outputs		  "2"
@@ -2345,7 +2182,7 @@ Model {
 	  Name			  "Demux2"
 	  SID			  "83"
 	  Ports			  [1, 2]
-	  Position		  [530, 357, 535, 428]
+	  Position		  [715, 357, 720, 428]
 	  BackgroundColor	  "black"
 	  ShowName		  off
 	  Outputs		  "2"
@@ -2368,7 +2205,7 @@ Model {
 	  Name			  "Euclidean\nnorm"
 	  SID			  "85"
 	  Ports			  [1, 1]
-	  Position		  [265, 286, 325, 314]
+	  Position		  [450, 286, 510, 314]
 	  ShowName		  off
 	  LibraryVersion	  "1.137"
 	  SourceBlock		  "uSimLib/Math/Euclidean\nnorm"
@@ -2388,7 +2225,7 @@ Model {
 	  Name			  "Flat Earth to LLA"
 	  SID			  "86"
 	  Ports			  [2, 2]
-	  Position		  [195, 413, 260, 462]
+	  Position		  [380, 413, 445, 462]
 	  LibraryVersion	  "1.273"
 	  SourceBlock		  "aerolibtransform2/Flat Earth to LLA"
 	  SourceType		  "Flat Earth to LLA"
@@ -2403,7 +2240,7 @@ Model {
 	  BlockType		  Gain
 	  Name			  "Gain"
 	  SID			  "87"
-	  Position		  [400, 410, 430, 440]
+	  Position		  [585, 410, 615, 440]
 	  ZOrder		  -11
 	  ShowName		  off
 	  Gain			  "1e7"
@@ -2415,7 +2252,7 @@ Model {
 	  BlockType		  Gain
 	  Name			  "Gain1"
 	  SID			  "88"
-	  Position		  [455, 220, 485, 250]
+	  Position		  [640, 220, 670, 250]
 	  ZOrder		  -11
 	  ShowName		  off
 	  Gain			  "1e4"
@@ -2433,7 +2270,7 @@ Model {
 	  BlockType		  Gain
 	  Name			  "Gain2"
 	  SID			  "89"
-	  Position		  [455, 285, 485, 315]
+	  Position		  [640, 285, 670, 315]
 	  ZOrder		  -11
 	  ShowName		  off
 	  Gain			  "1e2"
@@ -2452,7 +2289,7 @@ Model {
 	  Name			  "Selector"
 	  SID			  "90"
 	  Ports			  [1, 1]
-	  Position		  [160, 216, 200, 254]
+	  Position		  [345, 216, 385, 254]
 	  ShowName		  off
 	  InputPortWidth	  "3"
 	  IndexOptions		  "Index vector (dialog)"
@@ -2464,7 +2301,7 @@ Model {
 	  Name			  "Subsystem"
 	  SID			  "117"
 	  Ports			  [2, 1]
-	  Position		  [245, 214, 345, 256]
+	  Position		  [430, 214, 530, 256]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -2609,7 +2446,7 @@ Model {
 	  BlockType		  Terminator
 	  Name			  "Terminator"
 	  SID			  "91"
-	  Position		  [280, 440, 300, 460]
+	  Position		  [465, 440, 485, 460]
 	  ZOrder		  -5
 	  ShowName		  off
 	}
@@ -2617,7 +2454,7 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Zero level trust"
 	  SID			  "92"
-	  Position		  [140, 441, 165, 459]
+	  Position		  [325, 441, 350, 459]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -2626,7 +2463,7 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Zero level trust1"
 	  SID			  "93"
-	  Position		  [520, 156, 545, 174]
+	  Position		  [705, 156, 730, 174]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -2642,7 +2479,7 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Zero level trust2"
 	  SID			  "94"
-	  Position		  [520, 436, 545, 454]
+	  Position		  [705, 436, 730, 454]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -2658,7 +2495,7 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Zero level trust3"
 	  SID			  "95"
-	  Position		  [520, 471, 545, 489]
+	  Position		  [705, 471, 730, 489]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -2674,7 +2511,7 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Zero level trust4"
 	  SID			  "96"
-	  Position		  [520, 191, 545, 209]
+	  Position		  [705, 191, 730, 209]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "3"
@@ -2690,7 +2527,7 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Zero level trust5"
 	  SID			  "97"
-	  Position		  [520, 311, 545, 329]
+	  Position		  [705, 311, 730, 329]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -2706,7 +2543,7 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Zero level trust6"
 	  SID			  "98"
-	  Position		  [520, 331, 545, 349]
+	  Position		  [705, 331, 730, 349]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -2722,7 +2559,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "GPS"
 	  SID			  "99"
-	  Position		  [680, 318, 710, 332]
+	  Position		  [850, 318, 880, 332]
 	  BackgroundColor	  "yellow"
 	  IconDisplay		  "Port number"
 	}
@@ -2735,7 +2572,7 @@ Model {
 	Line {
 	  SrcBlock		  "P_ned"
 	  SrcPort		  1
-	  DstBlock		  "Flat Earth to LLA"
+	  DstBlock		  "Delay1"
 	  DstPort		  1
 	}
 	Line {
@@ -2775,17 +2612,8 @@ Model {
 	Line {
 	  SrcBlock		  "Vn, Ve, Vd"
 	  SrcPort		  1
-	  Points		  [30, 0]
-	  Branch {
-	    Points		    [0, -15]
-	    DstBlock		    "Selector"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, 50]
-	    DstBlock		    "Euclidean\nnorm"
-	    DstPort		    1
-	  }
+	  DstBlock		  "Delay"
+	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Subsystem"
@@ -2890,37 +2718,62 @@ Model {
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  6
 	}
+	Line {
+	  SrcBlock		  "Delay"
+	  SrcPort		  1
+	  Points		  [65, 0]
+	  Branch {
+	    Points		    [0, -15]
+	    DstBlock		    "Selector"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, 50]
+	    DstBlock		    "Euclidean\nnorm"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  SrcBlock		  "Delay1"
+	  SrcPort		  1
+	  DstBlock		  "Flat Earth to LLA"
+	  DstPort		  1
+	}
 	Annotation {
 	  Name			  "Convert velocity vector to speed"
-	  Position		  [331, 271]
+	  Position		  [516, 271]
 	}
 	Annotation {
 	  Name			  "Convert velocity vector in m/s to a scalar heading in degrees from North, increasing eastward."
-	  Position		  [262, 175]
+	  Position		  [447, 175]
 	}
 	Annotation {
 	  Name			  "Convert degrees to\nint32 in units of 1e-7"
-	  Position		  [386, 393]
+	  Position		  [571, 393]
 	}
 	Annotation {
-	  Position		  [630, 329]
+	  Position		  [815, 329]
 	}
 	Annotation {
-	  Position		  [630, 315]
+	  Position		  [815, 315]
 	}
 	Annotation {
-	  Position		  [623, 315]
+	  Position		  [808, 315]
 	}
 	Annotation {
-	  Position		  [630, 312]
+	  Position		  [815, 312]
 	}
 	Annotation {
 	  Name			  "A uint16 in units of\n1e-2 m/s"
-	  Position		  [482, 273]
+	  Position		  [667, 273]
 	}
 	Annotation {
 	  Name			  "A uint16 in units of\n1e-4 rads"
-	  Position		  [462, 203]
+	  Position		  [647, 203]
+	}
+	Annotation {
+	  Name			  "Implement a 0.5s delay on the vehicle position."
+	  Position		  [182, 338]
 	}
       }
     }
@@ -3005,23 +2858,23 @@ Model {
     }
     Block {
       BlockType		      Outport
-      Name		      "sensors_t"
+      Name		      "throttle"
       SID		      "108"
-      Position		      [490, 278, 520, 292]
+      Position		      [305, 278, 335, 292]
       BackgroundColor	      "yellow"
       Port		      "2"
       IconDisplay	      "Port number"
-      OutDataTypeStr	      "int16"
+      OutDataTypeStr	      "double"
     }
     Block {
       BlockType		      Outport
-      Name		      "sensors_r"
+      Name		      "rudder"
       SID		      "109"
-      Position		      [490, 313, 520, 327]
+      Position		      [305, 313, 335, 327]
       BackgroundColor	      "yellow"
       Port		      "3"
       IconDisplay	      "Port number"
-      OutDataTypeStr	      "single"
+      OutDataTypeStr	      "double"
     }
     Block {
       BlockType		      Outport
@@ -3032,6 +2885,16 @@ Model {
       Port		      "4"
       IconDisplay	      "Port number"
       OutDataTypeStr	      "single"
+    }
+    Block {
+      BlockType		      Outport
+      Name		      "heading"
+      SID		      "130"
+      Position		      [305, 353, 335, 367]
+      BackgroundColor	      "yellow"
+      Port		      "5"
+      IconDisplay	      "Port number"
+      OutDataTypeStr	      "double"
     }
     Line {
       SrcBlock		      "Commanded Throttle"
@@ -3110,25 +2973,13 @@ Model {
     Line {
       SrcBlock		      "From22"
       SrcPort		      1
-      DstBlock		      "Generate sensor data\nfrom actuator position"
-      DstPort		      2
+      DstBlock		      "rudder"
+      DstPort		      1
     }
     Line {
       SrcBlock		      "From20"
       SrcPort		      1
-      DstBlock		      "Generate sensor data\nfrom actuator position"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Generate sensor data\nfrom actuator position"
-      SrcPort		      1
-      DstBlock		      "sensors_t"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Generate sensor data\nfrom actuator position"
-      SrcPort		      2
-      DstBlock		      "sensors_r"
+      DstBlock		      "throttle"
       DstPort		      1
     }
     Line {
@@ -3147,6 +2998,12 @@ Model {
       SrcBlock		      "Forces & Moments"
       SrcPort		      5
       DstBlock		      "sensors_waterspeed"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "From3"
+      SrcPort		      1
+      DstBlock		      "heading"
       DstPort		      1
     }
     Annotation {

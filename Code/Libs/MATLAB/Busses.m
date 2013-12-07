@@ -69,13 +69,34 @@ elems(6).SamplingMode = 'Sample based';
 elems(6).Min = [];
 elems(6).Max = [];
 
-MavlinkData = Simulink.Bus;
-MavlinkData.Description = sprintf('Holds all of the data generated within Simulink code that Mavlink may need access to for transmission.');
-MavlinkData.DataScope = 'Imported';
-MavlinkData.HeaderFile = 'MavlinkGlue.h';
-MavlinkData.Alignment = -1;
-MavlinkData.Elements = elems;
-assignin('base', 'MavlinkData', MavlinkData)
+elems(7) = Simulink.BusElement;
+elems(7).Name = 'wp0';
+elems(7).Dimensions = 3;
+elems(7).DimensionsMode = 'Fixed';
+elems(7).DataType = 'single';
+elems(7).SampleTime = -1;
+elems(7).Complexity = 'real';
+elems(7).SamplingMode = 'Sample based';
+elems(7).Min = [];
+elems(7).Max = [];
+
+elems(8) = Simulink.BusElement;
+elems(8).Name = 'wp1';
+elems(8).Dimensions = 3;
+elems(8).DimensionsMode = 'Fixed';
+elems(8).DataType = 'single';
+elems(8).SampleTime = -1;
+elems(8).Complexity = 'real';
+elems(8).SamplingMode = 'Sample based';
+elems(8).Min = [];
+elems(8).Max = [];
+
+InternalVariables = Simulink.Bus;
+InternalVariables.Description = sprintf('Holds all of the data generated within Simulink code that Mavlink may need access to for transmission.');
+InternalVariables.DataScope = 'Exported';
+InternalVariables.Alignment = -1;
+InternalVariables.Elements = elems;
+assignin('base', 'InternalVariables', InternalVariables);
 
 % Bus object: Mission 
 clear elems;

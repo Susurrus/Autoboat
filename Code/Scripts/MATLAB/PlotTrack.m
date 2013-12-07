@@ -6,8 +6,8 @@ hold on;
 axis equal;
 
 % Clean up some variables that may have singleton dimensions:
-position = squeeze(position);
-velocity = squeeze(velocity);
+position = single(squeeze(globalPosition));
+velocity = single(squeeze(sensedVelocity));
 
 % Fix velocity + position orientation
 if size(velocity, 1) == 3
@@ -59,12 +59,12 @@ title('Throttle Commands');
 
 figure;
 hold on;
-plot(rudderAngleCommand * 180/pi, 'k:');
+plot(commands_rudder_angle * 180/pi, 'k:');
 plot(rudder_position * 180/pi);
 title('Commanded versus actual rudder angle');
 ylabel('Rudder angle (deg)');
 set(gca, 'XTick', []);
-set(gca, 'YLim', [-45 45]);
+set(gca, 'YLim', [-100 100]);
 xlabel('Time');
 
 %% Plot errors

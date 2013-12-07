@@ -36,7 +36,7 @@
 #include "controller.h"
 
 // Declare our internal variable data store for some miscellaneous data output over MAVLink.
-MavlinkData internalVariables;
+InternalVariables controllerVars;
 
 /**
  * This function converts latitude/longitude/altitude into a north/east/down local tangent plane. The
@@ -285,7 +285,7 @@ void MavLinkSendSystemTime(void)
 
 /**
  * This function transmits a MAVLink SYS_STATUS message. It relies on various external information such as sensor/actuator status
- * from ecanSensors.h, the internalVariables struct exported by Simulink, and the drop rate calculated within ecanSensors.c.
+ * from ecanSensors.h, the controllerVars struct exported by Simulink, and the drop rate calculated within ecanSensors.c.
  */
 void MavLinkSendStatus(void)
 {
@@ -388,8 +388,8 @@ void MavLinkSendBasicState(void)
 	mavlink_msg_basic_state_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 		currentCommands.autonomousRudderCommand, currentCommands.primaryManualRudderCommand, currentCommands.secondaryManualRudderCommand, rudderSensorData.RudderAngle,
 		currentCommands.autonomousThrottleCommand, currentCommands.primaryManualThrottleCommand, currentCommands.secondaryManualThrottleCommand, 0,
-		internalVariables.Acmd,
-		internalVariables.L2Vector[0], internalVariables.L2Vector[1]
+		controllerVars.Acmd,
+		controllerVars.L2Vector[0], controllerVars.L2Vector[1]
 	);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
@@ -408,7 +408,7 @@ void MavLinkSendAttitude(void)
 
 	mavlink_msg_attitude_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                          nodeSystemTime*10,
-							  revoGsDataStore.roll, revoGsDataStore.pitch, internalVariables.Heading,
+							  revoGsDataStore.roll, revoGsDataStore.pitch, controllerVars.Heading,
 							  0.0, 0.0, 0.0);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
@@ -429,8 +429,8 @@ void MavLinkSendLocalPosition(void)
 
 	mavlink_msg_local_position_ned_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                                    nodeSystemTime*10,
-	                                    internalVariables.LocalPosition[0], internalVariables.LocalPosition[1], internalVariables.LocalPosition[2],
-	                                    internalVariables.Velocity[0], internalVariables.Velocity[1], internalVariables.Velocity[2]);
+	                                    controllerVars.LocalPosition[0], controllerVars.LocalPosition[1], controllerVars.LocalPosition[2],
+	                                    controllerVars.Velocity[0], controllerVars.Velocity[1], controllerVars.Velocity[2]);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
@@ -866,9 +866,9 @@ void SetStartingPointToCurrentLocation(void)
 	// Update the starting point for the track to be the current vehicle position.
 	// We tack on GPS coordinates if we have some.
 	Mission newStartPoint = {};
-	newStartPoint.coordinates[0] = internalVariables.LocalPosition[0];
-	newStartPoint.coordinates[1] = internalVariables.LocalPosition[1];
-	newStartPoint.coordinates[2] = internalVariables.LocalPosition[2];
+	newStartPoint.coordinates[0] = controllerVars.LocalPosition[0];
+	newStartPoint.coordinates[1] = controllerVars.LocalPosition[1];
+	newStartPoint.coordinates[2] = controllerVars.LocalPosition[2];
 	if (gpsDataStore.mode == 1 || gpsDataStore.mode == 2) {
 		newStartPoint.otherCoordinates[0] = gpsDataStore.latitude;
 		newStartPoint.otherCoordinates[1] = gpsDataStore.longitude;

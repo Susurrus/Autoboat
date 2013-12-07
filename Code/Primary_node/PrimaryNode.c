@@ -249,12 +249,13 @@ void PrimaryNode100HzLoop(void)
 	// And make sure the primary LED is blinking indicating that the node is operational
 	SetStatusModeLed();
 
-	// Run the next timestep of the controller.
+	// Run the next timestep of the controller. Output is stored locally and passed to the actuators,
+	// but some additional system state is stored in controllerVars in `MavlinkGlue`.
 	float rCommand;
 	int16_t tCommand;
 	bool reset = (nodeErrors != 0);
 	controller_custom(&gpsDataStore, &throttleDataStore.rpm, &rudderSensorData.RudderAngle,
-		&reset, &waterDataStore.speed, &rCommand, &tCommand);
+		&reset, &waterDataStore.speed, &rCommand, &tCommand, &controllerVars);
 
 	// And output the necessary control outputs.
 	PrimaryNodeMuxAndOutputControllerCommands(rCommand, tCommand);

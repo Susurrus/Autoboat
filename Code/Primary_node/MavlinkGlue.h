@@ -25,6 +25,10 @@
 #define M_PI_2 1.57079632679489661923
 #include "mavlink.h"
 
+// The main Simulink project `controller.mdl` declares the InternalVariables struct.
+#include "controller.h"
+extern InternalVariables controllerVars; // Track a bunch of internal variables from the controller.
+
 // Events that trigger changes in the parameter protocol state machine.
 enum PARAM_EVENT {
 	PARAM_EVENT_NONE,
@@ -51,17 +55,6 @@ enum MISSION_EVENT {
 	MISSION_EVENT_SET_CURRENT_RECEIVED,
 	MISSION_EVENT_ITEM_RECEIVED
 };
-
-// Large data store of many internal/misc variables that are output via MAVLink.
-typedef struct {
-  float LocalPosition[3];
-  float Velocity[3];
-  float Heading;
-  float Speed;
-  float L2Vector[3];
-  float Acmd;
-} MavlinkData;
-extern MavlinkData internalVariables;
 
 /**
  * Initialize MAVLink transmission. This just sets up the MAVLink scheduler with the basic
