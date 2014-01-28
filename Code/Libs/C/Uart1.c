@@ -14,17 +14,22 @@ static uint8_t u1TxBuf[1024];
 void Uart1StartTransmission(void);
 
 /**
- * Initialization function for the UART1 peripheral.
- * Should be called in initialization code for the
- * model. This function configures the UART
- * for whatever baud rate is specified. It also configures two circular buffers
- * for transmission and reception.
+ * Initialization function for the UART1 peripheral. Should be called in initialization code for the
+ * model. This function configures the UART for whatever baud rate is specified. It also configures
+ * two circular buffers for transmission and reception.
+ *
+ * This function can be called again to re-initialize the UART. This clears all relevant registers
+ * and reinitializes values to 0.
  */
 void Uart1Init(uint16_t brgRegister)
 {
     // First initialize the necessary circular buffers.
     CB_Init(&uart1RxBuffer, u1RxBuf, sizeof(u1RxBuf));
     CB_Init(&uart1TxBuffer, u1TxBuf, sizeof(u1TxBuf));
+
+	// If the UART was already opened, close it first. This should also clear the transmit/receive
+	// buffers so we won't have left-over data around when we re-initialize, if we are.
+	CloseUART1();
 
     // Configure and open the port.
 	OpenUART1(
@@ -33,7 +38,7 @@ void Uart1Init(uint16_t brgRegister)
 		brgRegister
 	);
 
-    // Finally setup interrupts for proper UART communication. Enable both TX and RX interrupts at
+    // Setup interrupts for proper UART communication. Enable both TX and RX interrupts at
 	// priority level 6 (arbitrary).
     ConfigIntUART1(UART_RX_INT_EN & UART_RX_INT_PR6 &
                    UART_TX_INT_EN & UART_TX_INT_PR6);
@@ -103,15 +108,24 @@ int Uart1WriteData(const void *data, size_t length)
 
 void _ISR _U1RXInterrupt(void)
 {
+	// Make sure if there's an overflow error, then we clear it. While this destroys 5 bytes of data,
+	// it's like the whole message these bytes are a part of is missing more bytes, and irrecoverably
+	// corrupt, so we don't worry about it.
+	if (U1STAbits.OERR == 1) {
+		U1STAbits.OERR = 0;
+	}
 
     // Keep receiving new bytes while the buffer has data.
+	char c;
     while (U1STAbits.URXDA == 1) {
-            CB_WriteByte(&uart1RxBuffer, (uint8_t)U1RXREG);
-    }
-
-    // Clear buffer overflow bit if triggered
-    if (U1STAbits.OERR == 1) {
-            U1STAbits.OERR = 0;
+		// If there's a framing or parity error for the current UART byte, read the data but ignore
+		// it. Only if there isn't an error do we actually add the value to our circular buffer.
+		if (U1STAbits.FERR == 1 && U1STAbits.PERR) {
+			c = U1RXREG;
+		} else {
+			c = U1RXREG;
+			CB_WriteByte(&uart1RxBuffer, (uint8_t)c);
+		}
     }
 
     // Clear the interrupt flag
@@ -127,6 +141,10 @@ void _ISR _U1RXInterrupt(void)
  */
 void _ISR _U1TXInterrupt(void)
 {
+	// Due to a bug with the dsPIC33E, this interrupt can trigger prematurely. We sit and poll the
+	// TRMT bit to stall until the character is properly transmit.
+	while (!U1STAbits.TRMT);
+
     Uart1StartTransmission();
 
     // Clear the interrupt flag
