@@ -151,15 +151,16 @@ int main(void)
 #elif __dsPIC33EP256MC502__
 	// To enable ECAN1 pins: TX on 39, RX on 36
 	PPSOutput(OUT_FN_PPS_C1TX, OUT_PIN_PPS_RP39);
-	PPSInput(PPS_C1RX, PPS_RP36);
+	PPSInput(IN_FN_PPS_C1RX, IN_PIN_PPS_RP36);
 
 	// To enable UART1 pins: TX on 43, RX on 45
 	PPSOutput(OUT_FN_PPS_U1TX, OUT_PIN_PPS_RP43);
-	PPSInput(PPS_U1RX, PPS_RPI45);
+	PPSOutput(OUT_FN_PPS_U1TX, OUT_PIN_PPS_RP42); // FIXME: Remove this; for debugging only!
+	PPSInput(IN_FN_PPS_U1RX, IN_PIN_PPS_RPI45);
 
 	// To enable UART2 pins: TX on 40, RX on 41
 	PPSOutput(OUT_FN_PPS_U2TX, OUT_PIN_PPS_RP40);
-	PPSInput(PPS_U2RX, PPS_RP41);
+	PPSInput(IN_FN_PPS_U2RX, IN_PIN_PPS_RP41);
 #endif
 	PPSLock;
 

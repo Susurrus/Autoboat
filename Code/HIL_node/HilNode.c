@@ -174,11 +174,11 @@ void HilNodeInit(void)
 #ifdef __dsPIC33FJ128MC802__
 	// To enable ECAN1 pins: TX on 7, RX on 4
 	PPSOutput(OUT_FN_PPS_C1TX, OUT_PIN_PPS_RP7);
-	PPSInput(PPS_C1RX, PPS_RP4);
+	PPSInput(IN_FN_PPS_C1RX, IN_PIN_PPS_RP4);
 
 	// To enable UART1 pins: TX on 11, RX on 13
 	PPSOutput(OUT_FN_PPS_U1TX, OUT_PIN_PPS_RP11);
-	PPSInput(PPS_U1RX, PPS_RP13);
+	PPSInput(IN_FN_PPS_U1RX, IN_PIN_PPS_RP13);
 
 	// Configure SPI2 so that:
 	//  * (input) SPI2.SDI = B8
@@ -190,15 +190,15 @@ void HilNodeInit(void)
 #elif __dsPIC33EP256MC502__
 	// To enable ECAN1 pins: TX on 39, RX on 36
 	PPSOutput(OUT_FN_PPS_C1TX, OUT_PIN_PPS_RP39);
-	PPSInput(PPS_C1RX, PPS_RP36);
+	PPSInput(IN_FN_PPS_C1RX, IN_PIN_PPS_RP36);
 
 	// To enable UART1 pins: TX on 43, RX on 45
 	PPSOutput(OUT_FN_PPS_U1TX, OUT_PIN_PPS_RP43);
-	PPSInput(PPS_U1RX, PPS_RPI45);
+	PPSInput(IN_FN_PPS_U1RX, IN_PIN_PPS_RPI45);
 
 	// Configure SPI2 so that:
 	//  * (input) SPI2.SDI = B10
-	PPSInput(PPS_SDI2, PPS_RP42);
+	PPSInput(IN_FN_PPS_SDI2, IN_PIN_PPS_RP42);
 	//  * SPI2.SCK is output on B9
 	PPSOutput(OUT_FN_PPS_SCK2, OUT_PIN_PPS_RP41);
 	//  * (output) SPI2.SDO = B8
