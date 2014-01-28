@@ -113,7 +113,7 @@ void Ecan1Init(uint32_t f_osc)
 #elif __dsPIC33EP256MC502__
 		  (unsigned long int)ecan1MsgBuf,
 #endif
-		 NULL,
+		 0ul,
 		 (uint16_t)&C1TXD,
 		 7);
 	DMA2REQbits.IRQSEL = 0x46; // Attach this DMA to the ECAN1 TX data sent event
@@ -126,7 +126,7 @@ void Ecan1Init(uint32_t f_osc)
 #elif __dsPIC33EP256MC502__
 		  (unsigned long int)ecan1MsgBuf,
 #endif
-		  NULL,
+		  0ul,
 		  (uint16_t)&C1RXD,
 		  7);
 	DMA0REQbits.IRQSEL = 0x22; // Attach this DMA to the ECAN1 RX data ready event
