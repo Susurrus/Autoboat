@@ -248,7 +248,7 @@ void Ecan1GetErrorStatus(uint8_t errors[2])
  * It clears interrupt bits and pushes received message into
  * the circular buffer.
  */
-void __attribute__((interrupt, no_auto_psv))_C1Interrupt(void)
+void _ISR _C1Interrupt(void)
 {
     // Give us a CAN message struct to populate and use
     CanMessage message;

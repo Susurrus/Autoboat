@@ -101,7 +101,7 @@ int Uart1WriteData(const void *data, size_t length)
     return success;
 }
 
-void __attribute__((__interrupt__, no_auto_psv)) _U1RXInterrupt(void)
+void _ISR _U1RXInterrupt(void)
 {
 
     // Keep receiving new bytes while the buffer has data.
@@ -125,7 +125,7 @@ void __attribute__((__interrupt__, no_auto_psv)) _U1RXInterrupt(void)
  * therefore keeps adding bytes to transmit if there're more
  * in the queue.
  */
-void __attribute__((__interrupt__, no_auto_psv)) _U1TXInterrupt(void)
+void _ISR _U1TXInterrupt(void)
 {
     Uart1StartTransmission();
 
