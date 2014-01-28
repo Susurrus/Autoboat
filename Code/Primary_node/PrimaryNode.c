@@ -139,15 +139,15 @@ int main(void)
 #ifdef __dsPIC33FJ128MC802__
 	// To enable ECAN1 pins: TX on 7, RX on 4
 	PPSOutput(OUT_FN_PPS_C1TX, OUT_PIN_PPS_RP7);
-	PPSInput(PPS_C1RX, PPS_RP4);
+	PPSInput(IN_FN_PPS_C1RX, IN_PIN_PPS_RP4);
 
 	// To enable UART1 pins: TX on 11, RX on 13
 	PPSOutput(OUT_FN_PPS_U1TX, OUT_PIN_PPS_RP11);
-	PPSInput(PPS_U1RX, PPS_RP13);
+	PPSInput(IN_FN_PPS_U1RX, IN_PIN_PPS_RP13);
 
 	// To enable UART2 pins: TX on 8, RX on 9
 	PPSOutput(OUT_FN_PPS_U2TX, OUT_PIN_PPS_RP8);
-	PPSInput(PPS_U2RX, PPS_RP9);
+	PPSInput(IN_FN_PPS_U2RX, IN_PIN_PPS_RP9);
 #elif __dsPIC33EP256MC502__
 	// To enable ECAN1 pins: TX on 39, RX on 36
 	PPSOutput(OUT_FN_PPS_C1TX, OUT_PIN_PPS_RP39);
@@ -498,11 +498,11 @@ void Adc1Init(void)
 #elif __dsPIC33EP256MC502__
 	OpenADC1(
 		ADC_MODULE_ON & ADC_IDLE_CONTINUE & ADC_ADDMABM_SCATTR & ADC_AD12B_12BIT & ADC_FORMAT_INTG & ADC_SSRC_AUTO & ADC_AUTO_SAMPLING_ON & ADC_SIMULTANEOUS & ADC_SAMP_ON,
-		ADC_VREF_AVDD_AVSS & ADC_SCAN_ON & ADC_SELECT_CHAN_0 & ADC_DMA_ADD_INC_4 & ADC_ALT_BUF_OFF & ADC_ALT_INPUT_OFF,
+		ADC_VREF_AVDD_AVSS & ADC_SCAN_ON & ADC_SELECT_CHAN_0 & ADC_ALT_BUF_OFF & ADC_ALT_INPUT_OFF,
 		ADC_SAMPLE_TIME_31 & ADC_CONV_CLK_INTERNAL_RC & ADC_CONV_CLK_32Tcy,
 		ADC_DMA_BUF_LOC_1,
-		0, // Don't read any pins in porta
-		ENABLE_AN0_ANA & ENABLE_AN1_ANA & ENABLE_AN3_ANA & ENABLE_AN5_ANA, // Enable our specific pins
+		0x1 | 0x2, // Read AN0/A0 (voltage sense) and AN1/A1 (temperature)
+		0x2 | 0x8, // Read AN3/B1 (current sense) and AN5/B3 (board voltage sense)
 		0, // Don't read any pins in portc
 		0, // Don't read any pins in portd
 		0, // Don't read any pins in porte
@@ -526,7 +526,7 @@ void Adc1Init(void)
 #elif __dsPIC33EP256MC502__
 		  (unsigned long int)adcDmaBuffer,
 #endif
-		  NULL,
+		  0ul,
 		  (uint16_t)&ADC1BUF0,
 		  3); // Specify the number of pins being measured (n) as n-1 here. Must match ADC_DMA_ADD_INC_n setting.
 	DMA1REQbits.IRQSEL = 0x0D; // Attach this DMA to the ADC1 conversion done event
