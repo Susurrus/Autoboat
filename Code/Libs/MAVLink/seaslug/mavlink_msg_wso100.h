@@ -79,7 +79,7 @@ static inline uint16_t mavlink_msg_wso100_pack(uint8_t system_id, uint8_t compon
  * @brief Pack a wso100 message on a channel
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
- * @param chan The MAVLink channel this message was sent over
+ * @param chan The MAVLink channel this message will be sent over
  * @param msg The MAVLink message to compress the data into
  * @param speed Wind speed in m/s.
  * @param direction Wind direction in rads east from north.
@@ -121,7 +121,7 @@ static inline uint16_t mavlink_msg_wso100_pack_chan(uint8_t system_id, uint8_t c
 }
 
 /**
- * @brief Encode a wso100 struct into a message
+ * @brief Encode a wso100 struct
  *
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
@@ -131,6 +131,20 @@ static inline uint16_t mavlink_msg_wso100_pack_chan(uint8_t system_id, uint8_t c
 static inline uint16_t mavlink_msg_wso100_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_wso100_t* wso100)
 {
 	return mavlink_msg_wso100_pack(system_id, component_id, msg, wso100->speed, wso100->direction, wso100->temperature, wso100->pressure, wso100->humidity);
+}
+
+/**
+ * @brief Encode a wso100 struct on a channel
+ *
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param chan The MAVLink channel this message will be sent over
+ * @param msg The MAVLink message to compress the data into
+ * @param wso100 C-struct to read the message contents from
+ */
+static inline uint16_t mavlink_msg_wso100_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_wso100_t* wso100)
+{
+	return mavlink_msg_wso100_pack_chan(system_id, component_id, chan, msg, wso100->speed, wso100->direction, wso100->temperature, wso100->pressure, wso100->humidity);
 }
 
 /**

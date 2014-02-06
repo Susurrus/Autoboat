@@ -94,7 +94,7 @@ static inline uint16_t mavlink_msg_revo_gs_pack(uint8_t system_id, uint8_t compo
  * @brief Pack a revo_gs message on a channel
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
- * @param chan The MAVLink channel this message was sent over
+ * @param chan The MAVLink channel this message will be sent over
  * @param msg The MAVLink message to compress the data into
  * @param heading Heading in degrees eastward from north
  * @param mag_status Magnetometer status
@@ -145,7 +145,7 @@ static inline uint16_t mavlink_msg_revo_gs_pack_chan(uint8_t system_id, uint8_t 
 }
 
 /**
- * @brief Encode a revo_gs struct into a message
+ * @brief Encode a revo_gs struct
  *
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
@@ -155,6 +155,20 @@ static inline uint16_t mavlink_msg_revo_gs_pack_chan(uint8_t system_id, uint8_t 
 static inline uint16_t mavlink_msg_revo_gs_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_revo_gs_t* revo_gs)
 {
 	return mavlink_msg_revo_gs_pack(system_id, component_id, msg, revo_gs->heading, revo_gs->mag_status, revo_gs->pitch, revo_gs->pitch_status, revo_gs->roll, revo_gs->roll_status, revo_gs->dip, revo_gs->mag_horiz_comp);
+}
+
+/**
+ * @brief Encode a revo_gs struct on a channel
+ *
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param chan The MAVLink channel this message will be sent over
+ * @param msg The MAVLink message to compress the data into
+ * @param revo_gs C-struct to read the message contents from
+ */
+static inline uint16_t mavlink_msg_revo_gs_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_revo_gs_t* revo_gs)
+{
+	return mavlink_msg_revo_gs_pack_chan(system_id, component_id, chan, msg, revo_gs->heading, revo_gs->mag_status, revo_gs->pitch, revo_gs->pitch_status, revo_gs->roll, revo_gs->roll_status, revo_gs->dip, revo_gs->mag_horiz_comp);
 }
 
 /**

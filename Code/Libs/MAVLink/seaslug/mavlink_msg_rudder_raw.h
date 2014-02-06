@@ -84,7 +84,7 @@ static inline uint16_t mavlink_msg_rudder_raw_pack(uint8_t system_id, uint8_t co
  * @brief Pack a rudder_raw message on a channel
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
- * @param chan The MAVLink channel this message was sent over
+ * @param chan The MAVLink channel this message will be sent over
  * @param msg The MAVLink message to compress the data into
  * @param raw_position The raw data from the position sensor, generally a potentiometer.
  * @param port_limit Status of the rudder limit sensor, port side. 0 indicates off and 1 indicates that the limit is hit. If this sensor is inactive set to 0xFF.
@@ -129,7 +129,7 @@ static inline uint16_t mavlink_msg_rudder_raw_pack_chan(uint8_t system_id, uint8
 }
 
 /**
- * @brief Encode a rudder_raw struct into a message
+ * @brief Encode a rudder_raw struct
  *
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
@@ -139,6 +139,20 @@ static inline uint16_t mavlink_msg_rudder_raw_pack_chan(uint8_t system_id, uint8
 static inline uint16_t mavlink_msg_rudder_raw_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_rudder_raw_t* rudder_raw)
 {
 	return mavlink_msg_rudder_raw_pack(system_id, component_id, msg, rudder_raw->raw_position, rudder_raw->port_limit, rudder_raw->center_limit, rudder_raw->starboard_limit, rudder_raw->port_limit_val, rudder_raw->starboard_limit_val);
+}
+
+/**
+ * @brief Encode a rudder_raw struct on a channel
+ *
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param chan The MAVLink channel this message will be sent over
+ * @param msg The MAVLink message to compress the data into
+ * @param rudder_raw C-struct to read the message contents from
+ */
+static inline uint16_t mavlink_msg_rudder_raw_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_rudder_raw_t* rudder_raw)
+{
+	return mavlink_msg_rudder_raw_pack_chan(system_id, component_id, chan, msg, rudder_raw->raw_position, rudder_raw->port_limit, rudder_raw->center_limit, rudder_raw->starboard_limit, rudder_raw->port_limit_val, rudder_raw->starboard_limit_val);
 }
 
 /**

@@ -10,7 +10,7 @@
 #include <math.h>
 
 #ifndef M_PI_2
-#define M_PI_2 1.57079632
+    #define M_PI_2 ((float)asin(1))
 #endif
 
 /**

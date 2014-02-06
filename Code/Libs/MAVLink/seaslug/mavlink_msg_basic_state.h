@@ -109,7 +109,7 @@ static inline uint16_t mavlink_msg_basic_state_pack(uint8_t system_id, uint8_t c
  * @brief Pack a basic_state message on a channel
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
- * @param chan The MAVLink channel this message was sent over
+ * @param chan The MAVLink channel this message will be sent over
  * @param msg The MAVLink message to compress the data into
  * @param commanded_auto_rudder_angle This is the rudder angle command as commanded by the onboard autonomous controller. It's in milliradians where positive indicates port-side.
  * @param commanded_primary_rudder_angle This is the rudder angle command as commanded by the primary manual controller. It's in milliradians where positive indicates port-side.
@@ -169,7 +169,7 @@ static inline uint16_t mavlink_msg_basic_state_pack_chan(uint8_t system_id, uint
 }
 
 /**
- * @brief Encode a basic_state struct into a message
+ * @brief Encode a basic_state struct
  *
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
@@ -179,6 +179,20 @@ static inline uint16_t mavlink_msg_basic_state_pack_chan(uint8_t system_id, uint
 static inline uint16_t mavlink_msg_basic_state_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_basic_state_t* basic_state)
 {
 	return mavlink_msg_basic_state_pack(system_id, component_id, msg, basic_state->commanded_auto_rudder_angle, basic_state->commanded_primary_rudder_angle, basic_state->commanded_secondary_rudder_angle, basic_state->rudder_angle, basic_state->commanded_auto_throttle, basic_state->commanded_primary_throttle, basic_state->commanded_secondary_throttle, basic_state->prop_speed, basic_state->a_cmd, basic_state->L2_north, basic_state->L2_east);
+}
+
+/**
+ * @brief Encode a basic_state struct on a channel
+ *
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param chan The MAVLink channel this message will be sent over
+ * @param msg The MAVLink message to compress the data into
+ * @param basic_state C-struct to read the message contents from
+ */
+static inline uint16_t mavlink_msg_basic_state_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_basic_state_t* basic_state)
+{
+	return mavlink_msg_basic_state_pack_chan(system_id, component_id, chan, msg, basic_state->commanded_auto_rudder_angle, basic_state->commanded_primary_rudder_angle, basic_state->commanded_secondary_rudder_angle, basic_state->rudder_angle, basic_state->commanded_auto_throttle, basic_state->commanded_primary_throttle, basic_state->commanded_secondary_throttle, basic_state->prop_speed, basic_state->a_cmd, basic_state->L2_north, basic_state->L2_east);
 }
 
 /**

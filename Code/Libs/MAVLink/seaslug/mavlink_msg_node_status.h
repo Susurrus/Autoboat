@@ -204,7 +204,7 @@ static inline uint16_t mavlink_msg_node_status_pack(uint8_t system_id, uint8_t c
  * @brief Pack a node_status message on a channel
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
- * @param chan The MAVLink channel this message was sent over
+ * @param chan The MAVLink channel this message will be sent over
  * @param msg The MAVLink message to compress the data into
  * @param hil_status Status bitfield for the HIL node. Consult HilNode.h for details.
  * @param hil_errors Reset bitfield for the HIL node. Consult HilNode.h for details.
@@ -321,7 +321,7 @@ static inline uint16_t mavlink_msg_node_status_pack_chan(uint8_t system_id, uint
 }
 
 /**
- * @brief Encode a node_status struct into a message
+ * @brief Encode a node_status struct
  *
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
@@ -331,6 +331,20 @@ static inline uint16_t mavlink_msg_node_status_pack_chan(uint8_t system_id, uint
 static inline uint16_t mavlink_msg_node_status_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_node_status_t* node_status)
 {
 	return mavlink_msg_node_status_pack(system_id, component_id, msg, node_status->hil_status, node_status->hil_errors, node_status->hil_temp, node_status->hil_load, node_status->hil_voltage, node_status->imu_status, node_status->imu_errors, node_status->imu_temp, node_status->imu_load, node_status->imu_voltage, node_status->power_status, node_status->power_errors, node_status->power_temp, node_status->power_load, node_status->power_voltage, node_status->primary_status, node_status->primary_errors, node_status->primary_temp, node_status->primary_load, node_status->primary_voltage, node_status->rc_status, node_status->rc_errors, node_status->rc_temp, node_status->rc_load, node_status->rc_voltage, node_status->rudder_status, node_status->rudder_errors, node_status->rudder_temp, node_status->rudder_load, node_status->rudder_voltage);
+}
+
+/**
+ * @brief Encode a node_status struct on a channel
+ *
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param chan The MAVLink channel this message will be sent over
+ * @param msg The MAVLink message to compress the data into
+ * @param node_status C-struct to read the message contents from
+ */
+static inline uint16_t mavlink_msg_node_status_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_node_status_t* node_status)
+{
+	return mavlink_msg_node_status_pack_chan(system_id, component_id, chan, msg, node_status->hil_status, node_status->hil_errors, node_status->hil_temp, node_status->hil_load, node_status->hil_voltage, node_status->imu_status, node_status->imu_errors, node_status->imu_temp, node_status->imu_load, node_status->imu_voltage, node_status->power_status, node_status->power_errors, node_status->power_temp, node_status->power_load, node_status->power_voltage, node_status->primary_status, node_status->primary_errors, node_status->primary_temp, node_status->primary_load, node_status->primary_voltage, node_status->rc_status, node_status->rc_errors, node_status->rc_temp, node_status->rc_load, node_status->rc_voltage, node_status->rudder_status, node_status->rudder_errors, node_status->rudder_temp, node_status->rudder_load, node_status->rudder_voltage);
 }
 
 /**
