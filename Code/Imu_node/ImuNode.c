@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
+#include <math.h>
 
 #include <pps.h>
 
@@ -32,6 +33,7 @@ THE SOFTWARE.
 #include "Ecan1.h"
 #include "CanMessages.h"
 #include "Tokimec.h"
+#include "ImuNode.h"
 
 /**
  * Store specific data output from the Tokimec.
@@ -41,6 +43,24 @@ static struct {
     float pitch; // In rads
     float yaw; // In rads
 } tokimecData;
+
+// Specify the sensor timeout to be .2s if the checking is run at 100Hz.
+#define SENSOR_TIMEOUT 20
+typedef struct {
+	bool enabled            : 1; // If the sensor is enabled, i.e. it is online and transmitting messages.
+	uint8_t enabled_counter : 7; // The timeout counter for this sensor being enabled.
+	bool active             : 1; // If the sensor is active, i.e. receiving valid data.
+	uint8_t active_counter  : 7; // The timeout counter for this sensor being active.
+} timeoutCounters;
+
+
+// Start with the assumption that we're disconnected and trigger events starting up as needed.
+struct stc {
+	timeoutCounters imu;
+} sensorAvailability = {
+	{0, SENSOR_TIMEOUT, 0, SENSOR_TIMEOUT}
+};
+
 
 // Set up the message scheduler for running 3 tasks:
 //  * Blinking the status LED at 1Hz
@@ -67,31 +87,64 @@ MessageSchedule taskSchedule = {
 	taskTimeSteps
 };
 
+// Specify the frequency in Hz that these tasks should be executed at. Used with the message scheduler
+// library.
+#define RATE_TRANSMIT_NODE_STATUS      2
+#define RATE_TRANSMIT_IMU_DATA        25
+#define RATE_TRANSMIT_BLINK_DEFAULT    1
+#define RATE_TRANSMIT_BLINK_CONNECTED  4
+
 void ImuNodeInit(uint32_t f_osc)
 {
     // And configure the Peripheral Pin Select pins:
     PPSUnLock;
+	PPSUnLock;
 
 #ifdef __dsPIC33FJ128MC802__
-    // To enable ECAN1 pins: TX on 7, RX on 4
-    PPSOutput(OUT_FN_PPS_C1TX, OUT_PIN_PPS_RP7);
-    PPSInput(PPS_C1RX, PPS_RP4);
+	// To enable ECAN1 pins: TX on 7, RX on 4
+	PPSOutput(OUT_FN_PPS_C1TX, OUT_PIN_PPS_RP7);
+	PPSInput(IN_FN_PPS_C1RX, IN_PIN_PPS_RP4);
+
+	// To enable UART1 pins: TX on 9, RX on 8
+	PPSOutput(OUT_FN_PPS_U1TX, OUT_PIN_PPS_RP9);
+	PPSInput(IN_FN_PPS_U1RX, IN_PIN_PPS_RP8);
 #elif __dsPIC33EP256MC502__
-    // To enable ECAN1 pins: TX on 39, RX on 36
-    PPSOutput(OUT_FN_PPS_C1TX, OUT_PIN_PPS_RP39);
-    PPSInput(PPS_C1RX, PPS_RP36);
+	// To enable ECAN1 pins: TX on 39, RX on 36
+	PPSOutput(OUT_FN_PPS_C1TX, OUT_PIN_PPS_RP39);
+	PPSInput(IN_FN_PPS_C1RX, IN_PIN_PPS_RP36);
+
+	// To enable UART1 pins: TX on 41, RX on 40
+	PPSOutput(OUT_FN_PPS_U1TX, OUT_PIN_PPS_RP41);
+	PPSInput(IN_FN_PPS_U1RX, IN_PIN_PPS_RP40);
 #endif
 
     PPSLock;
+	
+	// Also disable analog functionality on B8 so we can use it for UART1 RX.
+	// This only applies to the dsPIC33E family.
+#ifdef __dsPIC33EP256MC502__
+	ANSELBbits.ANSB8 = 0;
+#endif
 
     // Initialize status LEDs for use.
-    _TRISA3 = 0;
-    _TRISA4 = 0;
+	// A3 (output): Red LED, off by default, and is solid when the system hit a fatal error.
+    _TRISA3 = 0; 
     _LATA3 = 0;
+	// A4 (output): Amber LED, blinks at 1Hz when disconnected from the IMU, 2Hz otherwise.
+    _TRISA4 = 0;
     _LATA4 = 0;
 
-    // Set up UART1 for 115200 baud.
-    Uart1Init((uint16_t)((f_osc / 2l) / (16l * 115200l) - 1l));
+	_TRISB7 = 0; // Set ECAN1_TX pin to an output
+	_TRISB4 = 1; // Set ECAN1_RX pin to an input;
+
+    // Set up UART1 for 115200 baud. There's no round() on the dsPICs, so we implement our own.
+	double brg = (double)f_osc / 2.0 / 16.0 / 115200.0 - 1.0;
+	if (brg - floor(brg) >= 0.5) {
+		brg = ceil(brg);
+	} else {
+		brg = floor(brg);
+	}
+	Uart1Init((uint16_t)brg);
 
     // Initialize ECAN1 for input and output using DMA buffers 0 & 2
     Ecan1Init(f_osc);
@@ -101,36 +154,39 @@ void ImuNodeInit(uint32_t f_osc)
 
     // Set up all of our tasks.
     // Blink at 1Hz
-    if (!AddMessageRepeating(&taskSchedule, TASK_BLINK, 1)) {
+    if (!AddMessageRepeating(&taskSchedule, TASK_BLINK, RATE_TRANSMIT_BLINK_DEFAULT)) {
             FATAL_ERROR();
     }
     // Transmit node status at 2Hz
-    if (!AddMessageRepeating(&taskSchedule, TASK_TRANSMIT_STATUS, 2)) {
+    if (!AddMessageRepeating(&taskSchedule, TASK_TRANSMIT_STATUS, RATE_TRANSMIT_NODE_STATUS)) {
             FATAL_ERROR();
     }
     // Transmit IMU data at 25Hz
-    if (!AddMessageRepeating(&taskSchedule, TASK_TRANSMIT_IMU, 25)) {
+    if (!AddMessageRepeating(&taskSchedule, TASK_TRANSMIT_IMU, RATE_TRANSMIT_IMU_DATA)) {
             FATAL_ERROR();
     }
 }
 
 /**
- * This function reads in new data from UART2 and feeds it into the NMEA0183 parser which then
- * calls the Revo GS library for parsing the data out.
+ * This function reads in new data from UART1 and feeds it into our TokimecParser.
  */
 void RunContinuousTasks(void)
 {
-	// The following variables are all necessary for the NMEA0183 parsing of the RevoGS messages.
+	// Keep track of state for the Tokimec parser.
 	static TokimecOutput o;
 
-        uint8_t c;
+	uint8_t c;
 	while (Uart1ReadByte(&c)) {
-		TokimecParse((char)c, &o);
+		// If we've successfully decoded a message, make sure we know we're connected.
+		if (TokimecParse((char)c, &o) > 0) {
+			sensorAvailability.imu.enabled_counter = 0;
+			sensorAvailability.imu.active_counter = 0;
+		}
 
-                // Convert the incoming 3-axis data to straight radians.
-                tokimecData.roll = (float)o.nice.roll/8192.0;
-                tokimecData.pitch = (float)o.nice.pitch/8192.0;
-                tokimecData.yaw = (float)o.nice.yaw/8192.0;
+		// Convert the incoming 3-axis data to straight radians.
+		tokimecData.roll = (float)o.nice.roll / 8192.0;
+		tokimecData.pitch = (float)o.nice.pitch / 8192.0;
+		tokimecData.yaw = (float)o.nice.yaw / 8192.0;
 	}
 }
 
@@ -138,6 +194,14 @@ void Run100HzTasks(void)
 {
     // Track the tasks to be performed for this timestep.
     static uint8_t msgs[NUM_TASKS];
+	
+	// Increment sensor availability timeout counters.
+	if (sensorAvailability.imu.enabled_counter < SENSOR_TIMEOUT) {
+		++sensorAvailability.imu.enabled_counter;
+	}
+	if (sensorAvailability.imu.active_counter < SENSOR_TIMEOUT) {
+		++sensorAvailability.imu.active_counter;
+	}
 
     uint8_t messagesToSend = GetMessagesForTimestep(&taskSchedule, msgs);
     int i;
@@ -155,8 +219,35 @@ void Run100HzTasks(void)
                 NodeTransmitStatus();
             break;
             case TASK_BLINK: // Blink the status LED at 1Hz
-                    _LATA4 ^= 1;
+				_LATA4 ^= 1;
             break;
         }
     }
+	
+	// And update sensor availability.
+	if (sensorAvailability.imu.enabled && sensorAvailability.imu.enabled_counter >= SENSOR_TIMEOUT) {
+		sensorAvailability.imu.enabled = false;
+
+		// When the IMU is no longer connected, blink at a regular rate.
+		RemoveMessage(&taskSchedule, TASK_BLINK);
+		AddMessageRepeating(&taskSchedule, TASK_BLINK, RATE_TRANSMIT_BLINK_DEFAULT);
+
+		// When the IMU is no longer connected, no longer transmit IMU messages.
+		RemoveMessage(&taskSchedule, TASK_TRANSMIT_IMU);
+
+		// Also update our status.
+		nodeStatus &= ~IMU_NODE_STATUS_FLAG_IMU_ACTIVE;
+	} else if (!sensorAvailability.imu.enabled && sensorAvailability.imu.enabled_counter < SENSOR_TIMEOUT) {
+		sensorAvailability.imu.enabled = true;
+
+		// When the IMU is connected, blink a little faster.
+		RemoveMessage(&taskSchedule, TASK_BLINK);
+		AddMessageRepeating(&taskSchedule, TASK_BLINK, RATE_TRANSMIT_BLINK_CONNECTED);
+		
+		// When the IMU is reconnected, transmit IMU messages.
+		AddMessageRepeating(&taskSchedule, TASK_TRANSMIT_IMU, RATE_TRANSMIT_IMU_DATA);
+
+		// Also update our status.
+		nodeStatus |= IMU_NODE_STATUS_FLAG_IMU_ACTIVE;
+	}
 }
