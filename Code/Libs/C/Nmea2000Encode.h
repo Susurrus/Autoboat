@@ -10,8 +10,8 @@
 #include "EcanDefines.h"
 
 /**
- *
- * @param msg
+ * Packages a CanMessage struct with the data provided as additional arguments.
+ * @param msg The CAN message struct to be filled.
  * @param sourceDevice An ID representing the transmitting device.
  * @param instance Which rudder instance this is. Used for when multiple rudder controller exist. If no value or unknown use 0xFF.
  * @param dirOrder UNKNOWN. Set to 0x3 to specify invalid.
