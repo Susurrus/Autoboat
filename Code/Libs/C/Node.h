@@ -29,12 +29,12 @@ enum CAN_NODE_ID {
     CAN_NODE_RC                 = 3,
     CAN_NODE_POWER_SENSOR       = 4,
     CAN_NODE_HIL                = 5,
-    CAN_NODE_IMU_SENSOR         = 6
+    CAN_NODE_IMU_SENSOR         = 6,
+    CAN_NODE_GYRO_SENSOR         = 7
 };
 
 // Specify how many individual nodes there are:
-#define NUM_NODES 6
-
+#define NUM_NODES 7
 /**
  * This macro provides a way to handle fatal errors on the CAN node, where a red error LED is
  * available. This macro turns that LED on then sits and spins in a forever-loop.
