@@ -1,7 +1,7 @@
 #ifndef MAVLINK_TYPES_H_
 #define MAVLINK_TYPES_H_
 
-#include <stdint.h>
+#include <inttypes.h>
 
 #ifndef MAVLINK_MAX_PAYLOAD_LEN
 // it is possible to override this, but be careful!
@@ -48,7 +48,7 @@ typedef struct __mavlink_system {
     uint8_t type;    ///< Unused, can be used by user to store the system's type
     uint8_t state;   ///< Unused, can be used by user to store the system's state
     uint8_t mode;    ///< Unused, can be used by user to store the system's mode
-    uint8_t nav_mode;    ///< Unused, can be used by user to store the system's navigation mode
+    uint32_t nav_mode;    ///< Unused, can be used by user to store the system's navigation mode
 } mavlink_system_t;
 
 typedef struct __mavlink_message {
