@@ -26,7 +26,16 @@ struct WaterData waterDataStore = {0};
 struct ThrottleData throttleDataStore = {0};
 GpsData gpsDataStore = {0};
 struct GpsDataBundle gpsNewDataStore = {0};
-struct DateTimeData dateTimeDataStore = {0};
+struct DateTimeData dateTimeDataStore = { // Initialize our system clock to clearly invalid values.
+	UINT16_MAX,
+	UINT8_MAX,
+	UINT8_MAX,
+	UINT8_MAX,
+	UINT8_MAX,
+	UINT8_MAX,
+	UINT64_MAX,
+	false
+};
 struct RevoGsData revoGsDataStore = {0};
 struct NodeStatusData nodeStatusDataStore[NUM_NODES] = {
 	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
