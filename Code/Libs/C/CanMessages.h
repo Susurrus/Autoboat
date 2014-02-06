@@ -23,7 +23,10 @@ enum {
     CAN_MSG_ID_STATUS              = 0x090,
 
     // IMU messages (defined by the VSAS-2GM)
-    CAN_MSG_ID_IMU_DATA            = 0x102
+    CAN_MSG_ID_IMU_DATA            = 0x102,
+
+    // Gyro messages (for use with Z-only gyro)
+    CAN_MSG_ID_GYRO_DATA            = 0x105
 };
 
 // Define the length of all of the custom CAN messages.
@@ -37,7 +40,10 @@ enum {
     CAN_MSG_SIZE_STATUS              = 8,
 
     // IMU messages (defined by the VSAS-2GM)
-    CAN_MSG_SIZE_IMU_DATA            = 6
+    CAN_MSG_SIZE_IMU_DATA            = 6,
+
+    // Gyro messages (for use with Z-only gyro)
+    CAN_MSG_SIZE_GYRO_DATA           = 4
 };
 
 /**
@@ -65,5 +71,21 @@ void CanMessageDecodeRudderDetails(const CanMessage *msg, uint16_t *potVal, uint
 void CanMessagePackageImuData(CanMessage *msg, float direction, float pitch, float roll);
 
 void CanMessageDecodeImuData(const CanMessage *msg, float *direction, float *pitch, float *roll);
+
+/**
+ * The gyro data messages are based on the NMEA2000 PGN127251 message, which indicates vehicle rate. This gyro
+ * message doesn't indicate vessel turn rate, however, merely the z-axis turn rate. It uses the little-endian storage format
+ * to be consistent with the NMEA2000 standard.
+ * @param zRate Rotation rate around the z-axis. Units are in radians/s. Positive indicated counter-clockwise rotation.
+ */
+void CanMessagePackageGyroData(CanMessage *msg, float zRate);
+
+/**
+ * The gyro data messages are based on the NMEA2000 PGN127251 message, which indicates vehicle rate. This gyro
+ * message doesn't indicate vessel turn rate, however, merely the z-axis turn rate. It uses the little-endian storage format
+ * to be consistent with the NMEA2000 standard.
+ * @param zRate Rotation rate around the z-axis. Units are in radians/s. Positive indicated counter-clockwise rotation.
+ */
+void CanMessageDecodeGyroData(const CanMessage *msg, float *zRate);
 
 #endif // CAN_MESSAGES_H

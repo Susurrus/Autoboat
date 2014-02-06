@@ -2,9 +2,6 @@
 #include "EcanDefines.h"
 #include "Packing.h"
 
-// Declare a temporary variable module-scope to avoid duplicate allocations.
-static int16_t tmp;
-
 void CanMessagePackageStatus(CanMessage *msg, uint8_t nodeId, uint8_t cpuLoad, int8_t temp, uint8_t voltage, uint16_t status, uint16_t errors)
 {
 	// Set CAN header information.
@@ -168,6 +165,7 @@ void CanMessagePackageImuData(CanMessage *msg, float direction, float pitch, flo
 
 void CanMessageDecodeImuData(const CanMessage *msg, float *direction, float *pitch, float *roll)
 {
+	int16_t tmp;
     if (direction) {
 		BEUnpackInt16(&tmp, &msg->payload[0]);
         *direction = (float)tmp / 8192.0;
@@ -179,5 +177,27 @@ void CanMessageDecodeImuData(const CanMessage *msg, float *direction, float *pit
     if (roll) {
 		BEUnpackInt16(&tmp, &msg->payload[4]);
         *roll = (float)tmp / 8192.0;
+    }
+}
+
+void CanMessagePackageGyroData(CanMessage *msg, float zRate)
+{
+    msg->id = CAN_MSG_ID_GYRO_DATA;
+    msg->buffer = 0;
+    msg->message_type = CAN_MSG_DATA;
+    msg->frame_type = CAN_FRAME_STD;
+    msg->validBytes = CAN_MSG_SIZE_GYRO_DATA;
+
+    // Now fill in the data.
+    uint32_t intZRate = (uint32_t)(zRate * 1e8);
+	BEPackInt16(&msg->payload[0], intZRate);
+}
+
+void CanMessageDecodeGyroData(const CanMessage *msg, float *zRate)
+{
+    if (zRate) {
+		uint32_t tmp;
+		LEUnpackUint32(&tmp, &msg->payload[0]);
+        *zRate = (float)tmp / 1e8;
     }
 }
