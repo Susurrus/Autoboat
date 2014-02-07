@@ -43,11 +43,14 @@ struct NodeStatusData nodeStatusDataStore[NUM_NODES] = {
 	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
 	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
 	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
+	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
 	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF}
 };
+struct GyroData gyroDataStore = {0};
 
 // At startup assume all sensors are disconnected.
 struct stc sensorAvailability = {
+	{1, SENSOR_TIMEOUT, 1, SENSOR_TIMEOUT},
 	{1, SENSOR_TIMEOUT, 1, SENSOR_TIMEOUT},
 	{1, SENSOR_TIMEOUT, 1, SENSOR_TIMEOUT},
 	{1, SENSOR_TIMEOUT, 1, SENSOR_TIMEOUT},
@@ -162,6 +165,12 @@ uint8_t ProcessAllEcanMessages(void)
 	if (sensorAvailability.rcNode.active_counter < SENSOR_TIMEOUT) {
 		++sensorAvailability.rcNode.active_counter;
 	}
+	if (sensorAvailability.gyro.enabled_counter < SENSOR_TIMEOUT) {
+		++sensorAvailability.gyro.enabled_counter;
+	}
+	if (sensorAvailability.gyro.active_counter < SENSOR_TIMEOUT) {
+		++sensorAvailability.gyro.active_counter;
+	}
 
 	do {
 		int foundOne = Ecan1Receive(&msg, &messagesLeft);
@@ -251,6 +260,10 @@ uint8_t ProcessAllEcanMessages(void)
 											&revoGsDataStore.heading,
 											&revoGsDataStore.pitch,
 											&revoGsDataStore.roll);
+				} else if (msg.id == CAN_MSG_ID_GYRO_DATA) {
+					sensorAvailability.gyro.enabled_counter = 0;
+					sensorAvailability.gyro.active_counter = 0;
+					CanMessageDecodeGyroData(&msg, &gyroDataStore.zRate);
 				}
 			} else {
 				pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
@@ -563,5 +576,10 @@ void UpdateSensorsAvailability(void)
 	} else if (!sensorAvailability.rcNode.active && sensorAvailability.rcNode.active_counter == 0) {
 		sensorAvailability.rcNode.active = true;
 		nodeErrors |= PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
+	}
+	if (sensorAvailability.rcNode.active && sensorAvailability.rcNode.active_counter >= SENSOR_TIMEOUT) {
+		sensorAvailability.rcNode.active = false;
+	} else if (!sensorAvailability.rcNode.active && sensorAvailability.rcNode.active_counter == 0) {
+		sensorAvailability.rcNode.active = true;
 	}
 }

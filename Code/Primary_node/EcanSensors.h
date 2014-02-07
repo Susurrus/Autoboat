@@ -5,6 +5,7 @@
 #include <stdbool.h>
 
 #include "Types.h"
+#include "Node.h"
 
 struct RudderCanData  {
 	float Position;
@@ -61,6 +62,12 @@ struct RevoGsData {
 };
 extern struct RevoGsData revoGsDataStore;
 
+struct GyroData {
+	float   zRate;
+	bool    newData;
+};
+extern struct GyroData gyroDataStore;
+
 struct NodeStatusData {
 	int8_t   temp;
 	uint8_t  voltage;
@@ -68,7 +75,7 @@ struct NodeStatusData {
 	uint16_t status;
 	uint16_t errors;
 };
-extern struct NodeStatusData nodeStatusDataStore[6];
+extern struct NodeStatusData nodeStatusDataStore[NUM_NODES];
 
 /**
  * Declare bitflags for use with the GpsData struct's receivedMessages field.
@@ -140,6 +147,7 @@ extern struct stc {
 	timeoutCounters prop; // The ACS300 outputs CAN messages quite frequently. It's enabled whenever one of these messages has been received within the last second and active when it's enabled and in run mode within the last second.
 	timeoutCounters rudder; // The rudder controller outputs messages quite frequently also. It's enabled whenever one of these messages has been received within the last second. It's active when it's enabled and calibrated and done calibrating.
 	timeoutCounters rcNode; // The RC CAN node that provides override manual control.
+        timeoutCounters gyro; // The gyro is enabled and active whenever messages are received
 } sensorAvailability;
 
 

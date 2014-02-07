@@ -102,6 +102,12 @@ void MavLinkSendMainPower(void);
 void MavLinkSendBasicState(void);
 
 /**
+ * Transmits the z-axis rotation rate from the DSP3000. Note that this is in the body frame. Data is
+ * in rads/s and clockwise positive.
+ */
+void MavLinkSendDsp3000(void);
+
+/**
  * Transmits the vehicle attitude. Right now just the yaw value.
  * Expects systemStatus.time to be in centiseconds which are then converted
  * to ms for transmission.

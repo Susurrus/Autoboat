@@ -154,7 +154,7 @@ struct {
 } mavlinkManualControlData;
 
 // Set up the message scheduler for MAVLink transmission
-#define MAVLINK_MSGS_SIZE 15
+#define MAVLINK_MSGS_SIZE 16
 uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_HEARTBEAT,
 	MAVLINK_MSG_ID_SYS_STATUS,
@@ -170,7 +170,8 @@ uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_MAIN_POWER,
 	MAVLINK_MSG_ID_GPS200,
 	MAVLINK_MSG_ID_NODE_STATUS,
-	MAVLINK_MSG_ID_WAYPOINT_STATUS
+	MAVLINK_MSG_ID_WAYPOINT_STATUS,
+	MAVLINK_MSG_ID_DSP3000
 };
 uint16_t tsteps[MAVLINK_MSGS_SIZE][2][8] = {};
 uint8_t  mSizes[MAVLINK_MSGS_SIZE];
@@ -195,7 +196,8 @@ void MavLinkInit(void)
 		mavlinkSchedule.MessageSizes[i] = mavMessageSizes[ids[i]];
 	}
 
-	const uint8_t const periodicities[] = {2, 2, 1, 10, 10, 5, 2, 10, 1, 5, 2, 5, 1, 1, 1};
+	//const uint8_t const periodicities[MAVLINK_MSGS_SIZE] = {2, 2, 1, 10, 10, 5, 2, 10, 1, 5, 2, 5, 1, 1, 1, 10};
+	const uint8_t const periodicities[MAVLINK_MSGS_SIZE] = {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10};
 	for (i = 0; i < sizeof(periodicities); ++i) {
 		if (!AddMessageRepeating(&mavlinkSchedule, ids[i], periodicities[i])) {
 			FATAL_ERROR();
@@ -266,22 +268,18 @@ void MavLinkSendHeartbeat(void)
  * This function transmits the system time. Looks like it's necessary for QGC to
  * record timestamps on data reliably. For some reason it doesn't just use the local
  * time of message reception. Hopefully this fixes that.
- * This message is only transmitted if there actually is a global clock to sync with.
  */
 void MavLinkSendSystemTime(void)
 {
-	// Grab the global time if the GPS is active
-	if (sensorAvailability.gps.active) {
-		mavlink_message_t msg;
+	mavlink_message_t msg;
 
-		// Pack the message
-		mavlink_msg_system_time_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-		                             dateTimeDataStore.usecSinceEpoch, nodeSystemTime*10);
+	// Pack the message
+	mavlink_msg_system_time_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+								 dateTimeDataStore.usecSinceEpoch, nodeSystemTime*10);
 
-		// Copy the message to the send buffer
-		len = mavlink_msg_to_send_buffer(buf, &msg);
-		Uart1WriteData(buf, (uint8_t)len);
-	}
+	// Copy the message to the send buffer
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+	Uart1WriteData(buf, (uint8_t)len);
 }
 
 /**
@@ -392,6 +390,21 @@ void MavLinkSendBasicState(void)
 		controllerVars.Acmd,
 		controllerVars.L2Vector[0], controllerVars.L2Vector[1]
 	);
+
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+
+	Uart1WriteData(buf, (uint8_t)len);
+}
+
+/**
+ * Transmits the z-axis rotation rate from the DSP3000. Note that this is in the body frame. Data is
+ * in rads/s and clockwise positive.
+ */
+void MavLinkSendDsp3000(void)
+{
+	mavlink_message_t msg;
+
+	mavlink_msg_dsp3000_pack(mavlink_system.sysid, mavlink_system.compid, &msg, gyroDataStore.zRate);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
@@ -1623,6 +1636,10 @@ void MavLinkTransmit(void)
 
 			case MAVLINK_MSG_ID_GPS200:
 				MavLinkSendGps200Data();
+			break;
+
+			case MAVLINK_MSG_ID_DSP3000:
+				MavLinkSendDsp3000();
 			break;
 
 			case MAVLINK_MSG_ID_MAIN_POWER:
