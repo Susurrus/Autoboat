@@ -189,15 +189,15 @@ void CanMessagePackageGyroData(CanMessage *msg, float zRate)
     msg->validBytes = CAN_MSG_SIZE_GYRO_DATA;
 
     // Now fill in the data.
-    uint32_t intZRate = (uint32_t)(zRate * 1e8);
-	BEPackInt16(&msg->payload[0], intZRate);
+    int32_t intZRate = (int32_t)(zRate * 1e8);
+	LEPackInt32(&msg->payload[0], intZRate);
 }
 
 void CanMessageDecodeGyroData(const CanMessage *msg, float *zRate)
 {
     if (zRate) {
-		uint32_t tmp;
-		LEUnpackUint32(&tmp, &msg->payload[0]);
+		int32_t tmp;
+		LEUnpackInt32(&tmp, &msg->payload[0]);
         *zRate = (float)tmp / 1e8;
     }
 }

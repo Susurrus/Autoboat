@@ -76,7 +76,7 @@ void CanMessageDecodeImuData(const CanMessage *msg, float *direction, float *pit
  * The gyro data messages are based on the NMEA2000 PGN127251 message, which indicates vehicle rate. This gyro
  * message doesn't indicate vessel turn rate, however, merely the z-axis turn rate. It uses the little-endian storage format
  * to be consistent with the NMEA2000 standard.
- * @param zRate Rotation rate around the z-axis. Units are in radians/s. Positive indicates clockwise rotation.
+ * @param zRate Rotation rate around the z-axis. Units are in degrees/s. Positive indicates clockwise rotation.
  */
 void CanMessagePackageGyroData(CanMessage *msg, float zRate);
 
@@ -84,7 +84,7 @@ void CanMessagePackageGyroData(CanMessage *msg, float zRate);
  * The gyro data messages are based on the NMEA2000 PGN127251 message, which indicates vehicle rate. This gyro
  * message doesn't indicate vessel turn rate, however, merely the z-axis turn rate. It uses the little-endian storage format
  * to be consistent with the NMEA2000 standard.
- * @param zRate Rotation rate around the z-axis. Units are in radians/s. Positive indicates clockwise rotation.
+ * @param zRate Rotation rate around the z-axis. Units are in degrees/s. Positive indicates clockwise rotation.
  */
 void CanMessageDecodeGyroData(const CanMessage *msg, float *zRate);
 

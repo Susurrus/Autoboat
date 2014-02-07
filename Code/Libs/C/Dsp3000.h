@@ -1,5 +1,5 @@
 /**
- * This file implements the serial library for the Tokimec VSAS-2GM IMU.
+ * This file implements the a serial streem decodier KVH DSP-3000 z-axis gyro.
  */
 #ifndef DSP3000_H
 #define DSP3000_H
@@ -7,7 +7,7 @@
 #include <stdint.h>
 
 typedef struct {
-	float zRate; // Rate of rotation in radians/s, clockwise is positive.
+	float zRate; // Rate of rotation in degrees/s, clockwise is positive.
 	bool status; // 0 if malfunction or starting up (bad data), 1 if good data
 } Dsp3000Output;
 
