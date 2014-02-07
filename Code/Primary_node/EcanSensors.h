@@ -150,22 +150,6 @@ extern struct stc {
         timeoutCounters gyro; // The gyro is enabled and active whenever messages are received
 } sensorAvailability;
 
-
-/**
- * These functions are getters for the above structs for use with Matlab.
- */
-void GetWindDataPacked(uint8_t *data);
-
-void GetAirDataPacked(uint8_t *data);
-
-void GetWaterDataPacked(uint8_t *data);
-
-void GetThrottleDataPacked(uint8_t *data);
-
-void GetGpsDataPacked(uint8_t *data);
-
-void GetRudderCanDataPacked(uint8_t *data);
-
 /**
  * Returns the availability of the RcNode. enabled is set to true if it's broadcasting status
  * messages on the CAN bus. It's active if the RC controller is on and therefore the node is

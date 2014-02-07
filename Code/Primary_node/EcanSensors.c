@@ -67,27 +67,6 @@ float GetWaterSpeed(void)
 	return waterDataStore.speed;
 }
 
-void GetThrottleDataPacked(uint8_t *data)
-{
-	LEPackInt16(&data[0], throttleDataStore.rpm);
-	data[2] = throttleDataStore.newData;
-	throttleDataStore.newData = false;
-}
-
-void GetGpsDataPacked(uint8_t *data)
-{
-	LEPackInt32(&data[0], gpsDataStore.latitude);
-	LEPackInt32(&data[4], gpsDataStore.longitude);
-	LEPackInt32(&data[8], gpsDataStore.altitude);
-	LEPackUint16(&data[12], gpsDataStore.cog);
-	LEPackUint16(&data[14], gpsDataStore.sog);
-
-	data[16] = gpsDataStore.newData;
-
-	// Mark this data as old now
-	gpsDataStore.newData = 0;
-}
-
 void ClearGpsData(void)
 {
 	gpsDataStore.latitude = 0.0;
