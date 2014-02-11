@@ -31,6 +31,9 @@ extern uint16_t rcThrottleRange[2];
 // Track if the node restored the calibration values on startup
 extern bool restoredCalibration;
 
+// Set the processor operational frequency
+#define F_OSC 80000000L
+
 // Track if the e-stop is active or not.
 extern bool estopActive;
 
