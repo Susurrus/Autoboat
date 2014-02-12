@@ -13,7 +13,7 @@ typedef enum {
  * Initialize all IMU-node-specific functionality.
  * @param f_osc The oscillator frequency that the processor is operating at.
  */
-void ImuNodeInit(uint32_t f_osc);
+void GyroNodeInit(uint32_t f_osc);
 
 /**
  * This function contains all calls that should be called continuously on the IMU node.
