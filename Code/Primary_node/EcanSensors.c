@@ -537,7 +537,9 @@ void UpdateSensorsAvailability(void)
 	} else if (!sensorAvailability.rudder.active && sensorAvailability.rudder.active_counter == 0) {
 		sensorAvailability.rudder.active = true;
 	}
-	// Reset if the RC node is not enabled OR it's not active.
+	/// RC Node:
+	// Reset if the RC node is not enabled. If the RC node becomes enabled, only set the reset if
+	// it's active as well (indicating the RC Node is overridding manual control).
 	if (sensorAvailability.rcNode.enabled && sensorAvailability.rcNode.enabled_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.rcNode.enabled = false;
 		nodeErrors |= PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
@@ -547,6 +549,7 @@ void UpdateSensorsAvailability(void)
 			nodeErrors &= ~PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
 		}
 	}
+	// Also reset if the RC node is active.
 	if (sensorAvailability.rcNode.active && sensorAvailability.rcNode.active_counter >= SENSOR_TIMEOUT) {
 		sensorAvailability.rcNode.active = false;
 		if (sensorAvailability.rcNode.enabled) {
@@ -555,10 +558,5 @@ void UpdateSensorsAvailability(void)
 	} else if (!sensorAvailability.rcNode.active && sensorAvailability.rcNode.active_counter == 0) {
 		sensorAvailability.rcNode.active = true;
 		nodeErrors |= PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
-	}
-	if (sensorAvailability.rcNode.active && sensorAvailability.rcNode.active_counter >= SENSOR_TIMEOUT) {
-		sensorAvailability.rcNode.active = false;
-	} else if (!sensorAvailability.rcNode.active && sensorAvailability.rcNode.active_counter == 0) {
-		sensorAvailability.rcNode.active = true;
 	}
 }
