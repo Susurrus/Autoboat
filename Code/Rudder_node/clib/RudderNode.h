@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+// Keep track of the processor's operating frequency.
+#define F_OSC 80000000L
+
 /**
  * This enum declares the bitflags used for the nodeStatus variable in Node.h.
  */

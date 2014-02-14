@@ -61,6 +61,9 @@ void RudderNodeInit(void)
 {
 	nodeId = CAN_NODE_RUDDER_CONTROLLER;
 
+	// Initialize our ECAN peripheral
+	Ecan1Init(F_OSC);
+
 	// Initialize the EEPROM for storing the onboard parameters.
 	enum DATASTORE_INIT x = DataStoreInit();
 	if (x == DATASTORE_INIT_SUCCESS) {
