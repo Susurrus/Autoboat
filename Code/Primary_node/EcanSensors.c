@@ -16,9 +16,6 @@
 #define ON  1
 #define OFF 0
 
-// Set the timeout period for sensors (in units of centiseconds)
-#define SENSOR_TIMEOUT 100
-
 struct PowerData powerDataStore = {0};
 struct WindData windDataStore = {0};
 struct AirData airDataStore = {0};
@@ -96,60 +93,15 @@ uint8_t ProcessAllEcanMessages(void)
 	uint8_t messagesHandled = 0;
 
 	// Here we increment the timeout counters for each sensor/actuator we're tracking the status of. This function is assumed to be called at 100Hz and as such the timeout value is 100.
-	if (sensorAvailability.gps.enabled_counter < SENSOR_TIMEOUT) {
-		++sensorAvailability.gps.enabled_counter;
-	}
-	if (sensorAvailability.gps.active_counter < SENSOR_TIMEOUT) {
-		++sensorAvailability.gps.active_counter;
-	}
-	if (sensorAvailability.imu.enabled_counter < SENSOR_TIMEOUT) {
-		++sensorAvailability.imu.enabled_counter;
-	}
-	if (sensorAvailability.imu.active_counter < SENSOR_TIMEOUT) {
-		++sensorAvailability.imu.active_counter;
-	}
-	if (sensorAvailability.wso100.enabled_counter < SENSOR_TIMEOUT) {
-		++sensorAvailability.wso100.enabled_counter;
-	}
-	if (sensorAvailability.wso100.active_counter < SENSOR_TIMEOUT) {
-		++sensorAvailability.wso100.active_counter;
-	}
-	if (sensorAvailability.dst800.enabled_counter < SENSOR_TIMEOUT) {
-		++sensorAvailability.dst800.enabled_counter;
-	}
-	if (sensorAvailability.dst800.active_counter < SENSOR_TIMEOUT) {
-		++sensorAvailability.dst800.active_counter;
-	}
-	if (sensorAvailability.power.enabled_counter < SENSOR_TIMEOUT) {
-		++sensorAvailability.power.enabled_counter;
-	}
-	if (sensorAvailability.power.active_counter < SENSOR_TIMEOUT) {
-		++sensorAvailability.power.active_counter;
-	}
-	if (sensorAvailability.prop.enabled_counter < SENSOR_TIMEOUT) {
-		++sensorAvailability.prop.enabled_counter;
-	}
-	if (sensorAvailability.prop.active_counter < SENSOR_TIMEOUT) {
-		++sensorAvailability.prop.active_counter;
-	}
-	if (sensorAvailability.rudder.enabled_counter < SENSOR_TIMEOUT) {
-		++sensorAvailability.rudder.enabled_counter;
-	}
-	if (sensorAvailability.rudder.active_counter < SENSOR_TIMEOUT) {
-		++sensorAvailability.rudder.active_counter;
-	}
-	if (sensorAvailability.rcNode.enabled_counter < SENSOR_TIMEOUT) {
-		++sensorAvailability.rcNode.enabled_counter;
-	}
-	if (sensorAvailability.rcNode.active_counter < SENSOR_TIMEOUT) {
-		++sensorAvailability.rcNode.active_counter;
-	}
-	if (sensorAvailability.gyro.enabled_counter < SENSOR_TIMEOUT) {
-		++sensorAvailability.gyro.enabled_counter;
-	}
-	if (sensorAvailability.gyro.active_counter < SENSOR_TIMEOUT) {
-		++sensorAvailability.gyro.active_counter;
-	}
+	SENSOR_TIMEOUT_COUNTER_INCREMENT(gps);
+	SENSOR_TIMEOUT_COUNTER_INCREMENT(imu);
+	SENSOR_TIMEOUT_COUNTER_INCREMENT(wso100);
+	SENSOR_TIMEOUT_COUNTER_INCREMENT(dst800);
+	SENSOR_TIMEOUT_COUNTER_INCREMENT(power);
+	SENSOR_TIMEOUT_COUNTER_INCREMENT(prop);
+	SENSOR_TIMEOUT_COUNTER_INCREMENT(rudder);
+	SENSOR_TIMEOUT_COUNTER_INCREMENT(rcNode);
+	SENSOR_TIMEOUT_COUNTER_INCREMENT(gyro);
 
 	do {
 		int foundOne = Ecan1Receive(&msg, &messagesLeft);
