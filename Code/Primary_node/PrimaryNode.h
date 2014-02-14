@@ -20,7 +20,7 @@ enum PRIMARY_NODE_RESET {
 	PRIMARY_NODE_RESET_UNUSED1          = 0x0002,
 	PRIMARY_NODE_RESET_UNUSED2          = 0x0004,
 	PRIMARY_NODE_RESET_UNUSED3          = 0x0008,
-	PRIMARY_NODE_RESET_MANUAL_OVERRIDE  = 0x0010, // Manual override has been engaged by the secondary controller
+	PRIMARY_NODE_RESET_MANUAL_OVERRIDE  = 0x0010, // Manual override has been engaged by the secondary controller OR the RC node doesn't exist on the CAN bus.
 	PRIMARY_NODE_RESET_CALIBRATING      = 0x0020, // The rudder is undergoing calibration.
 	PRIMARY_NODE_RESET_UNCALIBRATED     = 0x0040, // The rudder is uncalibrated.
 	PRIMARY_NODE_RESET_ESTOP            = 0x0080  // The system is in emergency-stop mode, actuators are centered and stopped, system will not respond to any commands; it's dead in the water.
