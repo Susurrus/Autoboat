@@ -14,6 +14,9 @@ bool estopActive = false;
 void RcNodeInit(void)
 {
 	nodeId = CAN_NODE_RC;
+
+	// Initialize our ECAN peripheral
+	Ecan1Init(F_OSC);
 	
 	// Initialize the EEPROM for storing the onboard parameters.
 	enum DATASTORE_INIT x = DataStoreInit();

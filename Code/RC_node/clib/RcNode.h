@@ -3,6 +3,9 @@
 
 #include <stdbool.h>
 
+// Keep track of the processor's operating frequency.
+#define F_OSC 80000000L
+
 /// Store some 16-bit bitfields for tracking the system status and various erros.
 /// These have been declared in Node.h
 // status tracks various statuses of the node.
