@@ -68,6 +68,8 @@ struct GyroData {
 };
 extern struct GyroData gyroDataStore;
 
+// Stores all status data from a CANode.
+// Invalid values for every field is the maximum positive value for that datatype.
 struct NodeStatusData {
 	int8_t   temp;
 	uint8_t  voltage;
@@ -75,7 +77,18 @@ struct NodeStatusData {
 	uint16_t status;
 	uint16_t errors;
 };
+// Holds the status data for every node, including this one.
 extern struct NodeStatusData nodeStatusDataStore[NUM_NODES];
+
+// Set the timeout period for nodes (in units of centiseconds)
+#define NODE_TIMEOUT 100
+
+/**
+ * This array stores the timeout counters for each node. Once they hit `NODE_TIMEOUT`, the nodes
+ * are considered offline. This transition will reset the `nodeStatusDataStore` array to its default
+ * values.
+ */
+extern uint8_t nodeStatusTimeoutCounters[NUM_NODES];
 
 /**
  * Declare bitflags for use with the GpsData struct's receivedMessages field.

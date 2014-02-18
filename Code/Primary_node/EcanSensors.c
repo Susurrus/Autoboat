@@ -35,13 +35,22 @@ struct DateTimeData dateTimeDataStore = { // Initialize our system clock to clea
 };
 struct RevoGsData revoGsDataStore = {0};
 struct NodeStatusData nodeStatusDataStore[NUM_NODES] = {
-	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
-	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
-	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
-	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
-	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
-	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF},
-	{0x7F, 0xFF, 0xFF, 0xFFFF, 0xFFFF}
+	{INT8_MAX, UINT8_MAX, UINT8_MAX, UINT16_MAX, UINT16_MAX},
+	{INT8_MAX, UINT8_MAX, UINT8_MAX, UINT16_MAX, UINT16_MAX},
+	{INT8_MAX, UINT8_MAX, UINT8_MAX, UINT16_MAX, UINT16_MAX},
+	{INT8_MAX, UINT8_MAX, UINT8_MAX, UINT16_MAX, UINT16_MAX},
+	{INT8_MAX, UINT8_MAX, UINT8_MAX, UINT16_MAX, UINT16_MAX},
+	{INT8_MAX, UINT8_MAX, UINT8_MAX, UINT16_MAX, UINT16_MAX},
+	{INT8_MAX, UINT8_MAX, UINT8_MAX, UINT16_MAX, UINT16_MAX}
+};
+uint8_t nodeStatusTimeoutCounters[NUM_NODES] = {
+	NODE_TIMEOUT,
+	NODE_TIMEOUT,
+	NODE_TIMEOUT,
+	NODE_TIMEOUT,
+	NODE_TIMEOUT,
+	NODE_TIMEOUT,
+	NODE_TIMEOUT
 };
 struct GyroData gyroDataStore = {0};
 
@@ -103,6 +112,18 @@ uint8_t ProcessAllEcanMessages(void)
 	SENSOR_TIMEOUT_COUNTER_INCREMENT(rcNode);
 	SENSOR_TIMEOUT_COUNTER_INCREMENT(gyro);
 
+	// Increment all of the node timeout counters if they haven't timed-out yet.
+	int i;
+	for (i = 0; i < NUM_NODES; ++i) {
+		// Be sure to not do this for the current node, as it won't ever receive CAN messages from
+		// itself.
+		if (i != nodeId - 1) { // Subtract 1 to account for 0-indexing of arrays.
+			if (nodeStatusTimeoutCounters[i] < NODE_TIMEOUT) {
+				++nodeStatusTimeoutCounters[i];
+			}
+		}
+	}
+
 	do {
 		int foundOne = Ecan1Receive(&msg, &messagesLeft);
 		if (foundOne) {
@@ -134,11 +155,18 @@ uint8_t ProcessAllEcanMessages(void)
 
 					// If we've found a valid node, store the data for it.
 					if (node > 0 && node <= NUM_NODES) {
+						// Update all of the data broadcast by this node.
 						nodeStatusDataStore[node - 1].load = cpuLoad;
 						nodeStatusDataStore[node - 1].temp = temp;
 						nodeStatusDataStore[node - 1].voltage = voltage;
 						nodeStatusDataStore[node - 1].status = status;
 						nodeStatusDataStore[node - 1].errors = errors;
+
+						// And reset the timeout counter for this node.
+						nodeStatusTimeoutCounters[node - 1] = 0;
+
+						// And add some extra logic for integrating the RC node statusAvailability
+						// logic.
 						if (node == CAN_NODE_RC) {
 							sensorAvailability.rcNode.enabled_counter = 0;
 							// Only if the RC transmitter is connected and in override mode should the RC node be considered
@@ -376,6 +404,23 @@ uint8_t ProcessAllEcanMessages(void)
 			++messagesHandled;
 		}
 	} while (messagesLeft > 0);
+
+	// Now if any nodes have timed out, reset their struct data. This code doesn't do anything but
+	// modify the NodeStatusData struct. All node-disconnection issues that affect this system state
+	// is handled in `UpdateSensorsAvailability()`.
+	for (i = 0; i < NUM_NODES; ++i) {
+		// Be sure to not do this for the current node, as it won't ever receive CAN messages from
+		// itself.
+		if (i != nodeId - 1) {
+			if (nodeStatusTimeoutCounters[i] >= NODE_TIMEOUT) {
+				nodeStatusDataStore[i].errors  = UINT16_MAX;
+				nodeStatusDataStore[i].load    = UINT8_MAX;
+				nodeStatusDataStore[i].status  = UINT16_MAX;
+				nodeStatusDataStore[i].temp    = INT8_MAX;
+				nodeStatusDataStore[i].voltage = UINT8_MAX;
+			}
+		}
+	}
 
 	// Check for any errors on the ECAN peripheral:
 	uint8_t errors[2];
