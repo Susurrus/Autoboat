@@ -115,9 +115,11 @@ static mavlink_system_t mavlink_system = {
 
 /** manual control parameters **/
 // Specify the button that must be pressed for throttle values to be recorded.
-#define TRIGGER_ENABLE_BUTTON 0x0010
+// On the Logitech F710 we use, it's the Button, which in D-mode is button 4.
+#define TRIGGER_ENABLE_BUTTON 1 << 4
 // Specify the button that activates rudder calibration.
-#define RUDDER_CAL_BUTTON     0x0008
+// On the Logitech F710 we use, it's the Button, which in D-mode is button 8.
+#define RUDDER_CAL_BUTTON     1 << 8
 // Autonomous/manual switching is done through QGC
 
 // Latch onto the first groundstation unit and only receive and transmit to it.
