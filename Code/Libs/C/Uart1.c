@@ -74,6 +74,9 @@ void Uart1StartTransmission(void)
         // A temporary variable is used here because writing directly into U1TXREG causes some weird issues.
         uint8_t c;
         CB_ReadByte(&uart1TxBuffer, &c);
+		
+		// We process the char before we try to send it in case writing directly into U1TXREG has
+		// weird side effects.
         U1TXREG = c;
     }
 }
