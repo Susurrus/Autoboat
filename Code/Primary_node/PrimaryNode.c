@@ -157,7 +157,6 @@ int main(void)
 
 	// To enable UART1 pins: TX on 43 (B11), TX debug on 42 (B10), RX on 45 (B13)
 	PPSOutput(OUT_FN_PPS_U1TX, OUT_PIN_PPS_RP43);
-	PPSOutput(OUT_FN_PPS_U1TX, OUT_PIN_PPS_RP42); // FIXME: Remove this; for debugging only!
 	PPSInput(IN_FN_PPS_U1RX, IN_PIN_PPS_RPI45);
 
 	// To enable UART2 pins: TX on 40 (B8), RX on 41 (B9)
@@ -175,9 +174,6 @@ int main(void)
 	_TRISB12 = OUTPUT;
 	// B15 (output): Amber GPS LED on the CANode Primary Shield, on when GPS is active & receiving good data.
 	_TRISB15 = OUTPUT;
-	// RB0 (input): Trigger pin for reinitializing the UART. This is active-low, which allows the input
-	// signal to work for this or for connecting to MCLR.
-	_TRISB0 = INPUT;
 
 	// Now before we start everything, make sure we have our state correct given that we just started
 	// up. Every sensor is assumed to be online, but just expiring on initialization, so here we call
@@ -187,40 +183,9 @@ int main(void)
 	// Finally initialize the controller model
 	controller_initialize();
 
-	// Set a flag for when B0 has gone low to trigger a UART reset. This effectively does falling-
-	// edge triggering from the B0 signal. We start out true here because we want to make sure the
-	// reset doesn't start on bootup. I think signals are intially 0 when read from the latches after
-	// bootup.
-	bool alreadyResetUart = true;
-
 	// Run system tasks when a timer interrupt has been triggered.
 	while (true) {
-		// Listen for a low value on B0, which indicates that we should re-initialize our UART
-		// FIXME: Remove after debugging.
-		if (!_LATB0 && !alreadyResetUart) {
 
-			// NEXT: Resetting the UART entails only resetting the transmitter.
-			// We check that the enable bit is still high, because if it's not, then we have
-			// bit corruption, which may be the issue.
-			if (U1STA & _U1STA_UTXEN_MASK) {
-				U1STAbits.UTXEN = 0;
-				int i;
-				for (i = 0; i < 200; ++i);
-				U1STAbits.UTXEN = 1;
-			} else {
-				_LATA3 = 1;
-				_LATA4 = 1;
-				while (1);
-			}
-
-			alreadyResetUart = true;
-		}
-		// After the B0 input has gone back high, wait for it to go high again before resetting our
-		// reset flag.
-		else if (alreadyResetUart && _LATB0) {
-			alreadyResetUart = false;
-		}
-		
 		if (runTasks) {
 			PrimaryNode100HzLoop();
 			runTasks = false;
