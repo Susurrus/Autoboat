@@ -198,9 +198,6 @@ int main(void)
  */
 void PrimaryNode100HzLoop(void)
 {
-	// Keep an internal counter around so that other processes can occur at less than 100Hz.
-	static uint8_t internalCounter = 0;
-
 	// Clear state on when errors
 	ClearStateWhenErrors();
 
@@ -219,17 +216,9 @@ void PrimaryNode100HzLoop(void)
 
 	// Input voltage in dV (AN5)
 	nodeVoltage = (uint8_t)((3.3 / ANmax) * ((21.0 + 2.0) / 2.0) * 10.0 * (float)adcDmaBuffer[5]);
-			
+
 	// Onboard temperature in degrees C (AN1)
 	nodeTemp = (int8_t)((3.3 / ANmax * (float)adcDmaBuffer[1] - 0.5) * 100.0);
-
-	// Send any necessary messages for this timestep.
-	MavLinkTransmit();
-
-	// At 2Hz transmit a NODE_STATUS ECAN message.
-	if (internalCounter == 0 || internalCounter == 50) {
-		NodeTransmitStatus();
-	}
 
 	// Set a reset signal for the first 2 seconds, allowing things to stabilize a bit before the
 	// system responds. This is especially crucial because it can take up to a second for sensors to
@@ -266,12 +255,8 @@ void PrimaryNode100HzLoop(void)
 	// Update the onboard system time counter.
 	++nodeSystemTime;
 
-	// Update the internal counter.
-	if (internalCounter == 99) {
-		internalCounter = 0;
-	} else {
-		++internalCounter;
-	}
+	// Send any necessary messages for this timestep.
+	MavLinkTransmit();
 }
 
 /**
