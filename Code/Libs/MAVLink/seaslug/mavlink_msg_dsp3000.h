@@ -4,7 +4,7 @@
 
 typedef struct __mavlink_dsp3000_t
 {
- float z_rate; ///< Z-axis rotation rate in rads/s, clockwise positive.
+ float z_rate; ///< Z-axis rotation rate in degrees/s, clockwise positive.
 } mavlink_dsp3000_t;
 
 #define MAVLINK_MSG_ID_DSP3000_LEN 4
@@ -29,7 +29,7 @@ typedef struct __mavlink_dsp3000_t
  * @param component_id ID of this component (e.g. 200 for IMU)
  * @param msg The MAVLink message to compress the data into
  *
- * @param z_rate Z-axis rotation rate in rads/s, clockwise positive.
+ * @param z_rate Z-axis rotation rate in degrees/s, clockwise positive.
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_dsp3000_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
@@ -61,7 +61,7 @@ static inline uint16_t mavlink_msg_dsp3000_pack(uint8_t system_id, uint8_t compo
  * @param component_id ID of this component (e.g. 200 for IMU)
  * @param chan The MAVLink channel this message will be sent over
  * @param msg The MAVLink message to compress the data into
- * @param z_rate Z-axis rotation rate in rads/s, clockwise positive.
+ * @param z_rate Z-axis rotation rate in degrees/s, clockwise positive.
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_dsp3000_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
@@ -119,7 +119,7 @@ static inline uint16_t mavlink_msg_dsp3000_encode_chan(uint8_t system_id, uint8_
  * @brief Send a dsp3000 message
  * @param chan MAVLink channel to send the message
  *
- * @param z_rate Z-axis rotation rate in rads/s, clockwise positive.
+ * @param z_rate Z-axis rotation rate in degrees/s, clockwise positive.
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
@@ -154,7 +154,7 @@ static inline void mavlink_msg_dsp3000_send(mavlink_channel_t chan, float z_rate
 /**
  * @brief Get field z_rate from dsp3000 message
  *
- * @return Z-axis rotation rate in rads/s, clockwise positive.
+ * @return Z-axis rotation rate in degrees/s, clockwise positive.
  */
 static inline float mavlink_msg_dsp3000_get_z_rate(const mavlink_message_t* msg)
 {
