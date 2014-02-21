@@ -12,19 +12,19 @@
 #include "CircularBuffer.h"
 
 /**
- * Initializes the UART1 peripheral according to the BRG SFR value passed to it.
+ * Initializes the UART2 peripheral according to the BRG SFR value passed to it.
  * @param brgRegister The value to be placed in the BRG register.
  */
 void Uart2Init(uint16_t brgRegister);
 
 /**
- * Alters the baud rate of the UART1 peripheral to that dictated by brgRegister.
+ * Alters the baud rate of the UART2 peripheral to that dictated by brgRegister.
  * @param brgRegister The new baud rate.
  */
 void Uart2ChangeBaudRate(uint16_t brgRegister);
 
 /**
- * This function reads a byte out of the received data buffer for UART1.
+ * This function reads a byte out of the received data buffer for UART2.
  * @param datum The data received from the buffer. If no data was there it's unmodified.
  * @return A boolean value of whether valid data was returned.
  */
@@ -37,7 +37,7 @@ int Uart2ReadByte(uint8_t *datum);
 void Uart2WriteByte(uint8_t datum);
 
 /**
- * This function augments the uart1EnqueueByte() function by providing an interface
+ * This function augments the Uart2WriteByte() function by providing an interface
  * that enqueues multiple bytes.
  */
 int Uart2WriteData(const void *data, size_t length);
