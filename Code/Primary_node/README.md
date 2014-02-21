@@ -10,9 +10,9 @@ This project requires both the '/Code/Libs/MATLAB' folder and the MicroSimulink-
    * `/Code/Libs/MAVLink`
    * `/Code/Libs/MAVLink/seaslug`
    * `/Code/primary_node`
-   * `/Code/primary_node/controller_no_lib_ert_rtw`
- 2. Specify the large data model
- 3. Add all *.c and *.h files under `controller_no_lib_ert_rtw' to the project.
+   * `/Code/primary_node/controller_ert_rtw`
+ 2. Specify the large code & large data model
+ 3. Add all *.c and *.h files under `controller_ert_rtw' to the project.
  4. Add all *.c and *.h files in `/Code/primary_node`.
  5. Add missing files as reported by the compiler in `/Code/Libs/C`
  
@@ -21,3 +21,10 @@ This project requires both the '/Code/Libs/MATLAB' folder and the MicroSimulink-
 Switching between these processors requires two different changes:
  1. When compiling for the dsPIC33E, make sure to include the Stack.s file. This means that you can ignore all warnings about extended pointers.
  2. Choose the proper DEES_*.s file based on the processor type selected.
+
+## Functionality
+
+### MAVLink corruption compensation
+The UART1 transmission is connected to UART2 reception at the pin-level on the PIC. A separate MAVLink decoding process is run on this and the processor logs when its output stream has become corrupted, resets the UART1 transmission hardware and outputs a STATUSTEXT MAVLink message with the time this occurred.
+
+Additionally, while the data stream is corrupted, pin RB0 is set high, so a low value indicates a valid MAVLink stream.
