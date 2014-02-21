@@ -84,6 +84,12 @@ void MavLinkSendSystemTime(void);
 void MavLinkSendStatus(void);
 
 /**
+ * Sends the specified text in a Common::STATUSTEXT message out over UART1.
+ * @param text An up-to-50 character string for transmitting.
+ */
+void MavLinkSendStatusText(enum MAV_SEVERITY severity, const char *text);
+
+/**
  * Pull the raw GPS sensor data from the gpsDataStore struct within the GPS module and
  * transmit it via MAVLink over UART1.
  * TODO: Convert this message to a GLOBAL_POSITION_INT

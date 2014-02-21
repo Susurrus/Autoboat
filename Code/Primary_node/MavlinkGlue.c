@@ -337,6 +337,18 @@ void MavLinkSendStatus(void)
 	Uart1WriteData(buf, (uint8_t)len);
 }
 
+void MavLinkSendStatusText(enum MAV_SEVERITY severity, const char *text)
+{
+	mavlink_message_t msg;
+	char msgText[MAVLINK_MSG_ID_STATUSTEXT_LEN] = {};
+	strncpy(msgText, text, MAVLINK_MSG_STATUSTEXT_FIELD_TEXT_LEN);
+	mavlink_msg_statustext_pack(mavlink_system.sysid, mavlink_system.compid, &msg, severity, msgText);
+
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+
+	Uart1WriteData(buf, (uint8_t)len);
+}
+
 /**
  * Pull the raw GPS sensor data from the gpsDataStore struct within the GPS module and
  * transmit it via MAVLink over UART1.
