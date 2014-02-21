@@ -37,7 +37,7 @@ int Uart1ReadByte(uint8_t *datum);
 void Uart1WriteByte(uint8_t datum);
 
 /**
- * This function augments the uart1EnqueueByte() function by providing an interface
+ * This function augments the Uart1WriteByte() function by providing an interface
  * that enqueues multiple bytes.
  */
 int Uart1WriteData(const void *data, size_t length);

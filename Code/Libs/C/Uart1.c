@@ -87,7 +87,7 @@ int Uart1ReadByte(uint8_t *datum)
 }
 
 /**
- * This function supplements the uart1EnqueueData() function by also
+ * This function supplements the Uart1WriteData() function by also
  * providing an interface that only enqueues a single byte.
  */
 void Uart1WriteByte(uint8_t datum)
