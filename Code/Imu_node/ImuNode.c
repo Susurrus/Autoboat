@@ -173,20 +173,21 @@ void ImuNodeInit(uint32_t f_osc)
 void RunContinuousTasks(void)
 {
 	// Keep track of state for the Tokimec parser.
-	static TokimecOutput o;
+	static TokimecOutput o = {};
 
 	uint8_t c;
 	while (Uart1ReadByte(&c)) {
-		// If we've successfully decoded a message, make sure we know we're connected.
+		// If we've successfully decoded a message...
 		if (TokimecParse((char)c, &o) > 0) {
+			// Log that the IMU is connected.
 			sensorAvailability.imu.enabled_counter = 0;
 			sensorAvailability.imu.active_counter = 0;
-		}
 
-		// Convert the incoming 3-axis data to straight radians.
-		tokimecData.roll = (float)o.nice.roll / 8192.0;
-		tokimecData.pitch = (float)o.nice.pitch / 8192.0;
-		tokimecData.yaw = (float)o.nice.yaw / 8192.0;
+			// And convert the incoming 3-axis data to straight radians.
+			tokimecData.roll = (float)o.nice.roll / 8192.0;
+			tokimecData.pitch = (float)o.nice.pitch / 8192.0;
+			tokimecData.yaw = (float)o.nice.yaw / 8192.0;
+		}
 	}
 }
 
