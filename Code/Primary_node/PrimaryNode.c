@@ -306,7 +306,7 @@ void PrimaryNode100HzLoop(void)
 	int16_t tCommand;
 	bool reset = (nodeErrors != 0);
 	controller_custom(&gpsDataStore, &throttleDataStore.rpm, &rudderSensorData.RudderAngle,
-		&reset, &waterDataStore.speed, &rCommand, &tCommand, &controllerVars);
+		(boolean_T*)&reset, &waterDataStore.speed, &rCommand, &tCommand, &controllerVars);
 
 	// And output the necessary control outputs.
 	PrimaryNodeMuxAndOutputControllerCommands(rCommand, tCommand);
