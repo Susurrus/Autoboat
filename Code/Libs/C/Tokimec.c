@@ -89,7 +89,9 @@ int TokimecParse(char in, TokimecOutput *data)
 		uint8_t calculatedChecksum = _TokimecOutputChecksum(data);
 		if (calculatedChecksum == data->nice.checksum) {
 			// Now if we're running on a little-endian system, we need to reverse the byte-ordering for all multi-byte data types in the message.
-#if defined __x86_64__ || defined __x86__
+			// This needs to be set for both the dsPIC33E and x86 architectures so we just hardcode it here.
+			// FIXME: Change the following code to work for more systems.
+#if defined __x86_64__ || defined __x86__ || 1
 			data->nice.status = Swap2Bytes(data->nice.status);
 			data->nice.counter = Swap2Bytes(data->nice.counter);
 			data->nice.yaw = Swap2Bytes(data->nice.yaw);
