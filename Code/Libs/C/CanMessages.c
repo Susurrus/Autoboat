@@ -201,3 +201,72 @@ void CanMessageDecodeGyroData(const CanMessage *msg, float *zRate)
         *zRate = (float)tmp / 1e8;
     }
 }
+
+void CanMessagePackageAngularVelocityData(CanMessage *msg, int16_t xAngleVel, int16_t yAngleVel, int16_t zAngleVel)
+{
+    msg->id = CAN_MSG_ID_ANG_VEL_DATA;
+    msg->buffer = 0;
+    msg->message_type = CAN_MSG_DATA;
+    msg->frame_type = CAN_FRAME_STD;
+    msg->validBytes = CAN_MSG_SIZE_ANG_VEL_DATA;
+
+    // Now fill in the data.
+	LEPackInt16(&msg->payload[0], xAngleVel);
+	LEPackInt16(&msg->payload[2], yAngleVel);
+	LEPackInt16(&msg->payload[4], zAngleVel);
+}
+
+void CanMessagePackageAccelerationData(CanMessage *msg, int16_t xAccel, int16_t yAccel, int16_t zAccel)
+{
+    msg->id = CAN_MSG_ID_ACCEL_DATA;
+    msg->buffer = 0;
+    msg->message_type = CAN_MSG_DATA;
+    msg->frame_type = CAN_FRAME_STD;
+    msg->validBytes = CAN_MSG_SIZE_ACCEL_DATA;
+
+    // Now fill in the data.
+	LEPackInt16(&msg->payload[0], xAccel);
+	LEPackInt16(&msg->payload[2], yAccel);
+	LEPackInt16(&msg->payload[4], zAccel);
+}
+
+void CanMessagePackageGpsPosData(CanMessage *msg, int32_t latitude, int32_t longitude)
+{
+    msg->id = CAN_MSG_ID_GPS_POS_DATA;
+    msg->buffer = 0;
+    msg->message_type = CAN_MSG_DATA;
+    msg->frame_type = CAN_FRAME_STD;
+    msg->validBytes = CAN_MSG_SIZE_GPS_POS_DATA;
+
+    // Now fill in the data.
+	LEPackInt32(&msg->payload[0], latitude);
+	LEPackInt32(&msg->payload[4], longitude);
+}
+
+void CanMessagePackageEstGpsPosData(CanMessage *msg, int32_t estLatitude, int32_t estLongitude)
+{
+    msg->id = CAN_MSG_ID_GPS_EST_POS_DATA;
+    msg->buffer = 0;
+    msg->message_type = CAN_MSG_DATA;
+    msg->frame_type = CAN_FRAME_STD;
+    msg->validBytes = CAN_MSG_SIZE_GPS_EST_POS_DATA;
+
+    // Now fill in the data.
+	LEPackInt32(&msg->payload[0], estLatitude);
+	LEPackInt32(&msg->payload[4], estLongitude);
+}
+
+void CanMessagePackageGpsVelData(CanMessage *msg, int16_t gpsHeading, int16_t gpsSpeed, int16_t magBearing, uint16_t status)
+{
+    msg->id = CAN_MSG_ID_GPS_VEL_DATA;
+    msg->buffer = 0;
+    msg->message_type = CAN_MSG_DATA;
+    msg->frame_type = CAN_FRAME_STD;
+    msg->validBytes = CAN_MSG_SIZE_GPS_VEL_DATA;
+
+    // Now fill in the data.
+	LEPackInt16(&msg->payload[0], gpsHeading);
+	LEPackInt16(&msg->payload[2], gpsSpeed);
+	LEPackInt16(&msg->payload[4], magBearing);
+	LEPackUint16(&msg->payload[6], status);
+}

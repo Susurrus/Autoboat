@@ -25,8 +25,15 @@ enum {
     // IMU messages (defined by the VSAS-2GM)
     CAN_MSG_ID_IMU_DATA            = 0x102,
 
-    // Gyro messages (for use with Z-only gyro)
-    CAN_MSG_ID_GYRO_DATA            = 0x105
+    // Gyro messages (for use with Z-only DSP-3000 gyro)
+    CAN_MSG_ID_GYRO_DATA           = 0x105,
+
+    // Gyro messages (for use with Tokimec VSAS-2GM)
+    CAN_MSG_ID_ANG_VEL_DATA        = 0x106,
+    CAN_MSG_ID_ACCEL_DATA          = 0x107,
+    CAN_MSG_ID_GPS_POS_DATA        = 0x108,
+    CAN_MSG_ID_GPS_EST_POS_DATA    = 0x109,
+    CAN_MSG_ID_GPS_VEL_DATA        = 0x10A
 };
 
 // Define the length of all of the custom CAN messages.
@@ -42,8 +49,15 @@ enum {
     // IMU messages (defined by the VSAS-2GM)
     CAN_MSG_SIZE_IMU_DATA            = 6,
 
-    // Gyro messages (for use with Z-only gyro)
-    CAN_MSG_SIZE_GYRO_DATA           = 4
+    // Gyro messages (for use with Z-only DSP-3000 gyro)
+    CAN_MSG_SIZE_GYRO_DATA           = 4,
+
+    // Gyro messages (for use with Tokimec VSAS-2GM)
+    CAN_MSG_SIZE_ANG_VEL_DATA        = 6,
+    CAN_MSG_SIZE_ACCEL_DATA          = 6,
+    CAN_MSG_SIZE_GPS_POS_DATA        = 8,
+    CAN_MSG_SIZE_GPS_EST_POS_DATA    = 8,
+    CAN_MSG_SIZE_GPS_VEL_DATA        = 8
 };
 
 /**
@@ -66,12 +80,6 @@ void CanMessagePackageRudderDetails(CanMessage *msg, uint16_t potVal, uint16_t p
 
 void CanMessageDecodeRudderDetails(const CanMessage *msg, uint16_t *potVal, uint16_t *portLimitVal, uint16_t *sbLimitVal, bool *portLimitTrig, bool *sbLimitTrig, bool *enabled, bool *calibrated, bool *calibrating);
 
-// The IMU data messages are based on the Direction/Attitude messages from the VSAS-2GM, which uses
-// a big-endian storage format. All units are in radians.
-void CanMessagePackageImuData(CanMessage *msg, float direction, float pitch, float roll);
-
-void CanMessageDecodeImuData(const CanMessage *msg, float *direction, float *pitch, float *roll);
-
 /**
  * The gyro data messages are based on the NMEA2000 PGN127251 message, which indicates vehicle rate. This gyro
  * message doesn't indicate vessel turn rate, however, merely the z-axis turn rate. It uses the little-endian storage format
@@ -87,5 +95,41 @@ void CanMessagePackageGyroData(CanMessage *msg, float zRate);
  * @param zRate Rotation rate around the z-axis. Units are in degrees/s. Positive indicates clockwise rotation.
  */
 void CanMessageDecodeGyroData(const CanMessage *msg, float *zRate);
+
+// The IMU data messages are based on the Direction/Attitude messages from the VSAS-2GM, which uses
+// a big-endian storage format. All units are in radians.
+void CanMessagePackageImuData(CanMessage *msg, float direction, float pitch, float roll);
+
+void CanMessageDecodeImuData(const CanMessage *msg, float *direction, float *pitch, float *roll);
+
+/**
+ * CAN message for the Tokimec's angular velocity data
+ */
+void CanMessagePackageAngularVelocityData(CanMessage *msg, int16_t xAngleVel, int16_t yAngleVel, int16_t zAngleVel);
+
+/**
+ * CAN message for the Tokimec's acceleration data
+ */
+void CanMessagePackageAccelerationData(CanMessage *msg, int16_t xAccel, int16_t yAccel, int16_t zAccel);
+
+/**
+ * CAN message for the Tokimec's raw latitude and longitude data.
+ */
+void CanMessagePackageGpsPosData(CanMessage *msg, int32_t latitude, int32_t longitude);
+
+/**
+ * CAN message for the Tokimec's estimated GPS lat/long.
+ */
+void CanMessagePackageEstGpsPosData(CanMessage *msg, int32_t estLatitude, int32_t estLongitude);
+
+/**
+ * CAN message for the Tokimec's gps heading & speed as well as magnetic bearing and system status.
+ * @param gpsHeading GPS heading.
+ * @param gpsSpeed GPS speed.
+ * @param magBearing The magnetic bearing.
+ * @param status A bitfield of the Tokimec status.
+ */
+void CanMessagePackageGpsVelData(CanMessage *msg, int16_t gpsHeading, int16_t gpsSpeed, int16_t magBearing, uint16_t status);
+
 
 #endif // CAN_MESSAGES_H

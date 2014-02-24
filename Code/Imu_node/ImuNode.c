@@ -36,13 +36,11 @@ THE SOFTWARE.
 #include "ImuNode.h"
 
 /**
- * Store specific data output from the Tokimec.
+ * Store specific data output from the Tokimec. We can use this both as the intermediate data store
+ * for the Tokimec parser as well as the global data store because it will never be read or written
+ * while the other operation is happening because none of that is done during interrupts.
  */
-static struct {
-    float roll; // In rads
-    float pitch; // In rads
-    float yaw; // In rads
-} tokimecData;
+static TokimecOutput tokimecData = {};
 
 // Specify the sensor timeout to be .2s if the checking is run at 100Hz.
 #define SENSOR_TIMEOUT 20
@@ -172,21 +170,14 @@ void ImuNodeInit(uint32_t f_osc)
  */
 void RunContinuousTasks(void)
 {
-	// Keep track of state for the Tokimec parser.
-	static TokimecOutput o = {};
 
 	uint8_t c;
 	while (Uart1ReadByte(&c)) {
 		// If we've successfully decoded a message...
-		if (TokimecParse((char)c, &o) > 0) {
+		if (TokimecParse((char)c, &tokimecData) > 0) {
 			// Log that the IMU is connected.
 			sensorAvailability.imu.enabled_counter = 0;
 			sensorAvailability.imu.active_counter = 0;
-
-			// And convert the incoming 3-axis data to straight radians.
-			tokimecData.roll = (float)o.nice.roll / 8192.0;
-			tokimecData.pitch = (float)o.nice.pitch / 8192.0;
-			tokimecData.yaw = (float)o.nice.yaw / 8192.0;
 		}
 	}
 }
@@ -210,10 +201,46 @@ void Run100HzTasks(void)
         switch (msgs[i]) {
             case TASK_TRANSMIT_IMU: {
                 CanMessage msg;
+
+				// Transmit the absolute attitude message
                 CanMessagePackageImuData(&msg,
-                                         tokimecData.yaw,
-                                         tokimecData.pitch,
-                                         tokimecData.roll);
+                                         tokimecData.nice.yaw,
+                                         tokimecData.nice.pitch,
+                                         tokimecData.nice.roll);
+                Ecan1Transmit(&msg);
+
+				// Now transmit the angular velocity data
+                CanMessagePackageAngularVelocityData(&msg,
+                                         tokimecData.nice.x_angle_vel,
+                                         tokimecData.nice.y_angle_vel,
+                                         tokimecData.nice.z_angle_vel);
+                Ecan1Transmit(&msg);
+
+				// And then the accelerometer data
+                CanMessagePackageAccelerationData(&msg,
+                                         tokimecData.nice.x_accel,
+                                         tokimecData.nice.y_accel,
+                                         tokimecData.nice.z_accel);
+                Ecan1Transmit(&msg);
+
+				// And now the position data
+                CanMessagePackageGpsPosData(&msg,
+                                         tokimecData.nice.latitude,
+                                         tokimecData.nice.longitude);
+                Ecan1Transmit(&msg);
+
+				// And its estimated position data
+                CanMessagePackageEstGpsPosData(&msg,
+                                         tokimecData.nice.est_latitude,
+                                         tokimecData.nice.est_longitude);
+                Ecan1Transmit(&msg);
+
+				// And finally a few random data bits
+                CanMessagePackageGpsVelData(&msg,
+                                         tokimecData.nice.gpsDirection,
+                                         tokimecData.nice.gpsSpeed,
+                                         tokimecData.nice.magneticBearing,
+                                         tokimecData.nice.status);
                 Ecan1Transmit(&msg);
             } break;
             case TASK_TRANSMIT_STATUS:
