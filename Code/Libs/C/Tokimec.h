@@ -40,30 +40,30 @@ typedef union {
 		uint8_t id;  // Set to 0xFF
 		uint16_t status; // Bitfield of status bits. See TokimecStatusFlags enum.
 		uint16_t counter; // Incremented for each packet.
-		int16_t yaw;
-		int16_t pitch;
-		int16_t roll;
-		int16_t x_angle_vel;
-		int16_t y_angle_vel;
-		int16_t z_angle_vel;
-		int16_t x_accel;
-		int16_t y_accel;
-		int16_t z_accel;
+		int16_t yaw; // Absolute yaw in units of 2^-13 rads.
+		int16_t pitch; // Absolute pitch in units of 2^-13 rads.
+		int16_t roll; // Absolute roll in units of 2^-13 rads.
+		int16_t x_angle_vel; // Angular velocity around the X axis in units of 2^-12 rads/s.
+		int16_t y_angle_vel; // Angular velocity around the Y axis in units of 2^-12 rads/s.
+		int16_t z_angle_vel; // Angular velocity around the Z axis in units of 2^-12 rads/s.
+		int16_t x_accel; // Acceleration along the X axis (forward) in units of 2^-8 m/s^2.
+		int16_t y_accel; // Acceleration along the Y axis (right) in units of 2^-8 m/s^2.
+		int16_t z_accel; // Acceleration along the Z axis (up) in units of 2^-8 m/s^2.
 		uint16_t gpsNoDataTime; // Time since last GPS hit, units are 2ms, maximum value is 2500
-		int32_t est_latitude;
-		int32_t est_longitude;
-		int32_t latitude;
-		int32_t longitude;
-		int32_t altitude;
-		int16_t velocity_n;
-		int16_t velocity_e;
-		int16_t velocity_d;
-		uint8_t gpsNum;
-		GpsStatus gpsStatus;
-		int16_t gpsDirection;
-		int16_t gpsSpeed;
-		int16_t gpsHdop;
-		int16_t magneticBearing;
+		int32_t est_latitude; // Calculated GPS latitude in units of 2^-29 radians.
+		int32_t est_longitude; // Calculated GPS longitude in units of 2^-29 radians.
+		int32_t latitude; // Raw GPS latitude in units of 2^-29 radians.
+		int32_t longitude; // Raw GPS longitude in units of 2^-29 radians.
+		int32_t altitude; // Raw GPS altitude in units of cm.
+		int16_t velocity_n; // Velocity in the north direction in units of 2^-6 m/s.
+		int16_t velocity_e; // Velocity in the east direction in units of 2^-6 m/s.
+		int16_t velocity_d; // Velocity in the down direction in units of 2^-6 m/s.
+		uint8_t gpsNum; // Number of GPS satellites being used
+		GpsStatus gpsStatus; // GPS status.
+		int16_t gpsDirection; // GPS course over ground in units of 2^-13 rads.
+		int16_t gpsSpeed; // GPS speed in units of 2^-6 m/s.
+		int16_t gpsHdop; // Horizontal degree of precision.
+		int16_t magneticBearing; // Magnetic bearing in units of 2e-13 rads.
 		uint8_t utcHours;
 		uint8_t utcMinutes;
 		uint8_t utcSeconds;
