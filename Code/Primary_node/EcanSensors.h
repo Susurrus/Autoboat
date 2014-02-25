@@ -7,12 +7,14 @@
 #include "Types.h"
 #include "Node.h"
 
+// Store data from the Rudder Node.
 struct RudderCanData  {
 	float Position;
 	bool  NewData;
 };
 extern struct RudderCanData rudderCanDataStore;
 
+// Store data from the Power Node.
 struct PowerData {
 	float voltage;
 	float current;
@@ -21,13 +23,13 @@ struct PowerData {
 };
 extern struct PowerData powerDataStore;
 
+// Store data from the wSO100 air/wind sensor
 struct WindData {
 	float speed;
 	float direction;
 	bool  newData;
 };
 extern struct WindData windDataStore;
-
 struct AirData {
 	float temp;
 	float pressure;
@@ -36,6 +38,7 @@ struct AirData {
 };
 extern struct AirData airDataStore;
 
+// Store data from the DST-800 triducer.
 struct WaterData {
 	float speed; // Speed through the water in m/s
 	float temp;  // Water temperature in degrees Celsius
@@ -44,24 +47,49 @@ struct WaterData {
 };
 extern struct WaterData waterDataStore;
 
+// Store data from the ACS300 BLDC driver board
 struct ThrottleData {
 	int16_t rpm;
 	bool    newData;
 };
 extern struct ThrottleData throttleDataStore;
 
+// Store data from the Revolution GS IMU
 struct RevoGsData {
-	float    heading; // In rads
-	char     magStatus;
-	float    pitch; // In rads
-	char     pitchStatus;
-	float    roll; // In rads
-	char     rollStatus;
-	float    dip; // In rads
-	uint16_t magneticMagnitude;
+    float heading; // In rads
+    char magStatus;
+    float pitch; // In rads
+    char pitchStatus;
+    float roll; // in rads
+    char rollStatus;
+    float dip; // In rads
+    uint16_t magneticMagnitude;
 };
 extern struct RevoGsData revoGsDataStore;
 
+// Store data from the Tokimec VSAS-2GM
+struct TokimecData {
+    int16_t yaw; // Absolute yaw in units of 2^-13 rads.
+    int16_t pitch; // Absolute pitch in units of 2^-13 rads.
+    int16_t roll; // Absolute roll in units of 2^-13 rads.
+    int16_t x_angle_vel; // Angular velocity around the X axis in units of 2^-12 rads/s.
+    int16_t y_angle_vel; // Angular velocity around the Y axis in units of 2^-12 rads/s.
+    int16_t z_angle_vel; // Angular velocity around the Z axis in units of 2^-12 rads/s.
+    int16_t x_accel; // Acceleration along the X axis (forward) in units of 2^-8 m/s^2.
+    int16_t y_accel; // Acceleration along the Y axis (right) in units of 2^-8 m/s^2.
+    int16_t z_accel; // Acceleration along the Z axis (up) in units of 2^-8 m/s^2.
+    int32_t est_latitude; // Calculated GPS latitude in units of 2^-29 radians.
+    int32_t est_longitude; // Calculated GPS longitude in units of 2^-29 radians.
+    int32_t latitude; // Raw GPS latitude in units of 2^-29 radians.
+    int32_t longitude; // Raw GPS longitude in units of 2^-29 radians.
+    int16_t gpsDirection; // GPS course over ground in units of 2^-13 rads.
+    int16_t gpsSpeed; // GPS speed in units of 2^-6 m/s.
+    int16_t magneticBearing; // Magnetic bearing in units of 2e-13 rads.
+    uint16_t status; // Bitfield of status bits. See TokimecStatusFlags enum.
+};
+extern struct TokimecData tokimecDataStore;
+
+// Store data from the DSP-3000 z-axis gyro.
 struct GyroData {
 	float   zRate;
 	bool    newData;

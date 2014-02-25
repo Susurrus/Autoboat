@@ -34,6 +34,7 @@ struct DateTimeData dateTimeDataStore = { // Initialize our system clock to clea
 	false
 };
 struct RevoGsData revoGsDataStore = {0};
+struct TokimecData tokimecDataStore = {};
 struct NodeStatusData nodeStatusDataStore[NUM_NODES] = {
 	{INT8_MAX, UINT8_MAX, UINT8_MAX, UINT16_MAX, UINT16_MAX},
 	{INT8_MAX, UINT8_MAX, UINT8_MAX, UINT16_MAX, UINT16_MAX},
@@ -216,13 +217,47 @@ uint8_t ProcessAllEcanMessages(void)
 					sensorAvailability.imu.enabled_counter = 0;
 					sensorAvailability.imu.active_counter = 0;
 					CanMessageDecodeImuData(&msg,
-											&revoGsDataStore.heading,
-											&revoGsDataStore.pitch,
-											&revoGsDataStore.roll);
+											&tokimecDataStore.yaw,
+											&tokimecDataStore.pitch,
+											&tokimecDataStore.roll);
 				} else if (msg.id == CAN_MSG_ID_GYRO_DATA) {
 					sensorAvailability.gyro.enabled_counter = 0;
 					sensorAvailability.gyro.active_counter = 0;
 					CanMessageDecodeGyroData(&msg, &gyroDataStore.zRate);
+				} else if (msg.id == CAN_MSG_SIZE_ANG_VEL_DATA) {
+					sensorAvailability.imu.enabled_counter = 0;
+					sensorAvailability.imu.active_counter = 0;
+					CanMessageDecodeAngularVelocityData(&msg,
+											&tokimecDataStore.x_angle_vel,
+											&tokimecDataStore.y_angle_vel,
+											&tokimecDataStore.z_angle_vel);
+				} else if (msg.id == CAN_MSG_SIZE_ACCEL_DATA) {
+					sensorAvailability.imu.enabled_counter = 0;
+					sensorAvailability.imu.active_counter = 0;
+					CanMessageDecodeAccelerationData(&msg,
+						&tokimecDataStore.x_accel,
+						&tokimecDataStore.y_accel,
+						&tokimecDataStore.z_accel);
+				} else if (msg.id == CAN_MSG_SIZE_GPS_POS_DATA) {
+					sensorAvailability.imu.enabled_counter = 0;
+					sensorAvailability.imu.active_counter = 0;
+					CanMessageDecodeGpsPosData(&msg,
+						&tokimecDataStore.latitude,
+						&tokimecDataStore.longitude);
+				} else if (msg.id == CAN_MSG_SIZE_GPS_EST_POS_DATA) {
+					sensorAvailability.imu.enabled_counter = 0;
+					sensorAvailability.imu.active_counter = 0;
+					CanMessageDecodeGpsPosData(&msg,
+						&tokimecDataStore.est_latitude,
+						&tokimecDataStore.est_longitude);
+				} else if (msg.id == CAN_MSG_SIZE_GPS_VEL_DATA) {
+					sensorAvailability.imu.enabled_counter = 0;
+					sensorAvailability.imu.active_counter = 0;
+					CanMessageDecodeGpsVelData(&msg,
+						&tokimecDataStore.gpsDirection,
+						&tokimecDataStore.gpsSpeed,
+						&tokimecDataStore.magneticBearing,
+						&tokimecDataStore.status);
 				}
 			} else {
 				pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);

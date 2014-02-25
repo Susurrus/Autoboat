@@ -146,7 +146,7 @@ void CanMessageDecodeRudderDetails(const CanMessage *msg, uint16_t *potVal, uint
     }
 }
 
-void CanMessagePackageImuData(CanMessage *msg, float direction, float pitch, float roll)
+void CanMessagePackageImuData(CanMessage *msg, int16_t direction, int16_t pitch, int16_t roll)
 {
     msg->id = CAN_MSG_ID_IMU_DATA;
     msg->buffer = 0;
@@ -155,28 +155,21 @@ void CanMessagePackageImuData(CanMessage *msg, float direction, float pitch, flo
     msg->validBytes = CAN_MSG_SIZE_IMU_DATA;
 
     // Now fill in the data.
-    int16_t intDirection = (int16_t)(direction * 8192.0);
-	BEPackInt16(&msg->payload[0], intDirection);
-    int16_t intPitch = (int16_t)(pitch * 8192.0);
-	BEPackInt16(&msg->payload[2], intPitch);
-    int16_t intRoll = (int16_t)(roll * 8192.0);
-	BEPackInt16(&msg->payload[4], intRoll);
+	BEPackInt16(&msg->payload[0], direction);
+	BEPackInt16(&msg->payload[2], pitch);
+	BEPackInt16(&msg->payload[4], roll);
 }
 
-void CanMessageDecodeImuData(const CanMessage *msg, float *direction, float *pitch, float *roll)
+void CanMessageDecodeImuData(const CanMessage *msg, int16_t *direction, int16_t *pitch, int16_t *roll)
 {
-	int16_t tmp;
     if (direction) {
-		BEUnpackInt16(&tmp, &msg->payload[0]);
-        *direction = (float)tmp / 8192.0;
+		BEUnpackInt16(direction, &msg->payload[0]);
     }
     if (pitch) {
-		BEUnpackInt16(&tmp, &msg->payload[2]);
-        *pitch = (float)tmp / 8192.0;
+		BEUnpackInt16(pitch, &msg->payload[2]);
     }
     if (roll) {
-		BEUnpackInt16(&tmp, &msg->payload[4]);
-        *roll = (float)tmp / 8192.0;
+		BEUnpackInt16(roll, &msg->payload[4]);
     }
 }
 
@@ -216,6 +209,19 @@ void CanMessagePackageAngularVelocityData(CanMessage *msg, int16_t xAngleVel, in
 	LEPackInt16(&msg->payload[4], zAngleVel);
 }
 
+void CanMessageDecodeAngularVelocityData(const CanMessage *msg, int16_t *xAngleVel, int16_t *yAngleVel, int16_t *zAngleVel)
+{
+    if (xAngleVel) {
+		LEUnpackInt16(xAngleVel, &msg->payload[0]);
+    }
+    if (yAngleVel) {
+		LEUnpackInt16(yAngleVel, &msg->payload[2]);
+    }
+    if (zAngleVel) {
+		LEUnpackInt16(zAngleVel, &msg->payload[4]);
+    }
+}
+
 void CanMessagePackageAccelerationData(CanMessage *msg, int16_t xAccel, int16_t yAccel, int16_t zAccel)
 {
     msg->id = CAN_MSG_ID_ACCEL_DATA;
@@ -228,6 +234,19 @@ void CanMessagePackageAccelerationData(CanMessage *msg, int16_t xAccel, int16_t 
 	LEPackInt16(&msg->payload[0], xAccel);
 	LEPackInt16(&msg->payload[2], yAccel);
 	LEPackInt16(&msg->payload[4], zAccel);
+}
+
+void CanMessageDecodeAccelerationData(const CanMessage *msg, int16_t *xAccel, int16_t *yAccel, int16_t *zAccel)
+{
+    if (xAccel) {
+		LEUnpackInt16(xAccel, &msg->payload[0]);
+    }
+    if (yAccel) {
+		LEUnpackInt16(yAccel, &msg->payload[2]);
+    }
+    if (zAccel) {
+		LEUnpackInt16(zAccel, &msg->payload[4]);
+    }
 }
 
 void CanMessagePackageGpsPosData(CanMessage *msg, int32_t latitude, int32_t longitude)
@@ -243,6 +262,16 @@ void CanMessagePackageGpsPosData(CanMessage *msg, int32_t latitude, int32_t long
 	LEPackInt32(&msg->payload[4], longitude);
 }
 
+void CanMessageDecodeGpsPosData(const CanMessage *msg, int32_t *latitude, int32_t *longitude)
+{
+    if (latitude) {
+		LEUnpackInt32(latitude, &msg->payload[0]);
+    }
+    if (longitude) {
+		LEUnpackInt32(longitude, &msg->payload[4]);
+    }
+}
+
 void CanMessagePackageEstGpsPosData(CanMessage *msg, int32_t estLatitude, int32_t estLongitude)
 {
     msg->id = CAN_MSG_ID_GPS_EST_POS_DATA;
@@ -254,6 +283,16 @@ void CanMessagePackageEstGpsPosData(CanMessage *msg, int32_t estLatitude, int32_
     // Now fill in the data.
 	LEPackInt32(&msg->payload[0], estLatitude);
 	LEPackInt32(&msg->payload[4], estLongitude);
+}
+
+void CanMessageDecodeEstGpsPosData(const CanMessage *msg, int32_t *estLatitude, int32_t *estLongitude)
+{
+    if (estLatitude) {
+		LEUnpackInt32(estLatitude, &msg->payload[0]);
+    }
+    if (estLongitude) {
+		LEUnpackInt32(estLongitude, &msg->payload[4]);
+    }
 }
 
 void CanMessagePackageGpsVelData(CanMessage *msg, int16_t gpsHeading, int16_t gpsSpeed, int16_t magBearing, uint16_t status)
@@ -269,4 +308,20 @@ void CanMessagePackageGpsVelData(CanMessage *msg, int16_t gpsHeading, int16_t gp
 	LEPackInt16(&msg->payload[2], gpsSpeed);
 	LEPackInt16(&msg->payload[4], magBearing);
 	LEPackUint16(&msg->payload[6], status);
+}
+
+void CanMessageDecodeGpsVelData(const CanMessage *msg, int16_t *gpsHeading, int16_t *gpsSpeed, int16_t *magBearing, uint16_t *status)
+{
+    if (gpsHeading) {
+		LEUnpackInt16(gpsHeading, &msg->payload[0]);
+    }
+    if (gpsSpeed) {
+		LEUnpackInt16(gpsSpeed, &msg->payload[2]);
+    }
+    if (magBearing) {
+		LEUnpackInt16(magBearing, &msg->payload[4]);
+    }
+    if (status) {
+		LEUnpackUint16(status, &msg->payload[6]);
+    }
 }

@@ -98,29 +98,33 @@ void CanMessageDecodeGyroData(const CanMessage *msg, float *zRate);
 
 // The IMU data messages are based on the Direction/Attitude messages from the VSAS-2GM, which uses
 // a big-endian storage format. All units are in radians.
-void CanMessagePackageImuData(CanMessage *msg, float direction, float pitch, float roll);
+void CanMessagePackageImuData(CanMessage *msg, int16_t direction, int16_t pitch, int16_t roll);
 
-void CanMessageDecodeImuData(const CanMessage *msg, float *direction, float *pitch, float *roll);
+void CanMessageDecodeImuData(const CanMessage *msg, int16_t *direction, int16_t *pitch, int16_t *roll);
 
 /**
  * CAN message for the Tokimec's angular velocity data
  */
 void CanMessagePackageAngularVelocityData(CanMessage *msg, int16_t xAngleVel, int16_t yAngleVel, int16_t zAngleVel);
+void CanMessageDecodeAngularVelocityData(const CanMessage *msg, int16_t *xAngleVel, int16_t *yAngleVel, int16_t *zAngleVel);
 
 /**
  * CAN message for the Tokimec's acceleration data
  */
 void CanMessagePackageAccelerationData(CanMessage *msg, int16_t xAccel, int16_t yAccel, int16_t zAccel);
+void CanMessageDecodeAccelerationData(const CanMessage *msg, int16_t *xAccel, int16_t *yAccel, int16_t *zAccel);
 
 /**
  * CAN message for the Tokimec's raw latitude and longitude data.
  */
 void CanMessagePackageGpsPosData(CanMessage *msg, int32_t latitude, int32_t longitude);
+void CanMessageDecodeGpsPosData(const CanMessage *msg, int32_t *latitude, int32_t *longitude);
 
 /**
  * CAN message for the Tokimec's estimated GPS lat/long.
  */
 void CanMessagePackageEstGpsPosData(CanMessage *msg, int32_t estLatitude, int32_t estLongitude);
+void CanMessageDecodeEstGpsPosData(const CanMessage *msg, int32_t *estLatitude, int32_t *estLongitude);
 
 /**
  * CAN message for the Tokimec's gps heading & speed as well as magnetic bearing and system status.
@@ -130,6 +134,7 @@ void CanMessagePackageEstGpsPosData(CanMessage *msg, int32_t estLatitude, int32_
  * @param status A bitfield of the Tokimec status.
  */
 void CanMessagePackageGpsVelData(CanMessage *msg, int16_t gpsHeading, int16_t gpsSpeed, int16_t magBearing, uint16_t status);
+void CanMessageDecodeGpsVelData(const CanMessage *msg, int16_t *gpsHeading, int16_t *gpsSpeed, int16_t *magBearing, uint16_t *status);
 
 
 #endif // CAN_MESSAGES_H

@@ -131,7 +131,7 @@ __attribute__((always_inline)) static inline void BEUnpackUint16(uint16_t *data,
 
 __attribute__((always_inline)) static inline void BEUnpackInt16(int16_t *data, const uint8_t container[2])
 {
-	*data = (int16_t)container[1] | ((int16_t)container[0] << 8);
+        *data = (int16_t)container[1] | ((int16_t)container[0] << 8);
 }
 
 __attribute__((always_inline)) static inline void BEUnpackInt32(int32_t *data, const uint8_t container[4])

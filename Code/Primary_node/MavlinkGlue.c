@@ -434,9 +434,13 @@ void MavLinkSendAttitude(void)
 {
 	mavlink_message_t msg;
 
+	// The roll as reported from the Tokimec is opposite from what the ATTITUDE message expects
+	// (at least according to QGC).
+	float roll = (float)tokimecDataStore.roll / 8192.0;
+	float pitch = (float)tokimecDataStore.pitch / 8192.0;
 	mavlink_msg_attitude_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                          nodeSystemTime*10,
-							  revoGsDataStore.roll, revoGsDataStore.pitch, controllerVars.Heading,
+							  -roll, pitch, controllerVars.Heading,
 							  0.0, 0.0, 0.0);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
