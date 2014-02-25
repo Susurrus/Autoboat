@@ -238,11 +238,8 @@ int main(void)
 				// decoding call above.
 				mavlink_reset_channel_status(MAVLINK_COMM_1);
 
-				// And reset our UART1 hardware. I'm unsure if we need the nop there, but I figure
-				// it's wise.
-				U1STAbits.UTXEN = 0;
-				Nop();
-				U1STAbits.UTXEN = 1;
+				// And reset our UART1 hardware.
+				Uart1Init(BAUD115200_BRG_REG);
 			}
 		}
 		if (runTasks) {
