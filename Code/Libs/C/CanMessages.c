@@ -204,21 +204,21 @@ void CanMessagePackageAngularVelocityData(CanMessage *msg, int16_t xAngleVel, in
     msg->validBytes = CAN_MSG_SIZE_ANG_VEL_DATA;
 
     // Now fill in the data.
-	LEPackInt16(&msg->payload[0], xAngleVel);
-	LEPackInt16(&msg->payload[2], yAngleVel);
-	LEPackInt16(&msg->payload[4], zAngleVel);
+	BEPackInt16(&msg->payload[0], xAngleVel);
+	BEPackInt16(&msg->payload[2], yAngleVel);
+	BEPackInt16(&msg->payload[4], zAngleVel);
 }
 
 void CanMessageDecodeAngularVelocityData(const CanMessage *msg, int16_t *xAngleVel, int16_t *yAngleVel, int16_t *zAngleVel)
 {
     if (xAngleVel) {
-		LEUnpackInt16(xAngleVel, &msg->payload[0]);
+		BEUnpackInt16(xAngleVel, &msg->payload[0]);
     }
     if (yAngleVel) {
-		LEUnpackInt16(yAngleVel, &msg->payload[2]);
+		BEUnpackInt16(yAngleVel, &msg->payload[2]);
     }
     if (zAngleVel) {
-		LEUnpackInt16(zAngleVel, &msg->payload[4]);
+		BEUnpackInt16(zAngleVel, &msg->payload[4]);
     }
 }
 
@@ -231,21 +231,21 @@ void CanMessagePackageAccelerationData(CanMessage *msg, int16_t xAccel, int16_t 
     msg->validBytes = CAN_MSG_SIZE_ACCEL_DATA;
 
     // Now fill in the data.
-	LEPackInt16(&msg->payload[0], xAccel);
-	LEPackInt16(&msg->payload[2], yAccel);
-	LEPackInt16(&msg->payload[4], zAccel);
+	BEPackInt16(&msg->payload[0], xAccel);
+	BEPackInt16(&msg->payload[2], yAccel);
+	BEPackInt16(&msg->payload[4], zAccel);
 }
 
 void CanMessageDecodeAccelerationData(const CanMessage *msg, int16_t *xAccel, int16_t *yAccel, int16_t *zAccel)
 {
     if (xAccel) {
-		LEUnpackInt16(xAccel, &msg->payload[0]);
+		BEUnpackInt16(xAccel, &msg->payload[0]);
     }
     if (yAccel) {
-		LEUnpackInt16(yAccel, &msg->payload[2]);
+		BEUnpackInt16(yAccel, &msg->payload[2]);
     }
     if (zAccel) {
-		LEUnpackInt16(zAccel, &msg->payload[4]);
+		BEUnpackInt16(zAccel, &msg->payload[4]);
     }
 }
 
@@ -258,17 +258,17 @@ void CanMessagePackageGpsPosData(CanMessage *msg, int32_t latitude, int32_t long
     msg->validBytes = CAN_MSG_SIZE_GPS_POS_DATA;
 
     // Now fill in the data.
-	LEPackInt32(&msg->payload[0], latitude);
-	LEPackInt32(&msg->payload[4], longitude);
+	BEPackInt32(&msg->payload[0], latitude);
+	BEPackInt32(&msg->payload[4], longitude);
 }
 
 void CanMessageDecodeGpsPosData(const CanMessage *msg, int32_t *latitude, int32_t *longitude)
 {
     if (latitude) {
-		LEUnpackInt32(latitude, &msg->payload[0]);
+		BEUnpackInt32(latitude, &msg->payload[0]);
     }
     if (longitude) {
-		LEUnpackInt32(longitude, &msg->payload[4]);
+		BEUnpackInt32(longitude, &msg->payload[4]);
     }
 }
 
@@ -281,17 +281,17 @@ void CanMessagePackageEstGpsPosData(CanMessage *msg, int32_t estLatitude, int32_
     msg->validBytes = CAN_MSG_SIZE_GPS_EST_POS_DATA;
 
     // Now fill in the data.
-	LEPackInt32(&msg->payload[0], estLatitude);
-	LEPackInt32(&msg->payload[4], estLongitude);
+	BEPackInt32(&msg->payload[0], estLatitude);
+	BEPackInt32(&msg->payload[4], estLongitude);
 }
 
 void CanMessageDecodeEstGpsPosData(const CanMessage *msg, int32_t *estLatitude, int32_t *estLongitude)
 {
     if (estLatitude) {
-		LEUnpackInt32(estLatitude, &msg->payload[0]);
+		BEUnpackInt32(estLatitude, &msg->payload[0]);
     }
     if (estLongitude) {
-		LEUnpackInt32(estLongitude, &msg->payload[4]);
+		BEUnpackInt32(estLongitude, &msg->payload[4]);
     }
 }
 
@@ -304,24 +304,24 @@ void CanMessagePackageGpsVelData(CanMessage *msg, int16_t gpsHeading, int16_t gp
     msg->validBytes = CAN_MSG_SIZE_GPS_VEL_DATA;
 
     // Now fill in the data.
-	LEPackInt16(&msg->payload[0], gpsHeading);
-	LEPackInt16(&msg->payload[2], gpsSpeed);
-	LEPackInt16(&msg->payload[4], magBearing);
-	LEPackUint16(&msg->payload[6], status);
+	BEPackInt16(&msg->payload[0], gpsHeading);
+	BEPackInt16(&msg->payload[2], gpsSpeed);
+	BEPackInt16(&msg->payload[4], magBearing);
+	BEPackUint16(&msg->payload[6], status);
 }
 
 void CanMessageDecodeGpsVelData(const CanMessage *msg, int16_t *gpsHeading, int16_t *gpsSpeed, int16_t *magBearing, uint16_t *status)
 {
     if (gpsHeading) {
-		LEUnpackInt16(gpsHeading, &msg->payload[0]);
+		BEUnpackInt16(gpsHeading, &msg->payload[0]);
     }
     if (gpsSpeed) {
-		LEUnpackInt16(gpsSpeed, &msg->payload[2]);
+		BEUnpackInt16(gpsSpeed, &msg->payload[2]);
     }
     if (magBearing) {
-		LEUnpackInt16(magBearing, &msg->payload[4]);
+		BEUnpackInt16(magBearing, &msg->payload[4]);
     }
     if (status) {
-		LEUnpackUint16(status, &msg->payload[6]);
+		BEUnpackUint16(status, &msg->payload[6]);
     }
 }
