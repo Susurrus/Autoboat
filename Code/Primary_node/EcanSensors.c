@@ -34,7 +34,7 @@ struct DateTimeData dateTimeDataStore = { // Initialize our system clock to clea
 	false
 };
 struct RevoGsData revoGsDataStore = {0};
-struct TokimecData tokimecDataStore = {};
+TokimecOutput tokimecDataStore = {};
 struct NodeStatusData nodeStatusDataStore[NUM_NODES] = {
 	{INT8_MAX, UINT8_MAX, UINT8_MAX, UINT16_MAX, UINT16_MAX},
 	{INT8_MAX, UINT8_MAX, UINT8_MAX, UINT16_MAX, UINT16_MAX},

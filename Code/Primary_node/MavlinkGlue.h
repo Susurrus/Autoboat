@@ -90,6 +90,11 @@ void MavLinkSendStatus(void);
 void MavLinkSendStatusText(enum MAV_SEVERITY severity, const char *text);
 
 /**
+ * Transmit a TOKIMEC message pulling all data from the EcanSensors library.
+ */
+void MavLinkSendTokimec(void);
+
+/**
  * Pull the raw GPS sensor data from the gpsDataStore struct within the GPS module and
  * transmit it via MAVLink over UART1.
  * TODO: Convert this message to a GLOBAL_POSITION_INT

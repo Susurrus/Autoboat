@@ -6,6 +6,7 @@
 
 #include "Types.h"
 #include "Node.h"
+#include "Tokimec.h"
 
 // Store data from the Rudder Node.
 struct RudderCanData  {
@@ -68,26 +69,7 @@ struct RevoGsData {
 extern struct RevoGsData revoGsDataStore;
 
 // Store data from the Tokimec VSAS-2GM
-struct TokimecData {
-    int16_t yaw; // Absolute yaw in units of 2^-13 rads.
-    int16_t pitch; // Absolute pitch in units of 2^-13 rads.
-    int16_t roll; // Absolute roll in units of 2^-13 rads.
-    int16_t x_angle_vel; // Angular velocity around the X axis in units of 2^-12 rads/s.
-    int16_t y_angle_vel; // Angular velocity around the Y axis in units of 2^-12 rads/s.
-    int16_t z_angle_vel; // Angular velocity around the Z axis in units of 2^-12 rads/s.
-    int16_t x_accel; // Acceleration along the X axis (forward) in units of 2^-8 m/s^2.
-    int16_t y_accel; // Acceleration along the Y axis (right) in units of 2^-8 m/s^2.
-    int16_t z_accel; // Acceleration along the Z axis (up) in units of 2^-8 m/s^2.
-    int32_t est_latitude; // Calculated GPS latitude in units of 2^-29 radians.
-    int32_t est_longitude; // Calculated GPS longitude in units of 2^-29 radians.
-    int32_t latitude; // Raw GPS latitude in units of 2^-29 radians.
-    int32_t longitude; // Raw GPS longitude in units of 2^-29 radians.
-    int16_t gpsDirection; // GPS course over ground in units of 2^-13 rads.
-    int16_t gpsSpeed; // GPS speed in units of 2^-6 m/s.
-    int16_t magneticBearing; // Magnetic bearing in units of 2e-13 rads.
-    uint16_t status; // Bitfield of status bits. See TokimecStatusFlags enum.
-};
-extern struct TokimecData tokimecDataStore;
+extern TokimecOutput tokimecDataStore;
 
 // Store data from the DSP-3000 z-axis gyro.
 struct GyroData {

@@ -156,7 +156,7 @@ struct {
 } mavlinkManualControlData;
 
 // Set up the message scheduler for MAVLink transmission
-#define MAVLINK_MSGS_SIZE 16
+#define MAVLINK_MSGS_SIZE 17
 uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_HEARTBEAT,
 	MAVLINK_MSG_ID_SYS_STATUS,
@@ -173,7 +173,8 @@ uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_GPS200,
 	MAVLINK_MSG_ID_NODE_STATUS,
 	MAVLINK_MSG_ID_WAYPOINT_STATUS,
-	MAVLINK_MSG_ID_DSP3000
+	MAVLINK_MSG_ID_DSP3000,
+	MAVLINK_MSG_ID_TOKIMEC
 };
 uint16_t tsteps[MAVLINK_MSGS_SIZE][2][8] = {};
 uint8_t  mSizes[MAVLINK_MSGS_SIZE];
@@ -198,8 +199,8 @@ void MavLinkInit(void)
 		mavlinkSchedule.MessageSizes[i] = mavMessageSizes[ids[i]];
 	}
 
-	//const uint8_t const periodicities[MAVLINK_MSGS_SIZE] = {2, 2, 1, 10, 10, 5, 2, 10, 1, 5, 2, 5, 1, 1, 1, 20};
-	const uint8_t const periodicities[MAVLINK_MSGS_SIZE] = {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 20};
+	//const uint8_t const periodicities[MAVLINK_MSGS_SIZE] = {2, 2, 1, 10, 10, 5, 2, 10, 1, 5, 2, 5, 1, 1, 1, 20, 20};
+	const uint8_t const periodicities[MAVLINK_MSGS_SIZE] = {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 20, 20};
 	for (i = 0; i < sizeof(periodicities); ++i) {
 		if (!AddMessageRepeating(&mavlinkSchedule, ids[i], periodicities[i])) {
 			FATAL_ERROR();
@@ -343,6 +344,29 @@ void MavLinkSendStatusText(enum MAV_SEVERITY severity, const char *text)
 	char msgText[MAVLINK_MSG_ID_STATUSTEXT_LEN] = {};
 	strncpy(msgText, text, MAVLINK_MSG_STATUSTEXT_FIELD_TEXT_LEN);
 	mavlink_msg_statustext_pack(mavlink_system.sysid, mavlink_system.compid, &msg, severity, msgText);
+
+	len = mavlink_msg_to_send_buffer(buf, &msg);
+
+	Uart1WriteData(buf, (uint8_t)len);
+}
+
+/**
+ * Transmits the z-axis rotation rate from the DSP3000. Note that this is in the body frame. Data is
+ * in rads/s and clockwise positive.
+ */
+void MavLinkSendTokimec(void)
+{
+	mavlink_message_t msg;
+
+	mavlink_msg_tokimec_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+	                         tokimecDataStore.yaw, tokimecDataStore.pitch, tokimecDataStore.roll,
+	                         tokimecDataStore.x_angle_vel, tokimecDataStore.y_angle_vel, tokimecDataStore.z_angle_vel,
+	                         tokimecDataStore.x_accel, tokimecDataStore.y_accel, tokimecDataStore.z_accel,
+							 tokimecDataStore.magneticBearing,
+							 tokimecDataStore.latitude, tokimecDataStore.longitude,
+							 tokimecDataStore.est_latitude, tokimecDataStore.est_longitude,
+							 tokimecDataStore.gpsDirection, tokimecDataStore.gpsSpeed,
+							 tokimecDataStore.status);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
@@ -1658,6 +1682,10 @@ void MavLinkTransmit(void)
 
 			case MAVLINK_MSG_ID_DSP3000:
 				MavLinkSendDsp3000();
+			break;
+
+			case MAVLINK_MSG_ID_TOKIMEC:
+				MavLinkSendTokimec();
 			break;
 
 			case MAVLINK_MSG_ID_MAIN_POWER:

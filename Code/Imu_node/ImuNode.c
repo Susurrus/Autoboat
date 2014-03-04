@@ -204,43 +204,43 @@ void Run100HzTasks(void)
 
 				// Transmit the absolute attitude message
                 CanMessagePackageImuData(&msg,
-                                         tokimecData.nice.yaw,
-                                         tokimecData.nice.pitch,
-                                         tokimecData.nice.roll);
+                                         tokimecData.yaw,
+                                         tokimecData.pitch,
+                                         tokimecData.roll);
                 Ecan1Transmit(&msg);
 
 				// Now transmit the angular velocity data
                 CanMessagePackageAngularVelocityData(&msg,
-                                         tokimecData.nice.x_angle_vel,
-                                         tokimecData.nice.y_angle_vel,
-                                         tokimecData.nice.z_angle_vel);
+                                         tokimecData.x_angle_vel,
+                                         tokimecData.y_angle_vel,
+                                         tokimecData.z_angle_vel);
                 Ecan1Transmit(&msg);
 
 				// And then the accelerometer data
                 CanMessagePackageAccelerationData(&msg,
-                                         tokimecData.nice.x_accel,
-                                         tokimecData.nice.y_accel,
-                                         tokimecData.nice.z_accel);
+                                         tokimecData.x_accel,
+                                         tokimecData.y_accel,
+                                         tokimecData.z_accel);
                 Ecan1Transmit(&msg);
 
 				// And now the position data
                 CanMessagePackageGpsPosData(&msg,
-                                         tokimecData.nice.latitude,
-                                         tokimecData.nice.longitude);
+                                         tokimecData.latitude,
+                                         tokimecData.longitude);
                 Ecan1Transmit(&msg);
 
 				// And its estimated position data
                 CanMessagePackageEstGpsPosData(&msg,
-                                         tokimecData.nice.est_latitude,
-                                         tokimecData.nice.est_longitude);
+                                         tokimecData.est_latitude,
+                                         tokimecData.est_longitude);
                 Ecan1Transmit(&msg);
 
 				// And finally a few random data bits
                 CanMessagePackageGpsVelData(&msg,
-                                         tokimecData.nice.gpsDirection,
-                                         tokimecData.nice.gpsSpeed,
-                                         tokimecData.nice.magneticBearing,
-                                         tokimecData.nice.status);
+                                         tokimecData.gpsDirection,
+                                         tokimecData.gpsSpeed,
+                                         tokimecData.magneticBearing,
+                                         tokimecData.status);
                 Ecan1Transmit(&msg);
             } break;
             case TASK_TRANSMIT_STATUS:
