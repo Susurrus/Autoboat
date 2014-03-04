@@ -224,33 +224,33 @@ uint8_t ProcessAllEcanMessages(void)
 					sensorAvailability.gyro.enabled_counter = 0;
 					sensorAvailability.gyro.active_counter = 0;
 					CanMessageDecodeGyroData(&msg, &gyroDataStore.zRate);
-				} else if (msg.id == CAN_MSG_SIZE_ANG_VEL_DATA) {
+				} else if (msg.id == CAN_MSG_ID_ANG_VEL_DATA) {
 					sensorAvailability.imu.enabled_counter = 0;
 					sensorAvailability.imu.active_counter = 0;
 					CanMessageDecodeAngularVelocityData(&msg,
 											&tokimecDataStore.x_angle_vel,
 											&tokimecDataStore.y_angle_vel,
 											&tokimecDataStore.z_angle_vel);
-				} else if (msg.id == CAN_MSG_SIZE_ACCEL_DATA) {
+				} else if (msg.id == CAN_MSG_ID_ACCEL_DATA) {
 					sensorAvailability.imu.enabled_counter = 0;
 					sensorAvailability.imu.active_counter = 0;
 					CanMessageDecodeAccelerationData(&msg,
 						&tokimecDataStore.x_accel,
 						&tokimecDataStore.y_accel,
 						&tokimecDataStore.z_accel);
-				} else if (msg.id == CAN_MSG_SIZE_GPS_POS_DATA) {
+				} else if (msg.id == CAN_MSG_ID_GPS_POS_DATA) {
 					sensorAvailability.imu.enabled_counter = 0;
 					sensorAvailability.imu.active_counter = 0;
 					CanMessageDecodeGpsPosData(&msg,
 						&tokimecDataStore.latitude,
 						&tokimecDataStore.longitude);
-				} else if (msg.id == CAN_MSG_SIZE_GPS_EST_POS_DATA) {
+				} else if (msg.id == CAN_MSG_ID_GPS_EST_POS_DATA) {
 					sensorAvailability.imu.enabled_counter = 0;
 					sensorAvailability.imu.active_counter = 0;
 					CanMessageDecodeGpsPosData(&msg,
 						&tokimecDataStore.est_latitude,
 						&tokimecDataStore.est_longitude);
-				} else if (msg.id == CAN_MSG_SIZE_GPS_VEL_DATA) {
+				} else if (msg.id == CAN_MSG_ID_GPS_VEL_DATA) {
 					sensorAvailability.imu.enabled_counter = 0;
 					sensorAvailability.imu.active_counter = 0;
 					CanMessageDecodeGpsVelData(&msg,
