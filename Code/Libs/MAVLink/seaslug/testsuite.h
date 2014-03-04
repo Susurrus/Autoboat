@@ -318,6 +318,81 @@ static void mavlink_test_dsp3000(uint8_t system_id, uint8_t component_id, mavlin
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
+static void mavlink_test_tokimec(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+{
+	mavlink_message_t msg;
+        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
+        uint16_t i;
+	mavlink_tokimec_t packet_in = {
+		963497464,
+	}963497672,
+	}963497880,
+	}963498088,
+	}18067,
+	}18171,
+	}18275,
+	}18379,
+	}18483,
+	}18587,
+	}18691,
+	}18795,
+	}18899,
+	}19003,
+	}19107,
+	}19211,
+	}19315,
+	};
+	mavlink_tokimec_t packet1, packet2;
+        memset(&packet1, 0, sizeof(packet1));
+        	packet1.latitude = packet_in.latitude;
+        	packet1.longitude = packet_in.longitude;
+        	packet1.est_latitude = packet_in.est_latitude;
+        	packet1.est_longitude = packet_in.est_longitude;
+        	packet1.yaw = packet_in.yaw;
+        	packet1.pitch = packet_in.pitch;
+        	packet1.roll = packet_in.roll;
+        	packet1.x_angle_vel = packet_in.x_angle_vel;
+        	packet1.y_angle_vel = packet_in.y_angle_vel;
+        	packet1.z_angle_vel = packet_in.z_angle_vel;
+        	packet1.x_accel = packet_in.x_accel;
+        	packet1.y_accel = packet_in.y_accel;
+        	packet1.z_accel = packet_in.z_accel;
+        	packet1.mag_bearing = packet_in.mag_bearing;
+        	packet1.gps_heading = packet_in.gps_heading;
+        	packet1.gps_speed = packet_in.gps_speed;
+        	packet1.status = packet_in.status;
+        
+        
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_tokimec_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_tokimec_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_tokimec_pack(system_id, component_id, &msg , packet1.yaw , packet1.pitch , packet1.roll , packet1.x_angle_vel , packet1.y_angle_vel , packet1.z_angle_vel , packet1.x_accel , packet1.y_accel , packet1.z_accel , packet1.mag_bearing , packet1.latitude , packet1.longitude , packet1.est_latitude , packet1.est_longitude , packet1.gps_heading , packet1.gps_speed , packet1.status );
+	mavlink_msg_tokimec_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_tokimec_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.yaw , packet1.pitch , packet1.roll , packet1.x_angle_vel , packet1.y_angle_vel , packet1.z_angle_vel , packet1.x_accel , packet1.y_accel , packet1.z_accel , packet1.mag_bearing , packet1.latitude , packet1.longitude , packet1.est_latitude , packet1.est_longitude , packet1.gps_heading , packet1.gps_speed , packet1.status );
+	mavlink_msg_tokimec_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+        mavlink_msg_to_send_buffer(buffer, &msg);
+        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
+        	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
+        }
+	mavlink_msg_tokimec_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+        
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_tokimec_send(MAVLINK_COMM_1 , packet1.yaw , packet1.pitch , packet1.roll , packet1.x_angle_vel , packet1.y_angle_vel , packet1.z_angle_vel , packet1.x_accel , packet1.y_accel , packet1.z_accel , packet1.mag_bearing , packet1.latitude , packet1.longitude , packet1.est_latitude , packet1.est_longitude , packet1.gps_heading , packet1.gps_speed , packet1.status );
+	mavlink_msg_tokimec_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+}
+
 static void mavlink_test_basic_state(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
 {
 	mavlink_message_t msg;
@@ -592,6 +667,7 @@ static void mavlink_test_seaslug(uint8_t system_id, uint8_t component_id, mavlin
 	mavlink_test_revo_gs(system_id, component_id, last_msg);
 	mavlink_test_gps200(system_id, component_id, last_msg);
 	mavlink_test_dsp3000(system_id, component_id, last_msg);
+	mavlink_test_tokimec(system_id, component_id, last_msg);
 	mavlink_test_basic_state(system_id, component_id, last_msg);
 	mavlink_test_main_power(system_id, component_id, last_msg);
 	mavlink_test_node_status(system_id, component_id, last_msg);
