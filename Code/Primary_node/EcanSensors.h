@@ -104,6 +104,7 @@ extern uint8_t nodeStatusTimeoutCounters[NUM_NODES];
  * Declare bitflags for use with the GpsData struct's receivedMessages field.
  */
 enum {
+        GPSDATA_NONE     = 0x00,
 	GPSDATA_POSITION = 0x01,
 	GPSDATA_HEADING  = 0x02,
 	GPSDATA_FIX      = 0x04,
