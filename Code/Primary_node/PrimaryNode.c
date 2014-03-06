@@ -223,8 +223,10 @@ int main(void)
 				}
 			}
 			
-			// Now if we've reached our limit of MAVLINK_MAX_PACKET_LEN * 2, then reset UART1.
-			if (uart1TxStateIsGood && ++noMessageBytes >= MAVLINK_MAX_PACKET_LEN * 2) {
+			// Now if we've reached our limit of MAVLINK_MAX_PACKET_LEN, then reset UART1.
+			// We timeout after 75 bytes because that's larger than any message transmit by the SeaSlug.
+			// The largest message is common:STATUSTEXT.
+			if (uart1TxStateIsGood && ++noMessageBytes >= 75) {
 				// We're now in a corrupted state.
 				uart1TxStateIsGood = false;
 
