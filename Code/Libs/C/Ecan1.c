@@ -1,9 +1,12 @@
+// Include custom library headers
 #include "Ecan1.h"
 #include "CircularBuffer.h"
-#include "Node.h"
 
+// Include standard C library headers
 #include <string.h>
 #include <stdbool.h>
+
+// Include Microchip library headers
 #include <ecan.h>
 #include <dma.h>
 
@@ -11,7 +14,7 @@
  * @file   Ecan1.c
  * @author Bryant Mairs
  * @author Pavlo Manovi
- * @date   September 28th, 202
+ * @date   September 28th, 2012
  * @brief  Provides C functions for ECAN blocks
  */
 
@@ -25,7 +28,7 @@
 // NOTE: This DMA space is aligned along 64-byte boundaries to make sure there's enough room for
 // all 64-bytes of memory required.
 #ifdef __dsPIC33FJ128MC802__
-static volatile uint16_t ecan1MsgBuf[4][8] __attribute__((space(dma),aligned(64)));
+static volatile uint16_t ecan1MsgBuf[4][8] __attribute__((space(dma), aligned(64)));
 #elif __dsPIC33EP256MC502__
 static volatile uint16_t ecan1MsgBuf[4][8] __attribute__((aligned(64)));
 #endif
@@ -42,7 +45,7 @@ static bool currentlyTransmitting = 0;
 // Also track how many messages are pending for reading.
 static uint8_t receivedMessagesPending = 0;
 
-void Ecan1Init(uint32_t f_osc)
+void Ecan1Init(uint32_t f_osc, uint32_t f_baud)
 {
     // Initialize our circular buffers. If this fails, we crash and burn.
     if (!CB_Init(&ecan1TxCBuffer, txDataArray, ECAN1_BUFFERSIZE)) {
@@ -51,22 +54,22 @@ void Ecan1Init(uint32_t f_osc)
     if (!CB_Init(&ecan1RxCBuffer, rxDataArray, ECAN1_BUFFERSIZE)) {
         while (1);
     }
-	
-    // Set ECAN1 into configuration mode
-	C1CTRL1bits.REQOP = 4;
+
+    // Set ECAN1 into configuration mode and wait until it switches modes.
+    C1CTRL1bits.REQOP = 4;
     while (C1CTRL1bits.OPMODE != 4);
 
-    // Initialize the CAN node to 250kbaud, assuming a 80MHz clock.
-	const uint16_t propagationSegmentLength = 5;
-	const uint16_t phaseSegment1Length = 8;
-	const uint16_t phaseSegment2Length = 6;
-    const uint64_t f_baud = 250000L;
+    // Initialize the CAN node. We assume a fixed length for all of the CAN
+    // segments, but otherwise let the user specify the baud rate.
+    const uint16_t propagationSegmentLength = 5;
+    const uint16_t phaseSegment1Length = 8;
+    const uint16_t phaseSegment2Length = 6;
     const uint64_t f_tq = (propagationSegmentLength + phaseSegment1Length + phaseSegment2Length + 1) * f_baud;
-	const uint64_t f_cy = f_osc / 2;
-    const uint8_t BRP = (uint8_t)(f_cy / (2L * f_tq));
+    const uint64_t f_cy = f_osc / 2;
+    const uint8_t brp = (uint8_t)(f_cy / (2L * f_tq));
 
-    CAN1Initialize(CAN_SYNC_JUMP_WIDTH4 & CAN_BAUD_PRE_SCALE(BRP),
-                   CAN_WAKEUP_BY_FILTER_DIS & CAN_PROPAGATIONTIME_SEG_TQ(propagationSegmentLength) & CAN_PHASE_SEG1_TQ(phaseSegment1Length) & CAN_PHASE_SEG2_TQ(phaseSegment2Length) & CAN_SEG2_FREE_PROG & CAN_SAMPLE3TIMES);
+    CAN1Initialize(CAN_SYNC_JUMP_WIDTH4 & CAN_BAUD_PRE_SCALE(brp),
+            CAN_WAKEUP_BY_FILTER_DIS & CAN_PROPAGATIONTIME_SEG_TQ(propagationSegmentLength) & CAN_PHASE_SEG1_TQ(phaseSegment1Length) & CAN_PHASE_SEG2_TQ(phaseSegment2Length) & CAN_SEG2_FREE_PROG & CAN_SAMPLE3TIMES);
 
     // Use 4 buffers in DMA RAM (smallest value we can choose), other option is irrelevant.
     CAN1FIFOCon(CAN_DMA_BUF_SIZE_4 & CAN_FIFO_AREA_TRB0);
@@ -74,67 +77,67 @@ void Ecan1Init(uint32_t f_osc)
     // Setup message filters and masks.
     C1CTRL1bits.WIN = 1; // Allow configuration of masks and filters
 
-	// Set Mask 0 to allow everything.
-	CAN1SetMask(0, CAN_MASK_SID(0) & CAN_IGNORE_FILTER_TYPE, CAN_MASK_EID(0));
+    // Set Mask 0 to allow everything.
+    CAN1SetMask(0, CAN_MASK_SID(0) & CAN_IGNORE_FILTER_TYPE, CAN_MASK_EID(0));
 
-	// Set Filter 0 to use Mask 0.
-	CAN1SetMaskSource(CAN_MASK_FILTER0_MASK0, CAN_MASK_FILTER8_NO_MASK);
+    // Set Filter 0 to use Mask 0.
+    CAN1SetMaskSource(CAN_MASK_FILTER0_MASK0, CAN_MASK_FILTER8_NO_MASK);
 
-	// Set Filter 0 to allow everything.
-	CAN1SetFilter(0, CAN_FILTER_SID(0) & CAN_RX_EID_DIS, CAN_FILTER_EID(0));
+    // Set Filter 0 to allow everything.
+    CAN1SetFilter(0, CAN_FILTER_SID(0) & CAN_RX_EID_DIS, CAN_FILTER_EID(0));
 
-	// Point filter 0 to our reception buffer (Buffer 1).
-	CAN1SetBUFPNT1(CAN_FILTER0_RX_BUFFER1);
-	
-	// Enable Filter 0.
+    // Point filter 0 to our reception buffer (Buffer 1).
+    CAN1SetBUFPNT1(CAN_FILTER0_RX_BUFFER1);
+
+    // Enable Filter 0.
     CAN1EnableFilter(0);
 
     C1CTRL1bits.WIN = 0;
 
     // Return the modules to specified operating mode.
-	CAN1SetOperationMode(CAN_IDLE_CON & CAN_MASTERCLK_FOSC & CAN_CAPTURE_DISABLE & CAN_REQ_OPERMODE_NOR & CAN_SFR_BUFFER_WIN,
-			             CAN_DO_NOT_CMP_DATABYTES);
+    CAN1SetOperationMode(CAN_IDLE_CON & CAN_MASTERCLK_FOSC & CAN_CAPTURE_DISABLE & CAN_REQ_OPERMODE_NOR & CAN_SFR_BUFFER_WIN,
+            CAN_DO_NOT_CMP_DATABYTES);
 
     // Enable interrupts for ECAN1
     ConfigIntCAN1(CAN_INVALID_MESSAGE_INT_DIS & CAN_WAKEUP_INT_DIS & CAN_ERR_INT_DIS & CAN_FIFO_INT_DIS & CAN_RXBUF_OVERFLOW_INT_DIS & CAN_RXBUF_INT_EN & CAN_TXBUF_INT_EN,
-                  CAN_INT_ENABLE & CAN_INT_PRI_7);
+            CAN_INT_ENABLE & CAN_INT_PRI_7);
 
     // Configure buffer settings.
     // Specify details on the reception buffer (1) and the transmission buffer (0)
     CAN1SetTXRXMode(0, CAN_BUFFER0_IS_TX & CAN_ABORT_REQUEST_BUFFER0 & CAN_AUTOREMOTE_DISABLE_BUFFER0 & CAN_TX_HIGH_PRI_BUFFER0 &
-			           CAN_BUFFER1_IS_RX & CAN_ABORT_REQUEST_BUFFER1 & CAN_AUTOREMOTE_DISABLE_BUFFER1 & CAN_TX_HIGH_PRI_BUFFER1);
+            CAN_BUFFER1_IS_RX & CAN_ABORT_REQUEST_BUFFER1 & CAN_AUTOREMOTE_DISABLE_BUFFER1 & CAN_TX_HIGH_PRI_BUFFER1);
 
-	/// Set up necessary DMA channels for transmission and reception
-	// ECAN1 transmission over DMA2
-	OpenDMA2(DMA2_MODULE_ON & DMA2_SIZE_WORD & DMA2_TO_PERIPHERAL & DMA2_INTERRUPT_BLOCK & DMA2_NORMAL & DMA2_PERIPHERAL_INDIRECT & DMA2_CONTINUOUS,
-		 DMA2_AUTOMATIC,
+    /// Set up necessary DMA channels for transmission and reception
+    // ECAN1 transmission over DMA2
+    OpenDMA2(DMA2_MODULE_ON & DMA2_SIZE_WORD & DMA2_TO_PERIPHERAL & DMA2_INTERRUPT_BLOCK & DMA2_NORMAL & DMA2_PERIPHERAL_INDIRECT & DMA2_CONTINUOUS,
+            DMA2_AUTOMATIC,
 #ifdef __dsPIC33FJ128MC802__
-		  __builtin_dmaoffset(ecan1MsgBuf),
+            __builtin_dmaoffset(ecan1MsgBuf),
 #elif __dsPIC33EP256MC502__
-		  (unsigned long int)ecan1MsgBuf,
+            (unsigned long int)ecan1MsgBuf,
 #endif
-		 0ul,
-		 (uint16_t)&C1TXD,
-		 7);
-	DMA2REQbits.IRQSEL = 0x46; // Attach this DMA to the ECAN1 TX data sent event
+            0ul,
+            (uint16_t) & C1TXD,
+            7);
+    DMA2REQbits.IRQSEL = 0x46; // Attach this DMA to the ECAN1 TX data sent event
 
-	// ECAN1 reception over DMA0
-	OpenDMA0(DMA0_MODULE_ON & DMA0_SIZE_WORD & PERIPHERAL_TO_DMA0 & DMA0_INTERRUPT_BLOCK & DMA0_NORMAL & DMA0_PERIPHERAL_INDIRECT & DMA0_CONTINUOUS,
-		  DMA0_AUTOMATIC,
+    // ECAN1 reception over DMA0
+    OpenDMA0(DMA0_MODULE_ON & DMA0_SIZE_WORD & PERIPHERAL_TO_DMA0 & DMA0_INTERRUPT_BLOCK & DMA0_NORMAL & DMA0_PERIPHERAL_INDIRECT & DMA0_CONTINUOUS,
+            DMA0_AUTOMATIC,
 #ifdef __dsPIC33FJ128MC802__
-		  __builtin_dmaoffset(ecan1MsgBuf),
+            __builtin_dmaoffset(ecan1MsgBuf),
 #elif __dsPIC33EP256MC502__
-		  (unsigned long int)ecan1MsgBuf,
+            (unsigned long int)ecan1MsgBuf,
 #endif
-		  0ul,
-		  (uint16_t)&C1RXD,
-		  7);
-	DMA0REQbits.IRQSEL = 0x22; // Attach this DMA to the ECAN1 RX data ready event
+            0ul,
+            (uint16_t) & C1RXD,
+            7);
+    DMA0REQbits.IRQSEL = 0x22; // Attach this DMA to the ECAN1 RX data ready event
 }
 
 int Ecan1Receive(CanMessage *msg, uint8_t *messagesLeft)
 {
-    int foundOne = CB_ReadMany(&ecan1RxCBuffer, msg, sizeof(CanMessage));
+    int foundOne = CB_ReadMany(&ecan1RxCBuffer, msg, sizeof (CanMessage));
 
     if (messagesLeft) {
         if (foundOne) {
@@ -187,14 +190,14 @@ void _ecan1TransmitHelper(const CanMessage *message)
     ecan_msg_buf_ptr[0] = word0;
     ecan_msg_buf_ptr[1] = word1;
     ecan_msg_buf_ptr[2] = ((word2 & 0xFFF0) + message->validBytes);
-    ecan_msg_buf_ptr[3] = ((uint16_t) message->payload[1] << 8 | ((uint16_t) message->payload[0]));
-    ecan_msg_buf_ptr[4] = ((uint16_t) message->payload[3] << 8 | ((uint16_t) message->payload[2]));
-    ecan_msg_buf_ptr[5] = ((uint16_t) message->payload[5] << 8 | ((uint16_t) message->payload[4]));
-    ecan_msg_buf_ptr[6] = ((uint16_t) message->payload[7] << 8 | ((uint16_t) message->payload[6]));
+    ecan_msg_buf_ptr[3] = ((uint16_t)message->payload[1] << 8 | ((uint16_t)message->payload[0]));
+    ecan_msg_buf_ptr[4] = ((uint16_t)message->payload[3] << 8 | ((uint16_t)message->payload[2]));
+    ecan_msg_buf_ptr[5] = ((uint16_t)message->payload[5] << 8 | ((uint16_t)message->payload[4]));
+    ecan_msg_buf_ptr[6] = ((uint16_t)message->payload[7] << 8 | ((uint16_t)message->payload[6]));
 
     // Set the correct transfer intialization bit (TXREQ) based on message buffer.
     offset = message->buffer >> 1;
-    bufferCtrlRegAddr = (uint16_t *) (&C1TR01CON + offset);
+    bufferCtrlRegAddr = (uint16_t *)(&C1TR01CON + offset);
     bit_to_set = 1 << (3 | ((message->buffer & 1) << 3));
     *bufferCtrlRegAddr |= bit_to_set;
 
@@ -211,7 +214,7 @@ void Ecan1Transmit(const CanMessage *msg)
     // Message are only removed upon successful transmission.
     // They will be overwritten by newer message overflowing
     // the circular buffer however.
-    CB_WriteMany(&ecan1TxCBuffer, msg, sizeof(CanMessage), true);
+    CB_WriteMany(&ecan1TxCBuffer, msg, sizeof (CanMessage), true);
 
     // If this is the only message in the queue, attempt to
     // transmit it.
@@ -230,8 +233,8 @@ void Ecan1GetErrorStatus(uint8_t errors[2])
     } else if (C1INTFbits.TXWAR) {
         errors[0] = 1;
     } else {
-		errors[0] = 0;
-	}
+        errors[0] = 0;
+    }
 
     // Set reception errors in second array element.
     if (C1INTFbits.RXBP) {
@@ -239,8 +242,8 @@ void Ecan1GetErrorStatus(uint8_t errors[2])
     } else if (C1INTFbits.RXWAR) {
         errors[1] = 1;
     } else {
-		errors[1] = 0;
-	}
+        errors[1] = 0;
+    }
 }
 
 /**
@@ -264,7 +267,7 @@ void _ISR _C1Interrupt(void)
 
         // After a successfully sent message, there should be at least
         // one message in the queue, so pop it off.
-        CB_ReadMany(&ecan1TxCBuffer, &message, sizeof(CanMessage));
+        CB_ReadMany(&ecan1TxCBuffer, &message, sizeof (CanMessage));
 
         // Check for a buffer overflow. Then clear the entire buffer if there was.
         if (ecan1TxCBuffer.overflowCount) {
@@ -273,9 +276,9 @@ void _ISR _C1Interrupt(void)
 
         // Now if there's still a message left in the buffer,
         // try to transmit it.
-        if (ecan1TxCBuffer.dataSize >= sizeof(CanMessage)) {
+        if (ecan1TxCBuffer.dataSize >= sizeof (CanMessage)) {
             CanMessage msg;
-            CB_PeekMany(&ecan1TxCBuffer, &msg, sizeof(CanMessage));
+            CB_PeekMany(&ecan1TxCBuffer, &msg, sizeof (CanMessage));
             _ecan1TransmitHelper(&msg);
         } else {
             currentlyTransmitting = 0;
@@ -312,7 +315,7 @@ void _ISR _C1Interrupt(void)
         if (ide == 0) {
             message.frame_type = CAN_FRAME_STD;
 
-            message.id = (uint32_t) ((ecan_msg_buf_ptr[0] & 0x1FFC) >> 2);
+            message.id = (uint32_t)((ecan_msg_buf_ptr[0] & 0x1FFC) >> 2);
         } else {
             message.frame_type = CAN_FRAME_EXT;
 
@@ -333,19 +336,19 @@ void _ISR _C1Interrupt(void)
         } else {
             message.message_type = CAN_MSG_DATA;
 
-            message.validBytes = (uint8_t) (ecan_msg_buf_ptr[2] & 0x000F);
-            message.payload[0] = (uint8_t) ecan_msg_buf_ptr[3];
-            message.payload[1] = (uint8_t) ((ecan_msg_buf_ptr[3] & 0xFF00) >> 8);
-            message.payload[2] = (uint8_t) ecan_msg_buf_ptr[4];
-            message.payload[3] = (uint8_t) ((ecan_msg_buf_ptr[4] & 0xFF00) >> 8);
-            message.payload[4] = (uint8_t) ecan_msg_buf_ptr[5];
-            message.payload[5] = (uint8_t) ((ecan_msg_buf_ptr[5] & 0xFF00) >> 8);
-            message.payload[6] = (uint8_t) ecan_msg_buf_ptr[6];
-            message.payload[7] = (uint8_t) ((ecan_msg_buf_ptr[6] & 0xFF00) >> 8);
+            message.validBytes = (uint8_t)(ecan_msg_buf_ptr[2] & 0x000F);
+            message.payload[0] = (uint8_t)ecan_msg_buf_ptr[3];
+            message.payload[1] = (uint8_t)((ecan_msg_buf_ptr[3] & 0xFF00) >> 8);
+            message.payload[2] = (uint8_t)ecan_msg_buf_ptr[4];
+            message.payload[3] = (uint8_t)((ecan_msg_buf_ptr[4] & 0xFF00) >> 8);
+            message.payload[4] = (uint8_t)ecan_msg_buf_ptr[5];
+            message.payload[5] = (uint8_t)((ecan_msg_buf_ptr[5] & 0xFF00) >> 8);
+            message.payload[6] = (uint8_t)ecan_msg_buf_ptr[6];
+            message.payload[7] = (uint8_t)((ecan_msg_buf_ptr[6] & 0xFF00) >> 8);
         }
 
         // Store the message in the buffer
-        CB_WriteMany(&ecan1RxCBuffer, &message, sizeof(CanMessage), true);
+        CB_WriteMany(&ecan1RxCBuffer, &message, sizeof (CanMessage), true);
 
         // Increase the number of messages stored in the buffer
         ++receivedMessagesPending;

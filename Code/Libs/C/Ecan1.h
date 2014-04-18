@@ -18,7 +18,14 @@
 #include "EcanDefines.h"
 #include "CircularBuffer.h"
 
-void Ecan1Init(uint32_t f_osc);
+/**
+ * Initialize the CAN hardware. This DOES NOT enable any pins that may be
+ * necessary to map as inputs/outputs or using peripheral pin select hardware.
+ * Note that DMA0 and DMA2 are utilized for this peripheral.
+ * @param f_osc The oscillator frequency of the chip.
+ * @param f_baud The desired baud rate of the CAN bus.
+ */
+void Ecan1Init(uint32_t f_osc, uint32_t f_baud);
 
 /**
  * Pops the top message from the ECAN1 reception buffer.
