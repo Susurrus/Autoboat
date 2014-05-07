@@ -114,7 +114,7 @@ int main()
 	nodeId = CAN_NODE_POWER_SENSOR;
 	
     // Initialize ECAN1 for input and output using DMA buffers 0 & 2
-    Ecan1Init(F_OSC);
+    Ecan1Init(F_OSC, 250000);
 
 	// Set up a timer at 100.0320Hz, where F_timer = F_CY / 256 / prescalar.
 	Timer2Init(SetTaskFlag, F_OSC / 2 / 256 / 100);

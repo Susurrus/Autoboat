@@ -35,6 +35,11 @@ enum CAN_NODE_ID {
 
 // Specify how many individual nodes there are:
 #define NUM_NODES 7
+
+// Specify desired CAN baud rate. All nodes must communicate at this to sit on
+// the shared bus.
+#define NODE_CAN_BAUD 250000
+
 /**
  * This macro provides a way to handle fatal errors on the CAN node, where a red error LED is
  * available. This macro turns that LED on then sits and spins in a forever-loop.

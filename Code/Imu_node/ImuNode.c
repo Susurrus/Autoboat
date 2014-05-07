@@ -145,7 +145,7 @@ void ImuNodeInit(uint32_t f_osc)
 	Uart1Init((uint16_t)brg);
 
     // Initialize ECAN1 for input and output using DMA buffers 0 & 2
-    Ecan1Init(f_osc);
+    Ecan1Init(f_osc, NODE_CAN_BAUD);
 
     // Set the node ID
     nodeId = CAN_NODE_IMU_SENSOR;

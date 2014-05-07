@@ -130,7 +130,7 @@ int main(void)
 	}
 
 	// Initialize ECAN1
-	Ecan1Init(F_OSC);
+	Ecan1Init(F_OSC, NODE_CAN_BAUD);
 
 	// Initialize the MAVLink communications channel
 	MavLinkInit();

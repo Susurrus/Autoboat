@@ -221,7 +221,7 @@ void HilNodeInit(void)
     Timer2Init(SetPrimaryLoopFlag, 1562);
 
     // Initialize ECAN1
-    Ecan1Init(F_OSC);
+    Ecan1Init(F_OSC, NODE_CAN_BAUD);
 
 	// Set a schedule for outgoing CAN messages
     // Transmit the rudder angle at 10Hz

@@ -144,9 +144,9 @@ void _ISR _U1RXInterrupt(void)
  */
 void _ISR _U1TXInterrupt(void)
 {
-	// Due to a bug with the dsPIC33E, this interrupt can trigger prematurely. We sit and poll the
-	// TRMT bit to stall until the character is properly transmit.
-	while (!U1STAbits.TRMT);
+    // Due to a bug with the dsPIC33E, this interrupt can trigger prematurely. We sit and poll the
+    // TRMT bit to stall until the character is properly transmit.
+    while (!U1STAbits.TRMT);
 
     Uart1StartTransmission();
 
