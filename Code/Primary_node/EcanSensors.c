@@ -183,8 +183,8 @@ uint8_t ProcessAllEcanMessages(void)
 												  &rudderSensorData.RudderPotValue,
 												  &rudderSensorData.RudderPotLimitStarboard,
 												  &rudderSensorData.RudderPotLimitPort,
-												  &rudderSensorData.LimitHitStarboard,
 												  &rudderSensorData.LimitHitPort,
+												  &rudderSensorData.LimitHitStarboard,
 												  &rudderSensorData.Enabled,
 												  &rudderSensorData.Calibrated,
 												  &rudderSensorData.Calibrating);
