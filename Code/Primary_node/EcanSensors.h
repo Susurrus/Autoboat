@@ -189,12 +189,6 @@ extern struct stc {
 	if (sensorAvailability.sensor.active_counter < SENSOR_TIMEOUT) {   \
 		++sensorAvailability.sensor.active_counter;                \
 	}
-/**
- * Returns the availability of the RcNode. enabled is set to true if it's broadcasting status
- * messages on the CAN bus. It's active if the RC controller is on and therefore the node is
- * commanding the vessel.
- */
-void GetRcNodeAvailability(bool *status);
 
 /**
   * Clears the GPS data struct.
