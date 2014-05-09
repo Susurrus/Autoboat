@@ -199,7 +199,17 @@ int main(void)
 	bool uart1TxStateIsGood = true; // Keeps track of if UART1 is transmitting properly.
 	uint32_t firstCorruptionTime = 0; // Track when the corruption first occurred.
 	while (true) {
-		
+
+            // Process incoming ECAN messages. This is done continuously. We may get multiple of the
+            // same message between our 100Hz primary controller ticks, so data may be overridden,
+            // but that doesn't really matter.
+            ProcessAllEcanMessages();
+
+            // Check for new MAVLink messages. We may get multiple of the
+            // same message between our 100Hz primary controller ticks, so data may be overridden,
+            // but that doesn't really matter.
+            MavLinkReceive();
+
 		// We continuously process the input on UART2, which should be an exact copy of the data
 		// output from UART1, which is a MAVLink stream in the SeaSlug dialect.
 		if (Uart2ReadByte(&inData)) {
@@ -222,7 +232,7 @@ int main(void)
 					_LATB0 = OFF;
 				}
 			}
-			
+
 			// Now if we've reached our limit of MAVLINK_MAX_PACKET_LEN, then reset UART1.
 			// We timeout after 75 bytes because that's larger than any message transmit by the SeaSlug.
 			// The largest message is common:STATUSTEXT.
@@ -258,12 +268,6 @@ void PrimaryNode100HzLoop(void)
 {
 	// Clear state on when errors
 	ClearStateWhenErrors();
-
-	// Process incoming ECAN messages.
-	ProcessAllEcanMessages();
-
-	// Check for new MaVLink messages.
-	MavLinkReceive();
 
 	// Check ADC inputs
 	// Battery voltage in Volts
