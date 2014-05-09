@@ -575,8 +575,9 @@ void UpdateSensorsAvailability(void)
         sensorAvailability.rudder.active = true;
     }
     /// RC Node:
-    // Reset if the RC node is not enabled. If the RC node becomes enabled, only set the reset if
-    // it's active as well (indicating the RC Node is overridding manual control).
+    // The RC node is considered enabled if it's broadcasting on the CAN bus. If the RC node ever
+    // becomes disabled, then we stay in reset. This means the RC node needs to be on and transmitting
+    // CAN messages properly to the primary node for the primary node to not be in reset.
     if (sensorAvailability.rcNode.enabled && sensorAvailability.rcNode.enabled_counter >= SENSOR_TIMEOUT) {
         sensorAvailability.rcNode.enabled = false;
         nodeErrors |= PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
@@ -586,7 +587,8 @@ void UpdateSensorsAvailability(void)
             nodeErrors &= ~PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
         }
     }
-    // Also reset if the RC node is active.
+    // If the RC node stops being active, yet is still enabled, then we aren't in an error state. Otherwise
+    // if the RC node is active, we are.
     if (sensorAvailability.rcNode.active && sensorAvailability.rcNode.active_counter >= SENSOR_TIMEOUT) {
         sensorAvailability.rcNode.active = false;
         if (sensorAvailability.rcNode.enabled) {
