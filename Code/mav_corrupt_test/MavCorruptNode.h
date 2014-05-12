@@ -14,6 +14,8 @@ typedef struct {
 } ActuatorCommands;
 extern ActuatorCommands currentCommands;
 
+#define FATAL_ERROR() while(1)
+
 /**
  * Set the primary status indicator LED to always blink
  */

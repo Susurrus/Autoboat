@@ -22,31 +22,13 @@
 // User code includes
 #include "Uart1.h"
 #include "MessageScheduler.h"
-#include "EcanSensors.h"
 #include "MavlinkGlue.h"
 #include "MissionManager.h"
 #include "MavCorruptNode.h"
 
 uint32_t nodeSystemTime = 0;
 
-// Declare our internal variable data store for some miscellaneous data output over MAVLink.
-#include "InternalVariables.h"
-InternalVariables controllerVars;
-
 extern MissionList mList;
-
-struct RudderData {
-	float RudderAngle;
-	uint16_t RudderPotValue;
-	uint16_t RudderPotLimitStarboard;
-	uint16_t RudderPotLimitPort;
-	bool LimitHitStarboard;
-	bool LimitHitPort;
-	bool Enabled;
-	bool Calibrated;
-	bool Calibrating;
-};
-struct RudderData rudderSensorData;
 
 /**
  * This function converts latitude/longitude/altitude into a north/east/down local tangent plane. The
@@ -89,17 +71,6 @@ enum MISSION_STATE {
 	MISSION_STATE_MISSION_REQUEST_TIMEOUT2,
 	MISSION_STATE_SEND_MISSION_REQUEST3,
 	MISSION_STATE_MISSION_REQUEST_TIMEOUT3
-};
-
-// These flags are for use with the SYS_STATUS MAVLink message as a mapping from the Autoboat's
-// sensors to the sensors/controllers available in SYS_STATUS.
-enum ONBOARD_SENSORS {
-	ONBOARD_SENSORS_IMU = (1 << 0) | (1 << 1) | (1 << 2),
-	ONBOARD_SENSORS_WSO100 = 1 << 3,
-	ONBOARD_SENSORS_GPS = 1 << 5,
-	ONBOARD_CONTROL_YAW_POS = 1 << 12,
-	ONBOARD_CONTROL_XY_POS = 1 << 14,
-	ONBOARD_CONTROL_MOTOR = 1 << 15
 };
 
 // Store a module-wide variable for common MAVLink system variables.
@@ -147,13 +118,6 @@ int32_t gpsOrigin[3];
 uint16_t mavLinkMessagesReceived = 0;
 uint16_t mavLinkMessagesFailedParsing = 0;
 
-
-// Track manual control data transmit via MAVLink
-struct {
-	int16_t Rudder;
-	int16_t Throttle;
-	uint16_t Buttons; 
-} mavlinkManualControlData;
 
 // Set up the message scheduler for MAVLink transmission
 #define MAVLINK_MSGS_SIZE 17
@@ -241,7 +205,7 @@ void MavLinkSendSystemTime(void)
 
 	// Pack the message
 	mavlink_msg_system_time_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-								 dateTimeDataStore.usecSinceEpoch, nodeSystemTime*10);
+								 0, nodeSystemTime*10);
 
 	// Copy the message to the send buffer
 	len = mavlink_msg_to_send_buffer(buf, &msg);
@@ -258,28 +222,11 @@ void MavLinkSendStatus(void)
 
 	// Declare that we have onboard sensors: 3D gyro, 3D accelerometer, 3D magnetometer, absolute pressure, GPS
 	// And that we have the following controllers: yaw position, x/y position control, motor outputs/control.
-	uint32_t systemsPresent = ONBOARD_SENSORS_IMU |
-	                          ONBOARD_SENSORS_WSO100  |
-	                          ONBOARD_SENSORS_GPS     |
-	                          ONBOARD_CONTROL_YAW_POS |
-	                          ONBOARD_CONTROL_XY_POS  |
-	                          ONBOARD_CONTROL_MOTOR;
+	uint32_t systemsPresent = 0;
 
-	uint32_t systemsEnabled = ONBOARD_CONTROL_YAW_POS;
-	systemsEnabled |= sensorAvailability.gps.enabled?ONBOARD_SENSORS_GPS:0;
-	systemsEnabled |= sensorAvailability.imu.enabled?ONBOARD_SENSORS_IMU:0;
-	systemsEnabled |= sensorAvailability.wso100.enabled?ONBOARD_SENSORS_WSO100:0;
-	// The DST800 doesn't map into this bitfield.
-	// The power node doesn't map into this bitfield.
-	systemsEnabled |= sensorAvailability.prop.enabled?(ONBOARD_CONTROL_XY_POS|ONBOARD_CONTROL_MOTOR):0;
+	uint32_t systemsEnabled = 0;
 
-	uint32_t systemsActive = ONBOARD_CONTROL_YAW_POS;
-	systemsActive |= sensorAvailability.gps.active?ONBOARD_SENSORS_GPS:0;
-	systemsActive |= sensorAvailability.imu.active?ONBOARD_SENSORS_IMU:0;
-	systemsActive |= sensorAvailability.wso100.active?ONBOARD_SENSORS_WSO100:0;
-	// The DST800 doesn't map into this bitfield.
-	// The power node doesn't map into this bitfield.
-	systemsActive |= sensorAvailability.prop.active?(ONBOARD_CONTROL_XY_POS|ONBOARD_CONTROL_MOTOR):0;
+	uint32_t systemsActive = 0;
 
 	// Grab the globally-declared battery sensor data and map into the values necessary for transmission.
 	uint16_t voltage = (uint16_t)(0 * 1000);
@@ -322,14 +269,14 @@ void MavLinkSendTokimec(void)
 	mavlink_message_t msg;
 
 	mavlink_msg_tokimec_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-	                         tokimecDataStore.yaw, tokimecDataStore.pitch, tokimecDataStore.roll,
-	                         tokimecDataStore.x_angle_vel, tokimecDataStore.y_angle_vel, tokimecDataStore.z_angle_vel,
-	                         tokimecDataStore.x_accel, tokimecDataStore.y_accel, tokimecDataStore.z_accel,
-							 tokimecDataStore.magneticBearing,
-							 tokimecDataStore.latitude, tokimecDataStore.longitude,
-							 tokimecDataStore.est_latitude, tokimecDataStore.est_longitude,
-							 tokimecDataStore.gpsDirection, tokimecDataStore.gpsSpeed,
-							 tokimecDataStore.status);
+	                         0, 0, 0,
+	                         0, 0, 0,
+	                         0, 0, 0,
+							 0,
+							 0, 0,
+							 0, 0,
+							 0, 0,
+							 0);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
@@ -349,12 +296,12 @@ void MavLinkSendRawGps(void)
 	// 0,3,4,5,6,7 |   0      | invalid/no fix
 	//    2        |   3      | 3D fix
 	//    1        |   2      | 2D fix
-	uint8_t mavlinkGpsMode = gpsDataStore.mode == 2?3:(gpsDataStore.mode == 1?2:0);
+	uint8_t mavlinkGpsMode = 0;
 
 	mavlink_msg_gps_raw_int_pack(mavlink_system.sysid, mavlink_system.compid, &msg, ((uint64_t)nodeSystemTime)*10000,
-		mavlinkGpsMode, gpsDataStore.latitude, gpsDataStore.longitude, gpsDataStore.altitude,
-		gpsDataStore.hdop, gpsDataStore.vdop,
-		gpsDataStore.sog, (uint16_t)(((float)gpsDataStore.cog) * 180 / M_PI / 100),
+		mavlinkGpsMode, 0, 0, 0,
+		0, 0,
+		0, (uint16_t)(((float)0) * 180 / M_PI / 100),
 		0xFF);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
@@ -370,7 +317,7 @@ void MavLinkSendMainPower(void)
 	mavlink_message_t msg;
 
 	mavlink_msg_main_power_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-		(uint16_t)(powerDataStore.voltage * 100.0f),(uint16_t)(powerDataStore.current * 10.0f));
+		(uint16_t)(0 * 100.0f),(uint16_t)(0 * 10.0f));
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
@@ -386,10 +333,10 @@ void MavLinkSendBasicState(void)
 	mavlink_message_t msg;
 
 	mavlink_msg_basic_state_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-		currentCommands.autonomousRudderCommand, currentCommands.primaryManualRudderCommand, currentCommands.secondaryManualRudderCommand, rudderSensorData.RudderAngle,
+		currentCommands.autonomousRudderCommand, currentCommands.primaryManualRudderCommand, currentCommands.secondaryManualRudderCommand, 0,
 		currentCommands.autonomousThrottleCommand, currentCommands.primaryManualThrottleCommand, currentCommands.secondaryManualThrottleCommand, 0,
-		controllerVars.Acmd,
-		controllerVars.L2Vector[0], controllerVars.L2Vector[1]
+		0,
+		0, 0
 	);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
@@ -405,7 +352,7 @@ void MavLinkSendDsp3000(void)
 {
 	mavlink_message_t msg;
 
-	mavlink_msg_dsp3000_pack(mavlink_system.sysid, mavlink_system.compid, &msg, gyroDataStore.zRate);
+	mavlink_msg_dsp3000_pack(mavlink_system.sysid, mavlink_system.compid, &msg, 0);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
@@ -423,11 +370,11 @@ void MavLinkSendAttitude(void)
 
 	// The roll as reported from the Tokimec is opposite from what the ATTITUDE message expects
 	// (at least according to QGC).
-	float roll = (float)tokimecDataStore.roll / 8192.0;
-	float pitch = (float)tokimecDataStore.pitch / 8192.0;
+	float roll = (float)0 / 8192.0;
+	float pitch = (float)0 / 8192.0;
 	mavlink_msg_attitude_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                          nodeSystemTime*10,
-							  -roll, pitch, controllerVars.Heading,
+							  -roll, pitch, 0,
 							  0.0, 0.0, 0.0);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
@@ -445,8 +392,8 @@ void MavLinkSendLocalPosition(void)
 
 	mavlink_msg_local_position_ned_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                                    nodeSystemTime*10,
-	                                    controllerVars.LocalPosition[0], controllerVars.LocalPosition[1], controllerVars.LocalPosition[2],
-	                                    controllerVars.Velocity[0], controllerVars.Velocity[1], controllerVars.Velocity[2]);
+	                                    0, 0, 0,
+	                                    0, 0, 0);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
@@ -580,8 +527,8 @@ void MavLinkSendRudderRaw(void)
 	mavlink_message_t msg;
 
 	mavlink_msg_rudder_raw_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-                                rudderSensorData.RudderPotValue, rudderSensorData.LimitHitPort, 0, rudderSensorData.LimitHitStarboard,
-                                rudderSensorData.RudderPotLimitPort, rudderSensorData.RudderPotLimitStarboard);
+                                0, 0, 0, 0,
+                                0, 0);
 
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
@@ -592,8 +539,8 @@ void MavLinkSendWindAirData(void)
 {
 	mavlink_message_t msg;
 	mavlink_msg_wso100_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-		windDataStore.speed, windDataStore.direction,
-		airDataStore.temp, airDataStore.pressure, airDataStore.humidity);
+		0, 0,
+		0, 0, 0);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	Uart1WriteData(buf, (uint8_t)len);
 }
@@ -602,7 +549,7 @@ void MavLinkSendDst800Data(void)
 {
 	mavlink_message_t msg;
 	mavlink_msg_dst800_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-	                        waterDataStore.speed, waterDataStore.temp, waterDataStore.depth);
+	                        0, 0, 0);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	Uart1WriteData(buf, (uint8_t)len);
 }
@@ -611,10 +558,10 @@ void MavLinkSendRevoGsData(void)
 {
 	mavlink_message_t msg;
 	mavlink_msg_revo_gs_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-		revoGsDataStore.heading, revoGsDataStore.magStatus,
-		revoGsDataStore.pitch, revoGsDataStore.pitchStatus,
-		revoGsDataStore.roll, revoGsDataStore.rollStatus,
-		revoGsDataStore.dip, revoGsDataStore.magneticMagnitude);
+		0, 0,
+		0, 0,
+		0, 0,
+		0, 0);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	Uart1WriteData(buf, (uint8_t)len);
 }
@@ -623,7 +570,7 @@ void MavLinkSendGps200Data(void)
 {
 	mavlink_message_t msg;
 	mavlink_msg_gps200_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-	                        gpsDataStore.variation);
+	                        0);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	Uart1WriteData(buf, (uint8_t)len);
 }
@@ -632,41 +579,12 @@ void MavLinkSendNodeStatusData(void)
 {
 	mavlink_message_t msg;
 	mavlink_msg_node_status_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-	                             nodeStatusDataStore[CAN_NODE_HIL - 1].status,
-								 nodeStatusDataStore[CAN_NODE_HIL - 1].errors,
-								 nodeStatusDataStore[CAN_NODE_HIL - 1].temp,
-								 nodeStatusDataStore[CAN_NODE_HIL - 1].load,
-								 nodeStatusDataStore[CAN_NODE_HIL - 1].voltage,
-
-	                             nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].status,
-								 nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].errors,
-								 nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].temp,
-								 nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].load,
-								 nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].voltage,
-
-	                             nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].status,
-								 nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].errors,
-								 nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].temp,
-								 nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].load,
-								 nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].voltage,
-
-	                             0,
-								 0,
-								 0,
-								 0,
-								 0,
-
-	                             nodeStatusDataStore[CAN_NODE_RC - 1].status,
-								 nodeStatusDataStore[CAN_NODE_RC - 1].errors,
-								 nodeStatusDataStore[CAN_NODE_RC - 1].temp,
-								 nodeStatusDataStore[CAN_NODE_RC - 1].load,
-								 nodeStatusDataStore[CAN_NODE_RC - 1].voltage,
-
-	                             nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].status,
-								 nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].errors,
-								 nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].temp,
-								 nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].load,
-								 nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].voltage);
+	                             0,0,0,0,0,
+	                             0,0,0,0,0,
+	                             0,0,0,0,0,
+	                             0,0,0,0,0,
+	                             0,0,0,0,0,
+	                             0,0,0,0,0);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	Uart1WriteData(buf, (uint8_t)len);
 }
@@ -725,18 +643,6 @@ void MavLinkReceiveManualControl(const mavlink_manual_control_t *msg)
 {
     static uint16_t lastButtons = 0;
 	if (msg->target == mavlink_system.sysid) {
-		// Record the rudder angle
-		if (msg->r != INT16_MAX) {
-			mavlinkManualControlData.Rudder = msg->r;
-		}
-
-		// If the trigger has been pulled was part of this data packet, update the throttle value.
-		if ((msg->buttons & TRIGGER_ENABLE_BUTTON) != 0 && msg->z != INT16_MAX) {
-			mavlinkManualControlData.Throttle = msg->z;
-		}
-
-		// Record the buttons that are pressed
-		mavlinkManualControlData.Buttons = msg->buttons;
 
         // If the rudder calibration button has been pressed, send that command.
         if (!(lastButtons & RUDDER_CAL_BUTTON) && (msg->buttons & RUDDER_CAL_BUTTON)) {
@@ -760,12 +666,6 @@ void MavLinkReceiveSetMode(const mavlink_set_mode_t *msg)
  */
 void GetMavLinkManualControl(float *rc, int16_t *tc)
 {
-	if (rc) {
-		*rc = mavlinkManualControlData.Rudder;
-	}
-	if (tc) {
-		*tc = mavlinkManualControlData.Throttle;
-	}
 }
 
 /**
@@ -776,14 +676,6 @@ void SetStartingPointToCurrentLocation(void)
 	// Update the starting point for the track to be the current vehicle position.
 	// We tack on GPS coordinates if we have some.
 	Mission newStartPoint = {};
-	newStartPoint.coordinates[0] = controllerVars.LocalPosition[0];
-	newStartPoint.coordinates[1] = controllerVars.LocalPosition[1];
-	newStartPoint.coordinates[2] = controllerVars.LocalPosition[2];
-	if (gpsDataStore.mode == 1 || gpsDataStore.mode == 2) {
-		newStartPoint.otherCoordinates[0] = gpsDataStore.latitude;
-		newStartPoint.otherCoordinates[1] = gpsDataStore.longitude;
-		newStartPoint.otherCoordinates[2] = gpsDataStore.altitude;
-	}
 	SetStartingPoint(&newStartPoint);
 }
 
