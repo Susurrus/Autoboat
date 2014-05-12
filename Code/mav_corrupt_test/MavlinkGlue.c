@@ -25,8 +25,9 @@
 #include "EcanSensors.h"
 #include "MavlinkGlue.h"
 #include "MissionManager.h"
-#include "Node.h"
 #include "MavCorruptNode.h"
+
+uint32_t nodeSystemTime = 0;
 
 // Declare our internal variable data store for some miscellaneous data output over MAVLink.
 #include "InternalVariables.h"
@@ -219,46 +220,6 @@ void MavLinkSendHeartbeat(void)
 {
 	mavlink_message_t msg;
 
-	// Update MAVLink state and run mode based on the system state.
-
-	// If the vehicle is in ESTOP switch into emergency mode.
-	if (nodeErrors & PRIMARY_NODE_RESET_ESTOP) {
-		mavlink_system.state = MAV_STATE_EMERGENCY;
-		mavlink_system.mode &= ~MAV_MODE_FLAG_SAFETY_ARMED;
-	}
-	// If the startup reset line is triggered, indicate we're booting up. This is the only unarmed state
-	// although that's not technically true with this controller.
-	else if (nodeErrors & PRIMARY_NODE_RESET_STARTUP) {
-		mavlink_system.state = MAV_STATE_BOOT;
-		mavlink_system.mode &= ~MAV_MODE_FLAG_SAFETY_ARMED;
-	}
-	// Otherwise if we're undergoing calibration indicate that
-	else if (nodeErrors & PRIMARY_NODE_RESET_CALIBRATING) {
-		mavlink_system.state = MAV_STATE_CALIBRATING;
-		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
-	}
-	// Otherwise if there're any other errors we're in standby
-	else if (nodeErrors) {
-		mavlink_system.state = MAV_STATE_STANDBY;
-		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
-	}
-	// Finally we're active if there're no errors. Also indicate within the mode that we're armed.
-	else {
-		mavlink_system.state = MAV_STATE_ACTIVE;
-		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
-	}
-
-	/// Then we update the system mode using MAV_MODE_FLAGs
-	// Set manual/autonomous mode. Note that they're not mutually exclusive within the MAVLink protocol,
-	// though I treat them as such for my autopilot.
-	if (nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) {
-		mavlink_system.mode |= (MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
-		mavlink_system.mode &= ~MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
-	} else {
-		mavlink_system.mode &= ~(MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
-		mavlink_system.mode |= MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
-	}
-
 	// Pack the message
 	mavlink_msg_heartbeat_pack(mavlink_system.sysid, mavlink_system.compid, &msg, mavlink_system.type, MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY, mavlink_system.mode, 0, mavlink_system.state);
 
@@ -332,7 +293,7 @@ void MavLinkSendStatus(void)
 
 	mavlink_msg_sys_status_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 		systemsPresent, systemsEnabled, systemsActive,
-		(uint16_t)(nodeCpuLoad)*10,
+		0,
 		voltage, amperage, -1,
 		dropRate, mavLinkMessagesFailedParsing, 0, 0, 0, 0);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
@@ -689,11 +650,11 @@ void MavLinkSendNodeStatusData(void)
 								 nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].load,
 								 nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].voltage,
 
-	                             nodeStatus,
-								 nodeErrors,
-								 nodeTemp,
-								 nodeCpuLoad,
-								 nodeVoltage,
+	                             0,
+								 0,
+								 0,
+								 0,
+								 0,
 
 	                             nodeStatusDataStore[CAN_NODE_RC - 1].status,
 								 nodeStatusDataStore[CAN_NODE_RC - 1].errors,
@@ -790,21 +751,6 @@ void MavLinkReceiveManualControl(const mavlink_manual_control_t *msg)
 
 void MavLinkReceiveSetMode(const mavlink_set_mode_t *msg)
 {
-    if (msg->target_system == mavlink_system.sysid) {
-        // Set autonomous mode. Also latch the current vehicle location when this switch occurs. This
-		// will make the vehicle follow a line from this location to the next waypoint, which is expected
-		// behavior.
-        if ((msg->base_mode & MAV_MODE_FLAG_AUTO_ENABLED) &&
-            !(msg->base_mode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED)) {
-			SetStartingPointToCurrentLocation();
-            nodeStatus |= PRIMARY_NODE_STATUS_AUTOMODE;
-        }
-        // Or set manual mode
-        else if (!(msg->base_mode & MAV_MODE_FLAG_AUTO_ENABLED) &&
-            (msg->base_mode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED)) {
-            nodeStatus &= ~PRIMARY_NODE_STATUS_AUTOMODE;
-        }
-    }
 }
 
 /**
@@ -873,7 +819,7 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 			// Otherwise if a mission count was received, prepare to receive new missions.
 			else if (event == MISSION_EVENT_COUNT_RECEIVED) {
 				// Don't allow for writing of new missions if we're in autonomous mode.
-				if (nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) {
+				if (0) {
 					MavLinkSendMissionAck(MAV_MISSION_ERROR);
                                         MavLinkSendStatusText(MAV_SEVERITY_DEBUG, "MISSION_ACK(ERROR) sent");
 					nextState = MISSION_STATE_INACTIVE;
@@ -912,7 +858,7 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 				}
 			} else if (event == MISSION_EVENT_CLEAR_ALL_RECEIVED) {
 				// If we're in autonomous mode, don't allow for clearing the mission list
-				if (nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) {
+				if (0) {
 					MavLinkSendMissionAck(MAV_MISSION_ERROR);
                                         MavLinkSendStatusText(MAV_SEVERITY_DEBUG, "MISSION_ACK(ERROR) sent");
 					nextState = MISSION_STATE_INACTIVE;

@@ -11,7 +11,6 @@
 #include <timer.h>
 
 // Project includes
-#include "Node.h"
 #include "MavlinkGlue.h"
 #include "Uart1.h"
 #include "Uart2.h"
@@ -38,10 +37,6 @@ ActuatorCommands currentCommands;
 
 // Declare some function prototypes.
 void PrimaryNode100HzLoop(void);
-void SetStatusModeLed(void);
-void SetResetModeLed(void);
-void SetAutoModeLed(void);
-void CheckMissionStatus(void);
 
 // Set processor configuration settings
 #ifdef __dsPIC33FJ128MC802__
@@ -151,10 +146,8 @@ int main(void)
             MavLinkAppendMission(&m);
         }
         SetCurrentMission(0);
-        m.x = 0;
-        m.y = 0;
-        m.z = 0;
-        SetStartingPoint(&m);
+        Mission m2 = {};
+        SetStartingPoint(&m2);
 
 	// Report on system status now that initialization is complete.
 	MavLinkSendStatusText(MAV_SEVERITY_INFO, "Finished initialization. MAV_CORRUPT_NODE");
@@ -238,10 +231,6 @@ void PrimaryNode100HzLoop(void)
     // used.
     IncrementMissionCounter();
 
-	// Update the shield LEDs
-	SetResetModeLed();
-	SetAutoModeLed();
-
 	// And make sure the primary LED is blinking indicating that the node is operational
 	SetStatusModeLed();
 
@@ -256,7 +245,7 @@ void PrimaryNode100HzLoop(void)
 }
 
 /**
- * Set the primary status indicator LED to always blink
+ * Set the primary status indicator LED to always blink at 1Hz.
  */
 void SetStatusModeLed(void)
 {
@@ -272,71 +261,5 @@ void SetStatusModeLed(void)
 		statusModeBlinkCounter = 0;
 	} else {
 		++statusModeBlinkCounter;
-	}
-}
-
-/**
- * Set the reset indicator LED dependent on whether we are in a reset state or not
- */
-void SetResetModeLed(void)
-{
-	static uint8_t resetModeBlinkCounter = 0;
-	if (nodeErrors) {
-		if (resetModeBlinkCounter == 0) {
-			_LATA3 = ON;
-			resetModeBlinkCounter = 1;
-		} else if (resetModeBlinkCounter == 50) {
-			_LATA3 = OFF;
-			++resetModeBlinkCounter;
-		} else if (resetModeBlinkCounter == 99) {
-			resetModeBlinkCounter = 0;
-		} else {
-			++resetModeBlinkCounter;
-		}
-	} else {
-		_LATA3 = OFF;
-		resetModeBlinkCounter = 0;
-	}
-}
-
-/**
- * Set the autonomous mode LED dependent on whether we are in autonomous mode, manual override,
- * or regular manual mode. LED is solid for autonomous mode, flashing for manual override, and
- * off for regular manual control.
- */
-void SetAutoModeLed(void)
-{
-	static uint8_t autoModeBlinkCounter = 0;
-	
-	if (nodeErrors & PRIMARY_NODE_RESET_MANUAL_OVERRIDE) {
-		if (autoModeBlinkCounter == 0) {
-			_LATB12 = ON;
-			autoModeBlinkCounter = 1;
-		} else if (autoModeBlinkCounter == 25) {
-			_LATB12 = OFF;
-			++autoModeBlinkCounter;
-		} else if (autoModeBlinkCounter == 49) {
-			autoModeBlinkCounter = 0;
-		} else {
-			++autoModeBlinkCounter;
-		}
-	} else if (nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) {
-		_LATB12 = ON;
-		autoModeBlinkCounter = 0;
-	} else {
-		_LATB12 = OFF;
-		autoModeBlinkCounter = 0;
-	}
-}
-
-void CheckMissionStatus(void)
-{
-	static int8_t lastMission = 0;
-
-	int8_t currentMission;
-	GetCurrentMission(&currentMission);
-	if (currentMission != lastMission) {
-		MavLinkSendCurrentMission();
-		lastMission = currentMission;
 	}
 }

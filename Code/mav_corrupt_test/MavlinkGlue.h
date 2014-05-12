@@ -41,6 +41,8 @@ enum MISSION_EVENT {
 	MISSION_EVENT_ITEM_RECEIVED
 };
 
+extern uint32_t nodeSystemTime;
+
 /**
  * Initialize MAVLink transmission. This just sets up the MAVLink scheduler with the basic
  * repeatedly-transmit messages.
