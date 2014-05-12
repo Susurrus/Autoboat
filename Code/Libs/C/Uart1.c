@@ -1,12 +1,14 @@
-#include "CircularBuffer.h"
 #include "Uart1.h"
+
+#include "CircularBuffer.h"
+
 #include <xc.h>
 #include <uart.h>
 
 static CircularBuffer uart1RxBuffer;
-static uint8_t u1RxBuf[1024];
+static uint8_t u1RxBuf[UART1_BUFFER_SIZE];
 static CircularBuffer uart1TxBuffer;
-static uint8_t u1TxBuf[1024];
+static uint8_t u1TxBuf[UART1_BUFFER_SIZE];
 
 /*
  * Private functions.

@@ -9,7 +9,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "CircularBuffer.h"
+#define UART2_BUFFER_SIZE 1024
 
 /**
  * Initializes the UART2 peripheral according to the BRG SFR value passed to it.
