@@ -565,9 +565,11 @@ void MavLinkSendMissionCount(void)
 }
 
 /**
- * Only broadcast GLOBAL reference frame mission items. While missions are converted to LOCAL_NED
- * when stored onboard the controller, the global coordinates are preserved in the otherCoordinates
- * member.
+ * Output the desired mission. On receiving mission, the autopilot converts them to LOCAL_NED, before
+ * they're stored onboard the controller. The original global coordinates are preserved in the
+ * `otherCoordinates` member. This is not done for missions already in the local frame. This function
+ * prioritizes the global frame version, however, so if the mission was converted, it is output in
+ * the global frame. Otherwise the original mission is returned.
  * @param currentMissionIndex The 0-based index of the current mission.
  */
 void MavLinkSendMissionItem(uint8_t currentMissionIndex)
@@ -579,11 +581,26 @@ void MavLinkSendMissionItem(uint8_t currentMissionIndex)
 		mavlink_message_t msg;
 		int8_t missionManagerCurrentIndex;
 		GetCurrentMission(&missionManagerCurrentIndex);
-		mavlink_msg_mission_item_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-		                              groundStationSystemId, groundStationComponentId, currentMissionIndex,
-		                              MAV_FRAME_GLOBAL, m.action, (currentMissionIndex == (uint8_t)missionManagerCurrentIndex),
-		                              m.autocontinue, m.parameters[0], m.parameters[1], m.parameters[2], m.parameters[3],
-		                              m.otherCoordinates[0], m.otherCoordinates[1], m.otherCoordinates[2]);
+
+                // Try to send the mission back in the global frame. This makes the mission viewable
+                // on the main map, but not on the Horizontal Situation Indicator, which sucks, but
+                // the map is more important.
+                if (m.otherCoordinates[0] || m.otherCoordinates[1] || m.otherCoordinates[2]) {
+                    mavlink_msg_mission_item_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+                                                  groundStationSystemId, groundStationComponentId, currentMissionIndex,
+                                                  MAV_FRAME_GLOBAL, m.action, (currentMissionIndex == (uint8_t)missionManagerCurrentIndex),
+                                                  m.autocontinue, m.parameters[0], m.parameters[1], m.parameters[2], m.parameters[3],
+                                                  m.otherCoordinates[0], m.otherCoordinates[1], m.otherCoordinates[2]);
+                }
+                // Otherwise, if this message wasn't originally in the global frame, just output it
+                // as we received it.
+                else {
+                    mavlink_msg_mission_item_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+                                                  groundStationSystemId, groundStationComponentId, currentMissionIndex,
+                                                  m.refFrame, m.action, (currentMissionIndex == (uint8_t)missionManagerCurrentIndex),
+                                                  m.autocontinue, m.parameters[0], m.parameters[1], m.parameters[2], m.parameters[3],
+                                                  m.coordinates[0], m.coordinates[1], m.coordinates[2]);
+                }
 		len = mavlink_msg_to_send_buffer(buf, &msg);
 		Uart1WriteData(buf, (uint8_t)len);
 	}
