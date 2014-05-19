@@ -69,14 +69,14 @@ int CB_ReadByte(CircularBuffer *b, uint8_t *outData)
 {
 	if (b) {
 		if (b->dataSize) {
-			//copys the last element from the buffer to data
+			// Copies the last element from the buffer to data
 			*outData = b->data[b->readIndex];
-			//sets the buffer empty if there was only one element in it
+			// Sets the buffer empty if there was only one element in it
 			if (b->dataSize == 1) {
-				//checks for wrap around
+				// Checks for wrap around
 				b->readIndex = b->readIndex < (b->staticSize - 1)?b->readIndex + 1:0;
 			} else {
-				//checks for wrap around and moves indicies
+				// Checks for wrap around and moves indicies
 				b->readIndex = b->readIndex < (b->staticSize - 1)?b->readIndex + 1:0;
 			}
 			--b->dataSize;
@@ -90,9 +90,9 @@ int CB_ReadMany(CircularBuffer *b, void *outData, uint16_t size)
 {
 	int16_t i;
 	if (b && outData) {
-		//cast data so that it can be used to ready bytes
+		// Cast data so that it can be used to ready bytes
 		uint8_t *data_u = (uint8_t*)outData;
-		//check if there are enough items in the buffer to read
+		// Check if there are enough items in the buffer to read
 		if (b->dataSize >= size) {
 
 			// And read the data.
@@ -135,9 +135,9 @@ int CB_WriteMany(CircularBuffer *b, const void *inData, uint16_t size, bool fail
 {
 	if (b && inData) {
 		uint8_t *data_u = (uint8_t*)inData;
-		//if the fail early value is set
+		// If the fail early value is set
 		if (failEarly) {
-			//Checks to make sure there is enough space
+			// Checks to make sure there is enough space
 			if (b->staticSize - b->dataSize < size) {
 				return false;
 			} else {
@@ -158,16 +158,16 @@ int CB_WriteMany(CircularBuffer *b, const void *inData, uint16_t size, bool fail
 		else {
 			int i = 0;
 			while (i < size) {
-				//if the buffer is full the overflow count is increased and false is returned
+				// If the buffer is full the overflow count is increased and false is returned
 				if (b->dataSize == b->staticSize) {
 					b->overflowCount += (size - i);
 					return false;
 				}
-				//reads an element from the buffer to data
+				// Reads an element from the buffer to data
 				b->data[b->writeIndex] = data_u[i];
 				++i;
 				++b->dataSize;
-				//move the indicies and check for wrap around
+				// Move the indicies and check for wrap around
 				b->writeIndex = (b->writeIndex < (b->staticSize - 1)) ? b->writeIndex + 1: 0;
 			}
 			return true;
