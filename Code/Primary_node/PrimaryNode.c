@@ -285,8 +285,6 @@ void PrimaryNode100HzLoop(void)
 	// Set a reset signal for the first 2 seconds, allowing things to stabilize a bit before the
 	// system responds. This is especially crucial because it can take up to a second for sensors to
 	// timeout and appear as offline.
-	// FIXME: Note that this variable wrapping around will cause problems. This shouldn't be an issue
-	// as it goes until 500 days before this will happen.
 	if (nodeSystemTime == 0) {
 		nodeErrors |= PRIMARY_NODE_RESET_STARTUP;
 	} else if (nodeSystemTime == STARTUP_RESET_TIME) {
@@ -314,8 +312,11 @@ void PrimaryNode100HzLoop(void)
 	// And output the necessary control outputs.
 	PrimaryNodeMuxAndOutputControllerCommands(rCommand, tCommand);
 
-	// Update the onboard system time counter.
-	++nodeSystemTime;
+	// Update the onboard system time counter. We make sure we don't overflow here as we can
+        // run into issues with startup code being executed again.
+        if (nodeSystemTime < UINT32_MAX) {
+            ++nodeSystemTime;
+        }
 
 	// Send any necessary messages for this timestep.
 	MavLinkTransmit();
