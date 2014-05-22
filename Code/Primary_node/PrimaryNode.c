@@ -303,8 +303,8 @@ void PrimaryNode100HzLoop(void)
 
 	// Run the next timestep of the controller. Output is stored locally and passed to the actuators,
 	// but some additional system state is stored in controllerVars in `MavlinkGlue`.
-	float rCommand;
-	int16_t tCommand;
+	float rCommand = 0.0;
+	int16_t tCommand = 0;
 	bool reset = (nodeErrors != 0);
 	controller_custom(&gpsDataStore, &throttleDataStore.rpm, &rudderSensorData.RudderAngle,
 		(boolean_T*)&reset, &waterDataStore.speed, &rCommand, &tCommand, &controllerVars);
