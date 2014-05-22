@@ -23,12 +23,12 @@
 #include "Uart1.h"
 #include "MessageScheduler.h"
 #include "MavlinkGlue.h"
-#include "MissionManager.h"
 #include "MavCorruptNode.h"
 
 uint32_t nodeSystemTime = 0;
 
-extern MissionList mList;
+mavlink_mission_item_t mList[16];
+uint8_t currentMission = 0;
 
 /**
  * This function converts latitude/longitude/altitude into a north/east/down local tangent plane. The
@@ -190,7 +190,7 @@ void MavLinkSendHeartbeat(void)
 	// Copy the message to the send buffer
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	if (!Uart1WriteData(buf, (uint8_t)len)) {
-		FATAL_ERROR();
+//		FATAL_ERROR();
 	}
 }
 
@@ -333,8 +333,8 @@ void MavLinkSendBasicState(void)
 	mavlink_message_t msg;
 
 	mavlink_msg_basic_state_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-		currentCommands.autonomousRudderCommand, currentCommands.primaryManualRudderCommand, currentCommands.secondaryManualRudderCommand, 0,
-		currentCommands.autonomousThrottleCommand, currentCommands.primaryManualThrottleCommand, currentCommands.secondaryManualThrottleCommand, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0,
 		0,
 		0, 0
 	);
@@ -422,10 +422,6 @@ void MavLinkSendGpsGlobalOrigin(void)
  */
 void MavLinkSendCurrentMission(void)
 {
-	int8_t currentMission;
-
-	GetCurrentMission(&currentMission);
-
 	if (currentMission != -1) {
 		mavlink_message_t msg;
 		mavlink_msg_mission_current_pack(mavlink_system.sysid, mavlink_system.compid, &msg, (uint16_t)currentMission);
@@ -462,11 +458,9 @@ void MavLinkSendCommandAck(uint8_t command, uint8_t result)
 
 void MavLinkSendMissionCount(void)
 {
-	uint8_t missionCount;
 	mavlink_message_t msg;
-	GetMissionCount(&missionCount);
 	mavlink_msg_mission_count_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-	                               groundStationSystemId, groundStationComponentId, missionCount);
+	                               groundStationSystemId, groundStationComponentId, 16);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	Uart1WriteData(buf, (uint8_t)len);
 }
@@ -479,33 +473,18 @@ void MavLinkSendMissionCount(void)
  */
 void MavLinkSendMissionItem(uint8_t currentMissionIndex)
 {
-	Mission m;
-	uint8_t result;
-	GetMission(currentMissionIndex, &m, &result);
+	uint8_t result = true;
+        mavlink_mission_item_t m;
 	if (result) {
 		mavlink_message_t msg;
-		int8_t missionManagerCurrentIndex;
-		GetCurrentMission(&missionManagerCurrentIndex);
+                m = mList[currentMissionIndex];
 
-                // Try to send the mission back in the global frame. This makes the mission viewable
-                // on the main map, but not on the Horizontal Situation Indicator, which sucks, but
-                // the map is more important.
-                if (m.otherCoordinates[0] || m.otherCoordinates[1] || m.otherCoordinates[2]) {
-                    mavlink_msg_mission_item_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-                                                  groundStationSystemId, groundStationComponentId, currentMissionIndex,
-                                                  MAV_FRAME_GLOBAL, m.action, (currentMissionIndex == (uint8_t)missionManagerCurrentIndex),
-                                                  m.autocontinue, m.parameters[0], m.parameters[1], m.parameters[2], m.parameters[3],
-                                                  m.otherCoordinates[0], m.otherCoordinates[1], m.otherCoordinates[2]);
-                }
-                // Otherwise, if this message wasn't originally in the global frame, just output it
-                // as we received it.
-                else {
-                    mavlink_msg_mission_item_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-                                                  groundStationSystemId, groundStationComponentId, currentMissionIndex,
-                                                  m.refFrame, m.action, (currentMissionIndex == (uint8_t)missionManagerCurrentIndex),
-                                                  m.autocontinue, m.parameters[0], m.parameters[1], m.parameters[2], m.parameters[3],
-                                                  m.coordinates[0], m.coordinates[1], m.coordinates[2]);
-                }
+
+                mavlink_msg_mission_item_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
+                                              groundStationSystemId, groundStationComponentId, currentMissionIndex,
+                                              m.frame, m.command, false,
+                                              m.autocontinue, m.param1, m.param2, m.param3, m.param4,
+                                              m.x, m.y, m.z);
 		len = mavlink_msg_to_send_buffer(buf, &msg);
 		Uart1WriteData(buf, (uint8_t)len);
 	}
@@ -592,23 +571,9 @@ void MavLinkSendNodeStatusData(void)
 void MavLinkSendWaypointStatusData(void)
 {
 	mavlink_message_t msg;
-	int8_t missionIndex;
-	Mission cMission = {}, nMission;
-	boolean_T wasFound; // Using stupid Simulink datatypes to avoid errors
-	GetCurrentMission(&missionIndex);
-	GetMission(missionIndex, &nMission, &wasFound);
-	if (!wasFound) {
-		return; // Error out if we couldn't successfully fetch a mission.
-	}
-	// Fetch either the first waypoint or the starting point depending on what the next waypoint is.
-	if (missionIndex > 0) {
-		GetMission(missionIndex - 1, &cMission, &wasFound);
-	} else {
-		GetStartingPoint(&cMission);
-	}
 	mavlink_msg_waypoint_status_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
-	                                 cMission.otherCoordinates[0], cMission.otherCoordinates[1], cMission.coordinates[0], cMission.coordinates[1],
-									 nMission.otherCoordinates[0], nMission.otherCoordinates[1], nMission.coordinates[0], nMission.coordinates[1]);
+	                                 0, 0, 0, 0,
+					0, 0, 0, 0);
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 	Uart1WriteData(buf, (uint8_t)len);
 }
@@ -675,8 +640,6 @@ void SetStartingPointToCurrentLocation(void)
 {
 	// Update the starting point for the track to be the current vehicle position.
 	// We tack on GPS coordinates if we have some.
-	Mission newStartPoint = {};
-	SetStartingPoint(&newStartPoint);
 }
 
 /**
@@ -726,7 +689,7 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 					nextState = MISSION_STATE_INACTIVE;
 				}
 				// If there isn't enough room, respond with a MISSION_ACK error.
-				else if (newListSize > mList.maxSize) { // mList is exported by MATLAB code.
+				else if (newListSize > 16) { // mList is exported by MATLAB code.
 					MavLinkSendMissionAck(MAV_MISSION_NO_SPACE);
                                         MavLinkSendStatusText(MAV_SEVERITY_DEBUG, "MISSION_ACK(NO_SPACE) sent");
 					nextState = MISSION_STATE_INACTIVE;
@@ -735,9 +698,6 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 				else {
 					// Update the size of the mission list to the new list size.
 					mavlinkNewMissionListSize = newListSize;
-
-					// Clear all the old waypoints.
-					ClearMissionList();
 
 					// Update the starting point to the vehicle's current location
 					SetStartingPointToCurrentLocation();
@@ -757,8 +717,6 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 				}
 				// But if we're in manual mode, go ahead and clear everything.
 				else {
-					// Clear the old list
-					ClearMissionList();
 
 					// Update the starting point to the vehicle's current location
 					SetStartingPointToCurrentLocation();
@@ -769,7 +727,6 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 					nextState = MISSION_STATE_INACTIVE;
 				}
 			} else if (event == MISSION_EVENT_SET_CURRENT_RECEIVED) {
-				SetCurrentMission(*(uint8_t*)data);
 				MavLinkSendCurrentMission();
 				nextState = MISSION_STATE_INACTIVE;
 			}
@@ -779,9 +736,7 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 			if (event == MISSION_EVENT_NONE) {
 				MavLinkSendMissionCount();
                                 char x[50];
-                                uint8_t missionCount;
-                                GetMissionCount(&missionCount);
-                                snprintf(x, sizeof(x), "MISSION_COUNT(%d) sent", missionCount);
+                                snprintf(x, sizeof(x), "MISSION_COUNT(%d) sent", 16);
                                 MavLinkSendStatusText(MAV_SEVERITY_DEBUG, x);
 				nextState = MISSION_STATE_MISSION_COUNT_TIMEOUT;
 			}
@@ -816,9 +771,7 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 			if (event == MISSION_EVENT_NONE) {
 				MavLinkSendMissionCount();
                                 char x[50];
-                                uint8_t missionCount;
-                                GetMissionCount(&missionCount);
-                                snprintf(x, sizeof(x), "MISSION_COUNT(%d) sent", missionCount);
+                                snprintf(x, sizeof(x), "MISSION_COUNT(%d) sent", 16);
 				nextState = MISSION_STATE_MISSION_COUNT_TIMEOUT2;
 			}
 		break;
@@ -1029,10 +982,6 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 				if (currentMissionIndex == incomingMission->seq) {
 					int missionAddStatus = MavLinkAppendMission(incomingMission);
 					if (missionAddStatus != -1) {
-						// If this is going to be the new current mission, then we should set it as such.
-						if (incomingMission->current) {
-							SetCurrentMission(incomingMission->seq);
-						}
 
 						// If this was the last mission we were expecting, respond with an ACK
 						// confirming that we've successfully received the entire mission list.
@@ -1096,10 +1045,6 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 				if (currentMissionIndex == incomingMission->seq) {
 					int missionAddStatus = MavLinkAppendMission(incomingMission);
 					if (missionAddStatus != -1) {
-						// If this is going to be the new current mission, then we should set it as such.
-						if (incomingMission->current) {
-							SetCurrentMission(incomingMission->seq);
-						}
 
 						// If this was the last mission we were expecting, respond with an ACK
 						// confirming that we've successfully received the entire mission list.
@@ -1163,10 +1108,6 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 				if (currentMissionIndex == incomingMission->seq) {
 					int missionAddStatus = MavLinkAppendMission(incomingMission);
 					if (missionAddStatus != -1) {
-						// If this is going to be the new current mission, then we should set it as such.
-						if (incomingMission->current) {
-							SetCurrentMission(incomingMission->seq);
-						}
 
 						// If this was the last mission we were expecting, respond with an ACK
 						// confirming that we've successfully received the entire mission list.
@@ -1211,54 +1152,9 @@ void IncrementMissionCounter(void)
     }
 }
 
-int MavLinkAppendMission(const mavlink_mission_item_t *mission)
+int MavLinkAppendMission(const mavlink_mission_item_t *m)
 {
-	// We first copy the incoming mission data into our version of a Mission struct,
-	// which does not have some fields that are unnecessary.
-	Mission m = {
-		{
-			mission->x,
-			mission->y,
-			mission->z
-		},
-		{
-			0.0,
-			0.0,
-			0.0
-		},
-		mission->frame,
-		mission->command,
-		{
-			mission->param1,
-			mission->param2,
-			mission->param3,
-			mission->param4
-		},
-		mission->autocontinue
-	};
-
-	// Attempt to record this mission to the list, recording the result, which will be 0 for failure.
-	// We also map all incoming Global Lat/Long/Alt messages to North-East-Down here.
-	// These can be created in QGroundControl by just double-clicking on the Map. While the NED coordinates
-	// are stored, the global coordinates are as well so that they can be transmit as global coordinates
-	// to QGC, which doesn't display local waypoints on the primary map.
-	if (m.refFrame == MAV_FRAME_GLOBAL || m.refFrame == MAV_FRAME_GLOBAL_RELATIVE_ALT) {
-		m.refFrame = MAV_FRAME_LOCAL_NED;
-		// Preserve the global coordinates in the "otherCoordinates" members.
-		m.otherCoordinates[0] = m.coordinates[0];
-		m.otherCoordinates[1] = m.coordinates[1];
-		m.otherCoordinates[2] = m.coordinates[2];
-		const int32_t x[3] = {
-			(int32_t)(m.coordinates[0] * 1e7), // Stored in 1e-7 degrees
-			(int32_t)(m.coordinates[1] * 1e7), // Stored in 1e-7 degres
-			(int32_t)(m.coordinates[2] * 1e3)  // Stored in 1e-3 meters
-		};
-		lla2ltp(x, m.coordinates);
-	}
-
-	int8_t missionAddStatus;
-	AppendMission(&m, &missionAddStatus);
-	return missionAddStatus;
+	return true;
 }
 
 /**

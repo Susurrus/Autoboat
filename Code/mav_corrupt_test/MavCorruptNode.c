@@ -15,7 +15,6 @@
 #include "Uart1.h"
 #include "Uart2.h"
 #include "MavCorruptNode.h"
-#include "MissionManager.h"
 
 // Define some macros for setting pins as inputs or outputs using the TRIS pins.
 #define OUTPUT 0
@@ -24,9 +23,6 @@
 // Declare some macros for helping setting bit values
 #define ON  1
 #define OFF 0
-
-// Store actuator commmands here. Used by the MAVLink code
-ActuatorCommands currentCommands;
 
 // Specify how long after startup the node should stay in reset to let things stabilize. Units are
 // centiseconds.
@@ -129,28 +125,22 @@ int main(void)
 	ANSELBbits.ANSB0 = 0; // Also disable analog functionality on B0 so we can use it as a digital pin.
 	_TRISB0 = OUTPUT;
 
-        MissionInit();
         int i;
-        mavlink_mission_item_t m = {};
         for (i = 0; i < 15; ++i) {
-            m.x = i;
-            m.y = 100.0;
-            m.z = i;
-            m.param1 = 1;
-            m.param2 = 2;
-            m.param3 = 3;
-            m.param4 = 4;
-            m.command = MAV_CMD_NAV_WAYPOINT;
-            m.frame = MAV_FRAME_LOCAL_NED;
-            m.autocontinue = true;
-            MavLinkAppendMission(&m);
+            mList[i].x = i;
+            mList[i].y = 100.0;
+            mList[i].z = i;
+            mList[i].param1 = 1;
+            mList[i].param2 = 2;
+            mList[i].param3 = 3;
+            mList[i].param4 = 4;
+            mList[i].command = MAV_CMD_NAV_WAYPOINT;
+            mList[i].frame = MAV_FRAME_LOCAL_NED;
+            mList[i].autocontinue = true;
         }
-        SetCurrentMission(0);
-        Mission m2 = {};
-        SetStartingPoint(&m2);
 
 	// Report on system status now that initialization is complete.
-	MavLinkSendStatusText(MAV_SEVERITY_INFO, "Finished initialization. MAV_CORRUPT_NODE");
+	MavLinkSendStatusText(MAV_SEVERITY_INFO, "Finished initialization for MAV_CORRUPT_NODE");
 
 	// Run system tasks when a timer interrupt has been triggered.
 	uint8_t inData;
@@ -174,7 +164,7 @@ int main(void)
 			// We use comm channel 1, because 0 is being used by MavlinkGlue.c.
 			if (mavlink_parse_char(MAVLINK_COMM_1, inData, &msg, &status)) {
 				noMessageBytes = 0;
-				
+
 				// If we were in a corrupted state, we leave it and send a STATUSTEXT MAVLink message
 				// so the operator knows what happened.
 				if (!uart1TxStateIsGood) {
@@ -186,11 +176,11 @@ int main(void)
 					uart1TxStateIsGood = true;
 
 					// And clear the output pin.
-					_LATB0 = OFF;
+//					_LATB0 = OFF;
 				}
 			}
 
-			// Now if we've reached our limit of MAVLINK_MAX_PACKET_LEN, then reset UART1.
+			// Now if we've reached our limit, then reset UART1.
 			// We timeout after 75 bytes because that's larger than any message transmit by the SeaSlug.
 			// The largest message is common:STATUSTEXT.
 			if (uart1TxStateIsGood && ++noMessageBytes >= 75) {
@@ -198,20 +188,21 @@ int main(void)
 				uart1TxStateIsGood = false;
 
 				// So set our debugging pin high.
-				_LATB0 = ON;
+//				_LATB0 = ON;
 
 				// Save the time that this corruption happened at
 				firstCorruptionTime = nodeSystemTime;
 
 				// Reset our MAVLink decoder now. Make sure we're on comm channel 1 to match the
 				// decoding call above.
-				mavlink_reset_channel_status(MAVLINK_COMM_1);
+//				mavlink_reset_channel_status(MAVLINK_COMM_1);
 
 				// And reset our UART1 hardware.
-				Uart1Init(BAUD115200_BRG_REG);
+//                                Uart1ResetTxBuf();
+//				Uart1Init(BAUD115200_BRG_REG);
 			}
 		}
-		if (TMR2 > F_OSC / 2 / 256 / 100) {
+		if (TMR2 >= F_OSC / 2 / 256 / 100) {
                         _LATB15 = 1;
 			PrimaryNode100HzLoop();
                         _LATB15 = 0;
@@ -242,6 +233,8 @@ void PrimaryNode100HzLoop(void)
 
 	// Send any necessary messages for this timestep.
 	MavLinkTransmit();
+//				MavLinkSendStatus();
+//				MavLinkSendHeartbeat();
 }
 
 /**

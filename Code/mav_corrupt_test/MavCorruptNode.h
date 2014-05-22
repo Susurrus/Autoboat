@@ -4,16 +4,6 @@
 // Calculate the BRG register value necessary for 115200 baud with a 80MHz clock.
 #define BAUD115200_BRG_REG 21
 
-typedef struct {
-	float primaryManualRudderCommand;
-	float secondaryManualRudderCommand;
-	float autonomousRudderCommand;
-	int16_t primaryManualThrottleCommand;
-	int16_t secondaryManualThrottleCommand;
-	int16_t autonomousThrottleCommand;
-} ActuatorCommands;
-extern ActuatorCommands currentCommands;
-
 #define FATAL_ERROR() while(1)
 
 /**
