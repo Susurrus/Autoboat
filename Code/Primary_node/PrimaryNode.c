@@ -189,7 +189,7 @@ int main(void)
 	controller_initialize();
 
 	// Report on system status now that initialization is complete.
-	MavLinkSendStatusText(MAV_SEVERITY_INFO, "Finished initialzation.");
+	MavLinkSendStatusText(MAV_SEVERITY_INFO, "Finished initialization.");
 
 	// Run system tasks when a timer interrupt has been triggered.
 	uint8_t inData;
