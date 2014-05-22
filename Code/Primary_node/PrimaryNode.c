@@ -185,7 +185,7 @@ int main(void)
 	// the necessary code to trigger the timeout event for every sensor.
 	UpdateSensorsAvailability();
 
-	// Finally initialize the controller model
+	// Finally initialize the controller model (generated MATLAB code)
 	controller_initialize();
 
 	// Report on system status now that initialization is complete.
