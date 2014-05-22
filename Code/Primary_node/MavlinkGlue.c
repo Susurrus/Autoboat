@@ -265,9 +265,7 @@ void MavLinkSendHeartbeat(void)
 
 	// Copy the message to the send buffer
 	len = mavlink_msg_to_send_buffer(buf, &msg);
-	if (!Uart1WriteData(buf, (uint8_t)len)) {
-		FATAL_ERROR();
-	}
+	Uart1WriteData(buf, (uint8_t)len);
 }
 
 /**
