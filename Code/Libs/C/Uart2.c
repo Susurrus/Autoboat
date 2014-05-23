@@ -29,21 +29,22 @@ void Uart2Init(uint16_t brgRegister)
     CB_Init(&uart2RxBuffer, U2RxBuf, sizeof(U2RxBuf));
     CB_Init(&uart2TxBuffer, u2TxBuf, sizeof(u2TxBuf));
 
-	// If the UART was already opened, close it first. This should also clear the transmit/receive
-	// buffers so we won't have left-over data around when we re-initialize, if we are.
-	CloseUART2();
+    // If the UART was already opened, close it first. This should also clear the transmit/receive
+    // buffers so we won't have left-over data around when we re-initialize, if we are.
+    CloseUART2();
 
     // Configure and open the port.
-	OpenUART2(
-		UART_EN & UART_IDLE_CON & UART_IrDA_DISABLE & UART_MODE_FLOW & UART_UEN_00 & UART_EN_WAKE & UART_DIS_LOOPBACK & UART_DIS_ABAUD & UART_NO_PAR_8BIT & UART_UXRX_IDLE_ONE & UART_BRGH_SIXTEEN & UART_1STOPBIT,
-		UART_INT_TX_LAST_CH & UART_IrDA_POL_INV_ZERO & UART_SYNC_BREAK_DISABLED & UART_TX_ENABLE & UART_INT_RX_CHAR & UART_ADR_DETECT_DIS & UART_RX_OVERRUN_CLEAR,
-		brgRegister
-	);
+    OpenUART2(UART_EN & UART_IDLE_CON & UART_IrDA_DISABLE & UART_MODE_FLOW & UART_UEN_00 &
+        UART_EN_WAKE & UART_DIS_LOOPBACK & UART_DIS_ABAUD & UART_NO_PAR_8BIT & UART_UXRX_IDLE_ONE &
+        UART_BRGH_SIXTEEN & UART_1STOPBIT,
+        UART_INT_TX_LAST_CH & UART_IrDA_POL_INV_ZERO & UART_SYNC_BREAK_DISABLED & UART_TX_ENABLE &
+        UART_INT_RX_CHAR & UART_ADR_DETECT_DIS & UART_RX_OVERRUN_CLEAR,
+        brgRegister
+    );
 
     // Setup interrupts for proper UART communication. Enable both TX and RX interrupts at
-	// priority level 6 (arbitrary).
-    ConfigIntUART2(UART_RX_INT_EN & UART_RX_INT_PR6 &
-                   UART_TX_INT_EN & UART_TX_INT_PR6);
+    // priority level 6 (arbitrary).
+    ConfigIntUART2(UART_RX_INT_EN & UART_RX_INT_PR6 & UART_TX_INT_EN & UART_TX_INT_PR6);
 }
 
 void Uart2ChangeBaudRate(uint16_t brgRegister)
@@ -57,8 +58,8 @@ void Uart2ChangeBaudRate(uint16_t brgRegister)
     U2BRG = brgRegister;
 
     // Enable the port restoring the previous transmission settings
-    U2MODEbits.UARTEN	= 1;
-    U2STAbits.UTXEN		= utxen;
+    U2MODEbits.UARTEN = 1;
+    U2STAbits.UTXEN = utxen;
 }
 
 /**
@@ -72,13 +73,13 @@ void Uart2ChangeBaudRate(uint16_t brgRegister)
  */
 void Uart2StartTransmission(void)
 {
-	while (uart2TxBuffer.dataSize > 0 && !U2STAbits.UTXBF) {
+    while (uart2TxBuffer.dataSize > 0 && !U2STAbits.UTXBF) {
         // A temporary variable is used here because writing directly into U2TXREG causes some weird issues.
         uint8_t c;
         CB_ReadByte(&uart2TxBuffer, &c);
-		
-		// We process the char before we try to send it in case writing directly into U2TXREG has
-		// weird side effects.
+
+        // We process the char before we try to send it in case writing directly into U2TXREG has
+        // weird side effects.
         U2TXREG = c;
     }
 }
@@ -113,24 +114,24 @@ int Uart2WriteData(const void *data, size_t length)
 
 void _ISR _U2RXInterrupt(void)
 {
-	// Make sure if there's an overflow error, then we clear it. While this destroys 5 bytes of data,
-	// it's like the whole message these bytes are a part of is missing more bytes, and irrecoverably
-	// corrupt, so we don't worry about it.
-	if (U2STAbits.OERR == 1) {
-		U2STAbits.OERR = 0;
-	}
+    // Make sure if there's an overflow error, then we clear it. While this destroys 5 bytes of data,
+    // it's like the whole message these bytes are a part of is missing more bytes, and irrecoverably
+    // corrupt, so we don't worry about it.
+    if (U2STAbits.OERR == 1) {
+        U2STAbits.OERR = 0;
+    }
 
     // Keep receiving new bytes while the buffer has data.
-	char c;
+    char c;
     while (U2STAbits.URXDA == 1) {
-		// If there's a framing or parity error for the current UART byte, read the data but ignore
-		// it. Only if there isn't an error do we actually add the value to our circular buffer.
-		if (U2STAbits.FERR == 1 && U2STAbits.PERR) {
-			c = U2RXREG;
-		} else {
-			c = U2RXREG;
-			CB_WriteByte(&uart2RxBuffer, (uint8_t)c);
-		}
+        // If there's a framing or parity error for the current UART byte, read the data but ignore
+        // it. Only if there isn't an error do we actually add the value to our circular buffer.
+        if (U2STAbits.FERR == 1 && U2STAbits.PERR) {
+            c = U2RXREG;
+        } else {
+            c = U2RXREG;
+            CB_WriteByte(&uart2RxBuffer, (uint8_t)c);
+        }
     }
 
     // Clear the interrupt flag
@@ -146,9 +147,9 @@ void _ISR _U2RXInterrupt(void)
  */
 void _ISR _U2TXInterrupt(void)
 {
-	// Due to a bug with the dsPIC33E, this interrupt can trigger prematurely. We sit and poll the
-	// TRMT bit to stall until the character is properly transmit.
-	while (!U2STAbits.TRMT);
+    // Due to a bug with the dsPIC33E, this interrupt can trigger prematurely. We sit and poll the
+    // TRMT bit to stall until the character is properly transmit.
+    while (!U2STAbits.TRMT);
 
     Uart2StartTransmission();
 

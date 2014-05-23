@@ -29,21 +29,20 @@ void Uart1Init(uint16_t brgRegister)
     CB_Init(&uart1RxBuffer, u1RxBuf, sizeof(u1RxBuf));
     CB_Init(&uart1TxBuffer, u1TxBuf, sizeof(u1TxBuf));
 
-	// If the UART was already opened, close it first. This should also clear the transmit/receive
-	// buffers so we won't have left-over data around when we re-initialize, if we are.
-	CloseUART1();
+    // If the UART was already opened, close it first. This should also clear the transmit/receive
+    // buffers so we won't have left-over data around when we re-initialize, if we are.
+    CloseUART1();
 
     // Configure and open the port.
-	OpenUART1(
-		UART_EN & UART_IDLE_CON & UART_IrDA_DISABLE & UART_MODE_FLOW & UART_UEN_00 & UART_EN_WAKE & UART_DIS_LOOPBACK & UART_DIS_ABAUD & UART_NO_PAR_8BIT & UART_UXRX_IDLE_ONE & UART_BRGH_SIXTEEN & UART_1STOPBIT,
-		UART_INT_TX_LAST_CH & UART_IrDA_POL_INV_ZERO & UART_SYNC_BREAK_DISABLED & UART_TX_ENABLE & UART_INT_RX_CHAR & UART_ADR_DETECT_DIS & UART_RX_OVERRUN_CLEAR,
-		brgRegister
-	);
+    OpenUART1(
+            UART_EN & UART_IDLE_CON & UART_IrDA_DISABLE & UART_MODE_FLOW & UART_UEN_00 & UART_EN_WAKE & UART_DIS_LOOPBACK & UART_DIS_ABAUD & UART_NO_PAR_8BIT & UART_UXRX_IDLE_ONE & UART_BRGH_SIXTEEN & UART_1STOPBIT,
+            UART_INT_TX_LAST_CH & UART_IrDA_POL_INV_ZERO & UART_SYNC_BREAK_DISABLED & UART_TX_ENABLE & UART_INT_RX_CHAR & UART_ADR_DETECT_DIS & UART_RX_OVERRUN_CLEAR,
+            brgRegister
+            );
 
     // Setup interrupts for proper UART communication. Enable both TX and RX interrupts at
-	// priority level 6 (arbitrary).
-    ConfigIntUART1(UART_RX_INT_EN & UART_RX_INT_PR6 &
-                   UART_TX_INT_EN & UART_TX_INT_PR6);
+    // priority level 6 (arbitrary).
+    ConfigIntUART1(UART_RX_INT_EN & UART_RX_INT_PR6 & UART_TX_INT_EN & UART_TX_INT_PR6);
 }
 
 void Uart1ChangeBaudRate(uint16_t brgRegister)
@@ -57,8 +56,8 @@ void Uart1ChangeBaudRate(uint16_t brgRegister)
     U1BRG = brgRegister;
 
     // Enable the port restoring the previous transmission settings
-    U1MODEbits.UARTEN	= 1;
-    U1STAbits.UTXEN		= utxen;
+    U1MODEbits.UARTEN = 1;
+    U1STAbits.UTXEN = utxen;
 }
 
 /**
@@ -113,24 +112,24 @@ int Uart1WriteData(const void *data, size_t length)
 
 void _ISR _U1RXInterrupt(void)
 {
-	// Make sure if there's an overflow error, then we clear it. While this destroys 5 bytes of data,
-	// it's like the whole message these bytes are a part of is missing more bytes, and irrecoverably
-	// corrupt, so we don't worry about it.
-	if (U1STAbits.OERR == 1) {
-		U1STAbits.OERR = 0;
-	}
+    // Make sure if there's an overflow error, then we clear it. While this destroys 5 bytes of data,
+    // it's like the whole message these bytes are a part of is missing more bytes, and irrecoverably
+    // corrupt, so we don't worry about it.
+    if (U1STAbits.OERR == 1) {
+        U1STAbits.OERR = 0;
+    }
 
     // Keep receiving new bytes while the buffer has data.
-	char c;
+    char c;
     while (U1STAbits.URXDA == 1) {
-		// If there's a framing or parity error for the current UART byte, read the data but ignore
-		// it. Only if there isn't an error do we actually add the value to our circular buffer.
-		if (U1STAbits.FERR == 1 && U1STAbits.PERR) {
-			c = U1RXREG;
-		} else {
-			c = U1RXREG;
-			CB_WriteByte(&uart1RxBuffer, (uint8_t)c);
-		}
+        // If there's a framing or parity error for the current UART byte, read the data but ignore
+        // it. Only if there isn't an error do we actually add the value to our circular buffer.
+        if (U1STAbits.FERR == 1 && U1STAbits.PERR) {
+            c = U1RXREG;
+        } else {
+            c = U1RXREG;
+            CB_WriteByte(&uart1RxBuffer, (uint8_t)c);
+        }
     }
 
     // Clear the interrupt flag
