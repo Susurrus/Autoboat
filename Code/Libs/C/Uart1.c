@@ -71,20 +71,25 @@ void Uart1ChangeBaudRate(uint16_t brgRegister)
  */
 void Uart1StartTransmission(void)
 {
-	while (uart1TxBuffer.dataSize > 0 && !U1STAbits.UTXBF) {
+    while (uart1TxBuffer.dataSize > 0 && !U1STAbits.UTXBF) {
         // A temporary variable is used here because writing directly into U1TXREG causes some weird issues.
         uint8_t c;
+        IEC0bits.U1TXIE = 0;
         CB_ReadByte(&uart1TxBuffer, &c);
-		
-		// We process the char before we try to send it in case writing directly into U1TXREG has
-		// weird side effects.
+        IEC0bits.U1TXIE = 1;
+
+        // We process the char before we try to send it in case writing directly into U1TXREG has
+        // weird side effects.
         U1TXREG = c;
     }
 }
 
 int Uart1ReadByte(uint8_t *datum)
 {
-    return CB_ReadByte(&uart1RxBuffer, datum);
+    IEC0bits.U1RXIE = 0;
+    int rv = CB_ReadByte(&uart1RxBuffer, datum);
+    IEC0bits.U1RXIE = 1;
+    return rv;
 }
 
 /**
@@ -93,7 +98,9 @@ int Uart1ReadByte(uint8_t *datum)
  */
 void Uart1WriteByte(uint8_t datum)
 {
+    IEC0bits.U1TXIE = 0;
     CB_WriteByte(&uart1TxBuffer, datum);
+    IEC0bits.U1TXIE = 1;
     Uart1StartTransmission();
 }
 
@@ -103,9 +110,14 @@ void Uart1WriteByte(uint8_t datum)
  */
 int Uart1WriteData(const void *data, size_t length)
 {
-    int success = CB_WriteMany(&uart1TxBuffer, data, length, false);
-
-    Uart1StartTransmission();
+    IEC0bits.U1TXIE = 0;
+    int success = CB_WriteMany(&uart1TxBuffer, data, length, true);
+    IEC0bits.U1TXIE = 1;
+    if (success) {
+        Uart1StartTransmission();
+    } else {
+        return false;
+    }
 
     return success;
 }
@@ -145,11 +157,16 @@ void _ISR _U1RXInterrupt(void)
  */
 void _ISR _U1TXInterrupt(void)
 {
-    // Due to a bug with the dsPIC33E, this interrupt can trigger prematurely. We sit and poll the
-    // TRMT bit to stall until the character is properly transmit.
     while (!U1STAbits.TRMT);
+    while (uart1TxBuffer.dataSize > 0 && !U1STAbits.UTXBF) {
+        // A temporary variable is used here because writing directly into U1TXREG causes some weird issues.
+        uint8_t c;
+        CB_ReadByte(&uart1TxBuffer, &c);
 
-    Uart1StartTransmission();
+        // We process the char before we try to send it in case writing directly into U1TXREG has
+        // weird side effects.
+        U1TXREG = c;
+    }
 
     // Clear the interrupt flag
     IFS0bits.U1TXIF = 0;
