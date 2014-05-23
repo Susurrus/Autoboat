@@ -16,6 +16,30 @@
 #define ON  1
 #define OFF 0
 
+/**
+ * Check the current values of the 'state' timeout counter for the given sensor and update the sensor's
+ * state accordingly. This is merely a helper macro for SENSOR_STATE_UPDATE.
+ * @param sensor Should be one of the available sensors in the sensor
+ * @param state Should be either active or enabled.
+ */
+#define SENSOR_STATE_UPDATE_STATE(sensor, state)                                                                   \
+    if (sensorAvailability.sensor.state) {\
+        if (sensorAvailability.sensor.state ## _counter < SENSOR_TIMEOUT) {        \
+            ++sensorAvailability.sensor.state ## _counter;\
+        } else {\
+            sensorAvailability.sensor.state = false;                                                                   \
+        }\
+    } else if (!sensorAvailability.sensor.state && sensorAvailability.sensor.state ## _counter < SENSOR_TIMEOUT) { \
+        sensorAvailability.sensor.state = true;                                                                    \
+    }
+
+/**
+ * This macro update both the 'enabled' and 'active' state for a sensor
+ */
+#define SENSOR_STATE_UPDATE(sensor) \
+    SENSOR_STATE_UPDATE_STATE(sensor, enabled); \
+    SENSOR_STATE_UPDATE_STATE(sensor, active);
+
 struct PowerData powerDataStore = {0};
 struct WindData windDataStore = {0};
 struct AirData airDataStore = {0};
@@ -92,29 +116,6 @@ uint8_t ProcessAllEcanMessages(void)
 
     uint8_t messagesHandled = 0;
 
-    // Here we increment the timeout counters for each sensor/actuator we're tracking the status of. This function is assumed to be called at 100Hz and as such the timeout value is 100.
-    SENSOR_TIMEOUT_COUNTER_INCREMENT(gps);
-    SENSOR_TIMEOUT_COUNTER_INCREMENT(imu);
-    SENSOR_TIMEOUT_COUNTER_INCREMENT(wso100);
-    SENSOR_TIMEOUT_COUNTER_INCREMENT(dst800);
-    SENSOR_TIMEOUT_COUNTER_INCREMENT(power);
-    SENSOR_TIMEOUT_COUNTER_INCREMENT(prop);
-    SENSOR_TIMEOUT_COUNTER_INCREMENT(rudder);
-    SENSOR_TIMEOUT_COUNTER_INCREMENT(rcNode);
-    SENSOR_TIMEOUT_COUNTER_INCREMENT(gyro);
-
-    // Increment all of the node timeout counters if they haven't timed-out yet.
-    int i;
-    for (i = 0; i < NUM_NODES; ++i) {
-        // Be sure to not do this for the current node, as it won't ever receive CAN messages from
-        // itself.
-        if (i != nodeId - 1) { // Subtract 1 to account for 0-indexing of arrays.
-            if (nodeStatusTimeoutCounters[i] < NODE_TIMEOUT) {
-                ++nodeStatusTimeoutCounters[i];
-            }
-        }
-    }
-
     do {
         int foundOne = Ecan1Receive(&msg, &messagesLeft);
         if (foundOne) {
@@ -183,26 +184,6 @@ uint8_t ProcessAllEcanMessages(void)
                             rudderSensorData.Calibrated &&
                             !rudderSensorData.Calibrating) {
                         sensorAvailability.rudder.active_counter = 0;
-                    }
-                    // Track transitions in rudder calibrating state.
-                    if (nodeErrors & PRIMARY_NODE_RESET_CALIBRATING) {
-                        if (!rudderSensorData.Calibrating) {
-                            nodeErrors &= ~PRIMARY_NODE_RESET_CALIBRATING;
-                        }
-                    } else {
-                        if (rudderSensorData.Calibrating) {
-                            nodeErrors |= PRIMARY_NODE_RESET_CALIBRATING;
-                        }
-                    }
-                    // Track transitions in rudder calibrated state.
-                    if (nodeErrors & PRIMARY_NODE_RESET_UNCALIBRATED) {
-                        if (rudderSensorData.Calibrated) {
-                            nodeErrors &= ~PRIMARY_NODE_RESET_UNCALIBRATED;
-                        }
-                    } else {
-                        if (!rudderSensorData.Calibrated) {
-                            nodeErrors |= PRIMARY_NODE_RESET_UNCALIBRATED;
-                        }
                     }
                 } else if (msg.id == CAN_MSG_ID_IMU_DATA) {
                     sensorAvailability.imu.enabled_counter = 0;
@@ -445,14 +426,28 @@ uint8_t ProcessAllEcanMessages(void)
         }
     } while (messagesLeft > 0);
 
-    // Now if any nodes have timed out, reset their struct data. This code doesn't do anything but
-    // modify the NodeStatusData struct. All node-disconnection issues that affect this system state
-    // is handled in `UpdateSensorsAvailability()`.
+    return messagesHandled;
+}
+
+/**
+ * This function should be called at a constant rate (same units as SENSOR_TIMEOUT) and updates the
+ * availability of any sensors and onboard nodes. This function is separated from the
+ * `ProcessAllEcanMessages()` function because that function should be called as fast as possible,
+ * while this one should be called at the base tick rate of the system.
+ */
+void UpdateSensorsAvailability(void)
+{
+    // Now if any nodes have timed out, reset their struct data since any data we have for them is
+    // now invalid. Otherwise, keep incrementing their timeout counters. These are reset in
+    // `ProcessAllEcanMessages()`.
+    int i;
     for (i = 0; i < NUM_NODES; ++i) {
         // Be sure to not do this for the current node, as it won't ever receive CAN messages from
         // itself.
         if (i != nodeId - 1) {
-            if (nodeStatusTimeoutCounters[i] >= NODE_TIMEOUT) {
+            if (nodeStatusTimeoutCounters[i] < NODE_TIMEOUT) {
+                ++nodeStatusTimeoutCounters[i];
+            } else {
                 nodeStatusDataStore[i].errors = UINT16_MAX;
                 nodeStatusDataStore[i].load = UINT8_MAX;
                 nodeStatusDataStore[i].status = UINT16_MAX;
@@ -462,140 +457,17 @@ uint8_t ProcessAllEcanMessages(void)
         }
     }
 
-    // Check for any errors on the ECAN peripheral:
-    uint8_t errors[2];
-    Ecan1GetErrorStatus(errors);
-    if (nodeStatus & PRIMARY_NODE_STATUS_ECAN_TX_ERR) {
-        if (!errors[0]) {
-            nodeStatus &= ~PRIMARY_NODE_STATUS_ECAN_TX_ERR;
-        }
-    } else {
-        if (errors[0]) {
-            nodeStatus |= PRIMARY_NODE_STATUS_ECAN_TX_ERR;
-        }
-    }
-    if (nodeStatus & PRIMARY_NODE_STATUS_ECAN_RX_ERR) {
-        if (!errors[1]) {
-            nodeStatus &= ~PRIMARY_NODE_STATUS_ECAN_RX_ERR;
-        }
-    } else {
-        if (errors[1]) {
-            nodeStatus |= PRIMARY_NODE_STATUS_ECAN_RX_ERR;
-        }
-    }
-
-    UpdateSensorsAvailability();
-
-    return messagesHandled;
-}
-
-void UpdateSensorsAvailability(void)
-{
-    // Turn on the GPS indicator LED depending on the GPS status.
-    if (sensorAvailability.gps.enabled && sensorAvailability.gps.enabled_counter >= SENSOR_TIMEOUT) {
-        sensorAvailability.gps.enabled = false;
-        _LATB15 = OFF;
-    } else if (!sensorAvailability.gps.enabled && sensorAvailability.gps.enabled_counter == 0) {
-        sensorAvailability.gps.enabled = true;
-        _LATB15 = ON;
-    }
-    if (sensorAvailability.gps.active && sensorAvailability.gps.active_counter >= SENSOR_TIMEOUT) {
-        sensorAvailability.gps.active = false;
-        nodeStatus |= PRIMARY_NODE_STATUS_GPS_DISCON;
-    } else if (!sensorAvailability.gps.active && sensorAvailability.gps.active_counter == 0) {
-        sensorAvailability.gps.active = true;
-        nodeStatus &= ~PRIMARY_NODE_STATUS_GPS_DISCON;
-    }
-    if (sensorAvailability.imu.enabled && sensorAvailability.imu.enabled_counter >= SENSOR_TIMEOUT) {
-        sensorAvailability.imu.enabled = false;
-    } else if (!sensorAvailability.imu.enabled && sensorAvailability.imu.enabled_counter == 0) {
-        sensorAvailability.imu.enabled = true;
-    }
-    if (sensorAvailability.imu.active && sensorAvailability.imu.active_counter >= SENSOR_TIMEOUT) {
-        sensorAvailability.imu.active = false;
-    } else if (!sensorAvailability.imu.active && sensorAvailability.imu.active_counter == 0) {
-        sensorAvailability.imu.active = true;
-    }
-    if (sensorAvailability.wso100.enabled && sensorAvailability.wso100.enabled_counter >= SENSOR_TIMEOUT) {
-        sensorAvailability.wso100.enabled = false;
-    } else if (!sensorAvailability.wso100.enabled && sensorAvailability.wso100.enabled_counter == 0) {
-        sensorAvailability.wso100.enabled = true;
-    }
-    if (sensorAvailability.wso100.active && sensorAvailability.wso100.active_counter >= SENSOR_TIMEOUT) {
-        sensorAvailability.wso100.active = false;
-    } else if (!sensorAvailability.wso100.active && sensorAvailability.wso100.active_counter == 0) {
-        sensorAvailability.wso100.active = true;
-    }
-    if (sensorAvailability.dst800.enabled && sensorAvailability.dst800.enabled_counter >= SENSOR_TIMEOUT) {
-        sensorAvailability.dst800.enabled = false;
-    } else if (!sensorAvailability.dst800.enabled && sensorAvailability.dst800.enabled_counter == 0) {
-        sensorAvailability.dst800.enabled = true;
-    }
-    if (sensorAvailability.dst800.active && sensorAvailability.dst800.active_counter >= SENSOR_TIMEOUT) {
-        sensorAvailability.dst800.active = false;
-    } else if (!sensorAvailability.dst800.active && sensorAvailability.dst800.active_counter == 0) {
-        sensorAvailability.dst800.active = true;
-    }
-    if (sensorAvailability.power.enabled && sensorAvailability.power.enabled_counter >= SENSOR_TIMEOUT) {
-        sensorAvailability.power.enabled = false;
-    } else if (!sensorAvailability.power.enabled && sensorAvailability.power.enabled_counter == 0) {
-        sensorAvailability.power.enabled = true;
-    }
-    if (sensorAvailability.power.active && sensorAvailability.power.active_counter >= SENSOR_TIMEOUT) {
-        sensorAvailability.power.active = false;
-    } else if (!sensorAvailability.power.active && sensorAvailability.power.active_counter == 0) {
-        sensorAvailability.power.active = true;
-    }
-    // Track the ACS300 board. If it's not transmitting, assume we're in e-stop as that's the only
-    // way to tell.
-    if (sensorAvailability.prop.enabled && sensorAvailability.prop.enabled_counter >= SENSOR_TIMEOUT) {
-        sensorAvailability.prop.enabled = false;
-        nodeErrors |= PRIMARY_NODE_RESET_ESTOP;
-    } else if (!sensorAvailability.prop.enabled && sensorAvailability.prop.enabled_counter == 0) {
-        sensorAvailability.prop.enabled = true;
-        nodeErrors &= ~PRIMARY_NODE_RESET_ESTOP;
-    }
-    if (sensorAvailability.prop.active && sensorAvailability.prop.active_counter >= SENSOR_TIMEOUT) {
-        sensorAvailability.prop.active = false;
-    } else if (!sensorAvailability.prop.active && sensorAvailability.prop.active_counter == 0) {
-        sensorAvailability.prop.active = true;
-    }
-    // And if the rudder node disconnects, set the uncalibrated reset line. There's no need to peform
-    // the inverse check when it becomes active again, because that will be done when the CAN message
-    // is received.
-    if (sensorAvailability.rudder.enabled && sensorAvailability.rudder.enabled_counter >= SENSOR_TIMEOUT) {
-        sensorAvailability.rudder.enabled = false;
-        nodeErrors |= PRIMARY_NODE_RESET_UNCALIBRATED;
-    } else if (!sensorAvailability.rudder.enabled && sensorAvailability.rudder.enabled_counter == 0) {
-        sensorAvailability.rudder.enabled = true;
-    }
-    if (sensorAvailability.rudder.active && sensorAvailability.rudder.active_counter >= SENSOR_TIMEOUT) {
-        sensorAvailability.rudder.active = false;
-    } else if (!sensorAvailability.rudder.active && sensorAvailability.rudder.active_counter == 0) {
-        sensorAvailability.rudder.active = true;
-    }
-    /// RC Node:
-    // The RC node is considered enabled if it's broadcasting on the CAN bus. If the RC node ever
-    // becomes disabled, then we stay in reset. This means the RC node needs to be on and transmitting
-    // CAN messages properly to the primary node for the primary node to not be in reset.
-    if (sensorAvailability.rcNode.enabled && sensorAvailability.rcNode.enabled_counter >= SENSOR_TIMEOUT) {
-        sensorAvailability.rcNode.enabled = false;
-        nodeErrors |= PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
-    } else if (!sensorAvailability.rcNode.enabled && sensorAvailability.rcNode.enabled_counter == 0) {
-        sensorAvailability.rcNode.enabled = true;
-        if (!sensorAvailability.rcNode.active) {
-            nodeErrors &= ~PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
-        }
-    }
-    // If the RC node stops being active, yet is still enabled, then we aren't in an error state. Otherwise
-    // if the RC node is active, we are.
-    if (sensorAvailability.rcNode.active && sensorAvailability.rcNode.active_counter >= SENSOR_TIMEOUT) {
-        sensorAvailability.rcNode.active = false;
-        if (sensorAvailability.rcNode.enabled) {
-            nodeErrors &= ~PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
-        }
-    } else if (!sensorAvailability.rcNode.active && sensorAvailability.rcNode.active_counter == 0) {
-        sensorAvailability.rcNode.active = true;
-        nodeErrors |= PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
-    }
+    // Now update the '.enabled' or '.active' status for every sensor. We keep timeout counters that
+    // timeout a sensor after SENSOR_TIMEOUT amount of time, which depends on how often this function
+    // is called.
+    SENSOR_STATE_UPDATE(gps);
+    SENSOR_STATE_UPDATE(imu);
+    SENSOR_STATE_UPDATE(wso100);
+    SENSOR_STATE_UPDATE(dst800);
+    SENSOR_STATE_UPDATE(power);
+    SENSOR_STATE_UPDATE(prop);
+    SENSOR_STATE_UPDATE(rudder);
+    SENSOR_STATE_UPDATE(rcNode);
+    SENSOR_STATE_UPDATE(gyro);
+    SENSOR_STATE_UPDATE(gps);
 }

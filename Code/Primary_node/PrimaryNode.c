@@ -8,6 +8,7 @@
 #include <adc.h>
 #include <uart.h>
 #include <dma.h>
+#include <timer.h>
 
 // Project includes
 #include "Node.h"
@@ -53,6 +54,27 @@ struct {
 	float powerRailVoltage;
 	float powerRailCurrent;
 } analogSensors;
+
+struct {
+	bool gpsEnabled;
+	bool gpsActive;
+	bool imuEnabled;
+	bool imuActive;
+	bool wso100Enabled;
+	bool wso100Active;
+	bool dst800Enabled;
+	bool dst800Active;
+	bool powerEnabled;
+	bool powerActive;
+	bool propEnabled;
+	bool propActive;
+	bool rudderEnabled;
+	bool rudderActive;
+	bool rcNodeEnabled;
+	bool rcNodeActive;
+        bool gyroEnabled;
+        bool gyroActive;
+} lastSensorAvailability;
 
 // Store actuator commmands here. Used by the MAVLink code
 ActuatorCommands currentCommands;
@@ -120,7 +142,7 @@ int main(void)
 	Uart1Init(BAUD115200_BRG_REG);
 
 	// Initialize UART2 to 115200 for monitoring the groundstation communications.
-	Uart2Init(BAUD115200_BRG_REG);
+	Uart2Init(BAUD115200_BRG_REG); 
 
 	// Initialize the EEPROM for non-volatile data storage. DataStoreInit() also takes care of
 	// initializing the onboard data store to the current parameter values so all subsequent calls
@@ -130,7 +152,7 @@ int main(void)
 	}
 
 	// Initialize ECAN1
-	Ecan1Init(F_OSC, NODE_CAN_BAUD);
+	//Ecan1Init(F_OSC, NODE_CAN_BAUD);
 
 	// Initialize the MAVLink communications channel
 	MavLinkInit();
@@ -138,8 +160,9 @@ int main(void)
 	// Set up the ADC
 	Adc1Init();
 
-	// Set up a timer at 100.0320Hz, where F_timer = F_CY / 256 / prescalar.
-	Timer2Init(PrimaryNode100HzLoop, F_OSC / 2 / 256 / 100);
+	// Set up a timer at F_timer = F_OSC / 2 / 256.
+	OpenTimer2(T2_ON & T2_IDLE_CON & T2_GATE_OFF & T2_PS_1_256 & T2_32BIT_MODE_OFF & T2_SOURCE_INT, UINT16_MAX);
+	ConfigIntTimer2(T2_INT_PRIOR_1 & T2_INT_OFF);
 
 	// Finally perform the necessary pin mappings:
 	PPSUnLock;
@@ -175,10 +198,6 @@ int main(void)
 	_TRISB12 = OUTPUT;
 	// B15 (output): Amber GPS LED on the CANode Primary Shield, on when GPS is active & receiving good data.
 	_TRISB15 = OUTPUT;
-	// B0 (output): Debugging output pin for when the MAVLink stream gets corrupted. High when it is.
-	_LATB0 = OFF;
-	ANSELBbits.ANSB0 = 0; // Also disable analog functionality on B0 so we can use it as a digital pin.
-	_TRISB0 = OUTPUT;
 
 	// Now before we start everything, make sure we have our state correct given that we just started
 	// up. Every sensor is assumed to be online, but just expiring on initialization, so here we call
@@ -204,10 +223,117 @@ int main(void)
             // same message between our 100Hz primary controller ticks, so data may be overridden,
             // but that doesn't really matter.
             ProcessAllEcanMessages();
+            
+        // Check for any errors on the ECAN peripheral:
+        uint8_t errors[2];
+        Ecan1GetErrorStatus(errors);
+        if (nodeStatus & PRIMARY_NODE_STATUS_ECAN_TX_ERR) {
+            if (!errors[0]) {
+                nodeStatus &= ~PRIMARY_NODE_STATUS_ECAN_TX_ERR;
+            }
+        } else {
+            if (errors[0]) {
+                nodeStatus |= PRIMARY_NODE_STATUS_ECAN_TX_ERR;
+            }
+        }
+        if (nodeStatus & PRIMARY_NODE_STATUS_ECAN_RX_ERR) {
+            if (!errors[1]) {
+                nodeStatus &= ~PRIMARY_NODE_STATUS_ECAN_RX_ERR;
+            }
+        } else {
+            if (errors[1]) {
+                nodeStatus |= PRIMARY_NODE_STATUS_ECAN_RX_ERR;
+            }
+        }
+
+        // Turn on the GPS indicator LED depending on the GPS status.
+        if (lastSensorAvailability.gpsEnabled && !sensorAvailability.gps.enabled) {
+            _LATB15 = OFF;
+            lastSensorAvailability.gpsEnabled = false;
+        } else if (!lastSensorAvailability.gpsEnabled && sensorAvailability.gps.enabled) {
+            _LATB15 = ON;
+            lastSensorAvailability.gpsEnabled = true;
+        }
+        
+        // Set the GPS disconnected status bit when that occurs.
+        if (lastSensorAvailability.gpsActive && !sensorAvailability.gps.active) {
+            nodeStatus |= PRIMARY_NODE_STATUS_GPS_DISCON;
+            lastSensorAvailability.gpsActive = false;
+        } else if (!lastSensorAvailability.gpsActive && sensorAvailability.gps.active) {
+            nodeStatus &= ~PRIMARY_NODE_STATUS_GPS_DISCON;
+            lastSensorAvailability.gpsActive = true;
+        }
+
+        // If we ever lose contact with the ACS300, assume it's an e-stop condition.
+        if (lastSensorAvailability.propEnabled && !sensorAvailability.prop.enabled) {
+            nodeErrors |= PRIMARY_NODE_RESET_ESTOP;
+            lastSensorAvailability.propEnabled = false;
+        } else if (!lastSensorAvailability.propEnabled && sensorAvailability.prop.enabled) {
+            nodeErrors &= ~PRIMARY_NODE_RESET_ESTOP;
+            lastSensorAvailability.propEnabled = true;
+        }
+
+        // And if the rudder node disconnects, set the uncalibrated reset line. There's no need to peform
+        // the inverse check when it becomes active again, because that will be done when the CAN message
+        // is received.
+        if (lastSensorAvailability.rudderEnabled && !sensorAvailability.rudder.enabled) {
+            nodeErrors |= PRIMARY_NODE_RESET_UNCALIBRATED;
+            lastSensorAvailability.rudderEnabled = false;
+        } else if (!lastSensorAvailability.rudderEnabled && sensorAvailability.rudder.enabled) {
+            lastSensorAvailability.rudderEnabled = true;
+        }
+
+        /// RC Node:
+        // The RC node is considered enabled if it's broadcasting on the CAN bus. If the RC node ever
+        // becomes disabled, then we stay in reset. This means the RC node needs to be on and transmitting
+        // CAN messages properly to the primary node for the primary node to not be in reset. And if the RC
+        // node becomes enabled again, as long as the RC node is not active, we leave reset.
+        if (lastSensorAvailability.rcNodeEnabled && !sensorAvailability.rcNode.enabled) {
+            nodeErrors |= PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
+            lastSensorAvailability.rcNodeEnabled = false;
+        } else if (!lastSensorAvailability.rcNodeEnabled && sensorAvailability.rcNode.enabled) {
+            if (!lastSensorAvailability.rcNodeActive) {
+                nodeErrors &= ~PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
+            }
+            lastSensorAvailability.rcNodeEnabled = true;
+        }
+        // If the RC node stops being active, yet is still enabled, then we aren't in an error state. Otherwise
+        // if the RC node is active, we are.
+        if (lastSensorAvailability.rcNodeActive && !sensorAvailability.rcNode.active) {
+            if (lastSensorAvailability.rcNodeEnabled) {
+                nodeErrors &= ~PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
+            }
+            lastSensorAvailability.rcNodeActive = false;
+        } else if (!lastSensorAvailability.rcNodeActive && sensorAvailability.rcNode.active) {
+            nodeErrors |= PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
+            lastSensorAvailability.rcNodeActive = true;
+        }
+
+        // Track transitions in rudder calibrating state.
+        if (nodeErrors & PRIMARY_NODE_RESET_CALIBRATING) {
+            if (!rudderSensorData.Calibrating) {
+                nodeErrors &= ~PRIMARY_NODE_RESET_CALIBRATING;
+            }
+        } else {
+            if (rudderSensorData.Calibrating) {
+                nodeErrors |= PRIMARY_NODE_RESET_CALIBRATING;
+            }
+        }
+        // Track transitions in rudder calibrated state.
+        if (nodeErrors & PRIMARY_NODE_RESET_UNCALIBRATED) {
+            if (rudderSensorData.Calibrated) {
+                nodeErrors &= ~PRIMARY_NODE_RESET_UNCALIBRATED;
+            }
+        } else {
+            if (!rudderSensorData.Calibrated) {
+                nodeErrors |= PRIMARY_NODE_RESET_UNCALIBRATED;
+            }
+        }
 
             // Check for new MAVLink messages. We may get multiple of the
             // same message between our 100Hz primary controller ticks, so data may be overridden,
-            // but that doesn't really matter.
+            // but that doesn't really matter, as we were losing that data anyways when we were
+            // calling it at 100Hz.
             MavLinkReceive();
 
 		// We continuously process the input on UART2, which should be an exact copy of the data
@@ -228,8 +354,8 @@ int main(void)
 					// Now fix our state.
 					uart1TxStateIsGood = true;
 
-					// And clear the output pin.
-					_LATB0 = OFF;
+                                        // And clear the output pin
+                                        _LATB0 = OFF;
 				}
 			}
 
@@ -254,9 +380,10 @@ int main(void)
 				Uart1Init(BAUD115200_BRG_REG);
 			}
 		}
-		if (runTasks) {
+		if (TMR2 >= F_OSC / 2 / 256 / 100) {
 			PrimaryNode100HzLoop();
 			runTasks = false;
+                        TMR2 = 0;
 		}
 	}
 }
@@ -266,6 +393,15 @@ int main(void)
  */
 void PrimaryNode100HzLoop(void)
 {
+    // First update the status of any onboard sensors.
+    UpdateSensorsAvailability();
+
+    // Increment the counters for the mission and parameter protocols. They need to time some things
+    // this way, as they're normally called as fast as possible, so this external counter method is
+    // used.
+    IncrementMissionCounter();
+    IncrementParameterCounter();
+
 	// Clear state on when errors
 	ClearStateWhenErrors();
 

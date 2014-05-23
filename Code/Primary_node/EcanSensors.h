@@ -174,21 +174,8 @@ extern struct stc {
         timeoutCounters gyro; // The gyro is enabled and active whenever messages are received
 } sensorAvailability;
 
-// Set the timeout period for sensors (in units of centiseconds)
+// Set the timeout period for sensors (in units of the call rate of `UpdateSensorsAvailability`)
 #define SENSOR_TIMEOUT 100
-
-/**
- * Increment the timeout counters for a sensor. Should only be used at the start of
- * `ProcessAllEcanMessages()` and only once per sensor.
- * @param sensor The name of the sensor in the `sensorAvailability` struct.
- */
-#define SENSOR_TIMEOUT_COUNTER_INCREMENT(sensor)                           \
-	if (sensorAvailability.sensor.enabled_counter < SENSOR_TIMEOUT) {  \
-		++sensorAvailability.sensor.enabled_counter;               \
-	}                                                                  \
-	if (sensorAvailability.sensor.active_counter < SENSOR_TIMEOUT) {   \
-		++sensorAvailability.sensor.active_counter;                \
-	}
 
 /**
   * Clears the GPS data struct.

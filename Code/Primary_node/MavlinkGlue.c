@@ -130,6 +130,21 @@ static uint8_t groundStationComponentId = 0;
 static uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 static uint16_t len;
 
+// Variable for counting timesteps for the delaying parameter transmission
+static uint8_t parameterTimeoutCounter = 0;
+
+// Specify how long between transmitting parameters in a parameter transmission stream. This is in
+// units of timesteps. Conversion to real time depends on call rate of IncrementParameterCounter().
+#define INTRA_PARAM_DELAY 1
+
+// Internal counter variable for use with the COUNTDOWN state
+static uint8_t missionTimeoutCounter = 0;
+
+// Define a timeout (in units of main timesteps of MavlinkReceive()) for transmitting
+// MAVLink messages as part of the MISSION protocol. Messages will be retransmit
+// twice before giving up.
+#define MISSION_RESEND_TIMEOUT 100
+
 // This is a variable declared in Simulink that contains the GPS origin used for global/local
 // coordinate conversions. It's organized as latitude (1e7 degrees), longitude (1e7 degrees), and
 // altitude (1e6 meters). 
@@ -140,13 +155,6 @@ extern int32_t gpsOrigin[3];
 uint16_t mavLinkMessagesReceived = 0;
 uint16_t mavLinkMessagesFailedParsing = 0;
 
-// Define a timeout (in units of main timesteps of MavlinkReceive()) for transmitting
-// MAVLink messages as part of the PARAMETER and MISSION protocols. Messages will be retransmit
-// twice before it's considered hopeless.
-#define MAVLINK_RESEND_TIMEOUT 300
-
-// Specify how long between transmitting parameters in a parameter transmission stream.
-#define INTRA_PARAM_DELAY 5
 
 // Track manual control data transmit via MAVLink
 struct {
@@ -860,9 +868,6 @@ void MavLinkEvaluateParameterState(enum PARAM_EVENT event, const void *data)
 	// Keep a record of the current parameter being used
 	static uint16_t currentParameter;
 
-	// Used for the delaying parameter transmission
-	static uint8_t delayCountdown = 0;
-
 	// Store the state to change into
 	uint8_t nextState = state;
 
@@ -908,11 +913,14 @@ void MavLinkEvaluateParameterState(enum PARAM_EVENT event, const void *data)
 		} break;
 
 		// Add a delay of INTRA_PARAM_DELAY timesteps before attempting to schedule another one
+                // This counter variable should be incremented by the `IncrementParameterCounter()`
+                // function, which should be called at a constant rate. This rate should be the same
+                // as the units for INTRA_PARAM_DELAY.
 		case PARAM_STATE_STREAM_DELAY: {
 			if (event == PARAM_EVENT_ENTER_STATE) {
-					delayCountdown = INTRA_PARAM_DELAY;
+					parameterTimeoutCounter = 0;
 			} else if (event == PARAM_EVENT_NONE) {
-				if (delayCountdown-- == 0) {
+				if (parameterTimeoutCounter >= INTRA_PARAM_DELAY) {
 					nextState = PARAM_STATE_STREAM_SEND_VALUE;
 				}
 			}
@@ -927,6 +935,13 @@ void MavLinkEvaluateParameterState(enum PARAM_EVENT event, const void *data)
 		state = nextState;
 		MavLinkEvaluateParameterState(PARAM_EVENT_ENTER_STATE, NULL);
 	}
+}
+
+void IncrementParameterCounter(void)
+{
+    if (parameterTimeoutCounter < UINT8_MAX) {
+        ++parameterTimeoutCounter;
+    }
 }
 
 /**
@@ -956,9 +971,6 @@ void SetStartingPointToCurrentLocation(void)
  */
 void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 {
-	// Internal counter variable for use with the COUNTDOWN state
-	static uint16_t counter = 0;
-
 	// Keep track of the expected length of the incoming mission list
 	static uint16_t mavlinkNewMissionListSize;
 
@@ -1040,6 +1052,11 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 				MavLinkSendCurrentMission();
 				nextState = MISSION_STATE_INACTIVE;
 			}
+                        // At this point we shouldn't see anything else, so report an error if we do.
+                        else if (event > MISSION_EVENT_EXIT_STATE) {
+                                MavLinkSendMissionAck(MAV_MISSION_ERROR);
+                                nextState = MISSION_STATE_INACTIVE;
+                        }
 		break;
 
 		case MISSION_STATE_SEND_MISSION_COUNT:
@@ -1051,9 +1068,9 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 
 		case MISSION_STATE_MISSION_COUNT_TIMEOUT:
 			if (event == MISSION_EVENT_ENTER_STATE) {
-				counter = 0;
+				missionTimeoutCounter = 0;
 			} else if (event == MISSION_EVENT_NONE) {
-				if (counter++ > MAVLINK_RESEND_TIMEOUT) {
+				if (missionTimeoutCounter >= MISSION_RESEND_TIMEOUT) {
 					nextState = MISSION_STATE_SEND_MISSION_COUNT2;
 				}
 			} else if (event == MISSION_EVENT_REQUEST_LIST_RECEIVED) {
@@ -1079,9 +1096,9 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 
 		case MISSION_STATE_MISSION_COUNT_TIMEOUT2:
 			if (event == MISSION_EVENT_ENTER_STATE) {
-				counter = 0;
+				missionTimeoutCounter = 0;
 			} else if (event == MISSION_EVENT_NONE) {
-				if (counter++ > MAVLINK_RESEND_TIMEOUT) {
+				if (missionTimeoutCounter >= MISSION_RESEND_TIMEOUT) {
 					nextState = MISSION_STATE_SEND_MISSION_COUNT3;
 				}
 			} else if (event == MISSION_EVENT_REQUEST_LIST_RECEIVED) {
@@ -1107,9 +1124,9 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 
 		case MISSION_STATE_MISSION_COUNT_TIMEOUT3:
 			if (event == MISSION_EVENT_ENTER_STATE) {
-				counter = 0;
+				missionTimeoutCounter = 0;
 			} else if (event == MISSION_EVENT_NONE) {
-				if (counter++ > MAVLINK_RESEND_TIMEOUT) {
+				if (missionTimeoutCounter >= MISSION_RESEND_TIMEOUT) {
 					nextState = MISSION_STATE_INACTIVE;
 				}
 			} else if (event == MISSION_EVENT_REQUEST_LIST_RECEIVED) {
@@ -1135,11 +1152,11 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 
 		case MISSION_STATE_MISSION_ITEM_TIMEOUT:
 			if (event == MISSION_EVENT_ENTER_STATE) {
-				counter = 0;
+				missionTimeoutCounter = 0;
 			} else if (event == MISSION_EVENT_NONE) {
 				// Keep track of how long it's taking for a request to be received so we can timeout
 				// if necessary.
-				if (counter++ > MAVLINK_RESEND_TIMEOUT) {
+				if (missionTimeoutCounter >= MISSION_RESEND_TIMEOUT) {
 					nextState = MISSION_STATE_SEND_MISSION_ITEM2;
 				}
 			} else if (event == MISSION_EVENT_REQUEST_RECEIVED) {
@@ -1169,11 +1186,11 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 
 		case MISSION_STATE_MISSION_ITEM_TIMEOUT2:
 			if (event == MISSION_EVENT_ENTER_STATE) {
-				counter = 0;
+				missionTimeoutCounter = 0;
 			} else if (event == MISSION_EVENT_NONE) {
 				// Keep track of how long it's taking for a request to be received so we can timeout
 				// if necessary.
-				if (counter++ > MAVLINK_RESEND_TIMEOUT) {
+				if (missionTimeoutCounter >= MISSION_RESEND_TIMEOUT) {
 					nextState = MISSION_STATE_SEND_MISSION_ITEM3;
 				}
 			} else if (event == MISSION_EVENT_REQUEST_RECEIVED) {
@@ -1203,11 +1220,11 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 
 		case MISSION_STATE_MISSION_ITEM_TIMEOUT3:
 			if (event == MISSION_EVENT_ENTER_STATE) {
-				counter = 0;
+				missionTimeoutCounter = 0;
 			} else if (event == MISSION_EVENT_NONE) {
 				// Keep track of how long it's taking for a request to be received so we can timeout
 				// if necessary.
-				if (counter++ > MAVLINK_RESEND_TIMEOUT) {
+				if (missionTimeoutCounter >= MISSION_RESEND_TIMEOUT) {
 					nextState = MISSION_STATE_INACTIVE;
 				}
 			} else if (event == MISSION_EVENT_REQUEST_RECEIVED) {
@@ -1238,11 +1255,11 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 		// Implement the countdown timer for receiving a mission item
 		case MISSION_STATE_MISSION_REQUEST_TIMEOUT:
 			if (event == MISSION_EVENT_ENTER_STATE) {
-				counter = 0;
+				missionTimeoutCounter = 0;
 			} else if (event == MISSION_EVENT_NONE) {
 				// Keep track of how long it's taking for a request to be received so we can timeout
 				// if necessary.
-				if (counter++ > MAVLINK_RESEND_TIMEOUT) {
+				if (missionTimeoutCounter >= MISSION_RESEND_TIMEOUT) {
 					nextState = MISSION_STATE_SEND_MISSION_REQUEST2;
 				}
 			}
@@ -1297,11 +1314,11 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 		// Implement the countdown timer for receiving a mission item
 		case MISSION_STATE_MISSION_REQUEST_TIMEOUT2:
 			if (event == MISSION_EVENT_ENTER_STATE) {
-				counter = 0;
+				missionTimeoutCounter = 0;
 			} else if (event == MISSION_EVENT_NONE) {
 				// Keep track of how long it's taking for a request to be received so we can timeout
 				// if necessary.
-				if (counter++ > MAVLINK_RESEND_TIMEOUT) {
+				if (missionTimeoutCounter >= MISSION_RESEND_TIMEOUT) {
 					nextState = MISSION_STATE_SEND_MISSION_REQUEST3;
 				}
 			}
@@ -1356,11 +1373,11 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 		// Implement the countdown timer for receiving a mission item
 		case MISSION_STATE_MISSION_REQUEST_TIMEOUT3:
 			if (event == MISSION_EVENT_ENTER_STATE) {
-				counter = 0;
+				missionTimeoutCounter = 0;
 			} else if (event == MISSION_EVENT_NONE) {
 				// Keep track of how long it's taking for a request to be received so we can timeout
 				// if necessary.
-				if (counter++ > MAVLINK_RESEND_TIMEOUT) {
+				if (missionTimeoutCounter >= MISSION_RESEND_TIMEOUT) {
 					nextState = MISSION_STATE_INACTIVE;
 				}
 			}
@@ -1412,6 +1429,13 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 		state = nextState;
 		MavLinkEvaluateMissionState(MISSION_EVENT_ENTER_STATE, NULL);
 	}
+}
+
+void IncrementMissionCounter(void)
+{
+    if (missionTimeoutCounter < UINT8_MAX) {
+        ++missionTimeoutCounter;
+    }
 }
 
 int MavLinkAppendMission(const mavlink_mission_item_t *mission)

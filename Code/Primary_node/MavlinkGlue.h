@@ -219,6 +219,18 @@ void SetStartingPointToCurrentLocation(void);
 void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data);
 
 /**
+ * Increments the parameter counter for use within MAVLink's parameter protocol. Should be called at
+ * a constant rate.
+ */
+void IncrementParameterCounter(void);
+
+/**
+ * Increments the mission counter for use within MAVLink's parameter protocol. Should be called at
+ * a constant rate.
+ */
+void IncrementMissionCounter(void);
+
+/**
  * This function receives a MAVLink mission message and stores it into the current mission list. The
  * mission is modified before storage such that it has BOTH global and local coordinates using the
  * current position of the boat and the local origin for translation.
