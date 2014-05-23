@@ -6,7 +6,7 @@
 #include <uart.h>
 
 static CircularBuffer uart2RxBuffer;
-static uint8_t U2RxBuf[UART2_BUFFER_SIZE];
+static uint8_t u2RxBuf[UART2_BUFFER_SIZE];
 static CircularBuffer uart2TxBuffer;
 static uint8_t u2TxBuf[UART2_BUFFER_SIZE];
 
@@ -26,7 +26,7 @@ void Uart2StartTransmission(void);
 void Uart2Init(uint16_t brgRegister)
 {
     // First initialize the necessary circular buffers.
-    CB_Init(&uart2RxBuffer, U2RxBuf, sizeof(U2RxBuf));
+    CB_Init(&uart2RxBuffer, u2RxBuf, sizeof(u2RxBuf));
     CB_Init(&uart2TxBuffer, u2TxBuf, sizeof(u2TxBuf));
 
     // If the UART was already opened, close it first. This should also clear the transmit/receive
@@ -76,7 +76,9 @@ void Uart2StartTransmission(void)
     while (uart2TxBuffer.dataSize > 0 && !U2STAbits.UTXBF) {
         // A temporary variable is used here because writing directly into U2TXREG causes some weird issues.
         uint8_t c;
+        IEC1bits.U2TXIE = 0;
         CB_ReadByte(&uart2TxBuffer, &c);
+        IEC1bits.U2TXIE = 1;
 
         // We process the char before we try to send it in case writing directly into U2TXREG has
         // weird side effects.
@@ -86,7 +88,10 @@ void Uart2StartTransmission(void)
 
 int Uart2ReadByte(uint8_t *datum)
 {
-    return CB_ReadByte(&uart2RxBuffer, datum);
+    IEC1bits.U2RXIE = 0;
+    int rv = CB_ReadByte(&uart2RxBuffer, datum);
+    IEC1bits.U2RXIE = 1;
+    return rv;
 }
 
 /**
@@ -95,7 +100,9 @@ int Uart2ReadByte(uint8_t *datum)
  */
 void Uart2WriteByte(uint8_t datum)
 {
+    IEC1bits.U2TXIE = 0;
     CB_WriteByte(&uart2TxBuffer, datum);
+    IEC1bits.U2TXIE = 1;
     Uart2StartTransmission();
 }
 
@@ -105,9 +112,12 @@ void Uart2WriteByte(uint8_t datum)
  */
 int Uart2WriteData(const void *data, size_t length)
 {
-    int success = CB_WriteMany(&uart2TxBuffer, data, length, false);
-
-    Uart2StartTransmission();
+    IEC1bits.U2TXIE = 0;
+    int success = CB_WriteMany(&uart2TxBuffer, data, length, true);
+    IEC1bits.U2TXIE = 1;
+    if (success) {
+        Uart2StartTransmission();
+    }
 
     return success;
 }
@@ -151,7 +161,15 @@ void _ISR _U2TXInterrupt(void)
     // TRMT bit to stall until the character is properly transmit.
     while (!U2STAbits.TRMT);
 
-    Uart2StartTransmission();
+    while (uart2TxBuffer.dataSize > 0 && !U2STAbits.UTXBF) {
+        // A temporary variable is used here because writing directly into U2TXREG causes some weird issues.
+        uint8_t c;
+        CB_ReadByte(&uart2TxBuffer, &c);
+
+        // We process the char before we try to send it in case writing directly into U2TXREG has
+        // weird side effects.
+        U2TXREG = c;
+    }
 
     // Clear the interrupt flag
     IFS1bits.U2TXIF = 0;
