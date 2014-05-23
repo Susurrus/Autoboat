@@ -27,6 +27,10 @@
  *
  * Unit testing has been completed on x86 by compiling with the UNIT_TEST_CIRCULAR_BUFFER macro.
  * With gcc: `gcc CircularBuffer.c -DUNIT_TEST_CIRCULAR_BUFFER`
+ *
+ * Note that the Read/Write function calls are not threadsafe with the same CircularBuffer struct.
+ * This means that calling CB_Read*()/CB_Write*() is not safe in interrupts if they can interrupt
+ * calls to these same functions in regular code.
  */
 #ifndef CIRCULAR_BUFFER_H
 #define CIRCULAR_BUFFER_H
