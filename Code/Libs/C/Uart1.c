@@ -34,11 +34,13 @@ void Uart1Init(uint16_t brgRegister)
     CloseUART1();
 
     // Configure and open the port.
-    OpenUART1(
-            UART_EN & UART_IDLE_CON & UART_IrDA_DISABLE & UART_MODE_FLOW & UART_UEN_00 & UART_EN_WAKE & UART_DIS_LOOPBACK & UART_DIS_ABAUD & UART_NO_PAR_8BIT & UART_UXRX_IDLE_ONE & UART_BRGH_SIXTEEN & UART_1STOPBIT,
-            UART_INT_TX_LAST_CH & UART_IrDA_POL_INV_ZERO & UART_SYNC_BREAK_DISABLED & UART_TX_ENABLE & UART_INT_RX_CHAR & UART_ADR_DETECT_DIS & UART_RX_OVERRUN_CLEAR,
-            brgRegister
-            );
+    OpenUART1(UART_EN & UART_IDLE_CON & UART_IrDA_DISABLE & UART_MODE_FLOW & UART_UEN_00 &
+        UART_EN_WAKE & UART_DIS_LOOPBACK & UART_DIS_ABAUD & UART_NO_PAR_8BIT & UART_UXRX_IDLE_ONE &
+        UART_BRGH_SIXTEEN & UART_1STOPBIT,
+        UART_INT_TX_LAST_CH & UART_IrDA_POL_INV_ZERO & UART_SYNC_BREAK_DISABLED & UART_TX_ENABLE &
+        UART_INT_RX_CHAR & UART_ADR_DETECT_DIS & UART_RX_OVERRUN_CLEAR,
+        brgRegister
+    );
 
     // Setup interrupts for proper UART communication. Enable both TX and RX interrupts at
     // priority level 6 (arbitrary).
@@ -115,8 +117,6 @@ int Uart1WriteData(const void *data, size_t length)
     IEC0bits.U1TXIE = 1;
     if (success) {
         Uart1StartTransmission();
-    } else {
-        return false;
     }
 
     return success;
@@ -157,7 +157,10 @@ void _ISR _U1RXInterrupt(void)
  */
 void _ISR _U1TXInterrupt(void)
 {
+    // Due to a bug with the dsPIC33E, this interrupt can trigger prematurely. We sit and poll the
+    // TRMT bit to stall until the character is properly transmit.
     while (!U1STAbits.TRMT);
+
     while (uart1TxBuffer.dataSize > 0 && !U1STAbits.UTXBF) {
         // A temporary variable is used here because writing directly into U1TXREG causes some weird issues.
         uint8_t c;
