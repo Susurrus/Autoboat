@@ -465,6 +465,96 @@ static inline void mavlink_msg_node_status_send(mavlink_channel_t chan, uint16_t
 #endif
 }
 
+#if MAVLINK_MSG_ID_NODE_STATUS_LEN <= MAVLINK_MAX_PAYLOAD_LEN
+/*
+  This varient of _send() can be used to save stack space by re-using
+  memory from the receive buffer.  The caller provides a
+  mavlink_message_t which is the size of a full mavlink message. This
+  is usually the receive buffer for the channel, and allows a reply to an
+  incoming message with minimum stack space usage.
+ */
+static inline void mavlink_msg_node_status_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint16_t hil_status, uint16_t hil_errors, int8_t hil_temp, uint8_t hil_load, uint8_t hil_voltage, uint16_t imu_status, uint16_t imu_errors, int8_t imu_temp, uint8_t imu_load, uint8_t imu_voltage, uint16_t power_status, uint16_t power_errors, int8_t power_temp, uint8_t power_load, uint8_t power_voltage, uint16_t primary_status, uint16_t primary_errors, int8_t primary_temp, uint8_t primary_load, uint8_t primary_voltage, uint16_t rc_status, uint16_t rc_errors, int8_t rc_temp, uint8_t rc_load, uint8_t rc_voltage, uint16_t rudder_status, uint16_t rudder_errors, int8_t rudder_temp, uint8_t rudder_load, uint8_t rudder_voltage)
+{
+#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
+	char *buf = (char *)msgbuf;
+	_mav_put_uint16_t(buf, 0, hil_status);
+	_mav_put_uint16_t(buf, 2, hil_errors);
+	_mav_put_uint16_t(buf, 4, imu_status);
+	_mav_put_uint16_t(buf, 6, imu_errors);
+	_mav_put_uint16_t(buf, 8, power_status);
+	_mav_put_uint16_t(buf, 10, power_errors);
+	_mav_put_uint16_t(buf, 12, primary_status);
+	_mav_put_uint16_t(buf, 14, primary_errors);
+	_mav_put_uint16_t(buf, 16, rc_status);
+	_mav_put_uint16_t(buf, 18, rc_errors);
+	_mav_put_uint16_t(buf, 20, rudder_status);
+	_mav_put_uint16_t(buf, 22, rudder_errors);
+	_mav_put_int8_t(buf, 24, hil_temp);
+	_mav_put_uint8_t(buf, 25, hil_load);
+	_mav_put_uint8_t(buf, 26, hil_voltage);
+	_mav_put_int8_t(buf, 27, imu_temp);
+	_mav_put_uint8_t(buf, 28, imu_load);
+	_mav_put_uint8_t(buf, 29, imu_voltage);
+	_mav_put_int8_t(buf, 30, power_temp);
+	_mav_put_uint8_t(buf, 31, power_load);
+	_mav_put_uint8_t(buf, 32, power_voltage);
+	_mav_put_int8_t(buf, 33, primary_temp);
+	_mav_put_uint8_t(buf, 34, primary_load);
+	_mav_put_uint8_t(buf, 35, primary_voltage);
+	_mav_put_int8_t(buf, 36, rc_temp);
+	_mav_put_uint8_t(buf, 37, rc_load);
+	_mav_put_uint8_t(buf, 38, rc_voltage);
+	_mav_put_int8_t(buf, 39, rudder_temp);
+	_mav_put_uint8_t(buf, 40, rudder_load);
+	_mav_put_uint8_t(buf, 41, rudder_voltage);
+
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_NODE_STATUS, buf, MAVLINK_MSG_ID_NODE_STATUS_LEN, MAVLINK_MSG_ID_NODE_STATUS_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_NODE_STATUS, buf, MAVLINK_MSG_ID_NODE_STATUS_LEN);
+#endif
+#else
+	mavlink_node_status_t *packet = (mavlink_node_status_t *)msgbuf;
+	packet->hil_status = hil_status;
+	packet->hil_errors = hil_errors;
+	packet->imu_status = imu_status;
+	packet->imu_errors = imu_errors;
+	packet->power_status = power_status;
+	packet->power_errors = power_errors;
+	packet->primary_status = primary_status;
+	packet->primary_errors = primary_errors;
+	packet->rc_status = rc_status;
+	packet->rc_errors = rc_errors;
+	packet->rudder_status = rudder_status;
+	packet->rudder_errors = rudder_errors;
+	packet->hil_temp = hil_temp;
+	packet->hil_load = hil_load;
+	packet->hil_voltage = hil_voltage;
+	packet->imu_temp = imu_temp;
+	packet->imu_load = imu_load;
+	packet->imu_voltage = imu_voltage;
+	packet->power_temp = power_temp;
+	packet->power_load = power_load;
+	packet->power_voltage = power_voltage;
+	packet->primary_temp = primary_temp;
+	packet->primary_load = primary_load;
+	packet->primary_voltage = primary_voltage;
+	packet->rc_temp = rc_temp;
+	packet->rc_load = rc_load;
+	packet->rc_voltage = rc_voltage;
+	packet->rudder_temp = rudder_temp;
+	packet->rudder_load = rudder_load;
+	packet->rudder_voltage = rudder_voltage;
+
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_NODE_STATUS, (const char *)packet, MAVLINK_MSG_ID_NODE_STATUS_LEN, MAVLINK_MSG_ID_NODE_STATUS_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_NODE_STATUS, (const char *)packet, MAVLINK_MSG_ID_NODE_STATUS_LEN);
+#endif
+#endif
+}
+#endif
+
 #endif
 
 // MESSAGE NODE_STATUS UNPACKING

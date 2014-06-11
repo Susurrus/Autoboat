@@ -201,6 +201,48 @@ static inline void mavlink_msg_rudder_raw_send(mavlink_channel_t chan, uint16_t 
 #endif
 }
 
+#if MAVLINK_MSG_ID_RUDDER_RAW_LEN <= MAVLINK_MAX_PAYLOAD_LEN
+/*
+  This varient of _send() can be used to save stack space by re-using
+  memory from the receive buffer.  The caller provides a
+  mavlink_message_t which is the size of a full mavlink message. This
+  is usually the receive buffer for the channel, and allows a reply to an
+  incoming message with minimum stack space usage.
+ */
+static inline void mavlink_msg_rudder_raw_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint16_t raw_position, uint8_t port_limit, uint8_t center_limit, uint8_t starboard_limit, uint16_t port_limit_val, uint16_t starboard_limit_val)
+{
+#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
+	char *buf = (char *)msgbuf;
+	_mav_put_uint16_t(buf, 0, raw_position);
+	_mav_put_uint16_t(buf, 2, port_limit_val);
+	_mav_put_uint16_t(buf, 4, starboard_limit_val);
+	_mav_put_uint8_t(buf, 6, port_limit);
+	_mav_put_uint8_t(buf, 7, center_limit);
+	_mav_put_uint8_t(buf, 8, starboard_limit);
+
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_RUDDER_RAW, buf, MAVLINK_MSG_ID_RUDDER_RAW_LEN, MAVLINK_MSG_ID_RUDDER_RAW_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_RUDDER_RAW, buf, MAVLINK_MSG_ID_RUDDER_RAW_LEN);
+#endif
+#else
+	mavlink_rudder_raw_t *packet = (mavlink_rudder_raw_t *)msgbuf;
+	packet->raw_position = raw_position;
+	packet->port_limit_val = port_limit_val;
+	packet->starboard_limit_val = starboard_limit_val;
+	packet->port_limit = port_limit;
+	packet->center_limit = center_limit;
+	packet->starboard_limit = starboard_limit;
+
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_RUDDER_RAW, (const char *)packet, MAVLINK_MSG_ID_RUDDER_RAW_LEN, MAVLINK_MSG_ID_RUDDER_RAW_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_RUDDER_RAW, (const char *)packet, MAVLINK_MSG_ID_RUDDER_RAW_LEN);
+#endif
+#endif
+}
+#endif
+
 #endif
 
 // MESSAGE RUDDER_RAW UNPACKING

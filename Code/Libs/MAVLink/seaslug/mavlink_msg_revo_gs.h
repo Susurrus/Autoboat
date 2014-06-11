@@ -223,6 +223,52 @@ static inline void mavlink_msg_revo_gs_send(mavlink_channel_t chan, float headin
 #endif
 }
 
+#if MAVLINK_MSG_ID_REVO_GS_LEN <= MAVLINK_MAX_PAYLOAD_LEN
+/*
+  This varient of _send() can be used to save stack space by re-using
+  memory from the receive buffer.  The caller provides a
+  mavlink_message_t which is the size of a full mavlink message. This
+  is usually the receive buffer for the channel, and allows a reply to an
+  incoming message with minimum stack space usage.
+ */
+static inline void mavlink_msg_revo_gs_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  float heading, uint8_t mag_status, float pitch, uint8_t pitch_status, float roll, uint8_t roll_status, float dip, uint16_t mag_horiz_comp)
+{
+#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
+	char *buf = (char *)msgbuf;
+	_mav_put_float(buf, 0, heading);
+	_mav_put_float(buf, 4, pitch);
+	_mav_put_float(buf, 8, roll);
+	_mav_put_float(buf, 12, dip);
+	_mav_put_uint16_t(buf, 16, mag_horiz_comp);
+	_mav_put_uint8_t(buf, 18, mag_status);
+	_mav_put_uint8_t(buf, 19, pitch_status);
+	_mav_put_uint8_t(buf, 20, roll_status);
+
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_REVO_GS, buf, MAVLINK_MSG_ID_REVO_GS_LEN, MAVLINK_MSG_ID_REVO_GS_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_REVO_GS, buf, MAVLINK_MSG_ID_REVO_GS_LEN);
+#endif
+#else
+	mavlink_revo_gs_t *packet = (mavlink_revo_gs_t *)msgbuf;
+	packet->heading = heading;
+	packet->pitch = pitch;
+	packet->roll = roll;
+	packet->dip = dip;
+	packet->mag_horiz_comp = mag_horiz_comp;
+	packet->mag_status = mag_status;
+	packet->pitch_status = pitch_status;
+	packet->roll_status = roll_status;
+
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_REVO_GS, (const char *)packet, MAVLINK_MSG_ID_REVO_GS_LEN, MAVLINK_MSG_ID_REVO_GS_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_REVO_GS, (const char *)packet, MAVLINK_MSG_ID_REVO_GS_LEN);
+#endif
+#endif
+}
+#endif
+
 #endif
 
 // MESSAGE REVO_GS UNPACKING

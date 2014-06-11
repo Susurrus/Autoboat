@@ -168,6 +168,42 @@ static inline void mavlink_msg_dst800_send(mavlink_channel_t chan, float speed, 
 #endif
 }
 
+#if MAVLINK_MSG_ID_DST800_LEN <= MAVLINK_MAX_PAYLOAD_LEN
+/*
+  This varient of _send() can be used to save stack space by re-using
+  memory from the receive buffer.  The caller provides a
+  mavlink_message_t which is the size of a full mavlink message. This
+  is usually the receive buffer for the channel, and allows a reply to an
+  incoming message with minimum stack space usage.
+ */
+static inline void mavlink_msg_dst800_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  float speed, float temperature, float depth)
+{
+#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
+	char *buf = (char *)msgbuf;
+	_mav_put_float(buf, 0, speed);
+	_mav_put_float(buf, 4, temperature);
+	_mav_put_float(buf, 8, depth);
+
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_DST800, buf, MAVLINK_MSG_ID_DST800_LEN, MAVLINK_MSG_ID_DST800_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_DST800, buf, MAVLINK_MSG_ID_DST800_LEN);
+#endif
+#else
+	mavlink_dst800_t *packet = (mavlink_dst800_t *)msgbuf;
+	packet->speed = speed;
+	packet->temperature = temperature;
+	packet->depth = depth;
+
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_DST800, (const char *)packet, MAVLINK_MSG_ID_DST800_LEN, MAVLINK_MSG_ID_DST800_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_DST800, (const char *)packet, MAVLINK_MSG_ID_DST800_LEN);
+#endif
+#endif
+}
+#endif
+
 #endif
 
 // MESSAGE DST800 UNPACKING

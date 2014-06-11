@@ -322,6 +322,70 @@ static inline void mavlink_msg_tokimec_send(mavlink_channel_t chan, int16_t yaw,
 #endif
 }
 
+#if MAVLINK_MSG_ID_TOKIMEC_LEN <= MAVLINK_MAX_PAYLOAD_LEN
+/*
+  This varient of _send() can be used to save stack space by re-using
+  memory from the receive buffer.  The caller provides a
+  mavlink_message_t which is the size of a full mavlink message. This
+  is usually the receive buffer for the channel, and allows a reply to an
+  incoming message with minimum stack space usage.
+ */
+static inline void mavlink_msg_tokimec_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  int16_t yaw, int16_t pitch, int16_t roll, int16_t x_angle_vel, int16_t y_angle_vel, int16_t z_angle_vel, int16_t x_accel, int16_t y_accel, int16_t z_accel, int16_t mag_bearing, int32_t latitude, int32_t longitude, int32_t est_latitude, int32_t est_longitude, int16_t gps_heading, int16_t gps_speed, int16_t status)
+{
+#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
+	char *buf = (char *)msgbuf;
+	_mav_put_int32_t(buf, 0, latitude);
+	_mav_put_int32_t(buf, 4, longitude);
+	_mav_put_int32_t(buf, 8, est_latitude);
+	_mav_put_int32_t(buf, 12, est_longitude);
+	_mav_put_int16_t(buf, 16, yaw);
+	_mav_put_int16_t(buf, 18, pitch);
+	_mav_put_int16_t(buf, 20, roll);
+	_mav_put_int16_t(buf, 22, x_angle_vel);
+	_mav_put_int16_t(buf, 24, y_angle_vel);
+	_mav_put_int16_t(buf, 26, z_angle_vel);
+	_mav_put_int16_t(buf, 28, x_accel);
+	_mav_put_int16_t(buf, 30, y_accel);
+	_mav_put_int16_t(buf, 32, z_accel);
+	_mav_put_int16_t(buf, 34, mag_bearing);
+	_mav_put_int16_t(buf, 36, gps_heading);
+	_mav_put_int16_t(buf, 38, gps_speed);
+	_mav_put_int16_t(buf, 40, status);
+
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_TOKIMEC, buf, MAVLINK_MSG_ID_TOKIMEC_LEN, MAVLINK_MSG_ID_TOKIMEC_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_TOKIMEC, buf, MAVLINK_MSG_ID_TOKIMEC_LEN);
+#endif
+#else
+	mavlink_tokimec_t *packet = (mavlink_tokimec_t *)msgbuf;
+	packet->latitude = latitude;
+	packet->longitude = longitude;
+	packet->est_latitude = est_latitude;
+	packet->est_longitude = est_longitude;
+	packet->yaw = yaw;
+	packet->pitch = pitch;
+	packet->roll = roll;
+	packet->x_angle_vel = x_angle_vel;
+	packet->y_angle_vel = y_angle_vel;
+	packet->z_angle_vel = z_angle_vel;
+	packet->x_accel = x_accel;
+	packet->y_accel = y_accel;
+	packet->z_accel = z_accel;
+	packet->mag_bearing = mag_bearing;
+	packet->gps_heading = gps_heading;
+	packet->gps_speed = gps_speed;
+	packet->status = status;
+
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_TOKIMEC, (const char *)packet, MAVLINK_MSG_ID_TOKIMEC_LEN, MAVLINK_MSG_ID_TOKIMEC_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_TOKIMEC, (const char *)packet, MAVLINK_MSG_ID_TOKIMEC_LEN);
+#endif
+#endif
+}
+#endif
+
 #endif
 
 // MESSAGE TOKIMEC UNPACKING

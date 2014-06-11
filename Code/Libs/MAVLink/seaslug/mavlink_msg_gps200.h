@@ -146,6 +146,38 @@ static inline void mavlink_msg_gps200_send(mavlink_channel_t chan, float magneti
 #endif
 }
 
+#if MAVLINK_MSG_ID_GPS200_LEN <= MAVLINK_MAX_PAYLOAD_LEN
+/*
+  This varient of _send() can be used to save stack space by re-using
+  memory from the receive buffer.  The caller provides a
+  mavlink_message_t which is the size of a full mavlink message. This
+  is usually the receive buffer for the channel, and allows a reply to an
+  incoming message with minimum stack space usage.
+ */
+static inline void mavlink_msg_gps200_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  float magnetic_variation)
+{
+#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
+	char *buf = (char *)msgbuf;
+	_mav_put_float(buf, 0, magnetic_variation);
+
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_GPS200, buf, MAVLINK_MSG_ID_GPS200_LEN, MAVLINK_MSG_ID_GPS200_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_GPS200, buf, MAVLINK_MSG_ID_GPS200_LEN);
+#endif
+#else
+	mavlink_gps200_t *packet = (mavlink_gps200_t *)msgbuf;
+	packet->magnetic_variation = magnetic_variation;
+
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_GPS200, (const char *)packet, MAVLINK_MSG_ID_GPS200_LEN, MAVLINK_MSG_ID_GPS200_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_GPS200, (const char *)packet, MAVLINK_MSG_ID_GPS200_LEN);
+#endif
+#endif
+}
+#endif
+
 #endif
 
 // MESSAGE GPS200 UNPACKING

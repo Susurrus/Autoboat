@@ -223,6 +223,52 @@ static inline void mavlink_msg_waypoint_status_send(mavlink_channel_t chan, floa
 #endif
 }
 
+#if MAVLINK_MSG_ID_WAYPOINT_STATUS_LEN <= MAVLINK_MAX_PAYLOAD_LEN
+/*
+  This varient of _send() can be used to save stack space by re-using
+  memory from the receive buffer.  The caller provides a
+  mavlink_message_t which is the size of a full mavlink message. This
+  is usually the receive buffer for the channel, and allows a reply to an
+  incoming message with minimum stack space usage.
+ */
+static inline void mavlink_msg_waypoint_status_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  float last_wp_lat, float last_wp_lon, float last_wp_north, float last_wp_east, float next_wp_lat, float next_wp_lon, float next_wp_north, float next_wp_east)
+{
+#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
+	char *buf = (char *)msgbuf;
+	_mav_put_float(buf, 0, last_wp_lat);
+	_mav_put_float(buf, 4, last_wp_lon);
+	_mav_put_float(buf, 8, last_wp_north);
+	_mav_put_float(buf, 12, last_wp_east);
+	_mav_put_float(buf, 16, next_wp_lat);
+	_mav_put_float(buf, 20, next_wp_lon);
+	_mav_put_float(buf, 24, next_wp_north);
+	_mav_put_float(buf, 28, next_wp_east);
+
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_WAYPOINT_STATUS, buf, MAVLINK_MSG_ID_WAYPOINT_STATUS_LEN, MAVLINK_MSG_ID_WAYPOINT_STATUS_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_WAYPOINT_STATUS, buf, MAVLINK_MSG_ID_WAYPOINT_STATUS_LEN);
+#endif
+#else
+	mavlink_waypoint_status_t *packet = (mavlink_waypoint_status_t *)msgbuf;
+	packet->last_wp_lat = last_wp_lat;
+	packet->last_wp_lon = last_wp_lon;
+	packet->last_wp_north = last_wp_north;
+	packet->last_wp_east = last_wp_east;
+	packet->next_wp_lat = next_wp_lat;
+	packet->next_wp_lon = next_wp_lon;
+	packet->next_wp_north = next_wp_north;
+	packet->next_wp_east = next_wp_east;
+
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_WAYPOINT_STATUS, (const char *)packet, MAVLINK_MSG_ID_WAYPOINT_STATUS_LEN, MAVLINK_MSG_ID_WAYPOINT_STATUS_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_WAYPOINT_STATUS, (const char *)packet, MAVLINK_MSG_ID_WAYPOINT_STATUS_LEN);
+#endif
+#endif
+}
+#endif
+
 #endif
 
 // MESSAGE WAYPOINT_STATUS UNPACKING
