@@ -211,9 +211,10 @@ void MavLinkInit(void)
 	// We only report things that the GUI needs at 1Hz because it only updates that fast.
 	// REVO_GS - Not currently connected, so no need to report it often.
 	// WSO100 is just an environmental sensor, no need for quick updates.
-	const uint8_t const periodicities[MAVLINK_MSGS_SIZE] = {2, 4, 1, 10, 4, 10, 2, 10, 10, 10, 1, 4, 10, 5, 10, 20, 20};
+	//const uint8_t const periodicities[MAVLINK_MSGS_SIZE] = {2, 4, 1, 10, 4, 10, 2, 10, 10, 10, 1, 4, 10, 5, 10, 20, 20};
+	const uint8_t const periodicities[MAVLINK_MSGS_SIZE] = {2, 4, 1, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	for (i = 0; i < sizeof(periodicities); ++i) {
-		if (!AddMessageRepeating(&mavlinkSchedule, ids[i], periodicities[i])) {
+		if (periodicities[i] && !AddMessageRepeating(&mavlinkSchedule, ids[i], periodicities[i])) {
 			FATAL_ERROR();
 		}
 	}
