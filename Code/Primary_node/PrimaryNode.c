@@ -89,7 +89,7 @@ static volatile uint16_t adcDmaBuffer[16] __attribute__((aligned(32)));
 // Declare some function prototypes.
 void Adc1Init(void);
 void PrimaryNode100HzLoop(void);
-void PrimaryNodeMuxAndOutputControllerCommands(float rudderCommand, int16_t throttleCommand);
+void PrimaryNodeMuxAndOutputControllerCommands(float rudderCommand, int16_t throttleCommand, bool forceTransmission);
 void SetTaskFlag(void);
 
 // Set processor configuration settings
@@ -293,6 +293,14 @@ int main(void)
         if (lastSensorAvailability.rcNodeActive && !sensorAvailability.rcNode.active) {
             if (lastSensorAvailability.rcNodeEnabled) {
                 nodeErrors &= ~PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
+
+                // Output the command messages for this timestep even if they haven't changed,
+                // because the primary controller is now back in control of the vessel.
+                // FIXME: The storing of this data should not be done in the
+                // *OutputControllerCommands() function.
+                PrimaryNodeMuxAndOutputControllerCommands(currentCommands.autonomousRudderCommand,
+                                                          currentCommands.autonomousThrottleCommand,
+                                                          true);
             }
             lastSensorAvailability.rcNodeActive = false;
         } else if (!lastSensorAvailability.rcNodeActive && sensorAvailability.rcNode.active) {
@@ -394,7 +402,7 @@ void PrimaryNode100HzLoop(void)
             (boolean_T*) & reset, &waterDataStore.speed, &rCommand, &tCommand, &controllerVars);
 
     // And output the necessary control outputs.
-    PrimaryNodeMuxAndOutputControllerCommands(rCommand, tCommand);
+    PrimaryNodeMuxAndOutputControllerCommands(rCommand, tCommand, false);
 
     // Update the onboard system time counter. We make sure we don't overflow here as we can
     // run into issues with startup code being executed again.
@@ -496,7 +504,7 @@ void SetAutoModeLed(void)
     }
 }
 
-void PrimaryNodeMuxAndOutputControllerCommands(float rudderCommand, int16_t throttleCommand)
+void PrimaryNodeMuxAndOutputControllerCommands(float rudderCommand, int16_t throttleCommand, bool forceTransmission)
 {
     float muxedRc;
     int16_t muxedTc;
@@ -526,7 +534,7 @@ void PrimaryNodeMuxAndOutputControllerCommands(float rudderCommand, int16_t thro
 
     // Only transmit these commands if there are no errors.
     if (!nodeErrors) {
-        ActuatorsTransmitCommands(muxedRc, muxedTc);
+        ActuatorsTransmitCommands(muxedRc, muxedTc, forceTransmission);
     }
 }
 
