@@ -207,9 +207,6 @@ int main(void)
     MavLinkSendStatusText(MAV_SEVERITY_INFO, "Finished initialization.");
 
     // Run system tasks when a timer interrupt has been triggered.
-    uint8_t inData;
-    mavlink_message_t msg;
-    mavlink_status_t status;
     while (true) {
 
         // Process incoming ECAN messages. This is done continuously. We may get multiple of the
