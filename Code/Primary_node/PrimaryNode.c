@@ -540,11 +540,14 @@ void PrimaryNodeMuxAndOutputControllerCommands(float rudderCommand, int16_t thro
 
 float ProcessManualRudderCommand(float rc)
 {
+    // Set up 9 bins for binning the rudder command into, broken into (degrees):
+    // 0-6, 6-12, 12-18, 18-23, 23-28, 28-33, 33-39, 39-45
     static const int numBins = 9;
     static const float transitions[] = {0.0, 6 * M_PI / 180, 11 * M_PI / 180, 16 * M_PI / 180, 21 * M_PI / 180, 26 * M_PI / 180, 31 * M_PI / 180, 36 * M_PI / 180, 40 * M_PI / 180};
     static const float binAngles[] = {0.0, 6 * M_PI / 180, 12 * M_PI / 180, 18 * M_PI / 180, 23 * M_PI / 180, 28 * M_PI / 180, 33 * M_PI / 180, 39 * M_PI / 180, 45 * M_PI / 180};
+
     static int bin = 0; // Track the current bin we're in.
-    static float lastRc;
+    static float lastRc; // The last received control command
 
     // Cap the input to +- 45 degrees.
     if (rc > 0.7854) {
@@ -557,19 +560,14 @@ float ProcessManualRudderCommand(float rc)
     rc = (rc + lastRc) / 2.0;
     lastRc = rc;
 
-    // And finally add the ~8% deadband
-    if (rc > -0.3 && rc < 0.3) {
-        rc = 0.0;
-    }
-
-    // Attempt to move up a bin.
+    // Attempt to move up a bin taking into account hysteresis.
     if (bin + 1 < numBins) {
         if (fabs(rc) > (transitions[bin + 1] + 0.0349)) {
             ++bin;
         }
     }
 
-    // Attempt to step down a bin.
+    // Attempt to step down a bin taking into account hysteresis.
     if (bin - 1 >= 0) {
         if (fabs(rc) < (transitions[bin] - 0.0436)) {
             --bin;
