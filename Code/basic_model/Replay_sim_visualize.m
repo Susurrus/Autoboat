@@ -1,13 +1,3 @@
-%% Get input file
-[fname, pname] = uigetfile('*.csv', 'Select CSV file to replay'); % Select dataset file (CSV file)
-datafile = fullfile(pname, fname);
-auto_run = inputdlg('Autonomous run #', 'Input', 1, {'1'}); % Select which autonomous run within this dataset to animate
-if ~isempty(auto_run)
-    auto_run = str2double(auto_run{1});
-else
-    error('Invalid run # specified')
-end
-
 %% Process data
 % Acquire data from run
 data = ProcessCsvFile(datafile); % Select dataset
@@ -26,7 +16,7 @@ clear valid_autodata_data;
 
 % And manual override from NODE_STATUS @ 1Hz for the primary node.
 valid_reset_data = ~isnan(data.NODE_STATUS.primary_errors);
-manual_override = bitand(data.NODE_STATUS.primary_errors(valid_reset_data), hex2dec('10')) ~= 0;
+manual_override = double(bitand(data.NODE_STATUS.primary_errors(valid_reset_data), hex2dec('10')) ~= 0);
 override_time = timestampsFromZero(valid_reset_data);
 clear valid_reset_data;
 
@@ -37,7 +27,7 @@ clear override_time manual_override;
 
 % And now find all the times we're in autonomous mode and it's not being
 % overridden.
-automode = auto_mode & ~manual_override_int;
+automode = double(auto_mode & ~manual_override_int);
 clear manual_override_int;
 
 % Grab position and velocity data to interpolate all other data onto
