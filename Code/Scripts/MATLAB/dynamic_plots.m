@@ -147,10 +147,14 @@ function dynamic_plots(datafile, auto_run, saveVideo)
     end
     
     % Get the coordinates for icons for the boat and rudder
-    icon_coords;
+    [boat_coords, rudder_coords] = icon_coords();
+
+    % Set whether the animation is playing or not. Setting this to true
+    % pauses the rendering loop.
+    isPaused = false;
 
     % Finally plot everything for the first timepoint
-    f = figure;
+    f = figure('WindowKeyPressFcn', @playpause);
     positionAxis = subplot(3,2,[1 3 5]);
     axis(positionAxis, 'equal');
     hold(positionAxis, 'on');
@@ -238,6 +242,14 @@ function dynamic_plots(datafile, auto_run, saveVideo)
             return;
         end
 
+        % Wait if the animation is paused
+        while isPaused
+            if ~ishandle(f)
+                return;
+            end
+            pause(0.1)
+        end
+
         % Update the boat position
         set(boat_pos, 'XData', y(valid_range(1:i)), 'YData', x(valid_range(1:i)));
 
@@ -302,6 +314,13 @@ function dynamic_plots(datafile, auto_run, saveVideo)
             if i < length(valid_range)
                 pause(.05);
             end
+        end
+    end
+
+    % Play/pause the animation when pressing the spacebar
+    function playpause(h, e)
+        if strcmp(e.Key, 'space')
+            isPaused = ~isPaused;
         end
     end
 end
