@@ -31,21 +31,23 @@ THE SOFTWARE.
 #include <pps.h>
 
 // Include user headers
-#include "Node.h"
-#include "Uart1.h"
-#include "MessageScheduler.h"
-#include "Types.h"
-#include "Ecan1.h"
-#include "CanMessages.h"
 #include "AttitudeNode.h"
-#include "MPU60xx.h"
+#include "CanMessages.h"
+#include "Ecan1.h"
 #include "I2CdsPIC.h"
+#include "MAG3110.h"
+#include "MPU60xx.h"
+#include "MessageScheduler.h"
+#include "Node.h"
+#include "Types.h"
+#include "Uart1.h"
 
 #ifndef __dsPIC33EP256MC502__
 #error Must use a dsPIC33EP256MC502
 #endif
 
-MPU6050_Data imu_data;
+static MPU6050_Data imuData;
+static MAG3110_Data magData;
 
 // Set up the message scheduler for running 3 tasks:
 //  * Blinking the status LED at 1Hz
@@ -118,7 +120,8 @@ void AttitudeNodeInit(uint32_t f_osc)
 
     _TRISB7 = 0; // Set ECAN1_TX pin to an output
     _TRISB4 = 1; // Set ECAN1_RX pin to an input;
-    _TRISB0 = 1; // Set INT1 pin to an input
+    _TRISB1 = 1; // Set B1 to an input to read the interrupt pin from the MPU_60x0
+    _TRISA0 = 1; // Set A0 to an input to read the interrupt pin from the MAG3110
 
     // Set up UART1 for 115200 baud. There's no round() on the dsPICs, so we implement our own.
     double brg = (double)f_osc / 2.0 / 16.0 / 115200.0 - 1.0;
@@ -138,6 +141,10 @@ void AttitudeNodeInit(uint32_t f_osc)
     // Initialize the MPU6050, enabling slave devices for the future addition of
     // the MAG3110.
     MPU60xx_Init(true);
+
+    // Now that the MPU has been initialized with i2c passthrough, let's init the
+    // MAG3110 that sits on its aux i2c bus
+    MAG3110_Init();
 
     // Set the node ID
     nodeId = CAN_NODE_ATTITUDE_SENSOR;
@@ -162,6 +169,9 @@ void AttitudeNodeInit(uint32_t f_osc)
  */
 void RunContinuousTasks(void)
 {
+
+    // Get the IMU data
+    MPU60xx_GetData(&imuData);
 }
 
 void Run100HzTasks(void)
@@ -169,14 +179,15 @@ void Run100HzTasks(void)
     // Track the tasks to be performed for this timestep.
     static uint8_t msgs[NUM_TASKS];
 
-    // Get the IMU data
-    MPU60xx_Get6AxisData(&imu_data);
+    // And get the mag data
+    MAG3110_Get3AxisData(&magData);
 
     // And output the IMU data over UART for debugging.
     char imuDataStr[100];
-    sprintf(imuDataStr, "Accel: (%d, %d, %d), Gyro: (%d, %d, %d)\n",
-            imu_data.accelX, imu_data.accelY, imu_data.accelZ,
-            imu_data.gyroX, imu_data.gyroY, imu_data.gyroZ);
+    sprintf(imuDataStr, "Accel: (%d, %d, %d), Gyro: (%d, %d, %d), Mags: (%d, %d, %d)\n",
+            imuData.accelX, imuData.accelY, imuData.accelZ,
+            imuData.gyroX, imuData.gyroY, imuData.gyroZ,
+            magData.magX, magData.magY, magData.magZ);
     Uart1WriteData(imuDataStr, strlen(imuDataStr));
 
     uint8_t messagesToSend = GetMessagesForTimestep(&taskSchedule, msgs);

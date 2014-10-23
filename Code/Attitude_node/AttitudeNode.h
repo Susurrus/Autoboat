@@ -1,13 +1,15 @@
 #ifndef ATTITUDE_NODE_H
 #define ATTITUDE_NODE_H
 
+#include <stdint.h>
+
 /**
  * Declare flags for use with checking the `nodeStatus` variable declared in `Node.h`
  */
 typedef enum {
     // If the node is currently receiving IMU telemetry.
     ATTITUDE_NODE_STATUS_FLAG_IMU_ACTIVE = 0x0001
-} AttitudeNodeSTatus;
+} AttitudeNodeStatus;
 
 /**
  * Initialize all IMU-node-specific functionality.
