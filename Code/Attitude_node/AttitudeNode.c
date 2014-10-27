@@ -34,9 +34,7 @@ THE SOFTWARE.
 #include "AttitudeNode.h"
 #include "CanMessages.h"
 #include "Ecan1.h"
-#include "I2CdsPIC.h"
-#include "MAG3110.h"
-#include "MPU60xx.h"
+#include "IMU.h"
 #include "MessageScheduler.h"
 #include "Node.h"
 #include "Types.h"
@@ -48,6 +46,10 @@ THE SOFTWARE.
 
 static MPU6050_Data imuData;
 static MAG3110_Data magData;
+
+// Track when new IMU data has arrived. This is set in a change notification
+// interrupt and then continuously read in the main loop.
+static bool newImuData = false;
 
 // Set up the message scheduler for running 3 tasks:
 //  * Blinking the status LED at 1Hz
@@ -103,10 +105,15 @@ void AttitudeNodeInit(uint32_t f_osc)
     // Also disable analog functionality on B8 so we can use the i2c
     ANSELBbits.ANSB8 = 0;
 
-    // And disable analog functionality on B1 for using the interrupt peripheral
-    ANSELBbits.ANSB1 = 0;
-
     // i2c pins are bidirectional and don't need their TRIS bits messed with
+
+    // Set up RB1 for change notifications so that we don't constantly poll the
+    // I2C lines.
+    ANSELBbits.ANSB1 = 0; // Set to a digital pin
+    _TRISB1 = 1; // Set to a digital input
+    CNENBbits.CNIEB1 = 1; // Turn on the change notification for this pin
+    IEC1bits.CNIE = 1; // Turn on change notification interrupts
+    IFS1bits.CNIF = 0; // Reset the change notification interrupt
 
     // Initialize status LEDs for use.
     // A3 (output): Red LED, on by default, indicates an error.
@@ -120,8 +127,6 @@ void AttitudeNodeInit(uint32_t f_osc)
 
     _TRISB7 = 0; // Set ECAN1_TX pin to an output
     _TRISB4 = 1; // Set ECAN1_RX pin to an input;
-    _TRISB1 = 1; // Set B1 to an input to read the interrupt pin from the MPU_60x0
-    _TRISA0 = 1; // Set A0 to an input to read the interrupt pin from the MAG3110
 
     // Set up UART1 for 115200 baud. There's no round() on the dsPICs, so we implement our own.
     double brg = (double)f_osc / 2.0 / 16.0 / 115200.0 - 1.0;
@@ -135,16 +140,8 @@ void AttitudeNodeInit(uint32_t f_osc)
     // Initialize ECAN1 for input and output using DMA buffers 0 & 2
     Ecan1Init(f_osc, NODE_CAN_BAUD);
 
-    // Bring up the i2c peripheral bus at 400khz
-    I2C_Init(I2C_CALC_BRG(400000, f_osc));
-
-    // Initialize the MPU6050, enabling slave devices for the future addition of
-    // the MAG3110.
-    MPU60xx_Init(true);
-
-    // Now that the MPU has been initialized with i2c passthrough, let's init the
-    // MAG3110 that sits on its aux i2c bus
-    MAG3110_Init();
+    // Bring up the I2C bus at 400kHz and the attached MPU-6050/MAG3110 devices.
+    IMU_Init(400000, f_osc);
 
     // Set the node ID
     nodeId = CAN_NODE_ATTITUDE_SENSOR;
@@ -169,18 +166,17 @@ void AttitudeNodeInit(uint32_t f_osc)
  */
 void RunContinuousTasks(void)
 {
-
-    // Get the IMU data
-    MPU60xx_GetData(&imuData);
+    // Get the IMU data if a new data pulse has been detected
+    if (newImuData) {
+        IMU_GetData(&imuData, &magData);
+        newImuData = false;
+    }
 }
 
 void Run100HzTasks(void)
 {
     // Track the tasks to be performed for this timestep.
     static uint8_t msgs[NUM_TASKS];
-
-    // And get the mag data
-    MAG3110_Get3AxisData(&magData);
 
     // And output the IMU data over UART for debugging.
     char imuDataStr[100];
@@ -209,4 +205,15 @@ void Run100HzTasks(void)
             break;
         }
     }
+}
+
+void _ISR _CNInterrupt(void)
+{
+    // If pin B1 is high, it means that this interrupt was the rising edge of the
+    // pin.
+    if (_RB1 == 1) {
+        newImuData = true;
+    }
+
+    IFS1bits.CNIF = 0; // Clear the interrupt
 }
