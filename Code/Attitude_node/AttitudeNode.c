@@ -25,6 +25,7 @@ THE SOFTWARE.
 // Include standard headers
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 // Include Microchip headers
@@ -37,6 +38,7 @@ THE SOFTWARE.
 #include "IMU.h"
 #include "MessageScheduler.h"
 #include "Node.h"
+#include "Packing.h"
 #include "Types.h"
 #include "Uart1.h"
 
@@ -44,8 +46,9 @@ THE SOFTWARE.
 #error Must use a dsPIC33EP256MC502
 #endif
 
-static MPU6050_Data imuData;
+static MPU6050_Data mpuData;
 static MAG3110_Data magData;
+static IMU_Data imuData;
 
 // Track when new IMU data has arrived. This is set in a change notification
 // interrupt and then continuously read in the main loop.
@@ -166,9 +169,11 @@ void AttitudeNodeInit(uint32_t f_osc)
  */
 void RunContinuousTasks(void)
 {
-    // Get the IMU data if a new data pulse has been detected
+    // Get the IMU data if a new data pulse has been detected and feed it into
+    // the IMU AHRS algorithm.
     if (newImuData) {
-        IMU_GetData(&imuData, &magData);
+        IMU_GetData(&mpuData, &magData);
+        IMU_normalizeData(mpuData, magData, &imuData);
         newImuData = false;
     }
 }
@@ -178,13 +183,49 @@ void Run100HzTasks(void)
     // Track the tasks to be performed for this timestep.
     static uint8_t msgs[NUM_TASKS];
 
+    IMU_UpdateAHRS(&imuData);
+
     // And output the IMU data over UART for debugging.
+    // We support human-readable or plottable data.
     char imuDataStr[100];
+#define OUTPUT 2
+#if OUTPUT == 0
     sprintf(imuDataStr, "Accel: (%d, %d, %d), Gyro: (%d, %d, %d), Mags: (%d, %d, %d)\n",
             imuData.accelX, imuData.accelY, imuData.accelZ,
             imuData.gyroX, imuData.gyroY, imuData.gyroZ,
             magData.magX, magData.magY, magData.magZ);
     Uart1WriteData(imuDataStr, strlen(imuDataStr));
+#elif OUTPUT == 1
+    float q[4];
+    IMU_GetQuaternion(q);
+    sprintf(imuDataStr, "%f,%f,%f,%f\n", (double)q[0], (double)q[1], (double)q[2], (double)q[3]);
+    Uart1WriteData(imuDataStr, strlen(imuDataStr));
+#elif OUTPUT == 2
+    float q[4];
+    IMU_GetQuaternion(q);
+    float ypr[3];
+    IMU_QuaternionToYawPitchRoll(q, ypr);
+
+    // Convert to fixed-point value with precision of 1/ten-thousandths of a radian
+    int16_t yaw = (int16_t)(ypr[0] * 10000.0);
+    int16_t pitch = (int16_t)(ypr[1] * 10000.0);
+    int16_t roll = (int16_t)(ypr[2] * 10000.0);
+    itoa(imuDataStr, yaw, 10);
+    size_t newIndex = strlen(imuDataStr);
+    imuDataStr[newIndex++] = ',';
+    itoa(&imuDataStr[newIndex], pitch, 10);
+    newIndex = strlen(imuDataStr);
+    imuDataStr[newIndex++] = ',';
+    itoa(&imuDataStr[newIndex], roll, 10);
+    newIndex = strlen(imuDataStr);
+    imuDataStr[newIndex++] = '\n';
+    Uart1WriteData(imuDataStr, newIndex);
+#elif OUTPUT == 3
+    float q[4];
+    IMU_GetQuaternion(q);
+    IMU_QuaternionToString(q, imuDataStr);
+    Uart1WriteData(imuDataStr, 37);
+#endif
 
     uint8_t messagesToSend = GetMessagesForTimestep(&taskSchedule, msgs);
     int i;
