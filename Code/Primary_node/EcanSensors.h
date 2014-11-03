@@ -100,6 +100,12 @@ extern struct NodeStatusData nodeStatusDataStore[NUM_NODES];
  */
 extern uint8_t nodeStatusTimeoutCounters[NUM_NODES];
 
+typedef struct {
+    bool newData; // True if newData has arrived and has not been processed yet
+    float attitude_quat[4]; // The attitude quaternion in [w x y z] format (rads and meters).
+    float gyros[3]; // Rotation rate in radians/s in [x y z] format
+} ImuData;
+
 /**
  * Declare bitflags for use with the GpsData struct's receivedMessages field.
  */

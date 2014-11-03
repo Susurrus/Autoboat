@@ -12,7 +12,7 @@ Model {
       BusObject		      ""
       Name		      "Commanded Throttle"
     }
-    NumRootOutports	    5
+    NumRootOutports	    6
     Outport {
       BusObject		      "GpsData"
       BusOutputAsStruct	      "off"
@@ -38,8 +38,13 @@ Model {
       BusOutputAsStruct	      "off"
       Name		      "heading"
     }
+    Outport {
+      BusObject		      "ImuData"
+      BusOutputAsStruct	      "off"
+      Name		      "imu"
+    }
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.25"
+    ComputedModelVersion    "1.41"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -61,15 +66,15 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Oct 14 17:23:30 2014"
-  RTWModifiedTimeStamp	  335208205
-  ModelVersionFormat	  "1.%<AutoIncrement:25>"
+  LastModifiedDate	  "Sun Nov 02 17:12:27 2014"
+  RTWModifiedTimeStamp	  336849079
+  ModelVersionFormat	  "1.%<AutoIncrement:41>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
   LibraryLinkDisplay	  "disabled"
   WideLines		  off
-  ShowLineDimensions	  off
+  ShowLineDimensions	  on
   ShowPortDataTypes	  on
   ShowDesignRanges	  off
   ShowLoopsOnError	  on
@@ -643,6 +648,7 @@ Model {
 	PropName		"Components"
       }
       Name		      "Configuration"
+      ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=0 "
       CurrentDlgPage	      "Data Import//Export"
       ConfigPrmDlgPosition     [ 55, 36, 1333, 984 ] 
     }
@@ -773,13 +779,6 @@ Model {
       RTWStateStorageClass    "Auto"
     }
     Block {
-      BlockType		      Display
-      Format		      "short"
-      Decimation	      "10"
-      Floating		      off
-      SampleTime	      "-1"
-    }
-    Block {
       BlockType		      From
       IconDisplay	      "Tag"
       TagVisibility	      "local"
@@ -846,6 +845,14 @@ Model {
       Iterations	      "3"
     }
     Block {
+      BlockType		      Mux
+      Inputs		      "4"
+      DisplayOption	      "none"
+      UseBusObject	      off
+      BusObject		      "BusObject"
+      NonVirtualBus	      off
+    }
+    Block {
       BlockType		      Outport
       Port		      "1"
       OutMin		      "[]"
@@ -899,6 +906,23 @@ Model {
       OutDataTypeStr	      "Inherit: Same as input"
       LockScale		      off
       RndMeth		      "Floor"
+    }
+    Block {
+      BlockType		      Scope
+      ModelBased	      off
+      TickLabels	      "OneTimeTick"
+      ZoomMode		      "on"
+      Grid		      "on"
+      TimeRange		      "auto"
+      YMin		      "-5"
+      YMax		      "5"
+      SaveToWorkspace	      off
+      SaveName		      "ScopeData"
+      LimitDataPoints	      on
+      MaxDataPoints	      "5000"
+      Decimation	      "1"
+      SampleInput	      off
+      SampleTime	      "-1"
     }
     Block {
       BlockType		      Selector
@@ -975,7 +999,7 @@ Model {
   }
   System {
     Name		    "Plant"
-    Location		    [75, 251, 1175, 868]
+    Location		    [2, 82, 1902, 1027]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -989,7 +1013,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "130"
+    SIDHighWatermark	    "146"
     Block {
       BlockType		      Inport
       Name		      "Commanded Rudder"
@@ -1014,7 +1038,7 @@ Model {
       Name		      "Actuator\nDynamics"
       SID		      "3"
       Ports		      [2, 2]
-      Position		      [245, 59, 345, 181]
+      Position		      [235, 59, 335, 181]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -1024,7 +1048,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Actuator\nDynamics"
-	Location		[428, 82, 1678, 980]
+	Location		[335, 91, 1585, 989]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -1081,21 +1105,11 @@ Model {
 	  Name			  "Delay"
 	  SID			  "8"
 	  Ports			  [1, 1]
-	  Position		  [400, 333, 435, 367]
+	  Position		  [395, 333, 430, 367]
 	  ShowName		  off
 	  InputPortMap		  "u0"
-	  DelayLength		  "8"
+	  DelayLength		  "50"
 	  ExternalReset		  "None"
-	}
-	Block {
-	  BlockType		  Display
-	  Name			  "Display"
-	  SID			  "9"
-	  Ports			  [1]
-	  Position		  [410, 90, 500, 120]
-	  ZOrder		  -1
-	  Decimation		  "1"
-	  Lockdown		  off
 	}
 	Block {
 	  BlockType		  From
@@ -1130,6 +1144,7 @@ Model {
 	  SID			  "13"
 	  Position		  [225, 30, 255, 60]
 	  ZOrder		  -11
+	  ShowName		  off
 	  Gain			  "1/1023"
 	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
 	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
@@ -1147,14 +1162,25 @@ Model {
 	  OutDataTypeStr	  "boolean"
 	}
 	Block {
+	  BlockType		  Mux
+	  Name			  "Mux"
+	  SID			  "132"
+	  Ports			  [2, 1]
+	  Position		  [515, 401, 520, 439]
+	  ZOrder		  -16
+	  ShowName		  off
+	  Inputs		  "2"
+	  DisplayOption		  "bar"
+	}
+	Block {
 	  BlockType		  RateLimiter
 	  Name			  "Rate Limiter"
 	  SID			  "15"
 	  Position		  [460, 335, 490, 365]
 	  ZOrder		  -7
 	  ShowName		  off
-	  RisingSlewLimit	  "0.45"
-	  FallingSlewLimit	  "-0.45"
+	  RisingSlewLimit	  "0.343"
+	  FallingSlewLimit	  "-0.343"
 	  SampleTimeMode	  "inherited"
 	}
 	Block {
@@ -1178,6 +1204,35 @@ Model {
 	  InputPortMap		  "u0"
 	  UpperLimit		  ".7854"
 	  LowerLimit		  "-.7854"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "Scope"
+	  SID			  "131"
+	  Ports			  [1]
+	  Position		  [550, 409, 580, 441]
+	  ZOrder		  -3
+	  Floating		  off
+	  Location		  [-222, 217, 1694, 1368]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  List {
+	    ListType		    ScopeGraphics
+	    FigureColor		    "[0.5 0.5 0.5]"
+	    AxesColor		    "[0 0 0]"
+	    AxesTickColor	    "[1 1 1]"
+	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	    LineStyles		    "-|-|-|-|-|-"
+	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
+	    MarkerStyles	    "none|none|none|none|none|none"
+	  }
+	  DataFormat		  "StructureWithTime"
+	  LimitDataPoints	  off
+	  SampleTime		  "0"
 	}
 	Block {
 	  BlockType		  Switch
@@ -1276,28 +1331,35 @@ Model {
 	Line {
 	  SrcBlock		  "Gain"
 	  SrcPort		  1
-	  Points		  [85, 0]
-	  Branch {
-	    DstBlock		    "t_d"
-	    DstPort		    1
-	  }
-	  Branch {
-	    Points		    [0, 60]
-	    DstBlock		    "Display"
-	    DstPort		    1
-	  }
+	  DstBlock		  "t_d"
+	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Delay"
 	  SrcPort		  1
-	  DstBlock		  "Rate Limiter"
-	  DstPort		  1
+	  Points		  [5, 0]
+	  Branch {
+	    DstBlock		    "Rate Limiter"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, 80]
+	    DstBlock		    "Mux"
+	    DstPort		    2
+	  }
 	}
 	Line {
 	  SrcBlock		  "Rate Limiter"
 	  SrcPort		  1
-	  DstBlock		  "Saturation"
-	  DstPort		  1
+	  Points		  [5, 0]
+	  Branch {
+	    DstBlock		    "Saturation"
+	    DstPort		    1
+	  }
+	  Branch {
+	    DstBlock		    "Mux"
+	    DstPort		    1
+	  }
 	}
 	Line {
 	  SrcBlock		  "Saturation1"
@@ -1305,18 +1367,41 @@ Model {
 	  DstBlock		  "Delay"
 	  DstPort		  1
 	}
+	Line {
+	  SrcBlock		  "Mux"
+	  SrcPort		  1
+	  Points		  [5, 0; 0, 5]
+	  DstBlock		  "Scope"
+	  DstPort		  1
+	}
 	Annotation {
 	  Name			  "The rudder dynamics are modeled as a lag and slew-limit."
 	  Position		  [388, 309]
 	}
+	Annotation {
+	  Name			  "TODO: This should include dynamics and model the RPM of the prop"
+	  Position		  [315, 99]
+	}
       }
+    }
+    Block {
+      BlockType		      BusCreator
+      Name		      "Bus\nCreator"
+      SID		      "144"
+      Ports		      [3, 1]
+      Position		      [820, 206, 825, 264]
+      ZOrder		      -2
+      ShowName		      off
+      Inputs		      "3"
+      DisplayOption	      "bar"
+      OutDataTypeStr	      "Bus: ImuData"
     }
     Block {
       BlockType		      SubSystem
       Name		      "Forces & Moments"
       SID		      "21"
-      Ports		      [2, 5]
-      Position		      [555, 69, 670, 171]
+      Ports		      [2, 6]
+      Position		      [555, 59, 670, 231]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -1324,9 +1409,23 @@ Model {
       Opaque		      off
       RequestExecContextInheritance off
       MaskHideContents	      off
+      Port {
+	PortNumber		5
+	Name			"attitude_quat"
+	PropagatedSignals	", , , "
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
+      Port {
+	PortNumber		6
+	Name			"gyros"
+	PropagatedSignals	", , "
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
       System {
 	Name			"Forces & Moments"
-	Location		[170, 163, 1766, 928]
+	Location		[192, 138, 1788, 903]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -1343,7 +1442,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "Throttle"
 	  SID			  "22"
-	  Position		  [30, 83, 60, 97]
+	  Position		  [30, 93, 60, 107]
 	  BackgroundColor	  "darkGreen"
 	  IconDisplay		  "Port number"
 	}
@@ -1351,7 +1450,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "Rudder"
 	  SID			  "23"
-	  Position		  [30, 138, 60, 152]
+	  Position		  [30, 148, 60, 162]
 	  BackgroundColor	  "darkGreen"
 	  Port			  "2"
 	  IconDisplay		  "Port number"
@@ -1360,8 +1459,8 @@ Model {
 	  BlockType		  SubSystem
 	  Name			  "Convert actuator data\nto heading and speed"
 	  SID			  "24"
-	  Ports			  [2, 2]
-	  Position		  [135, 61, 245, 174]
+	  Ports			  [2, 3]
+	  Position		  [135, 68, 245, 182]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -1405,7 +1504,7 @@ Model {
 	      BlockType		      Constant
 	      Name		      "Constant4"
 	      SID		      "27"
-	      Position		      [535, 230, 565, 260]
+	      Position		      [550, 230, 580, 260]
 	      BackgroundColor	      "gray"
 	      ShowName		      off
 	      Value		      "2*pi"
@@ -1415,7 +1514,7 @@ Model {
 	      Name		      "Convert to\nm/s"
 	      SID		      "28"
 	      Position		      [115, 25, 175, 65]
-	      Gain		      "2.3"
+	      Gain		      "1.8"
 	      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
 	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
 	      SaturateOnIntegerOverflow	off
@@ -1425,7 +1524,7 @@ Model {
 	      Name		      "Discrete-Time\nIntegrator"
 	      SID		      "29"
 	      Ports		      [1, 1]
-	      Position		      [430, 199, 465, 231]
+	      Position		      [445, 199, 480, 231]
 	      ShowName		      off
 	      IntegratorMethod	      "Integration: Forward Euler"
 	      ExternalReset	      "none"
@@ -1449,7 +1548,7 @@ Model {
 	      BlockType		      Constant
 	      Name		      "Initial heading"
 	      SID		      "31"
-	      Position		      [430, 240, 460, 270]
+	      Position		      [445, 240, 475, 270]
 	      BackgroundColor	      "gray"
 	      ShowName		      off
 	      Value		      "phi_0"
@@ -1459,7 +1558,7 @@ Model {
 	      Name		      "Math\nFunction"
 	      SID		      "32"
 	      Ports		      [2, 1]
-	      Position		      [605, 212, 635, 243]
+	      Position		      [620, 212, 650, 243]
 	      ShowName		      off
 	      Operator		      "mod"
 	    }
@@ -1489,7 +1588,7 @@ Model {
 	      Name		      "Sum2"
 	      SID		      "35"
 	      Ports		      [2, 1]
-	      Position		      [495, 210, 515, 230]
+	      Position		      [510, 210, 530, 230]
 	      ShowName		      off
 	      InputSameDT	      off
 	      OutDataTypeStr	      "double"
@@ -1517,9 +1616,18 @@ Model {
 	      BlockType		      Outport
 	      Name		      "Vessel Heading"
 	      SID		      "38"
-	      Position		      [660, 223, 690, 237]
+	      Position		      [675, 223, 705, 237]
 	      BackgroundColor	      "yellow"
 	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "Yaw rate"
+	      SID		      "133"
+	      Position		      [675, 288, 705, 302]
+	      BackgroundColor	      "yellow"
+	      Port		      "3"
 	      IconDisplay	      "Port number"
 	    }
 	    Line {
@@ -1551,8 +1659,16 @@ Model {
 	    Line {
 	      SrcBlock		      "Divide by\nwheelbase"
 	      SrcPort		      1
-	      DstBlock		      "Discrete-Time\nIntegrator"
-	      DstPort		      1
+	      Points		      [5, 0]
+	      Branch {
+		DstBlock		"Discrete-Time\nIntegrator"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, 80]
+		DstBlock		"Yaw rate"
+		DstPort			1
+	      }
 	    }
 	    Line {
 	      SrcBlock		      "Discrete-Time\nIntegrator"
@@ -1612,6 +1728,29 @@ Model {
 	  SID			  "39"
 	  Position		  [300, 36, 330, 54]
 	  ZOrder		  -7
+	  ShowName		  off
+	  OutDataTypeStr	  "single"
+	  RndMeth		  "Simplest"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion1"
+	  SID			  "136"
+	  Position		  [320, 301, 350, 319]
+	  ZOrder		  -7
+	  ShowName		  off
+	  OutDataTypeStr	  "single"
+	  RndMeth		  "Simplest"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion2"
+	  SID			  "139"
+	  Position		  [595, 256, 625, 274]
+	  ZOrder		  -7
+	  ShowName		  off
 	  OutDataTypeStr	  "single"
 	  RndMeth		  "Simplest"
 	  SaturateOnIntegerOverflow off
@@ -1620,10 +1759,76 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Initial heading1"
 	  SID			  "40"
-	  Position		  [285, 300, 315, 330]
+	  Position		  [320, 220, 350, 250]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
+	  OutDataTypeStr	  "single"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Initial heading2"
+	  SID			  "138"
+	  Position		  [320, 260, 350, 290]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "0"
+	  OutDataTypeStr	  "single"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Initial heading3"
+	  SID			  "140"
+	  Position		  [565, 285, 595, 315]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "0"
+	  OutDataTypeStr	  "single"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Initial heading4"
+	  SID			  "141"
+	  Position		  [565, 325, 595, 355]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "0"
+	  OutDataTypeStr	  "single"
+	}
+	Block {
+	  BlockType		  Mux
+	  Name			  "Mux"
+	  SID			  "137"
+	  Ports			  [3, 1]
+	  Position		  [435, 281, 440, 319]
+	  ZOrder		  -16
+	  ShowName		  off
+	  Inputs		  "3"
+	  DisplayOption		  "bar"
+	}
+	Block {
+	  BlockType		  Mux
+	  Name			  "Mux1"
+	  SID			  "142"
+	  Ports			  [3, 1]
+	  Position		  [690, 281, 695, 319]
+	  ZOrder		  -16
+	  ShowName		  off
+	  Inputs		  "3"
+	  DisplayOption		  "bar"
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Rotation Angles to Quaternions"
+	  SID			  "145"
+	  Ports			  [1, 1]
+	  Position		  [715, 279, 805, 321]
+	  ZOrder		  -19
+	  AttributesFormatString  "Rotation Order: %<rotationOrder>"
+	  LibraryVersion	  "1.273"
+	  SourceBlock		  "aerolibtransform2/Rotation Angles to Quaternions"
+	  SourceType		  "Ang2Quat"
+	  rotationOrder		  "ZYX"
 	}
 	Block {
 	  BlockType		  SubSystem
@@ -1896,19 +2101,10 @@ Model {
 	}
 	Block {
 	  BlockType		  Outport
-	  Name			  "Roll"
-	  SID			  "56"
-	  Position		  [350, 308, 380, 322]
-	  BackgroundColor	  "yellow"
-	  IconDisplay		  "Port number"
-	}
-	Block {
-	  BlockType		  Outport
 	  Name			  "Heading"
 	  SID			  "57"
 	  Position		  [395, 173, 425, 187]
 	  BackgroundColor	  "yellow"
-	  Port			  "2"
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -1917,7 +2113,7 @@ Model {
 	  SID			  "58"
 	  Position		  [640, 78, 670, 92]
 	  BackgroundColor	  "yellow"
-	  Port			  "3"
+	  Port			  "2"
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -1926,7 +2122,7 @@ Model {
 	  SID			  "59"
 	  Position		  [640, 133, 670, 147]
 	  BackgroundColor	  "yellow"
-	  Port			  "4"
+	  Port			  "3"
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -1935,7 +2131,25 @@ Model {
 	  SID			  "60"
 	  Position		  [350, 38, 380, 52]
 	  BackgroundColor	  "yellow"
+	  Port			  "4"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "attitude"
+	  SID			  "143"
+	  Position		  [860, 293, 890, 307]
+	  BackgroundColor	  "yellow"
 	  Port			  "5"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "gyros"
+	  SID			  "134"
+	  Position		  [475, 293, 505, 307]
+	  BackgroundColor	  "yellow"
+	  Port			  "6"
 	  IconDisplay		  "Port number"
 	}
 	Line {
@@ -1951,15 +2165,9 @@ Model {
 	  DstPort		  2
 	}
 	Line {
-	  SrcBlock		  "Initial heading1"
-	  SrcPort		  1
-	  DstBlock		  "Roll"
-	  DstPort		  1
-	}
-	Line {
 	  SrcBlock		  "Convert actuator data\nto heading and speed"
 	  SrcPort		  2
-	  Points		  [100, 0]
+	  Points		  [0, 20; 100, 0]
 	  Branch {
 	    Points		    [0, 35]
 	    DstBlock		    "Heading"
@@ -1967,8 +2175,16 @@ Model {
 	  }
 	  Branch {
 	    Labels		    [0, 0]
-	    DstBlock		    "Subsystem"
-	    DstPort		    3
+	    Points		    [95, 0]
+	    Branch {
+	      DstBlock		      "Subsystem"
+	      DstPort		      3
+	    }
+	    Branch {
+	      Points		      [0, 40; 120, 0; 0, 80]
+	      DstBlock		      "Data Type Conversion2"
+	      DstPort		      1
+	    }
 	  }
 	}
 	Line {
@@ -1988,7 +2204,7 @@ Model {
 	    DstPort		    2
 	  }
 	  Branch {
-	    Points		    [0, -45]
+	    Points		    [0, -40]
 	    DstBlock		    "Data Type Conversion"
 	    DstPort		    1
 	  }
@@ -2012,6 +2228,71 @@ Model {
 	  DstBlock		  "Water speed"
 	  DstPort		  1
 	}
+	Line {
+	  SrcBlock		  "Convert actuator data\nto heading and speed"
+	  SrcPort		  3
+	  Points		  [55, 0]
+	  DstBlock		  "Data Type Conversion1"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Mux"
+	  SrcPort		  1
+	  DstBlock		  "gyros"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Initial heading3"
+	  SrcPort		  1
+	  DstBlock		  "Mux1"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Data Type Conversion2"
+	  SrcPort		  1
+	  Points		  [10, 0; 0, 25]
+	  DstBlock		  "Mux1"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Mux1"
+	  SrcPort		  1
+	  DstBlock		  "Rotation Angles to Quaternions"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Initial heading4"
+	  SrcPort		  1
+	  Points		  [35, 0; 0, -30]
+	  DstBlock		  "Mux1"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Rotation Angles to Quaternions"
+	  SrcPort		  1
+	  DstBlock		  "attitude"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Data Type Conversion1"
+	  SrcPort		  1
+	  DstBlock		  "Mux"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Initial heading2"
+	  SrcPort		  1
+	  Points		  [40, 0; 0, 25]
+	  DstBlock		  "Mux"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Initial heading1"
+	  SrcPort		  1
+	  Points		  [50, 0; 0, 55]
+	  DstBlock		  "Mux"
+	  DstPort		  1
+	}
 	Annotation {
 	  Name			  "This subsystem computes the forward force, heading and roll of the boat that \nis to be expected based on"
 	  " the current state. The model for these calculations\nis based off of the calculations performed in the original WG"
@@ -2020,13 +2301,21 @@ Model {
 	  Position		  [61, 458]
 	  HorizontalAlignment	  "left"
 	}
+	Annotation {
+	  Name			  "Gyros as x,y,z with:\nx pointing forward\ny pointing to the right\nand z pointing down"
+	  Position		  [452, 246]
+	}
+	Annotation {
+	  Name			  "This is the attitude of the vessel as yaw,pitch,roll in quaternion form"
+	  Position		  [737, 236]
+	}
       }
     }
     Block {
       BlockType		      From
       Name		      "From1"
       SID		      "61"
-      Position		      [595, 289, 660, 311]
+      Position		      [570, 349, 635, 371]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "Position"
@@ -2036,7 +2325,7 @@ Model {
       BlockType		      From
       Name		      "From18"
       SID		      "62"
-      Position		      [475, 84, 535, 106]
+      Position		      [475, 94, 535, 116]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "Throttle"
@@ -2045,7 +2334,7 @@ Model {
       BlockType		      From
       Name		      "From2"
       SID		      "63"
-      Position		      [600, 443, 655, 467]
+      Position		      [575, 503, 630, 527]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "Velocity"
@@ -2055,7 +2344,7 @@ Model {
       BlockType		      From
       Name		      "From20"
       SID		      "64"
-      Position		      [185, 274, 245, 296]
+      Position		      [185, 324, 245, 346]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "Throttle"
@@ -2064,7 +2353,7 @@ Model {
       BlockType		      From
       Name		      "From22"
       SID		      "65"
-      Position		      [185, 309, 245, 331]
+      Position		      [185, 384, 245, 406]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "Rudder"
@@ -2074,7 +2363,7 @@ Model {
       BlockType		      From
       Name		      "From3"
       SID		      "129"
-      Position		      [185, 349, 245, 371]
+      Position		      [185, 464, 245, 486]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "Heading"
@@ -2084,7 +2373,7 @@ Model {
       BlockType		      From
       Name		      "From8"
       SID		      "66"
-      Position		      [475, 134, 535, 156]
+      Position		      [475, 179, 535, 201]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "Rudder"
@@ -2095,7 +2384,7 @@ Model {
       Name		      "Get GPS"
       SID		      "78"
       Ports		      [2, 1]
-      Position		      [695, 221, 825, 534]
+      Position		      [670, 281, 800, 594]
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -2105,7 +2394,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Get GPS"
-	Location		[82, 173, 1033, 938]
+	Location		[714, 184, 1665, 949]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -2153,8 +2442,9 @@ Model {
 	  SID			  "125"
 	  Ports			  [1, 1]
 	  Position		  [170, 233, 205, 267]
+	  ShowName		  off
 	  InputPortMap		  "u0"
-	  DelayLength		  "150"
+	  DelayLength		  "gpsLatency"
 	  ExternalReset		  "None"
 	}
 	Block {
@@ -2163,8 +2453,9 @@ Model {
 	  SID			  "126"
 	  Ports			  [1, 1]
 	  Position		  [170, 408, 205, 442]
+	  ShowName		  off
 	  InputPortMap		  "u0"
-	  DelayLength		  "150"
+	  DelayLength		  "gpsLatency"
 	  ExternalReset		  "None"
 	}
 	Block {
@@ -2773,7 +3064,7 @@ Model {
 	  Position		  [647, 203]
 	}
 	Annotation {
-	  Name			  "Implement a 1.5s delay on the vehicle position."
+	  Name			  "Delay set by the gpsLatency variable in common.m"
 	  Position		  [182, 338]
 	}
       }
@@ -2782,7 +3073,7 @@ Model {
       BlockType		      Goto
       Name		      "Wind Heading1"
       SID		      "100"
-      Position		      [710, 129, 770, 151]
+      Position		      [710, 119, 770, 141]
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "Velocity"
@@ -2792,20 +3083,10 @@ Model {
       BlockType		      Goto
       Name		      "Wind Heading10"
       SID		      "101"
-      Position		      [710, 89, 770, 111]
+      Position		      [710, 59, 770, 81]
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "Heading"
-      TagVisibility	      "global"
-    }
-    Block {
-      BlockType		      Goto
-      Name		      "Wind Heading2"
-      SID		      "102"
-      Position		      [710, 69, 770, 91]
-      BackgroundColor	      "magenta"
-      ShowName		      off
-      GotoTag		      "Roll"
       TagVisibility	      "global"
     }
     Block {
@@ -2822,7 +3103,7 @@ Model {
       BlockType		      Goto
       Name		      "Wind Heading4"
       SID		      "104"
-      Position		      [880, 314, 940, 336]
+      Position		      [855, 374, 915, 396]
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "GPS"
@@ -2832,7 +3113,7 @@ Model {
       BlockType		      Goto
       Name		      "Wind Heading6"
       SID		      "105"
-      Position		      [710, 109, 770, 131]
+      Position		      [710, 89, 770, 111]
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "Position"
@@ -2849,10 +3130,26 @@ Model {
       TagVisibility	      "local"
     }
     Block {
+      BlockType		      Constant
+      Name		      "Zero level trust1"
+      SID		      "146"
+      Position		      [725, 206, 750, 224]
+      BackgroundColor	      "gray"
+      ShowName		      off
+      Value		      "0"
+      OutDataTypeStr	      "boolean"
+      Port {
+	PortNumber		1
+	Name			"newData"
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
+    }
+    Block {
       BlockType		      Outport
       Name		      "GPS"
       SID		      "107"
-      Position		      [980, 373, 1010, 387]
+      Position		      [955, 433, 985, 447]
       BackgroundColor	      "yellow"
       IconDisplay	      "Port number"
       OutDataTypeStr	      "Bus: GpsData"
@@ -2861,7 +3158,7 @@ Model {
       BlockType		      Outport
       Name		      "throttle"
       SID		      "108"
-      Position		      [305, 278, 335, 292]
+      Position		      [305, 328, 335, 342]
       BackgroundColor	      "yellow"
       Port		      "2"
       IconDisplay	      "Port number"
@@ -2871,7 +3168,7 @@ Model {
       BlockType		      Outport
       Name		      "rudder"
       SID		      "109"
-      Position		      [305, 313, 335, 327]
+      Position		      [305, 388, 335, 402]
       BackgroundColor	      "yellow"
       Port		      "3"
       IconDisplay	      "Port number"
@@ -2891,11 +3188,21 @@ Model {
       BlockType		      Outport
       Name		      "heading"
       SID		      "130"
-      Position		      [305, 353, 335, 367]
+      Position		      [305, 468, 335, 482]
       BackgroundColor	      "yellow"
       Port		      "5"
       IconDisplay	      "Port number"
       OutDataTypeStr	      "double"
+    }
+    Block {
+      BlockType		      Outport
+      Name		      "imu"
+      SID		      "135"
+      Position		      [925, 228, 955, 242]
+      BackgroundColor	      "yellow"
+      Port		      "6"
+      IconDisplay	      "Port number"
+      OutDataTypeStr	      "Bus: ImuData"
     }
     Line {
       SrcBlock		      "Commanded Throttle"
@@ -2908,12 +3215,6 @@ Model {
       SrcPort		      1
       DstBlock		      "Actuator\nDynamics"
       DstPort		      2
-    }
-    Line {
-      SrcBlock		      "Forces & Moments"
-      SrcPort		      1
-      DstBlock		      "Wind Heading2"
-      DstPort		      1
     }
     Line {
       SrcBlock		      "Actuator\nDynamics"
@@ -2941,7 +3242,7 @@ Model {
     }
     Line {
       SrcBlock		      "Forces & Moments"
-      SrcPort		      2
+      SrcPort		      1
       DstBlock		      "Wind Heading10"
       DstPort		      1
     }
@@ -2985,19 +3286,19 @@ Model {
     }
     Line {
       SrcBlock		      "Forces & Moments"
-      SrcPort		      4
+      SrcPort		      3
       DstBlock		      "Wind Heading1"
       DstPort		      1
     }
     Line {
       SrcBlock		      "Forces & Moments"
-      SrcPort		      3
+      SrcPort		      2
       DstBlock		      "Wind Heading6"
       DstPort		      1
     }
     Line {
       SrcBlock		      "Forces & Moments"
-      SrcPort		      5
+      SrcPort		      4
       DstBlock		      "sensors_waterspeed"
       DstPort		      1
     }
@@ -3007,8 +3308,52 @@ Model {
       DstBlock		      "heading"
       DstPort		      1
     }
+    Line {
+      SrcBlock		      "Bus\nCreator"
+      SrcPort		      1
+      DstBlock		      "imu"
+      DstPort		      1
+    }
+    Line {
+      Name		      "gyros"
+      Labels		      [0, 0]
+      SrcBlock		      "Forces & Moments"
+      SrcPort		      6
+      Points		      [0, 35]
+      DstBlock		      "Bus\nCreator"
+      DstPort		      3
+    }
+    Line {
+      Name		      "attitude_quat"
+      Labels		      [0, 0]
+      SrcBlock		      "Forces & Moments"
+      SrcPort		      5
+      Points		      [10, 0; 0, 45]
+      DstBlock		      "Bus\nCreator"
+      DstPort		      2
+    }
+    Line {
+      Name		      "newData"
+      Labels		      [0, 0]
+      SrcBlock		      "Zero level trust1"
+      SrcPort		      1
+      DstBlock		      "Bus\nCreator"
+      DstPort		      1
+    }
     Annotation {
-      Position		      [930, 351]
+      Position		      [905, 411]
+    }
+    Annotation {
+      Name		      "Rudder angle in rads"
+      Position		      [260, 367]
+    }
+    Annotation {
+      Name		      "Vessel heading in rads"
+      Position		      [259, 445]
+    }
+    Annotation {
+      Name		      "Throttle in proportional value from -1.0 to 1.0."
+      Position		      [264, 300]
     }
   }
 }

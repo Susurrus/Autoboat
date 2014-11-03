@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2427"
+    ComputedModelVersion    "1.2429"
     NumModelReferences	    1
     ModelReference {
       ModelRefBlockPath	      "HIL_sim/Model1|Plant"
@@ -31,9 +31,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Oct 14 15:40:15 2014"
-  RTWModifiedTimeStamp	  335202014
-  ModelVersionFormat	  "1.%<AutoIncrement:2427>"
+  LastModifiedDate	  "Thu Oct 30 15:51:22 2014"
+  RTWModifiedTimeStamp	  336585041
+  ModelVersionFormat	  "1.%<AutoIncrement:2429>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -71,6 +71,7 @@ Model {
     $ObjectID		    1
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "Boat_sim"
+    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -1870,7 +1871,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "141"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "12094"
+    SIDHighWatermark	    "12095"
     Block {
       BlockType		      Display
       Name		      "Display1"
@@ -1912,7 +1913,7 @@ Model {
       BlockType		      From
       Name		      "From14"
       SID		      "12073"
-      Position		      [45, 112, 115, 138]
+      Position		      [45, 117, 115, 143]
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "rudder_c"
@@ -1939,7 +1940,7 @@ Model {
       BlockType		      From
       Name		      "From17"
       SID		      "12074"
-      Position		      [45, 213, 115, 237]
+      Position		      [45, 218, 115, 242]
       BackgroundColor	      "magenta"
       ShowName		      off
       GotoTag		      "throttle_c"
@@ -2225,9 +2226,19 @@ Model {
     }
     Block {
       BlockType		      Goto
+      Name		      "Goto1"
+      SID		      "12095"
+      Position		      [400, 255, 480, 275]
+      BackgroundColor	      "cyan"
+      ShowName		      off
+      GotoTag		      "imuData"
+      TagVisibility	      "local"
+    }
+    Block {
+      BlockType		      Goto
       Name		      "Goto10"
       SID		      "12089"
-      Position		      [400, 245, 480, 265]
+      Position		      [400, 220, 480, 240]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "truthHeading"
@@ -2237,7 +2248,7 @@ Model {
       BlockType		      Goto
       Name		      "Goto12"
       SID		      "12090"
-      Position		      [390, 85, 460, 105]
+      Position		      [410, 80, 480, 100]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "GPS"
@@ -2257,7 +2268,7 @@ Model {
       BlockType		      Goto
       Name		      "Goto3"
       SID		      "12086"
-      Position		      [400, 210, 480, 230]
+      Position		      [400, 185, 480, 205]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "sensors_w"
@@ -2297,7 +2308,7 @@ Model {
       BlockType		      Goto
       Name		      "Goto8"
       SID		      "12088"
-      Position		      [400, 190, 480, 210]
+      Position		      [400, 150, 480, 170]
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "Rudder"
@@ -3853,12 +3864,12 @@ Model {
       BlockType		      ModelReference
       Name		      "Model1"
       SID		      "12092"
-      Ports		      [2, 5]
-      Position		      [185, 76, 345, 274]
+      Ports		      [2, 6]
+      Position		      [185, 78, 345, 277]
       ZOrder		      -17
       ModelNameDialog	      "Plant"
       SimulationMode	      "Normal"
-      ModelReferenceVersion   "1.24"
+      ModelReferenceVersion   "1.40"
       List {
 	ListType		InputPortNames
 	port0			"Commanded Rudder"
@@ -3871,6 +3882,7 @@ Model {
 	port2			"rudder"
 	port3			"sensors_waterspeed"
 	port4			"heading"
+	port5			"imu"
       }
       List {
 	ListType		OutputPortBusObjects
@@ -3879,6 +3891,7 @@ Model {
 	port2			""
 	port3			""
 	port4			""
+	port5			"ImuData"
       }
       List {
 	ListType		OutputPortOutputBusAsStructs
@@ -3887,6 +3900,7 @@ Model {
 	port2			"off"
 	port3			"off"
 	port4			"off"
+	port5			"off"
       }
       CopyOfModelName	      "Plant"
       DefaultDataLogging      on
@@ -4512,7 +4526,7 @@ Model {
     Line {
       SrcBlock		      "Model1"
       SrcPort		      3
-      Points		      [35, 0]
+      Points		      [0, 15; 35, 0]
       Branch {
 	DstBlock		"Generate sensor data\nfrom actuator position"
 	DstPort			2
@@ -4543,13 +4557,13 @@ Model {
     Line {
       SrcBlock		      "Model1"
       SrcPort		      2
+      Points		      [0, 10]
       DstBlock		      "Generate sensor data\nfrom actuator position"
       DstPort		      1
     }
     Line {
       SrcBlock		      "Model1"
       SrcPort		      4
-      Points		      [35, 0]
       DstBlock		      "Goto3"
       DstPort		      1
     }
@@ -4569,6 +4583,12 @@ Model {
       SrcBlock		      "Model1"
       SrcPort		      5
       DstBlock		      "Goto10"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Model1"
+      SrcPort		      6
+      DstBlock		      "Goto1"
       DstPort		      1
     }
     Annotation {

@@ -33,3 +33,6 @@ r = v * (1 - e2) / (1 - e2 * sin(ref_lla_rad(1))^2);
 
 % The gain is calculated as normal along with a conversion from 1e-7 degrees to rads
 lla_ltp_gain = [r * (pi / 180 / 1e7); v * cos(ref_lla_rad(1)) * (pi / 180 / 1e7); 1e-6];
+
+% The late ncy in the GPS unit (in units of T_step)
+gpsLatency = 450;

@@ -369,3 +369,47 @@ GpsData.HeaderFile = 'EcanSensors.h'; % Specify the name of the file declaring t
 GpsData.Alignment = -1;
 GpsData.Elements = elems;
 assignin('base', 'GpsData', GpsData)
+
+% Bus object: ImuData
+clear elems;
+elems(1) = Simulink.BusElement;
+elems(1).Name = 'newData';
+elems(1).Dimensions = 1;
+elems(1).DimensionsMode = 'Fixed';
+elems(1).DataType = 'boolean';
+elems(1).SampleTime = -1;
+elems(1).Complexity = 'real';
+elems(1).SamplingMode = 'Sample based';
+elems(1).Min = [];
+elems(1).Max = [];
+
+elems(2) = Simulink.BusElement;
+elems(2).Name = 'attitude_quat';
+elems(2).Dimensions = 4;
+elems(2).DimensionsMode = 'Fixed';
+elems(2).DataType = 'single';
+elems(2).SampleTime = -1;
+elems(2).Complexity = 'real';
+elems(2).SamplingMode = 'Sample based';
+elems(2).Min = [];
+elems(2).Max = [];
+
+elems(3) = Simulink.BusElement;
+elems(3).Name = 'gyros';
+elems(3).Dimensions = 3;
+elems(3).DimensionsMode = 'Fixed';
+elems(3).DataType = 'single';
+elems(3).SampleTime = -1;
+elems(3).Complexity = 'real';
+elems(3).SamplingMode = 'Sample based';
+elems(3).Min = [];
+elems(3).Max = [];
+
+ImuData = Simulink.Bus;
+ImuData.Description = sprintf('Struct storing all IMU data recorded.');
+ImuData.DataScope = 'Imported'; % Specify that the header file declaring this struct is external
+ImuData.HeaderFile = 'EcanSensors.h'; % Specify the name of the file declaring this datatype.
+ImuData.Alignment = -1;
+ImuData.Elements = elems;
+assignin('base', 'ImuData', ImuData)
+

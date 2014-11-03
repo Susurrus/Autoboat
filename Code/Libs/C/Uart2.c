@@ -1,9 +1,11 @@
 #include "Uart2.h"
 
-#include "CircularBuffer.h"
+#include <stdbool.h>
 
 #include <xc.h>
 #include <uart.h>
+
+#include "CircularBuffer.h"
 
 static CircularBuffer uart2RxBuffer;
 static uint8_t u2RxBuf[UART2_BUFFER_SIZE];

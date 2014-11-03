@@ -2,6 +2,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.interpolate import interp1d
 import sys
 
 NaN = float('NaN')
@@ -13,51 +14,45 @@ if __name__ == '__main__':
     data_name = sys.argv[3]
     
     # Load the file and check what column we'll be processing
+    data = {}
     with open(csv_file, 'r') as f:
-        columns = f.readline().split(',')
-        columns[-1] = columns[-1][:-1]
-        
-        # Make sure we have a valid data column
-        try:
-            data_index = columns.index(data_name)
-            timestamp_index = columns.index('timestamp')
-            base_mode_index = columns.index('HEARTBEAT.base_mode')
-            primary_errors_index = columns.index('NODE_STATUS.primary_errors')
-        except:
-            print(data_name, columns[1])
-            print("ERROR: Column not found in CSV file")
-            sys.exit(1)
+        # Assume the first line are CSVs of column headers.
+        column_names = f.readline().split(',')
+        column_names[-1] = column_names[-1][:-1]
+        assert column_names[0] == 'timestamp', "Expected timestamp to be the first column header. Aborting."
+        for col_name in column_names:
+            data[col_name] = [[], []] # Save a timestamp/data column for each data
 
-        # Grab this columns data over every timestep
-        data = []
+        print(list(data.keys()))
+        # Now extract all data
         line = f.readline()
         while line:
-            # Log this line's data
-            line_data = line.split(',')
-            timestamp = float(line_data[timestamp_index])
-            try:
-                base_mode = float(line_data[base_mode_index])
-            except:
-                base_mode = NaN
-            try:
-                primary_errors = float(line_data[primary_errors_index])
-            except:
-                primary_errors = NaN
-            try:
-                desired_data = float(line_data[data_index])
-            except:
-                desired_data = NaN
-            pulled_data = (timestamp, base_mode, primary_errors, desired_data)
-            data.append(pulled_data)
-            
-            # And load the next line
+            # Find any valid data, and save the timestamp/value pair
+            columns = f.readline().split(',')
+            columns[-1] = columns[-1][:-1]
+            for i in range(len(columns)):
+                if columns[i]:
+                    data[column_names[i]][0].append(float(columns[0]))
+                    data[column_names[i]][1].append(float(columns[i]))
+
+            # And read the next line
             line = f.readline()
-        
-        # Numpy-ify it and plot it
-        data = np.array(data)
-        
-        # Preprocess the data
-        # Subtract off the timestamp and convert to seconds
-        data[:,0] = data[:,0] - data[0][0]
-        plt.scatter(range(len(data[:,0])), data[:,3])
-        plt.show()
+
+    # Make sure we have a valid data columns
+    # FIXME
+    try:
+        pass
+    except:
+        print(data_name, columns[1])
+        print("ERROR: Column not found in CSV file")
+        sys.exit(1)
+
+    # And convert all data vectors to numpy arrays to simplify usage
+    for key in data.keys():
+        data[key] = np.array(data[key])
+
+    # Preprocess the data
+    # Subtract off the timestamp and convert to seconds
+    plt.scatter(data['LOCAL_POSITION_NED.y'][1,:], data['LOCAL_POSITION_NED.x'][1,:])
+    plt.axis('equal')
+    plt.show()

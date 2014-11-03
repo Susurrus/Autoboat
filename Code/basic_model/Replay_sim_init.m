@@ -23,10 +23,8 @@ Turn2Track = false;
 MaxDwnPthStar = single(1);
 tanIntercept = tan(45*pi/180);
 switchDistance = single(4);
-KPsiDot = single(0);
-wheelbase.Value = single(4);
-cogDotDerivativeDelay = single(0.8);
-T_step = 0.01;
+KPsiDot = single(0.7);
+wheelbase.Value = single(15);
 
 %% Grab some values based on file and autonomous run number
 % Acquire data from run
@@ -110,6 +108,52 @@ longitude = Simulink.Timeseries;
 longitude.Name = 'longitude';
 longitude.Time = gps_time;
 longitude.Data = int32(ranged_lon(valid_gps_data));
+
+% Get the IMU's data as yaw/pitch/roll + yaw_rate/pitch_rate/roll_rate
+ranged_yaw = data.TOKIMEC.yaw(valid_range);
+ranged_pitch = data.TOKIMEC.pitch(valid_range);
+ranged_roll = data.TOKIMEC.roll(valid_range);
+ranged_x_angle_vel = data.TOKIMEC.x_angle_vel(valid_range);
+ranged_y_angle_vel = data.TOKIMEC.y_angle_vel(valid_range);
+ranged_z_angle_vel = data.TOKIMEC.z_angle_vel(valid_range);
+ranged_status = data.TOKIMEC.status(valid_range);
+valid_imu_data = ~isnan(ranged_yaw);
+imu_time = valid_range_time;
+imu_time = imu_time(valid_imu_data);
+yaw = Simulink.Timeseries;
+yaw.Name = 'yaw';
+yaw.Time = imu_time;
+yaw.Data = single(ranged_yaw(valid_imu_data) / 8192.0);
+pitch = Simulink.Timeseries;
+pitch.Name = 'pitch';
+pitch.Time = imu_time;
+pitch.Data = single(ranged_pitch(valid_imu_data) / 8192.0);
+roll = Simulink.Timeseries;
+roll.Name = 'roll_rate';
+roll.Time = imu_time;
+roll.Data = single(ranged_roll(valid_imu_data) / 8192.0);
+x_rate = Simulink.Timeseries;
+x_rate.Name = 'x_angular_velocity';
+x_rate.Time = imu_time;
+x_rate.Data = single(ranged_x_angle_vel(valid_imu_data) / 4096.0);
+y_rate = Simulink.Timeseries;
+y_rate.Name = 'y_angular_velocity';
+y_rate.Time = imu_time;
+y_rate.Data = single(ranged_y_angle_vel(valid_imu_data) / 4096.0);
+z_rate = Simulink.Timeseries;
+z_rate.Name = 'z_angular_velocity';
+z_rate.Time = imu_time;
+z_rate.Data = single(ranged_z_angle_vel(valid_imu_data) / 4096.0);
+tokimec_status = Simulink.Timeseries;
+tokimec_status.Name = 'Tokimec status bits';
+tokimec_status.Time = imu_time;
+tokimec_status.Data = ranged_status(valid_imu_data);
+
+% And convert the IMU's yaw/pitch/roll into a w-x-y-z-format quaternion
+attitude = Simulink.Timeseries;
+attitude.Name = 'DCM';
+attitude.Time = imu_time;
+attitude.Data = angle2quat(yaw.Data, pitch.Data, roll.Data);
 
 % And the system's rudder angle from BASIC_STATE @ 10Hz.
 ranged_rudder = data.BASIC_STATE.rudder_angle(valid_range);

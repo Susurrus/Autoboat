@@ -11,6 +11,7 @@
 #include <timer.h>
 
 // Project includes
+#include "IMU_Math.h"
 #include "Node.h"
 #include "MavlinkGlue.h"
 #include "Acs300.h"
@@ -393,13 +394,26 @@ void PrimaryNode100HzLoop(void)
     // And make sure the primary LED is blinking indicating that the node is operational
     SetStatusModeLed();
 
+    ImuData imu = {
+        true,
+        {0.0, 0.0, 0.0, 0.0},
+        {(float)tokimecDataStore.x_angle_vel / (2^12), (float)tokimecDataStore.y_angle_vel / (2^12), (float)tokimecDataStore.z_angle_vel / (2^12)}
+    };
+    float ypr[3] = {
+        (float)tokimecDataStore.yaw / (2^13),
+        (float)tokimecDataStore.pitch / (2^13),
+        (float)tokimecDataStore.roll / (2^13)
+    };
+    YawPitchRollToQuaternion(ypr, imu.attitude_quat);
+
     // Run the next timestep of the controller. Output is stored locally and passed to the actuators,
     // but some additional system state is stored in controllerVars in `MavlinkGlue`.
     float rCommand = 0.0;
     int16_t tCommand = 0;
     bool reset = (nodeErrors != 0);
+
     controller_custom(&gpsDataStore, &throttleDataStore.rpm, &rudderSensorData.RudderAngle,
-            (boolean_T*) & reset, &waterDataStore.speed, &rCommand, &tCommand, &controllerVars);
+            (boolean_T*) &reset, &waterDataStore.speed, &rCommand, &tCommand, &controllerVars, &imu);
 
     // And output the necessary control outputs.
     PrimaryNodeMuxAndOutputControllerCommands(rCommand, tCommand, false);

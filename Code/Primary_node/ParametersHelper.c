@@ -56,8 +56,7 @@ static const Parameter params[] = {
     {"L2+_MaxDownPath*", &maxDwnPthStar, NULL, NULL, PARAMETERS_DATATYPE_REAL32},
     {"L2+_TanInter", &tanIntercept, NULL, NULL, PARAMETERS_DATATYPE_REAL32},
     {"L2+_SwitchDist", &switchDistance, NULL, NULL, PARAMETERS_DATATYPE_REAL32},
-	{"L2+_KPsiDot", &KPsiDot, NULL, NULL, PARAMETERS_DATATYPE_REAL32},
-	{"Est_cogDotDelay", &cogDotDerivativeDelay, NULL, NULL, PARAMETERS_DATATYPE_REAL32}
+    {"L2+_KPsiDot", &KPsiDot, NULL, NULL, PARAMETERS_DATATYPE_REAL32}
 };
 
 // Expose both the list of parameters and the total to the Parameters library.
