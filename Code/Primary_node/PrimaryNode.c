@@ -264,7 +264,7 @@ int main(void)
             lastSensorAvailability.propEnabled = true;
         }
 
-        // And if the rudder node disconnects, set the uncalibrated reset line. There's no need to peform
+        // And if the rudder node disconnects, set the uncalibrated reset line. There's no need to perform
         // the inverse check when it becomes active again, because that will be done when the CAN message
         // is received.
         if (lastSensorAvailability.rudderEnabled && !sensorAvailability.rudder.enabled) {
@@ -288,7 +288,7 @@ int main(void)
             }
             lastSensorAvailability.rcNodeEnabled = true;
         }
-        
+
         // If the RC node stops being active, yet is still enabled, then we aren't in an error state. Otherwise
         // if the RC node is active, we are.
         if (lastSensorAvailability.rcNodeActive && !sensorAvailability.rcNode.active) {
