@@ -202,40 +202,40 @@ void Run100HzTasks(void)
             case TASK_TRANSMIT_IMU: {
                 CanMessage msg;
 
-				// Transmit the absolute attitude message
+                // Transmit the absolute attitude message
                 CanMessagePackageImuData(&msg,
                                          tokimecData.yaw,
                                          tokimecData.pitch,
                                          tokimecData.roll);
                 Ecan1Transmit(&msg);
 
-				// Now transmit the angular velocity data
+                // Now transmit the angular velocity data
                 CanMessagePackageAngularVelocityData(&msg,
                                          tokimecData.x_angle_vel,
                                          tokimecData.y_angle_vel,
                                          tokimecData.z_angle_vel);
                 Ecan1Transmit(&msg);
 
-				// And then the accelerometer data
+                // And then the accelerometer data
                 CanMessagePackageAccelerationData(&msg,
                                          tokimecData.x_accel,
                                          tokimecData.y_accel,
                                          tokimecData.z_accel);
                 Ecan1Transmit(&msg);
 
-				// And now the position data
+                // And now the position data
                 CanMessagePackageGpsPosData(&msg,
                                          tokimecData.latitude,
                                          tokimecData.longitude);
                 Ecan1Transmit(&msg);
 
-				// And its estimated position data
+                // And its estimated position data
                 CanMessagePackageEstGpsPosData(&msg,
                                          tokimecData.est_latitude,
                                          tokimecData.est_longitude);
                 Ecan1Transmit(&msg);
 
-				// And finally a few random data bits
+                // And finally a few random data bits
                 CanMessagePackageGpsVelData(&msg,
                                          tokimecData.gpsDirection,
                                          tokimecData.gpsSpeed,
