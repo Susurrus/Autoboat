@@ -84,6 +84,8 @@ union HilDataFromPc {
         uint16_t gpsSog;
         float waterSpeed;
         uint16_t timestamp;
+        float attitudeQuat[4];
+        float gyros[3];
     } data;
     uint8_t bytes[sizeof(struct y)];
 };

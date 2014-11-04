@@ -7,6 +7,7 @@
 #include "Hil.h"
 #include "Acs300.h"
 #include "MessageScheduler.h"
+#include "IMU_Math.h"
 #include "Ecan1.h"
 #include "Nmea2000.h"
 #include "Rudder.h"
@@ -401,21 +402,23 @@ void HilNodeTimer100Hz(void)
                 break;
             // Emulate the IMU node
             // TODO: Don't broadcast this if the sensor exists.
-            case SCHED_ID_IMU:
+            case SCHED_ID_IMU: {
+                float yawPitchRoll[3];
+                QuaternionToEuler(hilReceivedData.data.attitudeQuat, yawPitchRoll);
                 // Transmit the absolute attitude message
                 CanMessagePackageImuData(&msg,
-                        4,
-                        5,
-                        6);
+                        yawPitchRoll[0],
+                        yawPitchRoll[1],
+                        yawPitchRoll[2]);
                 Ecan1Transmit(&msg);
 
                 // Now transmit the angular velocity data
                 CanMessagePackageAngularVelocityData(&msg,
-                        1,
-                        2,
-                        3);
+                        hilReceivedData.data.gyros[0],
+                        hilReceivedData.data.gyros[1],
+                        hilReceivedData.data.gyros[2]);
                 Ecan1Transmit(&msg);
-                break;
+            } break;
             }
         }
 
