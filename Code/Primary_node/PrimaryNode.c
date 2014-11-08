@@ -397,12 +397,12 @@ void PrimaryNode100HzLoop(void)
     ImuData imu = {
         true,
         {0.0, 0.0, 0.0, 0.0},
-        {(float)tokimecDataStore.x_angle_vel / (2^12), (float)tokimecDataStore.y_angle_vel / (2^12), (float)tokimecDataStore.z_angle_vel / (2^12)}
+        {(float)tokimecDataStore.x_angle_vel / 4096.0, (float)tokimecDataStore.y_angle_vel / 4096.0, (float)tokimecDataStore.z_angle_vel / 4096.0}
     };
     float ypr[3] = {
-        (float)tokimecDataStore.yaw / (2^13),
-        (float)tokimecDataStore.pitch / (2^13),
-        (float)tokimecDataStore.roll / (2^13)
+        (float)tokimecDataStore.yaw / 8192.0,
+        (float)tokimecDataStore.pitch / 8192.0,
+        (float)tokimecDataStore.roll / 8192.0
     };
     YawPitchRollToQuaternion(ypr, imu.attitude_quat);
 

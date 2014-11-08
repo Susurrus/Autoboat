@@ -469,11 +469,13 @@ void MavLinkSendAttitude(void)
 
 	// The roll as reported from the Tokimec is opposite from what the ATTITUDE message expects
 	// (at least according to QGC).
-	float roll = (float)tokimecDataStore.roll / (2^13);
-	float pitch = (float)tokimecDataStore.pitch / (2^13);
-        float rollRate = (float)tokimecDataStore.x_angle_vel / (2^12);
-        float pitchRate = (float)tokimecDataStore.y_angle_vel / (2^12);
-        float yawRate = (float)tokimecDataStore.z_angle_vel / (2^12);
+        // NOTE: The decimal representation is used below because (float)(2^13) evaluates to 15.0 for
+        // some reason, but this way works correctly.
+	float roll = (float)tokimecDataStore.roll / 8192.0;
+	float pitch = (float)tokimecDataStore.pitch / 8192.0;
+        float rollRate = (float)tokimecDataStore.x_angle_vel / 4096.0;
+        float pitchRate = (float)tokimecDataStore.y_angle_vel / 4096.0;
+        float yawRate = (float)tokimecDataStore.z_angle_vel / 4096.0;
 	mavlink_msg_attitude_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
 	                          nodeSystemTime*10,
                                   -roll, pitch, controllerVars.Heading,
