@@ -405,18 +405,18 @@ void HilNodeTimer100Hz(void)
             case SCHED_ID_IMU: {
                 float yawPitchRoll[3];
                 QuaternionToEuler(hilReceivedData.data.attitudeQuat, yawPitchRoll);
-                // Transmit the absolute attitude message
+                // Transmit the absolute attitude message (converting from floating- to fixed-point)
                 CanMessagePackageImuData(&msg,
-                        yawPitchRoll[0],
-                        yawPitchRoll[1],
-                        yawPitchRoll[2]);
+                        yawPitchRoll[0] * 8192.0,
+                        yawPitchRoll[1] * 8192.0,
+                        yawPitchRoll[2] * 8192.0);
                 Ecan1Transmit(&msg);
 
-                // Now transmit the angular velocity data
+                // Now transmit the angular velocity data (converting from floating- to fixed-point)
                 CanMessagePackageAngularVelocityData(&msg,
-                        hilReceivedData.data.gyros[0],
-                        hilReceivedData.data.gyros[1],
-                        hilReceivedData.data.gyros[2]);
+                        hilReceivedData.data.gyros[0] * 4096.0,
+                        hilReceivedData.data.gyros[1] * 4096.0,
+                        hilReceivedData.data.gyros[2] * 4096.0);
                 Ecan1Transmit(&msg);
             } break;
             }
