@@ -119,8 +119,8 @@ int main(void)
     /// First step is to move over to the FRC w/ PLL clock from the default FRC clock.
     // Set the clock to 79.84MHz.
     PLLFBD = 63; // M = 65
-    CLKDIVbits.PLLPOST = 0; // N1 = 2
-    CLKDIVbits.PLLPRE = 1; // N2 = 3
+    CLKDIVbits.PLLPOST = 0; // N2 = 2
+    CLKDIVbits.PLLPRE = 1; // N1 = 3
 
     // Initiate Clock Switch to FRM oscillator with PLL.
     __builtin_write_OSCCONH(0x01);
