@@ -180,9 +180,6 @@ int main(void)
     // To enable UART1 pins: TX on 43 (B11), MAVLink input decode on 43 (B11), RX on 45 (B13)
     PPSOutput(OUT_FN_PPS_U1TX, OUT_PIN_PPS_RP43);
     PPSInput(IN_FN_PPS_U1RX, IN_PIN_PPS_RPI45);
-
-    // Enable UART2 RX on the same pin as UART1 TX, so we can decode it's live output stream
-    PPSInput(IN_FN_PPS_U2RX, IN_PIN_PPS_RP43);
 #endif
     PPSLock;
 
