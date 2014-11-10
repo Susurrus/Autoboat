@@ -113,10 +113,14 @@ _FICD(JTAGEN_OFF & ICS_PGD2);
 int main(void)
 {
     /// First step is to move over to the FRC w/ PLL clock from the default FRC clock.
-    // Set the clock to 79.84MHz.
-    PLLFBD = 63; // M = 65
+    // Set the clock to 79.84MHz
+    PLLFBDbits.PLLDIV = 63; // M = 65
     CLKDIVbits.PLLPOST = 0; // N2 = 2
     CLKDIVbits.PLLPRE = 1; // N1 = 3
+    // Set the clock to 140MHz (Kept for possible future use)
+//    PLLFBDbits.PLLDIV = 74; // M = 76
+//    CLKDIVbits.PLLPOST = 0; // N2 = 2
+//    CLKDIVbits.PLLPRE = 0; // N1 = 2
 
     // Initiate Clock Switch to FRM oscillator with PLL.
     __builtin_write_OSCCONH(0x01);
