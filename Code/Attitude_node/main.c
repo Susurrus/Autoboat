@@ -58,8 +58,8 @@ int main()
     // Run system tasks when a timer interrupt has been triggered.
     while (true) {
         if (runTasks) {
-            Run100HzTasks();
             runTasks = false;
+            Run100HzTasks();
         }
         RunContinuousTasks();
     }

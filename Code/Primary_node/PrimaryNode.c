@@ -45,9 +45,6 @@
 // Define the maximum value of the ADC input
 #define ANmax 4095.0f
 
-// Flag for triggering a run of the primary loop. Set by the timer interrupt.
-bool runTasks = false;
-
 // Store analog sensors here
 
 struct {
@@ -91,7 +88,6 @@ static volatile uint16_t adcDmaBuffer[16] __attribute__((aligned(32)));
 void Adc1Init(void);
 void PrimaryNode100HzLoop(void);
 void PrimaryNodeMuxAndOutputControllerCommands(float rudderCommand, int16_t throttleCommand, bool forceTransmission);
-void SetTaskFlag(void);
 
 // Set processor configuration settings
 #ifdef __dsPIC33FJ128MC802__
@@ -336,11 +332,11 @@ int main(void)
         // calling it at 100Hz.
         MavLinkReceive();
 
-
+        // Trigger the 100Hz loop when the timer counts past the 0.01s mark.
         if (TMR2 >= F_OSC / 2 / 256 / 100) {
+            TMR2 = 0; // We need to reset the timer counter BEFORE doing anything in here or it
+                      // throws off our calculations.
             PrimaryNode100HzLoop();
-            runTasks = false;
-            TMR2 = 0;
         }
     }
 }
@@ -694,12 +690,4 @@ float GetPowerRailVoltage(void)
 float GetPowerRailCurrent(void)
 {
     return analogSensors.powerRailCurrent;
-}
-
-/**
- * Timer interrupt callback. Sets a flag that the main execution loop waits on to do everything.
- */
-void SetTaskFlag(void)
-{
-    runTasks = true;
 }

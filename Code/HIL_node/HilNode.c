@@ -163,8 +163,8 @@ int main()
 
         // Also execute the main execution loop at 100Hz.
         if (runPrimaryLoop) {
-            HilNodeTimer100Hz();
             runPrimaryLoop = false;
+            HilNodeTimer100Hz();
         }
     }
 }
