@@ -165,6 +165,8 @@ extern int32_t gpsOrigin[3];
 uint16_t mavLinkMessagesReceived = 0;
 uint16_t mavLinkMessagesFailedParsing = 0;
 
+// Store radio telemetry information from the 3DRs.
+mavlink_radio_status_t radioStatus;
 
 // Track manual control data transmit via MAVLink
 struct {
@@ -174,7 +176,7 @@ struct {
 } mavlinkManualControlData;
 
 // Set up the message scheduler for MAVLink transmission
-#define MAVLINK_MSGS_SIZE 17
+#define MAVLINK_MSGS_SIZE 18
 uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_HEARTBEAT,
 	MAVLINK_MSG_ID_SYS_STATUS,
@@ -192,7 +194,8 @@ uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_NODE_STATUS,
 	MAVLINK_MSG_ID_WAYPOINT_STATUS,
 	MAVLINK_MSG_ID_DSP3000,
-	MAVLINK_MSG_ID_TOKIMEC
+	MAVLINK_MSG_ID_TOKIMEC,
+	MAVLINK_MSG_ID_RADIO_STATUS
 };
 uint16_t tsteps[MAVLINK_MSGS_SIZE][2][8] = {};
 uint8_t  mSizes[MAVLINK_MSGS_SIZE];
@@ -222,7 +225,7 @@ void MavLinkInit(void)
 	// REVO_GS - not currently connecte.
 	// WSO100 - environmental sensor, no need for quick updates
         // DSP3000 - no longer onboard
-	const uint8_t const periodicities[MAVLINK_MSGS_SIZE] = {2, 4, 1, 10, 4, 10, 2, 10, 10, 10, 0, 4, 10, 5, 10, 0, 25};
+	const uint8_t const periodicities[MAVLINK_MSGS_SIZE] = {2, 4, 1, 10, 4, 10, 2, 10, 10, 10, 0, 4, 10, 5, 10, 0, 25, 1};
 	for (i = 0; i < sizeof(periodicities); ++i) {
 		if (periodicities[i] && !AddMessageRepeating(&mavlinkSchedule, ids[i], periodicities[i])) {
 			FATAL_ERROR();
@@ -391,6 +394,17 @@ void MavLinkSendTokimec(void)
 	len = mavlink_msg_to_send_buffer(buf, &msg);
 
 	Uart1WriteData(buf, (uint8_t)len);
+}
+
+void MavLinkSendRadioStatus(void)
+{
+    mavlink_message_t msg;
+
+    mavlink_msg_radio_status_encode(mavlink_system.sysid, mavlink_system.compid, &msg, &radioStatus);
+
+    len = mavlink_msg_to_send_buffer(buf, &msg);
+
+    Uart1WriteData(buf, (uint8_t)len);
 }
 
 /**
@@ -1525,7 +1539,7 @@ void MavLinkReceive(void)
 	// timestep such that its internal state machine works properly.
 	bool processedParameterMessage = false;
 
-    uint8_t c;
+        uint8_t c;
 	while (Uart1ReadByte(&c)) {
 		processedData = true;
 		// Parse another byte and if there's a message found process it.
@@ -1633,6 +1647,13 @@ void MavLinkReceive(void)
 					MavLinkEvaluateParameterState(PARAM_EVENT_SET_RECEIVED, &p);
 					processedParameterMessage = true;
 				} break;
+
+				case MAVLINK_MSG_ID_RADIO_STATUS: {
+					mavlink_msg_radio_status_decode(&msg, &radioStatus);
+				} break;
+
+                                default:
+                                    break;
 			}
 		}
 	}
