@@ -30,13 +30,8 @@ static void mavlink_test_rudder_raw(uint8_t system_id, uint8_t component_id, mav
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_rudder_raw_t packet_in = {
-		17235,
-	}17339,
-	}17443,
-	}151,
-	}218,
-	}29,
-	};
+		17235,17339,17443,151,218,29
+    };
 	mavlink_rudder_raw_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
         	packet1.raw_position = packet_in.raw_position;
@@ -83,12 +78,8 @@ static void mavlink_test_wso100(uint8_t system_id, uint8_t component_id, mavlink
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_wso100_t packet_in = {
-		17.0,
-	}45.0,
-	}73.0,
-	}101.0,
-	}129.0,
-	};
+		17.0,45.0,73.0,101.0,129.0
+    };
 	mavlink_wso100_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
         	packet1.speed = packet_in.speed;
@@ -134,10 +125,8 @@ static void mavlink_test_dst800(uint8_t system_id, uint8_t component_id, mavlink
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_dst800_t packet_in = {
-		17.0,
-	}45.0,
-	}73.0,
-	};
+		17.0,45.0,73.0
+    };
 	mavlink_dst800_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
         	packet1.speed = packet_in.speed;
@@ -181,15 +170,8 @@ static void mavlink_test_revo_gs(uint8_t system_id, uint8_t component_id, mavlin
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_revo_gs_t packet_in = {
-		17.0,
-	}45.0,
-	}73.0,
-	}101.0,
-	}18067,
-	}187,
-	}254,
-	}65,
-	};
+		17.0,45.0,73.0,101.0,18067,187,254,65
+    };
 	mavlink_revo_gs_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
         	packet1.heading = packet_in.heading;
@@ -238,8 +220,8 @@ static void mavlink_test_gps200(uint8_t system_id, uint8_t component_id, mavlink
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_gps200_t packet_in = {
-		17.0,
-	};
+		17.0
+    };
 	mavlink_gps200_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
         	packet1.magnetic_variation = packet_in.magnetic_variation;
@@ -281,8 +263,8 @@ static void mavlink_test_dsp3000(uint8_t system_id, uint8_t component_id, mavlin
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_dsp3000_t packet_in = {
-		17.0,
-	};
+		17.0
+    };
 	mavlink_dsp3000_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
         	packet1.z_rate = packet_in.z_rate;
@@ -324,24 +306,8 @@ static void mavlink_test_tokimec(uint8_t system_id, uint8_t component_id, mavlin
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_tokimec_t packet_in = {
-		963497464,
-	}963497672,
-	}963497880,
-	}963498088,
-	}18067,
-	}18171,
-	}18275,
-	}18379,
-	}18483,
-	}18587,
-	}18691,
-	}18795,
-	}18899,
-	}19003,
-	}19107,
-	}19211,
-	}19315,
-	};
+		963497464,963497672,963497880,963498088,18067,18171,18275,18379,18483,18587,18691,18795,18899,19003,19107,19211,19315
+    };
 	mavlink_tokimec_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
         	packet1.latitude = packet_in.latitude;
@@ -393,24 +359,63 @@ static void mavlink_test_tokimec(uint8_t system_id, uint8_t component_id, mavlin
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
+static void mavlink_test_radio(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+{
+	mavlink_message_t msg;
+        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
+        uint16_t i;
+	mavlink_radio_t packet_in = {
+		17235,17339,17,84,151,218,29
+    };
+	mavlink_radio_t packet1, packet2;
+        memset(&packet1, 0, sizeof(packet1));
+        	packet1.rxerrors = packet_in.rxerrors;
+        	packet1.fixed = packet_in.fixed;
+        	packet1.rssi = packet_in.rssi;
+        	packet1.remrssi = packet_in.remrssi;
+        	packet1.txbuf = packet_in.txbuf;
+        	packet1.noise = packet_in.noise;
+        	packet1.remnoise = packet_in.remnoise;
+        
+        
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_radio_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_radio_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_radio_pack(system_id, component_id, &msg , packet1.rssi , packet1.remrssi , packet1.txbuf , packet1.noise , packet1.remnoise , packet1.rxerrors , packet1.fixed );
+	mavlink_msg_radio_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_radio_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.rssi , packet1.remrssi , packet1.txbuf , packet1.noise , packet1.remnoise , packet1.rxerrors , packet1.fixed );
+	mavlink_msg_radio_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+        mavlink_msg_to_send_buffer(buffer, &msg);
+        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
+        	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
+        }
+	mavlink_msg_radio_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+        
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_radio_send(MAVLINK_COMM_1 , packet1.rssi , packet1.remrssi , packet1.txbuf , packet1.noise , packet1.remnoise , packet1.rxerrors , packet1.fixed );
+	mavlink_msg_radio_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+}
+
 static void mavlink_test_basic_state(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
 {
 	mavlink_message_t msg;
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_basic_state_t packet_in = {
-		17.0,
-	}45.0,
-	}73.0,
-	}101.0,
-	}129.0,
-	}157.0,
-	}185.0,
-	}18691,
-	}18795,
-	}18899,
-	}19003,
-	};
+		17.0,45.0,73.0,101.0,129.0,157.0,185.0,18691,18795,18899,19003
+    };
 	mavlink_basic_state_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
         	packet1.commanded_auto_rudder_angle = packet_in.commanded_auto_rudder_angle;
@@ -462,9 +467,8 @@ static void mavlink_test_main_power(uint8_t system_id, uint8_t component_id, mav
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_main_power_t packet_in = {
-		17235,
-	}17339,
-	};
+		17235,17339
+    };
 	mavlink_main_power_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
         	packet1.voltage = packet_in.voltage;
@@ -507,37 +511,8 @@ static void mavlink_test_node_status(uint8_t system_id, uint8_t component_id, ma
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_node_status_t packet_in = {
-		17235,
-	}17339,
-	}17443,
-	}17547,
-	}17651,
-	}17755,
-	}17859,
-	}17963,
-	}18067,
-	}18171,
-	}18275,
-	}18379,
-	}77,
-	}144,
-	}211,
-	}22,
-	}89,
-	}156,
-	}223,
-	}34,
-	}101,
-	}168,
-	}235,
-	}46,
-	}113,
-	}180,
-	}247,
-	}58,
-	}125,
-	}192,
-	};
+		17235,17339,17443,17547,17651,17755,17859,17963,18067,18171,18275,18379,77,144,211,22,89,156,223,34,101,168,235,46,113,180,247,58,125,192
+    };
 	mavlink_node_status_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
         	packet1.hil_status = packet_in.hil_status;
@@ -608,15 +583,8 @@ static void mavlink_test_waypoint_status(uint8_t system_id, uint8_t component_id
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_waypoint_status_t packet_in = {
-		17.0,
-	}45.0,
-	}73.0,
-	}101.0,
-	}129.0,
-	}157.0,
-	}185.0,
-	}213.0,
-	};
+		17.0,45.0,73.0,101.0,129.0,157.0,185.0,213.0
+    };
 	mavlink_waypoint_status_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
         	packet1.last_wp_lat = packet_in.last_wp_lat;
@@ -668,6 +636,7 @@ static void mavlink_test_seaslug(uint8_t system_id, uint8_t component_id, mavlin
 	mavlink_test_gps200(system_id, component_id, last_msg);
 	mavlink_test_dsp3000(system_id, component_id, last_msg);
 	mavlink_test_tokimec(system_id, component_id, last_msg);
+	mavlink_test_radio(system_id, component_id, last_msg);
 	mavlink_test_basic_state(system_id, component_id, last_msg);
 	mavlink_test_main_power(system_id, component_id, last_msg);
 	mavlink_test_node_status(system_id, component_id, last_msg);

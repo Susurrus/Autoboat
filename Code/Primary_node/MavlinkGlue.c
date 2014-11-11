@@ -103,14 +103,24 @@ enum ONBOARD_SENSORS {
 	ONBOARD_CONTROL_MOTOR = 1 << 15
 };
 
+typedef struct {
+    uint8_t sysid;
+    uint8_t compid;
+    uint8_t type;
+    uint8_t autopilot;
+    uint8_t state;
+    uint8_t mode;
+    uint32_t custom_mode;
+} MavlinkVehicle;
+
 // Store a module-wide variable for common MAVLink system variables.
-static mavlink_system_t mavlink_system = {
+static MavlinkVehicle mavlink_system = {
 	20, // Arbitrarily chosen MAV number
 	MAV_COMP_ID_ALL,
 	MAV_TYPE_SURFACE_BOAT,
+        MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY,
 	MAV_STATE_UNINIT,
-	MAV_MODE_PREFLIGHT | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED, // The vehicle is booting up and have manual control enabled.
-	0 // Unused and unsure of expected usage
+	MAV_MODE_PREFLIGHT | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED // The vehicle is booting up and have manual control enabled.
 };
 
 /** manual control parameters **/
@@ -270,7 +280,7 @@ void MavLinkSendHeartbeat(void)
 	}
 
 	// Pack the message
-	mavlink_msg_heartbeat_pack(mavlink_system.sysid, mavlink_system.compid, &msg, mavlink_system.type, MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY, mavlink_system.mode, 0, mavlink_system.state);
+	mavlink_msg_heartbeat_pack(mavlink_system.sysid, mavlink_system.compid, &msg, mavlink_system.type, mavlink_system.autopilot, mavlink_system.mode, mavlink_system.custom_mode, mavlink_system.state);
 
 	// Copy the message to the send buffer
 	len = mavlink_msg_to_send_buffer(buf, &msg);
@@ -335,7 +345,7 @@ void MavLinkSendStatus(void)
 	// Calculate the drop rate
 	uint16_t dropRate = 0;
 	if (mavLinkMessagesFailedParsing) {
-		dropRate = (uint16_t)(((float)mavLinkMessagesFailedParsing) * 10000.0f / ((float)(mavLinkMessagesReceived + mavLinkMessagesFailedParsing)));
+            dropRate = (uint16_t)(((float)mavLinkMessagesFailedParsing) * 10000.0f / ((float)(mavLinkMessagesReceived + mavLinkMessagesFailedParsing)));
 	}
 
 	mavlink_msg_sys_status_pack(mavlink_system.sysid, mavlink_system.compid, &msg,
