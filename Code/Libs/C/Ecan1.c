@@ -114,7 +114,7 @@ void Ecan1Init(uint32_t f_osc, uint32_t f_baud)
 #ifdef __dsPIC33FJ128MC802__
             __builtin_dmaoffset(ecan1MsgBuf),
 #elif __dsPIC33EP256MC502__
-            (unsigned long int)ecan1MsgBuf,
+            (unsigned long int)ecan1MsgBuf, // Warning here (cast from pointer to integer of different size) expected, unknown how to fix
 #endif
             0ul,
             (uint16_t) & C1TXD,
@@ -127,7 +127,7 @@ void Ecan1Init(uint32_t f_osc, uint32_t f_baud)
 #ifdef __dsPIC33FJ128MC802__
             __builtin_dmaoffset(ecan1MsgBuf),
 #elif __dsPIC33EP256MC502__
-            (unsigned long int)ecan1MsgBuf,
+            (unsigned long int)ecan1MsgBuf, // Warning here (cast from pointer to integer of different size) expected, unknown how to fix
 #endif
             0ul,
             (uint16_t) & C1RXD,

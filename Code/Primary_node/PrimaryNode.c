@@ -675,7 +675,7 @@ void Adc1Init(void)
 #ifdef __dsPIC33FJ128MC802__
             __builtin_dmaoffset(adcDmaBuffer),
 #elif __dsPIC33EP256MC502__
-            (unsigned long int)adcDmaBuffer,
+            (unsigned long int)adcDmaBuffer, // Warning here (cast from pointer to integer of different size) expected, unknown how to fix
 #endif
             0ul,
             (uint16_t) & ADC1BUF0,
