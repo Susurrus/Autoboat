@@ -169,8 +169,9 @@ static uint8_t missionTimeoutCounter = 0;
 // altitude (1e6 meters). 
 extern int32_t gpsOrigin[3];
 
-// Track how well MAVLink decoding is going:
-// WARN: Possible overflow over long-enough duration
+// Track how well MAVLink decoding is going.
+// WARN: Possible overflow over long-enough duration, but this is the size of these variables in
+// the MAVLink code.
 uint16_t mavLinkMessagesReceived = 0;
 uint16_t mavLinkMessagesFailedParsing = 0;
 
@@ -1495,10 +1496,6 @@ void MavLinkReceive(void)
 	mavlink_message_t rxMessage;
 	mavlink_status_t status;
 
-	// Track whether we actually handled any data in this function call.
-	// Used for updating the number of MAVLink messages handled
-	bool processedData = false;
-
 	// Track if a mission message was processed in this call. This is used to determine if a
 	// NONE_EVENT should be sent to the mission manager. The manager needs to be called every
 	// timestep such that its internal state machine works properly.
@@ -1511,7 +1508,6 @@ void MavLinkReceive(void)
 
         uint8_t c;
 	while (Uart1ReadByte(&c)) {
-		processedData = true;
 		// Parse another byte and if there's a message found process it.
 		if (mavlink_parse_char(MAVLINK_COMM_0, c, &rxMessage, &status)) {
 
@@ -1626,7 +1622,14 @@ void MavLinkReceive(void)
                                     break;
 			}
 		}
-	}
+
+                // Update our stats of both messages received and number of message failures.
+                // The `packet_rx_success_count` is a global and persistent count of successfully-
+                // received messages, while `packet_rx_drop_count` is a local value and will be 0 or
+                // 1 depending on if the character decoded successfully.
+                mavLinkMessagesReceived = status.packet_rx_success_count;
+                mavLinkMessagesFailedParsing += status.packet_rx_drop_count;
+        }
 
 	// Now if no mission messages were received, trigger the Mission Manager anyways with a NONE
 	// event.
@@ -1638,13 +1641,6 @@ void MavLinkReceive(void)
 	// event.
 	if (!processedParameterMessage) {
 		MavLinkEvaluateParameterState(PARAM_EVENT_NONE, NULL);
-	}
-
-	// Update the number of messages received, both successful and not. Note that the 'status' variable
-	// will be updated on every call to *_parse_char(), so this will always be a valid value.
-	if (processedData) {
-		mavLinkMessagesReceived += status.packet_rx_success_count;
-		mavLinkMessagesFailedParsing += status.packet_rx_drop_count;
 	}
 }
 
