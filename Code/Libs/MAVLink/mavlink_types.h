@@ -2,11 +2,7 @@
 #define MAVLINK_TYPES_H_
 
 // Visual Studio versions before 2013 don't conform to C99.
-#if (defined _MSC_VER) && (_MSC_VER < 1800)
 #include <stdint.h>
-#else
-#include <inttypes.h>
-#endif
 
 #ifndef MAVLINK_MAX_PAYLOAD_LEN
 // it is possible to override this, but be careful!
