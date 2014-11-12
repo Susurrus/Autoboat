@@ -1618,9 +1618,9 @@ void MavLinkReceive(void)
 					processedParameterMessage = true;
 				} break;
 
-				case MAVLINK_MSG_ID_RADIO_STATUS: {
+				case MAVLINK_MSG_ID_RADIO_STATUS:
 					mavlink_msg_radio_status_decode(&rxMessage, &radioStatus);
-				} break;
+				break;
 
                                 default:
                                     break;
@@ -1686,6 +1686,10 @@ void MavLinkTransmit(void)
 
 			case MAVLINK_MSG_ID_GPS_RAW_INT: {
 				MavLinkSendRawGps();
+			} break;
+
+			case MAVLINK_MSG_ID_RADIO_STATUS: {
+				MavLinkSendRadioStatus();
 			} break;
 
 			/** SeaSlug Messages **/
