@@ -5,7 +5,7 @@
 #if (defined _MSC_VER) && (_MSC_VER < 1800)
 #include <stdint.h>
 #else
-#include <stdint.h>
+#include <inttypes.h>
 #endif
 
 #ifndef MAVLINK_MAX_PAYLOAD_LEN
