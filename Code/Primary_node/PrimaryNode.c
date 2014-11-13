@@ -388,6 +388,9 @@ void PrimaryNode100HzLoop(void)
     SetResetModeLed();
     SetAutoModeLed();
 
+    // Make sure we transmit NODE_STATUS messages at 2Hz.
+    TransmitNodeStatus2Hz();
+
     // And make sure the primary LED is blinking indicating that the node is operational
     SetStatusModeLed();
 
@@ -512,6 +515,23 @@ void SetAutoModeLed(void)
     } else {
         _LATB12 = OFF;
         autoModeBlinkCounter = 0;
+    }
+}
+
+/**
+ * Transmit the node status message at 2Hz.
+ */
+void TransmitNodeStatus2Hz(void)
+{
+    static uint8_t counter = 0;
+    if (counter == 49) {
+        NodeTransmitStatus();
+        ++counter;
+    } else if (counter == 99) {
+        NodeTransmitStatus();
+        counter = 0;
+    } else {
+        ++counter;
     }
 }
 

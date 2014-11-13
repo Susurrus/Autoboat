@@ -67,6 +67,11 @@ void SetResetModeLed(void);
 void SetAutoModeLed(void);
 
 /**
+ * Call at 100Hz to transmit a NODE_STATUS can message at 2Hz.
+ */
+void TransmitNodeStatus2Hz(void);
+
+/**
  * Perform a bunch of processing on a manual rudder angle input including binning the final value.
  * @param rc A rudder angle in radians.
  */
