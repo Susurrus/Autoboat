@@ -16,6 +16,7 @@
  */
 
 #include <stdint.h>
+#include <stdbool.h>
 #include <xc.h>
 
 /**
@@ -97,6 +98,6 @@ extern uint8_t nodeVoltage;
  * Transmit a CAN_MESSAGE_STATUS message using the status and error
  * variables declared in this library.
  */
-void NodeTransmitStatus(void);
+bool NodeTransmitStatus(void);
 
 #endif // CAN_NODE_H

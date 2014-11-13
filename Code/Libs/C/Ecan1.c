@@ -208,19 +208,23 @@ void _ecan1TransmitHelper(const CanMessage *message)
 /**
  * Transmits a CanMessage using the transmission circular buffer.
  */
-void Ecan1Transmit(const CanMessage *msg)
+bool Ecan1Transmit(const CanMessage *msg)
 {
     // Append the message to the queue.
     // Message are only removed upon successful transmission.
     // They will be overwritten by newer message overflowing
     // the circular buffer however.
-    CB_WriteMany(&ecan1TxCBuffer, msg, sizeof (CanMessage), true);
+    if (!CB_WriteMany(&ecan1TxCBuffer, msg, sizeof (CanMessage), true)) {
+        return false;
+    }
 
     // If this is the only message in the queue, attempt to
     // transmit it.
     if (!currentlyTransmitting) {
         _ecan1TransmitHelper(msg);
     }
+
+    return true;
 }
 
 void Ecan1GetErrorStatus(uint8_t errors[2])

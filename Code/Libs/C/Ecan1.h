@@ -18,6 +18,8 @@
 #include "EcanDefines.h"
 #include "CircularBuffer.h"
 
+#include <stdbool.h>
+
 /**
  * Initialize the CAN hardware. This DOES NOT enable any pins that may be
  * necessary to map as inputs/outputs or using peripheral pin select hardware.
@@ -37,7 +39,7 @@ int Ecan1Receive(CanMessage *msg, uint8_t *messagesLeft);
  * Transmits a CAN message via a circular buffer interface
  * similar to that used by CAN message reception.
  */
-void Ecan1Transmit(const CanMessage *message);
+bool Ecan1Transmit(const CanMessage *message);
 
 /**
  * Returns the error status of the ECAN1 peripheral.
