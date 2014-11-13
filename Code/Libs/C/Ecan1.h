@@ -20,6 +20,20 @@
 
 #include <stdbool.h>
 
+typedef enum {
+    ECAN_ERROR_NONE,
+    ECAN_ERROR_WARNING,
+    ECAN_ERROR_PASSIVE,
+    ECAN_ERROR_BUS_OFF
+} EcanError;
+
+typedef struct {
+    unsigned TxBufferOverflow: 1; // 1 if a buffer overflow has occured
+    unsigned RxBufferOverflow: 1; // 1 if a buffer overflow has occured
+    EcanError TxError: 2;
+    EcanError RxError: 2;
+} EcanStatus;
+
 /**
  * Initialize the CAN hardware. This DOES NOT enable any pins that may be
  * necessary to map as inputs/outputs or using peripheral pin select hardware.
@@ -43,14 +57,20 @@ bool Ecan1Transmit(const CanMessage *message);
 
 /**
  * Returns the error status of the ECAN1 peripheral.
- * Returns a tuple with element 0->transmission error state,
- * and element 1->reception error state.
- *  0 => no error
- *  1 => warning (error count E(96,128]
- *  2 => passive (error count E(128,256] 
- *  3 => off (error count > 256, only for TX)
+ * Returns an enum
  */
-void Ecan1GetErrorStatus(uint8_t errors[2]);
+EcanStatus Ecan1GetErrorStatus(void);
+
+/**
+ * Returns the transmission and reception error counts. See the documentation for details, but the
+ * basics are:
+ *   * 1   <= errorCount < 128 : No error
+ *   * 128 <= errorCount < 256 : Error
+ *   * 256 == errorCount : ECAN bus disabled
+ * @param txErrors The transmission error count.
+ * @param txErrors The reception error count.
+ */
+void Ecan1GetErrorCounts(uint8_t *txErrors, uint8_t *rxErrors);
 
 /**
  * This function provides a general way to initialize the DMA peripheral.

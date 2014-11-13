@@ -45,6 +45,10 @@ static bool currentlyTransmitting = 0;
 // Also track how many messages are pending for reading.
 static uint8_t receivedMessagesPending = 0;
 
+// Track when the buffers have overflowed. These are cleared as soon as they are read.
+static bool txBufferOverflow = false;
+static bool rxBufferOverflow = false;
+
 void Ecan1Init(uint32_t f_osc, uint32_t f_baud)
 {
     // Initialize our circular buffers. If this fails, we crash and burn.
@@ -227,27 +231,47 @@ bool Ecan1Transmit(const CanMessage *msg)
     return true;
 }
 
-void Ecan1GetErrorStatus(uint8_t errors[2])
+EcanStatus Ecan1GetErrorStatus(void)
 {
-    // Set transmission errors in first array element.
-    if (C1INTFbits.TXBO) {
-        errors[0] = 3;
-    } else if (C1INTFbits.TXBP) {
-        errors[0] = 2;
-    } else if (C1INTFbits.TXWAR) {
-        errors[0] = 1;
-    } else {
-        errors[0] = 0;
+    EcanStatus status = {};
+
+    // Set overflow errors
+    if (txBufferOverflow) {
+        status.TxBufferOverflow = 1;
+        txBufferOverflow = false;
+    }
+    if (rxBufferOverflow) {
+        status.RxBufferOverflow = 1;
+        rxBufferOverflow = false;
     }
 
-    // Set reception errors in second array element.
-    if (C1INTFbits.RXBP) {
-        errors[1] = 2;
-    } else if (C1INTFbits.RXWAR) {
-        errors[1] = 1;
+    // Set transmission errors.
+    if (C1INTFbits.TXBO) {
+        status.TxError = ECAN_ERROR_BUS_OFF;
+    } else if (C1INTFbits.TXBP) {
+        status.TxError = ECAN_ERROR_PASSIVE;
+    } else if (C1INTFbits.TXWAR) {
+        status.TxError = ECAN_ERROR_WARNING;
     } else {
-        errors[1] = 0;
+        status.TxError = ECAN_ERROR_NONE;
     }
+
+    // Set reception errors.
+    if (C1INTFbits.RXBP) {
+        status.RxError = ECAN_ERROR_PASSIVE;
+    } else if (C1INTFbits.RXWAR) {
+        status.RxError = ECAN_ERROR_WARNING;
+    } else {
+        status.RxError = ECAN_ERROR_NONE;
+    }
+
+    return status;
+}
+
+void Ecan1GetErrorCounts(uint8_t *txErrors, uint8_t *rxErrors)
+{
+    *txErrors = C1ECbits.TERRCNT;
+    *rxErrors = C1ECbits.RERRCNT;
 }
 
 /**
@@ -275,6 +299,7 @@ void _ISR _C1Interrupt(void)
 
         // Check for a buffer overflow. Then clear the entire buffer if there was.
         if (ecan1TxCBuffer.overflowCount) {
+            txBufferOverflow = true;
             CB_Init(&ecan1TxCBuffer, txDataArray, ECAN1_BUFFERSIZE);
         }
 
@@ -351,11 +376,19 @@ void _ISR _C1Interrupt(void)
             message.payload[7] = (uint8_t)((ecan_msg_buf_ptr[6] & 0xFF00) >> 8);
         }
 
-        // Store the message in the buffer
-        CB_WriteMany(&ecan1RxCBuffer, &message, sizeof (CanMessage), true);
+        // Store the message in the buffer and update our messages-in-queue value.
+        if (CB_WriteMany(&ecan1RxCBuffer, &message, sizeof (CanMessage), true)) {
+            ++receivedMessagesPending;
+        } else {
+            // If writing fails, log the error and clear the buffer. This ensures we are at least
+            // receiving the most recent data
+            rxBufferOverflow = true;
+            CB_Init(&ecan1RxCBuffer, rxDataArray, ECAN1_BUFFERSIZE);
 
-        // Increase the number of messages stored in the buffer
-        ++receivedMessagesPending;
+            // Try to log this message again
+            CB_WriteMany(&ecan1RxCBuffer, &message, sizeof (CanMessage), true);
+            receivedMessagesPending = 1;
+        }
 
         // Be sure to clear the interrupt flag.
         C1INTFbits.RBIF = 0;

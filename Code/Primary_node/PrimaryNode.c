@@ -213,23 +213,22 @@ int main(void)
         ProcessAllEcanMessages();
 
         // Check for any errors on the ECAN peripheral:
-        uint8_t errors[2];
-        Ecan1GetErrorStatus(errors);
+        EcanStatus ecanErrors = Ecan1GetErrorStatus();
         if (nodeStatus & PRIMARY_NODE_STATUS_ECAN_TX_ERR) {
-            if (!errors[0]) {
+            if (!ecanErrors.TxError && !ecanErrors.TxBufferOverflow) {
                 nodeStatus &= ~PRIMARY_NODE_STATUS_ECAN_TX_ERR;
             }
         } else {
-            if (errors[0]) {
+            if (ecanErrors.TxError || ecanErrors.TxBufferOverflow) {
                 nodeStatus |= PRIMARY_NODE_STATUS_ECAN_TX_ERR;
             }
         }
         if (nodeStatus & PRIMARY_NODE_STATUS_ECAN_RX_ERR) {
-            if (!errors[1]) {
+            if (!ecanErrors.RxError && !ecanErrors.RxBufferOverflow) {
                 nodeStatus &= ~PRIMARY_NODE_STATUS_ECAN_RX_ERR;
             }
         } else {
-            if (errors[1]) {
+            if (ecanErrors.RxError || ecanErrors.RxBufferOverflow) {
                 nodeStatus |= PRIMARY_NODE_STATUS_ECAN_RX_ERR;
             }
         }

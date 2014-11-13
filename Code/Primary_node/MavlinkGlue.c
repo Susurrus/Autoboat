@@ -16,6 +16,9 @@
  * custom messages and switch the transmission from uart1EnqueueData() it should
  * be almost exclusively relient on modules like MissionManager and the scheduler.
  */
+
+#include "Ecan1.h"
+
 // C standard library includes
 #include <stdio.h>
 
@@ -355,11 +358,18 @@ void MavLinkSendStatus(void)
             dropRate = (uint16_t)(((float)mavLinkMessagesFailedParsing) * 10000.0f / ((float)(mavLinkMessagesReceived + mavLinkMessagesFailedParsing)));
 	}
 
+        // Get the ECAN error count to transmit that as well:
+        //  * errors_count1 - ecan1 tx error count
+        //  * errors_count2 - ecan1 rx error count
+        uint8_t ecanTxErrorCount, ecanRxErrorCount;
+        Ecan1GetErrorCounts(&ecanTxErrorCount, &ecanRxErrorCount);
+
 	mavlink_msg_sys_status_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
-		systemsPresent, systemsEnabled, systemsActive,
-		(uint16_t)(nodeCpuLoad)*10,
-		voltage, amperage, -1,
-		dropRate, mavLinkMessagesFailedParsing, 0, 0, 0, 0);
+            systemsPresent, systemsEnabled, systemsActive,
+            (uint16_t)(nodeCpuLoad)*10,
+            voltage, amperage, -1,
+            dropRate, mavLinkMessagesFailedParsing,
+            ecanTxErrorCount, ecanRxErrorCount, 0, 0);
 	len = mavlink_msg_to_send_buffer(buf, &txMessage);
 
 	Uart1WriteData(buf, (uint8_t)len);
