@@ -33,8 +33,8 @@ static UDP_SOCKET remoteServerSocket = INVALID_UDP_SOCKET;
 
 void EthernetInit(void)
 {
-	// Initialize hardware
-	InitBoard();
+    // Initialize hardware
+    InitBoard();
 
     // Initialize stack-related hardware components that may be 
     // required by the UART configuration routines
@@ -43,8 +43,8 @@ void EthernetInit(void)
     // Initialize Stack and application related NV variables into AppConfig.
     InitAppConfig();
 
-	// Seed the LFSRRand() function.
-	LFSRSeedRand(GenerateRandomDWORD());
+    // Seed the LFSRRand() function.
+    LFSRSeedRand(GenerateRandomDWORD());
 
 	// Initialize the MAC library.
     MACInit();
@@ -55,17 +55,17 @@ void EthernetInit(void)
 	// Initialize UDP.
     UDPInit();
 
-	// Open up a socket for our UDP server.
-	localServerSocket = UDPOpenEx(NULL, UDP_OPEN_SERVER, UDP_SERVER_PORT, UDP_SERVER_PORT);
-	if (localServerSocket == INVALID_UDP_SOCKET) {
-		FATAL_ERROR();
-	}
+    // Open up a socket for our UDP server.
+    localServerSocket = UDPOpenEx(0, UDP_OPEN_SERVER, UDP_SERVER_PORT, UDP_SERVER_PORT);
+    if (localServerSocket == INVALID_UDP_SOCKET) {
+        FATAL_ERROR();
+    }
 
-	// Open up a socket for our UDP client.
-	remoteServerSocket = UDPOpenEx(NULL, UDP_OPEN_IP_ADDRESS, UDP_CLIENT_PORT, UDP_CLIENT_PORT);
-	if (remoteServerSocket == INVALID_UDP_SOCKET) {
-		FATAL_ERROR();
-	}
+    // Open up a socket for our UDP client.
+    remoteServerSocket = UDPOpenEx(0, UDP_OPEN_IP_ADDRESS, UDP_CLIENT_PORT, UDP_CLIENT_PORT);
+    if (remoteServerSocket == INVALID_UDP_SOCKET) {
+        FATAL_ERROR();
+    }
 }
 
 void EthernetRun(void (*ProcessData)(BYTE *data, WORD dataLen))
