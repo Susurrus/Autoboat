@@ -359,72 +359,96 @@ void HilNodeTimer100Hz(void)
                 // TODO: Don't transmit this if the RC node is actually broadcasting.
             case SCHED_ID_RC_STATUS:
                 CanMessagePackageStatus(&msg, CAN_NODE_RC, UINT8_MAX, INT8_MAX, UINT8_MAX, 0, 0);
-                Ecan1Transmit(&msg);
+                if (!Ecan1Transmit(&msg)) {
+                    FATAL_ERROR();
+                }
                 break;
                 // Emulate the rudder node
             case SCHED_ID_RUDDER_ANGLE:
                 if (!(nodeStatus & NODE_STATUS_FLAG_RUDDER_ACTIVE)) {
                     PackagePgn127245(&msg, CAN_NODE_RUDDER_CONTROLLER, 0xFF, 0xF, NAN, hilReceivedData.data.rAngle);
-                    Ecan1Transmit(&msg);
+                    if (!Ecan1Transmit(&msg)) {
+                        FATAL_ERROR();
+                    }
                 }
                 break;
             case SCHED_ID_RUDDER_LIMITS:
                 if (!(nodeStatus & NODE_STATUS_FLAG_RUDDER_ACTIVE)) {
                     CanMessagePackageRudderDetails(&msg, 0, 0, 0, false, false, true, true, false);
-                    Ecan1Transmit(&msg);
+                    if (!Ecan1Transmit(&msg)) {
+                        FATAL_ERROR();
+                    }
                 }
                 break;
                 // Emulate the ACS300
             case SCHED_ID_THROTTLE_STATUS:
                 if (!(nodeStatus & NODE_STATUS_FLAG_PROP_ACTIVE)) {
                     Acs300PackageHeartbeat(&msg, (uint16_t) hilReceivedData.data.tSpeed, 0, 0, 0);
-                    Ecan1Transmit(&msg);
+                    if (!Ecan1Transmit(&msg)) {
+                        FATAL_ERROR();
+                    }
                 }
                 break;
                 // Emulate the GPS200
             case SCHED_ID_LAT_LON:
                 PackagePgn129025(&msg, nodeId, hilReceivedData.data.gpsLatitude, hilReceivedData.data.gpsLongitude);
-                Ecan1Transmit(&msg);
+                if (!Ecan1Transmit(&msg)) {
+                    FATAL_ERROR();
+                }
                 break;
             case SCHED_ID_COG_SOG:
                 PackagePgn129026(&msg, nodeId, 0xFF, 0x7, hilReceivedData.data.gpsCog, hilReceivedData.data.gpsSog);
-                Ecan1Transmit(&msg);
+                if (!Ecan1Transmit(&msg)) {
+                    FATAL_ERROR();
+                }
                 break;
             case SCHED_ID_GPS_FIX:
                 PackagePgn129539(&msg, nodeId, 0xFF, PGN_129539_MODE_3D, PGN_129539_MODE_3D, 100, 100, 100);
-                Ecan1Transmit(&msg);
+                if (!Ecan1Transmit(&msg)) {
+                    FATAL_ERROR();
+                }
                 break;
                 // Emulate the DST800 water speed sensor
                 // TODO: Don't broadcast this if the sensor exists.
             case SCHED_ID_WATER_SPD:
                 PackagePgn128259(&msg, nodeId, 0xFF, hilReceivedData.data.waterSpeed, NAN, WATER_REFERENCE_PADDLE_WHEEL);
-                Ecan1Transmit(&msg);
+                if (!Ecan1Transmit(&msg)) {
+                    FATAL_ERROR();
+                }
                 break;
             // Emulate the IMU node
             // TODO: Don't broadcast this if the sensor exists.
-            case SCHED_ID_IMU: {
-                float yawPitchRoll[3];
-                QuaternionToEuler(hilReceivedData.data.attitudeQuat, yawPitchRoll);
-                // Transmit the absolute attitude message (converting from floating- to fixed-point)
-                CanMessagePackageImuData(&msg,
-                        yawPitchRoll[0] * 8192.0,
-                        yawPitchRoll[1] * 8192.0,
-                        yawPitchRoll[2] * 8192.0);
-                Ecan1Transmit(&msg);
+            case SCHED_ID_IMU:
+                {
+                    float yawPitchRoll[3];
+                    QuaternionToEuler(hilReceivedData.data.attitudeQuat, yawPitchRoll);
+                    // Transmit the absolute attitude message (converting from floating- to fixed-point)
+                    CanMessagePackageImuData(&msg,
+                            yawPitchRoll[0] * 8192.0,
+                            yawPitchRoll[1] * 8192.0,
+                            yawPitchRoll[2] * 8192.0);
+                    if (!Ecan1Transmit(&msg)) {
+                        FATAL_ERROR();
+                    }
 
-                // Now transmit the angular velocity data (converting from floating- to fixed-point)
-                CanMessagePackageAngularVelocityData(&msg,
-                        hilReceivedData.data.gyros[0] * 4096.0,
-                        hilReceivedData.data.gyros[1] * 4096.0,
-                        hilReceivedData.data.gyros[2] * 4096.0);
-                Ecan1Transmit(&msg);
-            } break;
+                    // Now transmit the angular velocity data (converting from floating- to fixed-point)
+                    CanMessagePackageAngularVelocityData(&msg,
+                            hilReceivedData.data.gyros[0] * 4096.0,
+                            hilReceivedData.data.gyros[1] * 4096.0,
+                            hilReceivedData.data.gyros[2] * 4096.0);
+                    if (!Ecan1Transmit(&msg)) {
+                        FATAL_ERROR();
+                    }
+                }
+                break;
             }
         }
 
         // We always transmit the status of this HIL node.
         if (msgs[i] == SCHED_ID_HIL_STATUS) {
-            NodeTransmitStatus();
+            if (!NodeTransmitStatus()) {
+                FATAL_ERROR();
+            }
         }
     }
 }
