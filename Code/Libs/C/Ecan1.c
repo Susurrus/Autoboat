@@ -258,7 +258,7 @@ void _ISR _C1Interrupt(void)
     uint8_t ide = 0;
     uint8_t srr = 0;
     uint32_t id = 0;
-    volatile uint16_t *ecan_msg_buf_ptr;
+    volatile uint16_t *ecan_msg_buf_ptr; // TODO: Move this to using a proper ECAN bitfield instead
 
     // If the interrupt was set because of a transmit, check to
     // see if more messages are in the circular buffer and start

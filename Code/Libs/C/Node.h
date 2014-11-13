@@ -30,7 +30,7 @@ enum CAN_NODE_ID {
     CAN_NODE_POWER_SENSOR       = 4,
     CAN_NODE_HIL                = 5,
     CAN_NODE_IMU_SENSOR         = 6,
-    CAN_NODE_GYRO_SENSOR        = 7,
+    CAN_NODE_GYRO_SENSOR        = 7, // No longer used
     CAN_NODE_ATTITUDE_SENSOR    = 8
 };
 

@@ -240,7 +240,7 @@ void HilNodeInit(void)
         FATAL_ERROR();
     }
 
-    // Transmit the throttle status at 100Hz
+    // Transmit the throttle status at 10Hz
     if (!AddMessageRepeating(&sched, SCHED_ID_THROTTLE_STATUS, 10)) {
         FATAL_ERROR();
     }

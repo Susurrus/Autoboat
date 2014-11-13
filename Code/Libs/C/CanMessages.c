@@ -155,21 +155,21 @@ void CanMessagePackageImuData(CanMessage *msg, int16_t direction, int16_t pitch,
     msg->validBytes = CAN_MSG_SIZE_IMU_DATA;
 
     // Now fill in the data.
-	BEPackInt16(&msg->payload[0], direction);
-	BEPackInt16(&msg->payload[2], pitch);
-	BEPackInt16(&msg->payload[4], roll);
+    BEPackInt16(&msg->payload[0], direction);
+    BEPackInt16(&msg->payload[2], pitch);
+    BEPackInt16(&msg->payload[4], roll);
 }
 
 void CanMessageDecodeImuData(const CanMessage *msg, int16_t *direction, int16_t *pitch, int16_t *roll)
 {
     if (direction) {
-		BEUnpackInt16(direction, &msg->payload[0]);
+            BEUnpackInt16(direction, &msg->payload[0]);
     }
     if (pitch) {
-		BEUnpackInt16(pitch, &msg->payload[2]);
+            BEUnpackInt16(pitch, &msg->payload[2]);
     }
     if (roll) {
-		BEUnpackInt16(roll, &msg->payload[4]);
+            BEUnpackInt16(roll, &msg->payload[4]);
     }
 }
 
