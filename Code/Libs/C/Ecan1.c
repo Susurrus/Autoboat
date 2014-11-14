@@ -141,7 +141,9 @@ void Ecan1Init(uint32_t f_osc, uint32_t f_baud)
 
 int Ecan1Receive(CanMessage *msg, uint8_t *messagesLeft)
 {
+    IEC2bits.C1IE = 0; // Disable the ECAN1 receive interrupt to avoid write-during-read collisions
     int foundOne = CB_ReadMany(&ecan1RxCBuffer, msg, sizeof (CanMessage));
+    IEC2bits.C1IE = 1;
 
     if (messagesLeft) {
         if (foundOne) {
@@ -218,9 +220,12 @@ bool Ecan1Transmit(const CanMessage *msg)
     // Message are only removed upon successful transmission.
     // They will be overwritten by newer message overflowing
     // the circular buffer however.
+    IEC2bits.C1IE = 0; // Disable the ECAN1 transmit interrupt to avoid read-during-write collisions
     if (!CB_WriteMany(&ecan1TxCBuffer, msg, sizeof (CanMessage), true)) {
+        IEC2bits.C1IE = 1;
         return false;
     }
+    IEC2bits.C1IE = 1;
 
     // If this is the only message in the queue, attempt to
     // transmit it.
