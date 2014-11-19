@@ -1,0 +1,3 @@
+This is a mounting plate for the Tokimec VSAS-2GM IMU onto the wooden IMU shelf in the forward compartment of the SeaSlug. 5/8" #8 wood screws fit in the outer-most screw holes securing the plate to the boat. M6 Allen-head bolts screw up into a locknut above the Tokimec.
+
+This can be trivially lasercut out of acrylic. The #8 screws will need to be recessed and same with the boltheads for the Tokimec.
