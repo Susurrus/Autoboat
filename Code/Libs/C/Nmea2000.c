@@ -144,30 +144,35 @@ uint8_t ParsePgn126992(const uint8_t data[8], uint8_t *seqId, uint8_t *source, u
 		fieldStatus |= 0x02;
 	}
 
+        // Get the number of days since epoch. This is used for the date and timestamp calculations.
+        uint16_t days;
+        LEUnpackUint16(&days, &data[2]);
+
+        // Obtain the offset from epoch based on the number of days
+        // I use local variables here only for consistency with the yearOffset variable.
+        uint8_t yearOffset;
+        uint8_t monthOffset;
+        uint8_t dayOffset;
+        DaysSinceEpochToOffset(days, &yearOffset, &monthOffset, &dayOffset);
+        uint16_t dateYear = 1970 + (uint16_t)yearOffset;
+        uint16_t dateMonth = 1 + (uint16_t)monthOffset;
+        uint16_t dateDay = 1 + (uint16_t)dayOffset;
+
 	// Field 2: Date in days since Jan 1 1970.
 	// This field can be invalid if all 1's.
 	if (data[2] != 0xFF || data[3] != 0xFF) {
-		uint16_t days;
-		LEUnpackUint16(&days, &data[2]);
-
-		// Obtain the offset from epoch based on the number of days
-		// I use local variables here only for consistency with the yearOffset variable.
-		uint8_t yearOffset;
-		uint8_t monthOffset;
-		uint8_t dayOffset;
-		DaysSinceEpochToOffset(days, &yearOffset, &monthOffset, &dayOffset);
 
 		// Add the offsets to that these are the actual date
 		if (year) {
-			*year = 1970 + (uint16_t)yearOffset;
+			*year = dateYear;
 			fieldStatus |= 0x04;
 		}
 		if (month) {
-			*month = 1 + monthOffset;
+			*month = dateMonth;
 			fieldStatus |= 0x08;
 		}
 		if (day) {
-			*day = 1 + dayOffset;
+			*day = dateDay;
 			fieldStatus |= 0x10;
 		}
 	}
@@ -196,7 +201,16 @@ uint8_t ParsePgn126992(const uint8_t data[8], uint8_t *seqId, uint8_t *source, u
 		}
 
 		if (usecSinceEpoch) {
-			*usecSinceEpoch = x * 100;
+                    // Convert the 1e-4 seconds to microseconds and add in the microseconds for all
+                    // the days that have occurred.
+                    uint64_t usecsFromMidnight = (uint64_t)x * 100; // Correct!
+                    // But we modify the number of days by the number of leap-days:
+                    uint16_t tm_year = dateYear - 1900;
+                    uint16_t leapDays = (tm_year - 69) / 4; // A day every 4 years starting in 1973
+                    leapDays -= (tm_year - 1) / 100; // Subtract a day out every 100 years starting in 2001
+                    leapDays += (tm_year + 299) / 400; // Add a day every 400 years starting in 2001
+                    uint64_t usecsFromDays = (uint64_t)(days - leapDays) * 24 * 60 * 60 * 1e6;
+                    *usecSinceEpoch = usecsFromMidnight + usecsFromDays;
 		}
 	}
 
