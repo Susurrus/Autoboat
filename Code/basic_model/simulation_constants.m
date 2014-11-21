@@ -1,5 +1,5 @@
 % These constants are specific to the simulator and are not necessary for
-% the compilation of code_gen.mdl
+% the controller.
 
 % Initial latitude & longitude. This provides the baseline for the plant
 % to generate GPS data.
