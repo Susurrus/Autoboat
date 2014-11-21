@@ -22,3 +22,8 @@ gps_leap_rate_limit.DataType = 'int32';
 gps_leap_rate_limit.DocUnits = '1e7 degrees';
 gps_leap_rate_limit.RTWInfo.StorageClass = 'ExportedGlobal';
 gps_leap_rate_limit.RTWInfo.Alias = 'gps_leap_rate_limit';
+
+% Set the GPS offset relative to the center of rotation of the boat.
+% Units are in meters and aligned [X, Y, Z] where X is forward and Y is to
+% starboard, and Z is down.
+gps_offset = [-2.709, 0.155, 0];
