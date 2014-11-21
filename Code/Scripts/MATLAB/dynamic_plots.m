@@ -153,8 +153,17 @@ function dynamic_plots(datafile, auto_run, saveVideo)
     % pauses the rendering loop.
     isPaused = false;
 
+    % If a video is requested, fullscreen the video. Resizing the video
+    % mid-playback during recording doesn't work, so this is the only way
+    % to get big videos out. This must be done in the first figure() call
+    % and not in a separate get() call.
+    if saveVideo
+        f = figure('WindowKeyPressFcn', @playpause, 'units', 'normalized', 'outerposition', [0 0 1 1]);
+    else
+        f = figure('WindowKeyPressFcn', @playpause);
+    end
+
     % Finally plot everything for the first timepoint
-    f = figure('WindowKeyPressFcn', @playpause);
     positionAxis = subplot(3,2,[1 3 5]);
     axis(positionAxis, 'equal');
     hold(positionAxis, 'on');
