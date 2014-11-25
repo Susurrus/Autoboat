@@ -23,18 +23,18 @@ basic_test.waypoints = [36.9525669    -122.0102978    0;
 basic_test.refFrame = 0; % Set a global lat/long/alt reference frame
 
 % Basic local coordinate test
-basic_test_local.waypoints = [0       0     0;
-                              25     -36    0;
-                              145    -44    0;
-                              220    -37    0;
-                              253    -57    0;
-                              312    -56    0;
+basic_test_local.waypoints = [-1243    -747.1    0;
+                              -710     -739      0;
+                              -671.9    407.2    0;
+                              -1296     376.6    0;
+                              -1654    -128.2    0;
+                              -519.5   -211.7    0;
                              ];
 basic_test_local.refFrame = 1; % Set a local NED reference frame
 
 % A slalom path through the harbor
-harbor_slalom.waypoints = [36.9638319535983655 -122.002068758010864 0;
-                           36.9642177152830627 -122.00243353843689  0;
+harbor_slalom.waypoints = [36.9638319535983655 -122.002068758010864  0;
+                           36.9642177152830627 -122.002433538436890  0;
                            36.9646463370846874 -122.002202868461609  0;
                            36.9651821109432746 -122.002519369125366  0;
                            36.9657135948855782 -122.002326250076294  0;
@@ -45,24 +45,27 @@ harbor_slalom.waypoints = [36.9638319535983655 -122.002068758010864 0;
 harbor_slalom.refFrame = 0; % Set a global lat/long/alt reference frame
 
 % A simple 6-point figure 8
-figure8.waypoints = [0    0    0;
-                     -35  19   0;
-                     -93  21   0;
-                     -156 13   0;
-                     -186 33   0;
-                     -244 34   0;
-                     -249 77   0;
+figure8.waypoints = [-1200  -800 0;
+                     -1300  -700 0;
+                     -1200  -600 0;
+                     -1100  -700 0;
+                     -1200  -800 0;
+                     -1300  -900 0;
+                     -1200 -1000 0;
+                     -1100  -900 0;
+                     -1200  -800 0;
                     ];
 figure8.refFrame = 1; % Set a local NED reference frame
 
 % Set this variable to the waypoint struct that you'd like to use
 test_coordinates = basic_test;
+mission_count = length(test_coordinates.waypoints);
 
 % The following line just initializes an array of structs
-test_waypoints(size(test_coordinates.waypoints,1)) = Simulink.Bus.createMATLABStruct('Mission');
-for i = 1:size(test_coordinates.waypoints,1)
+test_waypoints(length(test_coordinates.waypoints)) = Simulink.Bus.createMATLABStruct('Mission');
+for i = 1:length(test_coordinates.waypoints)
     m = Simulink.Bus.createMATLABStruct('Mission');
-    m.coordinates = single(test_coordinates.waypoints(i,:));
+    m.coordinates = single(test_coordinates.waypoints(i,:)');
     m.refFrame = uint8(test_coordinates.refFrame);
     m.action = uint8(16); % MAV_CMD_NAV_WAYPOINT
     m.autocontinue = true;
