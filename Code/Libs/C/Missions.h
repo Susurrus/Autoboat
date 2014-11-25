@@ -2,7 +2,6 @@
 #define MISSIONS_H
 
 #include <stdint.h>
-#include <stdbool.h>
 
 typedef struct {
   float coordinates[3];
@@ -10,7 +9,7 @@ typedef struct {
   uint8_t refFrame;
   uint8_t action;
   float parameters[4];
-  bool autocontinue;
+  uint8_t autocontinue;
 } Mission;
 
 #endif
