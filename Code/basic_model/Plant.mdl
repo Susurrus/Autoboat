@@ -44,7 +44,7 @@ Model {
       Name		      "imu"
     }
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.45"
+    ComputedModelVersion    "1.46"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -66,13 +66,13 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Nov 21 15:18:40 2014"
-  RTWModifiedTimeStamp	  338483912
-  ModelVersionFormat	  "1.%<AutoIncrement:45>"
+  LastModifiedDate	  "Tue Nov 25 17:47:09 2014"
+  RTWModifiedTimeStamp	  338838422
+  ModelVersionFormat	  "1.%<AutoIncrement:46>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
-  LibraryLinkDisplay	  "disabled"
+  LibraryLinkDisplay	  "user"
   WideLines		  off
   ShowLineDimensions	  on
   ShowPortDataTypes	  on
@@ -106,7 +106,6 @@ Model {
     $ObjectID		    1
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "Plant"
-    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -423,7 +422,7 @@ Model {
 	  EnableParallelModelReferenceBuilds off
 	  ParallelModelReferenceErrorOnInvalidPool on
 	  ParallelModelReferenceMATLABWorkerInit "None"
-	  ModelReferenceNumInstancesAllowed "Multi"
+	  ModelReferenceNumInstancesAllowed "Single"
 	  PropagateVarSize	  "Infer from blocks in model"
 	  ModelReferencePassRootInputsByReference on
 	  ModelReferenceMinAlgLoopOccurrences off
@@ -649,8 +648,8 @@ Model {
       }
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=0 "
-      CurrentDlgPage	      "Data Import//Export"
-      ConfigPrmDlgPosition     [ 55, 36, 1333, 984 ] 
+      CurrentDlgPage	      "Model Referencing"
+      ConfigPrmDlgPosition     [ 47, 6, 1341, 992 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -1020,7 +1019,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "178"
+    SIDHighWatermark	    "183"
     Block {
       BlockType		      Inport
       Name		      "Commanded Rudder"
@@ -2512,6 +2511,29 @@ Model {
 	  NonVirtualBus		  on
 	}
 	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion"
+	  SID			  "180"
+	  Position		  [175, 566, 215, 584]
+	  ZOrder		  -7
+	  ShowName		  off
+	  OutDataTypeStr	  "single"
+	  RndMeth		  "Simplest"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  DataTypeConversion
+	  Name			  "Data Type Conversion1"
+	  SID			  "181"
+	  Position		  [328, 490, 382, 505]
+	  ZOrder		  -7
+	  BlockRotation		  270
+	  ShowName		  off
+	  OutDataTypeStr	  "double"
+	  RndMeth		  "Simplest"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
 	  BlockType		  Delay
 	  Name			  "Delay"
 	  SID			  "125"
@@ -2596,7 +2618,7 @@ Model {
 	  Ports			  [1, 1]
 	  Position		  [470, 286, 530, 314]
 	  ShowName		  off
-	  LibraryVersion	  "1.137"
+	  LibraryVersion	  "1.145"
 	  SourceBlock		  "uSimLib/Math/Euclidean\nnorm"
 	  SourceType		  ""
 	  ShowPortLabels	  "FromPortIcon"
@@ -2672,18 +2694,6 @@ Model {
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
-	}
-	Block {
-	  BlockType		  Product
-	  Name			  "Product"
-	  SID			  "170"
-	  Ports			  [2, 1]
-	  Position		  [265, 537, 295, 568]
-	  ZOrder		  -19
-	  ShowName		  off
-	  InputSameDT		  off
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
 	}
 	Block {
 	  BlockType		  Selector
@@ -2881,14 +2891,16 @@ Model {
 	  ShowName		  off
 	}
 	Block {
-	  BlockType		  Trigonometry
-	  Name			  "Trigonometric\nFunction"
-	  SID			  "166"
-	  Ports			  [1, 1]
-	  Position		  [185, 560, 215, 590]
-	  ZOrder		  -34
-	  ShowName		  off
-	  Operator		  "cos"
+	  BlockType		  Reference
+	  Name			  "Vector rotation"
+	  SID			  "179"
+	  Ports			  [2, 1]
+	  Position		  [240, 538, 350, 587]
+	  ZOrder		  -4
+	  ForegroundColor	  "blue"
+	  LibraryVersion	  "1.145"
+	  SourceBlock		  "uSimLib/Math/Vector rotation"
+	  SourceType		  "Stateflow"
 	}
 	Block {
 	  BlockType		  Constant
@@ -3012,6 +3024,7 @@ Model {
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "gps_offset"
+	  OutDataTypeStr	  "single"
 	}
 	Block {
 	  BlockType		  SubSystem
@@ -3344,13 +3357,13 @@ Model {
 	  SrcPort		  1
 	  Points		  [20, 0]
 	  Branch {
-	    Points		    [0, -15]
-	    DstBlock		    "Selector"
+	    Points		    [0, 50]
+	    DstBlock		    "Euclidean\nnorm"
 	    DstPort		    1
 	  }
 	  Branch {
-	    Points		    [0, 50]
-	    DstBlock		    "Euclidean\nnorm"
+	    Points		    [0, -15]
+	    DstBlock		    "Selector"
 	    DstPort		    1
 	  }
 	}
@@ -3369,21 +3382,26 @@ Model {
 	Line {
 	  SrcBlock		  "Delay3"
 	  SrcPort		  1
-	  DstBlock		  "Trigonometric\nFunction"
+	  DstBlock		  "Data Type Conversion"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Vector rotation"
+	  SrcPort		  1
+	  DstBlock		  "Data Type Conversion1"
 	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Zero level trust9"
 	  SrcPort		  1
-	  Points		  [90, 0; 0, 15]
-	  DstBlock		  "Product"
+	  Points		  [15, 0; 0, 20]
+	  DstBlock		  "Vector rotation"
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Trigonometric\nFunction"
+	  SrcBlock		  "Data Type Conversion"
 	  SrcPort		  1
-	  Points		  [20, 0; 0, -15]
-	  DstBlock		  "Product"
+	  DstBlock		  "Vector rotation"
 	  DstPort		  2
 	}
 	Line {
@@ -3394,9 +3412,8 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Product"
+	  SrcBlock		  "Data Type Conversion1"
 	  SrcPort		  1
-	  Points		  [55, 0]
 	  DstBlock		  "Sum1"
 	  DstPort		  2
 	}
