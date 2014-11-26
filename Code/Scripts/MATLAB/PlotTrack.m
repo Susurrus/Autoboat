@@ -118,42 +118,42 @@ end
 % vehicle position into the local waypoint segment's coordinate frame.
 % So while the original vessel coordinates were North/East, the new will be
 % Along-track distance/cross-track distance.
-ax(2) = subplot(2,1,2);
-north = [ones(length(wp0), 1) zeros(length(wp0), 1)];
-track = wp1(:, 1:2) - wp0(:, 1:2);
-% Determine angle between waypoint track and North vector. This is how much we need to rotate the boat position.
-angles = -atan2(track(:,2), track(:,1));
-rotmat_components = [cos(angles) -sin(angles) sin(angles)];
-vessel_pos = position(:,1:2) - wp0(:,1:2);
-new_position = size(position(:,1:2));
-for i = 1:length(vessel_pos)
-    rotmat = [rotmat_components(i, 1) rotmat_components(i, 2); rotmat_components(i, 3) rotmat_components(i, 1)];
-    new_position(i, :) = rotmat * vessel_pos(i, :)';
-end
-crosstrack_error = new_position(:, 2);
-plot(crosstrack_error, 'k');
-set(gca, 'XTick', []);
-title('Crosstrack error');
-xlabel('Time');
-ylabel('Error (m)');
-axis tight;
-
-% Output the heading RMS error over the whole thing
-er = sum(exp_heading .^ 2);
-heading_rms_error = sqrt(er/length(crosstrack_error))
-
-% Now the RMS error over a leg starting with a 10deg heading deviation is:
-range = 7433:10780;
-er = sum((exp_heading(range)) .^ 2);
-leg_heading_rms_error = sqrt(er/length(exp_heading(range)))
-
-% Finally add some limits indicating when waypoints changed
-transitions = find(diff(wp0(:,1)) > 0 | diff(wp0(:,2)) > 0 | diff(wp1(:,1)) > 0 | diff(wp1(:,2)) > 0);
-ylim = get(gca, 'YLim');
-x = 1:length(wp0);
-for i = 1:length(transitions)
-    line([x(transitions(i)) x(transitions(i))], [ylim(1) ylim(2)], 'Color', 'b', 'LineStyle', '--');
-end
-
-% Now link the zooming of the plots together
-linkaxes(ax, 'x');
+% ax(2) = subplot(2,1,2);
+% north = [ones(length(wp0), 1) zeros(length(wp0), 1)];
+% track = wp1(:, 1:2) - wp0(:, 1:2);
+% % Determine angle between waypoint track and North vector. This is how much we need to rotate the boat position.
+% angles = -atan2(track(:,2), track(:,1));
+% rotmat_components = [cos(angles) -sin(angles) sin(angles)];
+% vessel_pos = position(:,1:2) - wp0(:,1:2);
+% new_position = size(position(:,1:2));
+% for i = 1:length(vessel_pos)
+%     rotmat = [rotmat_components(i, 1) rotmat_components(i, 2); rotmat_components(i, 3) rotmat_components(i, 1)];
+%     new_position(i, :) = rotmat * vessel_pos(i, :)';
+% end
+% crosstrack_error = new_position(:, 2);
+% plot(crosstrack_error, 'k');
+% set(gca, 'XTick', []);
+% title('Crosstrack error');
+% xlabel('Time');
+% ylabel('Error (m)');
+% axis tight;
+%
+% % Output the heading RMS error over the whole thing
+% er = sum(exp_heading .^ 2);
+% heading_rms_error = sqrt(er/length(crosstrack_error))
+%
+% % Now the RMS error over a leg starting with a 10deg heading deviation is:
+% range = 7433:10780;
+% er = sum((exp_heading(range)) .^ 2);
+% leg_heading_rms_error = sqrt(er/length(exp_heading(range)))
+%
+% % Finally add some limits indicating when waypoints changed
+% transitions = find(diff(wp0(:,1)) > 0 | diff(wp0(:,2)) > 0 | diff(wp1(:,1)) > 0 | diff(wp1(:,2)) > 0);
+% ylim = get(gca, 'YLim');
+% x = 1:length(wp0);
+% for i = 1:length(transitions)
+%     line([x(transitions(i)) x(transitions(i))], [ylim(1) ylim(2)], 'Color', 'b', 'LineStyle', '--');
+% end
+%
+% % Now link the zooming of the plots together
+% linkaxes(ax, 'x');
