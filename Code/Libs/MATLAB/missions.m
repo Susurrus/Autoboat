@@ -12,15 +12,21 @@ emptyMission = Simulink.Bus.createMATLABStruct('Mission');
 % commented-out matrices are the original test ones. Overrides are
 % implemented below for the in-harbor boat test.
 
-% Basic first test:
+% Basic first test, 2 waypoints roughly north-south:
 basic_test.waypoints = [36.9525669    -122.0102978    0;
-                        36.957368     -122.0102119    1;
-                        36.9577109    -121.9973373    2;
-                        36.9520867    -121.9976807    3;
-                        36.9488620    -122.0033455    4;
-                        36.9590826    -122.0042896    5;
+                        36.957368     -122.0102119    0;
                        ];
 basic_test.refFrame = 0; % Set a global lat/long/alt reference frame
+
+% Basic first test:
+basic_multiwaypoint_test.waypoints = [36.9525669    -122.0102978    0;
+                                      36.957368     -122.0102119    0;
+                                      36.9577109    -121.9973373    0;
+                                      36.9520867    -121.9976807    0;
+                                      36.9488620    -122.0033455    0;
+                                      36.9590826    -122.0042896    0;
+                                     ];
+basic_multiwaypoint_test.refFrame = 0; % Set a global lat/long/alt reference frame
 
 % Basic local coordinate test
 basic_test_local.waypoints = [-1243    -747.1    0;
@@ -62,8 +68,8 @@ test_coordinates = basic_test;
 mission_count = length(test_coordinates.waypoints);
 
 % The following line just initializes an array of structs
-test_waypoints(length(test_coordinates.waypoints)) = Simulink.Bus.createMATLABStruct('Mission');
-for i = 1:length(test_coordinates.waypoints)
+test_waypoints(size(test_coordinates.waypoints, 1)) = Simulink.Bus.createMATLABStruct('Mission');
+for i = 1:size(test_coordinates.waypoints, 1)
     m = Simulink.Bus.createMATLABStruct('Mission');
     m.coordinates = single(test_coordinates.waypoints(i,:)');
     m.refFrame = uint8(test_coordinates.refFrame);
