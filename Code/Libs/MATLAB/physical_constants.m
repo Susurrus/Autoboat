@@ -26,4 +26,4 @@ gps_leap_rate_limit.RTWInfo.Alias = 'gps_leap_rate_limit';
 % Set the GPS offset relative to the center of rotation of the boat.
 % Units are in meters and aligned [X, Y, Z] where X is forward and Y is to
 % starboard, and Z is down.
-gps_offset = [-2.709, 0.155, 0];
+gps_offset = [-2.709, -0.155, 0];
