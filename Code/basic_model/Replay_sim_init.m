@@ -54,8 +54,16 @@ automode = automode & ~errors;
 clear manual_override_int;
 
 % Split this data into groups based on the mode of autonomousity.
+% Make sure that if the dataset starts or stops while the vehicle is
+% autonomous, that it's handled correctly.
 start_indices = find(diff(automode) > 0);
+if automode(1) == 1
+    start_indices = [1; start_indices];
+end
 end_indices = find(diff(automode) < 0);
+if automode(end) == 1
+    end_indices = [end_indices; length(automode)];
+end
 assert(length(start_indices) == length(end_indices));
 clear mode_with_pos;
 
