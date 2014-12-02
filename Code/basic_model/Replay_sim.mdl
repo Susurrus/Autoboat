@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.34"
+    ComputedModelVersion    "1.35"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -28,9 +28,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Dec 01 14:24:57 2014"
-  RTWModifiedTimeStamp	  339332696
-  ModelVersionFormat	  "1.%<AutoIncrement:34>"
+  LastModifiedDate	  "Mon Dec 01 20:54:28 2014"
+  RTWModifiedTimeStamp	  339368057
+  ModelVersionFormat	  "1.%<AutoIncrement:35>"
   ConfigurationManager	  "None"
   SampleTimeColors	  on
   SampleTimeAnnotations	  off
@@ -68,6 +68,7 @@ Model {
     $ObjectID		    1
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "Replay_sim2"
+    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -965,7 +966,7 @@ Model {
   }
   System {
     Name		    "Replay_sim"
-    Location		    [10, 82, 1028, 647]
+    Location		    [63, 202, 1081, 767]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -979,7 +980,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "924"
+    SIDHighWatermark	    "929"
     Block {
       BlockType		      SubSystem
       Name		      "Autonomous Controller"
@@ -2119,6 +2120,7 @@ Model {
 	      IconDisplay	      "Port number"
 	      Port {
 		PortNumber		1
+		PropagatedSignals	"throttle"
 		ShowPropagatedSignals	"on"
 		RTWStorageClass		"Auto"
 		DataLoggingNameMode	"SignalName"
@@ -2596,7 +2598,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"GPS Estimator"
-		Location		[200, 50, 1904, 1048]
+		Location		[200, 82, 1904, 1051]
 		Open			off
 		ModelBrowserVisibility	off
 		ModelBrowserWidth	200
@@ -4668,8 +4670,8 @@ Model {
     Block {
       BlockType		      Constant
       Name		      "Constant5"
-      SID		      "38"
-      Position		      [45, 114, 85, 136]
+      SID		      "927"
+      Position		      [135, 94, 175, 116]
       ZOrder		      -5
       BackgroundColor	      "gray"
       ShowName		      off
@@ -4684,12 +4686,18 @@ Model {
     Block {
       BlockType		      Constant
       Name		      "Constant6"
-      SID		      "846"
-      Position		      [55, 409, 95, 431]
+      SID		      "928"
+      Position		      [235, 414, 275, 436]
       ZOrder		      -5
       BackgroundColor	      "gray"
       ShowName		      off
       OutDataTypeStr	      "boolean"
+      Port {
+	PortNumber		1
+	Name			"newData"
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
     }
     Block {
       BlockType		      Gain
@@ -4873,7 +4881,7 @@ Model {
       BlockType		      FromWorkspace
       Name		      "reset10"
       SID		      "806"
-      Position		      [150, 437, 250, 463]
+      Position		      [150, 442, 250, 468]
       ZOrder		      -10
       ShowName		      off
       VariableName	      "attitude"
@@ -4926,6 +4934,25 @@ Model {
       Interpolate	      off
       ZeroCross		      on
       OutputAfterFinalValue   "Holding final value"
+    }
+    Block {
+      BlockType		      FromWorkspace
+      Name		      "reset14"
+      SID		      "926"
+      Position		      [15, 112, 115, 138]
+      ZOrder		      -10
+      ShowName		      off
+      VariableName	      "gpsNewData"
+      SampleTime	      "T_step"
+      Interpolate	      off
+      ZeroCross		      on
+      OutputAfterFinalValue   "Holding final value"
+      Port {
+	PortNumber		1
+	Name			"newData"
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
     }
     Block {
       BlockType		      FromWorkspace
@@ -5059,6 +5086,19 @@ Model {
 	RTWStorageClass		"Auto"
 	DataLoggingNameMode	"SignalName"
       }
+    }
+    Block {
+      BlockType		      FromWorkspace
+      Name		      "reset9"
+      SID		      "925"
+      Position		      [45, 417, 145, 443]
+      ZOrder		      -10
+      ShowName		      off
+      VariableName	      "imuNewData"
+      SampleTime	      "T_step"
+      Interpolate	      off
+      ZeroCross		      on
+      OutputAfterFinalValue   "Holding final value"
     }
     Line {
       Name		      "water_speed"
@@ -5196,14 +5236,6 @@ Model {
       DstPort		      2
     }
     Line {
-      Name		      "newData"
-      Labels		      [0, 0]
-      SrcBlock		      "Constant5"
-      SrcPort		      1
-      DstBlock		      "Bus\nCreator"
-      DstPort		      1
-    }
-    Line {
       SrcBlock		      "Mux"
       SrcPort		      1
       DstBlock		      "Gain"
@@ -5249,7 +5281,7 @@ Model {
       Labels		      [-1, 0]
       SrcBlock		      "reset10"
       SrcPort		      1
-      Points		      [0, 5; 50, 0; 0, 20]
+      Points		      [50, 0; 0, 20]
       DstBlock		      "Bus\nCreator1"
       DstPort		      2
     }
@@ -5283,9 +5315,20 @@ Model {
       DstPort		      3
     }
     Line {
+      Name		      "newData"
+      Labels		      [2, 0]
+      SrcBlock		      "Constant5"
+      SrcPort		      1
+      Points		      [45, 0; 0, 20]
+      DstBlock		      "Bus\nCreator"
+      DstPort		      1
+    }
+    Line {
+      Name		      "newData"
+      Labels		      [0, 0]
       SrcBlock		      "Constant6"
       SrcPort		      1
-      Points		      [245, 0]
+      Points		      [30, 0; 0, 25]
       DstBlock		      "Bus\nCreator1"
       DstPort		      1
     }
@@ -5296,14 +5339,6 @@ Model {
       "r running, call `Replay_sim_visualize` to see the results"
       Position		      [331, 78]
       HorizontalAlignment     "left"
-    }
-    Annotation {
-      Name		      "TODO: Get the newData signal working correctly"
-      Position		      [139, 82]
-    }
-    Annotation {
-      Name		      "TODO: Get the newData signal working correctly"
-      Position		      [149, 392]
     }
   }
 }
@@ -5334,8 +5369,6 @@ Stateflow {
     firstJunction	    4
     viewObj		    2
     machine		    1
-    subviewS {
-    }
     ssIdHighWaterMark	    6
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
@@ -5473,8 +5506,6 @@ Stateflow {
     firstJunction	    12
     viewObj		    10
     machine		    1
-    subviewS {
-    }
     ssIdHighWaterMark	    10
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
@@ -5674,8 +5705,6 @@ Stateflow {
     firstJunction	    22
     viewObj		    20
     machine		    1
-    subviewS {
-    }
     ssIdHighWaterMark	    15
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
@@ -5875,8 +5904,6 @@ Stateflow {
     firstJunction	    32
     viewObj		    30
     machine		    1
-    subviewS {
-    }
     ssIdHighWaterMark	    5
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
@@ -5994,8 +6021,6 @@ Stateflow {
     firstJunction	    39
     viewObj		    37
     machine		    1
-    subviewS {
-    }
     ssIdHighWaterMark	    10
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
