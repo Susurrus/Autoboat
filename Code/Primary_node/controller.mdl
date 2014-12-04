@@ -45,7 +45,7 @@ Model {
       Name		      "internalVars"
     }
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2486"
+    ComputedModelVersion    "1.2487"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -67,9 +67,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Nov 25 17:50:19 2014"
-  RTWModifiedTimeStamp	  338833377
-  ModelVersionFormat	  "1.%<AutoIncrement:2486>"
+  LastModifiedDate	  "Thu Dec 04 08:41:14 2014"
+  RTWModifiedTimeStamp	  339582857
+  ModelVersionFormat	  "1.%<AutoIncrement:2487>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1184,7 +1184,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "25765"
+    SIDHighWatermark	    "25771"
     Block {
       BlockType		      Inport
       Name		      "sensors_GPS"
@@ -5203,13 +5203,37 @@ Model {
 		  Name			  "Sum"
 		  SID			  "25750"
 		  Ports			  [2, 1]
-		  Position		  [465, 175, 485, 195]
+		  Position		  [660, 175, 680, 195]
 		  ZOrder		  -32
 		  ShowName		  off
 		  IconShape		  "round"
 		  Inputs		  "-+|"
 		  InputSameDT		  off
 		  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Switch
+		  Name			  "Switch"
+		  SID			  "25767"
+		  Position		  [925, 460, 975, 500]
+		  ZOrder		  -18
+		  Criteria		  "u2 ~= 0"
+		  InputSameDT		  off
+		  OutDataTypeStr	  "Inherit: Inherit via back propagation"
+		  RndMeth		  "Simplest"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Switch
+		  Name			  "Switch1"
+		  SID			  "25769"
+		  Position		  [565, 95, 615, 135]
+		  ZOrder		  -18
+		  Criteria		  "u2 ~= 0"
+		  InputSameDT		  off
+		  OutDataTypeStr	  "Inherit: Inherit via back propagation"
+		  RndMeth		  "Simplest"
 		  SaturateOnIntegerOverflow off
 		}
 		Block {
@@ -5223,6 +5247,46 @@ Model {
 		  LibraryVersion	  "1.145"
 		  SourceBlock		  "uSimLib/Math/Vector rotation"
 		  SourceType		  "Stateflow"
+		}
+		Block {
+		  BlockType		  Constant
+		  Name			  "Zero level trust1"
+		  SID			  "25766"
+		  Position		  [755, 469, 885, 491]
+		  BackgroundColor	  "gray"
+		  ShowName		  off
+		  Value			  "GpsOffsetCorrectionEnable"
+		  OutDataTypeStr	  "boolean"
+		}
+		Block {
+		  BlockType		  Constant
+		  Name			  "Zero level trust2"
+		  SID			  "25768"
+		  Position		  [785, 500, 855, 520]
+		  BackgroundColor	  "gray"
+		  ShowName		  off
+		  Value			  "0"
+		  OutDataTypeStr	  "single"
+		}
+		Block {
+		  BlockType		  Constant
+		  Name			  "Zero level trust3"
+		  SID			  "25770"
+		  Position		  [395, 104, 525, 126]
+		  BackgroundColor	  "gray"
+		  ShowName		  off
+		  Value			  "GpsOffsetCorrectionEnable"
+		  OutDataTypeStr	  "boolean"
+		}
+		Block {
+		  BlockType		  Constant
+		  Name			  "Zero level trust4"
+		  SID			  "25771"
+		  Position		  [425, 135, 495, 155]
+		  BackgroundColor	  "gray"
+		  ShowName		  off
+		  Value			  "0"
+		  OutDataTypeStr	  "single"
 		}
 		Block {
 		  BlockType		  Constant
@@ -5542,7 +5606,7 @@ Model {
 		Line {
 		  SrcBlock		  "Sum"
 		  SrcPort		  1
-		  Points		  [365, 0]
+		  Points		  [170, 0]
 		  Branch {
 		    Points		    [0, 165]
 		    DstBlock		    "Discrete-Time\nIntegrator4"
@@ -5569,26 +5633,64 @@ Model {
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Vector rotation"
+		  SrcBlock		  "cross product"
 		  SrcPort		  1
-		  Points		  [390, 0]
+		  DstBlock		  "Switch1"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Switch"
+		  SrcPort		  1
+		  Points		  [10, 0; 0, -110]
 		  DstBlock		  "Add"
 		  DstPort		  3
 		}
 		Line {
-		  SrcBlock		  "cross product"
+		  SrcBlock		  "Zero level trust1"
 		  SrcPort		  1
-		  Points		  [95, 0]
+		  DstBlock		  "Switch"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "Vector rotation"
+		  SrcPort		  1
+		  DstBlock		  "Switch"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Zero level trust2"
+		  SrcPort		  1
+		  Points		  [40, 0; 0, -15]
+		  DstBlock		  "Switch"
+		  DstPort		  3
+		}
+		Line {
+		  SrcBlock		  "Zero level trust3"
+		  SrcPort		  1
+		  DstBlock		  "Switch1"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "Zero level trust4"
+		  SrcPort		  1
+		  Points		  [40, 0; 0, -15]
+		  DstBlock		  "Switch1"
+		  DstPort		  3
+		}
+		Line {
+		  SrcBlock		  "Switch1"
+		  SrcPort		  1
+		  Points		  [50, 0]
 		  DstBlock		  "Sum"
 		  DstPort		  1
 		}
 		Annotation {
-		  Name			  "Subtract off the GPS offset from the final calculated position"
-		  Position		  [818, 475]
+		  Name			  "Subtract off the GPS offset from the final calculated position if it's\nbeen enabled."
+		  Position		  [803, 440]
 		}
 		Annotation {
-		  Name			  "Subtract off the extra velocity induced by the GPS offset"
-		  Position		  [533, 85]
+		  Name			  "Subtract off the extra velocity induced by the GPS offset\nif it's been enabled."
+		  Position		  [533, 70]
 		}
 	      }
 	    }

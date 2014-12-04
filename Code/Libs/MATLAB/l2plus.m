@@ -1,4 +1,5 @@
-% Set some constants for use with the L2+ trajectory controller
+% Set some constants for use in the controller. Most of these are
+% L2+-related.
 
 % The time-offset for the L2+ controller. The lookahead distance is TStar *
 % Velocity. Larger values imply lower-gain.
@@ -23,7 +24,7 @@ IPStar.RTWInfo.Alias = 'ipStar';
 % Boolean indicating whether the initial-point logic will be used.
 InitialPoint = Simulink.Parameter;
 InitialPoint.Description = 'Indicates whether the initial-point logic will be used';
-InitialPoint.Value = 0;
+InitialPoint.Value = false;
 InitialPoint.DataType = 'boolean';
 InitialPoint.DocUnits = '';
 InitialPoint.RTWInfo.StorageClass = 'ExportedGlobal';
@@ -32,7 +33,7 @@ InitialPoint.RTWInfo.Alias = 'initialPoint';
 % Boolean indicating whether to turn towards the L2 vector or away from it.
 Turn2Track = Simulink.Parameter;
 Turn2Track.Description = 'Indicates to turn towards L2 vector versus away from it.';
-Turn2Track.Value = 0;
+Turn2Track.Value = false;
 Turn2Track.DataType = 'boolean';
 Turn2Track.DocUnits = '';
 Turn2Track.RTWInfo.StorageClass = 'ExportedGlobal';
@@ -74,3 +75,12 @@ KPsiDot.DataType = 'single';
 KPsiDot.DocUnits = '';
 KPsiDot.RTWInfo.StorageClass = 'ExportedGlobal';
 KPsiDot.RTWInfo.Alias = 'KPsiDot';
+
+% Toggle the GPS offset correction code
+GpsOffsetCorrectionEnable = Simulink.Parameter;
+GpsOffsetCorrectionEnable.Description = 'Enables GPS offset correct when enabled.';
+GpsOffsetCorrectionEnable.Value = false;
+GpsOffsetCorrectionEnable.DataType = 'boolean';
+GpsOffsetCorrectionEnable.DocUnits = '';
+GpsOffsetCorrectionEnable.RTWInfo.StorageClass = 'ExportedGlobal';
+GpsOffsetCorrectionEnable.RTWInfo.Alias = 'GpsOffsetCorrectionEnable';
