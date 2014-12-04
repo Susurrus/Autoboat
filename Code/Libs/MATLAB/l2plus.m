@@ -79,7 +79,7 @@ KPsiDot.RTWInfo.Alias = 'KPsiDot';
 % Toggle the GPS offset correction code
 GpsOffsetCorrectionEnable = Simulink.Parameter;
 GpsOffsetCorrectionEnable.Description = 'Enables GPS offset correct when enabled.';
-GpsOffsetCorrectionEnable.Value = false;
+GpsOffsetCorrectionEnable.Value = true;
 GpsOffsetCorrectionEnable.DataType = 'boolean';
 GpsOffsetCorrectionEnable.DocUnits = '';
 GpsOffsetCorrectionEnable.RTWInfo.StorageClass = 'ExportedGlobal';
