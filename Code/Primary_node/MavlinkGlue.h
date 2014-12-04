@@ -14,7 +14,8 @@
  *
  * This code was written to be as generic as possible. If you remove all of the
  * custom messages and switch the transmission from uart1EnqueueData() it should
- * be almost exclusively relient on modules like MissionManager and the scheduler.
+ * be almost exclusively relient on modules like controller (for the MissionManager*() functions)
+ * and the scheduler.
  */
 
 #ifndef MAVLINK_GLUE_H
