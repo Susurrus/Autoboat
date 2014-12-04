@@ -245,7 +245,6 @@ elems(6).Max = [];
 MissionList = Simulink.Bus;
 MissionList.Description = sprintf('This is the central data store for the various Missions that will be used by the autopilot.');
 MissionList.DataScope = 'Exported';
-MissionList.HeaderFile = 'MissionManager.h';
 MissionList.Alignment = -1;
 MissionList.Elements = elems;
 assignin('base', 'MissionList', MissionList)
