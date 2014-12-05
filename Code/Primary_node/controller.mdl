@@ -45,7 +45,7 @@ Model {
       Name		      "internalVars"
     }
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2487"
+    ComputedModelVersion    "1.2488"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -67,9 +67,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Dec 04 08:41:14 2014"
-  RTWModifiedTimeStamp	  339582857
-  ModelVersionFormat	  "1.%<AutoIncrement:2487>"
+  LastModifiedDate	  "Thu Dec 04 18:10:48 2014"
+  RTWModifiedTimeStamp	  339595633
+  ModelVersionFormat	  "1.%<AutoIncrement:2488>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1184,7 +1184,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "25771"
+    SIDHighWatermark	    "25835"
     Block {
       BlockType		      Inport
       Name		      "sensors_GPS"
@@ -1392,20 +1392,115 @@ Model {
 	    }
 	    Block {
 	      BlockType		      Reference
+	      Name		      "AppendMission"
+	      SID		      "25830"
+	      Ports		      [1, 1]
+	      Position		      [200, 174, 300, 216]
+	      ZOrder		      -5
+	      Priority		      "-2"
+	      LibraryVersion	      "1.145"
+	      SourceBlock	      "uSimLib/Mission Manager/AppendMission"
+	      SourceType	      ""
+	      sampleTime	      "-1"
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "ClearMissionList"
+	      SID		      "25831"
+	      Ports		      []
+	      Position		      [200, 264, 300, 306]
+	      ZOrder		      -5
+	      ForegroundColor	      "cyan"
+	      Priority		      "-1"
+	      LibraryVersion	      "1.145"
+	      SourceBlock	      "uSimLib/Mission Manager/ClearMissionList"
+	      SourceType	      ""
+	      sampleTime	      "-1"
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant"
+	      SID		      "25834"
+	      Position		      [45, 184, 140, 206]
+	      ZOrder		      -5
+	      BackgroundColor	      "gray"
+	      ShowName		      off
+	      Value		      "test_waypoints(1)"
+	      OutDataTypeStr	      "Bus: Mission"
+	    }
+	    Block {
+	      BlockType		      DataTypeConversion
+	      Name		      "Data Type Conversion"
+	      SID		      "25835"
+	      Position		      [335, 183, 390, 207]
+	      ZOrder		      -7
+	      ShowName		      off
+	      OutDataTypeStr	      "uint8"
+	      RndMeth		      "Simplest"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "Mission Init"
+	      SID		      "25832"
+	      Ports		      []
+	      Position		      [200, 84, 300, 126]
+	      ZOrder		      -4
+	      ForegroundColor	      "blue"
+	      BackgroundColor	      "cyan"
+	      Priority		      "-3"
+	      LibraryVersion	      "1.145"
+	      SourceBlock	      "uSimLib/Mission Manager/Mission Init"
+	      SourceType	      ""
+	      maxMissions	      "16"
+	      sampleTime	      "-1"
+	    }
+	    Block {
+	      BlockType		      Reference
 	      Name		      "Mission InitAll"
 	      SID		      "25715"
 	      Ports		      []
-	      Position		      [195, 69, 296, 112]
+	      Position		      [200, 354, 301, 397]
 	      ZOrder		      -10
 	      ForegroundColor	      "red"
 	      BackgroundColor	      "yellow"
-	      Priority		      "2"
+	      Priority		      "0"
 	      LibraryVersion	      "1.145"
 	      SourceBlock	      "uSimLib/Mission Manager/Mission InitAll"
 	      SourceType	      ""
 	      maxMissions	      "16"
 	      sampleTime	      "-1"
 	      missionsVar	      "test_waypoints"
+	    }
+	    Block {
+	      BlockType		      Reference
+	      Name		      "SetCurrentMission"
+	      SID		      "25833"
+	      Ports		      [1]
+	      Position		      [440, 174, 540, 216]
+	      ZOrder		      -5
+	      LibraryVersion	      "1.145"
+	      SourceBlock	      "uSimLib/Mission Manager/SetCurrentMission"
+	      SourceType	      ""
+	      sampleTime	      "-1"
+	    }
+	    Line {
+	      SrcBlock		      "AppendMission"
+	      SrcPort		      1
+	      DstBlock		      "Data Type Conversion"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Constant"
+	      SrcPort		      1
+	      DstBlock		      "AppendMission"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "Data Type Conversion"
+	      SrcPort		      1
+	      DstBlock		      "SetCurrentMission"
+	      DstPort		      1
 	    }
 	  }
 	}
@@ -1927,7 +2022,7 @@ Model {
 		  ForegroundColor	  "red"
 		  LibraryVersion	  "1.145"
 		  SourceBlock		  "uSimLib/Mission Manager/GetCurrentMission"
-		  SourceType		  ""
+		  SourceType		  "Unknown"
 		  sampleTime		  "T_step"
 		}
 		Block {
@@ -1941,7 +2036,7 @@ Model {
 		  BackgroundColor	  "yellow"
 		  LibraryVersion	  "1.145"
 		  SourceBlock		  "uSimLib/Mission Manager/GetMission"
-		  SourceType		  ""
+		  SourceType		  "Unknown"
 		  sampleTime		  "T_step"
 		}
 		Block {
@@ -2016,7 +2111,7 @@ Model {
 		    BackgroundColor	    "cyan"
 		    LibraryVersion	    "1.145"
 		    SourceBlock		    "uSimLib/Mission Manager/GetStartingPoint"
-		    SourceType		    ""
+		    SourceType		    "Unknown"
 		    sampleTime		    "-1"
 		    }
 		    Block {
@@ -2132,7 +2227,7 @@ Model {
 		    BackgroundColor	    "cyan"
 		    LibraryVersion	    "1.145"
 		    SourceBlock		    "uSimLib/Mission Manager/GetMission"
-		    SourceType		    ""
+		    SourceType		    "Unknown"
 		    sampleTime		    "-1"
 		    }
 		    Block {
@@ -2580,7 +2675,7 @@ Model {
 		  ForegroundColor	  "cyan"
 		  LibraryVersion	  "1.145"
 		  SourceBlock		  "uSimLib/Mission Manager/GetCurrentMission"
-		  SourceType		  ""
+		  SourceType		  "Unknown"
 		  sampleTime		  "-1"
 		}
 		Block {
@@ -2593,7 +2688,7 @@ Model {
 		  ForegroundColor	  "cyan"
 		  LibraryVersion	  "1.145"
 		  SourceBlock		  "uSimLib/Mission Manager/GetMissionCount"
-		  SourceType		  ""
+		  SourceType		  "Unknown"
 		  sampleTime		  "-1"
 		}
 		Block {
@@ -2676,7 +2771,7 @@ Model {
 		    ForegroundColor	    "cyan"
 		    LibraryVersion	    "1.145"
 		    SourceBlock		    "uSimLib/Mission Manager/SetCurrentMission"
-		    SourceType		    ""
+		    SourceType		    "Unknown"
 		    sampleTime		    "-1"
 		    }
 		    Line {
@@ -2859,7 +2954,7 @@ Model {
 		    ForegroundColor	    "cyan"
 		    LibraryVersion	    "1.145"
 		    SourceBlock		    "uSimLib/Mission Manager/SetCurrentMission"
-		    SourceType		    ""
+		    SourceType		    "Unknown"
 		    sampleTime		    "-1"
 		    }
 		    Block {
@@ -2872,7 +2967,7 @@ Model {
 		    ForegroundColor	    "cyan"
 		    LibraryVersion	    "1.145"
 		    SourceBlock		    "uSimLib/Mission Manager/SetStartingPoint"
-		    SourceType		    ""
+		    SourceType		    "Unknown"
 		    sampleTime		    "-1"
 		    }
 		    Line {
@@ -4110,7 +4205,7 @@ Model {
 	    Block {
 	      BlockType		      SubSystem
 	      Name		      "GPS Estimator"
-	      SID		      "25366"
+	      SID		      "25772"
 	      Ports		      [4, 3]
 	      Position		      [320, 53, 420, 207]
 	      MinAlgLoopOccurrences   off
@@ -4138,7 +4233,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "gps"
-		  SID			  "25367"
+		  SID			  "25773"
 		  Position		  [25, 218, 55, 232]
 		  BackgroundColor	  "darkGreen"
 		  IconDisplay		  "Port number"
@@ -4146,7 +4241,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "reset"
-		  SID			  "25368"
+		  SID			  "25774"
 		  Position		  [25, 363, 55, 377]
 		  BackgroundColor	  "darkGreen"
 		  Port			  "2"
@@ -4155,7 +4250,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "attitude"
-		  SID			  "25742"
+		  SID			  "25775"
 		  Position		  [25, 468, 55, 482]
 		  BackgroundColor	  "darkGreen"
 		  Port			  "3"
@@ -4164,7 +4259,7 @@ Model {
 		Block {
 		  BlockType		  Inport
 		  Name			  "psi_dot"
-		  SID			  "25743"
+		  SID			  "25776"
 		  Position		  [120, 78, 150, 92]
 		  BackgroundColor	  "darkGreen"
 		  Port			  "4"
@@ -4174,7 +4269,7 @@ Model {
 		Block {
 		  BlockType		  Sum
 		  Name			  "Add"
-		  SID			  "25369"
+		  SID			  "25777"
 		  Ports			  [3, 1]
 		  Position		  [1015, 344, 1045, 376]
 		  ShowName		  off
@@ -4186,7 +4281,7 @@ Model {
 		Block {
 		  BlockType		  BusSelector
 		  Name			  "Bus\nSelector1"
-		  SID			  "25370"
+		  SID			  "25778"
 		  Ports			  [1, 1]
 		  Position		  [145, 295, 150, 325]
 		  ShowName		  off
@@ -4201,7 +4296,7 @@ Model {
 		Block {
 		  BlockType		  SubSystem
 		  Name			  "Calculate local position from \nGPS data"
-		  SID			  "25511"
+		  SID			  "25779"
 		  Ports			  [3, 2]
 		  Position		  [580, 306, 810, 384]
 		  LibraryVersion	  "1.31"
@@ -4245,14 +4340,14 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "latLonAlt"
-		    SID			    "25511::22"
+		    SID			    "25779::22"
 		    Position		    [20, 101, 40, 119]
 		    IconDisplay		    "Port number"
 		    }
 		    Block {
 		    BlockType		    Inport
 		    Name		    "newData"
-		    SID			    "25511::18"
+		    SID			    "25779::18"
 		    Position		    [20, 136, 40, 154]
 		    Port		    "2"
 		    IconDisplay		    "Port number"
@@ -4260,7 +4355,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "reset"
-		    SID			    "25511::19"
+		    SID			    "25779::19"
 		    Position		    [20, 171, 40, 189]
 		    Port		    "3"
 		    IconDisplay		    "Port number"
@@ -4268,7 +4363,7 @@ Model {
 		    Block {
 		    BlockType		    Demux
 		    Name		    " Demux "
-		    SID			    "25511::26"
+		    SID			    "25779::26"
 		    Ports		    [1, 1]
 		    Position		    [270, 220, 320, 260]
 		    Outputs		    "1"
@@ -4276,7 +4371,7 @@ Model {
 		    Block {
 		    BlockType		    S-Function
 		    Name		    " SFunction "
-		    SID			    "25511::25"
+		    SID			    "25779::25"
 		    Tag			    "Stateflow S-Function controller 4"
 		    Ports		    [3, 3]
 		    Position		    [180, 100, 230, 220]
@@ -4299,20 +4394,20 @@ Model {
 		    Block {
 		    BlockType		    Terminator
 		    Name		    " Terminator "
-		    SID			    "25511::28"
+		    SID			    "25779::28"
 		    Position		    [460, 231, 480, 249]
 		    }
 		    Block {
 		    BlockType		    Outport
 		    Name		    "enableLLA2LTP"
-		    SID			    "25511::29"
+		    SID			    "25779::29"
 		    Position		    [460, 101, 480, 119]
 		    IconDisplay		    "Port number"
 		    }
 		    Block {
 		    BlockType		    Outport
 		    Name		    "resetIntegrator"
-		    SID			    "25511::20"
+		    SID			    "25779::20"
 		    Position		    [460, 136, 480, 154]
 		    Port		    "2"
 		    IconDisplay		    "Port number"
@@ -4368,7 +4463,7 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Constant"
-		  SID			  "25747"
+		  SID			  "25780"
 		  Position		  [120, 45, 160, 65]
 		  ZOrder		  -5
 		  BackgroundColor	  "gray"
@@ -4379,7 +4474,7 @@ Model {
 		Block {
 		  BlockType		  SubSystem
 		  Name			  "Convert to local tangent\nplane coordinate frame"
-		  SID			  "25512"
+		  SID			  "25781"
 		  Ports			  [1, 1, 1]
 		  Position		  [875, 244, 975, 286]
 		  ZOrder		  -5
@@ -4395,10 +4490,10 @@ Model {
 		  MaskHideContents	  off
 		  System {
 		    Name		    "Convert to local tangent\nplane coordinate frame"
-		    Location		    [397, 232, 761, 616]
+		    Location		    [430, 592, 992, 993]
 		    Open		    off
 		    ModelBrowserVisibility  on
-		    ModelBrowserWidth	    212
+		    ModelBrowserWidth	    200
 		    ScreenColor		    "white"
 		    PaperOrientation	    "landscape"
 		    PaperPositionMode	    "auto"
@@ -4411,7 +4506,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "LLA"
-		    SID			    "25513"
+		    SID			    "25782"
 		    Position		    [80, 108, 110, 122]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -4420,7 +4515,7 @@ Model {
 		    Block {
 		    BlockType		    EnablePort
 		    Name		    "Enable"
-		    SID			    "25514"
+		    SID			    "25783"
 		    Ports		    []
 		    Position		    [240, 25, 260, 45]
 		    ZOrder		    -2
@@ -4429,7 +4524,7 @@ Model {
 		    Block {
 		    BlockType		    SubSystem
 		    Name		    "LLA2LTP"
-		    SID			    "25515"
+		    SID			    "25784"
 		    Ports		    [1, 1]
 		    Position		    [200, 94, 300, 136]
 		    ZOrder		    -5
@@ -4461,7 +4556,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "LLA"
-		    SID			    "25516"
+		    SID			    "25785"
 		    Position		    [65, 158, 95, 172]
 		    ZOrder		    -1
 		    BackgroundColor	    "darkGreen"
@@ -4470,7 +4565,7 @@ Model {
 		    Block {
 		    BlockType		    Sum
 		    Name		    "Add"
-		    SID			    "25517"
+		    SID			    "25786"
 		    Ports		    [2, 1]
 		    Position		    [175, 172, 205, 203]
 		    ZOrder		    -2
@@ -4484,7 +4579,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "25518"
+		    SID			    "25787"
 		    Position		    [30, 195, 130, 225]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -4495,7 +4590,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant1"
-		    SID			    "25519"
+		    SID			    "25788"
 		    Position		    [30, 235, 130, 265]
 		    ZOrder		    -5
 		    BackgroundColor	    "gray"
@@ -4506,7 +4601,7 @@ Model {
 		    Block {
 		    BlockType		    Product
 		    Name		    "Product"
-		    SID			    "25520"
+		    SID			    "25789"
 		    Ports		    [2, 1]
 		    Position		    [375, 202, 405, 233]
 		    ZOrder		    -19
@@ -4520,7 +4615,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "LTP"
-		    SID			    "25521"
+		    SID			    "25790"
 		    Position		    [450, 213, 480, 227]
 		    ZOrder		    -2
 		    BackgroundColor	    "yellow"
@@ -4567,7 +4662,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "LTP"
-		    SID			    "25522"
+		    SID			    "25791"
 		    Position		    [375, 108, 405, 122]
 		    ZOrder		    -2
 		    BackgroundColor	    "yellow"
@@ -4592,7 +4687,7 @@ Model {
 		Block {
 		  BlockType		  DiscreteIntegrator
 		  Name			  "Discrete-Time\nIntegrator4"
-		  SID			  "25410"
+		  SID			  "25792"
 		  Ports			  [2, 1]
 		  Position		  [900, 340, 935, 375]
 		  ShowName		  off
@@ -4606,7 +4701,7 @@ Model {
 		Block {
 		  BlockType		  SubSystem
 		  Name			  "GPS slew-limit\nzero-order hold"
-		  SID			  "25510"
+		  SID			  "25793"
 		  Ports			  [2, 2]
 		  Position		  [355, 243, 535, 332]
 		  ZOrder		  -4
@@ -4651,14 +4746,14 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "current_gps_position"
-		    SID			    "25510::18"
+		    SID			    "25793::18"
 		    Position		    [20, 101, 40, 119]
 		    IconDisplay		    "Port number"
 		    }
 		    Block {
 		    BlockType		    Inport
 		    Name		    "newData_in"
-		    SID			    "25510::22"
+		    SID			    "25793::22"
 		    Position		    [20, 136, 40, 154]
 		    Port		    "2"
 		    IconDisplay		    "Port number"
@@ -4666,7 +4761,7 @@ Model {
 		    Block {
 		    BlockType		    Demux
 		    Name		    " Demux "
-		    SID			    "25510::15"
+		    SID			    "25793::15"
 		    Ports		    [1, 1]
 		    Position		    [270, 205, 320, 245]
 		    Outputs		    "1"
@@ -4674,7 +4769,7 @@ Model {
 		    Block {
 		    BlockType		    S-Function
 		    Name		    " SFunction "
-		    SID			    "25510::14"
+		    SID			    "25793::14"
 		    Tag			    "Stateflow S-Function controller 2"
 		    Ports		    [2, 3]
 		    Position		    [180, 104, 230, 206]
@@ -4698,20 +4793,20 @@ Model {
 		    Block {
 		    BlockType		    Terminator
 		    Name		    " Terminator "
-		    SID			    "25510::17"
+		    SID			    "25793::17"
 		    Position		    [460, 216, 480, 234]
 		    }
 		    Block {
 		    BlockType		    Outport
 		    Name		    "position"
-		    SID			    "25510::5"
+		    SID			    "25793::5"
 		    Position		    [460, 101, 480, 119]
 		    IconDisplay		    "Port number"
 		    }
 		    Block {
 		    BlockType		    Outport
 		    Name		    "newData_out"
-		    SID			    "25510::23"
+		    SID			    "25793::23"
 		    Position		    [460, 136, 480, 154]
 		    Port		    "2"
 		    IconDisplay		    "Port number"
@@ -4761,7 +4856,7 @@ Model {
 		Block {
 		  BlockType		  Mux
 		  Name			  "Mux"
-		  SID			  "25746"
+		  SID			  "25794"
 		  Ports			  [2, 1]
 		  Position		  [205, 56, 210, 94]
 		  ZOrder		  -16
@@ -4772,7 +4867,7 @@ Model {
 		Block {
 		  BlockType		  Reference
 		  Name			  "Quaternions to Rotation Angles"
-		  SID			  "25745"
+		  SID			  "25795"
 		  Ports			  [1, 1]
 		  Position		  [205, 454, 305, 496]
 		  ZOrder		  -17
@@ -4785,7 +4880,7 @@ Model {
 		Block {
 		  BlockType		  Selector
 		  Name			  "Selector"
-		  SID			  "25761"
+		  SID			  "25796"
 		  Ports			  [1, 1]
 		  Position		  [345, 456, 385, 494]
 		  ZOrder		  -17
@@ -4803,7 +4898,7 @@ Model {
 		Block {
 		  BlockType		  SubSystem
 		  Name			  "Subsystem1"
-		  SID			  "25490"
+		  SID			  "25797"
 		  Ports			  [1, 3]
 		  Position		  [115, 163, 185, 287]
 		  ShowName		  off
@@ -4832,7 +4927,7 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "gps"
-		    SID			    "25491"
+		    SID			    "25798"
 		    Position		    [15, 143, 45, 157]
 		    BackgroundColor	    "darkGreen"
 		    IconDisplay		    "Port number"
@@ -4840,7 +4935,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector"
-		    SID			    "25492"
+		    SID			    "25799"
 		    Ports		    [1, 1]
 		    Position		    [110, 46, 115, 84]
 		    ShowName		    off
@@ -4855,7 +4950,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector1"
-		    SID			    "25493"
+		    SID			    "25800"
 		    Ports		    [1, 1]
 		    Position		    [110, 101, 115, 139]
 		    ShowName		    off
@@ -4870,7 +4965,7 @@ Model {
 		    Block {
 		    BlockType		    BusSelector
 		    Name		    "Bus\nSelector2"
-		    SID			    "25494"
+		    SID			    "25801"
 		    Ports		    [1, 3]
 		    Position		    [110, 173, 115, 207]
 		    ShowName		    off
@@ -4897,7 +4992,7 @@ Model {
 		    Block {
 		    BlockType		    Constant
 		    Name		    "Constant"
-		    SID			    "25495"
+		    SID			    "25802"
 		    Position		    [525, 73, 555, 87]
 		    BackgroundColor	    "gray"
 		    ShowName		    off
@@ -4907,7 +5002,7 @@ Model {
 		    Block {
 		    BlockType		    DataTypeConversion
 		    Name		    "Data Type Conversion"
-		    SID			    "25496"
+		    SID			    "25803"
 		    Position		    [160, 55, 215, 75]
 		    ZOrder		    -7
 		    ShowName		    off
@@ -4918,7 +5013,7 @@ Model {
 		    Block {
 		    BlockType		    DataTypeConversion
 		    Name		    "Data Type Conversion1"
-		    SID			    "25497"
+		    SID			    "25804"
 		    Position		    [160, 110, 215, 130]
 		    ZOrder		    -7
 		    ShowName		    off
@@ -4929,7 +5024,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain"
-		    SID			    "25498"
+		    SID			    "25805"
 		    Position		    [245, 50, 275, 80]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -4941,7 +5036,7 @@ Model {
 		    Block {
 		    BlockType		    Gain
 		    Name		    "Gain1"
-		    SID			    "25499"
+		    SID			    "25806"
 		    Position		    [245, 105, 275, 135]
 		    ZOrder		    -11
 		    ShowName		    off
@@ -4953,7 +5048,7 @@ Model {
 		    Block {
 		    BlockType		    Mux
 		    Name		    "Mux"
-		    SID			    "25500"
+		    SID			    "25807"
 		    Ports		    [3, 1]
 		    Position		    [585, 51, 590, 89]
 		    ShowName		    off
@@ -4963,7 +5058,7 @@ Model {
 		    Block {
 		    BlockType		    Mux
 		    Name		    "Mux1"
-		    SID			    "25501"
+		    SID			    "25808"
 		    Ports		    [3, 1]
 		    Position		    [280, 171, 285, 209]
 		    ShowName		    off
@@ -4973,7 +5068,7 @@ Model {
 		    Block {
 		    BlockType		    Product
 		    Name		    "Product"
-		    SID			    "25502"
+		    SID			    "25809"
 		    Ports		    [2, 1]
 		    Position		    [450, 72, 480, 103]
 		    ShowName		    off
@@ -4984,7 +5079,7 @@ Model {
 		    Block {
 		    BlockType		    Product
 		    Name		    "Product1"
-		    SID			    "25503"
+		    SID			    "25810"
 		    Ports		    [2, 1]
 		    Position		    [450, 42, 480, 73]
 		    ShowName		    off
@@ -4995,7 +5090,7 @@ Model {
 		    Block {
 		    BlockType		    Trigonometry
 		    Name		    "Trigonometric\nFunction"
-		    SID			    "25504"
+		    SID			    "25811"
 		    Ports		    [1, 1]
 		    Position		    [355, 86, 385, 104]
 		    ShowName		    off
@@ -5003,7 +5098,7 @@ Model {
 		    Block {
 		    BlockType		    Trigonometry
 		    Name		    "Trigonometric\nFunction1"
-		    SID			    "25505"
+		    SID			    "25812"
 		    Ports		    [1, 1]
 		    Position		    [355, 56, 385, 74]
 		    ShowName		    off
@@ -5012,7 +5107,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "velocity"
-		    SID			    "25506"
+		    SID			    "25813"
 		    Position		    [645, 63, 675, 77]
 		    BackgroundColor	    "yellow"
 		    IconDisplay		    "Port number"
@@ -5020,7 +5115,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "heading"
-		    SID			    "25507"
+		    SID			    "25814"
 		    Position		    [645, 113, 675, 127]
 		    BackgroundColor	    "yellow"
 		    Port		    "2"
@@ -5029,7 +5124,7 @@ Model {
 		    Block {
 		    BlockType		    Outport
 		    Name		    "pos"
-		    SID			    "25508"
+		    SID			    "25815"
 		    Position		    [545, 183, 575, 197]
 		    BackgroundColor	    "yellow"
 		    Port		    "3"
@@ -5201,7 +5296,7 @@ Model {
 		Block {
 		  BlockType		  Sum
 		  Name			  "Sum"
-		  SID			  "25750"
+		  SID			  "25816"
 		  Ports			  [2, 1]
 		  Position		  [660, 175, 680, 195]
 		  ZOrder		  -32
@@ -5215,7 +5310,7 @@ Model {
 		Block {
 		  BlockType		  Switch
 		  Name			  "Switch"
-		  SID			  "25767"
+		  SID			  "25817"
 		  Position		  [925, 460, 975, 500]
 		  ZOrder		  -18
 		  Criteria		  "u2 ~= 0"
@@ -5227,7 +5322,7 @@ Model {
 		Block {
 		  BlockType		  Switch
 		  Name			  "Switch1"
-		  SID			  "25769"
+		  SID			  "25818"
 		  Position		  [565, 95, 615, 135]
 		  ZOrder		  -18
 		  Criteria		  "u2 ~= 0"
@@ -5239,7 +5334,7 @@ Model {
 		Block {
 		  BlockType		  Reference
 		  Name			  "Vector rotation"
-		  SID			  "25765"
+		  SID			  "25819"
 		  Ports			  [2, 1]
 		  Position		  [495, 438, 605, 487]
 		  ZOrder		  -4
@@ -5251,7 +5346,7 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Zero level trust1"
-		  SID			  "25766"
+		  SID			  "25820"
 		  Position		  [755, 469, 885, 491]
 		  BackgroundColor	  "gray"
 		  ShowName		  off
@@ -5261,7 +5356,7 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Zero level trust2"
-		  SID			  "25768"
+		  SID			  "25821"
 		  Position		  [785, 500, 855, 520]
 		  BackgroundColor	  "gray"
 		  ShowName		  off
@@ -5271,7 +5366,7 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Zero level trust3"
-		  SID			  "25770"
+		  SID			  "25822"
 		  Position		  [395, 104, 525, 126]
 		  BackgroundColor	  "gray"
 		  ShowName		  off
@@ -5281,7 +5376,7 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Zero level trust4"
-		  SID			  "25771"
+		  SID			  "25823"
 		  Position		  [425, 135, 495, 155]
 		  BackgroundColor	  "gray"
 		  ShowName		  off
@@ -5291,7 +5386,7 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Zero level trust7"
-		  SID			  "25748"
+		  SID			  "25824"
 		  Position		  [170, 115, 240, 135]
 		  BackgroundColor	  "gray"
 		  ShowName		  off
@@ -5301,7 +5396,7 @@ Model {
 		Block {
 		  BlockType		  Constant
 		  Name			  "Zero level trust9"
-		  SID			  "25753"
+		  SID			  "25825"
 		  Position		  [385, 420, 455, 440]
 		  BackgroundColor	  "gray"
 		  ShowName		  off
@@ -5311,7 +5406,7 @@ Model {
 		Block {
 		  BlockType		  SubSystem
 		  Name			  "cross product"
-		  SID			  "25749"
+		  SID			  "25826"
 		  Ports			  [2, 1]
 		  Position		  [285, 71, 375, 124]
 		  ZOrder		  -4
@@ -5356,14 +5451,14 @@ Model {
 		    Block {
 		    BlockType		    Inport
 		    Name		    "v1"
-		    SID			    "25749::1"
+		    SID			    "25826::1"
 		    Position		    [20, 101, 40, 119]
 		    IconDisplay		    "Port number"
 		    }
 		    Block {
 		    BlockType		    Inport
 		    Name		    "v2"
-		    SID			    "25749::18"
+		    SID			    "25826::18"
 		    Position		    [20, 136, 40, 154]
 		    Port		    "2"
 		    IconDisplay		    "Port number"
@@ -5371,7 +5466,7 @@ Model {
 		    Block {
 		    BlockType		    Demux
 		    Name		    " Demux "
-		    SID			    "25749::15"
+		    SID			    "25826::15"
 		    Ports		    [1, 1]
 		    Position		    [270, 160, 320, 200]
 		    Outputs		    "1"
@@ -5379,7 +5474,7 @@ Model {
 		    Block {
 		    BlockType		    S-Function
 		    Name		    " SFunction "
-		    SID			    "25749::14"
+		    SID			    "25826::14"
 		    Tag			    "Stateflow S-Function controller 1"
 		    Ports		    [2, 2]
 		    Position		    [180, 100, 230, 160]
@@ -5396,13 +5491,13 @@ Model {
 		    Block {
 		    BlockType		    Terminator
 		    Name		    " Terminator "
-		    SID			    "25749::17"
+		    SID			    "25826::17"
 		    Position		    [460, 171, 480, 189]
 		    }
 		    Block {
 		    BlockType		    Outport
 		    Name		    "y"
-		    SID			    "25749::5"
+		    SID			    "25826::5"
 		    Position		    [460, 101, 480, 119]
 		    IconDisplay		    "Port number"
 		    }
@@ -5443,7 +5538,7 @@ Model {
 		Block {
 		  BlockType		  Outport
 		  Name			  "velocity"
-		  SID			  "25431"
+		  SID			  "25827"
 		  Position		  [1115, 178, 1145, 192]
 		  BackgroundColor	  "yellow"
 		  IconDisplay		  "Port number"
@@ -5451,7 +5546,7 @@ Model {
 		Block {
 		  BlockType		  Outport
 		  Name			  "pos"
-		  SID			  "25432"
+		  SID			  "25828"
 		  Position		  [1115, 353, 1145, 367]
 		  BackgroundColor	  "yellow"
 		  Port			  "2"
@@ -5460,7 +5555,7 @@ Model {
 		Block {
 		  BlockType		  Outport
 		  Name			  "heading"
-		  SID			  "25433"
+		  SID			  "25829"
 		  Position		  [255, 218, 285, 232]
 		  BackgroundColor	  "yellow"
 		  Port			  "3"
@@ -6487,7 +6582,7 @@ Stateflow {
   chart {
     id			    2
     name		    "Autonomous Controller/State Keeper &\nEstimator/GPS Estimator/cross product"
-    windowPosition	    [390.75 188.25 200.25 189.75]
+    windowPosition	    [405.75 173.25 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1920 1080 1.333333333333333]
     treeNode		    [0 3 0 0]
@@ -6624,7 +6719,7 @@ Stateflow {
   chart {
     id			    10
     name		    "Autonomous Controller/State Keeper &\nEstimator/GPS Estimator/GPS slew-limit\nzero-order hold"
-    windowPosition	    [492.891 184.031 200.25 189.75]
+    windowPosition	    [507.891 169.031 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1920 1080 1.333333333333333]
     treeNode		    [0 11 0 0]
@@ -6823,7 +6918,7 @@ Stateflow {
   chart {
     id			    20
     name		    "Autonomous Controller/State Keeper &\nEstimator/GPS Estimator/Calculate local position from \nGPS data"
-    windowPosition	    [752.124 57.904 200.25 189.75]
+    windowPosition	    [767.124 42.904 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1920 1080 1.333333333333333]
     treeNode		    [0 21 0 0]
