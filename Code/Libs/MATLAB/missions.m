@@ -68,6 +68,7 @@ test_coordinates = basic_test;
 mission_count = length(test_coordinates.waypoints);
 
 % The following line just initializes an array of structs
+clear test_waypoints;
 test_waypoints(size(test_coordinates.waypoints, 1)) = Simulink.Bus.createMATLABStruct('Mission');
 for i = 1:size(test_coordinates.waypoints, 1)
     m = Simulink.Bus.createMATLABStruct('Mission');
