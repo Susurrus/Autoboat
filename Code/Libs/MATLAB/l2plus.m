@@ -43,7 +43,7 @@ Turn2Track.RTWInfo.Alias = 'turn2Track';
 % current position that should indicate the aim point.
 MaxDwnPthStar = Simulink.Parameter;
 MaxDwnPthStar.Description = 'Maximum downpath distance of the aimpoint';
-MaxDwnPthStar.Value = 1;
+MaxDwnPthStar.Value = 10;
 MaxDwnPthStar.DataType = 'single';
 MaxDwnPthStar.DocUnits = 'm';
 MaxDwnPthStar.RTWInfo.StorageClass = 'ExportedGlobal';
@@ -61,7 +61,7 @@ tanIntercept.RTWInfo.Alias = 'tanIntercept';
 % Distance before reaching a waypoint that you will then switch over to the next waypoint
 switchDistance = Simulink.Parameter;
 switchDistance.Description = 'Distance from a waypoint where the vehicle is considered at that waypoint.';
-switchDistance.Value = 4;
+switchDistance.Value = 10;
 switchDistance.DataType = 'single';
 switchDistance.DocUnits = 'm';
 switchDistance.RTWInfo.StorageClass = 'ExportedGlobal';
