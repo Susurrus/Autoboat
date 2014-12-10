@@ -30,15 +30,6 @@ InitialPoint.DocUnits = '';
 InitialPoint.RTWInfo.StorageClass = 'ExportedGlobal';
 InitialPoint.RTWInfo.Alias = 'initialPoint';
 
-% Boolean indicating whether to turn towards the L2 vector or away from it.
-Turn2Track = Simulink.Parameter;
-Turn2Track.Description = 'Indicates to turn towards L2 vector versus away from it.';
-Turn2Track.Value = false;
-Turn2Track.DataType = 'boolean';
-Turn2Track.DocUnits = '';
-Turn2Track.RTWInfo.StorageClass = 'ExportedGlobal';
-Turn2Track.RTWInfo.Alias = 'turn2Track';
-
 % The maximum distance down the track from a projection of the vehicle's
 % current position that should indicate the aim point.
 MaxDwnPthStar = Simulink.Parameter;

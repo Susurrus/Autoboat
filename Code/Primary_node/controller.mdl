@@ -45,7 +45,7 @@ Model {
       Name		      "internalVars"
     }
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2488"
+    ComputedModelVersion    "1.2489"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -67,9 +67,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Dec 04 18:10:48 2014"
-  RTWModifiedTimeStamp	  339595633
-  ModelVersionFormat	  "1.%<AutoIncrement:2488>"
+  LastModifiedDate	  "Wed Dec 10 15:22:44 2014"
+  RTWModifiedTimeStamp	  340125615
+  ModelVersionFormat	  "1.%<AutoIncrement:2489>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1400,7 +1400,7 @@ Model {
 	      Priority		      "-2"
 	      LibraryVersion	      "1.145"
 	      SourceBlock	      "uSimLib/Mission Manager/AppendMission"
-	      SourceType	      ""
+	      SourceType	      "Unknown"
 	      sampleTime	      "-1"
 	    }
 	    Block {
@@ -1414,7 +1414,7 @@ Model {
 	      Priority		      "-1"
 	      LibraryVersion	      "1.145"
 	      SourceBlock	      "uSimLib/Mission Manager/ClearMissionList"
-	      SourceType	      ""
+	      SourceType	      "Unknown"
 	      sampleTime	      "-1"
 	    }
 	    Block {
@@ -1451,7 +1451,7 @@ Model {
 	      Priority		      "-3"
 	      LibraryVersion	      "1.145"
 	      SourceBlock	      "uSimLib/Mission Manager/Mission Init"
-	      SourceType	      ""
+	      SourceType	      "Unknown"
 	      maxMissions	      "16"
 	      sampleTime	      "-1"
 	    }
@@ -1467,7 +1467,7 @@ Model {
 	      Priority		      "0"
 	      LibraryVersion	      "1.145"
 	      SourceBlock	      "uSimLib/Mission Manager/Mission InitAll"
-	      SourceType	      ""
+	      SourceType	      "Unknown"
 	      maxMissions	      "16"
 	      sampleTime	      "-1"
 	      missionsVar	      "test_waypoints"
@@ -1481,7 +1481,7 @@ Model {
 	      ZOrder		      -5
 	      LibraryVersion	      "1.145"
 	      SourceBlock	      "uSimLib/Mission Manager/SetCurrentMission"
-	      SourceType	      ""
+	      SourceType	      "Unknown"
 	      sampleTime	      "-1"
 	    }
 	    Line {
@@ -1774,7 +1774,7 @@ Model {
 		  Ports			  [6, 4]
 		  Position		  [180, 102, 230, 243]
 		  FunctionName		  "sf_sfun"
-		  Parameters		  "IPStar,InitialPoint,MaxDwnPthStar,TStar,Turn2Track,switchDistance,tanIntercept"
+		  Parameters		  "IPStar,InitialPoint,MaxDwnPthStar,TStar,switchDistance,tanIntercept"
 		  PortCounts		  "[6 4]"
 		  EnableBusSupport	  on
 		  Port {
@@ -6576,7 +6576,7 @@ Stateflow {
     name		    "controller"
     created		    "20-Jul-2010 14:18:50"
     isLibrary		    0
-    firstTarget		    65
+    firstTarget		    64
     sfVersion		    76014001.0002
   }
   chart {
@@ -7397,69 +7397,65 @@ Stateflow {
     eml {
       isEML		      1
       script		      "function [L2Vec, as_c, transition] = L2PlusWP1(wp0, wp0_found, wp1, wp1_found, Puav, Vxyz, switch"
-      "Distance, ...\n    tanIntercept, MaxDwnPthStar,Turn2Track,...\n    InitialPoint, IPStar, TStar)\n%=============="
-      "================\n%     computes bank angle command for following a straight line\n%     by creating an aim poin"
-      "t that may be more than L2 away \n%     from the UAV. The aim point is (usually) farther along the path \n%     "
-      "toward wp1 than the UAV, and the intercept\n%     angle is less than or equal to a specified value. This limits "
-      "the intercept\n%     angle even when the UAV is within L2 of the path.\n%     See L2PlusWP1.m for details\n%\n% "
-      "        INPUTS\n%             wp0     Waypoint 0 position in North-East-Down meters\n%             wp1     Waypo"
-      "int 1 position in North-East-Down meters\n%             Puav    Position of UAV in North-East-Down meters\n%    "
-      "         Vxyz    Inertial velocity in North-East-Down meters\n%\n%         PARAMETERS\n%             switchDista"
-      "nce distance from wp1 to switch to WP2\n%             tanIntercept  tangent of intercept angle\n%             Ma"
-      "xDwnPthStar L2 multiplier to determmine downpath aimpoint\n%             Turn2Track    true to turn toward T1 in"
-      "stead of L2\n%             InitialPoint  true if no line tracking at first--fly direct to some initial point\n% "
-      "            IPStar        L2 multiplier to determing distance of IP from first wp0\n%             Tstar         "
-      "was called L2Base, time constant of response\n%             \n%         OUTPUTS\n%             L2Vec   L2 vector"
-      " toward aim point\n%             as_c    commanded lateral acceleration\n%             transition A boolean of w"
-      "hether to transition or not to the next waypoint\n\n    persistent IPActive;  %true if flying toward IP\n    per"
-      "sistent IP; % location of initial point\n\n    persistent direction; % Keep track of the direction for patrol mo"
-      "de\n    if isempty(direction)\n        direction = int8(1);\n    end\n    \n    % Track the last acceleration co"
-      "mmand so we can filter it.\n    persistent last_as_c;\n    if isempty(last_as_c)\n        last_as_c = single(NaN"
-      ");\n    end\n    \n    Pwp1 = single(zeros(3,1));\n    Pe_y = single(0);\n    Dist2wp1 = single(0);\n    MinDown"
-      "Path = single(0);\n    Dist2WPSwitch = single(0);\n    L2DownPath = single(0);\n    L2ToT = single(zeros(3,1));\n"
-      "    L2Vec = single(zeros(3,1));\n    IP1 = single([0; 0;-999]); %signal for no IP\n    as_c = single(0);\n    tr"
-      "ansition = false;\n    \n    Pne = [Puav(1); Puav(2); 0]; %horizontal position\n    Vne = [Vxyz(1); Vxyz(2); 0];"
-      " % horizontal velocity\n    Groundspeed = norm(Vne);\n    L2 = single(TStar*Groundspeed);\n    \n    % If neithe"
-      "r waypoint is valid then don't do anything\n    if ~wp0_found || ~wp1_found\n        return;\n    % Otherwise if"
-      " the first two waypoints are next to each other (as is\n    % common if the origin is the first waypoint and the"
-      " boat latches that\n    % as its start value) then transition to the next waypoint.\n    elseif norm(wp1 - wp0) "
-      "< switchDistance\n        transition = true;\n        \n        % Also reset the acceleration command filter. Th"
-      "is is necessary as\n        % wp transitions may result in large swings. \n        last_as_c = single(NaN);\n   "
-      "     return;\n    end\n    \n    % Calculate N1 (right-hand orthogonal to T1) \n    % and T1 (unit vector pointi"
-      "ng from wp0 to wp1)\n    T1 = wp1 - wp0;\n    T1 = T1/norm(T1);\n    N1 = [-T1(2); T1(1); 0];\n    \n%     initi"
-      "alize the initial point\n    if (isempty(IPActive))\n        if (InitialPoint)\n%             IP is set relative"
-      " to the first \"from\" waypoint\n            IPActive = -1;\n            IP = [wp0(1); wp0(2); 0] - L2*IPStar*T1"
-      ";\n            \n            if (norm(IP-Pne) < .001)\n                IPActive = 0;\n                IP = singl"
-      "e([0; 0; -999]);\n            end\n        else\n            IPActive = 0;\n            IP = single([0; 0;-999])"
-      "; %signal for no IP\n        end\n    end\n    IP1 = IP;\n    \n    \n    if (IPActive)\n%         no line track"
-      "ing, direct to IP\n        L2Vec = L2*(IP - Pne)/norm(IP - Pne);\n%         check to see if at the IP to termina"
-      "te this mode\n        if norm(IP - Pne) < .1*L2\n            IPActive = 0;\n        end\n    else\n         if ("
-      "Pne(1) < 2)\n             IP1 = IP1;\n         end\n%         IP not active, track WP lines\n        Pwp1 = Pne "
-      "- [wp1(1); wp1(2); 0]; % position of UAV relative to wp1\n        Pe_y = single(Pwp1'*N1); % cross track error\n"
-      "        Dist2wp1 = -single(Pwp1'*T1); % distance to wp1\n\n%         minimum down path distance for Aim Point in"
-      "tersection on T\n%         is determined by the intercept angle but limited \n%         in case of very distant "
-      "intecepts to MaxDwnPthStar*L2\n        MinDownPath = single ( min( abs(Pe_y)/tanIntercept, MaxDwnPthStar*L2)); \n"
-      "        Dist2WPSwitch = Dist2wp1 - switchDistance;\n        if ( abs(Pe_y) > L2 )\n    %             Make sure a"
-      "impoint is no closer to waypoint than calculated switch point.\n            L2DownPath = MinDownPath;\n        e"
-      "lse\n    %             within L2 of T and Dist2WPSwitch >= 0, but limit angle of L2 wrt T\n            L2DownPat"
-      "h = (max(MinDownPath, (sqrt( L2^2 - Pe_y^2 ))));\n        end\n        \n        if ( Dist2WPSwitch < 0 )\n     "
-      "       transition = true;\n        end\n        \n         % vector from Pwp1 to aim point on T1\n         L2ToT"
-      " = single(( Dist2wp1 - L2DownPath )*(-T1) - Pwp1);\n         if (norm(L2ToT) < .001)\n             L2Vec = L2*T1"
-      ";\n         else\n            L2Vec = single(L2*( L2ToT/norm(L2ToT) )); % limit size to L2\n         end\n    % "
-      "        L2Vec = L2ToT;\n%         dummy statements\n    end\n    Zprod = single(Vxyz(1)*L2Vec(2) - Vxyz(2)*L2Vec"
-      "(1)); %Z component of cross product\n    \n    % Now if the groundspeed of the vessel is zero, we make sure we d"
-      "on't\n    % get a division-by-zero error and instead handle it gracefully.\n    if Groundspeed > 0\n        sinE"
-      "ta = single(Zprod/(Groundspeed*L2));\n        as_c = single(2*Groundspeed^2/(L2)*sinEta);\n    else\n        sin"
-      "Eta = single(0.0);\n        as_c = single(0.0);\n    end\n\n%         now override bank angle if heading in the "
-      "wrong direction\n    if ( Turn2Track && Dist2WPSwitch > 0 && ~IPActive ) \n%             turn to track not L2, g"
-      "ives min displacement from track\n        if ( T1'*Vxyz < 0 )\n            if ( Pe_y > 0 )\n                as_c"
-      " = single(99);\n            else\n                as_c = single(-99);\n            end\n        end\n     else\n"
-      "%           turn toward L2, give min displacement toward wp0\n        if ( L2Vec'*Vxyz < 0 )\n            if ( s"
-      "inEta < 0 )\n                as_c = single(-99);\n            else\n                as_c = single(99);\n        "
-      "    end\n        end\n    end\n    \n    % Now add a jump-filter on the commanded acceleration. We use a large\n"
-      "    % enough value here such that the acceleration cannot switch signs, but\n    % will still work in low-speed "
-      "situations.\n    % Note: The following works with the initial value of NaN, how\n    % convenient!\n    if abs(a"
-      "s_c - last_as_c) > single(99)\n        as_c = last_as_c;\n    else\n        last_as_c = as_c;\n    end\nend"
+      "Distance, ...\n    tanIntercept, MaxDwnPthStar,...\n    InitialPoint, IPStar, TStar)\n%========================="
+      "=====\n%     computes bank angle command for following a straight line\n%     by creating an aim point that may "
+      "be more than L2 away \n%     from the UAV. The aim point is (usually) farther along the path \n%     toward wp1 "
+      "than the UAV, and the intercept\n%     angle is less than or equal to a specified value. This limits the interce"
+      "pt\n%     angle even when the UAV is within L2 of the path.\n%     See L2PlusWP1.m for details\n%\n%         INP"
+      "UTS\n%             wp0     Waypoint 0 position in North-East-Down meters\n%             wp1     Waypoint 1 posit"
+      "ion in North-East-Down meters\n%             Puav    Position of UAV in North-East-Down meters\n%             Vx"
+      "yz    Inertial velocity in North-East-Down meters\n%\n%         PARAMETERS\n%             switchDistance distanc"
+      "e from wp1 to switch to WP2\n%             tanIntercept  tangent of intercept angle\n%             MaxDwnPthStar"
+      " L2 multiplier to determine downpath aimpoint\n%             InitialPoint  true if no line tracking at first--fl"
+      "y direct to some initial point\n%             IPStar        L2 multiplier to determing distance of IP from first"
+      " wp0\n%             Tstar         was called L2Base, time constant of response\n%             \n%         OUTPUT"
+      "S\n%             L2Vec   L2 vector toward aim point\n%             as_c    commanded lateral acceleration\n%    "
+      "         transition A boolean of whether to transition or not to the next waypoint\n\n    persistent IPActive;  "
+      "%true if flying toward IP\n    persistent IP; % location of initial point\n\n    persistent direction; % Keep tr"
+      "ack of the direction for patrol mode\n    if isempty(direction)\n        direction = int8(1);\n    end\n    \n  "
+      "  % Track the last acceleration command so we can filter it.\n    persistent last_as_c;\n    if isempty(last_as_"
+      "c)\n        last_as_c = single(NaN);\n    end\n    \n    Pwp1 = single(zeros(3,1));\n    Pe_y = single(0);\n    "
+      "Dist2wp1 = single(0);\n    MinDownPath = single(0);\n    Dist2WPSwitch = single(0);\n    L2DownPath = single(0);"
+      "\n    L2ToT = single(zeros(3,1));\n    L2Vec = single(zeros(3,1));\n    IP1 = single([0; 0;-999]); %signal for n"
+      "o IP\n    as_c = single(0);\n    transition = false;\n    \n    Pne = [Puav(1); Puav(2); 0]; %horizontal positio"
+      "n\n    Vne = [Vxyz(1); Vxyz(2); 0]; % horizontal velocity\n    Groundspeed = norm(Vne);\n    L2 = single(TStar*G"
+      "roundspeed);\n    \n    % If neither waypoint is valid then don't do anything\n    if ~wp0_found || ~wp1_found\n"
+      "        return;\n    % Otherwise if the first two waypoints are next to each other (as is\n    % common if the o"
+      "rigin is the first waypoint and the boat latches that\n    % as its start value) then transition to the next way"
+      "point.\n    elseif norm(wp1 - wp0) < switchDistance\n        transition = true;\n        \n        % Also reset "
+      "the acceleration command filter. This is necessary as\n        % wp transitions may result in large swings. \n  "
+      "      last_as_c = single(NaN);\n        return;\n    end\n    \n    % Calculate N1 (right-hand orthogonal to T1)"
+      " \n    % and T1 (unit vector pointing from wp0 to wp1)\n    T1 = wp1 - wp0;\n    T1 = T1/norm(T1);\n    N1 = [-T"
+      "1(2); T1(1); 0];\n    \n%     initialize the initial point\n    if (isempty(IPActive))\n        if (InitialPoint"
+      ")\n%             IP is set relative to the first \"from\" waypoint\n            IPActive = -1;\n            IP ="
+      " [wp0(1); wp0(2); 0] - L2*IPStar*T1;\n            \n            if (norm(IP-Pne) < .001)\n                IPActi"
+      "ve = 0;\n                IP = single([0; 0; -999]);\n            end\n        else\n            IPActive = 0;\n "
+      "           IP = single([0; 0;-999]); %signal for no IP\n        end\n    end\n    IP1 = IP;\n    \n    \n    if "
+      "(IPActive)\n%         no line tracking, direct to IP\n        L2Vec = L2*(IP - Pne)/norm(IP - Pne);\n%         c"
+      "heck to see if at the IP to terminate this mode\n        if norm(IP - Pne) < .1*L2\n            IPActive = 0;\n "
+      "       end\n    else\n         if (Pne(1) < 2)\n             IP1 = IP1;\n         end\n%         IP not active, "
+      "track WP lines\n        Pwp1 = Pne - [wp1(1); wp1(2); 0]; % position of UAV relative to wp1\n        Pe_y = sing"
+      "le(Pwp1'*N1); % cross track error\n        Dist2wp1 = -single(Pwp1'*T1); % distance to wp1\n\n%         minimum "
+      "down path distance for Aim Point intersection on T\n%         is determined by the intercept angle but limited \n"
+      "%         in case of very distant intecepts to MaxDwnPthStar*L2\n        MinDownPath = single ( min( abs(Pe_y)/t"
+      "anIntercept, MaxDwnPthStar*L2)); \n        Dist2WPSwitch = Dist2wp1 - switchDistance;\n        if ( abs(Pe_y) > "
+      "L2 )\n    %             Make sure aimpoint is no closer to waypoint than calculated switch point.\n            L"
+      "2DownPath = MinDownPath;\n        else\n    %             within L2 of T and Dist2WPSwitch >= 0, but limit angle"
+      " of L2 wrt T\n            L2DownPath = (max(MinDownPath, (sqrt( L2^2 - Pe_y^2 ))));\n        end\n        \n    "
+      "    if ( Dist2WPSwitch < 0 )\n            transition = true;\n        end\n        \n         % vector from Pwp1"
+      " to aim point on T1\n         L2ToT = single(( Dist2wp1 - L2DownPath )*(-T1) - Pwp1);\n         if (norm(L2ToT) "
+      "< .001)\n             L2Vec = L2*T1;\n         else\n            L2Vec = single(L2*( L2ToT/norm(L2ToT) )); % lim"
+      "it size to L2\n         end\n    %         L2Vec = L2ToT;\n%         dummy statements\n    end\n    Zprod = sing"
+      "le(Vxyz(1)*L2Vec(2) - Vxyz(2)*L2Vec(1)); %Z component of cross product\n    \n    % Now if the groundspeed of th"
+      "e vessel is zero, we make sure we don't\n    % get a division-by-zero error and instead handle it gracefully.\n "
+      "   if Groundspeed > 0\n        sinEta = single(Zprod/(Groundspeed*L2));\n        as_c = single(2*Groundspeed^2/("
+      "L2)*sinEta);\n    else\n        sinEta = single(0.0);\n        as_c = single(0.0);\n    end\n\n%           turn "
+      "toward L2, give min displacement toward wp0\n    if ( L2Vec'*Vxyz < 0 )\n        if ( sinEta < 0 )\n            "
+      "as_c = single(-99);\n        else\n            as_c = single(99);\n        end\n    end\n    \n    % Now add a j"
+      "ump-filter on the commanded acceleration. We use a large\n    % enough value here such that the acceleration can"
+      "not switch signs, but\n    % will still work in low-speed situations.\n    % Note: The following works with the "
+      "initial value of NaN, how\n    % convenient!\n    if abs(as_c - last_as_c) > single(99)\n        as_c = last_as_"
+      "c;\n    else\n        last_as_c = as_c;\n    end\nend"
       editorLayout	      "100 M4x1[308 217 1936 1056]"
       fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
       "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
@@ -7651,7 +7647,7 @@ Stateflow {
     name		    "switchDistance"
     linkNode		    [44 54 56]
     scope		    PARAMETER_DATA
-    paramIndexForInitFromWorkspace 5
+    paramIndexForInitFromWorkspace 4
     machine		    1
     props {
       array {
@@ -7674,7 +7670,7 @@ Stateflow {
     linkNode		    [44 55 57]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
-    paramIndexForInitFromWorkspace 6
+    paramIndexForInitFromWorkspace 5
     machine		    1
     props {
       array {
@@ -7715,32 +7711,9 @@ Stateflow {
   }
   data {
     id			    58
-    ssIdNumber		    12
-    name		    "Turn2Track"
-    linkNode		    [44 57 59]
-    scope		    PARAMETER_DATA
-    initFromWorkspace	    1
-    paramIndexForInitFromWorkspace 4
-    machine		    1
-    props {
-      array {
-	size			"1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-	isSigned		1
-	wordLength		"16"
-      }
-      frame		      SF_FRAME_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    59
     ssIdNumber		    13
     name		    "InitialPoint"
-    linkNode		    [44 58 60]
+    linkNode		    [44 57 59]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 1
@@ -7760,10 +7733,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    60
+    id			    59
     ssIdNumber		    14
     name		    "IPStar"
-    linkNode		    [44 59 61]
+    linkNode		    [44 58 60]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     machine		    1
@@ -7782,10 +7755,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    61
+    id			    60
     ssIdNumber		    15
     name		    "TStar"
-    linkNode		    [44 60 62]
+    linkNode		    [44 59 61]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 3
@@ -7805,10 +7778,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    62
+    id			    61
     ssIdNumber		    16
     name		    "as_c"
-    linkNode		    [44 61 63]
+    linkNode		    [44 60 62]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -7823,10 +7796,10 @@ Stateflow {
     dataType		    "single"
   }
   data {
-    id			    63
+    id			    62
     ssIdNumber		    26
     name		    "transition"
-    linkNode		    [44 62 0]
+    linkNode		    [44 61 0]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -7845,22 +7818,22 @@ Stateflow {
     dataType		    "boolean"
   }
   instance {
-    id			    64
+    id			    63
     name		    "Autonomous Controller/Rudder\nCommand/L2 Plus ref WP1"
     machine		    1
     chart		    44
   }
   target {
-    id			    65
+    id			    64
     name		    "sfun"
     description		    "Default Simulink S-Function Target."
     machine		    1
-    linkNode		    [1 0 66]
+    linkNode		    [1 0 65]
   }
   target {
-    id			    66
+    id			    65
     name		    "rtw"
     machine		    1
-    linkNode		    [1 65 0]
+    linkNode		    [1 64 0]
   }
 }
