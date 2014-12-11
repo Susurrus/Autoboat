@@ -11,25 +11,6 @@ TStar.DocUnits = 's';
 TStar.RTWInfo.StorageClass = 'ExportedGlobal';
 TStar.RTWInfo.Alias = 'tStar';
 
-% Distance from the first waypoint that the initial point is estimated to
-% be. Only matters if InitialPoint is set to True
-IPStar = Simulink.Parameter;
-IPStar.Description = 'Distance from the 1st waypoint that the initial point should be set to. Only relevant if InitialPoint is True.';
-IPStar.Value = 0;
-IPStar.DataType = 'single';
-IPStar.DocUnits = 'm';
-IPStar.RTWInfo.StorageClass = 'ExportedGlobal';
-IPStar.RTWInfo.Alias = 'ipStar';
-
-% Boolean indicating whether the initial-point logic will be used.
-InitialPoint = Simulink.Parameter;
-InitialPoint.Description = 'Indicates whether the initial-point logic will be used';
-InitialPoint.Value = false;
-InitialPoint.DataType = 'boolean';
-InitialPoint.DocUnits = '';
-InitialPoint.RTWInfo.StorageClass = 'ExportedGlobal';
-InitialPoint.RTWInfo.Alias = 'initialPoint';
-
 % The maximum distance down the track from a projection of the vehicle's
 % current position that should indicate the aim point.
 MaxDwnPthStar = Simulink.Parameter;
