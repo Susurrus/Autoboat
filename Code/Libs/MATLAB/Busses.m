@@ -48,7 +48,7 @@ elems(4).Min = [];
 elems(4).Max = [];
 
 elems(5) = Simulink.BusElement;
-elems(5).Name = 'L2Vector';
+elems(5).Name = 'AimPoint';
 elems(5).Dimensions = 3;
 elems(5).DimensionsMode = 'Fixed';
 elems(5).DataType = 'single';
@@ -59,8 +59,8 @@ elems(5).Min = [];
 elems(5).Max = [];
 
 elems(6) = Simulink.BusElement;
-elems(6).Name = 'Acmd';
-elems(6).Dimensions = 1;
+elems(6).Name = 'L2Vector';
+elems(6).Dimensions = 3;
 elems(6).DimensionsMode = 'Fixed';
 elems(6).DataType = 'single';
 elems(6).SampleTime = -1;
@@ -70,8 +70,8 @@ elems(6).Min = [];
 elems(6).Max = [];
 
 elems(7) = Simulink.BusElement;
-elems(7).Name = 'wp0';
-elems(7).Dimensions = 3;
+elems(7).Name = 'Acmd';
+elems(7).Dimensions = 1;
 elems(7).DimensionsMode = 'Fixed';
 elems(7).DataType = 'single';
 elems(7).SampleTime = -1;
@@ -81,7 +81,7 @@ elems(7).Min = [];
 elems(7).Max = [];
 
 elems(8) = Simulink.BusElement;
-elems(8).Name = 'wp1';
+elems(8).Name = 'wp0';
 elems(8).Dimensions = 3;
 elems(8).DimensionsMode = 'Fixed';
 elems(8).DataType = 'single';
@@ -90,6 +90,17 @@ elems(8).Complexity = 'real';
 elems(8).SamplingMode = 'Sample based';
 elems(8).Min = [];
 elems(8).Max = [];
+
+elems(9) = Simulink.BusElement;
+elems(9).Name = 'wp1';
+elems(9).Dimensions = 3;
+elems(9).DimensionsMode = 'Fixed';
+elems(9).DataType = 'single';
+elems(9).SampleTime = -1;
+elems(9).Complexity = 'real';
+elems(9).SamplingMode = 'Sample based';
+elems(9).Min = [];
+elems(9).Max = [];
 
 InternalVariables = Simulink.Bus;
 InternalVariables.Description = sprintf('Holds all of the data generated within Simulink code that Mavlink may need access to for transmission.');

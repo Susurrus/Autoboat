@@ -45,7 +45,7 @@ Model {
       Name		      "internalVars"
     }
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2530"
+    ComputedModelVersion    "1.2604"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -67,9 +67,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Dec 10 16:58:23 2014"
-  RTWModifiedTimeStamp	  340125615
-  ModelVersionFormat	  "1.%<AutoIncrement:2530>"
+  LastModifiedDate	  "Thu Dec 11 13:37:03 2014"
+  RTWModifiedTimeStamp	  340193292
+  ModelVersionFormat	  "1.%<AutoIncrement:2604>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1170,7 +1170,7 @@ Model {
   }
   System {
     Name		    "controller"
-    Location		    [202, 82, 1902, 1027]
+    Location		    [202, 82, 1678, 997]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1184,7 +1184,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "25835"
+    SIDHighWatermark	    "25837"
     Block {
       BlockType		      Inport
       Name		      "sensors_GPS"
@@ -1268,7 +1268,7 @@ Model {
       System {
 	Name			"Autonomous Controller"
 	Location		[728, 129, 1820, 984]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1519,8 +1519,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Rudder\nCommand"
-	    Location		    [728, 129, 1820, 967]
-	    Open		    off
+	    Location		    [728, 129, 1882, 967]
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -1622,7 +1622,7 @@ Model {
 	      BlockType		      Goto
 	      Name		      "Goto"
 	      SID		      "25272"
-	      Position		      [745, 52, 810, 78]
+	      Position		      [745, 37, 810, 63]
 	      BackgroundColor	      "cyan"
 	      ShowName		      off
 	      GotoTag		      "L2"
@@ -1652,7 +1652,7 @@ Model {
 	      BlockType		      Goto
 	      Name		      "Goto3"
 	      SID		      "25275"
-	      Position		      [1095, 152, 1240, 178]
+	      Position		      [1095, 182, 1240, 208]
 	      BackgroundColor	      "cyan"
 	      ShowName		      off
 	      GotoTag		      "autoRudderAngleCommand"
@@ -1662,17 +1662,27 @@ Model {
 	      BlockType		      Goto
 	      Name		      "Goto4"
 	      SID		      "25276"
-	      Position		      [745, 102, 810, 128]
+	      Position		      [745, 127, 810, 153]
 	      BackgroundColor	      "cyan"
 	      ShowName		      off
 	      GotoTag		      "a_cmd"
 	      TagVisibility	      "global"
 	    }
 	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto5"
+	      SID		      "25836"
+	      Position		      [745, 97, 810, 123]
+	      BackgroundColor	      "cyan"
+	      ShowName		      off
+	      GotoTag		      "AimPoint"
+	      TagVisibility	      "global"
+	    }
+	    Block {
 	      BlockType		      SubSystem
 	      Name		      "L2 Plus ref WP1"
 	      SID		      "25277"
-	      Ports		      [6, 3]
+	      Ports		      [6, 4]
 	      Position		      [505, 24, 655, 256]
 	      ErrorFcn		      "Stateflow.Translate.translate"
 	      PermitHierarchicalResolution "ExplicitOnly"
@@ -1710,7 +1720,7 @@ Model {
 		TiledPageScale		1
 		ShowPageBoundaries	off
 		ZoomFactor		"100"
-		SIDHighWatermark	"30"
+		SIDHighWatermark	"31"
 		Block {
 		  BlockType		  Inport
 		  Name			  "wp0"
@@ -1771,11 +1781,11 @@ Model {
 		  Name			  " SFunction "
 		  SID			  "25277::27"
 		  Tag			  "Stateflow S-Function controller 7"
-		  Ports			  [6, 4]
+		  Ports			  [6, 5]
 		  Position		  [180, 102, 230, 243]
 		  FunctionName		  "sf_sfun"
 		  Parameters		  "IPStar,InitialPoint,MaxDwnPthStar,TStar,switchDistance,tanIntercept"
-		  PortCounts		  "[6 4]"
+		  PortCounts		  "[6 5]"
 		  EnableBusSupport	  on
 		  Port {
 		    PortNumber		    2
@@ -1785,12 +1795,18 @@ Model {
 		  }
 		  Port {
 		    PortNumber		    3
-		    Name		    "as_c"
+		    Name		    "aimPoint"
 		    RTWStorageClass	    "Auto"
 		    DataLoggingNameMode	    "SignalName"
 		  }
 		  Port {
 		    PortNumber		    4
+		    Name		    "as_c"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		  }
+		  Port {
+		    PortNumber		    5
 		    Name		    "transition"
 		    RTWStorageClass	    "Auto"
 		    DataLoggingNameMode	    "SignalName"
@@ -1811,47 +1827,63 @@ Model {
 		}
 		Block {
 		  BlockType		  Outport
-		  Name			  "as_c"
-		  SID			  "25277::9"
+		  Name			  "aimPoint"
+		  SID			  "25277::31"
 		  Position		  [460, 136, 480, 154]
 		  Port			  "2"
 		  IconDisplay		  "Port number"
 		}
 		Block {
 		  BlockType		  Outport
-		  Name			  "transition"
-		  SID			  "25277::24"
+		  Name			  "as_c"
+		  SID			  "25277::9"
 		  Position		  [460, 171, 480, 189]
 		  Port			  "3"
 		  IconDisplay		  "Port number"
 		}
-		Line {
-		  SrcBlock		  " SFunction "
-		  SrcPort		  1
-		  DstBlock		  " Demux "
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  " Demux "
-		  SrcPort		  1
-		  DstBlock		  " Terminator "
-		  DstPort		  1
-		}
-		Line {
+		Block {
+		  BlockType		  Outport
 		  Name			  "transition"
-		  Labels		  [0, 0]
-		  SrcBlock		  " SFunction "
-		  SrcPort		  4
-		  DstBlock		  "transition"
+		  SID			  "25277::24"
+		  Position		  [460, 206, 480, 224]
+		  Port			  "4"
+		  IconDisplay		  "Port number"
+		}
+		Line {
+		  SrcBlock		  "wp0"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
 		  DstPort		  1
 		}
 		Line {
-		  Name			  "as_c"
-		  Labels		  [0, 0]
-		  SrcBlock		  " SFunction "
-		  SrcPort		  3
-		  DstBlock		  "as_c"
-		  DstPort		  1
+		  SrcBlock		  "wp0_found"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "wp1"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  3
+		}
+		Line {
+		  SrcBlock		  "wp1_found"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  4
+		}
+		Line {
+		  SrcBlock		  "Puav"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  5
+		}
+		Line {
+		  SrcBlock		  "Vxyz"
+		  SrcPort		  1
+		  DstBlock		  " SFunction "
+		  DstPort		  6
 		}
 		Line {
 		  Name			  "L2Vec"
@@ -1862,39 +1894,39 @@ Model {
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Vxyz"
-		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  6
+		  Name			  "aimPoint"
+		  Labels		  [0, 0]
+		  SrcBlock		  " SFunction "
+		  SrcPort		  3
+		  DstBlock		  "aimPoint"
+		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Puav"
-		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  5
+		  Name			  "as_c"
+		  Labels		  [0, 0]
+		  SrcBlock		  " SFunction "
+		  SrcPort		  4
+		  DstBlock		  "as_c"
+		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "wp1_found"
-		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  4
+		  Name			  "transition"
+		  Labels		  [0, 0]
+		  SrcBlock		  " SFunction "
+		  SrcPort		  5
+		  DstBlock		  "transition"
+		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "wp1"
+		  SrcBlock		  " Demux "
 		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  3
+		  DstBlock		  " Terminator "
+		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "wp0_found"
+		  SrcBlock		  " SFunction "
 		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  2
-		}
-		Line {
-		  SrcBlock		  "wp0"
-		  SrcPort		  1
-		  DstBlock		  " SFunction "
+		  DstBlock		  " Demux "
 		  DstPort		  1
 		}
 	      }
@@ -3102,7 +3134,7 @@ Model {
 	      Name		      "Translate a_cmd to\nrudder angle"
 	      SID		      "25337"
 	      Ports		      [4, 1]
-	      Position		      [905, 135, 1050, 190]
+	      Position		      [905, 165, 1050, 220]
 	      MinAlgLoopOccurrences   off
 	      PropExecContextOutsideSubsystem off
 	      RTWSystemCode	      "Auto"
@@ -3575,7 +3607,7 @@ Model {
 	    }
 	    Line {
 	      SrcBlock		      "L2 Plus ref WP1"
-	      SrcPort		      3
+	      SrcPort		      4
 	      Points		      [135, 0]
 	      DstBlock		      "Switch to\nnext waypoint\n(wraparound)"
 	      DstPort		      trigger
@@ -3617,7 +3649,7 @@ Model {
 	      }
 	      Branch {
 		Labels			[0, 0]
-		Points			[0, 105; 605, 0; 0, -190]
+		Points			[0, 105; 605, 0; 0, -160]
 		DstBlock		"Translate a_cmd to\nrudder angle"
 		DstPort			2
 	      }
@@ -3633,11 +3665,11 @@ Model {
 	      SrcPort		      1
 	      Points		      [25, 0]
 	      Branch {
-		DstBlock		"Goto3"
+		DstBlock		"Switch"
 		DstPort			1
 	      }
 	      Branch {
-		DstBlock		"Switch"
+		DstBlock		"Goto3"
 		DstPort			1
 	      }
 	    }
@@ -3655,7 +3687,7 @@ Model {
 	    }
 	    Line {
 	      SrcBlock		      "L2 Plus ref WP1"
-	      SrcPort		      2
+	      SrcPort		      3
 	      Points		      [70, 0]
 	      Branch {
 		DstBlock		"Goto4"
@@ -3669,7 +3701,7 @@ Model {
 	    Line {
 	      SrcBlock		      "psi_dot"
 	      SrcPort		      1
-	      Points		      [705, 0; 0, -205]
+	      Points		      [705, 0; 0, -175]
 	      DstBlock		      "Translate a_cmd to\nrudder angle"
 	      DstPort		      3
 	    }
@@ -3691,6 +3723,12 @@ Model {
 	      SrcBlock		      "Switch"
 	      SrcPort		      1
 	      DstBlock		      "Command"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "L2 Plus ref WP1"
+	      SrcPort		      2
+	      DstBlock		      "Goto5"
 	      DstPort		      1
 	    }
 	    Annotation {
@@ -6300,7 +6338,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"MAVLink Interface"
-	Location		[202, 82, 1678, 997]
+	Location		[728, 129, 1820, 984]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -6338,19 +6376,20 @@ Model {
 	  BlockType		  DataStoreWrite
 	  Name			  "Data Store\nWrite"
 	  SID			  "20232"
-	  Ports			  [7]
+	  Ports			  [8]
 	  Position		  [375, 89, 535, 641]
 	  ZOrder		  -6
 	  ShowName		  off
 	  DataStoreName		  "internalVariables"
 	  DataStoreElements	  "internalVariables.LocalPosition(:)#internalVariables.Velocity(:)#internalVariables.Heading#int"
-	  "ernalVariables.L2Vector(:)#internalVariables.Acmd#internalVariables.wp0(:)#internalVariables.wp1(:)"
+	  "ernalVariables.AimPoint(:)#internalVariables.L2Vector(:)#internalVariables.Acmd#internalVariables.wp0(:)#internalVa"
+	  "riables.wp1(:)"
 	}
 	Block {
 	  BlockType		  From
 	  Name			  "From1"
 	  SID			  "25058"
-	  Position		  [115, 434, 155, 456]
+	  Position		  [115, 459, 155, 481]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "a_cmd"
@@ -6360,7 +6399,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From13"
 	  SID			  "16168"
-	  Position		  [115, 354, 155, 376]
+	  Position		  [115, 389, 155, 411]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "L2"
@@ -6370,7 +6409,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From15"
 	  SID			  "17891"
-	  Position		  [115, 274, 235, 296]
+	  Position		  [115, 249, 235, 271]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "SensedHeading"
@@ -6380,7 +6419,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From16"
 	  SID			  "17866"
-	  Position		  [115, 114, 235, 136]
+	  Position		  [115, 109, 235, 131]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "SensedLocalPosition"
@@ -6390,7 +6429,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From17"
 	  SID			  "17867"
-	  Position		  [115, 195, 235, 215]
+	  Position		  [115, 180, 235, 200]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "SensedVelocity"
@@ -6400,7 +6439,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From2"
 	  SID			  "25473"
-	  Position		  [115, 514, 155, 536]
+	  Position		  [115, 529, 155, 551]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "wp0"
@@ -6410,10 +6449,20 @@ Model {
 	  BlockType		  From
 	  Name			  "From3"
 	  SID			  "25474"
-	  Position		  [115, 594, 155, 616]
+	  Position		  [115, 599, 155, 621]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "wp1"
+	  TagVisibility		  "global"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "From4"
+	  SID			  "25837"
+	  Position		  [115, 319, 235, 341]
+	  BackgroundColor	  "magenta"
+	  ShowName		  off
+	  GotoTag		  "AimPoint"
 	  TagVisibility		  "global"
 	}
 	Block {
@@ -6447,31 +6496,37 @@ Model {
 	  SrcBlock		  "From13"
 	  SrcPort		  1
 	  DstBlock		  "Data Store\nWrite"
-	  DstPort		  4
+	  DstPort		  5
 	}
 	Line {
 	  SrcBlock		  "From1"
 	  SrcPort		  1
 	  DstBlock		  "Data Store\nWrite"
-	  DstPort		  5
+	  DstPort		  6
 	}
 	Line {
 	  SrcBlock		  "From2"
 	  SrcPort		  1
 	  DstBlock		  "Data Store\nWrite"
-	  DstPort		  6
+	  DstPort		  7
 	}
 	Line {
 	  SrcBlock		  "From3"
 	  SrcPort		  1
 	  DstBlock		  "Data Store\nWrite"
-	  DstPort		  7
+	  DstPort		  8
 	}
 	Line {
 	  SrcBlock		  "Data Store\nRead"
 	  SrcPort		  1
 	  DstBlock		  "Out1"
 	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "From4"
+	  SrcPort		  1
+	  DstBlock		  "Data Store\nWrite"
+	  DstPort		  4
 	}
       }
     }
@@ -6576,7 +6631,7 @@ Stateflow {
     name		    "controller"
     created		    "20-Jul-2010 14:18:50"
     isLibrary		    0
-    firstTarget		    64
+    firstTarget		    65
     sfVersion		    76014001.0002
   }
   chart {
@@ -7371,7 +7426,7 @@ Stateflow {
     firstJunction	    46
     viewObj		    44
     machine		    1
-    ssIdHighWaterMark	    32
+    ssIdHighWaterMark	    33
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
     firstData		    48
@@ -7396,68 +7451,72 @@ Stateflow {
     decomposition	    CLUSTER_STATE
     eml {
       isEML		      1
-      script		      "function [L2Vec, as_c, transition] = L2PlusWP1(wp0, wp0_found, wp1, wp1_found, Puav, Vxyz, ...\n "
-      "   switchDistance, tanIntercept, MaxDwnPthStar, InitialPoint, IPStar, TStar)\n%     computes bank angle command "
-      "for following a straight line\n%     by creating an aim point that may be more than L2 away \n%     from the UAV"
-      ". The aim point is (usually) farther along the path \n%     toward wp1 than the UAV, and the intercept\n%     an"
-      "gle is less than or equal to a specified value. This limits the intercept\n%     angle even when the UAV is with"
-      "in L2 of the path.\n%\n%         INPUTS\n%             wp0     Waypoint 0 position in North-East-Down meters\n% "
-      "            wp1     Waypoint 1 position in North-East-Down meters\n%             Puav    Position of UAV in Nort"
-      "h-East-Down meters\n%             Vxyz    Inertial velocity in North-East-Down meters\n%\n%         PARAMETERS\n"
-      "%             switchDistance distance from wp1 to switch to WP2\n%             tanIntercept   tangent of interce"
-      "pt angle\n%             MaxDwnPthStar  L2 multiplier to determine downpath aimpoint\n%             InitialPoint "
-      "  true if no line tracking at first--fly direct to some initial point\n%             IPStar         L2 multiplie"
-      "r to determing distance of IP from first wp0\n%             Tstar          Controller gain, in seconds. Multipli"
-      "ed by the\n%                            groundspeed to get the lookahead distance.\n%             \n%         OU"
-      "TPUTS\n%             L2Vec      L2 vector toward aim point\n%             as_c       commanded lateral accelerat"
-      "ion\n%             transition A boolean indicating if a waypoint transition\n%                        should occ"
-      "ur.\n\n    persistent IPActive;  %true if flying toward IP\n    persistent IP; % location of initial point\n    "
-      "\n    % Track the last acceleration command so we can filter it.\n    persistent last_as_c;\n    if isempty(last"
-      "_as_c)\n        last_as_c = single(NaN);\n    end\n    \n    % Initialize the outputs. These are sensible defaul"
-      "ts, which lets error\n    % handling just \"return\" instead of having to re-specify these values.\n    L2Vec = "
-      "single(zeros(3,1));\n    as_c = single(0);\n    transition = false;\n    \n    % Create some nice intermediate v"
-      "ariables\n    Pne = [Puav(1); Puav(2); 0]; % Horizontal position\n    Vne = [Vxyz(1); Vxyz(2); 0]; % Horizontal "
-      "velocity\n    Groundspeed = norm(Vne); % The vehicle's groundspeed\n    L2 = single(TStar*Groundspeed); % L2 vec"
-      "tor length\n    \n    % If neither waypoint is valid then don't do anything\n    if ~wp0_found || ~wp1_found\n  "
-      "      return;\n    % Otherwise if the first two waypoints are next to each other (as is\n    % common if the ori"
-      "gin is the first waypoint and the boat latches that\n    % as its start value) then transition to the next waypo"
-      "int.\n    elseif norm(wp1 - wp0) < switchDistance\n        transition = true;\n        \n        % Also reset th"
-      "e acceleration command filter. This is necessary as\n        % wp transitions may result in large swings. \n    "
-      "    last_as_c = single(NaN);\n        return;\n    end\n    \n    % Calculate N1 (right-hand orthogonal to T1) \n"
-      "    % and T1 (unit vector pointing from wp0 to wp1)\n    T1 = wp1 - wp0;\n    T1 = T1/norm(T1);\n    N1 = [-T1(2"
-      "); T1(1); 0];\n    \n    % Create the initial point on initialization.\n    if isempty(IPActive)\n        % If w"
-      "e aren't on top of the aim point, use the one specified.\n        IP = [wp0(1); wp0(2); 0] - L2*IPStar*T1;\n    "
-      "    if InitialPoint && norm(IP - Pne) > .001\n            IPActive = true;\n        % Otherwise, use regular L2+"
-      " guidance mode.\n        else\n            IPActive = false;\n            IP = single([0; 0; -999]); %signal for"
-      " no IP\n        end\n    end\n    \n    % If initial-point guidance is active, aim straight towards that point.\n"
-      "    if IPActive\n        L2Vec = L2*(IP - Pne)/norm(IP - Pne);\n        \n        % Once we are within |L2|/10 t"
-      "o this initial point, switch to regular\n        % segment-tracking.\n        if norm(IP - Pne) < .1*L2\n       "
-      "     IPActive = false;\n        end\n    \n    % If initial-point mode isn't active, we're in \"regular\" L2+\n "
-      "   % line-segment mode.\n    else\n        Pwp1 = Pne - [wp1(1); wp1(2); 0]; % position of UAV relative to wp1\n"
-      "        Pe_y = single(Pwp1'*N1); % cross track error\n        Dist2wp1 = -single(Pwp1'*T1); % distance to wp1\n\n"
-      "        % The minimum down-path distance for the aim point intersection on\n        % T is determined by the int"
-      "ercept angle but limited in the case of\n        % very distant intercepts.\n        MinDownPath = single(min(ab"
-      "s(Pe_y)/tanIntercept, MaxDwnPthStar*L2));\n        % If we're too far away from the track, the L2 vector can't\n"
-      "        % intercept it, so just use the minimum down-path distance.\n        if abs(Pe_y) > L2\n            L2Do"
-      "wnPath = MinDownPath;\n        % Otherwise, calculate the downpath distance based on where the L2\n        % dis"
-      "tance puts us (Pythagorean's theorem).\n        else\n            L2DownPath = max(MinDownPath, sqrt(L2^2 - Pe_y"
-      "^2));\n        end\n        \n        % If we're within the switching distance to the waypoint,\n        % trans"
-      "ition!\n        if Dist2wp1 - switchDistance <= 0\n            transition = true;\n        end\n        \n      "
-      "   % Now finally calculate the L2 vector. Since the on-track position\n         % of the vehicle is never calcul"
-      "ated, calculate the aim point\n         % as an offset backwards from wp1 towards wp0.\n         L2ToT = single("
-      "(Dist2wp1 - L2DownPath) * (-T1) - Pwp1);\n         % Make sure to check for division by zero here!\n         if "
-      "norm(L2ToT) < .001\n             L2Vec = L2*T1;\n         else\n             L2Vec = single(L2 * L2ToT / norm(L2"
-      "ToT)); % limit size to L2\n         end\n    end\n    \n    % Now if the groundspeed of the vessel is zero, we m"
-      "ake sure we don't\n    % get a division-by-zero error and instead handle it gracefully.\n    if Groundspeed > 0\n"
-      "        Zprod = single(Vxyz(1)*L2Vec(2) - Vxyz(2)*L2Vec(1)); %Z component of cross product\n        sinEta = sin"
-      "gle(Zprod/(Groundspeed*L2));\n        as_c = single(2*Groundspeed^2/(L2)*sinEta);\n    else\n        sinEta = si"
-      "ngle(0.0);\n        as_c = single(0.0);\n    end\n\n    % If the aim point is behind us, turn around. Also choos"
-      "e a direction\n    % that minimize the turn angle.\n    if L2Vec'*Vxyz < 0\n        if sinEta < 0\n            a"
-      "s_c = single(-99);\n        else\n            as_c = single(99);\n        end\n    end\n    \n    % Now add a ju"
-      "mp-filter on the commanded acceleration. We use a large\n    % enough value here such that the acceleration cann"
-      "ot switch signs, but\n    % will still work in low-speed situations.\n    % Note: The following works with the i"
-      "nitial value of NaN, how\n    % convenient!\n    if abs(as_c - last_as_c) > single(99)\n        as_c = last_as_c"
-      ";\n    else\n        last_as_c = as_c;\n    end\nend"
+      script		      "function [L2Vec, aimPoint, as_c, transition] = L2PlusWP1(wp0, wp0_found, wp1, wp1_found, Puav, Vx"
+      "yz, ...\n    switchDistance, tanIntercept, MaxDwnPthStar, InitialPoint, IPStar, TStar)\n%     computes bank angl"
+      "e command for following a straight line\n%     by creating an aim point that may be more than L2 away \n%     fr"
+      "om the UAV. The aim point is (usually) farther along the path \n%     toward wp1 than the UAV, and the intercept"
+      "\n%     angle is less than or equal to a specified value. This limits the intercept\n%     angle even when the U"
+      "AV is within L2 of the path.\n%\n%         INPUTS\n%             wp0     Waypoint 0 position in North-East-Down "
+      "meters\n%             wp1     Waypoint 1 position in North-East-Down meters\n%             Puav    Position of U"
+      "AV in North-East-Down meters\n%             Vxyz    Inertial velocity in North-East-Down meters\n%\n%         PA"
+      "RAMETERS\n%             switchDistance distance from wp1 to switch to WP2\n%             tanIntercept   tangent "
+      "of intercept angle\n%             MaxDwnPthStar  L2 multiplier to determine downpath aimpoint\n%             Ini"
+      "tialPoint   true if no line tracking at first--fly direct to some initial point\n%             IPStar         L2"
+      " multiplier to determing distance of IP from first wp0\n%             Tstar          Controller gain, in seconds"
+      ". Multiplied by the\n%                            groundspeed to get the lookahead distance.\n%             \n% "
+      "        OUTPUTS\n%             L2Vec      L2 vector toward aim point\n%             as_c       commanded lateral"
+      " acceleration\n%             transition A boolean indicating if a waypoint transition\n%                        "
+      "should occur.\n\n    persistent IPActive;  %true if flying toward IP\n    persistent IP; % location of initial p"
+      "oint\n    \n    % Track the last acceleration command so we can filter it.\n    persistent last_as_c;\n    if is"
+      "empty(last_as_c)\n        last_as_c = single(NaN);\n    end\n    \n    % Initialize the outputs. These are sensi"
+      "ble defaults, which lets error\n    % handling just \"return\" instead of having to re-specify these values.\n  "
+      "  L2Vec = single(zeros(3, 1));\n    aimPoint = single(zeros(3, 1));\n    as_c = single(0);\n    transition = fal"
+      "se;\n    \n    % Sanitize the altitude from the waypoints, as L2+ is currently only\n    % 2-dimensional.\n    w"
+      "p0(3) = single(0);\n    wp1(3) = single(0);\n    \n    % If neither waypoint is valid then don't do anything\n  "
+      "  if ~wp0_found || ~wp1_found\n        return;\n    % Otherwise if the first two waypoints are next to each othe"
+      "r (as is\n    % common if the origin is the first waypoint and the boat latches that\n    % as its start value) "
+      "then transition to the next waypoint.\n    elseif norm(wp1 - wp0) < switchDistance\n        transition = true;\n"
+      "        \n        % Also reset the acceleration command filter. This is necessary as\n        % wp transitions m"
+      "ay result in large swings. \n        last_as_c = single(NaN);\n        return;\n    end\n    \n    % Create some"
+      " nice intermediate variables\n    Pne = [Puav(1); Puav(2); 0]; % Horizontal position\n    Vne = [Vxyz(1); Vxyz(2"
+      "); 0]; % Horizontal velocity\n    Groundspeed = norm(Vne); % The vehicle's groundspeed\n    L2 = single(TStar * "
+      "Groundspeed); % L2 vector length\n    \n    % Calculate N1 (right-hand orthogonal to T1) \n    % and T1 (unit ve"
+      "ctor pointing from wp0 to wp1)\n    T1 = wp1 - wp0;\n    T1 = T1 / norm(T1);\n    N1 = [-T1(2); T1(1); 0];\n    "
+      "\n    % Create the initial point on initialization.\n    if isempty(IPActive)\n        % If we aren't on top of "
+      "the aim point, use the one specified.\n        IP = [wp0(1); wp0(2); 0] - L2*IPStar*T1;\n        if InitialPoint"
+      " && norm(IP - Pne) > .001\n            IPActive = true;\n        % Otherwise, use regular L2+ guidance mode.\n  "
+      "      else\n            IPActive = false;\n            IP = single([0; 0; -999]); %signal for no IP\n        end"
+      "\n    end\n    \n    % If initial-point guidance is active, aim straight towards that point.\n    if IPActive\n "
+      "       % Calculate the aimpointand the L2 vector.\n        aimPoint = IP;\n        L2Vec = L2 * (aimPoint - Pne)"
+      " / norm(aimPoint - Pne);\n        \n        % Once we are within |L2|/10 to this initial point, switch to regula"
+      "r\n        % segment-tracking.\n        if norm(aimPoint - Pne) < .1*L2\n            IPActive = false;\n        "
+      "end\n    \n    % If initial-point mode isn't active, we're in \"regular\" L2+\n    % line-segment mode.\n    els"
+      "e\n        Pwp1 = Pne - [wp1(1); wp1(2); 0]; % position of UAV relative to wp1\n        Pe_y = single(Pwp1'*N1);"
+      " % cross track error\n        Dist2wp1 = -single(Pwp1'*T1); % distance to wp1\n\n        % The minimum down-path"
+      " distance for the aim point intersection on\n        % T is determined by the intercept angle but limited in the"
+      " case of\n        % very distant intercepts.\n        MinDownPath = single(min(abs(Pe_y)/tanIntercept, MaxDwnPth"
+      "Star*L2));\n        % If we're too far away from the track, the L2 vector can't\n        % intercept it, so just"
+      " use the minimum down-path distance.\n        if abs(Pe_y) > L2\n            L2DownPath = MinDownPath;\n        "
+      "% Otherwise, calculate the downpath distance based on where the L2\n        % distance puts us (Pythagorean's th"
+      "eorem).\n        else\n            L2DownPath = max(MinDownPath, sqrt(L2^2 - Pe_y^2));\n        end\n        \n "
+      "       % If we're within the switching distance to the waypoint,\n        % transition!\n        if Dist2wp1 - s"
+      "witchDistance <= 0\n            transition = true;\n        end\n        \n        % Calculate the aim point, wh"
+      "ich is where the L2 vector will point\n        % to.\n        aimPoint = [wp1(1); wp1(2); 0] - (Dist2wp1 - L2Dow"
+      "nPath) * T1;\n        \n        % Now finally calculate the L2 vector. Since the on-track position\n        % of"
+      " the vehicle is never calculated, calculate the aim point\n        % as an offset backwards from wp1 towards wp0"
+      ".\n        L2ToT = single((Dist2wp1 - L2DownPath) * (-T1) - Pwp1);\n        % Make sure to check for division by"
+      " zero here!\n        if norm(L2ToT) < .001\n            L2Vec = L2*T1;\n        else\n            L2Vec = single"
+      "(L2 * L2ToT / norm(L2ToT)); % limit size to L2\n        end\n    end\n    \n    % Now if the groundspeed of the "
+      "vessel is zero, we make sure we don't\n    % get a division-by-zero error and instead handle it gracefully.\n   "
+      " if Groundspeed > 0\n        Zprod = single(Vxyz(1)*L2Vec(2) - Vxyz(2)*L2Vec(1)); %Z component of cross product\n"
+      "        sinEta = single(Zprod/(Groundspeed*L2));\n        as_c = single(2*Groundspeed^2/(L2)*sinEta);\n    else\n"
+      "        sinEta = single(0.0);\n        as_c = single(0.0);\n    end\n\n    % If the aim point is behind us, turn"
+      " around. Also choose a direction\n    % that minimize the turn angle.\n    if L2Vec'*Vxyz < 0\n        if sinEta"
+      " < 0\n            as_c = single(-99);\n        else\n            as_c = single(99);\n        end\n    end\n    \n"
+      "    % Now add a jump-filter on the commanded acceleration. We use a large\n    % enough value here such that the"
+      " acceleration cannot switch signs, but\n    % will still work in low-speed situations.\n    % Note: The followin"
+      "g works with the initial value of NaN, how\n    % convenient!\n    if abs(as_c - last_as_c) > single(99)\n      "
+      "  as_c = last_as_c;\n    else\n        last_as_c = as_c;\n    end\nend"
       editorLayout	      "100 M4x1[308 217 1936 1056]"
       fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
       "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
@@ -7608,9 +7667,31 @@ Stateflow {
   }
   data {
     id			    53
+    ssIdNumber		    33
+    name		    "aimPoint"
+    linkNode		    [44 52 54]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    54
     ssIdNumber		    6
     name		    "Puav"
-    linkNode		    [44 52 54]
+    linkNode		    [44 53 55]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7624,10 +7705,10 @@ Stateflow {
     dataType		    "single"
   }
   data {
-    id			    54
+    id			    55
     ssIdNumber		    7
     name		    "Vxyz"
-    linkNode		    [44 53 55]
+    linkNode		    [44 54 56]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7644,10 +7725,10 @@ Stateflow {
     dataType		    "single"
   }
   data {
-    id			    55
+    id			    56
     ssIdNumber		    8
     name		    "switchDistance"
-    linkNode		    [44 54 56]
+    linkNode		    [44 55 57]
     scope		    PARAMETER_DATA
     paramIndexForInitFromWorkspace 4
     machine		    1
@@ -7666,10 +7747,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    56
+    id			    57
     ssIdNumber		    10
     name		    "tanIntercept"
-    linkNode		    [44 55 57]
+    linkNode		    [44 56 58]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 5
@@ -7689,10 +7770,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    57
+    id			    58
     ssIdNumber		    11
     name		    "MaxDwnPthStar"
-    linkNode		    [44 56 58]
+    linkNode		    [44 57 59]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 2
@@ -7712,10 +7793,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    58
+    id			    59
     ssIdNumber		    13
     name		    "InitialPoint"
-    linkNode		    [44 57 59]
+    linkNode		    [44 58 60]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 1
@@ -7735,10 +7816,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    59
+    id			    60
     ssIdNumber		    14
     name		    "IPStar"
-    linkNode		    [44 58 60]
+    linkNode		    [44 59 61]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     machine		    1
@@ -7757,10 +7838,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    60
+    id			    61
     ssIdNumber		    15
     name		    "TStar"
-    linkNode		    [44 59 61]
+    linkNode		    [44 60 62]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 3
@@ -7780,10 +7861,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    61
+    id			    62
     ssIdNumber		    16
     name		    "as_c"
-    linkNode		    [44 60 62]
+    linkNode		    [44 61 63]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -7798,10 +7879,10 @@ Stateflow {
     dataType		    "single"
   }
   data {
-    id			    62
+    id			    63
     ssIdNumber		    26
     name		    "transition"
-    linkNode		    [44 61 0]
+    linkNode		    [44 62 0]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -7820,22 +7901,22 @@ Stateflow {
     dataType		    "boolean"
   }
   instance {
-    id			    63
+    id			    64
     name		    "Autonomous Controller/Rudder\nCommand/L2 Plus ref WP1"
     machine		    1
     chart		    44
   }
   target {
-    id			    64
+    id			    65
     name		    "sfun"
     description		    "Default Simulink S-Function Target."
     machine		    1
-    linkNode		    [1 0 65]
+    linkNode		    [1 0 66]
   }
   target {
-    id			    65
+    id			    66
     name		    "rtw"
     machine		    1
-    linkNode		    [1 64 0]
+    linkNode		    [1 65 0]
   }
 }
