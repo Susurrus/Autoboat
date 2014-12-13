@@ -44,7 +44,7 @@ Model {
       Name		      "imu"
     }
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.46"
+    ComputedModelVersion    "1.49"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -66,9 +66,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Nov 25 17:47:09 2014"
-  RTWModifiedTimeStamp	  338838422
-  ModelVersionFormat	  "1.%<AutoIncrement:46>"
+  LastModifiedDate	  "Fri Dec 12 15:55:02 2014"
+  RTWModifiedTimeStamp	  340299715
+  ModelVersionFormat	  "1.%<AutoIncrement:49>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -106,6 +106,7 @@ Model {
     $ObjectID		    1
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "Plant"
+    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -695,6 +696,10 @@ Model {
       SaturateOnIntegerOverflow	on
     }
     Block {
+      BlockType		      BusAssignment
+      AssignedSignals	      "signal1"
+    }
+    Block {
       BlockType		      BusCreator
       Inputs		      "4"
       DisplayOption	      "none"
@@ -892,6 +897,15 @@ Model {
       LinearizeAsGain	      on
     }
     Block {
+      BlockType		      RateTransition
+      Integrity		      on
+      Deterministic	      on
+      X0		      "0"
+      OutPortSampleTimeOpt    "Specify"
+      OutPortSampleTimeMultiple	"1"
+      OutPortSampleTime	      "-1"
+    }
+    Block {
       BlockType		      S-Function
       FunctionName	      "system"
       SFunctionModules	      "''"
@@ -1005,7 +1019,7 @@ Model {
   }
   System {
     Name		    "Plant"
-    Location		    [16, 87, 1076, 830]
+    Location		    [177, 119, 1572, 879]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -1019,7 +1033,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "183"
+    SIDHighWatermark	    "195"
     Block {
       BlockType		      Inport
       Name		      "Commanded Rudder"
@@ -2450,7 +2464,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Get GPS"
-	Location		[970, 82, 1910, 1011]
+	Location		[56, 103, 1206, 1032]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -2499,6 +2513,28 @@ Model {
 	  IconDisplay		  "Port number"
 	}
 	Block {
+	  BlockType		  Reference
+	  Name			  "20-count\ncounter"
+	  SID			  "186"
+	  Ports			  [0, 1]
+	  Position		  [730, 530, 760, 560]
+	  ZOrder		  -7
+	  LibraryVersion	  "1.256"
+	  SourceBlock		  "simulink/Sources/Counter\nLimited"
+	  SourceType		  "Counter Limited"
+	  uplimit		  "19"
+	  tsamp			  "T_step"
+	}
+	Block {
+	  BlockType		  BusAssignment
+	  Name			  "Bus\nAssignment"
+	  SID			  "194"
+	  Ports			  [2, 1]
+	  Position		  [1000, 316, 1045, 354]
+	  ZOrder		  -1
+	  AssignedSignals	  "newData"
+	}
+	Block {
 	  BlockType		  BusCreator
 	  Name			  "Bus\nCreator"
 	  SID			  "81"
@@ -2509,6 +2545,20 @@ Model {
 	  DisplayOption		  "bar"
 	  OutDataTypeStr	  "Bus: GpsData"
 	  NonVirtualBus		  on
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Compare\nTo Zero"
+	  SID			  "187"
+	  Ports			  [1, 1]
+	  Position		  [835, 530, 865, 560]
+	  ZOrder		  -6
+	  LibraryVersion	  "1.256"
+	  SourceBlock		  "simulink/Logic and Bit\nOperations/Compare\nTo Zero"
+	  SourceType		  "Compare To Zero"
+	  relop			  "=="
+	  OutDataTypeStr	  "boolean"
+	  ZeroCross		  on
 	}
 	Block {
 	  BlockType		  DataTypeConversion
@@ -2576,6 +2626,23 @@ Model {
 	  InputPortMap		  "u0"
 	  DelayLength		  "gpsLatency"
 	  ExternalReset		  "None"
+	}
+	Block {
+	  BlockType		  Delay
+	  Name			  "Delay4"
+	  SID			  "188"
+	  Ports			  [1, 1]
+	  Position		  [925, 528, 960, 562]
+	  ShowName		  off
+	  InputPortMap		  "u0"
+	  DelayLength		  "gpsLatency"
+	  ExternalReset		  "None"
+	  Port {
+	    PortNumber		    1
+	    Name		    "newData"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
 	}
 	Block {
 	  BlockType		  Demux
@@ -2694,6 +2761,24 @@ Model {
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
+	}
+	Block {
+	  BlockType		  RateTransition
+	  Name			  "Rate Transition"
+	  SID			  "189"
+	  Position		  [850, 304, 890, 346]
+	  ZOrder		  -10
+	  ShowName		  off
+	  OutPortSampleTime	  ".2"
+	}
+	Block {
+	  BlockType		  RateTransition
+	  Name			  "Rate Transition1"
+	  SID			  "190"
+	  Position		  [915, 304, 955, 346]
+	  ZOrder		  -10
+	  ShowName		  off
+	  OutPortSampleTime	  "T_step"
 	}
 	Block {
 	  BlockType		  Selector
@@ -2914,11 +2999,11 @@ Model {
 	Block {
 	  BlockType		  Constant
 	  Name			  "Zero level trust1"
-	  SID			  "93"
+	  SID			  "195"
 	  Position		  [705, 156, 730, 174]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
-	  Value			  "0"
+	  Value			  "false"
 	  OutDataTypeStr	  "boolean"
 	  Port {
 	    PortNumber		    1
@@ -3162,7 +3247,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "GPS"
 	  SID			  "99"
-	  Position		  [850, 318, 880, 332]
+	  Position		  [1070, 328, 1100, 342]
 	  BackgroundColor	  "yellow"
 	  IconDisplay		  "Port number"
 	}
@@ -3225,12 +3310,6 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Bus\nCreator"
-	  SrcPort		  1
-	  DstBlock		  "GPS"
-	  DstPort		  1
-	}
-	Line {
 	  Name			  "cog"
 	  Labels		  [1, 0]
 	  SrcBlock		  "Gain1"
@@ -3264,14 +3343,6 @@ Model {
 	  SrcPort		  2
 	  DstBlock		  "Subsystem"
 	  DstPort		  2
-	}
-	Line {
-	  Name			  "newData"
-	  Labels		  [0, 0]
-	  SrcBlock		  "Zero level trust1"
-	  SrcPort		  1
-	  DstBlock		  "Bus\nCreator"
-	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Gain"
@@ -3417,6 +3488,59 @@ Model {
 	  DstBlock		  "Sum1"
 	  DstPort		  2
 	}
+	Line {
+	  SrcBlock		  "20-count\ncounter"
+	  SrcPort		  1
+	  DstBlock		  "Compare\nTo Zero"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Compare\nTo Zero"
+	  SrcPort		  1
+	  DstBlock		  "Delay4"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Rate Transition"
+	  SrcPort		  1
+	  DstBlock		  "Rate Transition1"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Bus\nCreator"
+	  SrcPort		  1
+	  DstBlock		  "Rate Transition"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Rate Transition1"
+	  SrcPort		  1
+	  DstBlock		  "Bus\nAssignment"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Bus\nAssignment"
+	  SrcPort		  1
+	  DstBlock		  "GPS"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "newData"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Zero level trust1"
+	  SrcPort		  1
+	  DstBlock		  "Bus\nCreator"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "newData"
+	  Labels		  [0, 0]
+	  SrcBlock		  "Delay4"
+	  SrcPort		  1
+	  Points		  [10, 0; 0, -200]
+	  DstBlock		  "Bus\nAssignment"
+	  DstPort		  2
+	}
 	Annotation {
 	  Name			  "Convert velocity vector to speed"
 	  Position		  [496, 276]
@@ -3461,6 +3585,10 @@ Model {
 	  Name			  "Offset the position reported by GPS by its actual\noffset aboard the boat."
 	  Position		  [67, 486]
 	  HorizontalAlignment	  "left"
+	}
+	Annotation {
+	  Name			  "Generate 5Hz newData signal.\nAlso make sure it's delayed like all\nthe other input signals"
+	  Position		  [545, 54]
 	}
       }
     }
