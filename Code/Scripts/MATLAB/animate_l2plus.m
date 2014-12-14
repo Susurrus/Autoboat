@@ -138,7 +138,7 @@ for i=2:length(sensedPosition)
 
     % Update the viewport, keeping it square and showing: the aim point,
     % from wp, and to wp.
-    y_positions = [y(i) aim_point_e(i) y(i) + l2_east(i)];
+    y_positions = [y(i) aim_point_e(i) y(i) + l2_east(i) from_wp_e(i) to_wp_e(i)];
     y_range = [min(y_positions); max(y_positions)];
     y_range_size = abs(y_range(1) - y_range(2));
     if y_range_size < 60 % Make sure the viewport is at least 60m tall
@@ -146,7 +146,7 @@ for i=2:length(sensedPosition)
         y_range(1) = y_range(1) - extra;
         y_range(2) = y_range(2) + extra;
     end
-    x_positions = [x(i) aim_point_n(i) x(i) + l2_north(i)];
+    x_positions = [x(i) aim_point_n(i) x(i) + l2_north(i) from_wp_n(i) to_wp_n(i)];
     x_range = [min(x_positions); max(x_positions)];
     x_range_size = abs(x_range(1) - x_range(2));
     if x_range_size < 60 % Make sure the viewport is at least 60m wide
