@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2394"
+    ComputedModelVersion    "1.2396"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -29,9 +29,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Jun 16 07:49:07 2014"
-  RTWModifiedTimeStamp	  324804673
-  ModelVersionFormat	  "1.%<AutoIncrement:2394>"
+  LastModifiedDate	  "Sun Dec 14 16:26:37 2014"
+  RTWModifiedTimeStamp	  340474818
+  ModelVersionFormat	  "1.%<AutoIncrement:2396>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -416,7 +416,7 @@ Model {
 	  CustomSource		  "../Libs/C/Conversions.c\n../Libs/C/Nmea2000.c\n../Libs/C/Nmea2000Encode.c\n../Libs/C/DEE.c\n../Lib"
 	  "s/C/DEES_33F_24F.s\n../Libs/C/Traps.c\n../Libs/C/CanMessages.c\n../Libs/C/Acs300.c\n../Libs/C/Rudder.c\n../Libs/C/N"
 	  "ode.c\n../Libs/C/CircularBuffer.c\n../Libs/C/Ecan1.c\n../Libs/C/Parameters.c\n../Libs/C/DataStore.c\n\nclib/RcNode."
-	  "c\nclib/ParametersHelper.c"
+	  "c\nclib/ParametersHelper.c\nclib/Ecan1RcNodeHelper.c"
 	  IncludeHyperlinkInReport off
 	  LaunchReport		  off
 	  TargetLang		  "C"
@@ -677,7 +677,7 @@ Model {
 		Name			"OPTIM_GCC"
 		Value			"-mcpu=33fj128MC802 -O3 -fschedule-insns -fschedule-insns2                                                  "
 		"                                                                                                                    "
-		"                                          -fno-short-double"
+		"                                             -fno-short-double"
 	      }
 	      CustomProperty {
 		DataType		"string"
@@ -730,7 +730,7 @@ Model {
       Name		      "Configuration"
       ExtraOptions	      "-aGenerateTraceInfo=0 -aIgnoreTestpoints=1 "
       CurrentDlgPage	      "Code Generation/Custom Code"
-      ConfigPrmDlgPosition     [ 430, 130, 1490, 888 ] 
+      ConfigPrmDlgPosition     [ 406, 40, 1514, 912 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -1121,7 +1121,7 @@ Model {
   }
   System {
     Name		    "rc_node"
-    Location		    [501, 322, 1402, 740]
+    Location		    [1191, 82, 2870, 1027]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    221
@@ -1135,7 +1135,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "22998"
+    SIDHighWatermark	    "23003"
     Block {
       BlockType		      SubSystem
       Name		      "Actuator\nOutputs"
@@ -1382,7 +1382,7 @@ Model {
 	    Location		    [401, 346, 899, 646]
 	    Open		    off
 	    ModelBrowserVisibility  on
-	    ModelBrowserWidth	    200
+	    ModelBrowserWidth	    221
 	    ScreenColor		    "white"
 	    PaperOrientation	    "landscape"
 	    PaperPositionMode	    "auto"
@@ -10905,6 +10905,43 @@ Model {
 	}
 	Block {
 	  BlockType		  Reference
+	  Name			  "Check for any ECAN1 errors\n[Ecan1RcNodeHelper.c]"
+	  SID			  "23002"
+	  Tag			  "dsPIC_dsPIC_CFunctionCall"
+	  Ports			  [0, 1]
+	  Position		  [15, 452, 190, 498]
+	  BackgroundColor	  "orange"
+	  LibraryVersion	  "3.84"
+	  SourceBlock		  "dsPICdrivers/OTHERS/C Function Call"
+	  SourceType		  "C Function Call"
+	  FctUpdate		  "Output Function"
+	  fctName		  "Ecan1ErrorsMatlab"
+	  INPUT_SIZE		  "1"
+	  INPUT1		  "--"
+	  INPUT2		  "--"
+	  INPUT3		  "--"
+	  OUTPUT_SIZE		  "2"
+	  OUTPUT1		  "uint8"
+	  SampleTime		  "T_step"
+	  InputType		  "[ ]"
+	  OutputType		  "[ 2 ]"
+	  FctDeclaration	  "extern void Ecan1ErrorsMatlab(uint8_T* y1);"
+	  FctCall		  "Ecan1ErrorsMatlab(*%y1);"
+	  OrderingInOutPopup	  "None"
+	  FctStart		  "None"
+	  FctStart_Name		  "Init_onlyOnce"
+	  FctStart_Declaration	  "inline extern void Init_onlyOnce();"
+	  FctStart_Call		  "Init_onlyOnce();"
+	  FctInit		  "None"
+	  FctInit_Name		  "Init_Reset"
+	  FctInit_Declaration	  "inline extern void Init_Reset();"
+	  FctInit_Call		  "Init_Reset();"
+	  PinDigitalInput	  "[]"
+	  PinDigitalOutput	  "[]"
+	  AnalogueInput		  "[]"
+	}
+	Block {
+	  BlockType		  Reference
 	  Name			  "Check the Primary Node's\nstatus message to see if e-stop\nhas been enabled.\n[RcNode.c]"
 	  SID			  "22779"
 	  Tag			  "dsPIC_dsPIC_CFunctionCall"
@@ -10945,7 +10982,7 @@ Model {
 	  Name			  "Compare\nTo Constant"
 	  SID			  "22788"
 	  Ports			  [1, 1]
-	  Position		  [215, 466, 245, 484]
+	  Position		  [265, 456, 295, 474]
 	  ZOrder		  -5
 	  ShowName		  off
 	  LibraryVersion	  "1.256"
@@ -10961,7 +10998,7 @@ Model {
 	  Name			  "Compare\nTo Constant1"
 	  SID			  "22789"
 	  Ports			  [1, 1]
-	  Position		  [215, 486, 245, 504]
+	  Position		  [265, 476, 295, 494]
 	  ZOrder		  -5
 	  ShowName		  off
 	  LibraryVersion	  "1.256"
@@ -10993,7 +11030,7 @@ Model {
 	  Name			  "Compare\nTo Constant3"
 	  SID			  "22894"
 	  Ports			  [1, 1]
-	  Position		  [240, 551, 270, 569]
+	  Position		  [265, 546, 295, 564]
 	  ZOrder		  -5
 	  ShowName		  off
 	  LibraryVersion	  "1.256"
@@ -11143,17 +11180,15 @@ Model {
 	  SaturateOnIntegerOverflow off
 	}
 	Block {
-	  BlockType		  Reference
-	  Name			  "ECAN1 Error Status"
-	  SID			  "18686"
-	  Ports			  [0, 2]
-	  Position		  [110, 464, 190, 506]
-	  ForegroundColor	  "red"
+	  BlockType		  Demux
+	  Name			  "Demux"
+	  SID			  "23003"
+	  Ports			  [1, 2]
+	  Position		  [225, 456, 230, 494]
+	  ZOrder		  -7
 	  ShowName		  off
-	  LibraryVersion	  "1.9"
-	  SourceBlock		  "ecan_dspic/ECAN1 Error Status"
-	  SourceType		  "ECAN 1 Reception Block"
-	  ecan1_error_sample_time "T_step"
+	  Outputs		  "2"
+	  DisplayOption		  "bar"
 	}
 	Block {
 	  BlockType		  From
@@ -11189,7 +11224,7 @@ Model {
 	  BlockType		  From
 	  Name			  "From4"
 	  SID			  "22897"
-	  Position		  [80, 550, 190, 570]
+	  Position		  [80, 545, 190, 565]
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "manualCalState"
@@ -11222,7 +11257,7 @@ Model {
 	  BlockType		  Goto
 	  Name			  "Goto1"
 	  SID			  "22790"
-	  Position		  [305, 464, 470, 486]
+	  Position		  [355, 454, 520, 476]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  GotoTag		  "reset_can_tx_error"
@@ -11232,7 +11267,7 @@ Model {
 	  BlockType		  Goto
 	  Name			  "Goto2"
 	  SID			  "22791"
-	  Position		  [305, 484, 470, 506]
+	  Position		  [355, 474, 520, 496]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  GotoTag		  "reset_can_rx_error"
@@ -11242,7 +11277,7 @@ Model {
 	  BlockType		  Goto
 	  Name			  "Goto3"
 	  SID			  "22893"
-	  Position		  [305, 550, 470, 570]
+	  Position		  [355, 545, 520, 565]
 	  BackgroundColor	  "cyan"
 	  ShowName		  off
 	  GotoTag		  "reset_rc_uncalibrated"
@@ -11563,30 +11598,6 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "ECAN1 Error Status"
-	  SrcPort		  1
-	  DstBlock		  "Compare\nTo Constant"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "ECAN1 Error Status"
-	  SrcPort		  2
-	  DstBlock		  "Compare\nTo Constant1"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Compare\nTo Constant1"
-	  SrcPort		  1
-	  DstBlock		  "Goto2"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Compare\nTo Constant"
-	  SrcPort		  1
-	  DstBlock		  "Goto1"
-	  DstPort		  1
-	}
-	Line {
 	  SrcBlock		  "Constant2"
 	  SrcPort		  1
 	  Points		  [10, 0; 0, -10]
@@ -11768,16 +11779,46 @@ Model {
 	  DstBlock		  "Data Store\nWrite2"
 	  DstPort		  1
 	}
-	Annotation {
-	  Name			  "The ECAN error lines are watched for changes to trigger changes\nin the can_tx_err and can_rx_err status "
-	  "lines."
-	  Position		  [99, 440]
-	  HorizontalAlignment	  "left"
+	Line {
+	  SrcBlock		  "Compare\nTo Constant1"
+	  SrcPort		  1
+	  DstBlock		  "Goto2"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Compare\nTo Constant"
+	  SrcPort		  1
+	  DstBlock		  "Goto1"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Check for any ECAN1 errors\n[Ecan1RcNodeHelper.c]"
+	  SrcPort		  1
+	  DstBlock		  "Demux"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Demux"
+	  SrcPort		  1
+	  DstBlock		  "Compare\nTo Constant"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Demux"
+	  SrcPort		  2
+	  DstBlock		  "Compare\nTo Constant1"
+	  DstPort		  1
 	}
 	Annotation {
 	  Name			  "We check the e-stop status off of the primary node and NOT the ACS300 so that \nthe rudder can still be c"
 	  "ommanded if the ACS300 isn't connected."
 	  Position		  [41, 31]
+	  HorizontalAlignment	  "left"
+	}
+	Annotation {
+	  Name			  "The ECAN error lines are watched for changes to trigger changes\nin the can_tx_err and can_rx_err status "
+	  "lines."
+	  Position		  [99, 430]
 	  HorizontalAlignment	  "left"
 	}
       }
