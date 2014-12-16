@@ -1,17 +1,17 @@
 % Show a visualization of the L2+ data from a simulated run
 
 % Set to true to save this as a video
-saveVideo = false;
+saveVideo = true;
 
 % Speed up the playback by 10x by skipping a bunch of timesteps.
-speed = 20;
+speed = 50;
 valid_range = 1:speed:length(sensedPosition);
 
 % Grab position data
 x = sensedPosition(valid_range, 1);
 y = sensedPosition(valid_range, 2);
 
-% And rudder data (for some reason it's inverted
+% And rudder data (for some reason it's negated)
 rudder_angle = -rudder_position(valid_range);
 
 % Then grab waypoint and desired path data
@@ -31,11 +31,14 @@ aim_point_e = AimPoint(valid_range, 2);
 % And finally course-over-ground data
 cog = sensedHeading(valid_range);
 
+% Clean up the commanded rudder data (for some reason it's negated)
+commanded_rudder_angle = -180/pi*commands_rudder_angle(valid_range);
+
 %% Animate (use static_plots to determine run to use)
 
 % Prepare for saving video
 if saveVideo
-    videoFileName = sprintf('%d.avi', now);
+    videoFileName = sprintf('%f.avi', now);
     aviWriter = VideoWriter(videoFileName);
     aviWriter.FrameRate = 30;
     open(aviWriter);
@@ -59,12 +62,29 @@ else
 end
 
 % Finally plot everything for the first timepoint
-positionAxis = axes;
+positionAxis = subplot(3,2,[1 3 5]);
 axis(positionAxis, 'equal');
 hold(positionAxis, 'on');
+rudderAxis = subplot(3,2,2);
+hold(rudderAxis, 'on');
+title(rudderAxis, 'Rudder');
+crosstrackErrorAxis = subplot(3,2,4);
+hold(crosstrackErrorAxis, 'on');
+set(crosstrackErrorAxis, 'xticklabel', []);
+title(crosstrackErrorAxis, 'Crosstrack Error (m)');
+headingErrorAxis = subplot(3,2,6);
+hold(headingErrorAxis, 'on');
+set(headingErrorAxis, 'xticklabel', []);
+title(headingErrorAxis, 'Heading error');
+
+% Keep the positionAxis current, necessary for patch()
+axes(positionAxis);
 
 % Plot the boat position as a dot trail
 boat_pos = plot(positionAxis, y(valid_range(1)), x(valid_range(1)), '.', 'MarkerSize', 15);
+
+% Plot the entire waypoint track
+path = plot(positionAxis, [from_wp_e to_wp_e], [from_wp_n to_wp_n], 'k-');
 
 % First calculate the position of the boat at all points during this range
 boat_rotmat = rotmat2(-cog(valid_range(1)));
@@ -91,10 +111,19 @@ l2_vector = quiver(positionAxis, y(valid_range(1)), x(valid_range(1)), l2_north(
 % And the aim point
 aim_point = plot(positionAxis, aim_point_e, aim_point_n, 'b*');
 
-% And then plot the current waypoint pairing
+% Highlight the current waypoint pairing
 from_wp = plot(positionAxis, from_wp_n(1), from_wp_e(1), 'g*', 'MarkerSize', 10);
 to_wp = plot(positionAxis, to_wp_n(1), to_wp_e(1), 'r*', 'MarkerSize', 10);
-path = plot(positionAxis, [from_wp_n(1) to_wp_n(1)], [from_wp_e(1) to_wp_e(1)], 'k-');
+
+% And the points of waypoint transition
+transitions = plot(0, 0, 'm.');
+
+% On the rudder plot, plot the commanded and real rudder angle
+r_angle = plot(rudderAxis, 0, 180/pi*rudder_angle(1), 'k-');
+c_r_angle = plot(rudderAxis, 0, commanded_rudder_angle(1), '--b');
+set(rudderAxis, 'YLim', [-45 45]);
+set(rudderAxis, 'YTick', -45:15:45);
+set(rudderAxis, 'YGrid', 'on');
 
 % Save this frame to our video.
 if saveVideo
@@ -103,15 +132,17 @@ if saveVideo
 end
 
 % And now animate this plot by updating the data for every plot element.
-for i=2:length(sensedPosition)
+for i=2:length(valid_range)
     % If the user closes the window quit animating.
     if ~ishandle(f)
+        close(aviWriter);
         return;
     end
 
     % Wait if the animation is paused
     while isPaused
         if ~ishandle(f)
+            close(aviWriter);
             return;
         end
         pause(0.1)
@@ -183,10 +214,23 @@ for i=2:length(sensedPosition)
     % Update the waypoint track as needed
     set(from_wp, 'XData', from_wp_e(i), 'YData', from_wp_n(i));
     set(to_wp, 'XData', to_wp_e(i), 'YData', to_wp_n(i));
-    set(path, 'XData', [from_wp_e(i) to_wp_e(i)], 'YData', [from_wp_n(i) to_wp_n(i)]);
+
+    % If there's been a waypoint transition, plot it too
+    if from_wp_e(i) ~= from_wp_e(i-1) || from_wp_n(i) ~= from_wp_n(i-1)
+        transitions_x = [get(transitions, 'XData') y(i)];
+        transitions_y = [get(transitions, 'YData') x(i)];
+        set(transitions, 'XData', transitions_x, 'YData', transitions_y);
+    end
 
     % Update the plot title
-    title(positionAxis, sprintf('Autonomous run'));
+    title(positionAxis, sprintf('Autonomous run (%d/%d)', i, length(valid_range)));
+
+    % Update the rudder data
+    set(r_angle, 'XData', 1:i, 'YData', 180/pi*rudder_angle(1:i));
+    set(c_r_angle, 'XData', 1:i, 'YData', commanded_rudder_angle(1:i));
+
+    % And limit the data views to the last 10s of data
+    set(rudderAxis, 'XLim', [max(1,i-100*100/speed); i]);
 
     % Save this frame to our video.
     if saveVideo
@@ -200,3 +244,4 @@ for i=2:length(sensedPosition)
         end
     end
 end
+close(aviWriter);
