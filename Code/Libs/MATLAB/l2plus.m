@@ -15,7 +15,7 @@ TStar.RTWInfo.Alias = 'tStar';
 % current position that should indicate the aim point.
 MaxDwnPthStar = Simulink.Parameter;
 MaxDwnPthStar.Description = 'Maximum downpath distance of the aimpoint';
-MaxDwnPthStar.Value = 10;
+MaxDwnPthStar.Value = 2;
 MaxDwnPthStar.DataType = 'single';
 MaxDwnPthStar.DocUnits = 'm';
 MaxDwnPthStar.RTWInfo.StorageClass = 'ExportedGlobal';
@@ -24,7 +24,7 @@ MaxDwnPthStar.RTWInfo.Alias = 'maxDwnPthStar';
 % The tangent of the maximum intercept angle.
 tanIntercept = Simulink.Parameter;
 tanIntercept.Description = 'Tangent of the maximum intercept angle';
-tanIntercept.Value = tan(45*pi/180);
+tanIntercept.Value = tan(30*pi/180);
 tanIntercept.DataType = 'single';
 tanIntercept.DocUnits = '';
 tanIntercept.RTWInfo.StorageClass = 'ExportedGlobal';
@@ -33,7 +33,7 @@ tanIntercept.RTWInfo.Alias = 'tanIntercept';
 % Distance before reaching a waypoint that you will then switch over to the next waypoint
 switchDistance = Simulink.Parameter;
 switchDistance.Description = 'Distance from a waypoint where the vehicle is considered at that waypoint.';
-switchDistance.Value = 10;
+switchDistance.Value = 20;
 switchDistance.DataType = 'single';
 switchDistance.DocUnits = 'm';
 switchDistance.RTWInfo.StorageClass = 'ExportedGlobal';
@@ -42,7 +42,7 @@ switchDistance.RTWInfo.Alias = 'switchDistance';
 % Gain on the feedforward heading rate signal
 KPsiDot = Simulink.Parameter;
 KPsiDot.Description = 'Gain on the heading derivative feedback loop.';
-KPsiDot.Value = 1;
+KPsiDot.Value = 0;
 KPsiDot.DataType = 'single';
 KPsiDot.DocUnits = '';
 KPsiDot.RTWInfo.StorageClass = 'ExportedGlobal';
