@@ -45,7 +45,7 @@ Model {
       Name		      "internalVars"
     }
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2658"
+    ComputedModelVersion    "1.2696"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -67,9 +67,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Dec 11 15:51:47 2014"
-  RTWModifiedTimeStamp	  340193292
-  ModelVersionFormat	  "1.%<AutoIncrement:2658>"
+  LastModifiedDate	  "Mon Dec 15 18:14:19 2014"
+  RTWModifiedTimeStamp	  340561114
+  ModelVersionFormat	  "1.%<AutoIncrement:2696>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1170,8 +1170,8 @@ Model {
   }
   System {
     Name		    "controller"
-    Location		    [202, 82, 1678, 997]
-    Open		    on
+    Location		    [123, 395, 1803, 1363]
+    Open		    off
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -1184,7 +1184,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "25837"
+    SIDHighWatermark	    "25838"
     Block {
       BlockType		      Inport
       Name		      "sensors_GPS"
@@ -1519,8 +1519,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Rudder\nCommand"
-	    Location		    [728, 129, 1882, 967]
-	    Open		    off
+	    Location		    [202, 82, 1902, 1027]
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -7481,33 +7481,34 @@ Stateflow {
       "undspeed\n    L2 = single(TStar * Groundspeed); % L2 vector length\n    \n    % Calculate T1 (unit vector pointi"
       "ng from wp0 to wp1) and N1 \n    % (right-hand orthogonal to T1) \n    T1 = wp1 - wp0;\n    T1 = T1 / norm(T1);\n"
       "    N1 = [-T1(2); T1(1); 0];\n    \n    % Calculate more intermediate variables\n    Pwp1 = Pne - wp1; % Positio"
-      "n of UAV relative to wp1\n    Pe_y = single(abs(Pwp1'*N1)); % Cross track error\n    Dist2wp1 = -single(Pwp1'*T1"
-      "); % Distance to wp1\n\n    % The minimum down-path distance for the aim point intersection on\n    % T is deter"
-      "mined by the intercept angle but limited in the case of\n    % very distant intercepts.\n    MinDownPath = singl"
-      "e(min(Pe_y / tanIntercept, MaxDwnPthStar * L2));\n    % If we're too far away from the track, the L2 vector can'"
-      "t\n    % intercept it, so just use the minimum down-path distance.\n    if Pe_y > L2\n        L2DownPath = MinDo"
-      "wnPath;\n    % Otherwise, calculate the downpath distance based on where the L2\n    % distance puts us (Pythago"
-      "rean theorem).\n    else\n        L2DownPath = max(MinDownPath, sqrt(L2^2 - Pe_y^2));\n    end\n\n    % If we're"
-      " within the switching distance to the waypoint,\n    % transition!\n    if Dist2wp1 - switchDistance <= 0\n     "
-      "   transition = true;\n    end\n\n    % Calculate the aim point as a relative position backwards from wp1\n    a"
-      "imPoint = wp1 - (Dist2wp1 - L2DownPath) * T1;\n    \n    % And finally calculate the aimpoint as a vector that's"
-      " L2-distance\n    % long and pointing fromt the vehicle to the aim point.\n    if norm(aimPoint - Pne) < .001\n "
-      "       L2Vec = L2*T1;\n    else\n        L2Vec = single(L2 * (aimPoint - Pne) / norm(aimPoint - Pne));\n    end\n"
-      "   \n    % It only makes sense to output an acceleration command if the vessel\n    % is moving.\n    if Grounds"
-      "peed > 0\n        % Calculate the desired chord intercept angle\n        Zprod = single(Vxyz(1) * L2Vec(2) - Vxy"
-      "z(2) * L2Vec(1)); % Z-component of cross product\n        sinEta = single(Zprod / (Groundspeed * L2));\n\n      "
-      "  % If the intercept point is behind us, just command a maximum\n        % acceleration in the direction of leas"
-      "t turn.\n        if L2Vec' * Vxyz < 0\n            if sinEta < 0\n                as_c = single(-99);\n         "
-      "   else\n                as_c = single(99);\n            end\n        % Otherwise, use circular motion equations"
-      " to determine the\n        % necessary lateral acceleration.\n        else\n            as_c = single(2 * Ground"
-      "speed^2 / L2 * sinEta);\n        end\n    else\n        as_c = single(0.0);\n    end\n    \n    % Now add a jump"
-      "-filter on the commanded acceleration. We use a large\n    % enough value here such that the acceleration cannot"
-      " switch signs, but\n    % will still work in low-speed situations. This is useful for slower\n    % systems when"
-      " they need to do a 180degree turn, so it's hard for the\n    % controller to decide which direction is the short"
-      "er one to turn to.\n    % Note: The following works with the initial value of NaN, how\n    % convenient!\n    i"
-      "f abs(as_c - last_as_c) > single(99)\n        as_c = last_as_c;\n    else\n        last_as_c = as_c;\n    end\ne"
-      "nd"
-      editorLayout	      "100 M4x1[572 97 960 903]"
+      "n of UAV relative to wp1\n    Pe_y = single(abs(Pwp1'*N1)); % Cross track error\n    Dist2wp1 = single(abs(Pwp1'"
+      "*T1)); % Along-track distance to wp1\n\n    % If we're within the switching distance to the waypoint, transition"
+      "!\n    if norm(Pwp1) <= switchDistance\n        transition = true;\n    end\n\n    % The minimum down-path dista"
+      "nce for the aim point intersection on\n    % T is determined by the intercept angle but limited in the case of\n"
+      "    % very distant intercepts.\n    MinDownPath = single(min(Pe_y / tanIntercept, MaxDwnPthStar * L2));\n    % I"
+      "f we're too far away from the track, the L2 vector can't\n    % intercept it, so just use the minimum down-path "
+      "distance.\n    if Pe_y > L2\n        L2DownPath = MinDownPath;\n    % Otherwise, calculate the downpath distance"
+      " based on where the L2\n    % distance puts us (Pythagorean theorem).\n    else\n        L2DownPath = max(MinDow"
+      "nPath, sqrt(L2^2 - Pe_y^2));\n    end\n    \n    % Here we clamp the aim point to be on the current line segment"
+      ".\n    L2DownPath = max(0, min(Dist2wp1, L2DownPath));\n\n    % Calculate the aim point as a relative position b"
+      "ackwards from wp1\n    aimPoint = wp1 - (Dist2wp1 - L2DownPath) * T1;\n    \n    % And finally calculate the aim"
+      "point as a vector that's L2-distance\n    % long and pointing from the vehicle to the aim point.\n    if norm(ai"
+      "mPoint - Pne) < .001\n        L2Vec = L2*T1;\n    else\n        L2Vec = single(L2 * (aimPoint - Pne) / norm(aimP"
+      "oint - Pne));\n    end\n   \n    % It only makes sense to output an acceleration command if the vessel\n    % is"
+      " moving.\n    if Groundspeed > 0\n        % Calculate the desired chord intercept angle\n        Zprod = single("
+      "Vxyz(1) * L2Vec(2) - Vxyz(2) * L2Vec(1)); % Z-component of cross product\n        sinEta = single(Zprod / (Groun"
+      "dspeed * L2));\n\n        % If the intercept point is behind us, just command a maximum\n        % acceleration "
+      "in the direction of least turn.\n        if L2Vec' * Vxyz < 0\n            if sinEta < 0\n                as_c ="
+      " single(-99);\n            else\n                as_c = single(99);\n            end\n        % Otherwise, use c"
+      "ircular motion equations to determine the\n        % necessary lateral acceleration.\n        else\n            "
+      "as_c = single(2 * Groundspeed^2 / L2 * sinEta);\n        end\n    else\n        as_c = single(0.0);\n    end\n  "
+      "  \n    % Now add a jump-filter on the commanded acceleration. We use a large\n    % enough value here such that"
+      " the acceleration cannot switch signs, but\n    % will still work in low-speed situations. This is useful for sl"
+      "ower\n    % systems when they need to do a 180degree turn, so it's hard for the\n    % controller to decide whic"
+      "h direction is the shorter one to turn to.\n    % Note: The following works with the initial value of NaN, how\n"
+      "    % convenient!\n    if abs(as_c - last_as_c) > single(99)\n        as_c = last_as_c;\n    else\n        last_"
+      "as_c = as_c;\n    end\nend"
+      editorLayout	      "100 M4x1[960 136 960 1040]"
       fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
       "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
       emlDefaultFimath	      FimathUserSpecified
