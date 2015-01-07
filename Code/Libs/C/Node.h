@@ -32,11 +32,12 @@ enum CAN_NODE_ID {
     CAN_NODE_HIL                = 5,
     CAN_NODE_IMU_SENSOR         = 6,
     CAN_NODE_GYRO_SENSOR        = 7, // No longer used
-    CAN_NODE_ATTITUDE_SENSOR    = 8
+    CAN_NODE_ATTITUDE_SENSOR    = 8,
+    CAN_NODE_BALLAST_CONTROLLER = 9
 };
 
 // Specify how many individual nodes there are:
-#define NUM_NODES 8
+#define NUM_NODES 9
 
 // Specify desired CAN baud rate. All nodes must communicate at this to sit on
 // the shared bus.
