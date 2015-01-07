@@ -494,12 +494,13 @@ void MavLinkSendAttitude(void)
 {
 	float roll = (float)tokimecDataStore.roll / 8192.0;
 	float pitch = (float)tokimecDataStore.pitch / 8192.0;
+	float yaw = (float)tokimecDataStore.yaw / 8192.0;
         float rollRate = (float)tokimecDataStore.x_angle_vel / 4096.0;
         float pitchRate = (float)tokimecDataStore.y_angle_vel / 4096.0;
         float yawRate = (float)tokimecDataStore.z_angle_vel / 4096.0;
 	mavlink_msg_attitude_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
 	                          nodeSystemTime*10,
-                                  roll, pitch, controllerVars.Heading,
+                                  roll, pitch, yaw,
                                   rollRate, pitchRate, yawRate);
 
 	len = mavlink_msg_to_send_buffer(buf, &txMessage);
