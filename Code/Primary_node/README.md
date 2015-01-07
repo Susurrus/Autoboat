@@ -18,9 +18,8 @@ This project requires both the '/Code/Libs/MATLAB' folder and the MicroSimulink-
  
 ### dsPIC33E versus dsPIC33F
 
-Switching between these processors requires two different changes:
- 1. When compiling for the dsPIC33E, make sure to include the Stack.s file. This means that you can ignore all warnings about extended pointers.
- 2. Choose the proper DEES_*.s file based on the processor type selected.
+Switching between these processors requires the following changes:
+ 1. Choose the proper DEES_*.s file based on the processor type selected.
 
 ## Functionality
 
