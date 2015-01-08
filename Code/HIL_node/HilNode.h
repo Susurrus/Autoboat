@@ -17,6 +17,31 @@ enum HIL_STATUS_FLAGS {
 };
 
 /**
+ * Define a different FATAL_ERROR() macro that's specific to the HIL node. This one disables both
+ * timers before entering the FATAL_ERROR loop.
+ */
+#define HIL_FATAL_ERROR() do { \
+    T2CONbits.TON = 0;         \
+    T4CONbits.TON = 0;         \
+    _TRISA3 = 0;               \
+    _LATA3 = 1;                \
+    while (1);                 \
+} while (0)
+
+/**
+ * A resettable ECAN-triggered error, likely from not having a receiving node on the CAN bus and the
+ * ECAN hardware triggering an error bit. This macro will block until there are no more ECAN
+ * transmission errors.
+ */
+#define HIL_ECAN_TRY(x) do {                \
+    EcanStatus s;                           \
+    do {                                    \
+        x;                                  \
+        s = Ecan1GetErrorStatus();          \
+    } while (s.TxError != ECAN_ERROR_NONE); \
+} while (0)
+
+/**
  * Initialization function, configures everything the node needs.
  */
 void HilNodeInit(void);

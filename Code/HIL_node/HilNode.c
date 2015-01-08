@@ -232,51 +232,51 @@ void HilNodeInit(void)
     // Set a schedule for outgoing CAN messages
     // Transmit the rudder angle at 10Hz
     if (!AddMessageRepeating(&sched, SCHED_ID_RUDDER_ANGLE, 10)) {
-        FATAL_ERROR();
+        HIL_FATAL_ERROR();
     }
 
     // Transmit the rudder status at 10Hz
     if (!AddMessageRepeating(&sched, SCHED_ID_RUDDER_LIMITS, 10)) {
-        FATAL_ERROR();
+        HIL_FATAL_ERROR();
     }
 
     // Transmit the throttle status at 10Hz
     if (!AddMessageRepeating(&sched, SCHED_ID_THROTTLE_STATUS, 10)) {
-        FATAL_ERROR();
+        HIL_FATAL_ERROR();
     }
 
     // Transmit the RC status at 2Hz
     if (!AddMessageRepeating(&sched, SCHED_ID_RC_STATUS, 2)) {
-        FATAL_ERROR();
+        HIL_FATAL_ERROR();
     }
 
     // Transmit latitude/longitude at 5Hz
     if (!AddMessageRepeating(&sched, SCHED_ID_LAT_LON, 5)) {
-        FATAL_ERROR();
+        HIL_FATAL_ERROR();
     }
 
     // Transmit heading & speed at 5Hz
     if (!AddMessageRepeating(&sched, SCHED_ID_COG_SOG, 5)) {
-        FATAL_ERROR();
+        HIL_FATAL_ERROR();
     }
 
     // Transmit heading & speed at 5Hz
     if (!AddMessageRepeating(&sched, SCHED_ID_GPS_FIX, 5)) {
-        FATAL_ERROR();
+        HIL_FATAL_ERROR();
     }
 
     // Transmit water speed at 1Hz
     if (!AddMessageRepeating(&sched, SCHED_ID_WATER_SPD, 1)) {
-        FATAL_ERROR();
+        HIL_FATAL_ERROR();
     }
 
     // Transmit HIL status at 2Hz
     if (!AddMessageRepeating(&sched, SCHED_ID_HIL_STATUS, 2)) {
-        FATAL_ERROR();
+        HIL_FATAL_ERROR();
     }
     // Transmit IMU data at 25Hz
     if (!AddMessageRepeating(&sched, SCHED_ID_IMU, 25)) {
-        FATAL_ERROR();
+        HIL_FATAL_ERROR();
     }
 }
 
@@ -355,66 +355,50 @@ void HilNodeTimer100Hz(void)
         // Only transmit HIL-related messages if HIL is active.
         if (HIL_IS_ACTIVE()) {
             switch (msgs[i]) {
-                // Emulate the RC node by transmitting its status message.
-                // TODO: Don't transmit this if the RC node is actually broadcasting.
+            // Emulate the RC node by transmitting its status message.
+            // TODO: Don't transmit this if the RC node is actually broadcasting.
             case SCHED_ID_RC_STATUS:
                 CanMessagePackageStatus(&msg, CAN_NODE_RC, UINT8_MAX, INT8_MAX, UINT8_MAX, 0, 0);
-                if (!Ecan1Transmit(&msg)) {
-                    FATAL_ERROR();
-                }
+                HIL_ECAN_TRY(Ecan1Transmit(&msg));
                 break;
-                // Emulate the rudder node
+            // Emulate the rudder node
             case SCHED_ID_RUDDER_ANGLE:
                 if (!(nodeStatus & NODE_STATUS_FLAG_RUDDER_ACTIVE)) {
                     PackagePgn127245(&msg, CAN_NODE_RUDDER_CONTROLLER, 0xFF, 0xF, NAN, hilReceivedData.data.rAngle);
-                    if (!Ecan1Transmit(&msg)) {
-                        FATAL_ERROR();
-                    }
+                    HIL_ECAN_TRY(Ecan1Transmit(&msg));
                 }
                 break;
             case SCHED_ID_RUDDER_LIMITS:
                 if (!(nodeStatus & NODE_STATUS_FLAG_RUDDER_ACTIVE)) {
                     CanMessagePackageRudderDetails(&msg, 0, 0, 0, false, false, true, true, false);
-                    if (!Ecan1Transmit(&msg)) {
-                        FATAL_ERROR();
-                    }
+                    HIL_ECAN_TRY(Ecan1Transmit(&msg));
                 }
                 break;
-                // Emulate the ACS300
+            // Emulate the ACS300
             case SCHED_ID_THROTTLE_STATUS:
                 if (!(nodeStatus & NODE_STATUS_FLAG_PROP_ACTIVE)) {
                     Acs300PackageHeartbeat(&msg, (uint16_t) hilReceivedData.data.tSpeed, 0, 0, 0);
-                    if (!Ecan1Transmit(&msg)) {
-                        FATAL_ERROR();
-                    }
+                    HIL_ECAN_TRY(Ecan1Transmit(&msg));
                 }
                 break;
-                // Emulate the GPS200
+            // Emulate the GPS200
             case SCHED_ID_LAT_LON:
                 PackagePgn129025(&msg, nodeId, hilReceivedData.data.gpsLatitude, hilReceivedData.data.gpsLongitude);
-                if (!Ecan1Transmit(&msg)) {
-                    FATAL_ERROR();
-                }
+                HIL_ECAN_TRY(Ecan1Transmit(&msg));
                 break;
             case SCHED_ID_COG_SOG:
                 PackagePgn129026(&msg, nodeId, 0xFF, 0x7, hilReceivedData.data.gpsCog, hilReceivedData.data.gpsSog);
-                if (!Ecan1Transmit(&msg)) {
-                    FATAL_ERROR();
-                }
+                HIL_ECAN_TRY(Ecan1Transmit(&msg));
                 break;
             case SCHED_ID_GPS_FIX:
                 PackagePgn129539(&msg, nodeId, 0xFF, PGN_129539_MODE_3D, PGN_129539_MODE_3D, 100, 100, 100);
-                if (!Ecan1Transmit(&msg)) {
-                    FATAL_ERROR();
-                }
+                HIL_ECAN_TRY(Ecan1Transmit(&msg));
                 break;
-                // Emulate the DST800 water speed sensor
-                // TODO: Don't broadcast this if the sensor exists.
+            // Emulate the DST800 water speed sensor
+            // TODO: Don't broadcast this if the sensor exists.
             case SCHED_ID_WATER_SPD:
                 PackagePgn128259(&msg, nodeId, 0xFF, hilReceivedData.data.waterSpeed, NAN, WATER_REFERENCE_PADDLE_WHEEL);
-                if (!Ecan1Transmit(&msg)) {
-                    FATAL_ERROR();
-                }
+                HIL_ECAN_TRY(Ecan1Transmit(&msg));
                 break;
             // Emulate the IMU node
             // TODO: Don't broadcast this if the sensor exists.
@@ -427,18 +411,14 @@ void HilNodeTimer100Hz(void)
                             yawPitchRoll[0] * 8192.0,
                             yawPitchRoll[1] * 8192.0,
                             yawPitchRoll[2] * 8192.0);
-                    if (!Ecan1Transmit(&msg)) {
-                        FATAL_ERROR();
-                    }
+                    HIL_ECAN_TRY(Ecan1Transmit(&msg));
 
                     // Now transmit the angular velocity data (converting from floating- to fixed-point)
                     CanMessagePackageAngularVelocityData(&msg,
                             hilReceivedData.data.gyros[0] * 4096.0,
                             hilReceivedData.data.gyros[1] * 4096.0,
                             hilReceivedData.data.gyros[2] * 4096.0);
-                    if (!Ecan1Transmit(&msg)) {
-                        FATAL_ERROR();
-                    }
+                    HIL_ECAN_TRY(Ecan1Transmit(&msg));
                 }
                 break;
             }
@@ -446,9 +426,7 @@ void HilNodeTimer100Hz(void)
 
         // We always transmit the status of this HIL node.
         if (msgs[i] == SCHED_ID_HIL_STATUS) {
-            if (!NodeTransmitStatus()) {
-                FATAL_ERROR();
-            }
+            HIL_ECAN_TRY(NodeTransmitStatus());
         }
     }
 }
@@ -521,7 +499,7 @@ uint8_t CanReceiveMessages(void)
                 break;
                 }
             } else {
-                FATAL_ERROR();
+                HIL_FATAL_ERROR();
             }
 
             ++messagesHandled;
