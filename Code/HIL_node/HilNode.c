@@ -405,7 +405,7 @@ void HilNodeTimer100Hz(void)
             case SCHED_ID_IMU:
                 {
                     float yawPitchRoll[3];
-                    QuaternionToEuler(hilReceivedData.data.attitudeQuat, yawPitchRoll);
+                    QuaternionToYawPitchRoll(hilReceivedData.data.attitudeQuat, yawPitchRoll);
                     // Transmit the absolute attitude message (converting from floating- to fixed-point)
                     CanMessagePackageImuData(&msg,
                             yawPitchRoll[0] * 8192.0,
