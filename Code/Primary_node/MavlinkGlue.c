@@ -235,7 +235,7 @@ void MavLinkInit(void)
 
 	//const uint8_t const periodicities[MAVLINK_MSGS_SIZE] = {2, 2, 1, 10, 10, 5, 2, 10, 1, 5, 2, 5, 1, 1, 1, 20, 20};
 	// We only report things that the GUI needs at 1Hz because it only updates that fast.
-	// REVO_GS - not currently connecte.
+	// REVO_GS - not currently connected.
 	// WSO100 - environmental sensor, no need for quick updates
         // DSP3000 - no longer onboard
 	const uint8_t const periodicities[MAVLINK_MSGS_SIZE] = {2, 4, 1, 10, 4, 10, 2, 10, 10, 10, 0, 4, 10, 5, 10, 0, 25, 1};
