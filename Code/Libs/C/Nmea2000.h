@@ -50,8 +50,8 @@ uint32_t Iso11783Decode(uint32_t can_id, uint8_t *src, uint8_t *dest, uint8_t *p
   */
 uint32_t Iso11783Encode(uint32_t pgn, uint8_t src, uint8_t dest, uint8_t pri);
 
-// Given a number of days return the offset since January 1st 1970 in years, months, and days.
-void DaysSinceEpochToOffset(uint16_t days, uint8_t *offset_years, uint8_t *offset_months, uint8_t *offset_days);
+// Given a number of days return date. Accounts properly for leap days.
+void DaysSinceEpochToYMD(uint16_t days, uint16_t *year, uint16_t *month, uint16_t *day);
 
 /***
  * PGN Parsers

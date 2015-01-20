@@ -74,7 +74,7 @@ uint32_t Iso11783Encode(uint32_t pgn, uint8_t src, uint8_t dest, uint8_t pri)
 	return can_id;
 }
 
-void DaysSinceEpochToOffset(uint16_t days, uint8_t *offset_years, uint8_t *offset_months, uint8_t *offset_days)
+void DaysSinceEpochToYMD(uint16_t days, uint16_t *year, uint16_t *month, uint16_t *day)
 {
 	static const float quad_year = 365 + 365 + 366 + 365;
 	static const uint16_t year_lengths[] = {365, 365, 366, 365};
@@ -96,9 +96,9 @@ void DaysSinceEpochToOffset(uint16_t days, uint8_t *offset_years, uint8_t *offse
 		month_lengths[1] = 29;
 	}
 
-	// Return the offset years.
-	if (offset_years) {
-		*offset_years = years_tmp;
+	// Return the year.
+	if (year) {
+		*year = 1970 + years_tmp;
 	}
 
 	// Modulo out the number of months along with the exact number of days
@@ -110,14 +110,14 @@ void DaysSinceEpochToOffset(uint16_t days, uint8_t *offset_years, uint8_t *offse
 		++months_tmp;
 	}
 
-	// Return the months value
-	if (offset_months) {
-		*offset_months = months_tmp;
+	// Return the month
+	if (month) {
+		*month = 1 + months_tmp;
 	}
 
 	// Return the days value
-	if (offset_days) {
-		*offset_days = days_tmp;
+	if (day) {
+		*day = 1 + days_tmp;
 	}
 }
 
@@ -150,13 +150,10 @@ uint8_t ParsePgn126992(const uint8_t data[8], uint8_t *seqId, uint8_t *source, u
 
         // Obtain the offset from epoch based on the number of days
         // I use local variables here only for consistency with the yearOffset variable.
-        uint8_t yearOffset;
-        uint8_t monthOffset;
-        uint8_t dayOffset;
-        DaysSinceEpochToOffset(days, &yearOffset, &monthOffset, &dayOffset);
-        uint16_t dateYear = 1970 + (uint16_t)yearOffset;
-        uint16_t dateMonth = 1 + (uint16_t)monthOffset;
-        uint16_t dateDay = 1 + (uint16_t)dayOffset;
+        uint16_t dateYear;
+        uint16_t dateMonth;
+        uint16_t dateDay;
+        DaysSinceEpochToYMD(days, &dateYear, &dateMonth, &dateDay);
 
 	// Field 2: Date in days since Jan 1 1970.
 	// This field can be invalid if all 1's.
@@ -727,6 +724,36 @@ int main(void)
 		assert(Iso11783Encode(pgn, src, dest, pri) == 0x18EA2051);
 	}
 
+    /** Test DaysSinceEpochToYMD() **/
+    {
+        uint16_t days; // Inputs
+        uint16_t dateYear, dateMonth, dateDay; // Outputs
+
+        // Testing for 1/1/1971
+        days = 365;
+        DaysSinceEpochToYMD(days, &dateYear, &dateMonth, &dateDay);
+        assert(dateYear == 1971 && dateMonth == 1 && dateDay == 1);
+
+        // Test for 1/12/2015
+        days = 16447;
+        DaysSinceEpochToYMD(days, &dateYear, &dateMonth, &dateDay);
+        assert(dateYear == 2015 && dateMonth == 1 && dateDay == 12);
+
+        // Test for 2/19/1996
+        days = 9555;
+        DaysSinceEpochToYMD(days, &dateYear, &dateMonth, &dateDay);
+        assert(dateYear == 1996 && dateMonth == 2 && dateDay == 29);
+
+        // Test for 1/1/1970
+        days = 0;
+        DaysSinceEpochToYMD(days, &dateYear, &dateMonth, &dateDay);
+        assert(dateYear == 1970 && dateMonth == 1 && dateDay == 1);
+
+        // Test for 1/1/1973
+        days = 365 + 365 + 366;
+        DaysSinceEpochToYMD(days, &dateYear, &dateMonth, &dateDay);
+        assert(dateYear == 1973 && dateMonth == 1 && dateDay == 1);
+    }
 	/** Test parsing of PGN126992 */
 	{
 		uint8_t data[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
