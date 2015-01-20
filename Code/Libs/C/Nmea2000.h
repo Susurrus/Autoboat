@@ -62,7 +62,7 @@ void DaysSinceEpochToOffset(uint16_t days, uint8_t *offset_years, uint8_t *offse
 uint8_t ParsePgn126992(const uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_t *year, uint8_t *month, uint8_t *day, uint8_t *hour, uint8_t *minute, uint8_t *second, uint64_t *usecSinceEpoch);
 
 // Units are instance: none, direction: none/enum, angleOrder: .0001 Radians, position: .0001 Radians.
-uint8_t ParsePgn127245(const uint8_t data[8], uint8_t *instance, uint8_t *direction, float *angleOrder, float *position);
+uint8_t ParsePgn127245(const uint8_t data[6], uint8_t *instance, uint8_t *direction, float *angleOrder, float *position);
 
 // Units are seqId: none, varSource: enum, ageInDays: days since epoch, variation: radians with positive Easterly.
 uint8_t ParsePgn127258(const uint8_t data[8], uint8_t *seqId, uint8_t *varSource, uint16_t *ageOfService, float *variation);

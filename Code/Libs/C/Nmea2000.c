@@ -217,7 +217,7 @@ uint8_t ParsePgn126992(const uint8_t data[8], uint8_t *seqId, uint8_t *source, u
 	return fieldStatus;
 }
 
-uint8_t ParsePgn127245(const uint8_t data[8], uint8_t *instance, uint8_t *direction, float *angleOrder, float *position)
+uint8_t ParsePgn127245(const uint8_t data[6], uint8_t *instance, uint8_t *direction, float *angleOrder, float *position)
 {
 
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
@@ -759,7 +759,7 @@ int main(void)
 
 	/** Test parsing of PGN127245 **/
 	{
-		uint8_t data[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+		uint8_t data[6] = {0xFF, 0xFF, 0xFF, 0x7F, 0xFF, 0x7F};
 
 		/*Check for NULL pointer exception*/
 
@@ -779,39 +779,39 @@ int main(void)
 		assert(position == 5.0);
 
 		// Check for correct parsing of only instance
-		uint8_t data2[8] = {0x0A, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+		uint8_t data2[6] = {0x0A, 0xFF, 0xFF, 0x7F, 0xFF, 0x7F};
 		assert(ParsePgn127245(data2, &instance, &direction, &angleOrder, &position) == 0x01);
 		assert(instance == 10);
 
 		// Check for correct parsing of only direction
-		uint8_t data3[8] = {0xFF, 0xBF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+		uint8_t data3[6] = {0xFF, 0xBF, 0xFF, 0x7F, 0xFF, 0x7F};
 		assert(ParsePgn127245(data3, &instance, &direction, &angleOrder, &position) == 0x02);
 		assert(direction == 2);
 
 		// Check for correct parsing of only angleOrder
-		uint8_t data4[8] = {0xFF, 0xFF, 10, 10, 0xFF, 0xFF, 0xFF, 0xFF};
+		uint8_t data4[6] = {0xFF, 0xFF, 10, 10, 0xFF, 0x7F};
 		assert(ParsePgn127245(data4, &instance, &direction, &angleOrder, &position) == 0x04);
 		assert(fabs(angleOrder - .2570) < EPSILON);
 
 		// Check for correct parsing of only position
-		uint8_t data5[8] = {0xFF, 0xFF, 0xFF, 0xFF, 10, 10, 0xFF, 0xFF};
+		uint8_t data5[6] = {0xFF, 0xFF, 0xFF, 0x7F, 10, 10};
 		assert(ParsePgn127245(data5, &instance, &direction, &angleOrder, &position) == 0x08);
 		assert(fabs(position - .2570) < EPSILON);
 
 		// Check for correct parsing of direction and angleOrder
-		uint8_t data6[8] = {0xFF, 0xBF, 0x3F, 0xC3, 0xFF, 0xFF, 0xFF, 0xFF};
+		uint8_t data6[6] = {0xFF, 0xBF, 0x3F, 0xC3, 0xFF, 0x7F};
 		assert(ParsePgn127245(data6, &instance, &direction, &angleOrder, &position) == 0x06);
 		assert(direction == 2);
-		assert(fabs(angleOrder - 4.9983) < EPSILON);
+		assert(fabs(angleOrder - -1.5553) < EPSILON);
 
 		// Check for correct parsing of instance and position
-		uint8_t data7[8] = {0xF5, 0xFF, 0xFF, 0xFF, 0x3F, 0xC3, 0xFF, 0xFF};
+		uint8_t data7[6] = {0xF5, 0xFF, 0xFF, 0x7F, 0x3F, 0xC3};
 		assert(ParsePgn127245(data7, &instance, &direction, &angleOrder, &position) == 0x09);
 		assert(instance == 0xF5);
-		assert(fabs(position - 4.9983) < EPSILON);
+		assert(fabs(position - -1.5553) < EPSILON);
 
 		// Check for correct parsing of all valid fields
-		uint8_t data8[8] = {13, 0x7F, 0x14, 0x13, 0x14, 0x13, 0xFF, 0xFF};
+		uint8_t data8[6] = {13, 0x7F, 0x14, 0x13, 0x14, 0x13};
 		assert(ParsePgn127245(data8, &instance, &direction, &angleOrder, &position) == 0x0F);
 		assert(instance == 13);
 		assert(direction == 1);
