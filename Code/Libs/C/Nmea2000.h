@@ -83,7 +83,7 @@ uint8_t ParsePgn127508(const uint8_t data[8], uint8_t *seqId, uint8_t *instance,
 uint8_t ParsePgn128259(const uint8_t data[8], uint8_t *seqId, float *waterSpeed);
 
 // Units are seqId: none, waterDepth: m, offset: m.
-uint8_t ParsePgn128267(const uint8_t data[8], uint8_t *seqId, float *waterDepth, float *offset);
+uint8_t ParsePgn128267(const uint8_t data[7], uint8_t *seqId, float *waterDepth, float *offset);
 
 // Units are seqId: none, latitude: radians (+ north), longitude: radians (+ east).
 // NOTE: Latitude and longitude are both returned as int32s because there is loss of precision if

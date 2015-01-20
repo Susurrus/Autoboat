@@ -369,7 +369,7 @@ uint8_t ParsePgn128259(const uint8_t data[8], uint8_t *seqId, float *waterSpeed)
 	return fieldStatus;
 }
 
-uint8_t ParsePgn128267(const uint8_t data[8], uint8_t *seqId, float *waterDepth, float *offset)
+uint8_t ParsePgn128267(const uint8_t data[7], uint8_t *seqId, float *waterDepth, float *offset)
 {
 
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
@@ -862,7 +862,7 @@ int main(void)
 
 	/** Test parsing of PGN128267 **/
 	{
-		uint8_t data[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+		uint8_t data[7] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F};
 
 		// Check for null-pointer exceptions when passed no arguments
 		ParsePgn128267(data, NULL, NULL, NULL);
