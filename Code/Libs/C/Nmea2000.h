@@ -33,6 +33,7 @@
   * @param[out] src The source of this message.
   * @param[out] dest The destination for this message. Set to 255 if the message was a broadcast.
   * @param[out] pri The priority, a 3-bit number with higher values indicating higher priority.
+  * @return The PGN of for this ID.
   */
 uint32_t Iso11783Decode(uint32_t can_id, uint8_t *src, uint8_t *dest, uint8_t *pri);
 
@@ -52,6 +53,16 @@ uint32_t Iso11783Encode(uint32_t pgn, uint8_t src, uint8_t dest, uint8_t pri);
 
 // Given a number of days return date. Accounts properly for leap days.
 void DaysSinceEpochToYMD(uint16_t days, uint16_t *year, uint16_t *month, uint16_t *day);
+
+/**
+ * Calculate the current Unix timestamp in microseconds. Note that no validation is done on the
+ * input parameters.
+ *
+ * @param usecsFromMidnight The number of microseconds since midnight.
+ * @param daysSinceEpoch The number of days since epoch.
+ * @return The number of microseconds since epoch.
+ */
+uint64_t UsecondsSinceEpoch(uint64_t usecsFromMidnight, uint16_t daysSinceEpoch);
 
 /***
  * PGN Parsers

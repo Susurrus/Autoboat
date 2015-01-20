@@ -121,6 +121,12 @@ void DaysSinceEpochToYMD(uint16_t days, uint16_t *year, uint16_t *month, uint16_
 	}
 }
 
+uint64_t UsecondsSinceEpoch(uint64_t usecsFromMidnight, uint16_t daysSinceEpoch)
+{
+    uint64_t usecsFromDays = (uint64_t)daysSinceEpoch * 24 * 60 * 60 * 1e6;
+    return usecsFromMidnight + usecsFromDays;
+}
+
 uint8_t ParsePgn126992(const uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_t *year, uint8_t *month, uint8_t *day, uint8_t *hour, uint8_t *minute, uint8_t *second, uint64_t *usecSinceEpoch)
 {
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
@@ -198,16 +204,8 @@ uint8_t ParsePgn126992(const uint8_t data[8], uint8_t *seqId, uint8_t *source, u
 		}
 
 		if (usecSinceEpoch) {
-                    // Convert the 1e-4 seconds to microseconds and add in the microseconds for all
-                    // the days that have occurred.
-                    uint64_t usecsFromMidnight = (uint64_t)x * 100; // Correct!
-                    // But we modify the number of days by the number of leap-days:
-                    uint16_t tm_year = dateYear - 1900;
-                    uint16_t leapDays = (tm_year - 69) / 4; // A day every 4 years starting in 1973
-                    leapDays -= (tm_year - 1) / 100; // Subtract a day out every 100 years starting in 2001
-                    leapDays += (tm_year + 299) / 400; // Add a day every 400 years starting in 2001
-                    uint64_t usecsFromDays = (uint64_t)(days - leapDays) * 24 * 60 * 60 * 1e6;
-                    *usecSinceEpoch = usecsFromMidnight + usecsFromDays;
+                    uint64_t usecsFromMidnight = (uint64_t)x * 100;
+                    *usecSinceEpoch = UsecondsSinceEpoch(usecsFromMidnight, days);
 		}
 	}
 
@@ -754,6 +752,38 @@ int main(void)
         DaysSinceEpochToYMD(days, &dateYear, &dateMonth, &dateDay);
         assert(dateYear == 1973 && dateMonth == 1 && dateDay == 1);
     }
+
+    /** Test UsecondsSinceEpoch() **/
+    {
+        uint16_t days;
+        uint64_t usecs; // Inputs
+        uint64_t usecsSinceEpoch; // Output
+
+        // Testing for 12:00:00am 1/1/1970
+        days = 0;
+        usecs = 0;
+        usecsSinceEpoch = UsecondsSinceEpoch(usecs, days);
+        assert(usecsSinceEpoch == 0);
+
+        // Testing for 1:06:00pm 1/1/1970
+        days = 0;
+        usecs = ((12ull + 1ull) * 3600ull + 6ull * 60ull + 0ull) * 1000000ull;
+        usecsSinceEpoch = UsecondsSinceEpoch(usecs, days);
+        assert(usecsSinceEpoch == 47160000000);
+
+        // Testing for 1:06:00pm 1/1/1970
+        days = 256;
+        usecs = 0;
+        usecsSinceEpoch = UsecondsSinceEpoch(usecs, days);
+        assert(usecsSinceEpoch == 22118400000000);
+
+        // Testing for 1/20/2015 9:37:22pm UTC
+        days = 16455;
+        usecs = ((12ull + 9ull) * 3600ull + 37ull * 60ull + 22ull) * 1000000ull;
+        usecsSinceEpoch = UsecondsSinceEpoch(usecs, days);
+        assert(usecsSinceEpoch == 1421789863258240);
+    }
+
 	/** Test parsing of PGN126992 */
 	{
 		uint8_t data[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
