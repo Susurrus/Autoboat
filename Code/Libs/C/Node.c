@@ -18,7 +18,7 @@ static CanMessage msg;
 
 bool NodeTransmitStatus(void)
 {
-	CanMessagePackageStatus(&msg, nodeId, nodeCpuLoad, nodeTemp, nodeVoltage, nodeStatus,
-	                        nodeErrors);
-	return Ecan1Transmit(&msg);
+    CanMessagePackageStatus(&msg, nodeId, nodeCpuLoad, nodeTemp, nodeVoltage, nodeStatus,
+                            nodeErrors);
+    return Ecan1Transmit(&msg);
 }
