@@ -48,13 +48,13 @@ struct ThrottleData throttleDataStore = {0};
 GpsData gpsDataStore = {0};
 struct GpsDataBundle gpsNewDataStore = {0};
 struct DateTimeData dateTimeDataStore = {// Initialize our system clock to clearly invalid values.
-    UINT16_MAX,
-    UINT8_MAX,
-    UINT8_MAX,
-    UINT8_MAX,
-    UINT8_MAX,
-    UINT8_MAX,
-    UINT64_MAX,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
     false
 };
 struct RevoGsData revoGsDataStore = {0};
