@@ -9,7 +9,7 @@ T_step = 0.01;
 % can't or won't evaluate MATLAB workspace variables.
 MaxPwmIn = .0025;
 
-% Initial GPS location
+% Reference GPS location. Used for converting LLA coordinates to LTP
 % Stored as radians for a priori computations.
 ref_lla = [36.963765; -122.00191; 0];
 ref_lla_rad = ref_lla * pi / 180;
@@ -19,7 +19,7 @@ ref_lla_rad = ref_lla * pi / 180;
 % variable in compiled C code.
 gpsOrigin = Simulink.Parameter;
 gpsOrigin.Description = 'The reference GPS location for this vehicle.';
-gpsOrigin.Value = ref_lla .* [1e7; 1e7; 1e6];
+gpsOrigin.Value = int32(ref_lla .* [1e7; 1e7; 1e6]);
 gpsOrigin.DataType = 'int32';
 gpsOrigin.DocUnits = '1e-7deg,1e-7deg,1e-6m';
 gpsOrigin.RTWInfo.StorageClass = 'ExportedGlobal';
