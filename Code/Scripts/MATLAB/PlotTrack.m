@@ -17,6 +17,11 @@ if size(position, 1) == 3
     position = position';
 end
 
+% Filter out the initial points that start at 0,0.
+position_starts = find(position(:,1) ~= 0 & position(:,2) ~= 0, 1, 'first');
+position = position(position_starts:end, :);
+velocity = velocity(position_starts:end, :);
+
 % Keep track of what's on the plot for a legend() call
 myLegend = {};
 

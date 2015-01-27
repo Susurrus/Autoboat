@@ -104,7 +104,6 @@ function dynamic_plots(datafile, auto_run, saveVideo)
     cog = unwrap(data.GPS_RAW_INT.cog(valid_gps_data) / 100 * pi / 180);
     cog = cog(i);
     cog = interp1(gps_time, cog, pos_time, 'nearest'); % Convert from centidegrees to radians
-    %cog = wrap(cog); % Wrap it back into the range [0..2*pi]
     clear valid_gps_data gps_time;
 
     % And water velocity (m/s) from DST800 @ 2Hz for the primary node.
