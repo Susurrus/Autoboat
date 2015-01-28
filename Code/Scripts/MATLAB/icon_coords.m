@@ -1,8 +1,8 @@
-function [boat_coords, rudder_coords] = icon_coords()
+function [boat_coords, rudder_coords] = icon_coords(scalar)
     %% Generate coordinates for rendering a top-down view of the boat and rudder
     % User settings
-    height = 20; % Height of the vessel
-    width = 6;   % Width of the vessel
+    height = 5.8928 * scalar; % Height of the vessel (19'4")
+    width = 2.032 * scalar;   % Width of the vessel (6'8")
 
     % Generate boat patch coordinates
     half_coords = [
