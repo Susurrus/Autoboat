@@ -6,7 +6,7 @@ hold on;
 axis equal;
 
 % Clean up some variables that may have singleton dimensions:
-position = single(squeeze(globalPosition));
+position = single(squeeze(sensedPosition));
 velocity = single(squeeze(sensedVelocity));
 
 % Fix velocity + position orientation
@@ -33,6 +33,24 @@ plot(double(position(:,2)), double(position(:,1)), 'k');
 myLegend{end + 1} = 'Position';
 grid on;
 %% Add additional decorations
+
+% Like the waypoints that are traversed
+% First skip the first timesteps when the waypoints are 0
+start_wps = find(wp0(:,1) ~= 0 & wp0(:,2) ~= 0, 1, 'first');
+wp0_real = wp0(start_wps:end,:);
+wp1_real = wp1(start_wps:end,:);
+% Now grab the unique pairs for wp0 & wp1
+[~,wp0_u1] = unique(wp0_real(:,1));
+[~,wp0_u2] = unique(wp0_real(:,2));
+wp0_u = unique([wp0_u1 wp0_u2]);
+[~,wp1_u1] = unique(wp1_real(:,1));
+[~,wp1_u2] = unique(wp1_real(:,2));
+wp1_u = unique([wp1_u1 wp1_u2]);
+wps = zeros(length(wp1_u) + 1, 3);
+wps(1:end-1,:) = wp0_real(wp0_u,:);
+wps(end,:) = wp1_real(wp1_u(end),:);
+plot(wps(:, 2), wps(:, 1), '--*k');
+myLegend{end + 1} = 'Waypoints';
 
 decoration_steps = 1:1000:length(position);
 
@@ -104,12 +122,12 @@ axis tight;
 
 % Output the heading RMS error over the whole thing
 er = sum((exp_heading - act_heading) .^ 2);
-heading_rms_error = sqrt(er/length(exp_heading))
+heading_rms_error = sqrt(er/length(exp_heading));
 
 % Now the RMS error over a leg starting with a 10deg heading deviation is:
 range = 7433:10780;
 er = sum((exp_heading(range) - act_heading(range)) .^ 2);
-leg_heading_rms_error = sqrt(er/length(exp_heading(range)))
+leg_heading_rms_error = sqrt(er/length(exp_heading(range)));
  
 % Add some limits indicating when waypoints changed
 transitions = find(diff(wp0(:,1)) > 0 | diff(wp0(:,2)) > 0 | diff(wp1(:,1)) > 0 | diff(wp1(:,2)) > 0);
