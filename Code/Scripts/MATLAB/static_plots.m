@@ -101,6 +101,10 @@ function static_plots(csv_file)
     end_indices = find(diff(mode_with_pos) < 0);
     assert(length(start_indices) == length(end_indices));
 
+    % Output the different run indices. These are all in reference to the
+    % timestamps for the LOCAL_POSITION_NED messages.
+    segments = [start_indices end_indices]
+
     % Finally plot all details for all of these segments
     for i=1:length(start_indices)
         figure;
