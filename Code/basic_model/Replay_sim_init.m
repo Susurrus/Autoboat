@@ -15,15 +15,15 @@ Busses;
 common;
 physical_constants;
 
-% L2+ variables
-TStar = single(10);
-IPStar = single(0);
-InitialPoint = single(0);
-Turn2Track = false;
-MaxDwnPthStar = single(1);
-tanIntercept = tan(45*pi/180);
-switchDistance = single(4);
-KPsiDot = single(0.7);
+% L2+ variables. We override the variables here so we don't need to touch
+% the main constants file.
+l2plus;
+TStar.Value = single(10);
+MaxDwnPthStar.Value = single(1);
+tanIntercept.Value = tan(45*pi/180);
+switchDistance.Value = single(4);
+KPsiDot.Value = single(0.7);
+GpsOffsetCorrectionEnable.Value = true;
 wheelbase.Value = single(15);
 
 %% Grab some values based on file and autonomous run number
@@ -96,11 +96,13 @@ ranged_cog = data.GPS_RAW_INT.cog(valid_range);
 valid_gps_data = ~isnan(ranged_lat);
 gps_time = valid_range_time;
 gps_time = gps_time(valid_gps_data);
-gpsNewDataValue = zeros(length(gps_time) * 2, 1);
+gps_time_with_prelude = [((0:.1:0.9) * gps_time(1))'; gps_time]; % Tack on 10 extra data points so the GPS latches before our dataset begins
+% The newData value needs to also apply to the prelude
+gpsNewDataValue = zeros(length(gps_time_with_prelude) * 2, 1);
 gpsNewDataValue(1:2:end) = 1;
-gpsNewDataTime = zeros(length(gps_time) * 2, 1);
-gpsNewDataTime(1:2:end) = gps_time;
-gpsNewDataTime(2:2:end) = gps_time + T_step / 2;
+gpsNewDataTime = zeros(length(gps_time_with_prelude) * 2, 1);
+gpsNewDataTime(1:2:end) = gps_time_with_prelude;
+gpsNewDataTime(2:2:end) = gps_time_with_prelude + T_step / 100;
 gpsNewData = Simulink.Timeseries;
 gpsNewData.Name = 'GPS new data';
 gpsNewData.Time = gpsNewDataTime;
@@ -119,12 +121,15 @@ sog.Time = gps_time;
 sog.Data = uint16(ranged_vel(valid_gps_data));
 latitude = Simulink.Timeseries;
 latitude.Name = 'latitude';
-latitude.Time = gps_time;
-latitude.Data = int32(ranged_lat(valid_gps_data));
+latitude.Time = gps_time_with_prelude;
+lat_data = int32(ranged_lat(valid_gps_data));
+latitude.Data = [ones(10,1, 'int32') .* lat_data(1); lat_data];
 longitude = Simulink.Timeseries;
 longitude.Name = 'longitude';
-longitude.Time = gps_time;
-longitude.Data = int32(ranged_lon(valid_gps_data));
+longitude.Time = gps_time_with_prelude;
+lon_data = int32(ranged_lon(valid_gps_data));
+longitude.Data = [ones(10,1, 'int32') .* lon_data(1); lon_data];
+clear lat_data lon_data;
 
 % Get the IMU's data as yaw/pitch/roll + yaw_rate/pitch_rate/roll_rate
 ranged_yaw = data.TOKIMEC.yaw(valid_range);
@@ -141,7 +146,7 @@ imuNewDataValue = zeros(length(imu_time) * 2, 1);
 imuNewDataValue(1:2:end) = 1;
 imuNewDataTime = zeros(length(imu_time) * 2, 1);
 imuNewDataTime(1:2:end) = imu_time;
-imuNewDataTime(2:2:end) = imu_time + T_step / 2;
+imuNewDataTime(2:2:end) = imu_time + T_step / 100;
 imuNewData = Simulink.Timeseries;
 imuNewData.Name = 'GPS new data';
 imuNewData.Time = imuNewDataTime;
