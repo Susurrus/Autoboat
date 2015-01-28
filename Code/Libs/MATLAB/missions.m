@@ -13,8 +13,8 @@ emptyMission = Simulink.Bus.createMATLABStruct('Mission');
 % implemented below for the in-harbor boat test.
 
 % Basic first test, 2 waypoints roughly north-south:
-basic_test.waypoints = [36.9525669    -122.0102978    0;
-                        36.957368     -122.0102119    0;
+basic_test.waypoints = [36.963873   -122.001981   0;
+                        36.966008   -122.002410   0;
                        ];
 basic_test.refFrame = 0; % Set a global lat/long/alt reference frame
 
