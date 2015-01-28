@@ -115,6 +115,13 @@ function dynamic_plots(datafile, auto_run, saveVideo)
     water_vel_y = water_speed .* sin(cog);
     clear valid_water_speed_data water_speed_time;
 
+    % And true heading (rad) from TOKIMEC @ 25Hz.
+    valid_heading_data = ~isnan(data.TOKIMEC.yaw);
+    heading_time = data.timestamp(valid_heading_data);
+    heading = unwrap(data.TOKIMEC.yaw(valid_heading_data) / 2^13);
+    heading = interp1(heading_time, heading, pos_time);
+    clear valid_heading_data heading_time;
+
     % Also calculate the crosstrack error.
     % This is done via simple vector projection using the vector from the start
     % waypoint to the boat position and the vector from the start waypoint to
@@ -132,7 +139,7 @@ function dynamic_plots(datafile, auto_run, saveVideo)
     % Calculate the heading error.
     all_wp_to_wp = [twaypoint_e_with_pos twaypoint_n_with_pos] - [fwaypoint_e_with_pos fwaypoint_n_with_pos];
     desired_heading = atan2_to_norm_angle(atan2(all_wp_to_wp(:,2), all_wp_to_wp(:,1)));
-    heading_error = wrapTo180(180/pi*(desired_heading - cog));
+    heading_error = wrapTo180(180/pi*(desired_heading - heading));
 
     %% Animate (use static_plots to determine run to use)
 
@@ -185,12 +192,12 @@ function dynamic_plots(datafile, auto_run, saveVideo)
     boat_pos = plot(positionAxis, y(valid_range(1)), x(valid_range(1)), '.', 'MarkerSize', 15);
 
     % First calculate the position of the boat at all points during this range
-    boat_rotmat = rotmat2(-cog(valid_range(1)));
+    boat_rotmat = rotmat2(-heading(valid_range(1)));
     boat_coords_rot = boat_coords;
     for i = 1:length(boat_coords_rot)
         boat_coords_rot(i,:) = boat_rotmat*boat_coords_rot(i,:)';
     end
-    boat_rotmat = rotmat2(-cog(valid_range(1)));
+    boat_rotmat = rotmat2(-heading(valid_range(1)));
 
     % And plot the rudder angle
     rudder_rotmat = rotmat2(-pi/180*rudder_angle(valid_range(1)));
@@ -204,13 +211,13 @@ function dynamic_plots(datafile, auto_run, saveVideo)
     boat = patch(y(valid_range(1)) + boat_coords_rot(:,1), x(valid_range(1)) + boat_coords_rot(:,2), 'y');
 
     % And its current ground velocity
-    velocity = quiver(positionAxis, y(valid_range(1)), x(valid_range(1)), vel_y(valid_range(1)), vel_x(valid_range(1)));
+    velocity = quiver(positionAxis, y(valid_range(1)), x(valid_range(1)), vel_y(valid_range(1)), vel_x(valid_range(1)), 'r');
 
     % And its water velocity
-    water_velocity = quiver(positionAxis, y(valid_range(1)), x(valid_range(1)), water_vel_y(valid_range(1)), water_vel_y(valid_range(1)));
+    water_velocity = quiver(positionAxis, y(valid_range(1)), x(valid_range(1)), water_vel_y(valid_range(1)), water_vel_y(valid_range(1)), 'g');
 
     % And the current L2+ vector
-    l2_vector = quiver(positionAxis, y(valid_range(1)), x(valid_range(1)), l2_north(valid_range(1)), l2_east(valid_range(1)));
+    l2_vector = quiver(positionAxis, y(valid_range(1)), x(valid_range(1)), l2_north(valid_range(1)), l2_east(valid_range(1)), 'c');
 
     % And then plot the current waypoint pairing
     a = fwaypoint_n_with_pos(valid_range);
@@ -262,7 +269,7 @@ function dynamic_plots(datafile, auto_run, saveVideo)
         set(boat_pos, 'XData', y(valid_range(1:i)), 'YData', x(valid_range(1:i)));
 
         % Update the boat drawing
-        boat_rotmat = rotmat2(-cog(valid_range(i)));
+        boat_rotmat = rotmat2(-heading(valid_range(i)));
         boat_coords_rot = boat_coords;
         for j = 1:length(boat_coords_rot)
             boat_coords_rot(j,:) = boat_rotmat*boat_coords_rot(j,:)';
@@ -295,7 +302,7 @@ function dynamic_plots(datafile, auto_run, saveVideo)
         set(path, 'XData', [c(i) g(i)], 'YData', [a(i) e(i)]);
 
         % Update the plot title
-        title(positionAxis, sprintf('Autonomous run %d, %.0f seconds', auto_run, pos_time(valid_range(i)) - pos_time(valid_range(1))));
+        title(positionAxis, sprintf('Autonomous run %d, %.0f seconds\ngreen=v_{water},red=v_{ground},blue=err_{ct},cyan=L1\\_vector', auto_run, pos_time(valid_range(i)) - pos_time(valid_range(1))));
 
         % Update the rudder data
         set(r_angle, 'XData', pos_time(valid_range(1:i)), 'YData', rudder_angle(valid_range(1:i)));
