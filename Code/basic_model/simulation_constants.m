@@ -3,13 +3,12 @@
 
 % Initial latitude & longitude. This provides the baseline for the plant
 % to generate GPS data.
-initial_LL = [36.9523845; -122.008435];
-phi_0 = 0;              % Initial heading (radians, eastward positive from north)
+initial_LL = [36.964; -122.0013];
+phi_0 = 3/2*pi;         % Initial heading (radians, eastward positive from north)
 v_0 = 0;                % Initial speed (m/s)
 battery_tray_angle = 0; % Initial battery tray angle
 
-% External forces
-%water_current = [sqrt(2)/2 sqrt(2)/2]; % m/s in North,East coordinates
+% External forces (m/s in North,East coordinates)
 water_current = [0 0];
 
 % Physical input/output parameters
