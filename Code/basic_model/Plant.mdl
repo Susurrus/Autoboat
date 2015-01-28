@@ -44,7 +44,7 @@ Model {
       Name		      "imu"
     }
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.51"
+    ComputedModelVersion    "1.55"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -66,9 +66,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Jan 08 14:00:19 2015"
-  RTWModifiedTimeStamp	  342626416
-  ModelVersionFormat	  "1.%<AutoIncrement:51>"
+  LastModifiedDate	  "Tue Jan 27 11:55:46 2015"
+  RTWModifiedTimeStamp	  344260538
+  ModelVersionFormat	  "1.%<AutoIncrement:55>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1033,7 +1033,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "204"
+    SIDHighWatermark	    "208"
     Block {
       BlockType		      Inport
       Name		      "Commanded Rudder"
@@ -1419,7 +1419,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Forces & Moments"
-	Location		[51, 528, 1647, 1293]
+	Location		[116, 189, 1712, 954]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -2220,7 +2220,6 @@ Model {
       BackgroundColor	      "cyan"
       ShowName		      off
       GotoTag		      "Gyros"
-      TagVisibility	      "global"
     }
     Block {
       BlockType		      From
@@ -2257,7 +2256,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Generate IMU Data"
-	Location		[1126, 402, 1867, 795]
+	Location		[66, 423, 807, 816]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -2635,6 +2634,7 @@ Model {
 	  Ports			  [1, 1]
 	  Position		  [835, 530, 865, 560]
 	  ZOrder		  -6
+	  ShowName		  off
 	  LibraryVersion	  "1.256"
 	  SourceBlock		  "simulink/Logic and Bit\nOperations/Compare\nTo Zero"
 	  SourceType		  "Compare To Zero"
@@ -2657,7 +2657,7 @@ Model {
 	  BlockType		  DataTypeConversion
 	  Name			  "Data Type Conversion1"
 	  SID			  "181"
-	  Position		  [328, 490, 382, 505]
+	  Position		  [328, 485, 382, 500]
 	  ZOrder		  -7
 	  BlockRotation		  270
 	  ShowName		  off
@@ -2769,7 +2769,7 @@ Model {
 	  ShowName		  off
 	  LibraryVersion	  "1.145"
 	  SourceBlock		  "uSimLib/Math/Euclidean\nnorm"
-	  SourceType		  "Unknown"
+	  SourceType		  ""
 	  ShowPortLabels	  "FromPortIcon"
 	  SystemSampleTime	  "-1"
 	  FunctionWithSeparateData off
@@ -2843,6 +2843,16 @@ Model {
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto1"
+	  SID			  "206"
+	  Position		  [445, 554, 560, 576]
+	  BackgroundColor	  "cyan"
+	  ShowName		  off
+	  GotoTag		  "GpsPosOffset"
+	  TagVisibility		  "local"
 	}
 	Block {
 	  BlockType		  RateTransition
@@ -3177,11 +3187,12 @@ Model {
 	Block {
 	  BlockType		  Constant
 	  Name			  "Zero level trust7"
-	  SID			  "163"
-	  Position		  [75, 170, 145, 190]
+	  SID			  "208"
+	  Position		  [75, 175, 145, 195]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "gps_offset"
+	  OutDataTypeStr	  "single"
 	}
 	Block {
 	  BlockType		  Constant
@@ -3487,15 +3498,9 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Delay2"
-	  SrcPort		  1
-	  DstBlock		  "cross product"
-	  DstPort		  1
-	}
-	Line {
 	  SrcBlock		  "Zero level trust7"
 	  SrcPort		  1
-	  Points		  [10, 0; 0, -15]
+	  Points		  [10, 0; 0, -20]
 	  DstBlock		  "cross product"
 	  DstPort		  2
 	}
@@ -3533,16 +3538,18 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  SrcBlock		  "Delay3"
-	  SrcPort		  1
-	  DstBlock		  "Data Type Conversion"
-	  DstPort		  1
-	}
-	Line {
 	  SrcBlock		  "Vector rotation"
 	  SrcPort		  1
-	  DstBlock		  "Data Type Conversion1"
-	  DstPort		  1
+	  Points		  [0, 0]
+	  Branch {
+	    DstBlock		    "Data Type Conversion1"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [0, 0]
+	    DstBlock		    "Goto1"
+	    DstPort		    1
+	  }
 	}
 	Line {
 	  SrcBlock		  "Zero level trust9"
@@ -3555,19 +3562,6 @@ Model {
 	  SrcBlock		  "Data Type Conversion"
 	  SrcPort		  1
 	  DstBlock		  "Vector rotation"
-	  DstPort		  2
-	}
-	Line {
-	  SrcBlock		  "cross product"
-	  SrcPort		  1
-	  Points		  [15, 0]
-	  DstBlock		  "Sum"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Data Type Conversion1"
-	  SrcPort		  1
-	  DstBlock		  "Sum1"
 	  DstPort		  2
 	}
 	Line {
@@ -3623,6 +3617,31 @@ Model {
 	  DstBlock		  "Bus\nAssignment"
 	  DstPort		  2
 	}
+	Line {
+	  SrcBlock		  "Delay3"
+	  SrcPort		  1
+	  DstBlock		  "Data Type Conversion"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Delay2"
+	  SrcPort		  1
+	  DstBlock		  "cross product"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Data Type Conversion1"
+	  SrcPort		  1
+	  DstBlock		  "Sum1"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "cross product"
+	  SrcPort		  1
+	  Points		  [15, 0]
+	  DstBlock		  "Sum"
+	  DstPort		  1
+	}
 	Annotation {
 	  Name			  "Convert velocity vector to speed"
 	  Position		  [496, 276]
@@ -3670,7 +3689,7 @@ Model {
 	}
 	Annotation {
 	  Name			  "Generate 5Hz newData signal.\nAlso make sure it's delayed like all\nthe other input signals"
-	  Position		  [545, 54]
+	  Position		  [895, 594]
 	}
       }
     }
