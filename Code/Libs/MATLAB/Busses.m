@@ -102,6 +102,61 @@ elems(9).SamplingMode = 'Sample based';
 elems(9).Min = [];
 elems(9).Max = [];
 
+elems(10) = Simulink.BusElement;
+elems(10).Name = 'sensedYaw';
+elems(10).Dimensions = 1;
+elems(10).DimensionsMode = 'Fixed';
+elems(10).DataType = 'single';
+elems(10).SampleTime = -1;
+elems(10).Complexity = 'real';
+elems(10).SamplingMode = 'Sample based';
+elems(10).Min = [];
+elems(10).Max = [];
+
+elems(11) = Simulink.BusElement;
+elems(11).Name = 'sensedYawRate';
+elems(11).Dimensions = 1;
+elems(11).DimensionsMode = 'Fixed';
+elems(11).DataType = 'single';
+elems(11).SampleTime = -1;
+elems(11).Complexity = 'real';
+elems(11).SamplingMode = 'Sample based';
+elems(11).Min = [];
+elems(11).Max = [];
+
+elems(12) = Simulink.BusElement;
+elems(12).Name = 'gpsVelOffset';
+elems(12).Dimensions = 3;
+elems(12).DimensionsMode = 'Fixed';
+elems(12).DataType = 'single';
+elems(12).SampleTime = -1;
+elems(12).Complexity = 'real';
+elems(12).SamplingMode = 'Sample based';
+elems(12).Min = [];
+elems(12).Max = [];
+
+elems(13) = Simulink.BusElement;
+elems(13).Name = 'gpsPosOffset';
+elems(13).Dimensions = 3;
+elems(13).DimensionsMode = 'Fixed';
+elems(13).DataType = 'single';
+elems(13).SampleTime = -1;
+elems(13).Complexity = 'real';
+elems(13).SamplingMode = 'Sample based';
+elems(13).Min = [];
+elems(13).Max = [];
+
+elems(14) = Simulink.BusElement;
+elems(14).Name = 'gpsPos';
+elems(14).Dimensions = 3;
+elems(14).DimensionsMode = 'Fixed';
+elems(14).DataType = 'single';
+elems(14).SampleTime = -1;
+elems(14).Complexity = 'real';
+elems(14).SamplingMode = 'Sample based';
+elems(14).Min = [];
+elems(14).Max = [];
+
 InternalVariables = Simulink.Bus;
 InternalVariables.Description = sprintf('Holds all of the data generated within Simulink code that Mavlink may need access to for transmission.');
 InternalVariables.DataScope = 'Exported';
