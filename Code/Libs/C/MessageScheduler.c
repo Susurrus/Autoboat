@@ -24,7 +24,7 @@ bool AddMessageRepeating(MessageSchedule *schedule, uint8_t id, uint8_t rate)
 	}
 
 	// Just store this for future use as it's used quite often.
-	float period = 100.0/((float)rate);
+	const float period = 100.0/((float)rate);
 	
 	// Find out which internal message ID we should use. If one isn't found,
 	// return an error.
@@ -259,6 +259,38 @@ uint8_t GetMessagesForTimestep(MessageSchedule *schedule, uint8_t *messages)
 void ResetTimestep(MessageSchedule *schedule)
 {
 	schedule->CurrentTimestep = 0;
+}
+
+/**
+ * Calculate the Hamming distance for a 16-bit number.
+ * @param i The number to analyze
+ * @return The number of bits that are set.
+ */
+uint16_t _HammingDistance(uint16_t i)
+{
+     i = i - ((i >> 1) & 0x55555555);
+     i = (i & 0x33333333) + ((i >> 2) & 0x33333333);
+     return (((i + (i >> 4)) & 0x0F0F0F0F) * 0x01010101) >> 24;
+}
+
+uint32_t GetBps(const MessageSchedule *schedule)
+{
+    uint32_t total = 0;
+
+    uint16_t mid;
+    for (mid = 0; mid < schedule->MessageTypes; ++mid) {
+        // Calculate the size of this message
+        const uint16_t size = schedule->MessageSizes[mid];
+
+        // We only count repeating messages as transient messages will disappear and
+        // not be a factor over the long-term.
+        uint8_t i;
+        for (i = 0; i < 8; ++i) {
+            total += size * _HammingDistance(schedule->Timesteps[mid][MSCHED_REPEATING][i]);
+        }
+    }
+
+    return total;
 }
 
 #ifdef UNIT_TEST
