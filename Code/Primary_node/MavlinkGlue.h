@@ -255,4 +255,10 @@ void MavLinkReceive(void);
  */
 void MavLinkTransmit(void);
 
+/**
+ * Transmit all MAVLink parameters as PARAM_VALUE messages without following the state machine. This
+ * can be used for debugging purposes as then the log contains a record of all parameter settings.
+ */
+void MavLinkTransmitAllParameters(void);
+
 #endif // MAVLINK_GLUE_H

@@ -508,7 +508,7 @@ void SetAutoModeLed(void)
         } else {
             ++autoModeBlinkCounter;
         }
-    } else if (nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) {
+    } else if (IS_AUTONOMOUS()) {
         _LATB12 = ON;
         autoModeBlinkCounter = 0;
     } else {
@@ -553,7 +553,7 @@ void PrimaryNodeMuxAndOutputControllerCommands(float rudderCommand, int16_t thro
     currentCommands.autonomousThrottleCommand = throttleCommand;
 
     // Select actuator commands based on vehicle mode.
-    if (nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) {
+    if (IS_AUTONOMOUS()) {
         muxedRc = rudderCommand;
         // Throttle command is not managed by the autonomous controller yet
         muxedTc = manTc;
@@ -565,6 +565,47 @@ void PrimaryNodeMuxAndOutputControllerCommands(float rudderCommand, int16_t thro
     // Only transmit these commands if there are no errors.
     if (!nodeErrors) {
         ActuatorsTransmitCommands(muxedRc, muxedTc, forceTransmission);
+    }
+}
+
+/**
+ * Provides a helper function for retrieving the automode boolean value from the nodeStatus bitfield.
+ * @returns A boolean of whether the vehicle is in autonomous mode or not.
+ */
+PrimaryNodeMode GetAutoMode(void)
+{
+    if ((nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) > 0) {
+        return PRIMARY_MODE_AUTONOMOUS;
+    } else {
+        return PRIMARY_MODE_MANUAL;
+    }
+}
+
+/**
+ * Provides a helper function for updating the autonomous mode of the vehicle. This updates the
+ * internal variable tracking the autonomous state of the controller. But it also does things based
+ * on the change of state. When the vehicle is put into autonomous mode, it logs the current position
+ * as the starting position to the 1st waypoint. It also outputs all parameters over MAVLink.
+ *
+ * This function also checks to see if the mode has changed before changing anything, so it is safely
+ * idempotent.
+ *
+ * @param newMode True to put the vehicle into autonomous mode, False otherwise.
+ */
+void SetAutoMode(PrimaryNodeMode newMode)
+{
+    if (newMode == PRIMARY_MODE_AUTONOMOUS && !IS_AUTONOMOUS()) {
+        // Update the vehicle state
+        nodeStatus |= PRIMARY_NODE_STATUS_AUTOMODE;
+
+        // Save the current position as the starting position for this waypoint track
+        SetStartingPointToCurrentLocation();
+
+        // Also transmit all parameters so it's easy to verify the config of the vehicle later.
+        MavLinkTransmitAllParameters();
+    } else if (IS_AUTONOMOUS()){
+        // Update the vehicle state
+        nodeStatus &= ~PRIMARY_NODE_STATUS_AUTOMODE;
     }
 }
 

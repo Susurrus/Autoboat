@@ -10,38 +10,6 @@
 #include <stdint.h>
 #include <stddef.h>
 
-/**
- * Provides a helper function for retrieving the automode boolean value from the nodeStatus bitfield.
- * @returns A boolean of whether the vehicle is in autonomous mode or not.
- */
-uint8_t GetAutoMode(void)
-{
-    return (uint8_t)((nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) > 0);
-}
-
-/**
- * Provides a helper function for updating the autonomous mode of the vehicle. When the vehicle is
- * switched into autonomous mode, a new starting location is stored.
- * @param newMode True to put the vehicle into autonomous mode, False otherwise.
- */
-void SetAutoMode(uint8_t newMode)
-{
-    if (newMode) {
-        // Store the current vehicle position when autonomous control is enabled.
-        if ((nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) == 0) {
-            SetStartingPointToCurrentLocation();
-        }
-        nodeStatus |= PRIMARY_NODE_STATUS_AUTOMODE;
-    } else {
-        nodeStatus &= ~PRIMARY_NODE_STATUS_AUTOMODE;
-    }
-}
-
-void ToggleAutoMode(void)
-{
-	SetAutoMode(!GetAutoMode());
-}
-
 static const Parameter params[] = {
     {"ModeAuto", NULL, (void(*)())SetAutoMode, (void(*)())GetAutoMode, PARAMETERS_DATATYPE_UINT8},
     {"Wheelbase", &wheelbase, NULL, NULL, PARAMETERS_DATATYPE_REAL32},

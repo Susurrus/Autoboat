@@ -33,7 +33,6 @@
 #include "PrimaryNode.h"
 #include "Parameters.h"
 #include "DataStore.h"
-#include "ParametersHelper.h"
 
 // MATLAB-generated code is included here, really only required for the declaration of the
 // InternalVariables struct.
@@ -294,7 +293,7 @@ void MavLinkSendHeartbeat(void)
 	/// Then we update the system mode using MAV_MODE_FLAGs
 	// Set manual/autonomous mode. Note that they're not mutually exclusive within the MAVLink protocol,
 	// though I treat them as such for my autopilot.
-	if (nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) {
+	if (IS_AUTONOMOUS()) {
 		mavlink_system.mode |= (MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
 		mavlink_system.mode &= ~MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
 	} else {
@@ -668,6 +667,14 @@ void _transmitParameter(uint16_t id)
     }
 }
 
+void MavLinkTransmitAllParameters(void)
+{
+    uint8_t pid;
+    for (pid = 0; pid < PARAMETERS_TOTAL; ++pid) {
+        _transmitParameter(pid);
+    }
+}
+
 /** Custom Sealion Messages **/
 
 void MavLinkSendRudderRaw(void)
@@ -839,18 +846,15 @@ void MavLinkReceiveManualControl(const mavlink_manual_control_t *msg)
 void MavLinkReceiveSetMode(const mavlink_set_mode_t *msg)
 {
     if (msg->target_system == mavlink_system.sysid) {
-        // Set autonomous mode. Also latch the current vehicle location when this switch occurs. This
-		// will make the vehicle follow a line from this location to the next waypoint, which is expected
-		// behavior.
+        // Set autonomous mode.
         if ((msg->base_mode & MAV_MODE_FLAG_AUTO_ENABLED) &&
             !(msg->base_mode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED)) {
-			SetStartingPointToCurrentLocation();
-            nodeStatus |= PRIMARY_NODE_STATUS_AUTOMODE;
+            SetAutoMode(PRIMARY_MODE_AUTONOMOUS);
         }
         // Or set manual mode
         else if (!(msg->base_mode & MAV_MODE_FLAG_AUTO_ENABLED) &&
             (msg->base_mode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED)) {
-            nodeStatus &= ~PRIMARY_NODE_STATUS_AUTOMODE;
+            SetAutoMode(PRIMARY_MODE_MANUAL);
         }
     }
 }
@@ -1012,7 +1016,7 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 			// Otherwise if a mission count was received, prepare to receive new missions.
 			else if (event == MISSION_EVENT_COUNT_RECEIVED) {
 				// Don't allow for writing of new missions if we're in autonomous mode.
-				if (nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) {
+				if (IS_AUTONOMOUS()) {
 					MavLinkSendMissionAck(MAV_MISSION_ERROR);
 					nextState = MISSION_STATE_INACTIVE;
 				}
@@ -1048,7 +1052,7 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 				}
 			} else if (event == MISSION_EVENT_CLEAR_ALL_RECEIVED) {
 				// If we're in autonomous mode, don't allow for clearing the mission list
-				if (nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) {
+				if (IS_AUTONOMOUS()) {
 					MavLinkSendMissionAck(MAV_MISSION_ERROR);
 					nextState = MISSION_STATE_INACTIVE;
 				}

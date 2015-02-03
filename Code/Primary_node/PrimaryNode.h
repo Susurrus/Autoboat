@@ -39,6 +39,11 @@ typedef struct {
 } ActuatorCommands;
 extern ActuatorCommands currentCommands;
 
+typedef enum {
+    PRIMARY_MODE_MANUAL,
+    PRIMARY_MODE_AUTONOMOUS
+} PrimaryNodeMode;
+
 /**
  * Initialize all of the C-libraries necessary for the Primary Node.
  */
@@ -65,6 +70,25 @@ void SetResetModeLed(void);
  * Change the status of the autonomous mode LED depending on system state.
  */
 void SetAutoModeLed(void);
+
+/**
+ * Provides a helper function for updating the autonomous mode of the vehicle. Additional actions
+ * are done by a MavlinkGlue helper function.
+ * @param newMode True to put the vehicle into autonomous mode, False otherwise.
+ */
+void SetAutoMode(PrimaryNodeMode newMode);
+
+/**
+ * Provides a helper function for retrieving the automode boolean value from the nodeStatus bitfield.
+ * I'm trying to minimize direct accesses/manipulation of the nodeStatus variable.
+ * @returns A boolean of whether the vehicle is in autonomous mode or not.
+ */
+PrimaryNodeMode GetAutoMode(void);
+
+/**
+ * This macro provides a shortcut for checking if the vehicle is current in under autonomous control.
+ */
+#define IS_AUTONOMOUS() (GetAutoMode() == PRIMARY_MODE_AUTONOMOUS)
 
 /**
  * Call at 100Hz to transmit a NODE_STATUS can message at 2Hz.
