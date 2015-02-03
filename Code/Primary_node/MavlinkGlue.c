@@ -319,7 +319,7 @@ void MavLinkSendSystemTime(void)
 {
 	// Pack the message
 	mavlink_msg_system_time_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
-								 dateTimeDataStore.usecSinceEpoch, nodeSystemTime*10);
+            dateTimeDataStore.usecSinceEpoch, nodeSystemTime*10);
 
 	// Copy the message to the send buffer
 	len = mavlink_msg_to_send_buffer(buf, &txMessage);
@@ -653,19 +653,19 @@ void MavLinkSendMissionRequest(uint8_t currentMissionIndex)
  */
 void _transmitParameter(uint16_t id)
 {
-	if (id < PARAMETERS_TOTAL) {
-		// Then use the helper functions from Parameters.h to get the current value. If there was an
-		// error, just return having done nothing.
-		float param_value = 0.0;
-		ParameterGetValueById(id, &param_value);
+    if (id < PARAMETERS_TOTAL) {
+        // Then use the helper functions from Parameters.h to get the current value. If there was an
+        // error, just return having done nothing.
+        float param_value = 0.0;
+        ParameterGetValueById(id, &param_value);
 
-		// Finally encode the message and transmit.
-		mavlink_msg_param_value_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
-			onboardParameters[id].name, param_value, onboardParameters[id].dataType,
-			PARAMETERS_TOTAL, id);
-		len = mavlink_msg_to_send_buffer(buf, &txMessage);
-		Uart1WriteData(buf, (uint8_t)len);
-	}
+        // Finally encode the message and transmit.
+        mavlink_msg_param_value_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
+            onboardParameters[id].name, param_value, onboardParameters[id].dataType,
+            PARAMETERS_TOTAL, id);
+        len = mavlink_msg_to_send_buffer(buf, &txMessage);
+        Uart1WriteData(buf, (uint8_t)len);
+    }
 }
 
 /** Custom Sealion Messages **/
@@ -784,28 +784,28 @@ void MavLinkSendWaypointStatusData(void)
 
 void MavLinkReceiveCommandLong(const mavlink_command_long_t *msg)
 {
-	if (msg->target_system == mavlink_system.sysid) {
-		switch (msg->command) {
-			case MAV_CMD_PREFLIGHT_STORAGE:
-				{
-					uint8_t result = MAV_RESULT_FAILED;
-					if (msg->param1) {
-						if (DataStoreSaveParameters()) {
-							result = MAV_RESULT_ACCEPTED;
-						}
-					} else {
-						if (DataStoreLoadParameters()) {
-							result = MAV_RESULT_ACCEPTED;
-						}
-					}
-					MavLinkSendCommandAck(msg->command, result);
-				}
-				break;
-			default:
-				MavLinkSendCommandAck(msg->command, MAV_RESULT_UNSUPPORTED);
-				break;
-		}
-	}
+    if (msg->target_system == mavlink_system.sysid) {
+        switch (msg->command) {
+        case MAV_CMD_PREFLIGHT_STORAGE:
+        {
+            uint8_t result = MAV_RESULT_FAILED;
+            if (msg->param1) {
+                if (DataStoreSaveParameters()) {
+                    result = MAV_RESULT_ACCEPTED;
+                }
+            } else {
+                if (DataStoreLoadParameters()) {
+                    result = MAV_RESULT_ACCEPTED;
+                }
+            }
+            MavLinkSendCommandAck(msg->command, result);
+        }
+            break;
+        default:
+            MavLinkSendCommandAck(msg->command, MAV_RESULT_UNSUPPORTED);
+            break;
+        }
+    }
 }
 
 void MavLinkReceiveManualControl(const mavlink_manual_control_t *msg)

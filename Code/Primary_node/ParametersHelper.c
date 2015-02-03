@@ -27,10 +27,10 @@ uint8_t GetAutoMode(void)
 void SetAutoMode(uint8_t newMode)
 {
     if (newMode) {
-		// Store the current vehicle position when autonomous control is enabled.
-		if ((nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) == 0) {
-			SetStartingPointToCurrentLocation();
-		}
+        // Store the current vehicle position when autonomous control is enabled.
+        if ((nodeStatus & PRIMARY_NODE_STATUS_AUTOMODE) == 0) {
+            SetStartingPointToCurrentLocation();
+        }
         nodeStatus |= PRIMARY_NODE_STATUS_AUTOMODE;
     } else {
         nodeStatus &= ~PRIMARY_NODE_STATUS_AUTOMODE;
