@@ -244,6 +244,15 @@ void MavLinkInit(void)
 			FATAL_ERROR();
 		}
 	}
+
+        // Make sure that we haven't exceeded the total number of bytes/s available on this connection.
+        // Running at 115200, we have about 11520bps available, so let's make sure we don't exceed
+        // 80% of that total bandwidth. This makes sure we have space for transient messages like
+        // missions, parameters, or waypoint/state changes.
+        uint32_t bps = GetBps(&mavlinkSchedule);
+        if (bps > (115200 / 10) * 4 / 5) {
+            FATAL_ERROR();
+        }
 }
 
 /**
