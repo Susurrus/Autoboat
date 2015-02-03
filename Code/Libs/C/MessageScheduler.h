@@ -38,9 +38,9 @@ typedef struct {
 	// Number of messages. Equal the the first dimensions of the *Messages[] arrays.
 	const uint8_t MessageTypes;
 	// An ID for every message type. The data is left unconstant so that initialization functions can manipulate it.
-	uint8_t* const MessageIds;
+	uint8_t *const MessageIds;
 	// The size in bytes of every message type. Contains `MessageTypes` entries. The data is left unconstant so that the initialization functions can manipulate it.
-	uint8_t* const MessageSizes;
+	uint8_t *const MessageSizes;
 	// Tracks the current timestep that we're executing at.
 	uint8_t CurrentTimestep;
 	// Keep a 128-bit schedule for every message. First dimension is messagetype,
@@ -89,5 +89,12 @@ uint8_t GetMessagesForTimestep(MessageSchedule *schedule, uint8_t messages[]);
  * Reset the current timestep. This has no other affect on the dispatcher.
  */
 void ResetTimestep(MessageSchedule *schedule);
+
+/**
+ * Calculates the bytes/s expected from this message schedule for recurring messages. So transient
+ * messages are ignored.
+ * @return The bytes/s output by this message schedule.
+ */
+uint32_t GetBps(const MessageSchedule *schedule);
 
 #endif // MESSAGE_SCHEDULER_H
