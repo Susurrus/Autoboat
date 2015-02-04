@@ -13,6 +13,7 @@ QGROUNDCONTROL_MAVDIR=$QGROUNDCONTROL_DIR/libs/mavlink/include/mavlink/v1.0
 
 # Update the MAVLink repository
 cd $PROJ_DIR/mavlink
+git reset --hard HEAD
 git pull upstream master
 
 # Copy over the most recent SeaSlug message definitions
