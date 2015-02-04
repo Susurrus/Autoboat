@@ -144,45 +144,45 @@
 		</message>
         <message id="180" name="CONTROLLER_DATA">
             <!-- Navigation -->
-            <field type="float" name="last_wp_north">The north component of the local coordinates of the last waypoint. (m)</field>
-            <field type="float" name="last_wp_east">The east component of the local coordinates of the last waypoint. (m)</field>
-            <field type="float" name="next_wp_north">The north component of the local coordinates of the next waypoint. (m)</field>
-            <field type="float" name="next_wp_east">The east component of the local coordinates of the next waypoint. (m)</field>
+            <field type="int16_t" name="last_wp_north">The north component of the local coordinates of the last waypoint (m * 10).</field> <!-- Covers +-3276.7 -->
+            <field type="int16_t" name="last_wp_east">The east component of the local coordinates of the last waypoint (m * 10).</field> <!-- Covers +-3276.7 -->
+            <field type="int16_t" name="next_wp_north">The north component of the local coordinates of the next waypoint (m * 10).</field> <!-- Covers +-3276.7 -->
+            <field type="int16_t" name="next_wp_east">The east component of the local coordinates of the next waypoint (m * 10).</field> <!-- Covers +-3276.7 -->
             <!-- IMU -->
-            <field type="float" name="w">Quaternion component 1, w (1 in null-rotation)</field>
-            <field type="float" name="x">Quaternion component 2, x (0 in null-rotation)</field>
-            <field type="float" name="y">Quaternion component 3, y (0 in null-rotation)</field>
-            <field type="float" name="z">Quaternion component 4, z (0 in null-rotation)</field>
-            <field type="float" name="roll_speed">Roll angular speed (rad/s)</field>
-            <field type="float" name="pitch_speed">Pitch angular speed (rad/s)</field>
-            <field type="float" name="yaw_speed">Yaw angular speed (rad/s)</field>
+            <field type="int16_t" name="w">Quaternion component 1, w (1 in null-rotation) (1e4)</field> <!-- Provides a range of +-3.2767, actual values +-1.0 -->
+            <field type="int16_t" name="x">Quaternion component 2, x (0 in null-rotation) (1e4)</field> <!-- Provides a range of +-3.2767, actual values +-0.0723 -->
+            <field type="int16_t" name="y">Quaternion component 3, y (0 in null-rotation) (1e4)</field> <!-- Provides a range of +-3.2767, actual values +-0.1083 -->
+            <field type="int16_t" name="z">Quaternion component 4, z (0 in null-rotation) (1e4)</field> <!-- Provides a range of +-3.2767, actual values +-0.9999 -->
+            <field type="int16_t" name="roll_speed">Roll angular speed (rad/s * 1e4)</field> <!-- Provides a range of +-3.2767, actual values +-.2139 -->
+            <field type="int16_t" name="pitch_speed">Pitch angular speed (rad/s * 1e4)</field> <!-- Provides a range of +-3.2767, actual values +-.0740 -->
+            <field type="int16_t" name="yaw_speed">Yaw angular speed (rad/s * 1e4)</field> <!-- Provides a range of +-3.2767, actual values +-.3164 -->
             <!-- DST800 -->
-            <field type="float" name="water_speed">Longitudinal water speed (m/s).</field>
+            <field type="uint16_t" name="water_speed">Forward water speed (m/s * 1e4).</field>
             <!-- GPS -->
-            <field type="uint8_t" name="fix_type">0-1: no fix, 2: 2D fix, 3: 3D fix, 4: DGPS, 5: RTK. Some applications will not use the value of this field unless it is at least two, so always correctly fill in the fix.</field>
-            <field type="int32_t" name="lat">Latitude (WGS84), in degrees * 1E7</field>
-            <field type="int32_t" name="lon">Longitude (WGS84), in degrees * 1E7</field>
-            <field type="uint16_t" name="vel">GPS ground speed (m/s * 100). If unknown, set to: UINT16_MAX</field>
-            <field type="uint16_t" name="cog">Course over ground (NOT heading, but direction of movement) in degrees * 100, 0.0..359.99 degrees. If unknown, set to: UINT16_MAX</field>
+            <field type="uint8_t" name="fix_type">0: no fix, 1 valid fix (2D or better).</field>
+            <field type="int32_t" name="lat">Latitude (WGS84) (degrees * 1e7). If unknown, set to 0.</field>
+            <field type="int32_t" name="lon">Longitude (WGS84) (degrees * 1e7). If unknown, set to 0.</field>
+            <field type="int16_t" name="vel">GPS ground speed (m/s * 1e3). If unknown, set to 0.</field> <!-- Provides a range of +-32.767 -->
+            <field type="uint16_t" name="cog">Course over ground, from 0 to 2*pi (rad * 1e4). If unknown, set to 0.</field>
             <!-- System -->
             <field type="uint8_t" name="reset">0 indicates system is operating normally, 1 indicates it's held in reset.</field>
-            <field type="uint64_t" name="time_utc">Timestamp (microseconds since UNIX epoch) in UTC. 0 for unknown. Commonly filled by the precision time source of a GPS receiver.</field>
+            <field type="uint32_t" name="time_boot_ms">Timestamp (milliseconds since system boot)</field>
             <!-- Controller intermediates -->
-            <field type="float" name="north">North-component of vehicle position in the local tangent plane (m)</field>
-            <field type="float" name="east">East-component of vehicle position in the local tangent plane (m)</field>
-            <field type="float" name="north_speed">North-component of speed (m/s)</field>
-            <field type="float" name="east_speed">East-component of speed (m/s)</field>
-            <field type="float" name="yaw_rate_global">The yaw rate converted to the global frame. (rad/s)</field>
-            <field type="float" name="a_cmd">This is the lateral acceleration as commanded by the onboard L2+ controller (m/s^2)</field>
-            <field type="int32_t" name="aim_point_n">North-coordinate of the L2+ aim point (mm)</field>
-            <field type="int32_t" name="aim_point_e">East-coordinate of the L2+ aim point (mm)</field>
+            <field type="int32_t" name="north">North-component of vehicle position in the local tangent plane (m * 1e3)</field> <!-- Provides a range of +-2.1474838e+006, actual values +-210.365 -->
+            <field type="int32_t" name="east">East-component of vehicle position in the local tangent plane (m * 1e3)</field> <!-- Provides a range of +-2.1474838e+006, actual values +-48.704 -->
+            <field type="int16_t" name="north_speed">North-component of speed (m/s * 1e3)</field> <!-- Provides a range of +-32.767, actual values +-1.735 -->
+            <field type="int16_t" name="east_speed">East-component of speed (m/s * 1e3)</field> <!-- Provides a range of +-32.767, actual values +-1.303 -->
+            <field type="int16_t" name="yaw_rate_global">The yaw rate converted to the global frame (rad/s * 1e4)</field> <!-- Provides a range of +-3.2767, actual values +-.3164 -->
+            <field type="int16_t" name="a_cmd">This is the lateral acceleration as commanded by the onboard L2+ controller (m/s^2 * 1e5)</field> <!-- Provides a range of +-.32767, actual values +-.2208 -->
+            <field type="int16_t" name="aim_point_n">North-coordinate of the L2+ aim point (m * 10)</field> <!-- Provides a range of +-3276.7, actual values +-236.6 -->
+            <field type="int16_t" name="aim_point_e">East-coordinate of the L2+ aim point (m * 10)</field> <!-- Provides a range of +-3276.7, actual values +-52.9 -->
             <!-- Controller commands -->
-            <field type="float" name="commanded_rudder_angle">This is the rudder angle command as commanded by the onboard autonomous controller. It's in milliradians where positive indicates port-side.</field>
+            <field type="int16_t" name="commanded_rudder_angle">This is the rudder angle command as commanded by the onboard autonomous controller, positive indicates port-side (rad * 1e4)</field>
             <field type="int16_t" name="commanded_throttle">This is the throttle command as commanded by the onboard autonomous controller. It's in units of 1/1023*100% of max current and positive values propel the vehicle forward.</field>
             commanded throttle
             <!-- Actuators -->
-            <field type="float" name="rudder_angle">The rudder angle in radians.</field>
-            <field type="int16_t" name="prop_speed">Propeller speed, positive values mean the vessel will be propelled forward. (rpm)</field>
+            <field type="int16_t" name="rudder_angle">The current rudder angle (rad * 1e4)</field> <!-- Provides a range from -3.2768 to 3.2767. Actual values never exceed +-1.6 -->
+            <field type="int16_t" name="prop_speed">Propeller speed, positive values mean the vessel will be propelled forward. (rpm * 100)</field> <!-- Provides a range from -327.68 to 327.67. This field is currently unused. -->
         </message>
 	</messages>
 </mavlink>
