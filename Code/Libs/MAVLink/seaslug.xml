@@ -82,10 +82,12 @@
 			<field type="float" name="commanded_auto_rudder_angle">This is the rudder angle command as commanded by the onboard autonomous controller. It's in milliradians where positive indicates port-side.</field>
 			<field type="float" name="commanded_primary_rudder_angle">This is the rudder angle command as commanded by the primary manual controller. It's in milliradians where positive indicates port-side.</field>
 			<field type="float" name="commanded_secondary_rudder_angle">This is the rudder angle command as commanded by the secondary/emergency manual controller. It's in milliradians where positive indicates port-side.</field>
+			<field type="float" name="commanded_rudder_angle">This is the rudder angle command as actually output to the vessel. It's a muxed signal of the above commanded_*_rudder_angle values. It's in milliradians where positive indicates port-side.</field>
 			<field type="float" name="rudder_angle">The interpreted rudder angle in radians.</field>
 			<field type="int16_t" name="commanded_auto_throttle">This is the throttle command as commanded by the onboard autonomous controller. It's in units of 1/1023*100% of max current and positive values propel the vehicle forward.</field>
 			<field type="int16_t" name="commanded_primary_throttle">This is the throttle command as commanded by the primary manual controller. It's in units of 1/1023*100% of max current and positive values propel the vehicle forward.</field>
 			<field type="int16_t" name="commanded_secondary_throttle">This is the throttle command as commanded by the secondary/emergency manual controller. It's in units of 1/1023*100% of max current and positive values propel the vehicle forward.</field>
+			<field type="int16_t" name="commanded_throttle">This is the throttle command as actually output to the vessel. It's a muxed signal of the above commanded_*_throttle values. It's in units of 1/1023*100% of max current and positive values propel the vehicle forward.</field>
 			<field type="int16_t" name="prop_speed">Propeller speed, positive values mean the vessel will be propelled forward. Units are in RPM.</field>
 			<field type="float" name="a_cmd">This is the lateral acceleration as commanded by the onboard L2+ controller. Units are in m/s^2.</field>
 			<field type="float" name="L2_north">North-coordinate of the L2 vector in mm.</field>
@@ -140,5 +142,47 @@
 			<field type="float" name="next_wp_north">The north component of the local coordinates of the next waypoint.</field>
 			<field type="float" name="next_wp_east">The east component of the local coordinates of the next waypoint.</field>
 		</message>
+        <message id="180" name="CONTROLLER_DATA">
+            <!-- Navigation -->
+            <field type="float" name="last_wp_north">The north component of the local coordinates of the last waypoint. (m)</field>
+            <field type="float" name="last_wp_east">The east component of the local coordinates of the last waypoint. (m)</field>
+            <field type="float" name="next_wp_north">The north component of the local coordinates of the next waypoint. (m)</field>
+            <field type="float" name="next_wp_east">The east component of the local coordinates of the next waypoint. (m)</field>
+            <!-- IMU -->
+            <field type="float" name="w">Quaternion component 1, w (1 in null-rotation)</field>
+            <field type="float" name="x">Quaternion component 2, x (0 in null-rotation)</field>
+            <field type="float" name="y">Quaternion component 3, y (0 in null-rotation)</field>
+            <field type="float" name="z">Quaternion component 4, z (0 in null-rotation)</field>
+            <field type="float" name="roll_speed">Roll angular speed (rad/s)</field>
+            <field type="float" name="pitch_speed">Pitch angular speed (rad/s)</field>
+            <field type="float" name="yaw_speed">Yaw angular speed (rad/s)</field>
+            <!-- DST800 -->
+            <field type="float" name="water_speed">Longitudinal water speed (m/s).</field>
+            <!-- GPS -->
+            <field type="uint8_t" name="fix_type">0-1: no fix, 2: 2D fix, 3: 3D fix, 4: DGPS, 5: RTK. Some applications will not use the value of this field unless it is at least two, so always correctly fill in the fix.</field>
+            <field type="int32_t" name="lat">Latitude (WGS84), in degrees * 1E7</field>
+            <field type="int32_t" name="lon">Longitude (WGS84), in degrees * 1E7</field>
+            <field type="uint16_t" name="vel">GPS ground speed (m/s * 100). If unknown, set to: UINT16_MAX</field>
+            <field type="uint16_t" name="cog">Course over ground (NOT heading, but direction of movement) in degrees * 100, 0.0..359.99 degrees. If unknown, set to: UINT16_MAX</field>
+            <!-- System -->
+            <field type="uint8_t" name="reset">0 indicates system is operating normally, 1 indicates it's held in reset.</field>
+            <field type="uint64_t" name="time_utc">Timestamp (microseconds since UNIX epoch) in UTC. 0 for unknown. Commonly filled by the precision time source of a GPS receiver.</field>
+            <!-- Controller intermediates -->
+            <field type="float" name="north">North-component of vehicle position in the local tangent plane (m)</field>
+            <field type="float" name="east">East-component of vehicle position in the local tangent plane (m)</field>
+            <field type="float" name="north_speed">North-component of speed (m/s)</field>
+            <field type="float" name="east_speed">East-component of speed (m/s)</field>
+            <field type="float" name="yaw_rate_global">The yaw rate converted to the global frame. (rad/s)</field>
+            <field type="float" name="a_cmd">This is the lateral acceleration as commanded by the onboard L2+ controller (m/s^2)</field>
+            <field type="int32_t" name="aim_point_n">North-coordinate of the L2+ aim point (mm)</field>
+            <field type="int32_t" name="aim_point_e">East-coordinate of the L2+ aim point (mm)</field>
+            <!-- Controller commands -->
+            <field type="float" name="commanded_rudder_angle">This is the rudder angle command as commanded by the onboard autonomous controller. It's in milliradians where positive indicates port-side.</field>
+            <field type="int16_t" name="commanded_throttle">This is the throttle command as commanded by the onboard autonomous controller. It's in units of 1/1023*100% of max current and positive values propel the vehicle forward.</field>
+            commanded throttle
+            <!-- Actuators -->
+            <field type="float" name="rudder_angle">The rudder angle in radians.</field>
+            <field type="int16_t" name="prop_speed">Propeller speed, positive values mean the vessel will be propelled forward. (rpm)</field>
+        </message>
 	</messages>
 </mavlink>
