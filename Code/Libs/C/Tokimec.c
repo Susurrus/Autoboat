@@ -196,7 +196,8 @@ uint8_t _TokimecOutputChecksum(const uint8_t *data)
 uint8_t _TokimecInputChecksum(const uint8_t *data)
 {
 	uint8_t newChecksum = 0;
-	for (int i = IN_BYTE_INDEX_COMMAND; i < IN_BYTE_INDEX_DLE2; ++i) {
+        int i;
+	for (i = IN_BYTE_INDEX_COMMAND; i < IN_BYTE_INDEX_DLE2; ++i) {
 		newChecksum += data[i];
 	}
 	newChecksum += data[IN_BYTE_INDEX_ETX];
@@ -209,7 +210,8 @@ void TokimecPackageCommandMessage(char msg[10], uint16_t cmd, uint16_t atime)
 	BEPackUint16(&msgTemplate[IN_BYTE_INDEX_COMMAND], cmd);
 	BEPackUint16(&msgTemplate[IN_BYTE_INDEX_ALIGN_TIME], atime);
 	msgTemplate[IN_BYTE_INDEX_BCC] = _TokimecInputChecksum(msgTemplate);
-	for (int i = 0; i < 10; ++i) {
+        int i;
+        for (i = 0; i < 10; ++i) {
 		msg[i] = msgTemplate[i];
 	}
 }
