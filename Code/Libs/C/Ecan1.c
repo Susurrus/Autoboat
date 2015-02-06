@@ -114,29 +114,27 @@ void Ecan1Init(uint32_t f_osc, uint32_t f_baud)
     /// Set up necessary DMA channels for transmission and reception
     // ECAN1 transmission over DMA2
     OpenDMA2(DMA2_MODULE_ON & DMA2_SIZE_WORD & DMA2_TO_PERIPHERAL & DMA2_INTERRUPT_BLOCK & DMA2_NORMAL & DMA2_PERIPHERAL_INDIRECT & DMA2_CONTINUOUS,
-            DMA2_AUTOMATIC,
+            0x46, // Specify the ECAN_TX peripheral for DMA2. See the device-specific manual.
 #ifdef __dsPIC33FJ128MC802__
             __builtin_dmaoffset(ecan1MsgBuf),
 #elif __dsPIC33EP256MC502__
             (unsigned long int)ecan1MsgBuf, // Warning here (cast from pointer to integer of different size) expected, unknown how to fix
 #endif
             0ul,
-            (uint16_t) & C1TXD,
+            (uint16_t) &C1TXD,
             7);
-    DMA2REQbits.IRQSEL = 0x46; // Attach this DMA to the ECAN1 TX data sent event
 
     // ECAN1 reception over DMA0
     OpenDMA0(DMA0_MODULE_ON & DMA0_SIZE_WORD & PERIPHERAL_TO_DMA0 & DMA0_INTERRUPT_BLOCK & DMA0_NORMAL & DMA0_PERIPHERAL_INDIRECT & DMA0_CONTINUOUS,
-            DMA0_AUTOMATIC,
+            0x22, // Specify the ECAN_RX peripheral for DMA2. See the device-specific manual.
 #ifdef __dsPIC33FJ128MC802__
             __builtin_dmaoffset(ecan1MsgBuf),
 #elif __dsPIC33EP256MC502__
             (unsigned long int)ecan1MsgBuf, // Warning here (cast from pointer to integer of different size) expected, unknown how to fix
 #endif
             0ul,
-            (uint16_t) & C1RXD,
+            (uint16_t) &C1RXD,
             7);
-    DMA0REQbits.IRQSEL = 0x22; // Attach this DMA to the ECAN1 RX data ready event
 }
 
 int Ecan1Receive(CanMessage *msg, uint8_t *messagesLeft)
