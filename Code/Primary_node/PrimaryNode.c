@@ -731,7 +731,7 @@ void Adc1Init(void)
 #endif
     // Open DMA1 for receiving ADC values
     OpenDMA1(DMA1_MODULE_ON & DMA1_SIZE_WORD & PERIPHERAL_TO_DMA1 & DMA1_INTERRUPT_BLOCK & DMA1_NORMAL & DMA1_PERIPHERAL_INDIRECT & DMA1_CONTINUOUS,
-            DMA1_AUTOMATIC,
+             0x0D,
 #ifdef __dsPIC33FJ128MC802__
             __builtin_dmaoffset(adcDmaBuffer),
 #elif __dsPIC33EP256MC502__
@@ -740,7 +740,6 @@ void Adc1Init(void)
             0ul,
             (uint16_t) & ADC1BUF0,
             3); // Specify the number of pins being measured (n) as n-1 here. Must match ADC_DMA_ADD_INC_n setting.
-    DMA1REQbits.IRQSEL = 0x0D; // Attach this DMA to the ADC1 conversion done event
 }
 
 float GetPowerRailVoltage(void)
