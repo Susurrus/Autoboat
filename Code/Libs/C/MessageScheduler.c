@@ -226,7 +226,7 @@ uint8_t GetMessagesForTimestep(MessageSchedule *schedule, uint8_t *messages)
 	int i;
 	int currentTimestepWord = (cleanupTimestep & 0x70) >> 4;
 	uint16_t timestepIndex = 1 << (cleanupTimestep & 0x0F);
-	for	(i = 0; i < schedule->MessageTypes; ++i) {
+	for (i = 0; i < schedule->MessageTypes; ++i) {
 		schedule->Timesteps[i][MSCHED_TRANSIENT][currentTimestepWord] &= ~timestepIndex;
 	}
 
@@ -238,7 +238,7 @@ uint8_t GetMessagesForTimestep(MessageSchedule *schedule, uint8_t *messages)
 	uint8_t messageCount = 0;
 	currentTimestepWord = (schedule->CurrentTimestep & 0x70) >> 4;
 	timestepIndex = 1 << (schedule->CurrentTimestep & 0x0F);
-	for	(i = 0; i < schedule->MessageTypes; ++i) {
+	for (i = 0; i < schedule->MessageTypes; ++i) {
 		if ((schedule->Timesteps[i][MSCHED_REPEATING][currentTimestepWord] | 
 		    schedule->Timesteps[i][MSCHED_TRANSIENT][currentTimestepWord]) & 
 			timestepIndex) {
