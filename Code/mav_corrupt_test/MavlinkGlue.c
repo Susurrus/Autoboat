@@ -76,11 +76,7 @@ enum MISSION_STATE {
 // Store a module-wide variable for common MAVLink system variables.
 static mavlink_system_t mavlink_system = {
 	20, // Arbitrarily chosen MAV number
-	MAV_COMP_ID_ALL,
-	MAV_TYPE_SURFACE_BOAT,
-	MAV_STATE_UNINIT,
-	MAV_MODE_PREFLIGHT | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED, // The vehicle is booting up and have manual control enabled.
-	0 // Unused and unsure of expected usage
+	MAV_COMP_ID_ALL
 };
 
 /** manual control parameters **/
@@ -167,9 +163,9 @@ void MavLinkInit(void)
 	// We only report things that the GUI needs at 1Hz because it only updates that fast.
 	// REVO_GS - Not currently connected, so no need to report it often.
 	// WSO100 is just an environmental sensor, no need for quick updates.
-	const uint8_t const periodicities[MAVLINK_MSGS_SIZE] = {2, 4, 1, 10, 4, 10, 2, 10, 10, 10, 1, 4, 10, 5, 10, 20, 20};
+	const uint8_t const periodicities[MAVLINK_MSGS_SIZE] = {2, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	for (i = 0; i < sizeof(periodicities); ++i) {
-		if (!AddMessageRepeating(&mavlinkSchedule, ids[i], periodicities[i])) {
+		if (periodicities[i] != 0 && !AddMessageRepeating(&mavlinkSchedule, ids[i], periodicities[i])) {
 			FATAL_ERROR();
 		}
 	}
@@ -185,7 +181,7 @@ void MavLinkSendHeartbeat(void)
 	mavlink_message_t msg;
 
 	// Pack the message
-	mavlink_msg_heartbeat_pack(mavlink_system.sysid, mavlink_system.compid, &msg, mavlink_system.type, MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY, mavlink_system.mode, 0, mavlink_system.state);
+	mavlink_msg_heartbeat_pack(mavlink_system.sysid, mavlink_system.compid, &msg, MAV_TYPE_SURFACE_BOAT, MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY, MAV_STATE_UNINIT, 0, MAV_MODE_PREFLIGHT | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED);
 
 	// Copy the message to the send buffer
 	len = mavlink_msg_to_send_buffer(buf, &msg);
