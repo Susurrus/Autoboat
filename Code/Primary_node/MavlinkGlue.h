@@ -162,6 +162,13 @@ void MavLinkSendCurrentMission(void);
  */
 void MavLinkSendMissionAck(uint8_t type);
 
+/**
+ * Transmit a CONTROLLER_DATA message. This message was not designed to be scheduled as normal, which
+ * is why it actually has function arguments. This should be sent explicitly immediately after the
+ * controller loop has run.
+ */
+void MavLinkSendControllerData(const float attitude_quat[4], float commandedRudder, int16_t commandedThrottle);
+
 void MavLinkSendMissionCount(void);
 
 void MavLinkSendMissionItem(uint8_t currentMissionIndex);

@@ -403,7 +403,7 @@ void PrimaryNode100HzLoop(void)
         (float)tokimecDataStore.pitch / 8192.0,
         (float)tokimecDataStore.roll / 8192.0
     };
-    YawPitchRollToQuaternion(ypr, imu.attitude_quat);
+    YawPitchRollToQuaternion(ypr, imu.attitude_quat); // TODO: Move this to when receiving Tokimec data
 
     // Run the next timestep of the controller. Output is stored locally and passed to the actuators,
     // but some additional system state is stored in controllerVars in `MavlinkGlue`.
@@ -413,6 +413,9 @@ void PrimaryNode100HzLoop(void)
 
     controller_custom(&gpsDataStore, &throttleDataStore.rpm, &rudderSensorData.RudderAngle,
             (boolean_T*) &reset, &waterDataStore.speed, &rCommand, &tCommand, &controllerVars, &imu);
+
+    // Now output the current system state and results of the last control loop
+    MavLinkSendControllerData(imu.attitude_quat, rCommand, tCommand);
 
     // And output the necessary control outputs.
     PrimaryNodeMuxAndOutputControllerCommands(rCommand, tCommand, false);

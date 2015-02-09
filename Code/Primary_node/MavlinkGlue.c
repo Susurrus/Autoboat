@@ -1,5 +1,5 @@
 /**
- * This file contains all of the MAVLink interfacing necessary by Sealion.
+ * This file contains all of the MAVLink interfacing necessary by SeaSlug.
  * It relies heavily on the MavlinkMessageScheduler for scheduling transmission
  * of MAVLink messages such as to not overload the interface.
  *
@@ -188,7 +188,7 @@ struct {
 } mavlinkManualControlData;
 
 // Set up the message scheduler for MAVLink transmission
-#define MAVLINK_MSGS_SIZE 18
+#define MAVLINK_MSGS_SIZE 17
 uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_HEARTBEAT,
 	MAVLINK_MSG_ID_SYS_STATUS,
@@ -200,14 +200,13 @@ uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_BASIC_STATE,
 	MAVLINK_MSG_ID_RUDDER_RAW,
 	MAVLINK_MSG_ID_DST800,
-	MAVLINK_MSG_ID_REVO_GS,
 	MAVLINK_MSG_ID_MAIN_POWER,
 	MAVLINK_MSG_ID_GPS200,
 	MAVLINK_MSG_ID_NODE_STATUS,
 	MAVLINK_MSG_ID_WAYPOINT_STATUS,
-	MAVLINK_MSG_ID_DSP3000,
 	MAVLINK_MSG_ID_TOKIMEC,
-	MAVLINK_MSG_ID_RADIO_STATUS
+	MAVLINK_MSG_ID_RADIO_STATUS,
+	MAVLINK_MSG_ID_CONTROLLER_DATA
 };
 uint16_t tsteps[MAVLINK_MSGS_SIZE][2][8] = {};
 uint8_t  mSizes[MAVLINK_MSGS_SIZE];
@@ -232,13 +231,9 @@ void MavLinkInit(void)
 		mavlinkSchedule.MessageSizes[i] = mavMessageSizes[ids[i]];
 	}
 
-	//const uint8_t const periodicities[MAVLINK_MSGS_SIZE] = {2, 2, 1, 10, 10, 5, 2, 10, 1, 5, 2, 5, 1, 1, 1, 20, 20};
-	// We only report things that the GUI needs at 1Hz because it only updates that fast.
-	// REVO_GS - not currently connected.
-	// WSO100 - environmental sensor, no need for quick updates
-        // DSP3000 - no longer onboard
-	const uint8_t const periodicities[MAVLINK_MSGS_SIZE] = {2, 4, 1, 10, 4, 10, 2, 10, 10, 10, 0, 4, 10, 5, 10, 0, 25, 1};
-	for (i = 0; i < sizeof(periodicities); ++i) {
+        // We only report things that the GUI needs at 2Hz because it only updates at 1 or 2Hz.
+        const uint8_t const periodicities[MAVLINK_MSGS_SIZE] = {2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 100};
+	for (i = 0; i < MAVLINK_MSGS_SIZE; ++i) {
 		if (periodicities[i] && !AddMessageRepeating(&mavlinkSchedule, ids[i], periodicities[i])) {
 			FATAL_ERROR();
 		}
@@ -469,8 +464,10 @@ void MavLinkSendMainPower(void)
 void MavLinkSendBasicState(void)
 {
 	mavlink_msg_basic_state_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
-		currentCommands.autonomousRudderCommand, currentCommands.primaryManualRudderCommand, currentCommands.secondaryManualRudderCommand, rudderSensorData.RudderAngle,
+		currentCommands.autonomousRudderCommand, currentCommands.primaryManualRudderCommand, currentCommands.secondaryManualRudderCommand, 0.0,
+                rudderSensorData.RudderAngle,
 		currentCommands.autonomousThrottleCommand, currentCommands.primaryManualThrottleCommand, currentCommands.secondaryManualThrottleCommand, 0,
+                0,
 		controllerVars.Acmd,
 		controllerVars.L2Vector[0], controllerVars.L2Vector[1]
 	);
@@ -587,6 +584,47 @@ void MavLinkSendCommandAck(uint8_t command, uint8_t result)
 	Uart1WriteData(buf, (uint8_t)len);
 }
 
+/**
+  * Transmit the main battery state as obtained from the power node via the CAN bus.
+  */
+void MavLinkSendControllerData(const float attitude_quat[4], float commandedRudder, int16_t commandedThrottle)
+{
+    // We need to make sure we clamp the acceleration command, because invalid values are represented
+    // as +-99, while its normal range is < +-1.
+    int16_t clampedACmd;
+    if (controllerVars.Acmd > 50) {
+        clampedACmd = INT16_MAX;
+    } else if (controllerVars.Acmd < -50) {
+        clampedACmd = INT16_MIN;
+    } else {
+        clampedACmd = controllerVars.Acmd * 1e5;
+    }
+
+    mavlink_msg_controller_data_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
+        controllerVars.wp0[0] * 10, controllerVars.wp0[1] * 10,
+        controllerVars.wp1[0] * 10, controllerVars.wp1[1] * 10,
+        attitude_quat[0], attitude_quat[1], attitude_quat[2], attitude_quat[3], // IMU Quaternion
+        tokimecDataStore.x_angle_vel, tokimecDataStore.y_angle_vel, tokimecDataStore.z_angle_vel,
+        waterDataStore.speed * 1e4,
+        (gpsDataStore.mode > 1) && gpsDataStore.newData, gpsDataStore.latitude, gpsDataStore.longitude, gpsDataStore.sog, gpsDataStore.cog,
+        (nodeErrors != 0),
+        nodeSystemTime*10,
+        controllerVars.LocalPosition[0] * 1e3, controllerVars.LocalPosition[1] * 1e3,
+        controllerVars.Velocity[0] * 1e3, controllerVars.Velocity[1] * 1e3,
+        controllerVars.sensedYawRate * 1e4,
+        clampedACmd,
+        controllerVars.AimPoint[0] * 10, controllerVars.AimPoint[1] * 10,
+        commandedRudder * 1e4,
+        commandedThrottle,
+        rudderSensorData.RudderAngle * 1e4,
+        throttleDataStore.rpm * 100
+    );
+
+    len = mavlink_msg_to_send_buffer(buf, &txMessage);
+
+    Uart1WriteData(buf, (uint8_t)len);
+}
+
 void MavLinkSendMissionCount(void)
 {
 	uint8_t missionCount;
@@ -675,7 +713,7 @@ void MavLinkTransmitAllParameters(void)
     }
 }
 
-/** Custom Sealion Messages **/
+/** Custom SeaSlug Messages **/
 
 void MavLinkSendRudderRaw(void)
 {
@@ -728,40 +766,40 @@ void MavLinkSendNodeStatusData(void)
 {
 	mavlink_msg_node_status_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
 	                             nodeStatusDataStore[CAN_NODE_HIL - 1].status,
-								 nodeStatusDataStore[CAN_NODE_HIL - 1].errors,
-								 nodeStatusDataStore[CAN_NODE_HIL - 1].temp,
-								 nodeStatusDataStore[CAN_NODE_HIL - 1].load,
-								 nodeStatusDataStore[CAN_NODE_HIL - 1].voltage,
+                                     nodeStatusDataStore[CAN_NODE_HIL - 1].errors,
+                                     nodeStatusDataStore[CAN_NODE_HIL - 1].temp,
+                                     nodeStatusDataStore[CAN_NODE_HIL - 1].load,
+                                     nodeStatusDataStore[CAN_NODE_HIL - 1].voltage,
 
 	                             nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].status,
-								 nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].errors,
-								 nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].temp,
-								 nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].load,
-								 nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].voltage,
+                                     nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].errors,
+                                     nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].temp,
+                                     nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].load,
+                                     nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].voltage,
 
 	                             nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].status,
-								 nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].errors,
-								 nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].temp,
-								 nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].load,
-								 nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].voltage,
+                                     nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].errors,
+                                     nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].temp,
+                                     nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].load,
+                                     nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].voltage,
 
 	                             nodeStatus,
-								 nodeErrors,
-								 nodeTemp,
-								 nodeCpuLoad,
-								 nodeVoltage,
+                                     nodeErrors,
+                                     nodeTemp,
+                                     nodeCpuLoad,
+                                     nodeVoltage,
 
 	                             nodeStatusDataStore[CAN_NODE_RC - 1].status,
-								 nodeStatusDataStore[CAN_NODE_RC - 1].errors,
-								 nodeStatusDataStore[CAN_NODE_RC - 1].temp,
-								 nodeStatusDataStore[CAN_NODE_RC - 1].load,
-								 nodeStatusDataStore[CAN_NODE_RC - 1].voltage,
+                                     nodeStatusDataStore[CAN_NODE_RC - 1].errors,
+                                     nodeStatusDataStore[CAN_NODE_RC - 1].temp,
+                                     nodeStatusDataStore[CAN_NODE_RC - 1].load,
+                                     nodeStatusDataStore[CAN_NODE_RC - 1].voltage,
 
 	                             nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].status,
-								 nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].errors,
-								 nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].temp,
-								 nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].load,
-								 nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].voltage);
+                                     nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].errors,
+                                     nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].temp,
+                                     nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].load,
+                                     nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].voltage);
 	len = mavlink_msg_to_send_buffer(buf, &txMessage);
 	Uart1WriteData(buf, (uint8_t)len);
 }
@@ -818,29 +856,29 @@ void MavLinkReceiveCommandLong(const mavlink_command_long_t *msg)
 void MavLinkReceiveManualControl(const mavlink_manual_control_t *msg)
 {
     static uint16_t lastButtons = 0;
-	if (msg->target == mavlink_system.sysid) {
-		// Record the rudder angle
-		if (msg->r != INT16_MAX) {
-			mavlinkManualControlData.Rudder = msg->r;
-		}
+    if (msg->target == mavlink_system.sysid) {
+        // Record the rudder angle
+        if (msg->r != INT16_MAX) {
+            mavlinkManualControlData.Rudder = msg->r;
+        }
 
-		// If the trigger has been pulled was part of this data packet, update the throttle value.
-		if ((msg->buttons & TRIGGER_ENABLE_BUTTON) != 0 && msg->z != INT16_MAX) {
-			mavlinkManualControlData.Throttle = msg->z;
-		}
+        // If the trigger has been pulled was part of this data packet, update the throttle value.
+        if ((msg->buttons & TRIGGER_ENABLE_BUTTON) != 0 && msg->z != INT16_MAX) {
+            mavlinkManualControlData.Throttle = msg->z;
+        }
 
-		// Record the buttons that are pressed
-		mavlinkManualControlData.Buttons = msg->buttons;
+        // Record the buttons that are pressed
+        mavlinkManualControlData.Buttons = msg->buttons;
 
         // If the rudder calibration button has been pressed, send that command.
         if (!(lastButtons & RUDDER_CAL_BUTTON) && (msg->buttons & RUDDER_CAL_BUTTON)) {
             RudderStartCalibration();
         }
 
-		// Keep track of what buttons are currently pressed so that up- and down-events can be
-		// tracked.
+        // Keep track of what buttons are currently pressed so that up- and down-events can be
+        // tracked.
         lastButtons = msg->buttons;
-	}
+    }
 }
 
 void MavLinkReceiveSetMode(const mavlink_set_mode_t *msg)
@@ -1738,16 +1776,8 @@ void MavLinkTransmit(void)
 				MavLinkSendDst800Data();
 			break;
 
-			case MAVLINK_MSG_ID_REVO_GS:
-				MavLinkSendRevoGsData();
-			break;
-
 			case MAVLINK_MSG_ID_GPS200:
 				MavLinkSendGps200Data();
-			break;
-
-			case MAVLINK_MSG_ID_DSP3000:
-				MavLinkSendDsp3000();
 			break;
 
 			case MAVLINK_MSG_ID_TOKIMEC:
@@ -1756,6 +1786,13 @@ void MavLinkTransmit(void)
 
 			case MAVLINK_MSG_ID_MAIN_POWER:
 				MavLinkSendMainPower();
+			break;
+
+			case MAVLINK_MSG_ID_CONTROLLER_DATA:
+                            //Do nothing here. We explicitly send this message immediately after
+                            // the controller loop has finished. This simplifies the code a little.
+                            // This is kept as a placeholder since we technically schedule this
+                            // message to make sure we don't have bandwidth issues.
 			break;
 
 			default: {
