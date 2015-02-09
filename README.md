@@ -22,17 +22,17 @@ The toolboxes required by the various models are the Aerospace Blockset, MATLAB,
 
 Code generation of the MATLAB projects requires a supported compiler [www.mathworks.com/support/compilers/R2011b] crosoft's Visual Studio 2010 is also required in order to compile the project or the Windows SDK 7.1 or newer. Both are available for free online.
 
-In addition to these Simulink libraries, the MAVLink C library for the Sealion must be installed. Download it from <https://github.com/mavlink/mavlink> into the same directory that this repository is contained in so that it looks like:
+In addition to these Simulink libraries, the MAVLink C library for the SeaSlug must be installed. Download it from <https://github.com/mavlink/mavlink> into the same directory that this repository is contained in so that it looks like:
 /MicroSimulink-Library
 /ECAN_dspic
 /Autoboat
 /mavlink
 
-You'll need Python 2.7 to run the MAVLink generator from within the mavlink directory:
+You'll need Python 2.6+ to run the MAVLink generator from within the mavlink directory:
 
-```$ python mavgen.py --lang=C --wire-protocol=1.0 -o include ../Autoboat/Code/basic_model/Extras/sealion.xml```
+```$ python mavgen.py --lang=C --wire-protocol=1.0 -o include ../Autoboat/Code/Libs/MAVLink/seaslug.xml```
 
-This will put the MAVLink code for the Sealion dialect into ```/mavlink/include``` where it can be referenced by primary_node.mdl.
+This will put the MAVLink code for the SeaSlug dialect into ```/mavlink/include``` where it can be referenced by primary_node.mdl.
 
 The current version of MAVLink will not compile with the xc16 compiler unless the ```stdint.h``` header file within the xc16 includes directory is duplicated as an ```inttypes.h``` file.
  
