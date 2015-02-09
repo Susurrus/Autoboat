@@ -17,11 +17,11 @@ typedef struct __mavlink_controller_data_t
  int16_t x; ///< Quaternion component 2, x (0 in null-rotation) (1e4)
  int16_t y; ///< Quaternion component 3, y (0 in null-rotation) (1e4)
  int16_t z; ///< Quaternion component 4, z (0 in null-rotation) (1e4)
- int16_t roll_speed; ///< Roll angular speed (rad/s * 1e4)
- int16_t pitch_speed; ///< Pitch angular speed (rad/s * 1e4)
- int16_t yaw_speed; ///< Yaw angular speed (rad/s * 1e4)
+ int16_t x_angle_vel; ///< Angular velocity around the X-axis. Units are rads/s * 2^12.
+ int16_t y_angle_vel; ///< Angular velocity around the Y-axis. Units are rads/s * 2^12.
+ int16_t z_angle_vel; ///< Angular velocity around the Z-axis. Units are rads/s * 2^12.
  uint16_t water_speed; ///< Forward water speed (m/s * 1e4).
- int16_t vel; ///< GPS ground speed (m/s * 1e3). If unknown, set to 0.
+ uint16_t sog; ///< GPS ground speed (m/s * 1e2). If unknown, set to 0.
  uint16_t cog; ///< Course over ground, from 0 to 2*pi (rad * 1e4). If unknown, set to 0.
  int16_t north_speed; ///< North-component of speed (m/s * 1e3)
  int16_t east_speed; ///< East-component of speed (m/s * 1e3)
@@ -40,8 +40,8 @@ typedef struct __mavlink_controller_data_t
 #define MAVLINK_MSG_ID_CONTROLLER_DATA_LEN 70
 #define MAVLINK_MSG_ID_180_LEN 70
 
-#define MAVLINK_MSG_ID_CONTROLLER_DATA_CRC 24
-#define MAVLINK_MSG_ID_180_CRC 24
+#define MAVLINK_MSG_ID_CONTROLLER_DATA_CRC 103
+#define MAVLINK_MSG_ID_180_CRC 103
 
 
 
@@ -61,11 +61,11 @@ typedef struct __mavlink_controller_data_t
          { "x", NULL, MAVLINK_TYPE_INT16_T, 0, 30, offsetof(mavlink_controller_data_t, x) }, \
          { "y", NULL, MAVLINK_TYPE_INT16_T, 0, 32, offsetof(mavlink_controller_data_t, y) }, \
          { "z", NULL, MAVLINK_TYPE_INT16_T, 0, 34, offsetof(mavlink_controller_data_t, z) }, \
-         { "roll_speed", NULL, MAVLINK_TYPE_INT16_T, 0, 36, offsetof(mavlink_controller_data_t, roll_speed) }, \
-         { "pitch_speed", NULL, MAVLINK_TYPE_INT16_T, 0, 38, offsetof(mavlink_controller_data_t, pitch_speed) }, \
-         { "yaw_speed", NULL, MAVLINK_TYPE_INT16_T, 0, 40, offsetof(mavlink_controller_data_t, yaw_speed) }, \
+         { "x_angle_vel", NULL, MAVLINK_TYPE_INT16_T, 0, 36, offsetof(mavlink_controller_data_t, x_angle_vel) }, \
+         { "y_angle_vel", NULL, MAVLINK_TYPE_INT16_T, 0, 38, offsetof(mavlink_controller_data_t, y_angle_vel) }, \
+         { "z_angle_vel", NULL, MAVLINK_TYPE_INT16_T, 0, 40, offsetof(mavlink_controller_data_t, z_angle_vel) }, \
          { "water_speed", NULL, MAVLINK_TYPE_UINT16_T, 0, 42, offsetof(mavlink_controller_data_t, water_speed) }, \
-         { "vel", NULL, MAVLINK_TYPE_INT16_T, 0, 44, offsetof(mavlink_controller_data_t, vel) }, \
+         { "sog", NULL, MAVLINK_TYPE_UINT16_T, 0, 44, offsetof(mavlink_controller_data_t, sog) }, \
          { "cog", NULL, MAVLINK_TYPE_UINT16_T, 0, 46, offsetof(mavlink_controller_data_t, cog) }, \
          { "north_speed", NULL, MAVLINK_TYPE_INT16_T, 0, 48, offsetof(mavlink_controller_data_t, north_speed) }, \
          { "east_speed", NULL, MAVLINK_TYPE_INT16_T, 0, 50, offsetof(mavlink_controller_data_t, east_speed) }, \
@@ -97,14 +97,14 @@ typedef struct __mavlink_controller_data_t
  * @param x Quaternion component 2, x (0 in null-rotation) (1e4)
  * @param y Quaternion component 3, y (0 in null-rotation) (1e4)
  * @param z Quaternion component 4, z (0 in null-rotation) (1e4)
- * @param roll_speed Roll angular speed (rad/s * 1e4)
- * @param pitch_speed Pitch angular speed (rad/s * 1e4)
- * @param yaw_speed Yaw angular speed (rad/s * 1e4)
+ * @param x_angle_vel Angular velocity around the X-axis. Units are rads/s * 2^12.
+ * @param y_angle_vel Angular velocity around the Y-axis. Units are rads/s * 2^12.
+ * @param z_angle_vel Angular velocity around the Z-axis. Units are rads/s * 2^12.
  * @param water_speed Forward water speed (m/s * 1e4).
  * @param fix_type 0: no fix, 1 valid fix (2D or better).
  * @param lat Latitude (WGS84) (degrees * 1e7). If unknown, set to 0.
  * @param lon Longitude (WGS84) (degrees * 1e7). If unknown, set to 0.
- * @param vel GPS ground speed (m/s * 1e3). If unknown, set to 0.
+ * @param sog GPS ground speed (m/s * 1e2). If unknown, set to 0.
  * @param cog Course over ground, from 0 to 2*pi (rad * 1e4). If unknown, set to 0.
  * @param reset 0 indicates system is operating normally, 1 indicates it's held in reset.
  * @param time_boot_ms Timestamp (milliseconds since system boot)
@@ -123,7 +123,7 @@ typedef struct __mavlink_controller_data_t
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_controller_data_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-						       int16_t last_wp_north, int16_t last_wp_east, int16_t next_wp_north, int16_t next_wp_east, int16_t w, int16_t x, int16_t y, int16_t z, int16_t roll_speed, int16_t pitch_speed, int16_t yaw_speed, uint16_t water_speed, uint8_t fix_type, int32_t lat, int32_t lon, int16_t vel, uint16_t cog, uint8_t reset, uint32_t time_boot_ms, int32_t north, int32_t east, int16_t north_speed, int16_t east_speed, int16_t yaw_rate_global, int16_t a_cmd, int16_t aim_point_n, int16_t aim_point_e, int16_t commanded_rudder_angle, int16_t commanded_throttle, int16_t rudder_angle, int16_t prop_speed)
+						       int16_t last_wp_north, int16_t last_wp_east, int16_t next_wp_north, int16_t next_wp_east, int16_t w, int16_t x, int16_t y, int16_t z, int16_t x_angle_vel, int16_t y_angle_vel, int16_t z_angle_vel, uint16_t water_speed, uint8_t fix_type, int32_t lat, int32_t lon, uint16_t sog, uint16_t cog, uint8_t reset, uint32_t time_boot_ms, int32_t north, int32_t east, int16_t north_speed, int16_t east_speed, int16_t yaw_rate_global, int16_t a_cmd, int16_t aim_point_n, int16_t aim_point_e, int16_t commanded_rudder_angle, int16_t commanded_throttle, int16_t rudder_angle, int16_t prop_speed)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_CONTROLLER_DATA_LEN];
@@ -140,11 +140,11 @@ static inline uint16_t mavlink_msg_controller_data_pack(uint8_t system_id, uint8
 	_mav_put_int16_t(buf, 30, x);
 	_mav_put_int16_t(buf, 32, y);
 	_mav_put_int16_t(buf, 34, z);
-	_mav_put_int16_t(buf, 36, roll_speed);
-	_mav_put_int16_t(buf, 38, pitch_speed);
-	_mav_put_int16_t(buf, 40, yaw_speed);
+	_mav_put_int16_t(buf, 36, x_angle_vel);
+	_mav_put_int16_t(buf, 38, y_angle_vel);
+	_mav_put_int16_t(buf, 40, z_angle_vel);
 	_mav_put_uint16_t(buf, 42, water_speed);
-	_mav_put_int16_t(buf, 44, vel);
+	_mav_put_uint16_t(buf, 44, sog);
 	_mav_put_uint16_t(buf, 46, cog);
 	_mav_put_int16_t(buf, 48, north_speed);
 	_mav_put_int16_t(buf, 50, east_speed);
@@ -175,11 +175,11 @@ static inline uint16_t mavlink_msg_controller_data_pack(uint8_t system_id, uint8
 	packet.x = x;
 	packet.y = y;
 	packet.z = z;
-	packet.roll_speed = roll_speed;
-	packet.pitch_speed = pitch_speed;
-	packet.yaw_speed = yaw_speed;
+	packet.x_angle_vel = x_angle_vel;
+	packet.y_angle_vel = y_angle_vel;
+	packet.z_angle_vel = z_angle_vel;
 	packet.water_speed = water_speed;
-	packet.vel = vel;
+	packet.sog = sog;
 	packet.cog = cog;
 	packet.north_speed = north_speed;
 	packet.east_speed = east_speed;
@@ -219,14 +219,14 @@ static inline uint16_t mavlink_msg_controller_data_pack(uint8_t system_id, uint8
  * @param x Quaternion component 2, x (0 in null-rotation) (1e4)
  * @param y Quaternion component 3, y (0 in null-rotation) (1e4)
  * @param z Quaternion component 4, z (0 in null-rotation) (1e4)
- * @param roll_speed Roll angular speed (rad/s * 1e4)
- * @param pitch_speed Pitch angular speed (rad/s * 1e4)
- * @param yaw_speed Yaw angular speed (rad/s * 1e4)
+ * @param x_angle_vel Angular velocity around the X-axis. Units are rads/s * 2^12.
+ * @param y_angle_vel Angular velocity around the Y-axis. Units are rads/s * 2^12.
+ * @param z_angle_vel Angular velocity around the Z-axis. Units are rads/s * 2^12.
  * @param water_speed Forward water speed (m/s * 1e4).
  * @param fix_type 0: no fix, 1 valid fix (2D or better).
  * @param lat Latitude (WGS84) (degrees * 1e7). If unknown, set to 0.
  * @param lon Longitude (WGS84) (degrees * 1e7). If unknown, set to 0.
- * @param vel GPS ground speed (m/s * 1e3). If unknown, set to 0.
+ * @param sog GPS ground speed (m/s * 1e2). If unknown, set to 0.
  * @param cog Course over ground, from 0 to 2*pi (rad * 1e4). If unknown, set to 0.
  * @param reset 0 indicates system is operating normally, 1 indicates it's held in reset.
  * @param time_boot_ms Timestamp (milliseconds since system boot)
@@ -246,7 +246,7 @@ static inline uint16_t mavlink_msg_controller_data_pack(uint8_t system_id, uint8
  */
 static inline uint16_t mavlink_msg_controller_data_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
 							   mavlink_message_t* msg,
-						           int16_t last_wp_north,int16_t last_wp_east,int16_t next_wp_north,int16_t next_wp_east,int16_t w,int16_t x,int16_t y,int16_t z,int16_t roll_speed,int16_t pitch_speed,int16_t yaw_speed,uint16_t water_speed,uint8_t fix_type,int32_t lat,int32_t lon,int16_t vel,uint16_t cog,uint8_t reset,uint32_t time_boot_ms,int32_t north,int32_t east,int16_t north_speed,int16_t east_speed,int16_t yaw_rate_global,int16_t a_cmd,int16_t aim_point_n,int16_t aim_point_e,int16_t commanded_rudder_angle,int16_t commanded_throttle,int16_t rudder_angle,int16_t prop_speed)
+						           int16_t last_wp_north,int16_t last_wp_east,int16_t next_wp_north,int16_t next_wp_east,int16_t w,int16_t x,int16_t y,int16_t z,int16_t x_angle_vel,int16_t y_angle_vel,int16_t z_angle_vel,uint16_t water_speed,uint8_t fix_type,int32_t lat,int32_t lon,uint16_t sog,uint16_t cog,uint8_t reset,uint32_t time_boot_ms,int32_t north,int32_t east,int16_t north_speed,int16_t east_speed,int16_t yaw_rate_global,int16_t a_cmd,int16_t aim_point_n,int16_t aim_point_e,int16_t commanded_rudder_angle,int16_t commanded_throttle,int16_t rudder_angle,int16_t prop_speed)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_CONTROLLER_DATA_LEN];
@@ -263,11 +263,11 @@ static inline uint16_t mavlink_msg_controller_data_pack_chan(uint8_t system_id, 
 	_mav_put_int16_t(buf, 30, x);
 	_mav_put_int16_t(buf, 32, y);
 	_mav_put_int16_t(buf, 34, z);
-	_mav_put_int16_t(buf, 36, roll_speed);
-	_mav_put_int16_t(buf, 38, pitch_speed);
-	_mav_put_int16_t(buf, 40, yaw_speed);
+	_mav_put_int16_t(buf, 36, x_angle_vel);
+	_mav_put_int16_t(buf, 38, y_angle_vel);
+	_mav_put_int16_t(buf, 40, z_angle_vel);
 	_mav_put_uint16_t(buf, 42, water_speed);
-	_mav_put_int16_t(buf, 44, vel);
+	_mav_put_uint16_t(buf, 44, sog);
 	_mav_put_uint16_t(buf, 46, cog);
 	_mav_put_int16_t(buf, 48, north_speed);
 	_mav_put_int16_t(buf, 50, east_speed);
@@ -298,11 +298,11 @@ static inline uint16_t mavlink_msg_controller_data_pack_chan(uint8_t system_id, 
 	packet.x = x;
 	packet.y = y;
 	packet.z = z;
-	packet.roll_speed = roll_speed;
-	packet.pitch_speed = pitch_speed;
-	packet.yaw_speed = yaw_speed;
+	packet.x_angle_vel = x_angle_vel;
+	packet.y_angle_vel = y_angle_vel;
+	packet.z_angle_vel = z_angle_vel;
 	packet.water_speed = water_speed;
-	packet.vel = vel;
+	packet.sog = sog;
 	packet.cog = cog;
 	packet.north_speed = north_speed;
 	packet.east_speed = east_speed;
@@ -338,7 +338,7 @@ static inline uint16_t mavlink_msg_controller_data_pack_chan(uint8_t system_id, 
  */
 static inline uint16_t mavlink_msg_controller_data_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_controller_data_t* controller_data)
 {
-	return mavlink_msg_controller_data_pack(system_id, component_id, msg, controller_data->last_wp_north, controller_data->last_wp_east, controller_data->next_wp_north, controller_data->next_wp_east, controller_data->w, controller_data->x, controller_data->y, controller_data->z, controller_data->roll_speed, controller_data->pitch_speed, controller_data->yaw_speed, controller_data->water_speed, controller_data->fix_type, controller_data->lat, controller_data->lon, controller_data->vel, controller_data->cog, controller_data->reset, controller_data->time_boot_ms, controller_data->north, controller_data->east, controller_data->north_speed, controller_data->east_speed, controller_data->yaw_rate_global, controller_data->a_cmd, controller_data->aim_point_n, controller_data->aim_point_e, controller_data->commanded_rudder_angle, controller_data->commanded_throttle, controller_data->rudder_angle, controller_data->prop_speed);
+	return mavlink_msg_controller_data_pack(system_id, component_id, msg, controller_data->last_wp_north, controller_data->last_wp_east, controller_data->next_wp_north, controller_data->next_wp_east, controller_data->w, controller_data->x, controller_data->y, controller_data->z, controller_data->x_angle_vel, controller_data->y_angle_vel, controller_data->z_angle_vel, controller_data->water_speed, controller_data->fix_type, controller_data->lat, controller_data->lon, controller_data->sog, controller_data->cog, controller_data->reset, controller_data->time_boot_ms, controller_data->north, controller_data->east, controller_data->north_speed, controller_data->east_speed, controller_data->yaw_rate_global, controller_data->a_cmd, controller_data->aim_point_n, controller_data->aim_point_e, controller_data->commanded_rudder_angle, controller_data->commanded_throttle, controller_data->rudder_angle, controller_data->prop_speed);
 }
 
 /**
@@ -352,7 +352,7 @@ static inline uint16_t mavlink_msg_controller_data_encode(uint8_t system_id, uin
  */
 static inline uint16_t mavlink_msg_controller_data_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_controller_data_t* controller_data)
 {
-	return mavlink_msg_controller_data_pack_chan(system_id, component_id, chan, msg, controller_data->last_wp_north, controller_data->last_wp_east, controller_data->next_wp_north, controller_data->next_wp_east, controller_data->w, controller_data->x, controller_data->y, controller_data->z, controller_data->roll_speed, controller_data->pitch_speed, controller_data->yaw_speed, controller_data->water_speed, controller_data->fix_type, controller_data->lat, controller_data->lon, controller_data->vel, controller_data->cog, controller_data->reset, controller_data->time_boot_ms, controller_data->north, controller_data->east, controller_data->north_speed, controller_data->east_speed, controller_data->yaw_rate_global, controller_data->a_cmd, controller_data->aim_point_n, controller_data->aim_point_e, controller_data->commanded_rudder_angle, controller_data->commanded_throttle, controller_data->rudder_angle, controller_data->prop_speed);
+	return mavlink_msg_controller_data_pack_chan(system_id, component_id, chan, msg, controller_data->last_wp_north, controller_data->last_wp_east, controller_data->next_wp_north, controller_data->next_wp_east, controller_data->w, controller_data->x, controller_data->y, controller_data->z, controller_data->x_angle_vel, controller_data->y_angle_vel, controller_data->z_angle_vel, controller_data->water_speed, controller_data->fix_type, controller_data->lat, controller_data->lon, controller_data->sog, controller_data->cog, controller_data->reset, controller_data->time_boot_ms, controller_data->north, controller_data->east, controller_data->north_speed, controller_data->east_speed, controller_data->yaw_rate_global, controller_data->a_cmd, controller_data->aim_point_n, controller_data->aim_point_e, controller_data->commanded_rudder_angle, controller_data->commanded_throttle, controller_data->rudder_angle, controller_data->prop_speed);
 }
 
 /**
@@ -367,14 +367,14 @@ static inline uint16_t mavlink_msg_controller_data_encode_chan(uint8_t system_id
  * @param x Quaternion component 2, x (0 in null-rotation) (1e4)
  * @param y Quaternion component 3, y (0 in null-rotation) (1e4)
  * @param z Quaternion component 4, z (0 in null-rotation) (1e4)
- * @param roll_speed Roll angular speed (rad/s * 1e4)
- * @param pitch_speed Pitch angular speed (rad/s * 1e4)
- * @param yaw_speed Yaw angular speed (rad/s * 1e4)
+ * @param x_angle_vel Angular velocity around the X-axis. Units are rads/s * 2^12.
+ * @param y_angle_vel Angular velocity around the Y-axis. Units are rads/s * 2^12.
+ * @param z_angle_vel Angular velocity around the Z-axis. Units are rads/s * 2^12.
  * @param water_speed Forward water speed (m/s * 1e4).
  * @param fix_type 0: no fix, 1 valid fix (2D or better).
  * @param lat Latitude (WGS84) (degrees * 1e7). If unknown, set to 0.
  * @param lon Longitude (WGS84) (degrees * 1e7). If unknown, set to 0.
- * @param vel GPS ground speed (m/s * 1e3). If unknown, set to 0.
+ * @param sog GPS ground speed (m/s * 1e2). If unknown, set to 0.
  * @param cog Course over ground, from 0 to 2*pi (rad * 1e4). If unknown, set to 0.
  * @param reset 0 indicates system is operating normally, 1 indicates it's held in reset.
  * @param time_boot_ms Timestamp (milliseconds since system boot)
@@ -393,7 +393,7 @@ static inline uint16_t mavlink_msg_controller_data_encode_chan(uint8_t system_id
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_controller_data_send(mavlink_channel_t chan, int16_t last_wp_north, int16_t last_wp_east, int16_t next_wp_north, int16_t next_wp_east, int16_t w, int16_t x, int16_t y, int16_t z, int16_t roll_speed, int16_t pitch_speed, int16_t yaw_speed, uint16_t water_speed, uint8_t fix_type, int32_t lat, int32_t lon, int16_t vel, uint16_t cog, uint8_t reset, uint32_t time_boot_ms, int32_t north, int32_t east, int16_t north_speed, int16_t east_speed, int16_t yaw_rate_global, int16_t a_cmd, int16_t aim_point_n, int16_t aim_point_e, int16_t commanded_rudder_angle, int16_t commanded_throttle, int16_t rudder_angle, int16_t prop_speed)
+static inline void mavlink_msg_controller_data_send(mavlink_channel_t chan, int16_t last_wp_north, int16_t last_wp_east, int16_t next_wp_north, int16_t next_wp_east, int16_t w, int16_t x, int16_t y, int16_t z, int16_t x_angle_vel, int16_t y_angle_vel, int16_t z_angle_vel, uint16_t water_speed, uint8_t fix_type, int32_t lat, int32_t lon, uint16_t sog, uint16_t cog, uint8_t reset, uint32_t time_boot_ms, int32_t north, int32_t east, int16_t north_speed, int16_t east_speed, int16_t yaw_rate_global, int16_t a_cmd, int16_t aim_point_n, int16_t aim_point_e, int16_t commanded_rudder_angle, int16_t commanded_throttle, int16_t rudder_angle, int16_t prop_speed)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_CONTROLLER_DATA_LEN];
@@ -410,11 +410,11 @@ static inline void mavlink_msg_controller_data_send(mavlink_channel_t chan, int1
 	_mav_put_int16_t(buf, 30, x);
 	_mav_put_int16_t(buf, 32, y);
 	_mav_put_int16_t(buf, 34, z);
-	_mav_put_int16_t(buf, 36, roll_speed);
-	_mav_put_int16_t(buf, 38, pitch_speed);
-	_mav_put_int16_t(buf, 40, yaw_speed);
+	_mav_put_int16_t(buf, 36, x_angle_vel);
+	_mav_put_int16_t(buf, 38, y_angle_vel);
+	_mav_put_int16_t(buf, 40, z_angle_vel);
 	_mav_put_uint16_t(buf, 42, water_speed);
-	_mav_put_int16_t(buf, 44, vel);
+	_mav_put_uint16_t(buf, 44, sog);
 	_mav_put_uint16_t(buf, 46, cog);
 	_mav_put_int16_t(buf, 48, north_speed);
 	_mav_put_int16_t(buf, 50, east_speed);
@@ -449,11 +449,11 @@ static inline void mavlink_msg_controller_data_send(mavlink_channel_t chan, int1
 	packet.x = x;
 	packet.y = y;
 	packet.z = z;
-	packet.roll_speed = roll_speed;
-	packet.pitch_speed = pitch_speed;
-	packet.yaw_speed = yaw_speed;
+	packet.x_angle_vel = x_angle_vel;
+	packet.y_angle_vel = y_angle_vel;
+	packet.z_angle_vel = z_angle_vel;
 	packet.water_speed = water_speed;
-	packet.vel = vel;
+	packet.sog = sog;
 	packet.cog = cog;
 	packet.north_speed = north_speed;
 	packet.east_speed = east_speed;
@@ -484,7 +484,7 @@ static inline void mavlink_msg_controller_data_send(mavlink_channel_t chan, int1
   is usually the receive buffer for the channel, and allows a reply to an
   incoming message with minimum stack space usage.
  */
-static inline void mavlink_msg_controller_data_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  int16_t last_wp_north, int16_t last_wp_east, int16_t next_wp_north, int16_t next_wp_east, int16_t w, int16_t x, int16_t y, int16_t z, int16_t roll_speed, int16_t pitch_speed, int16_t yaw_speed, uint16_t water_speed, uint8_t fix_type, int32_t lat, int32_t lon, int16_t vel, uint16_t cog, uint8_t reset, uint32_t time_boot_ms, int32_t north, int32_t east, int16_t north_speed, int16_t east_speed, int16_t yaw_rate_global, int16_t a_cmd, int16_t aim_point_n, int16_t aim_point_e, int16_t commanded_rudder_angle, int16_t commanded_throttle, int16_t rudder_angle, int16_t prop_speed)
+static inline void mavlink_msg_controller_data_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  int16_t last_wp_north, int16_t last_wp_east, int16_t next_wp_north, int16_t next_wp_east, int16_t w, int16_t x, int16_t y, int16_t z, int16_t x_angle_vel, int16_t y_angle_vel, int16_t z_angle_vel, uint16_t water_speed, uint8_t fix_type, int32_t lat, int32_t lon, uint16_t sog, uint16_t cog, uint8_t reset, uint32_t time_boot_ms, int32_t north, int32_t east, int16_t north_speed, int16_t east_speed, int16_t yaw_rate_global, int16_t a_cmd, int16_t aim_point_n, int16_t aim_point_e, int16_t commanded_rudder_angle, int16_t commanded_throttle, int16_t rudder_angle, int16_t prop_speed)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char *buf = (char *)msgbuf;
@@ -501,11 +501,11 @@ static inline void mavlink_msg_controller_data_send_buf(mavlink_message_t *msgbu
 	_mav_put_int16_t(buf, 30, x);
 	_mav_put_int16_t(buf, 32, y);
 	_mav_put_int16_t(buf, 34, z);
-	_mav_put_int16_t(buf, 36, roll_speed);
-	_mav_put_int16_t(buf, 38, pitch_speed);
-	_mav_put_int16_t(buf, 40, yaw_speed);
+	_mav_put_int16_t(buf, 36, x_angle_vel);
+	_mav_put_int16_t(buf, 38, y_angle_vel);
+	_mav_put_int16_t(buf, 40, z_angle_vel);
 	_mav_put_uint16_t(buf, 42, water_speed);
-	_mav_put_int16_t(buf, 44, vel);
+	_mav_put_uint16_t(buf, 44, sog);
 	_mav_put_uint16_t(buf, 46, cog);
 	_mav_put_int16_t(buf, 48, north_speed);
 	_mav_put_int16_t(buf, 50, east_speed);
@@ -540,11 +540,11 @@ static inline void mavlink_msg_controller_data_send_buf(mavlink_message_t *msgbu
 	packet->x = x;
 	packet->y = y;
 	packet->z = z;
-	packet->roll_speed = roll_speed;
-	packet->pitch_speed = pitch_speed;
-	packet->yaw_speed = yaw_speed;
+	packet->x_angle_vel = x_angle_vel;
+	packet->y_angle_vel = y_angle_vel;
+	packet->z_angle_vel = z_angle_vel;
 	packet->water_speed = water_speed;
-	packet->vel = vel;
+	packet->sog = sog;
 	packet->cog = cog;
 	packet->north_speed = north_speed;
 	packet->east_speed = east_speed;
@@ -654,31 +654,31 @@ static inline int16_t mavlink_msg_controller_data_get_z(const mavlink_message_t*
 }
 
 /**
- * @brief Get field roll_speed from controller_data message
+ * @brief Get field x_angle_vel from controller_data message
  *
- * @return Roll angular speed (rad/s * 1e4)
+ * @return Angular velocity around the X-axis. Units are rads/s * 2^12.
  */
-static inline int16_t mavlink_msg_controller_data_get_roll_speed(const mavlink_message_t* msg)
+static inline int16_t mavlink_msg_controller_data_get_x_angle_vel(const mavlink_message_t* msg)
 {
 	return _MAV_RETURN_int16_t(msg,  36);
 }
 
 /**
- * @brief Get field pitch_speed from controller_data message
+ * @brief Get field y_angle_vel from controller_data message
  *
- * @return Pitch angular speed (rad/s * 1e4)
+ * @return Angular velocity around the Y-axis. Units are rads/s * 2^12.
  */
-static inline int16_t mavlink_msg_controller_data_get_pitch_speed(const mavlink_message_t* msg)
+static inline int16_t mavlink_msg_controller_data_get_y_angle_vel(const mavlink_message_t* msg)
 {
 	return _MAV_RETURN_int16_t(msg,  38);
 }
 
 /**
- * @brief Get field yaw_speed from controller_data message
+ * @brief Get field z_angle_vel from controller_data message
  *
- * @return Yaw angular speed (rad/s * 1e4)
+ * @return Angular velocity around the Z-axis. Units are rads/s * 2^12.
  */
-static inline int16_t mavlink_msg_controller_data_get_yaw_speed(const mavlink_message_t* msg)
+static inline int16_t mavlink_msg_controller_data_get_z_angle_vel(const mavlink_message_t* msg)
 {
 	return _MAV_RETURN_int16_t(msg,  40);
 }
@@ -724,13 +724,13 @@ static inline int32_t mavlink_msg_controller_data_get_lon(const mavlink_message_
 }
 
 /**
- * @brief Get field vel from controller_data message
+ * @brief Get field sog from controller_data message
  *
- * @return GPS ground speed (m/s * 1e3). If unknown, set to 0.
+ * @return GPS ground speed (m/s * 1e2). If unknown, set to 0.
  */
-static inline int16_t mavlink_msg_controller_data_get_vel(const mavlink_message_t* msg)
+static inline uint16_t mavlink_msg_controller_data_get_sog(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_int16_t(msg,  44);
+	return _MAV_RETURN_uint16_t(msg,  44);
 }
 
 /**
@@ -905,11 +905,11 @@ static inline void mavlink_msg_controller_data_decode(const mavlink_message_t* m
 	controller_data->x = mavlink_msg_controller_data_get_x(msg);
 	controller_data->y = mavlink_msg_controller_data_get_y(msg);
 	controller_data->z = mavlink_msg_controller_data_get_z(msg);
-	controller_data->roll_speed = mavlink_msg_controller_data_get_roll_speed(msg);
-	controller_data->pitch_speed = mavlink_msg_controller_data_get_pitch_speed(msg);
-	controller_data->yaw_speed = mavlink_msg_controller_data_get_yaw_speed(msg);
+	controller_data->x_angle_vel = mavlink_msg_controller_data_get_x_angle_vel(msg);
+	controller_data->y_angle_vel = mavlink_msg_controller_data_get_y_angle_vel(msg);
+	controller_data->z_angle_vel = mavlink_msg_controller_data_get_z_angle_vel(msg);
 	controller_data->water_speed = mavlink_msg_controller_data_get_water_speed(msg);
-	controller_data->vel = mavlink_msg_controller_data_get_vel(msg);
+	controller_data->sog = mavlink_msg_controller_data_get_sog(msg);
 	controller_data->cog = mavlink_msg_controller_data_get_cog(msg);
 	controller_data->north_speed = mavlink_msg_controller_data_get_north_speed(msg);
 	controller_data->east_speed = mavlink_msg_controller_data_get_east_speed(msg);
