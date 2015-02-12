@@ -5,6 +5,8 @@ extern "C" {
 #ifndef _CHECKSUM_H_
 #define _CHECKSUM_H_
 
+#include "mavlink_types.h"
+
 
 /**
  *
