@@ -28,5 +28,7 @@ rm -r $PROJ_DIR/mavlink_c_seaslug
 python -m pymavlink.tools.mavgen --lang=C -o $PROJ_DIR/mavlink_c_seaslug $MAVLINK_DIR/message_definitions/v1.0/seaslug.xml
 
 # Copy these files over to the Autoboat repository
-rm -r $AUTOBOAT_MAVDIR/*.h $AUTOBOAT_MAVDIR/common $AUTOBOAT_MAVDIR/seaslug
+rm $AUTOBOAT_MAVDIR/*.h
+rm -r $AUTOBOAT_MAVDIR/common
+rm -r $AUTOBOAT_MAVDIR/seaslug
 cp -r $PROJ_DIR/mavlink_c_seaslug/* $AUTOBOAT_MAVDIR
