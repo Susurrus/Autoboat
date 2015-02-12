@@ -16,6 +16,11 @@
 #define MSCHED_REPEATING 0
 #define	MSCHED_TRANSIENT 1
 
+// Helper macros for incrementing and decrementing a value while keeping it in the range [0, 99]
+// TODO: Add tests for these
+#define INCR_WRAP_TO_99(x) do {if ((x) >= 99) { (x) = 0; } else { ++(x); }} while (0)
+#define DECR_WRAP_TO_99(x) do {if ((x) == 0) { (x) = 99; } else { --(x); }} while (0)
+
 bool AddMessageRepeating(MessageSchedule *schedule, uint8_t id, uint8_t rate)
 {
 	// Be sure that we only process messages are reasonable rates
@@ -94,7 +99,7 @@ bool AddMessageRepeating(MessageSchedule *schedule, uint8_t id, uint8_t rate)
 // There's no reason to transmit this one-off message if it comes after a regularly scheduled
 // one. Really I should just add these as long as it's below the bandwidth limit for a single
 // timestep.
-bool AddMessageOnce(MessageSchedule *schedule, uint8_t id)
+bool AddMessageOnce(MessageSchedule *schedule, uint8_t id, AddMethod method)
 {
 	// Find out which internal message ID we should use. If one isn't found,
 	// return an error.
@@ -111,34 +116,44 @@ bool AddMessageOnce(MessageSchedule *schedule, uint8_t id)
 	}
 
 	// Find the smallest bracket in the next second to transmit this message
-	uint16_t lastCost = USHRT_MAX;
-	uint8_t bestTimestep = 0;
-	for (i = 0; i < 100; ++i) {
-		uint8_t testTimestep = (schedule->CurrentTimestep + i) % 100;
-		int currentTimestepWord = (testTimestep & 0x70) >> 4;
-		uint16_t timestepIndex = 1 << (testTimestep & 0x0F);
-		// Add up the cost of every message at this timestep. This time we count transient
-		// messages.
-		uint16_t j;
-		uint16_t currentCost = 0;
-		for	(j = 0; j < schedule->MessageTypes; ++j) {
-			if ((schedule->Timesteps[j][MSCHED_REPEATING][currentTimestepWord] | 
-				schedule->Timesteps[j][MSCHED_TRANSIENT][currentTimestepWord]) & 
-				timestepIndex) {
-				currentCost += schedule->MessageSizes[j];
-			}
-		}
-		
-		// Now if this is the best timestep, choose this one. If the cost is > 0, we keep searching
-		// for a lower-cost timestep.
-		if (currentCost == 0) {
-			bestTimestep = testTimestep;
-			break;
-		} else if (currentCost < lastCost) {
-			bestTimestep = testTimestep;
-			lastCost = currentCost;
-		}
-	}
+        uint8_t bestTimestep = 0;
+        switch (method) {
+        case ADD_METHOD_BEST: {
+                uint16_t lastCost = USHRT_MAX;
+                for (i = 0; i < 100; ++i) {
+                        uint8_t testTimestep = (schedule->CurrentTimestep + i) % 100;
+                        int currentTimestepWord = (testTimestep & 0x70) >> 4;
+                        uint16_t timestepIndex = 1 << (testTimestep & 0x0F);
+                        // Add up the cost of every message at this timestep. This time we count transient
+                        // messages.
+                        uint16_t j;
+                        uint16_t currentCost = 0;
+                        for	(j = 0; j < schedule->MessageTypes; ++j) {
+                                if ((schedule->Timesteps[j][MSCHED_REPEATING][currentTimestepWord] |
+                                        schedule->Timesteps[j][MSCHED_TRANSIENT][currentTimestepWord]) &
+                                        timestepIndex) {
+                                        currentCost += schedule->MessageSizes[j];
+                                }
+                        }
+
+                        // Now if this is the best timestep, choose this one. If the cost is > 0, we keep searching
+                        // for a lower-cost timestep.
+                        if (currentCost == 0) {
+                                bestTimestep = testTimestep;
+                                break;
+                        } else if (currentCost < lastCost) {
+                                bestTimestep = testTimestep;
+                                lastCost = currentCost;
+                        }
+                }
+            } break;
+        case ADD_METHOD_LATEST:
+            DECR_WRAP_TO_99(schedule->CurrentTimestep);
+            break;
+        case ADD_METHOD_SOONEST:
+            INCR_WRAP_TO_99(schedule->CurrentTimestep);
+            break;
+        }
 	
 	// Now that we have the best timestep to add this in, do it.
 	int currentTimestepWord = (bestTimestep & 0x70) >> 4;
@@ -562,7 +577,7 @@ int main(void)
 			GetMessagesForTimestep(&sched, msgs);
 		}
 		
-		assert(AddMessageOnce(&sched, 143));
+		assert(AddMessageOnce(&sched, 143, ADD_METHOD_BEST));
 		
 		uint8_t count = GetMessagesForTimestep(&sched, msgs);
 		assert(count == 2);

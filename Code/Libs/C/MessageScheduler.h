@@ -51,6 +51,15 @@ typedef struct {
 	uint16_t (* const Timesteps)[2][8];
 } MessageSchedule;
 
+/**
+ * Enum for defining the algorithm to use to add transient messages.
+ */
+typedef enum {
+    ADD_METHOD_BEST, // Select the timestep with the least data use within the next 1s
+    ADD_METHOD_SOONEST, // Select the next timestep
+    ADD_METHOD_LATEST // Select the last timestep, so ~1s from now
+} AddMethod;
+
 /// These functions handle adding/removing messages from the schedule.
 
 /**
@@ -62,7 +71,7 @@ bool AddMessageRepeating(MessageSchedule *schedule, uint8_t id, uint8_t rate);
  * Adds a one-time message to the dispatcher. Note that sequential calls to this function may not
  * persist that ordering within the dispatcher as messages are placed in the lowest cost bin first.
  */
-bool AddMessageOnce(MessageSchedule *schedule, uint8_t id);
+bool AddMessageOnce(MessageSchedule *schedule, uint8_t id, AddMethod method);
 
 /**
  * Removes all messages of a given ID from the dispatcher. This will apply to transient AND
