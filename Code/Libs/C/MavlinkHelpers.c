@@ -5,6 +5,7 @@
  */
 
 #include <string.h>
+#include <stdint.h>
 #include <../checksum.h>
 #include <mavlink.h>
 
