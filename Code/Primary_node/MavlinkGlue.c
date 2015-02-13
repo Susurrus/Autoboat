@@ -217,12 +217,6 @@ static struct {
 	uint16_t Buttons; 
 } mavlinkManualControlData;
 
-// Set separate MAVLink channels for the groundstation and the datalogger
-enum {
-    MAVLINK_CHAN_GROUNDSTATION = 0,
-    MAVLINK_CHAN_DATALOGGER
-};
-
 // Set up the message scheduler for MAVLink transmission to the groundstation
 #define GROUNDSTATION_SCHEDULE_NUM_MSGS 16
 static uint8_t groundstationMavlinkScheduleIds[GROUNDSTATION_SCHEDULE_NUM_MSGS] = {
@@ -282,7 +276,6 @@ void MavLinkSendMissionRequest(uint8_t currentMissionIndex);
 void MavLinkSendMissionAck(uint8_t type);
 void MavLinkSendGpsGlobalOrigin(void);
 void MavLinkSendLocalPosition(void);
-void MavLinkSendHeartbeat(uint8_t channel);
 void MavLinkSendStatus(uint8_t channel);
 void MavLinkSendNodeStatus(uint8_t channel);
 void MavLinkSendRawGps(void);

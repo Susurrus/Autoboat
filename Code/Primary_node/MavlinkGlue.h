@@ -32,11 +32,25 @@
 #include "controller.h"
 extern InternalVariables controllerVars; // Track a bunch of internal variables from the controller.
 
+// Set separate MAVLink channels for the groundstation and the datalogger
+enum SeaslugMavlinkChannel {
+    MAVLINK_CHAN_GROUNDSTATION = 0,
+    MAVLINK_CHAN_DATALOGGER
+};
+
 /**
  * Initialize MAVLink transmission. This just sets up the MAVLink scheduler with the basic
  * repeatedly-transmit messages.
  */
 void MavLinkInit(void);
+
+/**
+ * This function creates a MAVLink heartbeat message with some basic parameters and
+ * caches that message (along with its size) in the module-level variables declared
+ * above. This buffer should be transmit at 1Hz back to the groundstation.
+ * @param channel Which channel to transmit over, see SeaslugMavlinkChannel enum.
+ */
+void MavLinkSendHeartbeat(uint8_t channel);
 
 /**
  * Sends the specified text in a Common::STATUSTEXT message out over UART1.

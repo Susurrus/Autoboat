@@ -624,11 +624,19 @@ void SetAutoMode(PrimaryNodeMode newMode)
         // Save the current position as the starting position for this waypoint track
         SetStartingPointToCurrentLocation();
 
+        // Transmit a HEARTBEAT message to make sure the groundstation knows that we're autonomous
+        MavLinkSendHeartbeat(MAVLINK_CHAN_GROUNDSTATION);
+        MavLinkSendHeartbeat(MAVLINK_CHAN_DATALOGGER);
+
         // Also transmit all parameters so it's easy to verify the config of the vehicle later.
         MavLinkTransmitAllParameters();
     } else if (IS_AUTONOMOUS()){
         // Update the vehicle state
         nodeStatus &= ~PRIMARY_NODE_STATUS_AUTOMODE;
+
+        // Transmit a HEARTBEAT message to make sure the groundstation knows that we're now manual
+        MavLinkSendHeartbeat(MAVLINK_CHAN_GROUNDSTATION);
+        MavLinkSendHeartbeat(MAVLINK_CHAN_DATALOGGER);
     }
 }
 
