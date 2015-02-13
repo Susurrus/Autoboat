@@ -8,9 +8,9 @@ typedef struct __mavlink_tokimec_t
  int32_t longitude; ///< Raw GPS longitude. Units are 2e-29 rads.
  int32_t est_latitude; ///< Estimated GPS latitude. Units are 2e-29 rads.
  int32_t est_longitude; ///< Estimated GPS longitude. Units are 2e-29 rads.
- int16_t yaw; ///< Heading in degrees eastward from north
- int16_t pitch; ///< Magnetometer status
- int16_t roll; ///< Pitch angle in degrees.
+ int16_t yaw; ///< Yaw angle. Units are 2e-13 rads.
+ int16_t pitch; ///< Pitch angle. Units are 2e-13 rads.
+ int16_t roll; ///< Roll angle. Units are 2e-13 rads.
  int16_t x_angle_vel; ///< Angular velocity around the X-axis. Units are 2e-12 rads/s.
  int16_t y_angle_vel; ///< Angular velocity around the Y-axis. Units are 2e-12 rads/s.
  int16_t z_angle_vel; ///< Angular velocity around the Z-axis. Units are 2e-12 rads/s.
@@ -61,9 +61,9 @@ typedef struct __mavlink_tokimec_t
  * @param component_id ID of this component (e.g. 200 for IMU)
  * @param msg The MAVLink message to compress the data into
  *
- * @param yaw Heading in degrees eastward from north
- * @param pitch Magnetometer status
- * @param roll Pitch angle in degrees.
+ * @param yaw Yaw angle. Units are 2e-13 rads.
+ * @param pitch Pitch angle. Units are 2e-13 rads.
+ * @param roll Roll angle. Units are 2e-13 rads.
  * @param x_angle_vel Angular velocity around the X-axis. Units are 2e-12 rads/s.
  * @param y_angle_vel Angular velocity around the Y-axis. Units are 2e-12 rads/s.
  * @param z_angle_vel Angular velocity around the Z-axis. Units are 2e-12 rads/s.
@@ -141,9 +141,9 @@ static inline uint16_t mavlink_msg_tokimec_pack(uint8_t system_id, uint8_t compo
  * @param component_id ID of this component (e.g. 200 for IMU)
  * @param chan The MAVLink channel this message will be sent over
  * @param msg The MAVLink message to compress the data into
- * @param yaw Heading in degrees eastward from north
- * @param pitch Magnetometer status
- * @param roll Pitch angle in degrees.
+ * @param yaw Yaw angle. Units are 2e-13 rads.
+ * @param pitch Pitch angle. Units are 2e-13 rads.
+ * @param roll Roll angle. Units are 2e-13 rads.
  * @param x_angle_vel Angular velocity around the X-axis. Units are 2e-12 rads/s.
  * @param y_angle_vel Angular velocity around the Y-axis. Units are 2e-12 rads/s.
  * @param z_angle_vel Angular velocity around the Z-axis. Units are 2e-12 rads/s.
@@ -247,9 +247,9 @@ static inline uint16_t mavlink_msg_tokimec_encode_chan(uint8_t system_id, uint8_
  * @brief Send a tokimec message
  * @param chan MAVLink channel to send the message
  *
- * @param yaw Heading in degrees eastward from north
- * @param pitch Magnetometer status
- * @param roll Pitch angle in degrees.
+ * @param yaw Yaw angle. Units are 2e-13 rads.
+ * @param pitch Pitch angle. Units are 2e-13 rads.
+ * @param roll Roll angle. Units are 2e-13 rads.
  * @param x_angle_vel Angular velocity around the X-axis. Units are 2e-12 rads/s.
  * @param y_angle_vel Angular velocity around the Y-axis. Units are 2e-12 rads/s.
  * @param z_angle_vel Angular velocity around the Z-axis. Units are 2e-12 rads/s.
@@ -394,7 +394,7 @@ static inline void mavlink_msg_tokimec_send_buf(mavlink_message_t *msgbuf, mavli
 /**
  * @brief Get field yaw from tokimec message
  *
- * @return Heading in degrees eastward from north
+ * @return Yaw angle. Units are 2e-13 rads.
  */
 static inline int16_t mavlink_msg_tokimec_get_yaw(const mavlink_message_t* msg)
 {
@@ -404,7 +404,7 @@ static inline int16_t mavlink_msg_tokimec_get_yaw(const mavlink_message_t* msg)
 /**
  * @brief Get field pitch from tokimec message
  *
- * @return Magnetometer status
+ * @return Pitch angle. Units are 2e-13 rads.
  */
 static inline int16_t mavlink_msg_tokimec_get_pitch(const mavlink_message_t* msg)
 {
@@ -414,7 +414,7 @@ static inline int16_t mavlink_msg_tokimec_get_pitch(const mavlink_message_t* msg
 /**
  * @brief Get field roll from tokimec message
  *
- * @return Pitch angle in degrees.
+ * @return Roll angle. Units are 2e-13 rads.
  */
 static inline int16_t mavlink_msg_tokimec_get_roll(const mavlink_message_t* msg)
 {

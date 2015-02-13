@@ -9,9 +9,9 @@ typedef struct __mavlink_tokimec_with_time_t
  int32_t longitude; ///< Raw GPS longitude. Units are 2e-29 rads.
  int32_t est_latitude; ///< Estimated GPS latitude. Units are 2e-29 rads.
  int32_t est_longitude; ///< Estimated GPS longitude. Units are 2e-29 rads.
- int16_t yaw; ///< Heading in degrees eastward from north
- int16_t pitch; ///< Magnetometer status
- int16_t roll; ///< Pitch angle in degrees.
+ int16_t yaw; ///< Yaw angle. Units are 2e-13 rads.
+ int16_t pitch; ///< Pitch angle. Units are 2e-13 rads.
+ int16_t roll; ///< Roll angle. Units are 2e-13 rads.
  int16_t x_angle_vel; ///< Angular velocity around the X-axis. Units are 2e-12 rads/s.
  int16_t y_angle_vel; ///< Angular velocity around the Y-axis. Units are 2e-12 rads/s.
  int16_t z_angle_vel; ///< Angular velocity around the Z-axis. Units are 2e-12 rads/s.
@@ -64,9 +64,9 @@ typedef struct __mavlink_tokimec_with_time_t
  * @param msg The MAVLink message to compress the data into
  *
  * @param time_boot_ms Timestamp (milliseconds since system boot)
- * @param yaw Heading in degrees eastward from north
- * @param pitch Magnetometer status
- * @param roll Pitch angle in degrees.
+ * @param yaw Yaw angle. Units are 2e-13 rads.
+ * @param pitch Pitch angle. Units are 2e-13 rads.
+ * @param roll Roll angle. Units are 2e-13 rads.
  * @param x_angle_vel Angular velocity around the X-axis. Units are 2e-12 rads/s.
  * @param y_angle_vel Angular velocity around the Y-axis. Units are 2e-12 rads/s.
  * @param z_angle_vel Angular velocity around the Z-axis. Units are 2e-12 rads/s.
@@ -147,9 +147,9 @@ static inline uint16_t mavlink_msg_tokimec_with_time_pack(uint8_t system_id, uin
  * @param chan The MAVLink channel this message will be sent over
  * @param msg The MAVLink message to compress the data into
  * @param time_boot_ms Timestamp (milliseconds since system boot)
- * @param yaw Heading in degrees eastward from north
- * @param pitch Magnetometer status
- * @param roll Pitch angle in degrees.
+ * @param yaw Yaw angle. Units are 2e-13 rads.
+ * @param pitch Pitch angle. Units are 2e-13 rads.
+ * @param roll Roll angle. Units are 2e-13 rads.
  * @param x_angle_vel Angular velocity around the X-axis. Units are 2e-12 rads/s.
  * @param y_angle_vel Angular velocity around the Y-axis. Units are 2e-12 rads/s.
  * @param z_angle_vel Angular velocity around the Z-axis. Units are 2e-12 rads/s.
@@ -256,9 +256,9 @@ static inline uint16_t mavlink_msg_tokimec_with_time_encode_chan(uint8_t system_
  * @param chan MAVLink channel to send the message
  *
  * @param time_boot_ms Timestamp (milliseconds since system boot)
- * @param yaw Heading in degrees eastward from north
- * @param pitch Magnetometer status
- * @param roll Pitch angle in degrees.
+ * @param yaw Yaw angle. Units are 2e-13 rads.
+ * @param pitch Pitch angle. Units are 2e-13 rads.
+ * @param roll Roll angle. Units are 2e-13 rads.
  * @param x_angle_vel Angular velocity around the X-axis. Units are 2e-12 rads/s.
  * @param y_angle_vel Angular velocity around the Y-axis. Units are 2e-12 rads/s.
  * @param z_angle_vel Angular velocity around the Z-axis. Units are 2e-12 rads/s.
@@ -417,7 +417,7 @@ static inline uint32_t mavlink_msg_tokimec_with_time_get_time_boot_ms(const mavl
 /**
  * @brief Get field yaw from tokimec_with_time message
  *
- * @return Heading in degrees eastward from north
+ * @return Yaw angle. Units are 2e-13 rads.
  */
 static inline int16_t mavlink_msg_tokimec_with_time_get_yaw(const mavlink_message_t* msg)
 {
@@ -427,7 +427,7 @@ static inline int16_t mavlink_msg_tokimec_with_time_get_yaw(const mavlink_messag
 /**
  * @brief Get field pitch from tokimec_with_time message
  *
- * @return Magnetometer status
+ * @return Pitch angle. Units are 2e-13 rads.
  */
 static inline int16_t mavlink_msg_tokimec_with_time_get_pitch(const mavlink_message_t* msg)
 {
@@ -437,7 +437,7 @@ static inline int16_t mavlink_msg_tokimec_with_time_get_pitch(const mavlink_mess
 /**
  * @brief Get field roll from tokimec_with_time message
  *
- * @return Pitch angle in degrees.
+ * @return Roll angle. Units are 2e-13 rads.
  */
 static inline int16_t mavlink_msg_tokimec_with_time_get_roll(const mavlink_message_t* msg)
 {
