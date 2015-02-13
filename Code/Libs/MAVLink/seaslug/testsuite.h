@@ -414,14 +414,13 @@ static void mavlink_test_basic_state(uint8_t system_id, uint8_t component_id, ma
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_basic_state_t packet_in = {
-		17.0,45.0,73.0,101.0,129.0,157.0,185.0,213.0,18899,19003,19107,19211,19315
+		17.0,45.0,73.0,101.0,129.0,157.0,185.0,18691,18795,18899,19003
     };
 	mavlink_basic_state_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
         	packet1.commanded_auto_rudder_angle = packet_in.commanded_auto_rudder_angle;
         	packet1.commanded_primary_rudder_angle = packet_in.commanded_primary_rudder_angle;
         	packet1.commanded_secondary_rudder_angle = packet_in.commanded_secondary_rudder_angle;
-        	packet1.commanded_rudder_angle = packet_in.commanded_rudder_angle;
         	packet1.rudder_angle = packet_in.rudder_angle;
         	packet1.a_cmd = packet_in.a_cmd;
         	packet1.L2_north = packet_in.L2_north;
@@ -429,7 +428,6 @@ static void mavlink_test_basic_state(uint8_t system_id, uint8_t component_id, ma
         	packet1.commanded_auto_throttle = packet_in.commanded_auto_throttle;
         	packet1.commanded_primary_throttle = packet_in.commanded_primary_throttle;
         	packet1.commanded_secondary_throttle = packet_in.commanded_secondary_throttle;
-        	packet1.commanded_throttle = packet_in.commanded_throttle;
         	packet1.prop_speed = packet_in.prop_speed;
         
         
@@ -440,12 +438,12 @@ static void mavlink_test_basic_state(uint8_t system_id, uint8_t component_id, ma
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_basic_state_pack(system_id, component_id, &msg , packet1.commanded_auto_rudder_angle , packet1.commanded_primary_rudder_angle , packet1.commanded_secondary_rudder_angle , packet1.commanded_rudder_angle , packet1.rudder_angle , packet1.commanded_auto_throttle , packet1.commanded_primary_throttle , packet1.commanded_secondary_throttle , packet1.commanded_throttle , packet1.prop_speed , packet1.a_cmd , packet1.L2_north , packet1.L2_east );
+	mavlink_msg_basic_state_pack(system_id, component_id, &msg , packet1.commanded_auto_rudder_angle , packet1.commanded_primary_rudder_angle , packet1.commanded_secondary_rudder_angle , packet1.rudder_angle , packet1.commanded_auto_throttle , packet1.commanded_primary_throttle , packet1.commanded_secondary_throttle , packet1.prop_speed , packet1.a_cmd , packet1.L2_north , packet1.L2_east );
 	mavlink_msg_basic_state_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_basic_state_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.commanded_auto_rudder_angle , packet1.commanded_primary_rudder_angle , packet1.commanded_secondary_rudder_angle , packet1.commanded_rudder_angle , packet1.rudder_angle , packet1.commanded_auto_throttle , packet1.commanded_primary_throttle , packet1.commanded_secondary_throttle , packet1.commanded_throttle , packet1.prop_speed , packet1.a_cmd , packet1.L2_north , packet1.L2_east );
+	mavlink_msg_basic_state_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.commanded_auto_rudder_angle , packet1.commanded_primary_rudder_angle , packet1.commanded_secondary_rudder_angle , packet1.rudder_angle , packet1.commanded_auto_throttle , packet1.commanded_primary_throttle , packet1.commanded_secondary_throttle , packet1.prop_speed , packet1.a_cmd , packet1.L2_north , packet1.L2_east );
 	mavlink_msg_basic_state_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -458,7 +456,7 @@ static void mavlink_test_basic_state(uint8_t system_id, uint8_t component_id, ma
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_basic_state_send(MAVLINK_COMM_1 , packet1.commanded_auto_rudder_angle , packet1.commanded_primary_rudder_angle , packet1.commanded_secondary_rudder_angle , packet1.commanded_rudder_angle , packet1.rudder_angle , packet1.commanded_auto_throttle , packet1.commanded_primary_throttle , packet1.commanded_secondary_throttle , packet1.commanded_throttle , packet1.prop_speed , packet1.a_cmd , packet1.L2_north , packet1.L2_east );
+	mavlink_msg_basic_state_send(MAVLINK_COMM_1 , packet1.commanded_auto_rudder_angle , packet1.commanded_primary_rudder_angle , packet1.commanded_secondary_rudder_angle , packet1.rudder_angle , packet1.commanded_auto_throttle , packet1.commanded_primary_throttle , packet1.commanded_secondary_throttle , packet1.prop_speed , packet1.a_cmd , packet1.L2_north , packet1.L2_east );
 	mavlink_msg_basic_state_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
@@ -626,6 +624,61 @@ static void mavlink_test_waypoint_status(uint8_t system_id, uint8_t component_id
         memset(&packet2, 0, sizeof(packet2));
 	mavlink_msg_waypoint_status_send(MAVLINK_COMM_1 , packet1.last_wp_lat , packet1.last_wp_lon , packet1.last_wp_north , packet1.last_wp_east , packet1.next_wp_lat , packet1.next_wp_lon , packet1.next_wp_north , packet1.next_wp_east );
 	mavlink_msg_waypoint_status_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+}
+
+static void mavlink_test_basic_state2(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+{
+	mavlink_message_t msg;
+        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
+        uint16_t i;
+	mavlink_basic_state2_t packet_in = {
+		17.0,45.0,73.0,101.0,129.0,157.0,185.0,213.0,18899,19003,19107,19211,19315
+    };
+	mavlink_basic_state2_t packet1, packet2;
+        memset(&packet1, 0, sizeof(packet1));
+        	packet1.commanded_auto_rudder_angle = packet_in.commanded_auto_rudder_angle;
+        	packet1.commanded_primary_rudder_angle = packet_in.commanded_primary_rudder_angle;
+        	packet1.commanded_secondary_rudder_angle = packet_in.commanded_secondary_rudder_angle;
+        	packet1.commanded_rudder_angle = packet_in.commanded_rudder_angle;
+        	packet1.rudder_angle = packet_in.rudder_angle;
+        	packet1.a_cmd = packet_in.a_cmd;
+        	packet1.L2_north = packet_in.L2_north;
+        	packet1.L2_east = packet_in.L2_east;
+        	packet1.commanded_auto_throttle = packet_in.commanded_auto_throttle;
+        	packet1.commanded_primary_throttle = packet_in.commanded_primary_throttle;
+        	packet1.commanded_secondary_throttle = packet_in.commanded_secondary_throttle;
+        	packet1.commanded_throttle = packet_in.commanded_throttle;
+        	packet1.prop_speed = packet_in.prop_speed;
+        
+        
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_basic_state2_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_basic_state2_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_basic_state2_pack(system_id, component_id, &msg , packet1.commanded_auto_rudder_angle , packet1.commanded_primary_rudder_angle , packet1.commanded_secondary_rudder_angle , packet1.commanded_rudder_angle , packet1.rudder_angle , packet1.commanded_auto_throttle , packet1.commanded_primary_throttle , packet1.commanded_secondary_throttle , packet1.commanded_throttle , packet1.prop_speed , packet1.a_cmd , packet1.L2_north , packet1.L2_east );
+	mavlink_msg_basic_state2_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_basic_state2_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.commanded_auto_rudder_angle , packet1.commanded_primary_rudder_angle , packet1.commanded_secondary_rudder_angle , packet1.commanded_rudder_angle , packet1.rudder_angle , packet1.commanded_auto_throttle , packet1.commanded_primary_throttle , packet1.commanded_secondary_throttle , packet1.commanded_throttle , packet1.prop_speed , packet1.a_cmd , packet1.L2_north , packet1.L2_east );
+	mavlink_msg_basic_state2_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+        mavlink_msg_to_send_buffer(buffer, &msg);
+        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
+        	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
+        }
+	mavlink_msg_basic_state2_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+        
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_basic_state2_send(MAVLINK_COMM_1 , packet1.commanded_auto_rudder_angle , packet1.commanded_primary_rudder_angle , packet1.commanded_secondary_rudder_angle , packet1.commanded_rudder_angle , packet1.rudder_angle , packet1.commanded_auto_throttle , packet1.commanded_primary_throttle , packet1.commanded_secondary_throttle , packet1.commanded_throttle , packet1.prop_speed , packet1.a_cmd , packet1.L2_north , packet1.L2_east );
+	mavlink_msg_basic_state2_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
@@ -824,6 +877,7 @@ static void mavlink_test_seaslug(uint8_t system_id, uint8_t component_id, mavlin
 	mavlink_test_main_power(system_id, component_id, last_msg);
 	mavlink_test_node_status(system_id, component_id, last_msg);
 	mavlink_test_waypoint_status(system_id, component_id, last_msg);
+	mavlink_test_basic_state2(system_id, component_id, last_msg);
 	mavlink_test_controller_data(system_id, component_id, last_msg);
 	mavlink_test_tokimec_with_time(system_id, component_id, last_msg);
 	mavlink_test_param_value_with_time(system_id, component_id, last_msg);

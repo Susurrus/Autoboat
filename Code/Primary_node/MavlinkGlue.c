@@ -233,7 +233,7 @@ static uint8_t groundstationMavlinkScheduleIds[GROUNDSTATION_SCHEDULE_NUM_MSGS] 
 	MAVLINK_MSG_ID_ATTITUDE,
 	MAVLINK_MSG_ID_GPS_RAW_INT,
 	MAVLINK_MSG_ID_WSO100,
-	MAVLINK_MSG_ID_BASIC_STATE,
+	MAVLINK_MSG_ID_BASIC_STATE2,
 	MAVLINK_MSG_ID_RUDDER_RAW,
 	MAVLINK_MSG_ID_DST800,
 	MAVLINK_MSG_ID_MAIN_POWER,
@@ -595,23 +595,23 @@ void MavLinkSendMainPower(void)
 }
 
 /**
- * Transmits the custom BASIC_STATE message. This just transmits a bunch of random variables
+ * Transmits the custom BASIC_STATE2 message. This just transmits a bunch of random variables
  * that are good to know but arbitrarily grouped.
  */
-void MavLinkSendBasicState(void)
+void MavLinkSendBasicState2(void)
 {
-	mavlink_msg_basic_state_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
-		currentCommands.autonomousRudderCommand, currentCommands.primaryManualRudderCommand, currentCommands.secondaryManualRudderCommand, 0.0,
-                rudderSensorData.RudderAngle,
-		currentCommands.autonomousThrottleCommand, currentCommands.primaryManualThrottleCommand, currentCommands.secondaryManualThrottleCommand, 0,
-                0,
-		controllerVars.Acmd,
-		controllerVars.L2Vector[0], controllerVars.L2Vector[1]
-	);
+    mavlink_msg_basic_state2_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
+        currentCommands.autonomousRudderCommand, currentCommands.primaryManualRudderCommand, currentCommands.secondaryManualRudderCommand, 0.0,
+        rudderSensorData.RudderAngle,
+        currentCommands.autonomousThrottleCommand, currentCommands.primaryManualThrottleCommand, currentCommands.secondaryManualThrottleCommand, 0,
+        0,
+        controllerVars.Acmd,
+        controllerVars.L2Vector[0], controllerVars.L2Vector[1]
+    );
 
-	len = mavlink_msg_to_send_buffer(buf, &txMessage);
+    len = mavlink_msg_to_send_buffer(buf, &txMessage);
 
-	Uart1WriteData(buf, (uint8_t)len);
+    Uart1WriteData(buf, (uint8_t)len);
 }
 
 /**
@@ -1903,8 +1903,8 @@ void MavLinkTransmitGroundstation(void)
 				MavLinkSendWindAirData();
 			} break;
 
-			case MAVLINK_MSG_ID_BASIC_STATE:
-				MavLinkSendBasicState();
+			case MAVLINK_MSG_ID_BASIC_STATE2:
+				MavLinkSendBasicState2();
 			break;
 
 			case MAVLINK_MSG_ID_RUDDER_RAW:
