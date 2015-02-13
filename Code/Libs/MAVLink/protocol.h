@@ -75,7 +75,7 @@
 
 #else
 
-    #define MAVLINK_HELPER inline
+    #define MAVLINK_HELPER static inline
     #include "mavlink_helpers.h"
 
 #endif // MAVLINK_SEPARATE_HELPERS
