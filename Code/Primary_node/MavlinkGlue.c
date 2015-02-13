@@ -66,11 +66,7 @@ enum PARAM_STATE {
 	PARAM_STATE_SINGLETON_SEND_VALUE,
 
 	PARAM_STATE_STREAM_SEND_VALUE,
-	PARAM_STATE_STREAM_DELAY,
-
-        // The same as SEND_VALUE/DELAY except the message is double-transmit
-	PARAM_STATE_STREAM_SEND_VALUE_FIRST_TIME,
-	PARAM_STATE_STREAM_SEND_VALUE_SECOND_TIME
+	PARAM_STATE_STREAM_DELAY
 };
 
 // Events that trigger changes in the parameter protocol state machine.
@@ -83,14 +79,7 @@ enum PARAM_EVENT {
 
 	PARAM_EVENT_REQUEST_LIST_RECEIVED,
 	PARAM_EVENT_REQUEST_READ_RECEIVED,
-	PARAM_EVENT_SET_RECEIVED,
-
-        // Custom addition which just triggered a transmission of all parameters. This can be used
-        // for debugging or documentation purposes because a record of the current system parameters
-        // will exist in the MAVLink datastream log. This is implemented here instead of somewhere
-        // else because we want it to stop when a PARAM_EVENT_REQUEST_LIST_RECEIVED is received. This
-        // also transmits all messages twice.
-        PARAM_EVENT_TRANSMIT_ALL
+	PARAM_EVENT_SET_RECEIVED
 };
 
 // Set up state machine variables for the mission protocol
@@ -264,13 +253,17 @@ static MessageSchedule groundstationMavlinkSchedule = {
 	groundstationMavlinkScheduleTSteps
 };
 
+// Specify how many times each parameter should be transmit to the datalogger for reference.
+#define DATALOGGER_PARAM_TRANSMIT_COUNT 2
+
 // Set up the message scheduler for MAVLink transmission to the datalogger
-#define DATALOGGER_SCHEDULE_NUM_MSGS 5
+#define DATALOGGER_SCHEDULE_NUM_MSGS 6
 static uint8_t dataloggerMavlinkScheduleIds[DATALOGGER_SCHEDULE_NUM_MSGS] = {
 	MAVLINK_MSG_ID_HEARTBEAT,
 	MAVLINK_MSG_ID_SYS_STATUS,
 	MAVLINK_MSG_ID_NODE_STATUS,
 	MAVLINK_MSG_ID_TOKIMEC_WITH_TIME,
+	MAVLINK_MSG_ID_CONTROLLER_DATA,
         MAVLINK_MSG_ID_PARAM_VALUE_WITH_TIME
 };
 static uint16_t dataloggerMavlinkScheduleTSteps[DATALOGGER_SCHEDULE_NUM_MSGS][2][8] = {};
@@ -297,8 +290,9 @@ void MavLinkSendMainPower(void);
 void MavLinkSendBasicState(void);
 void MavLinkSendAttitude(void);
 void MavLinkSendSystemTime(void);
-void _transmitParameter(uint16_t id);
+void MavLinkSendParamValue(uint16_t id);
 int MavLinkAppendMission(const mavlink_mission_item_t *mission);
+void MavLinkSendDataloggerParameters(bool reset);
 
 
 /**
@@ -346,7 +340,7 @@ void MavLinkInit(void)
         // We want the HEARTBEAT/SYS_STATUS messages so this stream can be used with QGC. And then
         // for datalogging having the status of all nodes at 5Hz + the controller's input/output at
         // 100Hz is awesome.
-        const uint8_t const periodicities[DATALOGGER_SCHEDULE_NUM_MSGS] = {2, 2, 5, 100, 0};
+        const uint8_t const periodicities[DATALOGGER_SCHEDULE_NUM_MSGS] = {2, 2, 5, 0, 100, 0};
 	for (i = 0; i < DATALOGGER_SCHEDULE_NUM_MSGS; ++i) {
             if (periodicities[i] && !AddMessageRepeating(&dataloggerMavlinkSchedule, dataloggerMavlinkScheduleIds[i], periodicities[i])) {
                 FATAL_ERROR();
@@ -832,7 +826,7 @@ void MavLinkSendMissionRequest(uint8_t currentMissionIndex)
  * The following functions are helper functions for reading the various parameters aboard the boat.
  * @param id The ID of this parameter.
  */
-void _transmitParameter(uint16_t id)
+void MavLinkSendParamValue(uint16_t id)
 {
     if (id < PARAMETERS_TOTAL) {
         // Then use the helper functions from Parameters.h to get the current value. If there was an
@@ -853,7 +847,7 @@ void MavLinkTransmitAllParameters(void)
 {
     // To transmit all parameters we schedule a custom event. This lets us defer transmission for 1s
     // which should resolve issues when setting the autonomous mode via the parameter interface.
-//    AddMessageOnce(&groundstationMavlinkSchedule, MAVLINK_TRANSMIT_ALL_PARAMS, ADD_METHOD_LATEST);
+    AddMessageOnce(&dataloggerMavlinkSchedule, MAVLINK_MSG_ID_PARAM_VALUE_WITH_TIME, ADD_METHOD_SOONEST);
 }
 
 /** Custom SeaSlug Messages **/
@@ -1081,9 +1075,6 @@ void MavLinkEvaluateParameterState(enum PARAM_EVENT event, const void *data)
 			if (event == PARAM_EVENT_REQUEST_LIST_RECEIVED) {
 				currentParameter = 0;
 				nextState = PARAM_STATE_STREAM_SEND_VALUE;
-                        //} else if(event == PARAM_EVENT_TRANSMIT_ALL) {
-			//	currentParameter = 0;
-			//	nextState = PARAM_STATE_STREAM_SEND_VALUE_SECOND_TIME;
 			} else if (event == PARAM_EVENT_SET_RECEIVED) {
 				mavlink_param_set_t x = *(mavlink_param_set_t*)data;
 				currentParameter = ParameterSetValueByName(x.param_id, &x.param_value);
@@ -1100,14 +1091,14 @@ void MavLinkEvaluateParameterState(enum PARAM_EVENT event, const void *data)
 
 		case PARAM_STATE_SINGLETON_SEND_VALUE: {
 			if (event == PARAM_EVENT_NONE) {
-				_transmitParameter(currentParameter);
+				MavLinkSendParamValue(currentParameter);
 				nextState = PARAM_STATE_INACTIVE;
 			}
 		} break;
 
 		case PARAM_STATE_STREAM_SEND_VALUE: {
 			if (event == PARAM_EVENT_NONE) {
-				_transmitParameter(currentParameter);
+				MavLinkSendParamValue(currentParameter);
 
 				// And increment the current parameter index for the next iteration and
 				// we finish if we've hit the limit of parameters.
@@ -1131,47 +1122,6 @@ void MavLinkEvaluateParameterState(enum PARAM_EVENT event, const void *data)
 					nextState = PARAM_STATE_STREAM_SEND_VALUE;
 				}
 			}
-		} break;
-
-		case PARAM_STATE_STREAM_SEND_VALUE_FIRST_TIME: {
-                    // We make sure we exit the TRANSMIT_ALL behavior if a real parameter protocol
-                    // request has been made. Note that we don't do this for when parameters are set.
-                    // This is because the groundstation should be able to handle this situation and
-                    // we want to make sure that all parameters are transmit.
-                    if (event == PARAM_EVENT_REQUEST_LIST_RECEIVED) {
-                        currentParameter = 0;
-                        nextState = PARAM_STATE_STREAM_SEND_VALUE;
-                    } else if (event == PARAM_EVENT_NONE) {
-                        // Transmit the parameter twice. This is useful for lossy connections.
-                        _transmitParameter(currentParameter);
-                        nextState = PARAM_STATE_STREAM_SEND_VALUE_SECOND_TIME;
-                    }
-		} break;
-
-		// Add a delay of INTRA_PARAM_DELAY timesteps before attempting to schedule another one
-                // This counter variable should be incremented by the `IncrementParameterCounter()`
-                // function, which should be called at a constant rate. This rate should be the same
-                // as the units for INTRA_PARAM_DELAY.
-		case PARAM_STATE_STREAM_SEND_VALUE_SECOND_TIME: {
-                    // We make sure we exit the TRANSMIT_ALL behavior if a real parameter protocol
-                    // request has been made. Note that we don't do this for when parameters are set.
-                    // This is because the groundstation should be able to handle this situation and
-                    // we want to make sure that all parameters are transmit.
-                    if (event == PARAM_EVENT_REQUEST_LIST_RECEIVED) {
-                        currentParameter = 0;
-                        nextState = PARAM_STATE_STREAM_SEND_VALUE;
-                    } else if (event == PARAM_EVENT_NONE) {
-                        // Transmit the parameter twice. This is useful for lossy connections.
-                        _transmitParameter(currentParameter);
-
-                        // And increment the current parameter index for the next iteration and
-                        // we finish if we've hit the limit of parameters.
-                        if (++currentParameter == PARAMETERS_TOTAL) {
-                            nextState = PARAM_STATE_INACTIVE;
-                        } else {
-                            nextState = PARAM_STATE_STREAM_SEND_VALUE_FIRST_TIME;
-                        }
-                    }
 		} break;
 
 		default: break;
@@ -2007,8 +1957,52 @@ void MavLinkTransmitDatalogger(void)
             case MAVLINK_MSG_ID_TOKIMEC_WITH_TIME:
                 MavLinkSendTokimecWithTime();
                 break;
-            default:
+            case MAVLINK_MSG_ID_PARAM_VALUE_WITH_TIME:
+                MavLinkSendDataloggerParameters(true);
                 break;
+             default:
+                 break;
+         }
+     }
+
+    // Always attempt to send the datalogger parameters. This simplifies the logic somewhat.
+    MavLinkSendDataloggerParameters(false);
+}
+
+/**
+ * Every call to this function transmits another parameter using the timestamped
+ * PARAM_VALUE_WITH_TIME message. These are transmit out on the datalogger channel
+ * @param reset True to reset the internal counter. If true, this **will not** transmit a message.
+ */
+void MavLinkSendDataloggerParameters(bool reset)
+{
+    static uint8_t pid = 0, count = 0;
+    if (reset) {
+        pid = 0;
+        count = 0;
+    } else if (pid < PARAMETERS_TOTAL) {
+        // Get the value from the Parameter library using it's provided numeric ID
+        float param_value = 0.0;
+        ParameterGetValueById(pid, &param_value);
+
+        // Finally encode the message and transmit.
+        mavlink_msg_param_value_with_time_pack_chan(
+            mavlink_system.sysid, mavlink_system.compid, MAVLINK_CHAN_DATALOGGER,
+            &txMessage,
+            nodeSystemTime * 10,
+            onboardParameters[pid].name, param_value, onboardParameters[pid].dataType,
+            PARAMETERS_TOTAL, pid);
+        len = mavlink_msg_to_send_buffer(buf, &txMessage);
+        Uart2WriteData(buf, (uint8_t)len);
+
+        // Track how many times this message had been sent.
+        ++count;
+        if (count == DATALOGGER_PARAM_TRANSMIT_COUNT) {
+            // Reset the counter
+            count = 0;
+
+            // And increment the pid for next time
+            ++pid;
         }
     }
 }
