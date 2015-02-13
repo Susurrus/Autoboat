@@ -722,9 +722,11 @@ void MavLinkSendCommandAck(uint8_t command, uint8_t result)
 }
 
 /**
-  * Transmit all data input/output from the central controller loop to the datalogger.
-  */
-void MavLinkSendControllerData(const float attitude_quat[4], float commandedRudder, int16_t commandedThrottle)
+ * Transmit all data input/output from the central controller loop to the datalogger.
+ * The IMU data is passed in to make sure we transmit the exact same data that the controller
+ * processed.
+ */
+void MavLinkSendControllerData(const ImuData *imu, const GpsData *gps, float waterSpeed, float rudderAngle, float propSpeed, bool reset, float commandedRudder, int16_t commandedThrottle)
 {
     // We need to make sure we clamp the acceleration command, because invalid values are represented
     // as +-99, while its normal range is < +-1.
@@ -741,11 +743,11 @@ void MavLinkSendControllerData(const float attitude_quat[4], float commandedRudd
         mavlink_system.sysid, mavlink_system.compid, MAVLINK_CHAN_DATALOGGER, &txMessage,
         controllerVars.wp0[0] * 10, controllerVars.wp0[1] * 10,
         controllerVars.wp1[0] * 10, controllerVars.wp1[1] * 10,
-        attitude_quat[0], attitude_quat[1], attitude_quat[2], attitude_quat[3], // IMU Quaternion
-        tokimecDataStore.x_angle_vel, tokimecDataStore.y_angle_vel, tokimecDataStore.z_angle_vel,
-        waterDataStore.speed * 1e4,
-        (gpsDataStore.mode > 1) && gpsDataStore.newData, gpsDataStore.latitude, gpsDataStore.longitude, gpsDataStore.sog, gpsDataStore.cog,
-        (nodeErrors != 0),
+        imu->attitude_quat[0], imu->attitude_quat[1], imu->attitude_quat[2], imu->attitude_quat[3], // IMU Quaternion
+        imu->gyros[0], imu->gyros[1], imu->gyros[2],
+        waterSpeed * 1e4,
+        (gps->mode > 1) && gps->newData, gps->latitude, gps->longitude, gps->sog, gps->cog,
+        reset,
         nodeSystemTime*10,
         controllerVars.LocalPosition[0] * 1e3, controllerVars.LocalPosition[1] * 1e3,
         controllerVars.Velocity[0] * 1e3, controllerVars.Velocity[1] * 1e3,
@@ -754,8 +756,8 @@ void MavLinkSendControllerData(const float attitude_quat[4], float commandedRudd
         controllerVars.AimPoint[0] * 10, controllerVars.AimPoint[1] * 10,
         commandedRudder * 1e4,
         commandedThrottle,
-        rudderSensorData.RudderAngle * 1e4,
-        throttleDataStore.rpm * 100
+        rudderAngle * 1e4,
+        propSpeed * 100
     );
 
     len = mavlink_msg_to_send_buffer(buf, &txMessage);

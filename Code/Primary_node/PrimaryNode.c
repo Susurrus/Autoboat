@@ -413,20 +413,28 @@ void PrimaryNode100HzLoop(void)
     };
     YawPitchRollToQuaternion(ypr, imu.attitude_quat); // TODO: Move this to when receiving Tokimec data
 
-    // Run the next timestep of the controller. Output is stored locally and passed to the actuators,
-    // but some additional system state is stored in controllerVars in `MavlinkGlue`.
+    // Copy all inputs to the controller here. This makes sure that what we transmit in the
+    // CONTROLLER_DATA message is **exactly** what was computed on this timestep.
+    bool reset = (nodeErrors != 0);
+    GpsData controllerGpsIn = gpsDataStore;
+    float waterSpeed = waterDataStore.speed;
+    float rudderAngle = rudderSensorData.RudderAngle;
+    int16_t propSpeed = throttleDataStore.rpm;
+
+    // Run the control loop, the direct outputs are stored in the follow 2 variables. But note that
+    // some additional system state is stored in controllerVars in `MavlinkGlue`.
     float rCommand = 0.0;
     int16_t tCommand = 0;
-    bool reset = (nodeErrors != 0);
-
-    controller_custom(&gpsDataStore, &throttleDataStore.rpm, &rudderSensorData.RudderAngle,
-            (boolean_T*) &reset, &waterDataStore.speed, &rCommand, &tCommand, &controllerVars, &imu);
+    controller_custom(&controllerGpsIn, &propSpeed, &rudderAngle, (boolean_T*)&reset, &waterSpeed,
+        &rCommand, &tCommand, &controllerVars, &imu);
 
     // Now output the current system state and results of the last control loop, but at a reduced
     // rate of 50Hz.
-    MavLinkSendControllerData(imu.attitude_quat, rCommand, tCommand);
+    MavLinkSendControllerData(&imu, &controllerGpsIn, waterSpeed, rudderAngle, propSpeed, reset, rCommand, tCommand);
 
-    // And output the necessary control outputs.
+    // And output the necessary control outputs to the actuators. This will NOT transmit the commands
+    // if the system is in a reset state. This can happen from errors, but also when the secondary
+    // manual controller is active and controlling the vessel.
     PrimaryNodeMuxAndOutputControllerCommands(rCommand, tCommand, false);
 
     // Send any necessary groundstation messages for this timestep.

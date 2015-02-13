@@ -55,7 +55,7 @@ void MavLinkSendCurrentMission(void);
  * is why it actually has function arguments. This should be sent explicitly immediately after the
  * controller loop has run.
  */
-void MavLinkSendControllerData(const float attitude_quat[4], float commandedRudder, int16_t commandedThrottle);
+void MavLinkSendControllerData(const ImuData *imu, const GpsData *gps, float waterSpeed, float rudderAngle, float propSpeed, bool reset, float commandedRudder, int16_t commandedThrottle);
 
 void GetMavLinkManualControl(float *rc, int16_t *tc);
 
