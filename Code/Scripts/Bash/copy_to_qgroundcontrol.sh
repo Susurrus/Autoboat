@@ -1,3 +1,4 @@
+#!/bin/bash
 # This script updates the C-library version of MAVLink in use by qgroundcontrol. It updates the Autoboat repository and copies the relevant MAVLink files over the ones in the qgroundcontrol directory.
 # It also assumes that in the same PROJ_DIR as the Autoboat repository is a mavlink
 # and qgroundcontrol directory. The MAVLink project will be automatically updated, but QGC will

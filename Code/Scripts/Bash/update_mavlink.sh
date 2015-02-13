@@ -1,3 +1,4 @@
+#1/bin/bash
 # This script updates the C-library version of MAVLink in use by the SeaSlug.
 # Inputs:
 #   * The seaslug.xml file.
