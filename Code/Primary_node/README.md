@@ -7,15 +7,19 @@ This project requires both the '/Code/Libs/MATLAB' folder and the MicroSimulink-
 ### MPLAB X Project Settings
  1. Add the following directories to the include search path: 
    * `/Code/Libs/C`
-   * `/Code/Libs/MAVLink`
    * `/Code/Libs/MAVLink/seaslug`
    * `/Code/primary_node`
    * `/Code/primary_node/controller_ert_rtw`
  2. Specify the large code & large data model
- 3. Add all *.c and *.h files under `controller_ert_rtw' to the project.
- 4. Add all *.c and *.h files in `/Code/primary_node`.
- 5. Add missing files as reported by the compiler in `/Code/Libs/C`
+ 3. Add "MAVLINK_ALIGNED_FIELDS=0" as a C macro
+ 4. Add MAVLINK_SEPARATE_HELPERS as a C macro
+ 4. Add all *.c under `controller_ert_rtw' to the project.
+ 5. Add all *.c files in `/Code/primary_node`.
+ 6. Add missing files as reported by the compiler in `/Code/Libs/C`
+ 7. OPTIONAL: Add traps.c if weird resets occur to see which error is triggering
  
+Note, when regenerating MAVLink, there may arise a conflict between the mavlink_helpers.c file we provide and the function prototypes provided in protocol.h. The mavlink_helpers.c file will need to be adjusted by just copying over the functiond definitions from mavlink_helpers.h.
+
 ### dsPIC33E versus dsPIC33F
 
 Switching between these processors requires the following changes:

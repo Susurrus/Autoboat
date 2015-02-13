@@ -16,6 +16,7 @@
 #include "MavlinkGlue.h"
 #include "Acs300.h"
 #include "Uart1.h"
+#include "Uart2.h"
 #include "Ecan1.h"
 #include "PrimaryNode.h"
 #include "DataStore.h"
@@ -141,6 +142,9 @@ int main(void)
     // Initialize UART1 to 115200 for groundstation communications.
     Uart1Init(BAUD115200_BRG_REG);
 
+    // Initialize UART2 to 115200 for datalogger recording.
+    Uart2Init(BAUD115200_BRG_REG);
+
     // Initialize the EEPROM for non-volatile data storage. DataStoreInit() also takes care of
     // initializing the onboard data store to the current parameter values so all subsequent calls
     // to DataStoreLoadAllParameters() should work.
@@ -177,9 +181,13 @@ int main(void)
     PPSOutput(OUT_FN_PPS_C1TX, OUT_PIN_PPS_RP39);
     PPSInput(IN_FN_PPS_C1RX, IN_PIN_PPS_RP36);
 
-    // To enable UART1 pins: TX on 43 (B11), MAVLink input decode on 43 (B11), RX on 45 (B13)
+    // To enable UART1 pins: TX on 43 (B11), RX on 45 (B13)
     PPSOutput(OUT_FN_PPS_U1TX, OUT_PIN_PPS_RP43);
     PPSInput(IN_FN_PPS_U1RX, IN_PIN_PPS_RPI45);
+
+    // To enable UART2 pins: TX on 40 (B8), RX on 41 (B9)
+    PPSOutput(OUT_FN_PPS_U2TX, OUT_PIN_PPS_RP40);
+    PPSInput(IN_FN_PPS_U2RX, IN_PIN_PPS_RP41);
 #endif
     PPSLock;
 
@@ -414,20 +422,24 @@ void PrimaryNode100HzLoop(void)
     controller_custom(&gpsDataStore, &throttleDataStore.rpm, &rudderSensorData.RudderAngle,
             (boolean_T*) &reset, &waterDataStore.speed, &rCommand, &tCommand, &controllerVars, &imu);
 
-    // Now output the current system state and results of the last control loop
+    // Now output the current system state and results of the last control loop, but at a reduced
+    // rate of 50Hz.
     MavLinkSendControllerData(imu.attitude_quat, rCommand, tCommand);
 
     // And output the necessary control outputs.
     PrimaryNodeMuxAndOutputControllerCommands(rCommand, tCommand, false);
+
+    // Send any necessary groundstation messages for this timestep.
+    MavLinkTransmitGroundstation();
+
+    // Send any necessary datalogger messages for this timestep.
+    MavLinkTransmitDatalogger();
 
     // Update the onboard system time counter. We make sure we don't overflow here as we can
     // run into issues with startup code being executed again.
     if (nodeSystemTime < UINT32_MAX) {
         ++nodeSystemTime;
     }
-
-    // Send any necessary messages for this timestep.
-    MavLinkTransmit();
 }
 
 /**

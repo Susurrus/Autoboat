@@ -24,6 +24,7 @@
 
 // User code includes
 #include "Uart1.h"
+#include "Uart2.h"
 #include "MessageScheduler.h"
 #include "EcanSensors.h"
 #include "Rudder.h"
@@ -58,14 +59,38 @@ static mavlink_message_t txMessage;
  */
 extern void lla2ltp(const int32_t[3], float[3]);
 
-// Set up some state machine variables for the parameter protocol
+// Set up some state machine variables for the parameter protocol.
 enum PARAM_STATE {
 	PARAM_STATE_INACTIVE = 0,
 
 	PARAM_STATE_SINGLETON_SEND_VALUE,
 
 	PARAM_STATE_STREAM_SEND_VALUE,
-	PARAM_STATE_STREAM_DELAY
+	PARAM_STATE_STREAM_DELAY,
+
+        // The same as SEND_VALUE/DELAY except the message is double-transmit
+	PARAM_STATE_STREAM_SEND_VALUE_FIRST_TIME,
+	PARAM_STATE_STREAM_SEND_VALUE_SECOND_TIME
+};
+
+// Events that trigger changes in the parameter protocol state machine.
+// This follows almost exactly from MAVLink's parameter protocol as described in their docs.
+// Note, however, the addition of the TRANSMIT_ALL differs from that.
+enum PARAM_EVENT {
+	PARAM_EVENT_NONE,
+	PARAM_EVENT_ENTER_STATE,
+	PARAM_EVENT_EXIT_STATE,
+
+	PARAM_EVENT_REQUEST_LIST_RECEIVED,
+	PARAM_EVENT_REQUEST_READ_RECEIVED,
+	PARAM_EVENT_SET_RECEIVED,
+
+        // Custom addition which just triggered a transmission of all parameters. This can be used
+        // for debugging or documentation purposes because a record of the current system parameters
+        // will exist in the MAVLink datastream log. This is implemented here instead of somewhere
+        // else because we want it to stop when a PARAM_EVENT_REQUEST_LIST_RECEIVED is received. This
+        // also transmits all messages twice.
+        PARAM_EVENT_TRANSMIT_ALL
 };
 
 // Set up state machine variables for the mission protocol
@@ -101,6 +126,22 @@ enum MISSION_STATE {
 	MISSION_STATE_MISSION_REQUEST_TIMEOUT2,
 	MISSION_STATE_SEND_MISSION_REQUEST3,
 	MISSION_STATE_MISSION_REQUEST_TIMEOUT3
+};
+
+// Set up the events necessary for the mission protocol state machine.
+enum MISSION_EVENT {
+	MISSION_EVENT_NONE = 0,
+	MISSION_EVENT_ENTER_STATE,
+	MISSION_EVENT_EXIT_STATE,
+
+	// Message reception events
+	MISSION_EVENT_COUNT_RECEIVED,
+	MISSION_EVENT_ACK_RECEIVED,
+	MISSION_EVENT_REQUEST_RECEIVED,
+	MISSION_EVENT_REQUEST_LIST_RECEIVED,
+	MISSION_EVENT_CLEAR_ALL_RECEIVED,
+	MISSION_EVENT_SET_CURRENT_RECEIVED,
+	MISSION_EVENT_ITEM_RECEIVED
 };
 
 // These flags are for use with the SYS_STATUS MAVLink message as a mapping from the Autoboat's
@@ -174,22 +215,28 @@ extern int32_t gpsOrigin[3];
 // Track how well MAVLink decoding is going.
 // WARN: Possible overflow over long-enough duration, but this is the size of these variables in
 // the MAVLink code.
-uint16_t mavLinkMessagesReceived = 0;
-uint16_t mavLinkMessagesFailedParsing = 0;
+static uint16_t mavLinkMessagesReceived = 0;
+static uint16_t mavLinkMessagesFailedParsing = 0;
 
 // Store radio telemetry information from the 3DRs.
-mavlink_radio_status_t radioStatus;
+static mavlink_radio_status_t radioStatus;
 
 // Track manual control data transmit via MAVLink
-struct {
+static struct {
 	int16_t Rudder;
 	int16_t Throttle;
 	uint16_t Buttons; 
 } mavlinkManualControlData;
 
-// Set up the message scheduler for MAVLink transmission
-#define MAVLINK_MSGS_SIZE 17
-uint8_t ids[MAVLINK_MSGS_SIZE] = {
+// Set separate MAVLink channels for the groundstation and the datalogger
+enum {
+    MAVLINK_CHAN_GROUNDSTATION = 0,
+    MAVLINK_CHAN_DATALOGGER
+};
+
+// Set up the message scheduler for MAVLink transmission to the groundstation
+#define GROUNDSTATION_SCHEDULE_NUM_MSGS 16
+static uint8_t groundstationMavlinkScheduleIds[GROUNDSTATION_SCHEDULE_NUM_MSGS] = {
 	MAVLINK_MSG_ID_HEARTBEAT,
 	MAVLINK_MSG_ID_SYS_STATUS,
 	MAVLINK_MSG_ID_SYSTEM_TIME,
@@ -205,18 +252,54 @@ uint8_t ids[MAVLINK_MSGS_SIZE] = {
 	MAVLINK_MSG_ID_NODE_STATUS,
 	MAVLINK_MSG_ID_WAYPOINT_STATUS,
 	MAVLINK_MSG_ID_TOKIMEC,
-	MAVLINK_MSG_ID_RADIO_STATUS,
-	MAVLINK_MSG_ID_CONTROLLER_DATA
+	MAVLINK_MSG_ID_RADIO_STATUS
 };
-uint16_t tsteps[MAVLINK_MSGS_SIZE][2][8] = {};
-uint8_t  mSizes[MAVLINK_MSGS_SIZE];
-MessageSchedule mavlinkSchedule = {
-	MAVLINK_MSGS_SIZE,
-	ids,
-	mSizes,
+static uint16_t groundstationMavlinkScheduleTSteps[GROUNDSTATION_SCHEDULE_NUM_MSGS][2][8] = {};
+static uint8_t  groundstationMavlinkScheduleSizes[GROUNDSTATION_SCHEDULE_NUM_MSGS];
+static MessageSchedule groundstationMavlinkSchedule = {
+	GROUNDSTATION_SCHEDULE_NUM_MSGS,
+	groundstationMavlinkScheduleIds,
+	groundstationMavlinkScheduleSizes,
 	0,
-	tsteps
+	groundstationMavlinkScheduleTSteps
 };
+
+// Set up the message scheduler for MAVLink transmission to the datalogger
+#define DATALOGGER_SCHEDULE_NUM_MSGS 5
+static uint8_t dataloggerMavlinkScheduleIds[DATALOGGER_SCHEDULE_NUM_MSGS] = {
+	MAVLINK_MSG_ID_HEARTBEAT,
+	MAVLINK_MSG_ID_SYS_STATUS,
+	MAVLINK_MSG_ID_NODE_STATUS,
+	MAVLINK_MSG_ID_TOKIMEC_WITH_TIME,
+        MAVLINK_MSG_ID_PARAM_VALUE_WITH_TIME
+};
+static uint16_t dataloggerMavlinkScheduleTSteps[DATALOGGER_SCHEDULE_NUM_MSGS][2][8] = {};
+static uint8_t  dataloggerMavlinkScheduleSizes[DATALOGGER_SCHEDULE_NUM_MSGS];
+static MessageSchedule dataloggerMavlinkSchedule = {
+	DATALOGGER_SCHEDULE_NUM_MSGS,
+	dataloggerMavlinkScheduleIds,
+	dataloggerMavlinkScheduleSizes,
+	0,
+	dataloggerMavlinkScheduleTSteps
+};
+
+void MavLinkSendMissionCount(void);
+void MavLinkSendMissionItem(uint8_t currentMissionIndex);
+void MavLinkSendMissionRequest(uint8_t currentMissionIndex);
+void MavLinkSendMissionAck(uint8_t type);
+void MavLinkSendGpsGlobalOrigin(void);
+void MavLinkSendLocalPosition(void);
+void MavLinkSendHeartbeat(uint8_t channel);
+void MavLinkSendStatus(uint8_t channel);
+void MavLinkSendNodeStatus(uint8_t channel);
+void MavLinkSendRawGps(void);
+void MavLinkSendMainPower(void);
+void MavLinkSendBasicState(void);
+void MavLinkSendAttitude(void);
+void MavLinkSendSystemTime(void);
+void _transmitParameter(uint16_t id);
+int MavLinkAppendMission(const mavlink_mission_item_t *mission);
+
 
 /**
  * Initialize MAVLink transmission. This just sets up the MAVLink scheduler with the basic
@@ -224,29 +307,61 @@ MessageSchedule mavlinkSchedule = {
  */
 void MavLinkInit(void)
 {
-	// First initialize the MessageSchedule struct with the proper sizes.
-	const uint8_t const mavMessageSizes[] = MAVLINK_MESSAGE_LENGTHS;
-	int i;
-	for (i = 0; i < MAVLINK_MSGS_SIZE; ++i) {
-		mavlinkSchedule.MessageSizes[i] = mavMessageSizes[ids[i]];
-	}
+    const uint8_t const mavMessageSizes[] = MAVLINK_MESSAGE_LENGTHS;
+
+    // First initialize the MessageSchedule struct with the proper sizes.
+    {
+        int i;
+        for (i = 0; i < GROUNDSTATION_SCHEDULE_NUM_MSGS; ++i) {
+            groundstationMavlinkSchedule.MessageSizes[i] = mavMessageSizes[groundstationMavlinkScheduleIds[i]];
+        }
 
         // We only report things that the GUI needs at 2Hz because it only updates at 1 or 2Hz.
-        const uint8_t const periodicities[MAVLINK_MSGS_SIZE] = {2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 100};
-	for (i = 0; i < MAVLINK_MSGS_SIZE; ++i) {
-		if (periodicities[i] && !AddMessageRepeating(&mavlinkSchedule, ids[i], periodicities[i])) {
-			FATAL_ERROR();
-		}
+        const uint8_t const periodicities[GROUNDSTATION_SCHEDULE_NUM_MSGS] = {2, 2, 1, 2, 4, 2, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0};
+        for (i = 0; i < GROUNDSTATION_SCHEDULE_NUM_MSGS; ++i) {
+            if (periodicities[i] && !AddMessageRepeating(&groundstationMavlinkSchedule, groundstationMavlinkScheduleIds[i], periodicities[i])) {
+                FATAL_ERROR();
+            }
+        }
+
+        // Make sure that we haven't exceeded the total number of bytes/s available on this connection.
+        // While we're connecting at 115200, we expect the airspeed of the radios to be 64kbps.
+        // Additionally, ECC should be turned on, so that halves that data rate. And I don't want to
+        // exceed 80% of that total bandwidth. This makes sure we have space for transient messages like
+        // missions, parameters, or waypoint/state changes.
+        uint32_t bps = GetBps(&groundstationMavlinkSchedule);
+        if (bps > (64000 / 10) * 4 / 5 / 2) {
+            FATAL_ERROR();
+        }
+    }
+
+    // Initialize the MAVLink message scheduler for the datalogger
+    {
+	// First initialize the MessageSchedule struct with the proper sizes.
+	int i;
+	for (i = 0; i < DATALOGGER_SCHEDULE_NUM_MSGS; ++i) {
+            dataloggerMavlinkSchedule.MessageSizes[i] = mavMessageSizes[dataloggerMavlinkScheduleIds[i]];
+	}
+
+        // We want the HEARTBEAT/SYS_STATUS messages so this stream can be used with QGC. And then
+        // for datalogging having the status of all nodes at 5Hz + the controller's input/output at
+        // 100Hz is awesome.
+        const uint8_t const periodicities[DATALOGGER_SCHEDULE_NUM_MSGS] = {2, 2, 5, 100, 0};
+	for (i = 0; i < DATALOGGER_SCHEDULE_NUM_MSGS; ++i) {
+            if (periodicities[i] && !AddMessageRepeating(&dataloggerMavlinkSchedule, dataloggerMavlinkScheduleIds[i], periodicities[i])) {
+                FATAL_ERROR();
+            }
 	}
 
         // Make sure that we haven't exceeded the total number of bytes/s available on this connection.
-        // Running at 115200, we have about 11520bps available, so let's make sure we don't exceed
-        // 80% of that total bandwidth. This makes sure we have space for transient messages like
-        // missions, parameters, or waypoint/state changes.
-        uint32_t bps = GetBps(&mavlinkSchedule);
-        if (bps > (115200 / 10) * 4 / 5) {
+        // We're connecting at 115200, with all bandwidth available to us, almost all are scheduled.
+        // Every so often some SEASLUG_PARAMETER messages will be sent, so if we don't exceed 90%,
+        // it'll be fine.
+        uint32_t bps = GetBps(&dataloggerMavlinkSchedule);
+        if (bps > (115200 / 10) * 9 / 10) {
             FATAL_ERROR();
         }
+    }
 }
 
 /**
@@ -254,7 +369,7 @@ void MavLinkInit(void)
  * caches that message (along with its size) in the module-level variables declared
  * above. This buffer should be transmit at 1Hz back to the groundstation.
  */
-void MavLinkSendHeartbeat(void)
+void MavLinkSendHeartbeat(uint8_t channel)
 {
 	// Update MAVLink state and run mode based on the system state.
 
@@ -297,11 +412,20 @@ void MavLinkSendHeartbeat(void)
 	}
 
 	// Pack the message
-	mavlink_msg_heartbeat_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage, mavlink_system.type, mavlink_system.autopilot, mavlink_system.mode, mavlink_system.custom_mode, mavlink_system.state);
+	mavlink_msg_heartbeat_pack_chan(mavlink_system.sysid, mavlink_system.compid, channel,
+            &txMessage,
+            mavlink_system.type, mavlink_system.autopilot, mavlink_system.mode,
+            mavlink_system.custom_mode, mavlink_system.state);
 
 	// Copy the message to the send buffer
 	len = mavlink_msg_to_send_buffer(buf, &txMessage);
-	Uart1WriteData(buf, (uint8_t)len);
+
+        // Send to the correct channel
+        if (channel == MAVLINK_CHAN_DATALOGGER) {
+            Uart2WriteData(buf, (uint8_t)len);
+        } else {
+            Uart1WriteData(buf, (uint8_t)len);
+        }
 }
 
 /**
@@ -324,7 +448,7 @@ void MavLinkSendSystemTime(void)
  * This function transmits a MAVLink SYS_STATUS message. It relies on various external information such as sensor/actuator status
  * from ecanSensors.h, the controllerVars struct exported by Simulink, and the drop rate calculated within ecanSensors.c.
  */
-void MavLinkSendStatus(void)
+void MavLinkSendStatus(uint8_t channel)
 {
 	// Declare that we have onboard sensors: 3D gyro, 3D accelerometer, 3D magnetometer, absolute pressure, GPS
 	// And that we have the following controllers: yaw position, x/y position control, motor outputs/control.
@@ -367,7 +491,8 @@ void MavLinkSendStatus(void)
         uint8_t ecanTxErrorCount, ecanRxErrorCount;
         Ecan1GetErrorCounts(&ecanTxErrorCount, &ecanRxErrorCount);
 
-	mavlink_msg_sys_status_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
+	mavlink_msg_sys_status_pack_chan(mavlink_system.sysid, mavlink_system.compid, channel,
+            &txMessage,
             systemsPresent, systemsEnabled, systemsActive,
             (uint16_t)(nodeCpuLoad)*10,
             voltage, amperage, -1,
@@ -375,7 +500,11 @@ void MavLinkSendStatus(void)
             ecanTxErrorCount, ecanRxErrorCount, 0, 0);
 	len = mavlink_msg_to_send_buffer(buf, &txMessage);
 
-	Uart1WriteData(buf, (uint8_t)len);
+        if (channel == MAVLINK_CHAN_DATALOGGER) {
+            Uart2WriteData(buf, (uint8_t)len);
+        } else {
+            Uart1WriteData(buf, (uint8_t)len);
+        }
 }
 
 void MavLinkSendStatusText(enum MAV_SEVERITY severity, const char *text)
@@ -389,25 +518,39 @@ void MavLinkSendStatusText(enum MAV_SEVERITY severity, const char *text)
 	Uart1WriteData(buf, (uint8_t)len);
 }
 
-/**
- * Transmits the z-axis rotation rate from the DSP3000. Note that this is in the body frame. Data is
- * in rads/s and clockwise positive.
- */
 void MavLinkSendTokimec(void)
 {
-	mavlink_msg_tokimec_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
-	                         tokimecDataStore.yaw, tokimecDataStore.pitch, tokimecDataStore.roll,
-	                         tokimecDataStore.x_angle_vel, tokimecDataStore.y_angle_vel, tokimecDataStore.z_angle_vel,
-	                         tokimecDataStore.x_accel, tokimecDataStore.y_accel, tokimecDataStore.z_accel,
-							 tokimecDataStore.magneticBearing,
-							 tokimecDataStore.latitude, tokimecDataStore.longitude,
-							 tokimecDataStore.est_latitude, tokimecDataStore.est_longitude,
-							 tokimecDataStore.gpsDirection, tokimecDataStore.gpsSpeed,
-							 tokimecDataStore.status);
+    mavlink_msg_tokimec_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
+        tokimecDataStore.yaw, tokimecDataStore.pitch, tokimecDataStore.roll,
+        tokimecDataStore.x_angle_vel, tokimecDataStore.y_angle_vel, tokimecDataStore.z_angle_vel,
+        tokimecDataStore.x_accel, tokimecDataStore.y_accel, tokimecDataStore.z_accel,
+        tokimecDataStore.magneticBearing,
+        tokimecDataStore.latitude, tokimecDataStore.longitude,
+        tokimecDataStore.est_latitude, tokimecDataStore.est_longitude,
+        tokimecDataStore.gpsDirection, tokimecDataStore.gpsSpeed,
+        tokimecDataStore.status);
 
-	len = mavlink_msg_to_send_buffer(buf, &txMessage);
+    len = mavlink_msg_to_send_buffer(buf, &txMessage);
 
-	Uart1WriteData(buf, (uint8_t)len);
+    Uart1WriteData(buf, (uint8_t)len);
+}
+
+void MavLinkSendTokimecWithTime(void)
+{
+    mavlink_msg_tokimec_with_time_pack_chan(mavlink_system.sysid, mavlink_system.compid, MAVLINK_CHAN_DATALOGGER, &txMessage,
+        nodeSystemTime*10,
+        tokimecDataStore.yaw, tokimecDataStore.pitch, tokimecDataStore.roll,
+        tokimecDataStore.x_angle_vel, tokimecDataStore.y_angle_vel, tokimecDataStore.z_angle_vel,
+        tokimecDataStore.x_accel, tokimecDataStore.y_accel, tokimecDataStore.z_accel,
+        tokimecDataStore.magneticBearing,
+        tokimecDataStore.latitude, tokimecDataStore.longitude,
+        tokimecDataStore.est_latitude, tokimecDataStore.est_longitude,
+        tokimecDataStore.gpsDirection, tokimecDataStore.gpsSpeed,
+        tokimecDataStore.status);
+
+    len = mavlink_msg_to_send_buffer(buf, &txMessage);
+
+    Uart2WriteData(buf, (uint8_t)len);
 }
 
 void MavLinkSendRadioStatus(void)
@@ -585,7 +728,7 @@ void MavLinkSendCommandAck(uint8_t command, uint8_t result)
 }
 
 /**
-  * Transmit the main battery state as obtained from the power node via the CAN bus.
+  * Transmit all data input/output from the central controller loop to the datalogger.
   */
 void MavLinkSendControllerData(const float attitude_quat[4], float commandedRudder, int16_t commandedThrottle)
 {
@@ -600,7 +743,8 @@ void MavLinkSendControllerData(const float attitude_quat[4], float commandedRudd
         clampedACmd = controllerVars.Acmd * 1e5;
     }
 
-    mavlink_msg_controller_data_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
+    mavlink_msg_controller_data_pack_chan(
+        mavlink_system.sysid, mavlink_system.compid, MAVLINK_CHAN_DATALOGGER, &txMessage,
         controllerVars.wp0[0] * 10, controllerVars.wp0[1] * 10,
         controllerVars.wp1[0] * 10, controllerVars.wp1[1] * 10,
         attitude_quat[0], attitude_quat[1], attitude_quat[2], attitude_quat[3], // IMU Quaternion
@@ -622,7 +766,7 @@ void MavLinkSendControllerData(const float attitude_quat[4], float commandedRudd
 
     len = mavlink_msg_to_send_buffer(buf, &txMessage);
 
-    Uart1WriteData(buf, (uint8_t)len);
+    Uart2WriteData(buf, (uint8_t)len);
 }
 
 void MavLinkSendMissionCount(void)
@@ -707,10 +851,9 @@ void _transmitParameter(uint16_t id)
 
 void MavLinkTransmitAllParameters(void)
 {
-    uint8_t pid;
-    for (pid = 0; pid < PARAMETERS_TOTAL; ++pid) {
-        _transmitParameter(pid);
-    }
+    // To transmit all parameters we schedule a custom event. This lets us defer transmission for 1s
+    // which should resolve issues when setting the autonomous mode via the parameter interface.
+//    AddMessageOnce(&groundstationMavlinkSchedule, MAVLINK_TRANSMIT_ALL_PARAMS, ADD_METHOD_LATEST);
 }
 
 /** Custom SeaSlug Messages **/
@@ -762,46 +905,48 @@ void MavLinkSendGps200Data(void)
 	Uart1WriteData(buf, (uint8_t)len);
 }
 
-void MavLinkSendNodeStatusData(void)
+void MavLinkSendNodeStatus(uint8_t channel)
 {
-	mavlink_msg_node_status_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
-	                             nodeStatusDataStore[CAN_NODE_HIL - 1].status,
-                                     nodeStatusDataStore[CAN_NODE_HIL - 1].errors,
-                                     nodeStatusDataStore[CAN_NODE_HIL - 1].temp,
-                                     nodeStatusDataStore[CAN_NODE_HIL - 1].load,
-                                     nodeStatusDataStore[CAN_NODE_HIL - 1].voltage,
+    mavlink_msg_node_status_pack_chan(mavlink_system.sysid, mavlink_system.compid, channel,
+        &txMessage,
+        nodeStatusDataStore[CAN_NODE_HIL - 1].status,
+        nodeStatusDataStore[CAN_NODE_HIL - 1].errors,
+        nodeStatusDataStore[CAN_NODE_HIL - 1].temp,
+        nodeStatusDataStore[CAN_NODE_HIL - 1].load,
+        nodeStatusDataStore[CAN_NODE_HIL - 1].voltage,
+        nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].status,
+        nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].errors,
+        nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].temp,
+        nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].load,
+        nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].voltage,
+        nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].status,
+        nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].errors,
+        nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].temp,
+        nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].load,
+        nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].voltage,
+        nodeStatus,
+        nodeErrors,
+        nodeTemp,
+        nodeCpuLoad,
+        nodeVoltage,
+        nodeStatusDataStore[CAN_NODE_RC - 1].status,
+        nodeStatusDataStore[CAN_NODE_RC - 1].errors,
+        nodeStatusDataStore[CAN_NODE_RC - 1].temp,
+        nodeStatusDataStore[CAN_NODE_RC - 1].load,
+        nodeStatusDataStore[CAN_NODE_RC - 1].voltage,
+        nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].status,
+        nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].errors,
+        nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].temp,
+        nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].load,
+        nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].voltage);
+    len = mavlink_msg_to_send_buffer(buf, &txMessage);
 
-	                             nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].status,
-                                     nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].errors,
-                                     nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].temp,
-                                     nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].load,
-                                     nodeStatusDataStore[CAN_NODE_IMU_SENSOR - 1].voltage,
-
-	                             nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].status,
-                                     nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].errors,
-                                     nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].temp,
-                                     nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].load,
-                                     nodeStatusDataStore[CAN_NODE_POWER_SENSOR - 1].voltage,
-
-	                             nodeStatus,
-                                     nodeErrors,
-                                     nodeTemp,
-                                     nodeCpuLoad,
-                                     nodeVoltage,
-
-	                             nodeStatusDataStore[CAN_NODE_RC - 1].status,
-                                     nodeStatusDataStore[CAN_NODE_RC - 1].errors,
-                                     nodeStatusDataStore[CAN_NODE_RC - 1].temp,
-                                     nodeStatusDataStore[CAN_NODE_RC - 1].load,
-                                     nodeStatusDataStore[CAN_NODE_RC - 1].voltage,
-
-	                             nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].status,
-                                     nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].errors,
-                                     nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].temp,
-                                     nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].load,
-                                     nodeStatusDataStore[CAN_NODE_RUDDER_CONTROLLER - 1].voltage);
-	len = mavlink_msg_to_send_buffer(buf, &txMessage);
-	Uart1WriteData(buf, (uint8_t)len);
+    // Send to the correct channel
+    if (channel == MAVLINK_CHAN_DATALOGGER) {
+        Uart2WriteData(buf, (uint8_t)len);
+    } else {
+        Uart1WriteData(buf, (uint8_t)len);
+    }
 }
 
 void MavLinkSendWaypointStatusData(void)
@@ -936,6 +1081,9 @@ void MavLinkEvaluateParameterState(enum PARAM_EVENT event, const void *data)
 			if (event == PARAM_EVENT_REQUEST_LIST_RECEIVED) {
 				currentParameter = 0;
 				nextState = PARAM_STATE_STREAM_SEND_VALUE;
+                        //} else if(event == PARAM_EVENT_TRANSMIT_ALL) {
+			//	currentParameter = 0;
+			//	nextState = PARAM_STATE_STREAM_SEND_VALUE_SECOND_TIME;
 			} else if (event == PARAM_EVENT_SET_RECEIVED) {
 				mavlink_param_set_t x = *(mavlink_param_set_t*)data;
 				currentParameter = ParameterSetValueByName(x.param_id, &x.param_value);
@@ -983,6 +1131,47 @@ void MavLinkEvaluateParameterState(enum PARAM_EVENT event, const void *data)
 					nextState = PARAM_STATE_STREAM_SEND_VALUE;
 				}
 			}
+		} break;
+
+		case PARAM_STATE_STREAM_SEND_VALUE_FIRST_TIME: {
+                    // We make sure we exit the TRANSMIT_ALL behavior if a real parameter protocol
+                    // request has been made. Note that we don't do this for when parameters are set.
+                    // This is because the groundstation should be able to handle this situation and
+                    // we want to make sure that all parameters are transmit.
+                    if (event == PARAM_EVENT_REQUEST_LIST_RECEIVED) {
+                        currentParameter = 0;
+                        nextState = PARAM_STATE_STREAM_SEND_VALUE;
+                    } else if (event == PARAM_EVENT_NONE) {
+                        // Transmit the parameter twice. This is useful for lossy connections.
+                        _transmitParameter(currentParameter);
+                        nextState = PARAM_STATE_STREAM_SEND_VALUE_SECOND_TIME;
+                    }
+		} break;
+
+		// Add a delay of INTRA_PARAM_DELAY timesteps before attempting to schedule another one
+                // This counter variable should be incremented by the `IncrementParameterCounter()`
+                // function, which should be called at a constant rate. This rate should be the same
+                // as the units for INTRA_PARAM_DELAY.
+		case PARAM_STATE_STREAM_SEND_VALUE_SECOND_TIME: {
+                    // We make sure we exit the TRANSMIT_ALL behavior if a real parameter protocol
+                    // request has been made. Note that we don't do this for when parameters are set.
+                    // This is because the groundstation should be able to handle this situation and
+                    // we want to make sure that all parameters are transmit.
+                    if (event == PARAM_EVENT_REQUEST_LIST_RECEIVED) {
+                        currentParameter = 0;
+                        nextState = PARAM_STATE_STREAM_SEND_VALUE;
+                    } else if (event == PARAM_EVENT_NONE) {
+                        // Transmit the parameter twice. This is useful for lossy connections.
+                        _transmitParameter(currentParameter);
+
+                        // And increment the current parameter index for the next iteration and
+                        // we finish if we've hit the limit of parameters.
+                        if (++currentParameter == PARAMETERS_TOTAL) {
+                            nextState = PARAM_STATE_INACTIVE;
+                        } else {
+                            nextState = PARAM_STATE_STREAM_SEND_VALUE_FIRST_TIME;
+                        }
+                    }
 		} break;
 
 		default: break;
@@ -1710,11 +1899,11 @@ void MavLinkReceive(void)
  * This function handles transmission of MavLink messages taking into account transmission
  * speed, message size, and desired transmission rate.
  */
-void MavLinkTransmit(void)
+void MavLinkTransmitGroundstation(void)
 {
 	// And now transmit all messages for this timestep
-	uint8_t msgs[MAVLINK_MSGS_SIZE];
-	uint8_t count = GetMessagesForTimestep(&mavlinkSchedule, msgs);
+	uint8_t msgs[GROUNDSTATION_SCHEDULE_NUM_MSGS];
+	uint8_t count = GetMessagesForTimestep(&groundstationMavlinkSchedule, msgs);
 	int i;
 	for (i = 0; i < count; ++i) {
 
@@ -1723,7 +1912,7 @@ void MavLinkTransmit(void)
 			/** Common Messages **/
 
 			case MAVLINK_MSG_ID_HEARTBEAT: {
-				MavLinkSendHeartbeat();
+				MavLinkSendHeartbeat(MAVLINK_CHAN_GROUNDSTATION);
 			} break;
 
 			case MAVLINK_MSG_ID_SYSTEM_TIME: {
@@ -1731,7 +1920,7 @@ void MavLinkTransmit(void)
 			} break;
 
 			case MAVLINK_MSG_ID_SYS_STATUS: {
-				MavLinkSendStatus();
+				MavLinkSendStatus(MAVLINK_CHAN_GROUNDSTATION);
 			} break;
 
 			case MAVLINK_MSG_ID_ATTITUDE: {
@@ -1753,7 +1942,7 @@ void MavLinkTransmit(void)
 			/** SeaSlug Messages **/
 
 			case MAVLINK_MSG_ID_NODE_STATUS: {
-				MavLinkSendNodeStatusData();
+				MavLinkSendNodeStatus(MAVLINK_CHAN_GROUNDSTATION);
 			} break;
 
 			case MAVLINK_MSG_ID_WAYPOINT_STATUS: {
@@ -1788,16 +1977,38 @@ void MavLinkTransmit(void)
 				MavLinkSendMainPower();
 			break;
 
-			case MAVLINK_MSG_ID_CONTROLLER_DATA:
-                            //Do nothing here. We explicitly send this message immediately after
-                            // the controller loop has finished. This simplifies the code a little.
-                            // This is kept as a placeholder since we technically schedule this
-                            // message to make sure we don't have bandwidth issues.
-			break;
-
 			default: {
 
 			} break;
 		}
 	}
+}
+
+/**
+ * This function handles transmission of MavLink messages taking into account transmission
+ * speed, message size, and desired transmission rate.
+ */
+void MavLinkTransmitDatalogger(void)
+{
+    uint8_t msgs[DATALOGGER_SCHEDULE_NUM_MSGS];
+    uint8_t count = GetMessagesForTimestep(&dataloggerMavlinkSchedule, msgs);
+    int i;
+    for (i = 0; i < count; ++i) {
+        switch (msgs[i]) {
+            case MAVLINK_MSG_ID_HEARTBEAT:
+                MavLinkSendHeartbeat(MAVLINK_CHAN_DATALOGGER);
+                break;
+            case MAVLINK_MSG_ID_SYS_STATUS:
+                MavLinkSendStatus(MAVLINK_CHAN_DATALOGGER);
+                break;
+            case MAVLINK_MSG_ID_NODE_STATUS:
+                MavLinkSendNodeStatus(MAVLINK_CHAN_DATALOGGER);
+                break;
+            case MAVLINK_MSG_ID_TOKIMEC_WITH_TIME:
+                MavLinkSendTokimecWithTime();
+                break;
+            default:
+                break;
+        }
+    }
 }
