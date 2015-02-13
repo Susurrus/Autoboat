@@ -1071,13 +1071,22 @@ void MavLinkEvaluateParameterState(enum PARAM_EVENT event, const void *data)
 				currentParameter = 0;
 				nextState = PARAM_STATE_STREAM_SEND_VALUE;
 			} else if (event == PARAM_EVENT_SET_RECEIVED) {
-				mavlink_param_set_t x = *(mavlink_param_set_t*)data;
-				currentParameter = ParameterSetValueByName(x.param_id, &x.param_value);
-				// If there was an error, just reset.
-				if (currentParameter == UINT16_MAX) {
-					currentParameter = 0;
-				}
-				nextState = PARAM_STATE_SINGLETON_SEND_VALUE;
+                            // Decode the message
+                            mavlink_param_set_t *x = (mavlink_param_set_t *)data;
+
+                            // Only allow setting a parameter if we're in manual mode unless it's
+                            // the automode parameter.
+                            if (!IS_AUTONOMOUS() || strcmp(x->param_id, "ModeAuto") == 0) {
+                                currentParameter = ParameterSetValueByName(x->param_id, &x->param_value);
+                                // If there was an error, just reset.
+                                if (currentParameter == UINT16_MAX) {
+                                    currentParameter = 0;
+                                }
+                                nextState = PARAM_STATE_SINGLETON_SEND_VALUE;
+                            } else {
+                                // There no way to report errors with the parameter protocol.
+                                // See MAVLink issue #337: https://github.com/mavlink/mavlink/issues/337
+                            }
 			} else if (event == PARAM_EVENT_REQUEST_READ_RECEIVED) {
 				currentParameter = *(uint16_t*)data;
 				nextState = PARAM_STATE_SINGLETON_SEND_VALUE;
