@@ -218,7 +218,7 @@ static struct {
 } mavlinkManualControlData;
 
 // Set up the message scheduler for MAVLink transmission to the groundstation
-#define GROUNDSTATION_SCHEDULE_NUM_MSGS 16
+#define GROUNDSTATION_SCHEDULE_NUM_MSGS 17
 static uint8_t groundstationMavlinkScheduleIds[GROUNDSTATION_SCHEDULE_NUM_MSGS] = {
 	MAVLINK_MSG_ID_HEARTBEAT,
 	MAVLINK_MSG_ID_SYS_STATUS,
@@ -235,7 +235,8 @@ static uint8_t groundstationMavlinkScheduleIds[GROUNDSTATION_SCHEDULE_NUM_MSGS] 
 	MAVLINK_MSG_ID_NODE_STATUS,
 	MAVLINK_MSG_ID_WAYPOINT_STATUS,
 	MAVLINK_MSG_ID_TOKIMEC,
-	MAVLINK_MSG_ID_RADIO_STATUS
+	MAVLINK_MSG_ID_RADIO_STATUS,
+	MAVLINK_MSG_ID_VFR_HUD
 };
 static uint16_t groundstationMavlinkScheduleTSteps[GROUNDSTATION_SCHEDULE_NUM_MSGS][2][8] = {};
 static uint8_t  groundstationMavlinkScheduleSizes[GROUNDSTATION_SCHEDULE_NUM_MSGS];
@@ -283,6 +284,7 @@ void MavLinkSendMainPower(void);
 void MavLinkSendBasicState(void);
 void MavLinkSendAttitude(void);
 void MavLinkSendSystemTime(void);
+void MavLinkSendVfrHud(void);
 void MavLinkSendParamValue(uint16_t id);
 int MavLinkAppendMission(const mavlink_mission_item_t *mission);
 void MavLinkSendDataloggerParameters(bool reset);
@@ -304,7 +306,9 @@ void MavLinkInit(void)
         }
 
         // We only report things that the GUI needs at 2Hz because it only updates at 1 or 2Hz.
-        const uint8_t const periodicities[GROUNDSTATION_SCHEDULE_NUM_MSGS] = {2, 2, 1, 2, 4, 2, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0};
+        // We output the VFR_HUD message at a fast 5Hz because it has the throttle value and that's
+        // nice to have quick response to.
+        const uint8_t const periodicities[GROUNDSTATION_SCHEDULE_NUM_MSGS] = {2, 2, 1, 2, 4, 2, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 5};
         for (i = 0; i < GROUNDSTATION_SCHEDULE_NUM_MSGS; ++i) {
             if (periodicities[i] && !AddMessageRepeating(&groundstationMavlinkSchedule, groundstationMavlinkScheduleIds[i], periodicities[i])) {
                 FATAL_ERROR();
@@ -534,6 +538,27 @@ void MavLinkSendTokimecWithTime(void)
         tokimecDataStore.est_latitude, tokimecDataStore.est_longitude,
         tokimecDataStore.gpsDirection, tokimecDataStore.gpsSpeed,
         tokimecDataStore.status);
+
+    len = mavlink_msg_to_send_buffer(buf, &txMessage);
+
+    Uart2WriteData(buf, (uint8_t)len);
+}
+
+/**
+ * Transmits the VFR_HUD message, which updates the UI of the groundstation. This is currently only
+ * used to update the throttle value.
+ */
+void MavLinkSendVfrHud(void)
+{
+    float actRudderCommand;
+    int16_t actThrottleCommand;
+    GetCurrentActuatorCommands(&actRudderCommand, &actThrottleCommand);
+    mavlink_msg_vfr_hud_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
+        waterDataStore.speed, gpsDataStore.sog / 100.0,
+        (uint16_t)((float)tokimecDataStore.yaw / 8192.0),
+        (uint16_t)(fabs(actThrottleCommand / 1023.0) * 100),
+        gpsDataStore.altitude / 1000000.0,
+        0);
 
     len = mavlink_msg_to_send_buffer(buf, &txMessage);
 
@@ -1897,6 +1922,10 @@ void MavLinkTransmitGroundstation(void)
 			case MAVLINK_MSG_ID_RADIO_STATUS: {
 				MavLinkSendRadioStatus();
 			} break;
+
+                case MAVLINK_MSG_ID_VFR_HUD:
+                    MavLinkSendVfrHud();
+                    break;
 
 			/** SeaSlug Messages **/
 
