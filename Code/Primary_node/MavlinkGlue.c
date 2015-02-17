@@ -562,7 +562,7 @@ void MavLinkSendVfrHud(void)
 
     len = mavlink_msg_to_send_buffer(buf, &txMessage);
 
-    Uart2WriteData(buf, (uint8_t)len);
+    Uart1WriteData(buf, (uint8_t)len);
 }
 
 void MavLinkSendRadioStatus(void)
