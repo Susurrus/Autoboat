@@ -593,10 +593,15 @@ void MavLinkSendMainPower(void)
  */
 void MavLinkSendBasicState2(void)
 {
+    float actRudderAngleCommand;
+    int16_t actThrottleCommand;
+    GetCurrentActuatorCommands(&actRudderAngleCommand, &actThrottleCommand);
     mavlink_msg_basic_state2_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
-        currentCommands.autonomousRudderCommand, currentCommands.primaryManualRudderCommand, currentCommands.secondaryManualRudderCommand, 0.0,
+        currentCommands.autonomousRudderCommand, currentCommands.primaryManualRudderCommand, currentCommands.secondaryManualRudderCommand,
+        actRudderAngleCommand,
         rudderSensorData.RudderAngle,
-        currentCommands.autonomousThrottleCommand, currentCommands.primaryManualThrottleCommand, currentCommands.secondaryManualThrottleCommand, 0,
+        currentCommands.autonomousThrottleCommand, currentCommands.primaryManualThrottleCommand, currentCommands.secondaryManualThrottleCommand,
+        actThrottleCommand,
         0,
         controllerVars.Acmd,
         controllerVars.L2Vector[0], controllerVars.L2Vector[1]
