@@ -736,8 +736,8 @@ void MavLinkSendControllerData(const ImuData *imu, const GpsData *gps, float wat
         mavlink_system.sysid, mavlink_system.compid, MAVLINK_CHAN_DATALOGGER, &txMessage,
         controllerVars.wp0[0] * 10, controllerVars.wp0[1] * 10,
         controllerVars.wp1[0] * 10, controllerVars.wp1[1] * 10,
-        imu->attitude_quat[0], imu->attitude_quat[1], imu->attitude_quat[2], imu->attitude_quat[3], // IMU Quaternion
-        imu->gyros[0], imu->gyros[1], imu->gyros[2],
+        imu->attitude_quat[0] * 32768, imu->attitude_quat[1] * 32768, imu->attitude_quat[2] * 32768, imu->attitude_quat[3] * 32768, // IMU Quaternion
+        imu->gyros[0] * 4096.0, imu->gyros[1] * 4096.0, imu->gyros[2] * 4096.0,
         waterSpeed * 1e4,
         (gps->mode > 1) && gps->newData, gps->latitude, gps->longitude, gps->sog, gps->cog,
         reset,
