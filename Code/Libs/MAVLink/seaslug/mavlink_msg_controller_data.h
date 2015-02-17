@@ -13,13 +13,13 @@ typedef struct __mavlink_controller_data_t
  int16_t last_wp_east; ///< The east component of the local coordinates of the last waypoint (m * 10).
  int16_t next_wp_north; ///< The north component of the local coordinates of the next waypoint (m * 10).
  int16_t next_wp_east; ///< The east component of the local coordinates of the next waypoint (m * 10).
- int16_t w; ///< Quaternion component 1, w (1 in null-rotation) (1e4)
- int16_t x; ///< Quaternion component 2, x (0 in null-rotation) (1e4)
- int16_t y; ///< Quaternion component 3, y (0 in null-rotation) (1e4)
- int16_t z; ///< Quaternion component 4, z (0 in null-rotation) (1e4)
- int16_t x_angle_vel; ///< Angular velocity around the X-axis. Units are rads/s * 2^12.
- int16_t y_angle_vel; ///< Angular velocity around the Y-axis. Units are rads/s * 2^12.
- int16_t z_angle_vel; ///< Angular velocity around the Z-axis. Units are rads/s * 2^12.
+ int16_t w; ///< Quaternion component 1, w (1 in null-rotation) (2^15)
+ int16_t x; ///< Quaternion component 2, x (0 in null-rotation) (2^15)
+ int16_t y; ///< Quaternion component 3, y (0 in null-rotation) (2^15)
+ int16_t z; ///< Quaternion component 4, z (0 in null-rotation) (2^15)
+ int16_t x_angle_vel; ///< Angular velocity around the X-axis. (rads/s * 2^12)
+ int16_t y_angle_vel; ///< Angular velocity around the Y-axis. (rads/s * 2^12)
+ int16_t z_angle_vel; ///< Angular velocity around the Z-axis. (rads/s * 2^12)
  uint16_t water_speed; ///< Forward water speed (m/s * 1e4).
  uint16_t sog; ///< GPS ground speed (m/s * 1e2). If unknown, set to 0.
  uint16_t cog; ///< Course over ground, from 0 to 2*pi (rad * 1e4). If unknown, set to 0.
@@ -93,13 +93,13 @@ typedef struct __mavlink_controller_data_t
  * @param last_wp_east The east component of the local coordinates of the last waypoint (m * 10).
  * @param next_wp_north The north component of the local coordinates of the next waypoint (m * 10).
  * @param next_wp_east The east component of the local coordinates of the next waypoint (m * 10).
- * @param w Quaternion component 1, w (1 in null-rotation) (1e4)
- * @param x Quaternion component 2, x (0 in null-rotation) (1e4)
- * @param y Quaternion component 3, y (0 in null-rotation) (1e4)
- * @param z Quaternion component 4, z (0 in null-rotation) (1e4)
- * @param x_angle_vel Angular velocity around the X-axis. Units are rads/s * 2^12.
- * @param y_angle_vel Angular velocity around the Y-axis. Units are rads/s * 2^12.
- * @param z_angle_vel Angular velocity around the Z-axis. Units are rads/s * 2^12.
+ * @param w Quaternion component 1, w (1 in null-rotation) (2^15)
+ * @param x Quaternion component 2, x (0 in null-rotation) (2^15)
+ * @param y Quaternion component 3, y (0 in null-rotation) (2^15)
+ * @param z Quaternion component 4, z (0 in null-rotation) (2^15)
+ * @param x_angle_vel Angular velocity around the X-axis. (rads/s * 2^12)
+ * @param y_angle_vel Angular velocity around the Y-axis. (rads/s * 2^12)
+ * @param z_angle_vel Angular velocity around the Z-axis. (rads/s * 2^12)
  * @param water_speed Forward water speed (m/s * 1e4).
  * @param fix_type 0: no fix, 1 valid fix (2D or better).
  * @param lat Latitude (WGS84) (degrees * 1e7). If unknown, set to 0.
@@ -215,13 +215,13 @@ static inline uint16_t mavlink_msg_controller_data_pack(uint8_t system_id, uint8
  * @param last_wp_east The east component of the local coordinates of the last waypoint (m * 10).
  * @param next_wp_north The north component of the local coordinates of the next waypoint (m * 10).
  * @param next_wp_east The east component of the local coordinates of the next waypoint (m * 10).
- * @param w Quaternion component 1, w (1 in null-rotation) (1e4)
- * @param x Quaternion component 2, x (0 in null-rotation) (1e4)
- * @param y Quaternion component 3, y (0 in null-rotation) (1e4)
- * @param z Quaternion component 4, z (0 in null-rotation) (1e4)
- * @param x_angle_vel Angular velocity around the X-axis. Units are rads/s * 2^12.
- * @param y_angle_vel Angular velocity around the Y-axis. Units are rads/s * 2^12.
- * @param z_angle_vel Angular velocity around the Z-axis. Units are rads/s * 2^12.
+ * @param w Quaternion component 1, w (1 in null-rotation) (2^15)
+ * @param x Quaternion component 2, x (0 in null-rotation) (2^15)
+ * @param y Quaternion component 3, y (0 in null-rotation) (2^15)
+ * @param z Quaternion component 4, z (0 in null-rotation) (2^15)
+ * @param x_angle_vel Angular velocity around the X-axis. (rads/s * 2^12)
+ * @param y_angle_vel Angular velocity around the Y-axis. (rads/s * 2^12)
+ * @param z_angle_vel Angular velocity around the Z-axis. (rads/s * 2^12)
  * @param water_speed Forward water speed (m/s * 1e4).
  * @param fix_type 0: no fix, 1 valid fix (2D or better).
  * @param lat Latitude (WGS84) (degrees * 1e7). If unknown, set to 0.
@@ -363,13 +363,13 @@ static inline uint16_t mavlink_msg_controller_data_encode_chan(uint8_t system_id
  * @param last_wp_east The east component of the local coordinates of the last waypoint (m * 10).
  * @param next_wp_north The north component of the local coordinates of the next waypoint (m * 10).
  * @param next_wp_east The east component of the local coordinates of the next waypoint (m * 10).
- * @param w Quaternion component 1, w (1 in null-rotation) (1e4)
- * @param x Quaternion component 2, x (0 in null-rotation) (1e4)
- * @param y Quaternion component 3, y (0 in null-rotation) (1e4)
- * @param z Quaternion component 4, z (0 in null-rotation) (1e4)
- * @param x_angle_vel Angular velocity around the X-axis. Units are rads/s * 2^12.
- * @param y_angle_vel Angular velocity around the Y-axis. Units are rads/s * 2^12.
- * @param z_angle_vel Angular velocity around the Z-axis. Units are rads/s * 2^12.
+ * @param w Quaternion component 1, w (1 in null-rotation) (2^15)
+ * @param x Quaternion component 2, x (0 in null-rotation) (2^15)
+ * @param y Quaternion component 3, y (0 in null-rotation) (2^15)
+ * @param z Quaternion component 4, z (0 in null-rotation) (2^15)
+ * @param x_angle_vel Angular velocity around the X-axis. (rads/s * 2^12)
+ * @param y_angle_vel Angular velocity around the Y-axis. (rads/s * 2^12)
+ * @param z_angle_vel Angular velocity around the Z-axis. (rads/s * 2^12)
  * @param water_speed Forward water speed (m/s * 1e4).
  * @param fix_type 0: no fix, 1 valid fix (2D or better).
  * @param lat Latitude (WGS84) (degrees * 1e7). If unknown, set to 0.
@@ -616,7 +616,7 @@ static inline int16_t mavlink_msg_controller_data_get_next_wp_east(const mavlink
 /**
  * @brief Get field w from controller_data message
  *
- * @return Quaternion component 1, w (1 in null-rotation) (1e4)
+ * @return Quaternion component 1, w (1 in null-rotation) (2^15)
  */
 static inline int16_t mavlink_msg_controller_data_get_w(const mavlink_message_t* msg)
 {
@@ -626,7 +626,7 @@ static inline int16_t mavlink_msg_controller_data_get_w(const mavlink_message_t*
 /**
  * @brief Get field x from controller_data message
  *
- * @return Quaternion component 2, x (0 in null-rotation) (1e4)
+ * @return Quaternion component 2, x (0 in null-rotation) (2^15)
  */
 static inline int16_t mavlink_msg_controller_data_get_x(const mavlink_message_t* msg)
 {
@@ -636,7 +636,7 @@ static inline int16_t mavlink_msg_controller_data_get_x(const mavlink_message_t*
 /**
  * @brief Get field y from controller_data message
  *
- * @return Quaternion component 3, y (0 in null-rotation) (1e4)
+ * @return Quaternion component 3, y (0 in null-rotation) (2^15)
  */
 static inline int16_t mavlink_msg_controller_data_get_y(const mavlink_message_t* msg)
 {
@@ -646,7 +646,7 @@ static inline int16_t mavlink_msg_controller_data_get_y(const mavlink_message_t*
 /**
  * @brief Get field z from controller_data message
  *
- * @return Quaternion component 4, z (0 in null-rotation) (1e4)
+ * @return Quaternion component 4, z (0 in null-rotation) (2^15)
  */
 static inline int16_t mavlink_msg_controller_data_get_z(const mavlink_message_t* msg)
 {
@@ -656,7 +656,7 @@ static inline int16_t mavlink_msg_controller_data_get_z(const mavlink_message_t*
 /**
  * @brief Get field x_angle_vel from controller_data message
  *
- * @return Angular velocity around the X-axis. Units are rads/s * 2^12.
+ * @return Angular velocity around the X-axis. (rads/s * 2^12)
  */
 static inline int16_t mavlink_msg_controller_data_get_x_angle_vel(const mavlink_message_t* msg)
 {
@@ -666,7 +666,7 @@ static inline int16_t mavlink_msg_controller_data_get_x_angle_vel(const mavlink_
 /**
  * @brief Get field y_angle_vel from controller_data message
  *
- * @return Angular velocity around the Y-axis. Units are rads/s * 2^12.
+ * @return Angular velocity around the Y-axis. (rads/s * 2^12)
  */
 static inline int16_t mavlink_msg_controller_data_get_y_angle_vel(const mavlink_message_t* msg)
 {
@@ -676,7 +676,7 @@ static inline int16_t mavlink_msg_controller_data_get_y_angle_vel(const mavlink_
 /**
  * @brief Get field z_angle_vel from controller_data message
  *
- * @return Angular velocity around the Z-axis. Units are rads/s * 2^12.
+ * @return Angular velocity around the Z-axis. (rads/s * 2^12)
  */
 static inline int16_t mavlink_msg_controller_data_get_z_angle_vel(const mavlink_message_t* msg)
 {
