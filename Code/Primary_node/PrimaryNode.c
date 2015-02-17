@@ -782,3 +782,27 @@ float GetPowerRailCurrent(void)
 {
     return analogSensors.powerRailCurrent;
 }
+
+void GetCurrentActuatorCommands(float *rudderAngle, int16_t *throttle)
+{
+    // If we've detected a manual override from the RC node, that's what's driving the boat.
+    if (nodeErrors & PRIMARY_NODE_RESET_MANUAL_OVERRIDE) {
+        *rudderAngle = currentCommands.secondaryManualRudderCommand;
+        *throttle = currentCommands.secondaryManualThrottleCommand;
+    }
+    // Otherwise, if there aren't any other errors, it depends on the mode.
+    else if (!nodeErrors) {
+        if (IS_AUTONOMOUS()) {
+            *rudderAngle = currentCommands.autonomousRudderCommand;
+            *throttle = currentCommands.autonomousThrottleCommand;
+        } else {
+            *rudderAngle = currentCommands.primaryManualRudderCommand;
+            *throttle = currentCommands.primaryManualThrottleCommand;
+        }
+    }
+    // There's nothing driving the boat in this case
+    else {
+        *rudderAngle = 0.0;
+        *throttle = 0;
+    }
+}

@@ -129,4 +129,12 @@ float GetPowerRailVoltage(void);
  */
 float GetPowerRailCurrent(void);
 
+/**
+ * Returns the actual values driving the actuators. This is a 4-way mux between all methods of control
+ * (primary manual, secondary manual, and autonomous) and no-control output.
+ * @param rudderAngle[out] The rudder angle (rads)
+ * @param throttle[out] The throttle setting (1/1023 * 100%)
+ */
+void GetCurrentActuatorCommands(float *rudderAngle, int16_t *throttle);
+
 #endif // PRIMARY_NODE_H
