@@ -33,15 +33,15 @@ typedef struct __mavlink_controller_data_t
  int16_t commanded_throttle; ///< This is the throttle command as commanded by the onboard autonomous controller. It's in units of 1/1023*100% of max current and positive values propel the vehicle forward.
  int16_t rudder_angle; ///< The current rudder angle (rad * 1e4)
  int16_t prop_speed; ///< Propeller speed, positive values mean the vessel will be propelled forward. (rpm * 100)
- uint8_t fix_type; ///< 0: no fix, 1 valid fix (2D or better).
+ uint8_t new_gps_fix; ///< 0: no fix, 1 valid fix AND new GPS reading for this timestep (2D or better).
  uint8_t reset; ///< 0 indicates system is operating normally, 1 indicates it's held in reset.
 } mavlink_controller_data_t;
 
 #define MAVLINK_MSG_ID_CONTROLLER_DATA_LEN 70
 #define MAVLINK_MSG_ID_180_LEN 70
 
-#define MAVLINK_MSG_ID_CONTROLLER_DATA_CRC 103
-#define MAVLINK_MSG_ID_180_CRC 103
+#define MAVLINK_MSG_ID_CONTROLLER_DATA_CRC 220
+#define MAVLINK_MSG_ID_180_CRC 220
 
 
 
@@ -77,7 +77,7 @@ typedef struct __mavlink_controller_data_t
          { "commanded_throttle", NULL, MAVLINK_TYPE_INT16_T, 0, 62, offsetof(mavlink_controller_data_t, commanded_throttle) }, \
          { "rudder_angle", NULL, MAVLINK_TYPE_INT16_T, 0, 64, offsetof(mavlink_controller_data_t, rudder_angle) }, \
          { "prop_speed", NULL, MAVLINK_TYPE_INT16_T, 0, 66, offsetof(mavlink_controller_data_t, prop_speed) }, \
-         { "fix_type", NULL, MAVLINK_TYPE_UINT8_T, 0, 68, offsetof(mavlink_controller_data_t, fix_type) }, \
+         { "new_gps_fix", NULL, MAVLINK_TYPE_UINT8_T, 0, 68, offsetof(mavlink_controller_data_t, new_gps_fix) }, \
          { "reset", NULL, MAVLINK_TYPE_UINT8_T, 0, 69, offsetof(mavlink_controller_data_t, reset) }, \
          } \
 }
@@ -101,7 +101,7 @@ typedef struct __mavlink_controller_data_t
  * @param y_angle_vel Angular velocity around the Y-axis. (rads/s * 2^12)
  * @param z_angle_vel Angular velocity around the Z-axis. (rads/s * 2^12)
  * @param water_speed Forward water speed (m/s * 1e4).
- * @param fix_type 0: no fix, 1 valid fix (2D or better).
+ * @param new_gps_fix 0: no fix, 1 valid fix AND new GPS reading for this timestep (2D or better).
  * @param lat Latitude (WGS84) (degrees * 1e7). If unknown, set to 0.
  * @param lon Longitude (WGS84) (degrees * 1e7). If unknown, set to 0.
  * @param sog GPS ground speed (m/s * 1e2). If unknown, set to 0.
@@ -123,7 +123,7 @@ typedef struct __mavlink_controller_data_t
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_controller_data_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-						       int16_t last_wp_north, int16_t last_wp_east, int16_t next_wp_north, int16_t next_wp_east, int16_t w, int16_t x, int16_t y, int16_t z, int16_t x_angle_vel, int16_t y_angle_vel, int16_t z_angle_vel, uint16_t water_speed, uint8_t fix_type, int32_t lat, int32_t lon, uint16_t sog, uint16_t cog, uint8_t reset, uint32_t time_boot_ms, int32_t north, int32_t east, int16_t north_speed, int16_t east_speed, int16_t yaw_rate_global, int16_t a_cmd, int16_t aim_point_n, int16_t aim_point_e, int16_t commanded_rudder_angle, int16_t commanded_throttle, int16_t rudder_angle, int16_t prop_speed)
+						       int16_t last_wp_north, int16_t last_wp_east, int16_t next_wp_north, int16_t next_wp_east, int16_t w, int16_t x, int16_t y, int16_t z, int16_t x_angle_vel, int16_t y_angle_vel, int16_t z_angle_vel, uint16_t water_speed, uint8_t new_gps_fix, int32_t lat, int32_t lon, uint16_t sog, uint16_t cog, uint8_t reset, uint32_t time_boot_ms, int32_t north, int32_t east, int16_t north_speed, int16_t east_speed, int16_t yaw_rate_global, int16_t a_cmd, int16_t aim_point_n, int16_t aim_point_e, int16_t commanded_rudder_angle, int16_t commanded_throttle, int16_t rudder_angle, int16_t prop_speed)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_CONTROLLER_DATA_LEN];
@@ -156,7 +156,7 @@ static inline uint16_t mavlink_msg_controller_data_pack(uint8_t system_id, uint8
 	_mav_put_int16_t(buf, 62, commanded_throttle);
 	_mav_put_int16_t(buf, 64, rudder_angle);
 	_mav_put_int16_t(buf, 66, prop_speed);
-	_mav_put_uint8_t(buf, 68, fix_type);
+	_mav_put_uint8_t(buf, 68, new_gps_fix);
 	_mav_put_uint8_t(buf, 69, reset);
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_CONTROLLER_DATA_LEN);
@@ -191,7 +191,7 @@ static inline uint16_t mavlink_msg_controller_data_pack(uint8_t system_id, uint8
 	packet.commanded_throttle = commanded_throttle;
 	packet.rudder_angle = rudder_angle;
 	packet.prop_speed = prop_speed;
-	packet.fix_type = fix_type;
+	packet.new_gps_fix = new_gps_fix;
 	packet.reset = reset;
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_CONTROLLER_DATA_LEN);
@@ -223,7 +223,7 @@ static inline uint16_t mavlink_msg_controller_data_pack(uint8_t system_id, uint8
  * @param y_angle_vel Angular velocity around the Y-axis. (rads/s * 2^12)
  * @param z_angle_vel Angular velocity around the Z-axis. (rads/s * 2^12)
  * @param water_speed Forward water speed (m/s * 1e4).
- * @param fix_type 0: no fix, 1 valid fix (2D or better).
+ * @param new_gps_fix 0: no fix, 1 valid fix AND new GPS reading for this timestep (2D or better).
  * @param lat Latitude (WGS84) (degrees * 1e7). If unknown, set to 0.
  * @param lon Longitude (WGS84) (degrees * 1e7). If unknown, set to 0.
  * @param sog GPS ground speed (m/s * 1e2). If unknown, set to 0.
@@ -246,7 +246,7 @@ static inline uint16_t mavlink_msg_controller_data_pack(uint8_t system_id, uint8
  */
 static inline uint16_t mavlink_msg_controller_data_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
 							   mavlink_message_t* msg,
-						           int16_t last_wp_north,int16_t last_wp_east,int16_t next_wp_north,int16_t next_wp_east,int16_t w,int16_t x,int16_t y,int16_t z,int16_t x_angle_vel,int16_t y_angle_vel,int16_t z_angle_vel,uint16_t water_speed,uint8_t fix_type,int32_t lat,int32_t lon,uint16_t sog,uint16_t cog,uint8_t reset,uint32_t time_boot_ms,int32_t north,int32_t east,int16_t north_speed,int16_t east_speed,int16_t yaw_rate_global,int16_t a_cmd,int16_t aim_point_n,int16_t aim_point_e,int16_t commanded_rudder_angle,int16_t commanded_throttle,int16_t rudder_angle,int16_t prop_speed)
+						           int16_t last_wp_north,int16_t last_wp_east,int16_t next_wp_north,int16_t next_wp_east,int16_t w,int16_t x,int16_t y,int16_t z,int16_t x_angle_vel,int16_t y_angle_vel,int16_t z_angle_vel,uint16_t water_speed,uint8_t new_gps_fix,int32_t lat,int32_t lon,uint16_t sog,uint16_t cog,uint8_t reset,uint32_t time_boot_ms,int32_t north,int32_t east,int16_t north_speed,int16_t east_speed,int16_t yaw_rate_global,int16_t a_cmd,int16_t aim_point_n,int16_t aim_point_e,int16_t commanded_rudder_angle,int16_t commanded_throttle,int16_t rudder_angle,int16_t prop_speed)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_CONTROLLER_DATA_LEN];
@@ -279,7 +279,7 @@ static inline uint16_t mavlink_msg_controller_data_pack_chan(uint8_t system_id, 
 	_mav_put_int16_t(buf, 62, commanded_throttle);
 	_mav_put_int16_t(buf, 64, rudder_angle);
 	_mav_put_int16_t(buf, 66, prop_speed);
-	_mav_put_uint8_t(buf, 68, fix_type);
+	_mav_put_uint8_t(buf, 68, new_gps_fix);
 	_mav_put_uint8_t(buf, 69, reset);
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_CONTROLLER_DATA_LEN);
@@ -314,7 +314,7 @@ static inline uint16_t mavlink_msg_controller_data_pack_chan(uint8_t system_id, 
 	packet.commanded_throttle = commanded_throttle;
 	packet.rudder_angle = rudder_angle;
 	packet.prop_speed = prop_speed;
-	packet.fix_type = fix_type;
+	packet.new_gps_fix = new_gps_fix;
 	packet.reset = reset;
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_CONTROLLER_DATA_LEN);
@@ -338,7 +338,7 @@ static inline uint16_t mavlink_msg_controller_data_pack_chan(uint8_t system_id, 
  */
 static inline uint16_t mavlink_msg_controller_data_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_controller_data_t* controller_data)
 {
-	return mavlink_msg_controller_data_pack(system_id, component_id, msg, controller_data->last_wp_north, controller_data->last_wp_east, controller_data->next_wp_north, controller_data->next_wp_east, controller_data->w, controller_data->x, controller_data->y, controller_data->z, controller_data->x_angle_vel, controller_data->y_angle_vel, controller_data->z_angle_vel, controller_data->water_speed, controller_data->fix_type, controller_data->lat, controller_data->lon, controller_data->sog, controller_data->cog, controller_data->reset, controller_data->time_boot_ms, controller_data->north, controller_data->east, controller_data->north_speed, controller_data->east_speed, controller_data->yaw_rate_global, controller_data->a_cmd, controller_data->aim_point_n, controller_data->aim_point_e, controller_data->commanded_rudder_angle, controller_data->commanded_throttle, controller_data->rudder_angle, controller_data->prop_speed);
+	return mavlink_msg_controller_data_pack(system_id, component_id, msg, controller_data->last_wp_north, controller_data->last_wp_east, controller_data->next_wp_north, controller_data->next_wp_east, controller_data->w, controller_data->x, controller_data->y, controller_data->z, controller_data->x_angle_vel, controller_data->y_angle_vel, controller_data->z_angle_vel, controller_data->water_speed, controller_data->new_gps_fix, controller_data->lat, controller_data->lon, controller_data->sog, controller_data->cog, controller_data->reset, controller_data->time_boot_ms, controller_data->north, controller_data->east, controller_data->north_speed, controller_data->east_speed, controller_data->yaw_rate_global, controller_data->a_cmd, controller_data->aim_point_n, controller_data->aim_point_e, controller_data->commanded_rudder_angle, controller_data->commanded_throttle, controller_data->rudder_angle, controller_data->prop_speed);
 }
 
 /**
@@ -352,7 +352,7 @@ static inline uint16_t mavlink_msg_controller_data_encode(uint8_t system_id, uin
  */
 static inline uint16_t mavlink_msg_controller_data_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_controller_data_t* controller_data)
 {
-	return mavlink_msg_controller_data_pack_chan(system_id, component_id, chan, msg, controller_data->last_wp_north, controller_data->last_wp_east, controller_data->next_wp_north, controller_data->next_wp_east, controller_data->w, controller_data->x, controller_data->y, controller_data->z, controller_data->x_angle_vel, controller_data->y_angle_vel, controller_data->z_angle_vel, controller_data->water_speed, controller_data->fix_type, controller_data->lat, controller_data->lon, controller_data->sog, controller_data->cog, controller_data->reset, controller_data->time_boot_ms, controller_data->north, controller_data->east, controller_data->north_speed, controller_data->east_speed, controller_data->yaw_rate_global, controller_data->a_cmd, controller_data->aim_point_n, controller_data->aim_point_e, controller_data->commanded_rudder_angle, controller_data->commanded_throttle, controller_data->rudder_angle, controller_data->prop_speed);
+	return mavlink_msg_controller_data_pack_chan(system_id, component_id, chan, msg, controller_data->last_wp_north, controller_data->last_wp_east, controller_data->next_wp_north, controller_data->next_wp_east, controller_data->w, controller_data->x, controller_data->y, controller_data->z, controller_data->x_angle_vel, controller_data->y_angle_vel, controller_data->z_angle_vel, controller_data->water_speed, controller_data->new_gps_fix, controller_data->lat, controller_data->lon, controller_data->sog, controller_data->cog, controller_data->reset, controller_data->time_boot_ms, controller_data->north, controller_data->east, controller_data->north_speed, controller_data->east_speed, controller_data->yaw_rate_global, controller_data->a_cmd, controller_data->aim_point_n, controller_data->aim_point_e, controller_data->commanded_rudder_angle, controller_data->commanded_throttle, controller_data->rudder_angle, controller_data->prop_speed);
 }
 
 /**
@@ -371,7 +371,7 @@ static inline uint16_t mavlink_msg_controller_data_encode_chan(uint8_t system_id
  * @param y_angle_vel Angular velocity around the Y-axis. (rads/s * 2^12)
  * @param z_angle_vel Angular velocity around the Z-axis. (rads/s * 2^12)
  * @param water_speed Forward water speed (m/s * 1e4).
- * @param fix_type 0: no fix, 1 valid fix (2D or better).
+ * @param new_gps_fix 0: no fix, 1 valid fix AND new GPS reading for this timestep (2D or better).
  * @param lat Latitude (WGS84) (degrees * 1e7). If unknown, set to 0.
  * @param lon Longitude (WGS84) (degrees * 1e7). If unknown, set to 0.
  * @param sog GPS ground speed (m/s * 1e2). If unknown, set to 0.
@@ -393,7 +393,7 @@ static inline uint16_t mavlink_msg_controller_data_encode_chan(uint8_t system_id
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_controller_data_send(mavlink_channel_t chan, int16_t last_wp_north, int16_t last_wp_east, int16_t next_wp_north, int16_t next_wp_east, int16_t w, int16_t x, int16_t y, int16_t z, int16_t x_angle_vel, int16_t y_angle_vel, int16_t z_angle_vel, uint16_t water_speed, uint8_t fix_type, int32_t lat, int32_t lon, uint16_t sog, uint16_t cog, uint8_t reset, uint32_t time_boot_ms, int32_t north, int32_t east, int16_t north_speed, int16_t east_speed, int16_t yaw_rate_global, int16_t a_cmd, int16_t aim_point_n, int16_t aim_point_e, int16_t commanded_rudder_angle, int16_t commanded_throttle, int16_t rudder_angle, int16_t prop_speed)
+static inline void mavlink_msg_controller_data_send(mavlink_channel_t chan, int16_t last_wp_north, int16_t last_wp_east, int16_t next_wp_north, int16_t next_wp_east, int16_t w, int16_t x, int16_t y, int16_t z, int16_t x_angle_vel, int16_t y_angle_vel, int16_t z_angle_vel, uint16_t water_speed, uint8_t new_gps_fix, int32_t lat, int32_t lon, uint16_t sog, uint16_t cog, uint8_t reset, uint32_t time_boot_ms, int32_t north, int32_t east, int16_t north_speed, int16_t east_speed, int16_t yaw_rate_global, int16_t a_cmd, int16_t aim_point_n, int16_t aim_point_e, int16_t commanded_rudder_angle, int16_t commanded_throttle, int16_t rudder_angle, int16_t prop_speed)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_CONTROLLER_DATA_LEN];
@@ -426,7 +426,7 @@ static inline void mavlink_msg_controller_data_send(mavlink_channel_t chan, int1
 	_mav_put_int16_t(buf, 62, commanded_throttle);
 	_mav_put_int16_t(buf, 64, rudder_angle);
 	_mav_put_int16_t(buf, 66, prop_speed);
-	_mav_put_uint8_t(buf, 68, fix_type);
+	_mav_put_uint8_t(buf, 68, new_gps_fix);
 	_mav_put_uint8_t(buf, 69, reset);
 
 #if MAVLINK_CRC_EXTRA
@@ -465,7 +465,7 @@ static inline void mavlink_msg_controller_data_send(mavlink_channel_t chan, int1
 	packet.commanded_throttle = commanded_throttle;
 	packet.rudder_angle = rudder_angle;
 	packet.prop_speed = prop_speed;
-	packet.fix_type = fix_type;
+	packet.new_gps_fix = new_gps_fix;
 	packet.reset = reset;
 
 #if MAVLINK_CRC_EXTRA
@@ -484,7 +484,7 @@ static inline void mavlink_msg_controller_data_send(mavlink_channel_t chan, int1
   is usually the receive buffer for the channel, and allows a reply to an
   incoming message with minimum stack space usage.
  */
-static inline void mavlink_msg_controller_data_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  int16_t last_wp_north, int16_t last_wp_east, int16_t next_wp_north, int16_t next_wp_east, int16_t w, int16_t x, int16_t y, int16_t z, int16_t x_angle_vel, int16_t y_angle_vel, int16_t z_angle_vel, uint16_t water_speed, uint8_t fix_type, int32_t lat, int32_t lon, uint16_t sog, uint16_t cog, uint8_t reset, uint32_t time_boot_ms, int32_t north, int32_t east, int16_t north_speed, int16_t east_speed, int16_t yaw_rate_global, int16_t a_cmd, int16_t aim_point_n, int16_t aim_point_e, int16_t commanded_rudder_angle, int16_t commanded_throttle, int16_t rudder_angle, int16_t prop_speed)
+static inline void mavlink_msg_controller_data_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  int16_t last_wp_north, int16_t last_wp_east, int16_t next_wp_north, int16_t next_wp_east, int16_t w, int16_t x, int16_t y, int16_t z, int16_t x_angle_vel, int16_t y_angle_vel, int16_t z_angle_vel, uint16_t water_speed, uint8_t new_gps_fix, int32_t lat, int32_t lon, uint16_t sog, uint16_t cog, uint8_t reset, uint32_t time_boot_ms, int32_t north, int32_t east, int16_t north_speed, int16_t east_speed, int16_t yaw_rate_global, int16_t a_cmd, int16_t aim_point_n, int16_t aim_point_e, int16_t commanded_rudder_angle, int16_t commanded_throttle, int16_t rudder_angle, int16_t prop_speed)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char *buf = (char *)msgbuf;
@@ -517,7 +517,7 @@ static inline void mavlink_msg_controller_data_send_buf(mavlink_message_t *msgbu
 	_mav_put_int16_t(buf, 62, commanded_throttle);
 	_mav_put_int16_t(buf, 64, rudder_angle);
 	_mav_put_int16_t(buf, 66, prop_speed);
-	_mav_put_uint8_t(buf, 68, fix_type);
+	_mav_put_uint8_t(buf, 68, new_gps_fix);
 	_mav_put_uint8_t(buf, 69, reset);
 
 #if MAVLINK_CRC_EXTRA
@@ -556,7 +556,7 @@ static inline void mavlink_msg_controller_data_send_buf(mavlink_message_t *msgbu
 	packet->commanded_throttle = commanded_throttle;
 	packet->rudder_angle = rudder_angle;
 	packet->prop_speed = prop_speed;
-	packet->fix_type = fix_type;
+	packet->new_gps_fix = new_gps_fix;
 	packet->reset = reset;
 
 #if MAVLINK_CRC_EXTRA
@@ -694,11 +694,11 @@ static inline uint16_t mavlink_msg_controller_data_get_water_speed(const mavlink
 }
 
 /**
- * @brief Get field fix_type from controller_data message
+ * @brief Get field new_gps_fix from controller_data message
  *
- * @return 0: no fix, 1 valid fix (2D or better).
+ * @return 0: no fix, 1 valid fix AND new GPS reading for this timestep (2D or better).
  */
-static inline uint8_t mavlink_msg_controller_data_get_fix_type(const mavlink_message_t* msg)
+static inline uint8_t mavlink_msg_controller_data_get_new_gps_fix(const mavlink_message_t* msg)
 {
 	return _MAV_RETURN_uint8_t(msg,  68);
 }
@@ -921,7 +921,7 @@ static inline void mavlink_msg_controller_data_decode(const mavlink_message_t* m
 	controller_data->commanded_throttle = mavlink_msg_controller_data_get_commanded_throttle(msg);
 	controller_data->rudder_angle = mavlink_msg_controller_data_get_rudder_angle(msg);
 	controller_data->prop_speed = mavlink_msg_controller_data_get_prop_speed(msg);
-	controller_data->fix_type = mavlink_msg_controller_data_get_fix_type(msg);
+	controller_data->new_gps_fix = mavlink_msg_controller_data_get_new_gps_fix(msg);
 	controller_data->reset = mavlink_msg_controller_data_get_reset(msg);
 #else
 	memcpy(controller_data, _MAV_PAYLOAD(msg), MAVLINK_MSG_ID_CONTROLLER_DATA_LEN);
