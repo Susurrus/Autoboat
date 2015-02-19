@@ -98,6 +98,18 @@ float GetWaterSpeed(void)
     return waterDataStore.speed;
 }
 
+float GetPropSpeed(void)
+{
+    throttleDataStore.newData = false;
+    return throttleDataStore.rpm;
+}
+
+void GetGpsData(GpsData *data)
+{
+    *data = gpsDataStore;
+    gpsDataStore.newData = false;
+}
+
 void ClearGpsData(void)
 {
     gpsDataStore.latitude = 0.0;

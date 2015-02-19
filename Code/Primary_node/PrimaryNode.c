@@ -414,12 +414,14 @@ void PrimaryNode100HzLoop(void)
     YawPitchRollToQuaternion(ypr, imu.attitude_quat); // TODO: Move this to when receiving Tokimec data
 
     // Copy all inputs to the controller here. This makes sure that what we transmit in the
-    // CONTROLLER_DATA message is **exactly** what was computed on this timestep.
+    // CONTROLLER_DATA message is **exactly** what was computed on this timestep. Also we make sure
+    // to set their input data to false here.
     bool reset = (nodeErrors != 0);
-    GpsData controllerGpsIn = gpsDataStore;
-    float waterSpeed = waterDataStore.speed;
+    GpsData controllerGpsIn;
+    GetGpsData(&controllerGpsIn);
+    float waterSpeed = GetWaterSpeed();
     float rudderAngle = rudderSensorData.RudderAngle;
-    int16_t propSpeed = throttleDataStore.rpm;
+    int16_t propSpeed = GetPropSpeed();
 
     // Run the control loop, the direct outputs are stored in the follow 2 variables. But note that
     // some additional system state is stored in controllerVars in `MavlinkGlue`.

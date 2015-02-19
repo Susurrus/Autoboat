@@ -184,6 +184,22 @@ extern struct stc {
 #define SENSOR_TIMEOUT 100
 
 /**
+ * Returns the water speed of the vessel in m/s. Also clears the newData member variable.
+ */
+float GetWaterSpeed(void);
+
+/**
+ * Returns the rotation speed of the prop in rpm. Also clears the newData member variable.
+ */
+float GetPropSpeed(void);
+
+/**
+ * Returns the current GPS data. Also clears the newData member variable.
+ * @param[out] data A struct to copy the data into
+ */
+void GetGpsData(GpsData *data);
+
+/**
   * Clears the GPS data struct.
   */
 void ClearGpsData(void);
