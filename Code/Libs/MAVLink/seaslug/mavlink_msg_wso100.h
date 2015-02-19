@@ -5,7 +5,7 @@
 typedef struct __mavlink_wso100_t
 {
  float speed; ///< Wind speed in m/s.
- float direction; ///< Wind direction in rads east from north.
+ float direction; ///< Wind direction in rad east from north.
  float temperature; ///< Air temperature in degrees Celsius.
  float pressure; ///< Air pressure in Pascals.
  float humidity; ///< Air humidity in %.
@@ -38,7 +38,7 @@ typedef struct __mavlink_wso100_t
  * @param msg The MAVLink message to compress the data into
  *
  * @param speed Wind speed in m/s.
- * @param direction Wind direction in rads east from north.
+ * @param direction Wind direction in rad east from north.
  * @param temperature Air temperature in degrees Celsius.
  * @param pressure Air pressure in Pascals.
  * @param humidity Air humidity in %.
@@ -82,7 +82,7 @@ static inline uint16_t mavlink_msg_wso100_pack(uint8_t system_id, uint8_t compon
  * @param chan The MAVLink channel this message will be sent over
  * @param msg The MAVLink message to compress the data into
  * @param speed Wind speed in m/s.
- * @param direction Wind direction in rads east from north.
+ * @param direction Wind direction in rad east from north.
  * @param temperature Air temperature in degrees Celsius.
  * @param pressure Air pressure in Pascals.
  * @param humidity Air humidity in %.
@@ -152,7 +152,7 @@ static inline uint16_t mavlink_msg_wso100_encode_chan(uint8_t system_id, uint8_t
  * @param chan MAVLink channel to send the message
  *
  * @param speed Wind speed in m/s.
- * @param direction Wind direction in rads east from north.
+ * @param direction Wind direction in rad east from north.
  * @param temperature Air temperature in degrees Celsius.
  * @param pressure Air pressure in Pascals.
  * @param humidity Air humidity in %.
@@ -248,7 +248,7 @@ static inline float mavlink_msg_wso100_get_speed(const mavlink_message_t* msg)
 /**
  * @brief Get field direction from wso100 message
  *
- * @return Wind direction in rads east from north.
+ * @return Wind direction in rad east from north.
  */
 static inline float mavlink_msg_wso100_get_direction(const mavlink_message_t* msg)
 {

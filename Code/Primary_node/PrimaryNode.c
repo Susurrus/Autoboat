@@ -11,7 +11,6 @@
 #include <timer.h>
 
 // Project includes
-#include "IMU_Math.h"
 #include "Node.h"
 #include "MavlinkGlue.h"
 #include "Acs300.h"
@@ -403,15 +402,9 @@ void PrimaryNode100HzLoop(void)
 
     ImuData imu = {
         true,
-        {0.0, 0.0, 0.0, 0.0},
+        {(float)tokimecDataStore.yaw / 8192.0, (float)tokimecDataStore.pitch / 8192.0, (float)tokimecDataStore.roll / 8192.0},
         {(float)tokimecDataStore.x_angle_vel / 4096.0, (float)tokimecDataStore.y_angle_vel / 4096.0, (float)tokimecDataStore.z_angle_vel / 4096.0}
     };
-    float ypr[3] = {
-        (float)tokimecDataStore.yaw / 8192.0,
-        (float)tokimecDataStore.pitch / 8192.0,
-        (float)tokimecDataStore.roll / 8192.0
-    };
-    YawPitchRollToQuaternion(ypr, imu.attitude_quat); // TODO: Move this to when receiving Tokimec data
 
     // Copy all inputs to the controller here. This makes sure that what we transmit in the
     // CONTROLLER_DATA message is **exactly** what was computed on this timestep. Also we make sure

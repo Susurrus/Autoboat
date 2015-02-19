@@ -4,21 +4,21 @@
 
 typedef struct __mavlink_tokimec_t
 {
- int32_t latitude; ///< Raw GPS latitude. Units are 2e-29 rads.
- int32_t longitude; ///< Raw GPS longitude. Units are 2e-29 rads.
- int32_t est_latitude; ///< Estimated GPS latitude. Units are 2e-29 rads.
- int32_t est_longitude; ///< Estimated GPS longitude. Units are 2e-29 rads.
- int16_t yaw; ///< Yaw angle. Units are 2e-13 rads.
- int16_t pitch; ///< Pitch angle. Units are 2e-13 rads.
- int16_t roll; ///< Roll angle. Units are 2e-13 rads.
- int16_t x_angle_vel; ///< Angular velocity around the X-axis. Units are 2e-12 rads/s.
- int16_t y_angle_vel; ///< Angular velocity around the Y-axis. Units are 2e-12 rads/s.
- int16_t z_angle_vel; ///< Angular velocity around the Z-axis. Units are 2e-12 rads/s.
+ int32_t latitude; ///< Raw GPS latitude. Units are 2e-29 rad.
+ int32_t longitude; ///< Raw GPS longitude. Units are 2e-29 rad.
+ int32_t est_latitude; ///< Estimated GPS latitude. Units are 2e-29 rad.
+ int32_t est_longitude; ///< Estimated GPS longitude. Units are 2e-29 rad.
+ int16_t yaw; ///< Yaw angle. Units are 2e-13 rad.
+ int16_t pitch; ///< Pitch angle. Units are 2e-13 rad.
+ int16_t roll; ///< Roll angle. Units are 2e-13 rad.
+ int16_t x_angle_vel; ///< Angular velocity around the X-axis. Units are 2e-12 rad/s.
+ int16_t y_angle_vel; ///< Angular velocity around the Y-axis. Units are 2e-12 rad/s.
+ int16_t z_angle_vel; ///< Angular velocity around the Z-axis. Units are 2e-12 rad/s.
  int16_t x_accel; ///< Acceleration along the X-axis. Units are 2e-8 m/s^2.
  int16_t y_accel; ///< Acceleration along the Y-axis. Units are 2e-8 m/s^2.
  int16_t z_accel; ///< Acceleration along the Z-axis. Units are 2e-8 m/s^2.
- int16_t mag_bearing; ///< Magnetic bearing. Units are 2^-13 rads.
- int16_t gps_heading; ///< Raw GPS heading. Units are 2e-13 rads.
+ int16_t mag_bearing; ///< Magnetic bearing. Units are 2^-13 rad.
+ int16_t gps_heading; ///< Raw GPS heading. Units are 2e-13 rad.
  int16_t gps_speed; ///< Raw GPS speed. Units are 2e-6 m/s.
  int16_t status; ///< Status bitfield. See Tokimec documentation.
 } mavlink_tokimec_t;
@@ -61,21 +61,21 @@ typedef struct __mavlink_tokimec_t
  * @param component_id ID of this component (e.g. 200 for IMU)
  * @param msg The MAVLink message to compress the data into
  *
- * @param yaw Yaw angle. Units are 2e-13 rads.
- * @param pitch Pitch angle. Units are 2e-13 rads.
- * @param roll Roll angle. Units are 2e-13 rads.
- * @param x_angle_vel Angular velocity around the X-axis. Units are 2e-12 rads/s.
- * @param y_angle_vel Angular velocity around the Y-axis. Units are 2e-12 rads/s.
- * @param z_angle_vel Angular velocity around the Z-axis. Units are 2e-12 rads/s.
+ * @param yaw Yaw angle. Units are 2e-13 rad.
+ * @param pitch Pitch angle. Units are 2e-13 rad.
+ * @param roll Roll angle. Units are 2e-13 rad.
+ * @param x_angle_vel Angular velocity around the X-axis. Units are 2e-12 rad/s.
+ * @param y_angle_vel Angular velocity around the Y-axis. Units are 2e-12 rad/s.
+ * @param z_angle_vel Angular velocity around the Z-axis. Units are 2e-12 rad/s.
  * @param x_accel Acceleration along the X-axis. Units are 2e-8 m/s^2.
  * @param y_accel Acceleration along the Y-axis. Units are 2e-8 m/s^2.
  * @param z_accel Acceleration along the Z-axis. Units are 2e-8 m/s^2.
- * @param mag_bearing Magnetic bearing. Units are 2^-13 rads.
- * @param latitude Raw GPS latitude. Units are 2e-29 rads.
- * @param longitude Raw GPS longitude. Units are 2e-29 rads.
- * @param est_latitude Estimated GPS latitude. Units are 2e-29 rads.
- * @param est_longitude Estimated GPS longitude. Units are 2e-29 rads.
- * @param gps_heading Raw GPS heading. Units are 2e-13 rads.
+ * @param mag_bearing Magnetic bearing. Units are 2^-13 rad.
+ * @param latitude Raw GPS latitude. Units are 2e-29 rad.
+ * @param longitude Raw GPS longitude. Units are 2e-29 rad.
+ * @param est_latitude Estimated GPS latitude. Units are 2e-29 rad.
+ * @param est_longitude Estimated GPS longitude. Units are 2e-29 rad.
+ * @param gps_heading Raw GPS heading. Units are 2e-13 rad.
  * @param gps_speed Raw GPS speed. Units are 2e-6 m/s.
  * @param status Status bitfield. See Tokimec documentation.
  * @return length of the message in bytes (excluding serial stream start sign)
@@ -141,21 +141,21 @@ static inline uint16_t mavlink_msg_tokimec_pack(uint8_t system_id, uint8_t compo
  * @param component_id ID of this component (e.g. 200 for IMU)
  * @param chan The MAVLink channel this message will be sent over
  * @param msg The MAVLink message to compress the data into
- * @param yaw Yaw angle. Units are 2e-13 rads.
- * @param pitch Pitch angle. Units are 2e-13 rads.
- * @param roll Roll angle. Units are 2e-13 rads.
- * @param x_angle_vel Angular velocity around the X-axis. Units are 2e-12 rads/s.
- * @param y_angle_vel Angular velocity around the Y-axis. Units are 2e-12 rads/s.
- * @param z_angle_vel Angular velocity around the Z-axis. Units are 2e-12 rads/s.
+ * @param yaw Yaw angle. Units are 2e-13 rad.
+ * @param pitch Pitch angle. Units are 2e-13 rad.
+ * @param roll Roll angle. Units are 2e-13 rad.
+ * @param x_angle_vel Angular velocity around the X-axis. Units are 2e-12 rad/s.
+ * @param y_angle_vel Angular velocity around the Y-axis. Units are 2e-12 rad/s.
+ * @param z_angle_vel Angular velocity around the Z-axis. Units are 2e-12 rad/s.
  * @param x_accel Acceleration along the X-axis. Units are 2e-8 m/s^2.
  * @param y_accel Acceleration along the Y-axis. Units are 2e-8 m/s^2.
  * @param z_accel Acceleration along the Z-axis. Units are 2e-8 m/s^2.
- * @param mag_bearing Magnetic bearing. Units are 2^-13 rads.
- * @param latitude Raw GPS latitude. Units are 2e-29 rads.
- * @param longitude Raw GPS longitude. Units are 2e-29 rads.
- * @param est_latitude Estimated GPS latitude. Units are 2e-29 rads.
- * @param est_longitude Estimated GPS longitude. Units are 2e-29 rads.
- * @param gps_heading Raw GPS heading. Units are 2e-13 rads.
+ * @param mag_bearing Magnetic bearing. Units are 2^-13 rad.
+ * @param latitude Raw GPS latitude. Units are 2e-29 rad.
+ * @param longitude Raw GPS longitude. Units are 2e-29 rad.
+ * @param est_latitude Estimated GPS latitude. Units are 2e-29 rad.
+ * @param est_longitude Estimated GPS longitude. Units are 2e-29 rad.
+ * @param gps_heading Raw GPS heading. Units are 2e-13 rad.
  * @param gps_speed Raw GPS speed. Units are 2e-6 m/s.
  * @param status Status bitfield. See Tokimec documentation.
  * @return length of the message in bytes (excluding serial stream start sign)
@@ -247,21 +247,21 @@ static inline uint16_t mavlink_msg_tokimec_encode_chan(uint8_t system_id, uint8_
  * @brief Send a tokimec message
  * @param chan MAVLink channel to send the message
  *
- * @param yaw Yaw angle. Units are 2e-13 rads.
- * @param pitch Pitch angle. Units are 2e-13 rads.
- * @param roll Roll angle. Units are 2e-13 rads.
- * @param x_angle_vel Angular velocity around the X-axis. Units are 2e-12 rads/s.
- * @param y_angle_vel Angular velocity around the Y-axis. Units are 2e-12 rads/s.
- * @param z_angle_vel Angular velocity around the Z-axis. Units are 2e-12 rads/s.
+ * @param yaw Yaw angle. Units are 2e-13 rad.
+ * @param pitch Pitch angle. Units are 2e-13 rad.
+ * @param roll Roll angle. Units are 2e-13 rad.
+ * @param x_angle_vel Angular velocity around the X-axis. Units are 2e-12 rad/s.
+ * @param y_angle_vel Angular velocity around the Y-axis. Units are 2e-12 rad/s.
+ * @param z_angle_vel Angular velocity around the Z-axis. Units are 2e-12 rad/s.
  * @param x_accel Acceleration along the X-axis. Units are 2e-8 m/s^2.
  * @param y_accel Acceleration along the Y-axis. Units are 2e-8 m/s^2.
  * @param z_accel Acceleration along the Z-axis. Units are 2e-8 m/s^2.
- * @param mag_bearing Magnetic bearing. Units are 2^-13 rads.
- * @param latitude Raw GPS latitude. Units are 2e-29 rads.
- * @param longitude Raw GPS longitude. Units are 2e-29 rads.
- * @param est_latitude Estimated GPS latitude. Units are 2e-29 rads.
- * @param est_longitude Estimated GPS longitude. Units are 2e-29 rads.
- * @param gps_heading Raw GPS heading. Units are 2e-13 rads.
+ * @param mag_bearing Magnetic bearing. Units are 2^-13 rad.
+ * @param latitude Raw GPS latitude. Units are 2e-29 rad.
+ * @param longitude Raw GPS longitude. Units are 2e-29 rad.
+ * @param est_latitude Estimated GPS latitude. Units are 2e-29 rad.
+ * @param est_longitude Estimated GPS longitude. Units are 2e-29 rad.
+ * @param gps_heading Raw GPS heading. Units are 2e-13 rad.
  * @param gps_speed Raw GPS speed. Units are 2e-6 m/s.
  * @param status Status bitfield. See Tokimec documentation.
  */
@@ -394,7 +394,7 @@ static inline void mavlink_msg_tokimec_send_buf(mavlink_message_t *msgbuf, mavli
 /**
  * @brief Get field yaw from tokimec message
  *
- * @return Yaw angle. Units are 2e-13 rads.
+ * @return Yaw angle. Units are 2e-13 rad.
  */
 static inline int16_t mavlink_msg_tokimec_get_yaw(const mavlink_message_t* msg)
 {
@@ -404,7 +404,7 @@ static inline int16_t mavlink_msg_tokimec_get_yaw(const mavlink_message_t* msg)
 /**
  * @brief Get field pitch from tokimec message
  *
- * @return Pitch angle. Units are 2e-13 rads.
+ * @return Pitch angle. Units are 2e-13 rad.
  */
 static inline int16_t mavlink_msg_tokimec_get_pitch(const mavlink_message_t* msg)
 {
@@ -414,7 +414,7 @@ static inline int16_t mavlink_msg_tokimec_get_pitch(const mavlink_message_t* msg
 /**
  * @brief Get field roll from tokimec message
  *
- * @return Roll angle. Units are 2e-13 rads.
+ * @return Roll angle. Units are 2e-13 rad.
  */
 static inline int16_t mavlink_msg_tokimec_get_roll(const mavlink_message_t* msg)
 {
@@ -424,7 +424,7 @@ static inline int16_t mavlink_msg_tokimec_get_roll(const mavlink_message_t* msg)
 /**
  * @brief Get field x_angle_vel from tokimec message
  *
- * @return Angular velocity around the X-axis. Units are 2e-12 rads/s.
+ * @return Angular velocity around the X-axis. Units are 2e-12 rad/s.
  */
 static inline int16_t mavlink_msg_tokimec_get_x_angle_vel(const mavlink_message_t* msg)
 {
@@ -434,7 +434,7 @@ static inline int16_t mavlink_msg_tokimec_get_x_angle_vel(const mavlink_message_
 /**
  * @brief Get field y_angle_vel from tokimec message
  *
- * @return Angular velocity around the Y-axis. Units are 2e-12 rads/s.
+ * @return Angular velocity around the Y-axis. Units are 2e-12 rad/s.
  */
 static inline int16_t mavlink_msg_tokimec_get_y_angle_vel(const mavlink_message_t* msg)
 {
@@ -444,7 +444,7 @@ static inline int16_t mavlink_msg_tokimec_get_y_angle_vel(const mavlink_message_
 /**
  * @brief Get field z_angle_vel from tokimec message
  *
- * @return Angular velocity around the Z-axis. Units are 2e-12 rads/s.
+ * @return Angular velocity around the Z-axis. Units are 2e-12 rad/s.
  */
 static inline int16_t mavlink_msg_tokimec_get_z_angle_vel(const mavlink_message_t* msg)
 {
@@ -484,7 +484,7 @@ static inline int16_t mavlink_msg_tokimec_get_z_accel(const mavlink_message_t* m
 /**
  * @brief Get field mag_bearing from tokimec message
  *
- * @return Magnetic bearing. Units are 2^-13 rads.
+ * @return Magnetic bearing. Units are 2^-13 rad.
  */
 static inline int16_t mavlink_msg_tokimec_get_mag_bearing(const mavlink_message_t* msg)
 {
@@ -494,7 +494,7 @@ static inline int16_t mavlink_msg_tokimec_get_mag_bearing(const mavlink_message_
 /**
  * @brief Get field latitude from tokimec message
  *
- * @return Raw GPS latitude. Units are 2e-29 rads.
+ * @return Raw GPS latitude. Units are 2e-29 rad.
  */
 static inline int32_t mavlink_msg_tokimec_get_latitude(const mavlink_message_t* msg)
 {
@@ -504,7 +504,7 @@ static inline int32_t mavlink_msg_tokimec_get_latitude(const mavlink_message_t* 
 /**
  * @brief Get field longitude from tokimec message
  *
- * @return Raw GPS longitude. Units are 2e-29 rads.
+ * @return Raw GPS longitude. Units are 2e-29 rad.
  */
 static inline int32_t mavlink_msg_tokimec_get_longitude(const mavlink_message_t* msg)
 {
@@ -514,7 +514,7 @@ static inline int32_t mavlink_msg_tokimec_get_longitude(const mavlink_message_t*
 /**
  * @brief Get field est_latitude from tokimec message
  *
- * @return Estimated GPS latitude. Units are 2e-29 rads.
+ * @return Estimated GPS latitude. Units are 2e-29 rad.
  */
 static inline int32_t mavlink_msg_tokimec_get_est_latitude(const mavlink_message_t* msg)
 {
@@ -524,7 +524,7 @@ static inline int32_t mavlink_msg_tokimec_get_est_latitude(const mavlink_message
 /**
  * @brief Get field est_longitude from tokimec message
  *
- * @return Estimated GPS longitude. Units are 2e-29 rads.
+ * @return Estimated GPS longitude. Units are 2e-29 rad.
  */
 static inline int32_t mavlink_msg_tokimec_get_est_longitude(const mavlink_message_t* msg)
 {
@@ -534,7 +534,7 @@ static inline int32_t mavlink_msg_tokimec_get_est_longitude(const mavlink_messag
 /**
  * @brief Get field gps_heading from tokimec message
  *
- * @return Raw GPS heading. Units are 2e-13 rads.
+ * @return Raw GPS heading. Units are 2e-13 rad.
  */
 static inline int16_t mavlink_msg_tokimec_get_gps_heading(const mavlink_message_t* msg)
 {

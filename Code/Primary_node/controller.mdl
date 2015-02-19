@@ -45,7 +45,7 @@ Model {
       Name		      "internalVars"
     }
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2711"
+    ComputedModelVersion    "1.2734"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -67,9 +67,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Jan 28 11:15:39 2015"
-  RTWModifiedTimeStamp	  344344481
-  ModelVersionFormat	  "1.%<AutoIncrement:2711>"
+  LastModifiedDate	  "Thu Feb 19 11:31:43 2015"
+  RTWModifiedTimeStamp	  346243831
+  ModelVersionFormat	  "1.%<AutoIncrement:2734>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1170,7 +1170,7 @@ Model {
   }
   System {
     Name		    "controller"
-    Location		    [688, -1006, 1428, -77]
+    Location		    [317, 101, 1020, 629]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1184,7 +1184,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "25854"
+    SIDHighWatermark	    "25858"
     Block {
       BlockType		      Inport
       Name		      "sensors_GPS"
@@ -1267,7 +1267,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Autonomous Controller"
-	Location		[619, 82, 1910, 1028]
+	Location		[379, 82, 1670, 1028]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -3756,8 +3756,8 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "State Keeper &\nEstimator"
-	    Location		    [619, 82, 1910, 1028]
-	    Open		    off
+	    Location		    [264, 190, 1555, 1136]
+	    Open		    on
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -3787,7 +3787,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "reset"
 	      SID		      "25364"
-	      Position		      [25, 163, 55, 177]
+	      Position		      [25, 103, 55, 117]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "2"
 	      IconDisplay	      "Port number"
@@ -3796,7 +3796,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "gps"
 	      SID		      "25365"
-	      Position		      [25, 88, 55, 102]
+	      Position		      [25, 63, 55, 77]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "3"
 	      IconDisplay	      "Port number"
@@ -3818,10 +3818,10 @@ Model {
 	      Position		      [235, 131, 240, 169]
 	      ZOrder		      -3
 	      ShowName		      off
-	      OutputSignals	      "attitude_quat"
+	      OutputSignals	      "attitude"
 	      Port {
 		PortNumber		1
-		Name			"<attitude_quat>"
+		Name			"<attitude>"
 		RTWStorageClass		"Auto"
 		DataLoggingNameMode	"SignalName"
 	      }
@@ -3841,7 +3841,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"Extract inertial yaw rate"
-		Location		[202, 82, 1902, 1027]
+		Location		[264, 190, 1555, 1136]
 		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
@@ -3858,7 +3858,8 @@ Model {
 		  BlockType		  Inport
 		  Name			  "In1"
 		  SID			  "25541"
-		  Position		  [25, 58, 55, 72]
+		  Position		  [25, 68, 55, 82]
+		  BackgroundColor	  "darkGreen"
 		  ShowName		  off
 		  IconDisplay		  "Port number"
 		}
@@ -3867,7 +3868,7 @@ Model {
 		  Name			  "2Hz IIR lowpass"
 		  SID			  "25563"
 		  Ports			  [1, 1]
-		  Position		  [790, 57, 860, 103]
+		  Position		  [700, 52, 770, 98]
 		  ZOrder		  -4
 		  LibraryVersion	  "1.32"
 		  ErrorFcn		  "Stateflow.Translate.translate"
@@ -3985,13 +3986,13 @@ Model {
 		  Name			  "Bus\nSelector"
 		  SID			  "25542"
 		  Ports			  [1, 2]
-		  Position		  [85, 15, 90, 115]
+		  Position		  [95, 36, 100, 109]
 		  ZOrder		  -3
 		  ShowName		  off
-		  OutputSignals		  "attitude_quat,gyros"
+		  OutputSignals		  "attitude,gyros"
 		  Port {
 		    PortNumber		    1
-		    Name		    "<attitude_quat>"
+		    Name		    "<attitude>"
 		    RTWStorageClass	    "Auto"
 		    DataLoggingNameMode	    "SignalName"
 		  }
@@ -4003,22 +4004,143 @@ Model {
 		  }
 		}
 		Block {
-		  BlockType		  DataTypeConversion
-		  Name			  "Data Type Conversion"
-		  SID			  "25543"
-		  Position		  [425, 71, 470, 89]
-		  ZOrder		  -7
-		  ShowName		  off
-		  OutDataTypeStr	  "single"
-		  RndMeth		  "Floor"
-		  SaturateOnIntegerOverflow off
+		  BlockType		  SubSystem
+		  Name			  "Conver the gyros from their body-frame\ncoordinates to an inertial Euler-axis one"
+		  SID			  "25855"
+		  Ports			  [2, 1]
+		  Position		  [195, 36, 380, 109]
+		  ZOrder		  -4
+		  LibraryVersion	  "1.32"
+		  ErrorFcn		  "Stateflow.Translate.translate"
+		  PermitHierarchicalResolution "ExplicitOnly"
+		  TreatAsAtomicUnit	  on
+		  MinAlgLoopOccurrences	  off
+		  PropExecContextOutsideSubsystem off
+		  RTWSystemCode		  "Auto"
+		  FunctionWithSeparateData off
+		  Opaque		  off
+		  RequestExecContextInheritance	off
+		  MaskHideContents	  off
+		  SFBlockType		  "MATLAB Function"
+		  MaskType		  "Stateflow"
+		  MaskDescription	  "Embedded MATLAB block"
+		  MaskSelfModifiable	  on
+		  MaskDisplay		  "bgColor = Simulink.Root.ColorString2Rgb(get_param(gcbh, 'BackgroundColor')); image(imread('private"
+		  "/eml_membrane_16.png','png','BackgroundColor',bgColor(1:3)),'center'); disp([10 10 'rate_conversion']);"
+		  MaskIconFrame		  on
+		  MaskIconOpaque	  off
+		  MaskIconRotate	  "none"
+		  MaskPortRotate	  "default"
+		  MaskIconUnits		  "normalized"
+		  System {
+		    Name		    "Conver the gyros from their body-frame\ncoordinates to an inertial Euler-axis one"
+		    Location		    [257, 457, 812, 717]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    SIDHighWatermark	    "24"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "att_ypr"
+		    SID			    "25855::18"
+		    Position		    [20, 101, 40, 119]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "gyro_b"
+		    SID			    "25855::24"
+		    Position		    [20, 136, 40, 154]
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Demux
+		    Name		    " Demux "
+		    SID			    "25855::15"
+		    Ports		    [1, 1]
+		    Position		    [270, 205, 320, 245]
+		    Outputs		    "1"
+		    }
+		    Block {
+		    BlockType		    S-Function
+		    Name		    " SFunction "
+		    SID			    "25855::14"
+		    Tag			    "Stateflow S-Function controller 3"
+		    Ports		    [2, 2]
+		    Position		    [180, 104, 230, 206]
+		    FunctionName	    "sf_sfun"
+		    PortCounts		    "[2 2]"
+		    EnableBusSupport	    on
+		    Port {
+		    PortNumber		    2
+		    Name		    "att_ypr_dot"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    }
+		    Block {
+		    BlockType		    Terminator
+		    Name		    " Terminator "
+		    SID			    "25855::17"
+		    Position		    [460, 216, 480, 234]
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "att_ypr_dot"
+		    SID			    "25855::5"
+		    Position		    [460, 101, 480, 119]
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "att_ypr"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "gyro_b"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    2
+		    }
+		    Line {
+		    Name		    "att_ypr_dot"
+		    Labels		    [0, 0]
+		    SrcBlock		    " SFunction "
+		    SrcPort		    2
+		    DstBlock		    "att_ypr_dot"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    " Demux "
+		    SrcPort		    1
+		    DstBlock		    " Terminator "
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    " SFunction "
+		    SrcPort		    1
+		    DstBlock		    " Demux "
+		    DstPort		    1
+		    }
+		  }
 		}
 		Block {
 		  BlockType		  SubSystem
 		  Name			  "Glitch removal\n(zero-order hold on glitch)"
 		  SID			  "25564"
 		  Ports			  [1, 1]
-		  Position		  [625, 62, 735, 98]
+		  Position		  [535, 57, 645, 93]
 		  ZOrder		  -4
 		  LibraryVersion	  "1.32"
 		  ErrorFcn		  "Stateflow.Translate.translate"
@@ -4132,45 +4254,24 @@ Model {
 		  }
 		}
 		Block {
-		  BlockType		  Reference
-		  Name			  "Quaternion\nInverse"
-		  SID			  "25544"
-		  Ports			  [1, 1]
-		  Position		  [235, 18, 290, 62]
-		  ZOrder		  -8
-		  LibraryVersion	  "1.100"
-		  SourceBlock		  "aerolibutil/Quaternion\nInverse"
-		  SourceType		  "Quaternion Inverse"
-		}
-		Block {
-		  BlockType		  Reference
-		  Name			  "Quaternion\nRotation"
-		  SID			  "25545"
-		  Ports			  [2, 1]
-		  Position		  [335, 58, 390, 102]
-		  ZOrder		  -13
-		  LibraryVersion	  "1.100"
-		  SourceBlock		  "aerolibutil/Quaternion\nRotation"
-		  SourceType		  "Quaternion Rotation"
-		}
-		Block {
 		  BlockType		  Selector
 		  Name			  "Selector"
 		  SID			  "25546"
 		  Ports			  [1, 1]
-		  Position		  [520, 61, 560, 99]
+		  Position		  [430, 56, 470, 94]
 		  ZOrder		  -17
 		  ShowName		  off
 		  InputPortWidth	  "3"
 		  IndexOptions		  "Index vector (dialog)"
-		  Indices		  "[3]"
+		  Indices		  "[1]"
 		  OutputSizes		  "1"
 		}
 		Block {
 		  BlockType		  Outport
 		  Name			  "Inertial yaw rate"
 		  SID			  "25547"
-		  Position		  [950, 73, 980, 87]
+		  Position		  [850, 68, 880, 82]
+		  BackgroundColor	  "yellow"
 		  IconDisplay		  "Port number"
 		}
 		Line {
@@ -4180,20 +4281,7 @@ Model {
 		  DstPort		  1
 		}
 		Line {
-		  SrcBlock		  "Quaternion\nInverse"
-		  SrcPort		  1
-		  Points		  [25, 0]
-		  DstBlock		  "Quaternion\nRotation"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Quaternion\nRotation"
-		  SrcPort		  1
-		  DstBlock		  "Data Type Conversion"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Data Type Conversion"
+		  SrcBlock		  "Conver the gyros from their body-frame\ncoordinates to an inertial Euler-axis one"
 		  SrcPort		  1
 		  DstBlock		  "Selector"
 		  DstPort		  1
@@ -4211,26 +4299,26 @@ Model {
 		  DstPort		  1
 		}
 		Line {
-		  Name			  "<gyros>"
-		  Labels		  [0, 0]
-		  SrcBlock		  "Bus\nSelector"
-		  SrcPort		  2
-		  DstBlock		  "Quaternion\nRotation"
-		  DstPort		  2
-		}
-		Line {
 		  SrcBlock		  "2Hz IIR lowpass"
 		  SrcPort		  1
 		  DstBlock		  "Inertial yaw rate"
 		  DstPort		  1
 		}
 		Line {
-		  Name			  "<attitude_quat>"
+		  Name			  "<attitude>"
 		  Labels		  [0, 0]
 		  SrcBlock		  "Bus\nSelector"
 		  SrcPort		  1
-		  DstBlock		  "Quaternion\nInverse"
+		  DstBlock		  "Conver the gyros from their body-frame\ncoordinates to an inertial Euler-axis one"
 		  DstPort		  1
+		}
+		Line {
+		  Name			  "<gyros>"
+		  Labels		  [0, 0]
+		  SrcBlock		  "Bus\nSelector"
+		  SrcPort		  2
+		  DstBlock		  "Conver the gyros from their body-frame\ncoordinates to an inertial Euler-axis one"
+		  DstPort		  2
 		}
 		Annotation {
 		  Name			  "Extract the inertial yaw rate from the body rotation rates.\nThe yaw rate is filtered at 5Hz to remove g"
@@ -4255,7 +4343,7 @@ Model {
 	      MaskHideContents	      off
 	      System {
 		Name			"GPS Estimator"
-		Location		[619, 82, 1910, 1011]
+		Location		[379, 82, 1670, 1011]
 		Open			off
 		ModelBrowserVisibility	on
 		ModelBrowserWidth	200
@@ -4272,7 +4360,7 @@ Model {
 		  BlockType		  Inport
 		  Name			  "gps"
 		  SID			  "25773"
-		  Position		  [25, 218, 55, 232]
+		  Position		  [25, 223, 55, 237]
 		  BackgroundColor	  "darkGreen"
 		  IconDisplay		  "Port number"
 		}
@@ -4940,16 +5028,6 @@ Model {
 		}
 		Block {
 		  BlockType		  Goto
-		  Name			  "Goto2"
-		  SID			  "25842"
-		  Position		  [490, 524, 605, 546]
-		  BackgroundColor	  "cyan"
-		  ShowName		  off
-		  GotoTag		  "SensedYaw"
-		  TagVisibility		  "global"
-		}
-		Block {
-		  BlockType		  Goto
 		  Name			  "Goto3"
 		  SID			  "25846"
 		  Position		  [700, 104, 815, 126]
@@ -4980,25 +5058,13 @@ Model {
 		  DisplayOption		  "bar"
 		}
 		Block {
-		  BlockType		  Reference
-		  Name			  "Quaternions to Rotation Angles"
-		  SID			  "25795"
-		  Ports			  [1, 1]
-		  Position		  [205, 454, 305, 496]
-		  ZOrder		  -17
-		  AttributesFormatString  "Rotation Order: %<rotationOrder>"
-		  LibraryVersion	  "1.273"
-		  SourceBlock		  "aerolibtransform2/Quaternions to Rotation Angles"
-		  SourceType		  "Quat2Ang"
-		  rotationOrder		  "ZYX"
-		}
-		Block {
 		  BlockType		  Selector
 		  Name			  "Selector"
-		  SID			  "25796"
+		  SID			  "25858"
 		  Ports			  [1, 1]
-		  Position		  [345, 456, 385, 494]
+		  Position		  [310, 456, 350, 494]
 		  ZOrder		  -17
+		  ShowName		  off
 		  InputPortWidth	  "3"
 		  IndexOptions		  "Index vector (dialog)"
 		  Indices		  "[1]"
@@ -5006,6 +5072,7 @@ Model {
 		  Port {
 		    PortNumber		    1
 		    Name		    "yaw"
+		    PropagatedSignals	    "attitude"
 		    RTWStorageClass	    "Auto"
 		    DataLoggingNameMode	    "SignalName"
 		  }
@@ -5028,7 +5095,7 @@ Model {
 		  Name			  "Subsystem1"
 		  SID			  "25797"
 		  Ports			  [1, 2]
-		  Position		  [115, 163, 185, 287]
+		  Position		  [115, 162, 185, 298]
 		  ShowName		  off
 		  MinAlgLoopOccurrences	  off
 		  PropExecContextOutsideSubsystem off
@@ -5510,7 +5577,7 @@ Model {
 		  BlockType		  Constant
 		  Name			  "Zero level trust9"
 		  SID			  "25825"
-		  Position		  [385, 420, 455, 440]
+		  Position		  [385, 440, 455, 460]
 		  BackgroundColor	  "gray"
 		  ShowName		  off
 		  Value			  "gps_offset"
@@ -5704,16 +5771,15 @@ Model {
 		Line {
 		  SrcBlock		  "Subsystem1"
 		  SrcPort		  2
-		  Points		  [0, 10]
 		  DstBlock		  "GPS slew-limit\nzero-order hold"
 		  DstPort		  1
 		}
 		Line {
 		  SrcBlock		  "gps"
 		  SrcPort		  1
-		  Points		  [30, 0]
+		  Points		  [25, 0]
 		  Branch {
-		    Points		    [0, 85]
+		    Points		    [0, 80]
 		    DstBlock		    "Bus\nSelector1"
 		    DstPort		    1
 		  }
@@ -5773,12 +5839,6 @@ Model {
 		Line {
 		  SrcBlock		  "attitude"
 		  SrcPort		  1
-		  DstBlock		  "Quaternions to Rotation Angles"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Quaternions to Rotation Angles"
-		  SrcPort		  1
 		  DstBlock		  "Selector"
 		  DstPort		  1
 		}
@@ -5828,25 +5888,8 @@ Model {
 		  }
 		}
 		Line {
-		  Name			  "yaw"
-		  Labels		  [0, 0]
-		  SrcBlock		  "Selector"
-		  SrcPort		  1
-		  Points		  [35, 0]
-		  Branch {
-		    DstBlock		    "Vector rotation"
-		    DstPort		    2
-		  }
-		  Branch {
-		    Points		    [0, 60]
-		    DstBlock		    "Goto2"
-		    DstPort		    1
-		  }
-		}
-		Line {
 		  SrcBlock		  "Zero level trust9"
 		  SrcPort		  1
-		  Points		  [10, 0; 0, 20]
 		  DstBlock		  "Vector rotation"
 		  DstPort		  1
 		}
@@ -5951,6 +5994,14 @@ Model {
 		  SrcPort		  1
 		  Points		  [45, 0; 0, -20]
 		  DstBlock		  "cross product"
+		  DstPort		  2
+		}
+		Line {
+		  Name			  "yaw"
+		  Labels		  [0, 0]
+		  SrcBlock		  "Selector"
+		  SrcPort		  1
+		  DstBlock		  "Vector rotation"
 		  DstPort		  2
 		}
 		Annotation {
@@ -6127,7 +6178,6 @@ Model {
 	      Labels		      [0, 0]
 	      SrcBlock		      "gps"
 	      SrcPort		      1
-	      Points		      [245, 0]
 	      DstBlock		      "GPS Estimator"
 	      DstPort		      1
 	    }
@@ -6149,7 +6199,6 @@ Model {
 	      Labels		      [1, 0]
 	      SrcBlock		      "reset"
 	      SrcPort		      1
-	      Points		      [65, 0; 0, -60]
 	      DstBlock		      "GPS Estimator"
 	      DstPort		      2
 	    }
@@ -6196,7 +6245,7 @@ Model {
 	      }
 	    }
 	    Line {
-	      Name		      "<attitude_quat>"
+	      Name		      "<attitude>"
 	      Labels		      [0, 0]
 	      SrcBlock		      "Bus\nSelector"
 	      SrcPort		      1
@@ -6631,7 +6680,6 @@ Model {
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "SensedYaw"
-	  TagVisibility		  "global"
 	}
 	Block {
 	  BlockType		  From
@@ -6869,7 +6917,7 @@ Stateflow {
     name		    "controller"
     created		    "20-Jul-2010 14:18:50"
     isLibrary		    0
-    firstTarget		    63
+    firstTarget		    71
     sfVersion		    76014001.0002
   }
   chart {
@@ -7210,8 +7258,9 @@ Stateflow {
   }
   chart {
     id			    20
-    name		    "Autonomous Controller/State Keeper &\nEstimator/GPS Estimator/Calculate local position from \nGPS data"
-    windowPosition	    [767.124 42.904 200.25 189.75]
+    name		    "Autonomous Controller/State Keeper &\nEstimator/Extract inertial yaw rate/Conver the gyros from their b"
+    "ody-frame\ncoordinates to an inertial Euler-axis one"
+    windowPosition	    [552.891 124.031 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1920 1080 1.333333333333333]
     treeNode		    [0 21 0 0]
@@ -7219,14 +7268,14 @@ Stateflow {
     firstJunction	    22
     viewObj		    20
     machine		    1
-    ssIdHighWaterMark	    15
+    ssIdHighWaterMark	    11
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
     firstData		    24
-    chartFileNumber	    4
+    chartFileNumber	    3
     disableImplicitCasting  1
     eml {
-      name		      "estimateGPS"
+      name		      "rate_conversion"
     }
     supportVariableSizing   0
   }
@@ -7244,23 +7293,10 @@ Stateflow {
     decomposition	    CLUSTER_STATE
     eml {
       isEML		      1
-      script		      "function [enableLLA2LTP, resetIntegrator]  = estimateGPS(latLonAlt, newData, reset)\n%#codegen\n\n"
-      "% This function watches an incoming stream of GPS data and waits for 5\n% valid LLA values before it enables LLA"
-      " to LTP conversion. It also watches\n% for updates to a GPS stream in order to reset a velocity integrator for\n"
-      "% position estimation.\n\n% INPUTS:\n% latLonAlt - the latitude, longitude, and altitude of the vehicle from GPS"
-      "\n% in radians/meters.\n% newData - A boolean signal specifying whether latLonAlt holds new data\n% reset - A gl"
-      "obal reset boolean trigger.\n\n% OUTPUTS:\n% enableLLA2LTP - A boolean specifying whether LLA to LTP conversion "
-      "should\n% occur. The only reason it shouldn't is if the GPS hasn't latched valid\n% positions yet.\n% resetInteg"
-      "rator - Indicates that the velocity integrator, which is\n% calculating position in between GPS fixes, should be"
-      " reset.\n\npersistent newDataCounter;\n\n% Reset everything on first startup or when a global reset is triggered"
-      "\nif isempty(newDataCounter) || reset\n    newDataCounter = uint8(0);\nend\n\n% Pass through the global reset to"
-      " the velocity integrator\nif reset\n    resetIntegrator = true;\nelse\n    resetIntegrator = false;\nend\n\n% Wa"
-      "it for 5 valid GPS inputs before outputting the current position.\n% This allows the GPS to stabilize.\nif newDa"
-      "taCounter < 5\n    if newData && latLonAlt(1) ~= 0 && latLonAlt(2) ~= 0\n        newDataCounter = newDataCounter"
-      " + 1;\n    end\n    enableLLA2LTP = false;\nelse\n    % Reset the integrator if new data has been received for t"
-      "his timestep\n    % as we have a \"truth\" position now.\n    if newData\n        resetIntegrator = true;\n    e"
-      "nd\n    enableLLA2LTP = true;\nend"
-      editorLayout	      "100 M4x1[19 242 1080 733]"
+      script		      "function att_ypr_dot = rate_conversion(att_ypr, gyro_b)\n%% Convert the body rates to inertial Eu"
+      "ler 3-2-1 rates\natt = att_ypr(3:-1:1); % Convert to roll-pitch-yaw\natt_dot = body_rates_to_euler_rates(att, gy"
+      "ro_b);\natt_ypr_dot = att_dot(3:-1:1);"
+      editorLayout	      "100 M4x1[58 319 1080 685]"
     }
   }
   junction {
@@ -7295,9 +7331,163 @@ Stateflow {
   }
   data {
     id			    24
+    ssIdNumber		    5
+    name		    "att_ypr_dot"
+    linkNode		    [20 0 25]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"3"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    25
+    ssIdNumber		    6
+    name		    "att_ypr"
+    linkNode		    [20 24 26]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"3"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    26
+    ssIdNumber		    11
+    name		    "gyro_b"
+    linkNode		    [20 25 0]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"[3,1]"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  instance {
+    id			    27
+    name		    "Autonomous Controller/State Keeper &\nEstimator/Extract inertial yaw rate/Conver the gyros from their b"
+    "ody-frame\ncoordinates to an inertial Euler-axis one"
+    machine		    1
+    chart		    20
+  }
+  chart {
+    id			    28
+    name		    "Autonomous Controller/State Keeper &\nEstimator/GPS Estimator/Calculate local position from \nGPS data"
+    windowPosition	    [767.124 42.904 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1920 1080 1.333333333333333]
+    treeNode		    [0 29 0 0]
+    firstTransition	    31
+    firstJunction	    30
+    viewObj		    28
+    machine		    1
+    ssIdHighWaterMark	    15
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    32
+    chartFileNumber	    4
+    disableImplicitCasting  1
+    eml {
+      name		      "estimateGPS"
+    }
+    supportVariableSizing   0
+  }
+  state {
+    id			    29
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    28
+    treeNode		    [28 0 0 0]
+    superState		    SUBCHART
+    subviewer		    28
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function [enableLLA2LTP, resetIntegrator]  = estimateGPS(latLonAlt, newData, reset)\n%#codegen\n\n"
+      "% This function watches an incoming stream of GPS data and waits for 5\n% valid LLA values before it enables LLA"
+      " to LTP conversion. It also watches\n% for updates to a GPS stream in order to reset a velocity integrator for\n"
+      "% position estimation.\n\n% INPUTS:\n% latLonAlt - the latitude, longitude, and altitude of the vehicle from GPS"
+      "\n% in radians/meters.\n% newData - A boolean signal specifying whether latLonAlt holds new data\n% reset - A gl"
+      "obal reset boolean trigger.\n\n% OUTPUTS:\n% enableLLA2LTP - A boolean specifying whether LLA to LTP conversion "
+      "should\n% occur. The only reason it shouldn't is if the GPS hasn't latched valid\n% positions yet.\n% resetInteg"
+      "rator - Indicates that the velocity integrator, which is\n% calculating position in between GPS fixes, should be"
+      " reset.\n\npersistent newDataCounter;\n\n% Reset everything on first startup or when a global reset is triggered"
+      "\nif isempty(newDataCounter) || reset\n    newDataCounter = uint8(0);\nend\n\n% Pass through the global reset to"
+      " the velocity integrator\nif reset\n    resetIntegrator = true;\nelse\n    resetIntegrator = false;\nend\n\n% Wa"
+      "it for 5 valid GPS inputs before outputting the current position.\n% This allows the GPS to stabilize.\nif newDa"
+      "taCounter < 5\n    if newData && latLonAlt(1) ~= 0 && latLonAlt(2) ~= 0\n        newDataCounter = newDataCounter"
+      " + 1;\n    end\n    enableLLA2LTP = false;\nelse\n    % Reset the integrator if new data has been received for t"
+      "his timestep\n    % as we have a \"truth\" position now.\n    if newData\n        resetIntegrator = true;\n    e"
+      "nd\n    enableLLA2LTP = true;\nend"
+      editorLayout	      "100 M4x1[19 242 1080 733]"
+    }
+  }
+  junction {
+    id			    30
+    position		    [23.5747 49.5747 7]
+    chart		    28
+    linkNode		    [28 0 0]
+    subviewer		    28
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    31
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      30
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    28
+    linkNode		    [28 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    28
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    32
     ssIdNumber		    15
     name		    "enableLLA2LTP"
-    linkNode		    [20 0 25]
+    linkNode		    [28 0 33]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -7315,10 +7505,10 @@ Stateflow {
     dataType		    "boolean"
   }
   data {
-    id			    25
+    id			    33
     ssIdNumber		    4
     name		    "latLonAlt"
-    linkNode		    [20 24 26]
+    linkNode		    [28 32 34]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7333,10 +7523,10 @@ Stateflow {
     dataType		    "int32"
   }
   data {
-    id			    26
+    id			    34
     ssIdNumber		    6
     name		    "newData"
-    linkNode		    [20 25 27]
+    linkNode		    [28 33 35]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7354,10 +7544,10 @@ Stateflow {
     dataType		    "boolean"
   }
   data {
-    id			    27
+    id			    35
     ssIdNumber		    7
     name		    "reset"
-    linkNode		    [20 26 28]
+    linkNode		    [28 34 36]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7375,10 +7565,10 @@ Stateflow {
     dataType		    "boolean"
   }
   data {
-    id			    28
+    id			    36
     ssIdNumber		    8
     name		    "resetIntegrator"
-    linkNode		    [20 27 0]
+    linkNode		    [28 35 0]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -7402,26 +7592,26 @@ Stateflow {
     dataType		    "boolean"
   }
   instance {
-    id			    29
+    id			    37
     name		    "Autonomous Controller/State Keeper &\nEstimator/GPS Estimator/Calculate local position from \nGPS data"
     machine		    1
-    chart		    20
+    chart		    28
   }
   chart {
-    id			    30
+    id			    38
     name		    "Autonomous Controller/State Keeper &\nEstimator/Extract inertial yaw rate/2Hz IIR lowpass"
     windowPosition	    [435.75 143.25 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1920 1080 1.333333333333333]
-    treeNode		    [0 31 0 0]
-    firstTransition	    33
-    firstJunction	    32
-    viewObj		    30
+    treeNode		    [0 39 0 0]
+    firstTransition	    41
+    firstJunction	    40
+    viewObj		    38
     machine		    1
     ssIdHighWaterMark	    5
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
-    firstData		    34
+    firstData		    42
     chartFileNumber	    5
     disableImplicitCasting  1
     eml {
@@ -7429,14 +7619,14 @@ Stateflow {
     }
   }
   state {
-    id			    31
+    id			    39
     labelString		    "eML_blk_kernel()"
     position		    [18 64.5 118 66]
     fontSize		    12
-    chart		    30
-    treeNode		    [30 0 0 0]
+    chart		    38
+    treeNode		    [38 0 0 0]
     superState		    SUBCHART
-    subviewer		    30
+    subviewer		    38
     ssIdNumber		    1
     type		    FUNC_STATE
     decomposition	    CLUSTER_STATE
@@ -7450,16 +7640,16 @@ Stateflow {
     }
   }
   junction {
-    id			    32
+    id			    40
     position		    [23.5747 49.5747 7]
-    chart		    30
-    linkNode		    [30 0 0]
-    subviewer		    30
+    chart		    38
+    linkNode		    [38 0 0]
+    subviewer		    38
     ssIdNumber		    3
     type		    CONNECTIVE_JUNCTION
   }
   transition {
-    id			    33
+    id			    41
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -7467,23 +7657,23 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      32
+      id		      40
       intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
-    chart		    30
-    linkNode		    [30 0 0]
+    chart		    38
+    linkNode		    [38 0 0]
     dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    30
+    subviewer		    38
     drawStyle		    SMART
     executionOrder	    1
     ssIdNumber		    2
   }
   data {
-    id			    34
+    id			    42
     ssIdNumber		    4
     name		    "u"
-    linkNode		    [30 0 35]
+    linkNode		    [38 0 43]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7499,10 +7689,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    35
+    id			    43
     ssIdNumber		    5
     name		    "y"
-    linkNode		    [30 34 0]
+    linkNode		    [38 42 0]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -7518,27 +7708,27 @@ Stateflow {
     dataType		    "single"
   }
   instance {
-    id			    36
+    id			    44
     name		    "Autonomous Controller/State Keeper &\nEstimator/Extract inertial yaw rate/2Hz IIR lowpass"
     machine		    1
-    chart		    30
+    chart		    38
   }
   chart {
-    id			    37
+    id			    45
     name		    "Autonomous Controller/State Keeper &\nEstimator/Extract inertial yaw rate/Glitch removal\n(zero-order h"
     "old on glitch)"
     windowPosition	    [537.891 139.031 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1920 1080 1.333333333333333]
-    treeNode		    [0 38 0 0]
-    firstTransition	    40
-    firstJunction	    39
-    viewObj		    37
+    treeNode		    [0 46 0 0]
+    firstTransition	    48
+    firstJunction	    47
+    viewObj		    45
     machine		    1
     ssIdHighWaterMark	    10
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
-    firstData		    41
+    firstData		    49
     chartFileNumber	    6
     disableImplicitCasting  1
     eml {
@@ -7547,14 +7737,14 @@ Stateflow {
     supportVariableSizing   0
   }
   state {
-    id			    38
+    id			    46
     labelString		    "eML_blk_kernel()"
     position		    [18 64.5 118 66]
     fontSize		    12
-    chart		    37
-    treeNode		    [37 0 0 0]
+    chart		    45
+    treeNode		    [45 0 0 0]
     superState		    SUBCHART
-    subviewer		    37
+    subviewer		    45
     ssIdNumber		    1
     type		    FUNC_STATE
     decomposition	    CLUSTER_STATE
@@ -7577,16 +7767,16 @@ Stateflow {
     }
   }
   junction {
-    id			    39
+    id			    47
     position		    [23.5747 49.5747 7]
-    chart		    37
-    linkNode		    [37 0 0]
-    subviewer		    37
+    chart		    45
+    linkNode		    [45 0 0]
+    subviewer		    45
     ssIdNumber		    3
     type		    CONNECTIVE_JUNCTION
   }
   transition {
-    id			    40
+    id			    48
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -7594,23 +7784,23 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      39
+      id		      47
       intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
-    chart		    37
-    linkNode		    [37 0 0]
+    chart		    45
+    linkNode		    [45 0 0]
     dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    37
+    subviewer		    45
     drawStyle		    SMART
     executionOrder	    1
     ssIdNumber		    2
   }
   data {
-    id			    41
+    id			    49
     ssIdNumber		    5
     name		    "y"
-    linkNode		    [37 0 42]
+    linkNode		    [45 0 50]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -7626,10 +7816,10 @@ Stateflow {
     dataType		    "single"
   }
   data {
-    id			    42
+    id			    50
     ssIdNumber		    6
     name		    "x"
-    linkNode		    [37 41 0]
+    linkNode		    [45 49 0]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7647,27 +7837,27 @@ Stateflow {
     dataType		    "single"
   }
   instance {
-    id			    43
+    id			    51
     name		    "Autonomous Controller/State Keeper &\nEstimator/Extract inertial yaw rate/Glitch removal\n(zero-order h"
     "old on glitch)"
     machine		    1
-    chart		    37
+    chart		    45
   }
   chart {
-    id			    44
+    id			    52
     name		    "Autonomous Controller/Rudder\nCommand/L2 Plus ref WP1"
     windowPosition	    [767.101 -171 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1920 1080 1.333333333333333]
-    treeNode		    [0 45 0 0]
-    firstTransition	    47
-    firstJunction	    46
-    viewObj		    44
+    treeNode		    [0 53 0 0]
+    firstTransition	    55
+    firstJunction	    54
+    viewObj		    52
     machine		    1
     ssIdHighWaterMark	    33
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
-    firstData		    48
+    firstData		    56
     chartFileNumber	    7
     disableImplicitCasting  1
     eml {
@@ -7676,14 +7866,14 @@ Stateflow {
     supportVariableSizing   0
   }
   state {
-    id			    45
+    id			    53
     labelString		    "eML_blk_kernel()"
     position		    [18 64.5 118 66]
     fontSize		    12
-    chart		    44
-    treeNode		    [44 0 0 0]
+    chart		    52
+    treeNode		    [52 0 0 0]
     superState		    SUBCHART
-    subviewer		    44
+    subviewer		    52
     ssIdNumber		    1
     type		    FUNC_STATE
     decomposition	    CLUSTER_STATE
@@ -7753,16 +7943,16 @@ Stateflow {
     }
   }
   junction {
-    id			    46
+    id			    54
     position		    [23.5747 49.5747 7]
-    chart		    44
-    linkNode		    [44 0 0]
-    subviewer		    44
+    chart		    52
+    linkNode		    [52 0 0]
+    subviewer		    52
     ssIdNumber		    3
     type		    CONNECTIVE_JUNCTION
   }
   transition {
-    id			    47
+    id			    55
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -7770,23 +7960,23 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      46
+      id		      54
       intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
-    chart		    44
-    linkNode		    [44 0 0]
+    chart		    52
+    linkNode		    [52 0 0]
     dataLimits		    [23.575 23.575 14.625 34.575]
-    subviewer		    44
+    subviewer		    52
     drawStyle		    SMART
     executionOrder	    1
     ssIdNumber		    2
   }
   data {
-    id			    48
+    id			    56
     ssIdNumber		    24
     name		    "wp0"
-    linkNode		    [44 0 49]
+    linkNode		    [52 0 57]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7805,10 +7995,10 @@ Stateflow {
     dataType		    "single"
   }
   data {
-    id			    49
+    id			    57
     ssIdNumber		    31
     name		    "wp0_found"
-    linkNode		    [44 48 50]
+    linkNode		    [52 56 58]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7832,10 +8022,10 @@ Stateflow {
     dataType		    "boolean"
   }
   data {
-    id			    50
+    id			    58
     ssIdNumber		    25
     name		    "wp1"
-    linkNode		    [44 49 51]
+    linkNode		    [52 57 59]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7854,10 +8044,10 @@ Stateflow {
     dataType		    "single"
   }
   data {
-    id			    51
+    id			    59
     ssIdNumber		    32
     name		    "wp1_found"
-    linkNode		    [44 50 52]
+    linkNode		    [52 58 60]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7875,10 +8065,10 @@ Stateflow {
     dataType		    "boolean"
   }
   data {
-    id			    52
+    id			    60
     ssIdNumber		    17
     name		    "L2Vec"
-    linkNode		    [44 51 53]
+    linkNode		    [52 59 61]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -7895,10 +8085,10 @@ Stateflow {
     dataType		    "single"
   }
   data {
-    id			    53
+    id			    61
     ssIdNumber		    33
     name		    "aimPoint"
-    linkNode		    [44 52 54]
+    linkNode		    [52 60 62]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -7917,10 +8107,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    54
+    id			    62
     ssIdNumber		    6
     name		    "Puav"
-    linkNode		    [44 53 55]
+    linkNode		    [52 61 63]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7934,10 +8124,10 @@ Stateflow {
     dataType		    "single"
   }
   data {
-    id			    55
+    id			    63
     ssIdNumber		    7
     name		    "Vxyz"
-    linkNode		    [44 54 56]
+    linkNode		    [52 62 64]
     scope		    INPUT_DATA
     machine		    1
     props {
@@ -7954,10 +8144,10 @@ Stateflow {
     dataType		    "single"
   }
   data {
-    id			    56
+    id			    64
     ssIdNumber		    8
     name		    "switchDistance"
-    linkNode		    [44 55 57]
+    linkNode		    [52 63 65]
     scope		    PARAMETER_DATA
     paramIndexForInitFromWorkspace 2
     machine		    1
@@ -7976,10 +8166,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    57
+    id			    65
     ssIdNumber		    10
     name		    "tanIntercept"
-    linkNode		    [44 56 58]
+    linkNode		    [52 64 66]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 3
@@ -7999,10 +8189,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    58
+    id			    66
     ssIdNumber		    11
     name		    "MaxDwnPthStar"
-    linkNode		    [44 57 59]
+    linkNode		    [52 65 67]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     machine		    1
@@ -8021,10 +8211,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    59
+    id			    67
     ssIdNumber		    15
     name		    "TStar"
-    linkNode		    [44 58 60]
+    linkNode		    [52 66 68]
     scope		    PARAMETER_DATA
     initFromWorkspace	    1
     paramIndexForInitFromWorkspace 1
@@ -8044,10 +8234,10 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   data {
-    id			    60
+    id			    68
     ssIdNumber		    16
     name		    "as_c"
-    linkNode		    [44 59 61]
+    linkNode		    [52 67 69]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -8062,10 +8252,10 @@ Stateflow {
     dataType		    "single"
   }
   data {
-    id			    61
+    id			    69
     ssIdNumber		    26
     name		    "transition"
-    linkNode		    [44 60 0]
+    linkNode		    [52 68 0]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -8084,22 +8274,22 @@ Stateflow {
     dataType		    "boolean"
   }
   instance {
-    id			    62
+    id			    70
     name		    "Autonomous Controller/Rudder\nCommand/L2 Plus ref WP1"
     machine		    1
-    chart		    44
+    chart		    52
   }
   target {
-    id			    63
+    id			    71
     name		    "sfun"
     description		    "Default Simulink S-Function Target."
     machine		    1
-    linkNode		    [1 0 64]
+    linkNode		    [1 0 72]
   }
   target {
-    id			    64
+    id			    72
     name		    "rtw"
     machine		    1
-    linkNode		    [1 63 0]
+    linkNode		    [1 71 0]
   }
 }

@@ -5,10 +5,10 @@
 #include <stdint.h>
 
 struct RudderData {
-	float RudderAngle;
-	uint16_t RudderPotValue;
-	uint16_t RudderPotLimitStarboard;
-	uint16_t RudderPotLimitPort;
+	float RudderAngle; // The rudder angle in radians ([-.7854, .7854])
+	uint16_t RudderPotValue; // 12-bit ADC value
+	uint16_t RudderPotLimitStarboard; // 12-bit ADC value
+	uint16_t RudderPotLimitPort; // 12-bit ADC value
 	bool LimitHitStarboard;
 	bool LimitHitPort;
 	bool Enabled;

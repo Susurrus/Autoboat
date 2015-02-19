@@ -449,8 +449,8 @@ elems(1).Min = [];
 elems(1).Max = [];
 
 elems(2) = Simulink.BusElement;
-elems(2).Name = 'attitude_quat';
-elems(2).Dimensions = 4;
+elems(2).Name = 'attitude';
+elems(2).Dimensions = 3;
 elems(2).DimensionsMode = 'Fixed';
 elems(2).DataType = 'single';
 elems(2).SampleTime = -1;

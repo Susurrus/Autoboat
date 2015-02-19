@@ -50,7 +50,7 @@ extern struct WaterData waterDataStore;
 
 // Store data from the ACS300 BLDC driver board
 struct ThrottleData {
-	int16_t rpm;
+	int16_t rpm; // RPM
 	bool    newData;
 };
 extern struct ThrottleData throttleDataStore;
@@ -102,7 +102,7 @@ extern uint8_t nodeStatusTimeoutCounters[NUM_NODES];
 
 typedef struct {
     bool newData; // True if newData has arrived and has not been processed yet
-    float attitude_quat[4]; // The attitude quaternion in [w x y z] format (rads and meters).
+    float attitude[3]; // The attitude as Euler angles in yaw,pitch,roll (rads).
     float gyros[3]; // Rotation rate in radians/s in [x y z] format
 } ImuData;
 
