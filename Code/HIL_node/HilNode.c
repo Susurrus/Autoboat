@@ -405,16 +405,16 @@ void HilNodeTimer100Hz(void)
                 {
                     // Transmit the absolute attitude message (converting from floating- to fixed-point)
                     CanMessagePackageImuData(&msg,
-                            hilReceivedData.data.attitude[0] * 8192.0,
-                            hilReceivedData.data.attitude[1] * 8192.0,
-                            hilReceivedData.data.attitude[2] * 8192.0);
+                            (int16_t)(hilReceivedData.data.attitude[0] * 8192.0),
+                            (int16_t)(hilReceivedData.data.attitude[1] * 8192.0),
+                            (int16_t)(hilReceivedData.data.attitude[2] * 8192.0));
                     HIL_ECAN_TRY(Ecan1Transmit(&msg));
 
                     // Now transmit the angular velocity data (converting from floating- to fixed-point)
                     CanMessagePackageAngularVelocityData(&msg,
-                            hilReceivedData.data.gyros[0] * 4096.0,
-                            hilReceivedData.data.gyros[1] * 4096.0,
-                            hilReceivedData.data.gyros[2] * 4096.0);
+                            (int16_t)(hilReceivedData.data.gyros[0] * 4096.0),
+                            (int16_t)(hilReceivedData.data.gyros[1] * 4096.0),
+                            (int16_t)(hilReceivedData.data.gyros[2] * 4096.0));
                     HIL_ECAN_TRY(Ecan1Transmit(&msg));
                 }
                 break;
