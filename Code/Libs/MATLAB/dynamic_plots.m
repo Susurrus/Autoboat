@@ -83,17 +83,17 @@ function dynamic_plots(datafile, auto_run, saveVideo)
     clear valid_waypoint_data;
 
     % Also grab actual and commanded rudder angle and L2+ vector data
-    valid_basic_state_data = ~isnan(data.BASIC_STATE.rudder_angle);
+    valid_basic_state_data = ~isnan(data.BASIC_STATE2.rudder_angle);
     basic_state_time = data.timestamp(valid_basic_state_data);
     [basic_state_time, valid_basic_state_data2] = unique(basic_state_time);
     clear tmp;
-    rudder_angle = data.BASIC_STATE.rudder_angle(valid_basic_state_data);
+    rudder_angle = data.BASIC_STATE2.rudder_angle(valid_basic_state_data);
     rudder_angle = 180/pi*interp1(basic_state_time, rudder_angle(valid_basic_state_data2), pos_time);
-    commanded_rudder_angle = data.BASIC_STATE.commanded_auto_rudder_angle(valid_basic_state_data);
+    commanded_rudder_angle = data.BASIC_STATE2.commanded_auto_rudder_angle(valid_basic_state_data);
     commanded_rudder_angle = 180/pi*interp1(basic_state_time, commanded_rudder_angle(valid_basic_state_data2), pos_time);
-    l2_north = data.BASIC_STATE.L2_north(valid_basic_state_data);
+    l2_north = data.BASIC_STATE2.L2_north(valid_basic_state_data);
     l2_north = interp1(basic_state_time, l2_north(valid_basic_state_data2), pos_time);
-    l2_east = data.BASIC_STATE.L2_east(valid_basic_state_data);
+    l2_east = data.BASIC_STATE2.L2_east(valid_basic_state_data);
     l2_east = interp1(basic_state_time, l2_east(valid_basic_state_data2), pos_time);
     clear valid_basic_state_data;
 
@@ -153,7 +153,7 @@ function dynamic_plots(datafile, auto_run, saveVideo)
     end
     
     % Get the coordinates for icons for the boat and rudder
-    [boat_coords, rudder_coords] = icon_coords();
+    [boat_coords, rudder_coords] = icon_coords(2);
 
     % Set whether the animation is playing or not. Setting this to true
     % pauses the rendering loop.
