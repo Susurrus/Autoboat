@@ -54,7 +54,7 @@ function dynamic_plots_cdata(data, auto_run, filename)
     l2_east = aim_point_e - east;
 
     % And true heading
-    heading = data.CONTROLLER_DATA.yaw(valid_cdata) / 2^15;
+    heading = data.CONTROLLER_DATA.yaw(valid_cdata) / 2^13;
 
     % And finally course-over-ground data
     cog = data.CONTROLLER_DATA.cog(valid_cdata) / 1e4;
