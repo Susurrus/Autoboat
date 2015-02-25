@@ -1,18 +1,10 @@
 %% Plot each autonomous run from the provided CSV file.
 function static_plots_cdata(data)
     
-    % Check that all timestamps are unique, otherwise things explode later
-    assert(length(data.timestamp) == length(unique(data.timestamp)), 'Timestamp data must be unique for calculations');
-    
-    % And let's start our timestamps at 0, which makes the plots a little
-    % nicer.
-    data.timestamp = data.timestamp - data.timestamp(1);
-    
     %% Determine periods of autonomous control
     % Check for both autonomous mode from HEARTBEAT @ 10Hz
     valid_autodata_data = ~isnan(data.HEARTBEAT.base_mode);
     auto_mode = bitand(data.HEARTBEAT.base_mode(valid_autodata_data), 4) ~= 0;
-    manual_control = bitand(data.HEARTBEAT.base_mode(valid_autodata_data), 4) ~= 0;
     mode_time = data.timestamp(valid_autodata_data);
     [mode_time, i] = unique(mode_time);
     auto_mode = auto_mode(i);
@@ -22,8 +14,8 @@ function static_plots_cdata(data)
     plot(mode_time, auto_mode);
     title('Autonomous control over time');
 
-    %% Plot data for all autonomous mode segments
-    % First grab position
+    %% Gather necessary data
+    % Get the position data
     valid_cdata = ~isnan(data.CONTROLLER_DATA.reset);
     cdata_time = data.timestamp(valid_cdata);
     assert(any(valid_cdata), 'No valid CONTROLLER_DATA messages.');

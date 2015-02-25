@@ -1,35 +1,18 @@
 %% Plot each autonomous run from the provided CSV file.
 function static_plots_gcs(data)
     
-    % Check that all timestamps are unique, otherwise things explode later
-    assert(length(data.timestamp) == length(unique(data.timestamp)), 'Timestamp data must be unique for calculations');
-    
-    % And let's start our timestamps at 0, which makes the plots a little
-    % nicer.
-    data.timestamp = data.timestamp - data.timestamp(1);
-    
     %% Determine periods of autonomous control
     % Check for both autonomous mode from HEARTBEAT @ 10Hz
     valid_autodata_data = ~isnan(data.HEARTBEAT.base_mode);
-    auto_mode = bitand(data.HEARTBEAT.base_mode(valid_autodata_data), 4) ~= 0;
+    rad = bitand(data.HEARTBEAT.base_mode(valid_autodata_data), 4) ~= 0;
     mode_time = data.timestamp(valid_autodata_data);
     [mode_time, i] = unique(mode_time);
-    auto_mode = auto_mode(i);
+    rad = rad(i);
 
-    % And manual override from NODE_STATUS @ 1Hz for the primary node.
-    valid_reset_data = ~isnan(data.NODE_STATUS.primary_errors);
-    manual_override = bitand(data.NODE_STATUS.primary_errors(valid_reset_data), hex2dec('10')) ~= 0;
-    [override_time, oti] = unique(data.timestamp(valid_reset_data));
-    manual_override = manual_override(oti);
-    clear oti;
-
-    % Now resample the manual override signals, as that's the slower one
-    manual_override_int = interp1(override_time, manual_override, mode_time, 'nearest');
-    manual_override_int(isnan(manual_override_int)) = 0;
-
-    % And now find all the times we're in autonomous mode and it's not being
-    % overridden.
-    automode = auto_mode & ~manual_override_int;
+    figure;
+    hold on;
+    plot(mode_time, rad);
+    title('Autonomous control over time');
 
     figure;
     hold on;
