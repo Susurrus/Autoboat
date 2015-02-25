@@ -401,6 +401,9 @@ void MavLinkSendHeartbeat(uint8_t channel)
 		mavlink_system.mode &= ~(MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
 		mavlink_system.mode |= MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
 	}
+        // Since we have the uint32 field for storing custom data, we're going to pack both the
+        // nodeStatus and nodeErrors bitfields into it.
+        mavlink_system.custom_mode = ((uint32_t)nodeStatus) << 16 | (uint32_t)nodeErrors;
 
 	// Pack the message
 	mavlink_msg_heartbeat_pack_chan(mavlink_system.sysid, mavlink_system.compid, channel,
