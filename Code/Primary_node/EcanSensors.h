@@ -107,18 +107,17 @@ typedef struct {
 } ImuData;
 
 /**
- * Declare bitflags for use with the GpsData struct's receivedMessages field.
+ * Declare bitflags for use with the GpsData struct's newData field.
  */
 enum {
         GPSDATA_NONE     = 0x00,
-	GPSDATA_POSITION = 0x01,
-	GPSDATA_HEADING  = 0x02,
-	GPSDATA_FIX      = 0x04,
-	GPSDATA_ALL      = 0x07
+	GPSDATA_POSITION = 0x01, // Indicates new position data
+	GPSDATA_VELOCITY = 0x02, // Indicates new sog/cog data
+	GPSDATA_DOP      = 0x04  // Indicates there's new hdop/vdop/mode
 };
 
 typedef struct {
-	bool newData; // Flag for whether this struct stores new data
+	uint8_t newData; // Bitfield with flags for whether this struct stores new data.
 	uint8_t mode; // The type of fix used by the GPS. @see Nmea2000.h:PGN_129539_MODE.
 	uint16_t cog; // Course over ground in .0001 radians eastward from north.
 	uint16_t sog; // Speed over ground in cm/s
@@ -130,24 +129,6 @@ typedef struct {
 	float variation; // Magnetic variation at this GPS coordinate. Units in degrees.
 } GpsData;
 extern GpsData gpsDataStore;
-
-/**
- * This struct should not be modified by external code. It is merely used as an aggregator for
- * incoming GPS data. Once all three messages are aggregated, the data is checked for validity, and
- * then it overwrites the gpsDataStore variable if it is.
- */
-struct GpsDataBundle {
-	uint8_t receivedMessages; /// A bitfiled indicating which fields have been received for this timestep.
-	uint8_t mode; // The type of fix used by the GPS. @see Nmea2000.h:PGN_129539_MODE.
-	uint16_t cog; // Course over ground in degrees eastward from north.
-	uint16_t sog; // Speed over ground in m/s
-	int16_t hdop; // Horizontal dilation of precision. Units in m.
-	int16_t vdop; // Vertical dilation of precision. Units in m.
-	int32_t lat; // Latitude in units of 1e-7 degrees
-	int32_t lon; // Longitude in units of 1e-7 degrees
-	int32_t alt; // Altitude in 1e-6 meters
-};
-extern struct GpsDataBundle gpsNewDataStore;
 
 struct DateTimeData {
 	uint16_t year;

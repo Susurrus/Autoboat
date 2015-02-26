@@ -13,8 +13,8 @@ typedef struct __mavlink_controller_data_t
  int16_t last_wp_east; ///< The east component of the local coordinates of the last waypoint (m * 10).
  int16_t next_wp_north; ///< The north component of the local coordinates of the next waypoint (m * 10).
  int16_t next_wp_east; ///< The east component of the local coordinates of the next waypoint (m * 10).
- int16_t yaw; ///< Euler-angle, yaw component (rad * 2^15)
- int16_t pitch; ///< Euler-angle, pitch component (rad * 2^15)
+ int16_t yaw; ///< Euler-angle, yaw component (rad * 2^13)
+ int16_t pitch; ///< Euler-angle, pitch component (rad * 2^13)
  int16_t roll; ///< Euler-angle, roll component (rad * 2^13)
  int16_t x_angle_vel; ///< Angular velocity around the X-axis. (rad/s * 2^12)
  int16_t y_angle_vel; ///< Angular velocity around the Y-axis. (rad/s * 2^12)
@@ -31,7 +31,7 @@ typedef struct __mavlink_controller_data_t
  int16_t commanded_throttle; ///< This is the throttle command as commanded by the onboard autonomous controller. It's in units of 1/1023*100% of max current and positive values propel the vehicle forward.
  int16_t rudder_angle; ///< The current rudder angle (rad * 1e4)
  int16_t prop_speed; ///< Propeller speed, positive values mean the vessel will be propelled forward. (rpm * 100)
- uint8_t new_gps_fix; ///< 0: no fix, 1 valid fix AND new GPS reading for this timestep (2D or better).
+ uint8_t new_gps_fix; ///< 0: no fix, 1: valid position, 2:valid velocity. These fields are only set if GPS has a valid 2D or 3D fix.
  uint8_t reset; ///< 0 indicates system is operating normally, 1 indicates it's held in reset.
 } mavlink_controller_data_t;
 
@@ -89,14 +89,14 @@ typedef struct __mavlink_controller_data_t
  * @param last_wp_east The east component of the local coordinates of the last waypoint (m * 10).
  * @param next_wp_north The north component of the local coordinates of the next waypoint (m * 10).
  * @param next_wp_east The east component of the local coordinates of the next waypoint (m * 10).
- * @param yaw Euler-angle, yaw component (rad * 2^15)
- * @param pitch Euler-angle, pitch component (rad * 2^15)
+ * @param yaw Euler-angle, yaw component (rad * 2^13)
+ * @param pitch Euler-angle, pitch component (rad * 2^13)
  * @param roll Euler-angle, roll component (rad * 2^13)
  * @param x_angle_vel Angular velocity around the X-axis. (rad/s * 2^12)
  * @param y_angle_vel Angular velocity around the Y-axis. (rad/s * 2^12)
  * @param z_angle_vel Angular velocity around the Z-axis. (rad/s * 2^12)
  * @param water_speed Forward water speed (m/s * 1e4).
- * @param new_gps_fix 0: no fix, 1 valid fix AND new GPS reading for this timestep (2D or better).
+ * @param new_gps_fix 0: no fix, 1: valid position, 2:valid velocity. These fields are only set if GPS has a valid 2D or 3D fix.
  * @param lat Latitude (WGS84) (degrees * 1e7). If unknown, set to 0.
  * @param lon Longitude (WGS84) (degrees * 1e7). If unknown, set to 0.
  * @param sog GPS ground speed (m/s * 1e2). If unknown, set to 0.
@@ -205,14 +205,14 @@ static inline uint16_t mavlink_msg_controller_data_pack(uint8_t system_id, uint8
  * @param last_wp_east The east component of the local coordinates of the last waypoint (m * 10).
  * @param next_wp_north The north component of the local coordinates of the next waypoint (m * 10).
  * @param next_wp_east The east component of the local coordinates of the next waypoint (m * 10).
- * @param yaw Euler-angle, yaw component (rad * 2^15)
- * @param pitch Euler-angle, pitch component (rad * 2^15)
+ * @param yaw Euler-angle, yaw component (rad * 2^13)
+ * @param pitch Euler-angle, pitch component (rad * 2^13)
  * @param roll Euler-angle, roll component (rad * 2^13)
  * @param x_angle_vel Angular velocity around the X-axis. (rad/s * 2^12)
  * @param y_angle_vel Angular velocity around the Y-axis. (rad/s * 2^12)
  * @param z_angle_vel Angular velocity around the Z-axis. (rad/s * 2^12)
  * @param water_speed Forward water speed (m/s * 1e4).
- * @param new_gps_fix 0: no fix, 1 valid fix AND new GPS reading for this timestep (2D or better).
+ * @param new_gps_fix 0: no fix, 1: valid position, 2:valid velocity. These fields are only set if GPS has a valid 2D or 3D fix.
  * @param lat Latitude (WGS84) (degrees * 1e7). If unknown, set to 0.
  * @param lon Longitude (WGS84) (degrees * 1e7). If unknown, set to 0.
  * @param sog GPS ground speed (m/s * 1e2). If unknown, set to 0.
@@ -347,14 +347,14 @@ static inline uint16_t mavlink_msg_controller_data_encode_chan(uint8_t system_id
  * @param last_wp_east The east component of the local coordinates of the last waypoint (m * 10).
  * @param next_wp_north The north component of the local coordinates of the next waypoint (m * 10).
  * @param next_wp_east The east component of the local coordinates of the next waypoint (m * 10).
- * @param yaw Euler-angle, yaw component (rad * 2^15)
- * @param pitch Euler-angle, pitch component (rad * 2^15)
+ * @param yaw Euler-angle, yaw component (rad * 2^13)
+ * @param pitch Euler-angle, pitch component (rad * 2^13)
  * @param roll Euler-angle, roll component (rad * 2^13)
  * @param x_angle_vel Angular velocity around the X-axis. (rad/s * 2^12)
  * @param y_angle_vel Angular velocity around the Y-axis. (rad/s * 2^12)
  * @param z_angle_vel Angular velocity around the Z-axis. (rad/s * 2^12)
  * @param water_speed Forward water speed (m/s * 1e4).
- * @param new_gps_fix 0: no fix, 1 valid fix AND new GPS reading for this timestep (2D or better).
+ * @param new_gps_fix 0: no fix, 1: valid position, 2:valid velocity. These fields are only set if GPS has a valid 2D or 3D fix.
  * @param lat Latitude (WGS84) (degrees * 1e7). If unknown, set to 0.
  * @param lon Longitude (WGS84) (degrees * 1e7). If unknown, set to 0.
  * @param sog GPS ground speed (m/s * 1e2). If unknown, set to 0.
@@ -590,7 +590,7 @@ static inline int16_t mavlink_msg_controller_data_get_next_wp_east(const mavlink
 /**
  * @brief Get field yaw from controller_data message
  *
- * @return Euler-angle, yaw component (rad * 2^15)
+ * @return Euler-angle, yaw component (rad * 2^13)
  */
 static inline int16_t mavlink_msg_controller_data_get_yaw(const mavlink_message_t* msg)
 {
@@ -600,7 +600,7 @@ static inline int16_t mavlink_msg_controller_data_get_yaw(const mavlink_message_
 /**
  * @brief Get field pitch from controller_data message
  *
- * @return Euler-angle, pitch component (rad * 2^15)
+ * @return Euler-angle, pitch component (rad * 2^13)
  */
 static inline int16_t mavlink_msg_controller_data_get_pitch(const mavlink_message_t* msg)
 {
@@ -660,7 +660,7 @@ static inline uint16_t mavlink_msg_controller_data_get_water_speed(const mavlink
 /**
  * @brief Get field new_gps_fix from controller_data message
  *
- * @return 0: no fix, 1 valid fix AND new GPS reading for this timestep (2D or better).
+ * @return 0: no fix, 1: valid position, 2:valid velocity. These fields are only set if GPS has a valid 2D or 3D fix.
  */
 static inline uint8_t mavlink_msg_controller_data_get_new_gps_fix(const mavlink_message_t* msg)
 {

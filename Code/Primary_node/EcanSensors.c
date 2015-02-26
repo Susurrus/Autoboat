@@ -46,7 +46,6 @@ struct AirData airDataStore = {0};
 struct WaterData waterDataStore = {0};
 struct ThrottleData throttleDataStore = {0};
 GpsData gpsDataStore = {0};
-struct GpsDataBundle gpsNewDataStore = {0};
 struct DateTimeData dateTimeDataStore = {// Initialize our system clock to clearly invalid values.
     0,
     0,
@@ -107,7 +106,7 @@ float GetPropSpeed(void)
 void GetGpsData(GpsData *data)
 {
     *data = gpsDataStore;
-    gpsDataStore.newData = false;
+    gpsDataStore.newData = 0;
 }
 
 void ClearGpsData(void)
@@ -294,116 +293,62 @@ uint8_t ProcessAllEcanMessages(void)
                 break;
                 case PGN_POSITION_RAP_UPD:
                 { // From the GPS200
+                    // Keep the GPS enabled
                     sensorAvailability.gps.enabled_counter = 0;
-                    uint8_t rv = ParsePgn129025(msg.payload, &gpsNewDataStore.lat, &gpsNewDataStore.lon);
 
-                    // Only do something if both latitude and longitude were parsed successfully.
-                    if ((rv & 0x03) == 0x03) {
-                        // If there was already position data in there, assume this is the start of a new clustering and clear out old data.
-                        if (gpsNewDataStore.receivedMessages & GPSDATA_POSITION) {
-                            gpsNewDataStore.receivedMessages = GPSDATA_POSITION;
-                        }                            // Otherwise we...
-                        else {
-                            // Record that a position message was received.
-                            gpsNewDataStore.receivedMessages |= GPSDATA_POSITION;
+                    // Decode the position
+                    int32_t lat, lon;
+                    uint8_t rv = ParsePgn129025(msg.payload, &lat, &lon);
 
-                            // And if it was the last message in this bundle, check that it's valid,
-                            // and copy it over to the reading struct setting it as new data.
-                            if (gpsNewDataStore.receivedMessages == GPSDATA_ALL) {
-                                // Validity is checked by verifying that this had a valid 2D/3D fix,
-                                // and lat/lon is not 0,
-                                if ((gpsNewDataStore.mode == PGN_129539_MODE_2D || gpsNewDataStore.mode == PGN_129539_MODE_3D) &&
-                                        (gpsNewDataStore.lat != 0 || gpsNewDataStore.lon != 0)) {
+                    // Only do something if both latitude and longitude were parsed successfully and
+                    // the last fix update we got says that the data is good.
+                    if ((rv & 0x03) == 0x03 &&
+                        (gpsDataStore.mode == PGN_129539_MODE_2D || gpsDataStore.mode == PGN_129539_MODE_3D)) {
+                        // Mark that we found new position data
+                        gpsDataStore.newData |= GPSDATA_POSITION;
 
-                                    // Copy the entire struct over and then overwrite the newData
-                                    // field with a valid "true" value.
-                                    memcpy(&gpsDataStore, &gpsNewDataStore, sizeof (gpsNewDataStore));
-                                    gpsDataStore.newData = true;
+                        // Since we've received good data, keep the GPS active
+                        sensorAvailability.gps.active_counter = 0;
 
-                                    // Also set our GPS as receiving good data.
-                                    sensorAvailability.gps.active_counter = 0;
-                                }
-
-                                // Regardless of whether this data was useful, we clear for next bundle.
-                                gpsNewDataStore.receivedMessages = GPSDATA_NONE;
-                            }
-                        }
+                        // Finally copy the new data into the GPS struct
+                        gpsDataStore.latitude = lat;
+                        gpsDataStore.longitude = lon;
                     }
                 }
                 break;
                 case PGN_COG_SOG_RAP_UPD:
                 { // From the GPS200
                     sensorAvailability.gps.enabled_counter = 0;
-                    uint8_t rv = ParsePgn129026(msg.payload, NULL, NULL, &gpsNewDataStore.cog, &gpsNewDataStore.sog);
+                    uint16_t cog, sog;
+                    uint8_t rv = ParsePgn129026(msg.payload, NULL, NULL, &cog, &sog);
 
                     // Only update if both course-over-ground and speed-over-ground were parsed successfully.
-                    if ((rv & 0x0C) == 0x0C) {
-                        // If there was already heading data in there, assume this is the start of a new clustering and clear out old data.
-                        if (gpsNewDataStore.receivedMessages & GPSDATA_HEADING) {
-                            gpsNewDataStore.receivedMessages = GPSDATA_HEADING;
-                        }                            // Otherwise we...
-                        else {
-                            // Record that a position message was received.
-                            gpsNewDataStore.receivedMessages |= GPSDATA_HEADING;
+                    if ((rv & 0x0C) == 0x0C &&
+                        (gpsDataStore.mode == PGN_129539_MODE_2D || gpsDataStore.mode == PGN_129539_MODE_3D)) {
+                        // Mark that we found new velocity data
+                        gpsDataStore.newData |= GPSDATA_VELOCITY;
 
-                            // And if it was the last message in this bundle, check that it's valid,
-                            // and copy it over to the reading struct setting it as new data.
-                            if (gpsNewDataStore.receivedMessages == GPSDATA_ALL) {
-                                // Validity is checked by verifying that this had a valid 2D/3D fix,
-                                // and lat/lon is not 0,
-                                if ((gpsNewDataStore.mode == PGN_129539_MODE_2D || gpsNewDataStore.mode == PGN_129539_MODE_3D) &&
-                                        (gpsNewDataStore.lat != 0 || gpsNewDataStore.lon != 0)) {
+                        // Since we've received good data, keep the GPS active
+                        sensorAvailability.gps.active_counter = 0;
 
-                                    // Copy the entire struct over and then overwrite the newData
-                                    // field with a valid "true" value.
-                                    memcpy(&gpsDataStore, &gpsNewDataStore, sizeof (gpsNewDataStore));
-                                    gpsDataStore.newData = true;
-
-                                    // Also set our GPS as receiving good data.
-                                    sensorAvailability.gps.active_counter = 0;
-                                }
-
-                                // Regardless of whether this data was useful, we clear for next bundle.
-                                gpsNewDataStore.receivedMessages = GPSDATA_NONE;
-                            }
-                        }
+                        // Finally copy the new data into the GPS struct
+                        gpsDataStore.cog = cog;
+                        gpsDataStore.sog = sog;
                     }
                 }
                 break;
                 case PGN_GNSS_DOPS:
                 { // From the GPS200
                     sensorAvailability.gps.enabled_counter = 0;
-                    uint8_t rv = ParsePgn129539(msg.payload, NULL, NULL, &gpsNewDataStore.mode, &gpsNewDataStore.hdop, &gpsNewDataStore.vdop, NULL);
+                    uint8_t rv = ParsePgn129539(msg.payload, NULL, NULL, &gpsDataStore.mode, &gpsDataStore.hdop, &gpsDataStore.vdop, NULL);
 
+                    // If there was valid data in the mode and hdop/vdop fields,
                     if ((rv & 0x1C) == 0x1C) {
-                        // If there was already heading data in there, assume this is the start of a new clustering and clear out old data.
-                        if (gpsNewDataStore.receivedMessages & GPSDATA_FIX) {
-                            gpsNewDataStore.receivedMessages = GPSDATA_FIX;
-                        }                            // Otherwise we...
-                        else {
-                            // Record that a position message was received.
-                            gpsNewDataStore.receivedMessages |= GPSDATA_FIX;
+                        // Mark that we found new DoP data
+                        gpsDataStore.newData |= GPSDATA_DOP;
 
-                            // And if it was the last message in this bundle, check that it's valid,
-                            // and copy it over to the reading struct setting it as new data.
-                            if (gpsNewDataStore.receivedMessages == GPSDATA_ALL) {
-                                // Validity is checked by verifying that this had a valid 2D/3D fix,
-                                // and lat/lon is not 0,
-                                if ((gpsNewDataStore.mode == PGN_129539_MODE_2D || gpsNewDataStore.mode == PGN_129539_MODE_3D) &&
-                                        (gpsNewDataStore.lat != 0 || gpsNewDataStore.lon != 0)) {
-
-                                    // Copy the entire struct over and then overwrite the newData
-                                    // field with a valid "true" value.
-                                    memcpy(&gpsDataStore, &gpsNewDataStore, sizeof (gpsNewDataStore));
-                                    gpsDataStore.newData = true;
-                                    // Also set our GPS as receiving good data.
-                                    sensorAvailability.gps.active_counter = 0;
-                                }
-
-                                // Regardless of whether this data was useful, we clear for next bundle.
-                                gpsNewDataStore.receivedMessages = GPSDATA_NONE;
-                            }
-                        }
+                        // Since we've received good data, keep the GPS active
+                        sensorAvailability.gps.active_counter = 0;
                     }
                 }
                 break;
