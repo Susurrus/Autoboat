@@ -44,7 +44,7 @@ Model {
       Name		      "imu"
     }
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.61"
+    ComputedModelVersion    "1.62"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -66,9 +66,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Feb 19 16:04:15 2015"
-  RTWModifiedTimeStamp	  346262630
-  ModelVersionFormat	  "1.%<AutoIncrement:61>"
+  LastModifiedDate	  "Wed Feb 25 17:47:23 2015"
+  RTWModifiedTimeStamp	  346787236
+  ModelVersionFormat	  "1.%<AutoIncrement:62>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -106,7 +106,6 @@ Model {
     $ObjectID		    1
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "Plant"
-    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -691,6 +690,15 @@ Model {
   }
   BlockParameterDefaults {
     Block {
+      BlockType		      ArithShift
+      BitShiftNumberSource    "Dialog"
+      BitShiftNumber	      "0"
+      BinPtShiftNumber	      "0"
+      BitShiftDirection	      "Bidirectional"
+      DiagnosticForOORShift   "None"
+      CheckOORBitShift	      off
+    }
+    Block {
       BlockType		      Bias
       Bias		      "0"
       SaturateOnIntegerOverflow	on
@@ -1037,7 +1045,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "240"
+    SIDHighWatermark	    "252"
     Block {
       BlockType		      Inport
       Name		      "Commanded Rudder"
@@ -2713,13 +2721,43 @@ Model {
 	  Name			  "20-count\ncounter"
 	  SID			  "186"
 	  Ports			  [0, 1]
-	  Position		  [730, 530, 760, 560]
+	  Position		  [635, 530, 665, 560]
 	  ZOrder		  -7
 	  LibraryVersion	  "1.256"
 	  SourceBlock		  "simulink/Sources/Counter\nLimited"
 	  SourceType		  "Counter Limited"
 	  uplimit		  "19"
 	  tsamp			  "T_step"
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "24-count\ncounter"
+	  SID			  "248"
+	  Ports			  [0, 1]
+	  Position		  [635, 590, 665, 620]
+	  ZOrder		  -7
+	  LibraryVersion	  "1.256"
+	  SourceBlock		  "simulink/Sources/Counter\nLimited"
+	  SourceType		  "Counter Limited"
+	  uplimit		  "24"
+	  tsamp			  "T_step"
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Bitwise\nOperator"
+	  SID			  "252"
+	  Ports			  [2, 1]
+	  Position		  [860, 561, 900, 599]
+	  ZOrder		  -3
+	  ShowName		  off
+	  LibraryVersion	  "1.256"
+	  SourceBlock		  "simulink/Logic and Bit\nOperations/Bitwise\nOperator"
+	  SourceType		  "Bitwise Operator"
+	  logicop		  "OR"
+	  UseBitMask		  off
+	  NumInputPorts		  "2"
+	  BitMask		  "bin2dec('11011001')"
+	  BitMaskRealWorld	  "Stored Integer"
 	}
 	Block {
 	  BlockType		  BusAssignment
@@ -2735,7 +2773,7 @@ Model {
 	  Name			  "Bus\nCreator"
 	  SID			  "81"
 	  Ports			  [10, 1]
-	  Position		  [810, 144, 815, 501]
+	  Position		  [910, 144, 915, 501]
 	  ShowName		  off
 	  Inputs		  "10"
 	  DisplayOption		  "bar"
@@ -2763,14 +2801,29 @@ Model {
 	  Name			  "Compare\nTo Zero"
 	  SID			  "187"
 	  Ports			  [1, 1]
-	  Position		  [835, 530, 865, 560]
+	  Position		  [685, 530, 715, 560]
 	  ZOrder		  -6
 	  ShowName		  off
 	  LibraryVersion	  "1.256"
 	  SourceBlock		  "simulink/Logic and Bit\nOperations/Compare\nTo Zero"
 	  SourceType		  "Compare To Zero"
 	  relop			  "=="
-	  OutDataTypeStr	  "boolean"
+	  OutDataTypeStr	  "uint8"
+	  ZeroCross		  on
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Compare\nTo Zero1"
+	  SID			  "249"
+	  Ports			  [1, 1]
+	  Position		  [685, 590, 715, 620]
+	  ZOrder		  -6
+	  ShowName		  off
+	  LibraryVersion	  "1.256"
+	  SourceBlock		  "simulink/Logic and Bit\nOperations/Compare\nTo Zero"
+	  SourceType		  "Compare To Zero"
+	  relop			  "=="
+	  OutDataTypeStr	  "uint8"
 	  ZeroCross		  on
 	}
 	Block {
@@ -2845,7 +2898,7 @@ Model {
 	  Name			  "Delay4"
 	  SID			  "188"
 	  Ports			  [1, 1]
-	  Position		  [925, 528, 960, 562]
+	  Position		  [935, 563, 970, 597]
 	  ShowName		  off
 	  InputPortMap		  "u0"
 	  DelayLength		  "gpsLatency"
@@ -2873,7 +2926,7 @@ Model {
 	  Name			  "Demux2"
 	  SID			  "83"
 	  Ports			  [1, 2]
-	  Position		  [715, 357, 720, 428]
+	  Position		  [815, 357, 820, 428]
 	  BackgroundColor	  "black"
 	  ShowName		  off
 	  Outputs		  "2"
@@ -2940,7 +2993,7 @@ Model {
 	  BlockType		  Gain
 	  Name			  "Gain"
 	  SID			  "87"
-	  Position		  [585, 410, 615, 440]
+	  Position		  [545, 410, 575, 440]
 	  ZOrder		  -11
 	  ShowName		  off
 	  Gain			  "1e7"
@@ -2952,7 +3005,7 @@ Model {
 	  BlockType		  Gain
 	  Name			  "Gain1"
 	  SID			  "88"
-	  Position		  [640, 220, 670, 250]
+	  Position		  [615, 220, 645, 250]
 	  ZOrder		  -11
 	  ShowName		  off
 	  Gain			  "1e4"
@@ -2970,7 +3023,7 @@ Model {
 	  BlockType		  Gain
 	  Name			  "Gain2"
 	  SID			  "89"
-	  Position		  [640, 285, 670, 315]
+	  Position		  [615, 285, 645, 315]
 	  ZOrder		  -11
 	  ShowName		  off
 	  Gain			  "1e2"
@@ -2996,18 +3049,54 @@ Model {
 	}
 	Block {
 	  BlockType		  RateTransition
-	  Name			  "Rate Transition"
-	  SID			  "189"
-	  Position		  [850, 304, 890, 346]
+	  Name			  "Rate Transition1"
+	  SID			  "247"
+	  Position		  [770, 279, 805, 321]
+	  ZOrder		  -10
+	  ShowName		  off
+	  OutPortSampleTime	  "T_step"
+	}
+	Block {
+	  BlockType		  RateTransition
+	  Name			  "Rate Transition2"
+	  SID			  "241"
+	  Position		  [695, 214, 735, 256]
+	  ZOrder		  -10
+	  ShowName		  off
+	  OutPortSampleTime	  ".25"
+	}
+	Block {
+	  BlockType		  RateTransition
+	  Name			  "Rate Transition3"
+	  SID			  "242"
+	  Position		  [695, 279, 735, 321]
+	  ZOrder		  -10
+	  ShowName		  off
+	  OutPortSampleTime	  ".25"
+	}
+	Block {
+	  BlockType		  RateTransition
+	  Name			  "Rate Transition4"
+	  SID			  "243"
+	  Position		  [770, 214, 805, 256]
+	  ZOrder		  -10
+	  ShowName		  off
+	  OutPortSampleTime	  "T_step"
+	}
+	Block {
+	  BlockType		  RateTransition
+	  Name			  "Rate Transition6"
+	  SID			  "245"
+	  Position		  [630, 404, 670, 446]
 	  ZOrder		  -10
 	  ShowName		  off
 	  OutPortSampleTime	  ".2"
 	}
 	Block {
 	  BlockType		  RateTransition
-	  Name			  "Rate Transition1"
-	  SID			  "190"
-	  Position		  [915, 304, 955, 346]
+	  Name			  "Rate Transition7"
+	  SID			  "246"
+	  Position		  [695, 404, 730, 446]
 	  ZOrder		  -10
 	  ShowName		  off
 	  OutPortSampleTime	  "T_step"
@@ -3023,6 +3112,18 @@ Model {
 	  IndexOptions		  "Index vector (dialog)"
 	  Indices		  "[2 1]"
 	  OutputSizes		  "1"
+	}
+	Block {
+	  BlockType		  ArithShift
+	  Name			  "Shift\nArithmetic"
+	  SID			  "251"
+	  Ports			  [1, 1]
+	  Position		  [745, 585, 825, 625]
+	  ZOrder		  -19
+	  ShowName		  off
+	  InputPortMap		  "u0"
+	  BitShiftNumber	  "1"
+	  BitShiftDirection	  "Left"
 	}
 	Block {
 	  BlockType		  SubSystem
@@ -3232,11 +3333,11 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Zero level trust1"
 	  SID			  "195"
-	  Position		  [705, 156, 730, 174]
+	  Position		  [805, 156, 830, 174]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
-	  Value			  "false"
-	  OutDataTypeStr	  "boolean"
+	  Value			  "0"
+	  OutDataTypeStr	  "uint8"
 	  Port {
 	    PortNumber		    1
 	    Name		    "newData"
@@ -3248,7 +3349,7 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Zero level trust2"
 	  SID			  "94"
-	  Position		  [705, 436, 730, 454]
+	  Position		  [805, 436, 830, 454]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -3264,7 +3365,7 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Zero level trust3"
 	  SID			  "95"
-	  Position		  [705, 471, 730, 489]
+	  Position		  [805, 471, 830, 489]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -3280,7 +3381,7 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Zero level trust4"
 	  SID			  "96"
-	  Position		  [705, 191, 730, 209]
+	  Position		  [805, 191, 830, 209]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "3"
@@ -3296,7 +3397,7 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Zero level trust5"
 	  SID			  "97"
-	  Position		  [705, 311, 730, 329]
+	  Position		  [805, 311, 830, 329]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -3312,7 +3413,7 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Zero level trust6"
 	  SID			  "98"
-	  Position		  [705, 331, 730, 349]
+	  Position		  [805, 331, 830, 349]
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
@@ -3537,17 +3638,16 @@ Model {
 	  Labels		  [1, 0]
 	  SrcBlock		  "Gain1"
 	  SrcPort		  1
-	  DstBlock		  "Bus\nCreator"
-	  DstPort		  3
+	  DstBlock		  "Rate Transition2"
+	  DstPort		  1
 	}
 	Line {
 	  Name			  "sog"
 	  Labels		  [1, 0]
 	  SrcBlock		  "Gain2"
 	  SrcPort		  1
-	  Points		  [80, 0; 0, -30]
-	  DstBlock		  "Bus\nCreator"
-	  DstPort		  4
+	  DstBlock		  "Rate Transition3"
+	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Selector"
@@ -3570,8 +3670,7 @@ Model {
 	Line {
 	  SrcBlock		  "Gain"
 	  SrcPort		  1
-	  Points		  [50, 0; 0, -30]
-	  DstBlock		  "Demux2"
+	  DstBlock		  "Rate Transition6"
 	  DstPort		  1
 	}
 	Line {
@@ -3702,23 +3801,12 @@ Model {
 	Line {
 	  SrcBlock		  "Compare\nTo Zero"
 	  SrcPort		  1
-	  DstBlock		  "Delay4"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Rate Transition"
-	  SrcPort		  1
-	  DstBlock		  "Rate Transition1"
+	  Points		  [115, 0; 0, 25]
+	  DstBlock		  "Bitwise\nOperator"
 	  DstPort		  1
 	}
 	Line {
 	  SrcBlock		  "Bus\nCreator"
-	  SrcPort		  1
-	  DstBlock		  "Rate Transition"
-	  DstPort		  1
-	}
-	Line {
-	  SrcBlock		  "Rate Transition1"
 	  SrcPort		  1
 	  DstBlock		  "Bus\nAssignment"
 	  DstPort		  1
@@ -3742,7 +3830,7 @@ Model {
 	  Labels		  [0, 0]
 	  SrcBlock		  "Delay4"
 	  SrcPort		  1
-	  Points		  [10, 0; 0, -200]
+	  Points		  [0, -235]
 	  DstBlock		  "Bus\nAssignment"
 	  DstPort		  2
 	}
@@ -3778,6 +3866,69 @@ Model {
 	  DstBlock		  "Delay2"
 	  DstPort		  1
 	}
+	Line {
+	  SrcBlock		  "Rate Transition2"
+	  SrcPort		  1
+	  DstBlock		  "Rate Transition4"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Rate Transition3"
+	  SrcPort		  1
+	  DstBlock		  "Rate Transition1"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Rate Transition4"
+	  SrcPort		  1
+	  DstBlock		  "Bus\nCreator"
+	  DstPort		  3
+	}
+	Line {
+	  SrcBlock		  "Rate Transition1"
+	  SrcPort		  1
+	  Points		  [50, 0; 0, -30]
+	  DstBlock		  "Bus\nCreator"
+	  DstPort		  4
+	}
+	Line {
+	  SrcBlock		  "Rate Transition6"
+	  SrcPort		  1
+	  DstBlock		  "Rate Transition7"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Rate Transition7"
+	  SrcPort		  1
+	  Points		  [30, 0; 0, -25; 35, 0]
+	  DstBlock		  "Demux2"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "24-count\ncounter"
+	  SrcPort		  1
+	  DstBlock		  "Compare\nTo Zero1"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Compare\nTo Zero1"
+	  SrcPort		  1
+	  DstBlock		  "Shift\nArithmetic"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Shift\nArithmetic"
+	  SrcPort		  1
+	  Points		  [5, 0; 0, -15]
+	  DstBlock		  "Bitwise\nOperator"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Bitwise\nOperator"
+	  SrcPort		  1
+	  DstBlock		  "Delay4"
+	  DstPort		  1
+	}
 	Annotation {
 	  Name			  "Convert velocity vector to speed"
 	  Position		  [496, 276]
@@ -3791,20 +3942,20 @@ Model {
 	  Position		  [571, 393]
 	}
 	Annotation {
-	  Position		  [815, 329]
+	  Position		  [915, 329]
 	}
 	Annotation {
-	  Position		  [815, 315]
+	  Position		  [915, 315]
 	}
 	Annotation {
-	  Position		  [808, 315]
+	  Position		  [908, 315]
 	}
 	Annotation {
-	  Position		  [815, 312]
+	  Position		  [915, 312]
 	}
 	Annotation {
 	  Name			  "A uint16 in units of\n1e-2 m/s"
-	  Position		  [667, 273]
+	  Position		  [767, 273]
 	}
 	Annotation {
 	  Name			  "A uint16 in units of\n1e-4 rads"
@@ -3826,8 +3977,13 @@ Model {
 	  HorizontalAlignment	  "left"
 	}
 	Annotation {
-	  Name			  "Generate 5Hz newData signal.\nAlso make sure it's delayed like all\nthe other input signals"
-	  Position		  [895, 594]
+	  Name			  "Generate 4Hz newData signal for the velocity\nAlso make sure it's delayed like all\nthe other input signa"
+	  "ls"
+	  Position		  [740, 679]
+	}
+	Annotation {
+	  Name			  "Generate 5Hz newData signal for the position."
+	  Position		  [745, 513]
 	}
       }
     }
