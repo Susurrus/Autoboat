@@ -380,12 +380,6 @@ void MavLinkSendHeartbeat(uint8_t channel)
 		mavlink_system.state = MAV_STATE_CALIBRATING;
 		mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
 	}
-	// If the system is under backup manual control, make sure to report that.
-	else if (nodeErrors & PRIMARY_NODE_RESET_MANUAL_OVERRIDE) {
-		mavlink_system.state = MAV_STATE_ACTIVE;
-                mavlink_system.mode &= ~(MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
-                mavlink_system.mode |= MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
-	}
 	// Otherwise if there're any other errors we're in standby
 	else if (nodeErrors) {
 		mavlink_system.state = MAV_STATE_STANDBY;
@@ -394,22 +388,22 @@ void MavLinkSendHeartbeat(uint8_t channel)
 	// Finally we're active if there're no errors. Also indicate within the mode that we're armed.
 	else {
             mavlink_system.state = MAV_STATE_ACTIVE;
-
-            // And then we update the system mode using MAV_MODE_FLAGs
-            // Set manual/autonomous mode. Note that they're not mutually exclusive within the MAVLink protocol,
-            // though I treat them as such for my autopilot.
-            if (IS_AUTONOMOUS()) {
-                    mavlink_system.mode |= (MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
-                    mavlink_system.mode &= ~MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
-            } else {
-                    mavlink_system.mode &= ~(MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
-                    mavlink_system.mode |= MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
-            }
 	}
+
+        // And then we update the system mode with the control method, either manual or autonomous.
+        // Note that they're not mutually exclusive within the MAVLink protocol, though I treat them
+        // as such for my autopilot.
+        if (IS_AUTONOMOUS()) {
+                mavlink_system.mode |= (MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
+                mavlink_system.mode &= ~MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
+        } else {
+                mavlink_system.mode &= ~(MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED);
+                mavlink_system.mode |= MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
+        }
 
         // Since we have the uint32 field for storing custom data, we're going to pack both the
         // nodeStatus and nodeErrors bitfields into it.
-        mavlink_system.custom_mode = ((uint32_t)nodeStatus) << 16 | (uint32_t)nodeErrors;
+        mavlink_system.custom_mode = (((uint32_t)nodeStatus) << 16) | (uint32_t)nodeErrors;
 
 	// Pack the message
 	mavlink_msg_heartbeat_pack_chan(mavlink_system.sysid, mavlink_system.compid, channel,
