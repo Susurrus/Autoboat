@@ -303,7 +303,8 @@ uint8_t ProcessAllEcanMessages(void)
                     // Only do something if both latitude and longitude were parsed successfully and
                     // the last fix update we got says that the data is good.
                     if ((rv & 0x03) == 0x03 &&
-                        (gpsDataStore.mode == PGN_129539_MODE_2D || gpsDataStore.mode == PGN_129539_MODE_3D)) {
+                        (gpsDataStore.mode == PGN_129539_MODE_2D || gpsDataStore.mode == PGN_129539_MODE_3D) &&
+                        (lat != 0 && lon != 0)) {
                         // Mark that we found new position data
                         gpsDataStore.newData |= GPSDATA_POSITION;
 
