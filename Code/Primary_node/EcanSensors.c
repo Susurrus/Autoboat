@@ -313,8 +313,13 @@ uint8_t ProcessAllEcanMessages(void)
 
                     // Only do something if both latitude and longitude were parsed successfully and
                     // the last fix update we got says that the data is good.
+                    // Additionally jumps to 0,0 are ignored. I've seen this happen a few times.
+                    // Note that only unique position readings are allowed. This check is due to the
+                    // GPS200 unit being used outputting data at 5Hz, but only internally updating
+                    // at 4Hz. To prevent backtracking, ignoring duplicate positions is done.
                     if ((rv & 0x03) == 0x03 &&
                         (gpsDataStore.mode == PGN_129539_MODE_2D || gpsDataStore.mode == PGN_129539_MODE_3D) &&
+                        (lat != gpsDataStore.latitude && lon != gpsDataStore.longitude) &&
                         (lat != 0 && lon != 0)) {
                         // Mark that we found new position data
                         gpsDataStore.newData |= GPSDATA_POSITION;
@@ -334,7 +339,8 @@ uint8_t ProcessAllEcanMessages(void)
                     uint16_t cog, sog;
                     uint8_t rv = ParsePgn129026(msg.payload, NULL, NULL, &cog, &sog);
 
-                    // Only update if both course-over-ground and speed-over-ground were parsed successfully.
+                    // Only update if both course-over-ground and speed-over-ground were parsed
+                    // and the last reported GPS mode indicates a proper fix.
                     if ((rv & 0x0C) == 0x0C &&
                         (gpsDataStore.mode == PGN_129539_MODE_2D || gpsDataStore.mode == PGN_129539_MODE_3D)) {
                         // Mark that we found new velocity data

@@ -460,6 +460,7 @@ void MavLinkSendStatus(uint8_t channel)
 	                          ONBOARD_CONTROL_XY_POS  |
 	                          ONBOARD_CONTROL_MOTOR;
 
+        // These are systems which are connected.
 	uint32_t systemsEnabled = ONBOARD_CONTROL_YAW_POS;
 	systemsEnabled |= sensorAvailability.gps.enabled?ONBOARD_SENSORS_GPS:0;
 	systemsEnabled |= sensorAvailability.imu.enabled?ONBOARD_SENSORS_IMU:0;
@@ -468,6 +469,7 @@ void MavLinkSendStatus(uint8_t channel)
 	// The power node doesn't map into this bitfield.
 	systemsEnabled |= sensorAvailability.prop.enabled?(ONBOARD_CONTROL_XY_POS|ONBOARD_CONTROL_MOTOR):0;
 
+        // And these are systems which are transmitting good data
 	uint32_t systemsActive = ONBOARD_CONTROL_YAW_POS;
 	systemsActive |= sensorAvailability.gps.active?ONBOARD_SENSORS_GPS:0;
 	systemsActive |= sensorAvailability.imu.active?ONBOARD_SENSORS_IMU:0;
@@ -772,6 +774,7 @@ void MavLinkSendControllerData(const ImuData *imu, const GpsData *gps, float wat
         clampedACmd = controllerVars.Acmd * 1e5;
     }
 
+    // Note that GPS mode checking is already done for us when new GPS messages are received
     mavlink_msg_controller_data_pack_chan(
         mavlink_system.sysid, mavlink_system.compid, MAVLINK_CHAN_DATALOGGER, &txMessage,
         controllerVars.wp0[0] * 10, controllerVars.wp0[1] * 10,
