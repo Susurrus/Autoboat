@@ -782,7 +782,7 @@ void MavLinkSendControllerData(const ImuData *imu, const GpsData *gps, float wat
         imu->attitude[0] * 8192.0, imu->attitude[1] * 8192.0, imu->attitude[2] * 8192.0,
         imu->gyros[0] * 4096.0, imu->gyros[1] * 4096.0, imu->gyros[2] * 4096.0,
         waterSpeed * 1e4,
-        gps->newData, gps->latitude, gps->longitude, gps->sog, gps->cog, // Note that the mode checking is already done for us when new GPS messages are received
+        gps->newData, gps->latitude, gps->longitude, gps->sog, gps->cog, gps->hdop,
         reset,
         nodeSystemTime*10,
         controllerVars.LocalPosition[0] * 1e3, controllerVars.LocalPosition[1] * 1e3,
