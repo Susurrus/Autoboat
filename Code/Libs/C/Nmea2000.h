@@ -105,7 +105,7 @@ uint8_t ParsePgn129025(const uint8_t data[8], int32_t *latitude, int32_t *longit
 uint8_t ParsePgn129026(const uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, uint16_t *cog, uint16_t *sog);
 
 // Units are seqId: none, desiredMode: enum PGN_129539_MODE, actualMode: PGN_129539_MODE, hdop: .01 unitless, vdop: .01 unitless, tdop: .01 unitless
-uint8_t ParsePgn129539(const uint8_t data[8], uint8_t *seqId, uint8_t *desiredMode, uint8_t *actualMode, int16_t *hdop, int16_t *vdop, int16_t *tdop);
+uint8_t ParsePgn129539(const uint8_t data[8], uint8_t *seqId, uint8_t *desiredMode, uint8_t *actualMode, uint16_t *hdop, uint16_t *vdop, uint16_t *tdop);
 
 // Units are seqId: none, airSpeed: m/s, direction: radians eastward from north.
 uint8_t ParsePgn130306(const uint8_t data[8], uint8_t *seqId, float *airSpeed, float *direction);

@@ -453,7 +453,7 @@ uint8_t ParsePgn129026(const uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, u
 	return fieldStatus;
 }
 
-uint8_t ParsePgn129539(const uint8_t data[8], uint8_t *seqId, uint8_t *desiredMode, uint8_t *actualMode, int16_t *hdop, int16_t *vdop, int16_t *tdop)
+uint8_t ParsePgn129539(const uint8_t data[8], uint8_t *seqId, uint8_t *desiredMode, uint8_t *actualMode, uint16_t *hdop, uint16_t *vdop, uint16_t *tdop)
 {
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.
 	uint8_t fieldStatus = 0;
@@ -490,19 +490,19 @@ uint8_t ParsePgn129539(const uint8_t data[8], uint8_t *seqId, uint8_t *desiredMo
 
 	// Field 2: HDOP. Horizontal dilution of precision. Comes in as .01.
 	if (hdop && (data[2] != 0xFF || data[3] != 0x7F)) {
-		LEUnpackInt16(hdop, &data[2]);
+		LEUnpackUint16(hdop, &data[2]);
 		fieldStatus |= 0x08;
 	}
 
 	// Field 2: VDOP. Vertical dilution of precision. Comes in as .01.
 	if (vdop && (data[4] != 0xFF || data[5] != 0x7F)) {
-		LEUnpackInt16(vdop, &data[4]);
+		LEUnpackUint16(vdop, &data[4]);
 		fieldStatus |= 0x10;
 	}
 
 	// Field 2: TDOP. Temporal dilution of precision. Comes in as .01.
 	if (tdop && (data[6] != 0xFF || data[7] != 0x7F)) {
-		LEUnpackInt16(tdop, &data[6]);
+		LEUnpackUint16(tdop, &data[6]);
 		fieldStatus |= 0x20;
 	}
 

@@ -121,8 +121,8 @@ typedef struct {
 	uint8_t mode; // The type of fix used by the GPS. @see Nmea2000.h:PGN_129539_MODE.
 	uint16_t cog; // Course over ground in .0001 radians eastward from north.
 	uint16_t sog; // Speed over ground in cm/s
-	int16_t hdop; // Horizontal dilation of precision. Units in m.
-	int16_t vdop; // Vertical dilation of precision. Units in m.
+	uint16_t hdop; // Horizontal dilation of precision. Units in .01 (unitless).
+	uint16_t vdop; // Vertical dilation of precision. Units in .01 (unitless).
 	int32_t latitude; // Latitude in units of 1e-7 degrees
 	int32_t longitude; // Longitude in units of 1e-7 degrees
 	int32_t altitude; // Altitude in 1e-6 meters
