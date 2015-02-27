@@ -252,14 +252,15 @@ static MessageSchedule groundstationMavlinkSchedule = {
 #define DATALOGGER_PARAM_TRANSMIT_COUNT 2
 
 // Set up the message scheduler for MAVLink transmission to the datalogger
-#define DATALOGGER_SCHEDULE_NUM_MSGS 6
+#define DATALOGGER_SCHEDULE_NUM_MSGS 7
 static uint8_t dataloggerMavlinkScheduleIds[DATALOGGER_SCHEDULE_NUM_MSGS] = {
 	MAVLINK_MSG_ID_HEARTBEAT,
 	MAVLINK_MSG_ID_SYS_STATUS,
 	MAVLINK_MSG_ID_NODE_STATUS,
 	MAVLINK_MSG_ID_TOKIMEC_WITH_TIME,
 	MAVLINK_MSG_ID_CONTROLLER_DATA,
-        MAVLINK_MSG_ID_PARAM_VALUE_WITH_TIME
+        MAVLINK_MSG_ID_PARAM_VALUE_WITH_TIME,
+        MAVLINK_MSG_ID_SYSTEM_TIME
 };
 static uint16_t dataloggerMavlinkScheduleTSteps[DATALOGGER_SCHEDULE_NUM_MSGS][2][8] = {};
 static uint8_t  dataloggerMavlinkScheduleSizes[DATALOGGER_SCHEDULE_NUM_MSGS];
@@ -283,7 +284,7 @@ void MavLinkSendRawGps(void);
 void MavLinkSendMainPower(void);
 void MavLinkSendBasicState(void);
 void MavLinkSendAttitude(void);
-void MavLinkSendSystemTime(void);
+void MavLinkSendSystemTime(uint8_t channel);
 void MavLinkSendVfrHud(void);
 void MavLinkSendParamValue(uint16_t id);
 int MavLinkAppendMission(const mavlink_mission_item_t *mission);
@@ -337,7 +338,7 @@ void MavLinkInit(void)
         // We want the HEARTBEAT/SYS_STATUS messages so this stream can be used with QGC. And then
         // for datalogging having the status of all nodes at 5Hz + the controller's input/output at
         // 100Hz is awesome.
-        const uint8_t const periodicities[DATALOGGER_SCHEDULE_NUM_MSGS] = {2, 2, 5, 0, 100, 0};
+        const uint8_t const periodicities[DATALOGGER_SCHEDULE_NUM_MSGS] = {2, 2, 5, 0, 100, 0, 1};
 	for (i = 0; i < DATALOGGER_SCHEDULE_NUM_MSGS; ++i) {
             if (periodicities[i] && !AddMessageRepeating(&dataloggerMavlinkSchedule, dataloggerMavlinkScheduleIds[i], periodicities[i])) {
                 FATAL_ERROR();
@@ -427,15 +428,21 @@ void MavLinkSendHeartbeat(uint8_t channel)
  * record timestamps on data reliably. For some reason it doesn't just use the local
  * time of message reception. Hopefully this fixes that.
  */
-void MavLinkSendSystemTime(void)
+void MavLinkSendSystemTime(uint8_t channel)
 {
-	// Pack the message
-	mavlink_msg_system_time_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
-            dateTimeDataStore.usecSinceEpoch, nodeSystemTime*10);
+    // Pack the message
+    mavlink_msg_system_time_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
+        dateTimeDataStore.usecSinceEpoch, nodeSystemTime*10);
 
-	// Copy the message to the send buffer
-	len = mavlink_msg_to_send_buffer(buf, &txMessage);
-	Uart1WriteData(buf, (uint8_t)len);
+    // Copy the message to the send buffer
+    len = mavlink_msg_to_send_buffer(buf, &txMessage);
+
+    // Send to the correct channel
+    if (channel == MAVLINK_CHAN_DATALOGGER) {
+        Uart2WriteData(buf, (uint8_t)len);
+    } else {
+        Uart1WriteData(buf, (uint8_t)len);
+    }
 }
 
 /**
@@ -1902,7 +1909,7 @@ void MavLinkTransmitGroundstation(void)
 			} break;
 
 			case MAVLINK_MSG_ID_SYSTEM_TIME: {
-				MavLinkSendSystemTime();
+				MavLinkSendSystemTime(MAVLINK_CHAN_GROUNDSTATION);
 			} break;
 
 			case MAVLINK_MSG_ID_SYS_STATUS: {
@@ -1993,6 +2000,9 @@ void MavLinkTransmitDatalogger(void)
                 break;
             case MAVLINK_MSG_ID_NODE_STATUS:
                 MavLinkSendNodeStatus(MAVLINK_CHAN_DATALOGGER);
+                break;
+            case MAVLINK_MSG_ID_SYSTEM_TIME:
+                MavLinkSendSystemTime(MAVLINK_CHAN_DATALOGGER);
                 break;
             case MAVLINK_MSG_ID_TOKIMEC_WITH_TIME:
                 MavLinkSendTokimecWithTime();
