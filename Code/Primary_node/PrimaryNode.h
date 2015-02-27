@@ -57,21 +57,6 @@ void PrimaryNodeInit(void);
 void ClearStateWhenErrors(void);
 
 /**
- * Set the primary status indicator LED to always blink
- */
-void SetStatusModeLed(void);
-
-/**
- * Change the status of the reset mode LED depending on system state.
- */
-void SetResetModeLed(void);
-
-/**
- * Change the status of the autonomous mode LED depending on system state.
- */
-void SetAutoModeLed(void);
-
-/**
  * Provides a helper function for updating the autonomous mode of the vehicle. Additional actions
  * are done by a MavlinkGlue helper function.
  * @param newMode True to put the vehicle into autonomous mode, False otherwise.

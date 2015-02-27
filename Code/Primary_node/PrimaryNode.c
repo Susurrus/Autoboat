@@ -88,6 +88,10 @@ static volatile uint16_t adcDmaBuffer[16] __attribute__((aligned(32)));
 void Adc1Init(void);
 void PrimaryNode100HzLoop(void);
 void PrimaryNodeMuxAndOutputControllerCommands(float rudderCommand, int16_t throttleCommand, bool forceTransmission);
+void SetStatusModeLed(void);
+void SetAutoModeLed(void);
+void SetResetModeLed(void);
+void SetGpsLed(void);
 
 // Set processor configuration settings
 #ifdef __dsPIC33FJ128MC802__
