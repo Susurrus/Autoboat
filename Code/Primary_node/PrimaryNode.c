@@ -242,10 +242,8 @@ int main(void)
 
         // Turn on the GPS indicator LED depending on the GPS status.
         if (lastSensorAvailability.gpsEnabled && !sensorAvailability.gps.enabled) {
-            _LATB15 = OFF;
             lastSensorAvailability.gpsEnabled = false;
         } else if (!lastSensorAvailability.gpsEnabled && sensorAvailability.gps.enabled) {
-            _LATB15 = ON;
             lastSensorAvailability.gpsEnabled = true;
         }
 
@@ -390,9 +388,10 @@ void PrimaryNode100HzLoop(void)
     // If we've switched to a new waypoint, announce to QGC that we have.
     CheckMissionStatus();
 
-    // Update the shield LEDs
+    // Update the LEDs
     SetResetModeLed();
     SetAutoModeLed();
+    SetGpsLed();
 
     // Make sure we transmit NODE_STATUS messages at 2Hz.
     TransmitNodeStatus2Hz();
@@ -532,6 +531,41 @@ void SetAutoModeLed(void)
     } else {
         _LATB12 = OFF;
         autoModeBlinkCounter = 0;
+    }
+}
+
+/**
+ * Set the GPS LED dependent on whether the GPS is enabled
+ * or regular manual mode. LED is solid for autonomous mode, flashing for manual override, and
+ * off for regular manual control.
+ */
+void SetGpsLed(void)
+{
+    static uint8_t gpsBlinkCounter = 0;
+
+    // If the GPS is on and receiving good data, set the LED solid.
+    if (sensorAvailability.gps.active) {
+        _LATB15 = ON;
+        gpsBlinkCounter = 0;
+    }
+    // But if the GPS isn't spitting out good data, but is still transmitting, blink the LED.
+    else if (sensorAvailability.gps.enabled) {
+        if (gpsBlinkCounter == 0) {
+            _LATB15 = ON;
+            gpsBlinkCounter = 1;
+        } else if (gpsBlinkCounter == 25) {
+            _LATB15 = OFF;
+            ++gpsBlinkCounter;
+        } else if (gpsBlinkCounter == 49) {
+            gpsBlinkCounter = 0;
+        } else {
+            ++gpsBlinkCounter;
+        }
+    }
+    // Otherwise no output.
+    else {
+        _LATB15 = OFF;
+        gpsBlinkCounter = 0;
     }
 }
 
