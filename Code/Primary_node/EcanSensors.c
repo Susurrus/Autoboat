@@ -45,7 +45,18 @@ struct WindData windDataStore = {0};
 struct AirData airDataStore = {0};
 struct WaterData waterDataStore = {0};
 struct ThrottleData throttleDataStore = {0};
-GpsData gpsDataStore = {0};
+GpsData gpsDataStore = {
+    0,
+    0,
+    0,
+    0,
+    UINT16_MAX,
+    UINT16_MAX,
+    0,
+    0,
+    0,
+    0
+};
 struct DateTimeData dateTimeDataStore = {// Initialize our system clock to clearly invalid values.
     0,
     0,
