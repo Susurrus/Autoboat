@@ -117,7 +117,7 @@ float GetPropSpeed(void)
 void GetGpsData(GpsData *data)
 {
     *data = gpsDataStore;
-    gpsDataStore.newData = 0;
+    gpsDataStore.newData = GPSDATA_NONE;
 }
 
 void ClearGpsData(void)

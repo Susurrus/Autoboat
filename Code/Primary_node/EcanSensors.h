@@ -111,9 +111,9 @@ typedef struct {
  */
 enum {
         GPSDATA_NONE     = 0x00,
-	GPSDATA_POSITION = 0x01, // Indicates new position data
-	GPSDATA_VELOCITY = 0x02, // Indicates new sog/cog data
-	GPSDATA_DOP      = 0x04  // Indicates there's new hdop/vdop/mode
+	GPSDATA_POSITION = 0x01, // Indicates that a new position data was received. Note that messages with duplicate position data are ignored.
+	GPSDATA_VELOCITY = 0x02, // Indicates that a new sog/cog data message was received.
+	GPSDATA_DOP      = 0x04  // Indicates that a new mode/HDOP/VDOP message was received.
 };
 
 typedef struct {
