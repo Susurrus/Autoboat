@@ -121,4 +121,12 @@ void MavLinkTransmitDatalogger(void);
  */
 void MavLinkTransmitAllParameters(void);
 
+/**
+ * Returns the amount of time that has elapsed since the last GCS message. Note that due to how the
+ * time is stored, once the vehicle has been out for UINT32_MAX/100s, this function will not work
+ * correctly.
+ * @return The time in units of centiseconds
+ */
+uint32_t MavLinkTimeSinceLastGcsMessage(void);
+
 #endif // MAVLINK_GLUE_H

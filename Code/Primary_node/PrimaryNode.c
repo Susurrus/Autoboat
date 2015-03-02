@@ -45,13 +45,17 @@
 // Define the maximum value of the ADC input
 #define ANmax 4095.0f
 
-// Store analog sensors here
+// Set the limit for when the GCS is considered disconnected at 30s
+#define GCS_DISCONNECTION_TIME 3000
 
+// Store analog sensor data here
 struct {
     float powerRailVoltage;
     float powerRailCurrent;
 } analogSensors;
 
+// This is used to store sensor availability from the last sample time in order to trigger on
+// sensor availability changes.
 struct {
     bool gpsEnabled;
     bool gpsActive;
@@ -332,6 +336,17 @@ int main(void)
         } else {
             if (!rudderSensorData.Calibrated) {
                 nodeErrors |= PRIMARY_NODE_RESET_UNCALIBRATED;
+            }
+        }
+
+        // If the GCS has been disconnected for too long, set an error flag
+        if (nodeErrors & PRIMARY_NODE_RESET_GCS_DISCONNECTED) {
+            if (MavLinkTimeSinceLastGcsMessage() < GCS_DISCONNECTION_TIME) {
+                nodeErrors &= ~PRIMARY_NODE_RESET_GCS_DISCONNECTED;
+            }
+        } else {
+            if (MavLinkTimeSinceLastGcsMessage() >= GCS_DISCONNECTION_TIME) {
+                nodeErrors |= PRIMARY_NODE_RESET_GCS_DISCONNECTED;
             }
         }
 

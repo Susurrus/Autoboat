@@ -217,6 +217,11 @@ static struct {
 	uint16_t Buttons; 
 } mavlinkManualControlData;
 
+// Track the last transmission received from the groundstation. This can be used to check for a
+// disconnection. This is in .01s units, the same as that used by the nodeSystemTime variable from
+// the Node.h library.
+static uint32_t gcsLastTimeSeen = UINT16_MAX;
+
 // Set up the message scheduler for MAVLink transmission to the groundstation
 #define GROUNDSTATION_SCHEDULE_NUM_MSGS 17
 static uint8_t groundstationMavlinkScheduleIds[GROUNDSTATION_SCHEDULE_NUM_MSGS] = {
@@ -354,6 +359,11 @@ void MavLinkInit(void)
             FATAL_ERROR();
         }
     }
+}
+
+uint32_t MavLinkTimeSinceLastGcsMessage(void)
+{
+    return nodeSystemTime - gcsLastTimeSeen;
 }
 
 /**
@@ -1765,6 +1775,12 @@ void MavLinkReceive(void)
 				groundStationSystemId = rxMessage.sysid;
 				groundStationComponentId = rxMessage.compid;
 			}
+
+                        // If the message is from the groundstation, update the received time
+                        if (rxMessage.sysid == groundStationSystemId &&
+                            rxMessage.compid == groundStationComponentId) {
+                            gcsLastTimeSeen = nodeSystemTime;
+                        }
 
 			switch(rxMessage.msgid) {
 
