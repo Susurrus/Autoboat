@@ -250,12 +250,12 @@ int main(void)
             lastSensorAvailability.gpsEnabled = true;
         }
 
-        // Set the GPS disconnected status bit when that occurs.
+        // Set the GPS disconnected error bit when that occurs.
         if (lastSensorAvailability.gpsActive && !sensorAvailability.gps.active) {
-            nodeStatus |= PRIMARY_NODE_STATUS_GPS_DISCON;
+            nodeErrors |= PRIMARY_NODE_RESET_GPS_DISCONNECTED;
             lastSensorAvailability.gpsActive = false;
         } else if (!lastSensorAvailability.gpsActive && sensorAvailability.gps.active) {
-            nodeStatus &= ~PRIMARY_NODE_STATUS_GPS_DISCON;
+            nodeErrors &= ~PRIMARY_NODE_RESET_GPS_DISCONNECTED;
             lastSensorAvailability.gpsActive = true;
         }
 

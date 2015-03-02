@@ -9,7 +9,7 @@ enum PRIMARY_NODE_STATUS {
 	PRIMARY_NODE_STATUS_UNUSED      = 0x0002,
 	PRIMARY_NODE_STATUS_ECAN_TX_ERR = 0x0004, // Error in CAN transmission
 	PRIMARY_NODE_STATUS_ECAN_RX_ERR = 0x0008, // ERROR in CAN reception
-	PRIMARY_NODE_STATUS_GPS_DISCON  = 0x0010  // GPS is disconnected or not locked on.
+	PRIMARY_NODE_STATUS_UNUSED2     = 0x0010
 };
 
 /**
@@ -18,8 +18,8 @@ enum PRIMARY_NODE_STATUS {
 enum PRIMARY_NODE_RESET {
 	PRIMARY_NODE_RESET_STARTUP          = 0x0001, // Active during the first 5 seconds of bootup.
 	PRIMARY_NODE_RESET_GCS_DISCONNECTED = 0x0002, // The groundcontrol station has been disconnected for too long.
-	PRIMARY_NODE_RESET_UNUSED2          = 0x0004,
-	PRIMARY_NODE_RESET_UNUSED3          = 0x0008,
+	PRIMARY_NODE_RESET_GPS_DISCONNECTED = 0x0004, // The GPS unit has had a bad fix for too long.
+	PRIMARY_NODE_RESET_UNUSED           = 0x0008,
 	PRIMARY_NODE_RESET_MANUAL_OVERRIDE  = 0x0010, // Manual override has been engaged by the secondary controller OR the RC node doesn't exist on the CAN bus.
 	PRIMARY_NODE_RESET_CALIBRATING      = 0x0020, // The rudder is undergoing calibration.
 	PRIMARY_NODE_RESET_UNCALIBRATED     = 0x0040, // The rudder is uncalibrated.
