@@ -208,11 +208,6 @@ int main(void)
     // B15 (output): Amber GPS LED on the CANode Primary Shield, on when GPS is active & receiving good data.
     _TRISB15 = OUTPUT;
 
-    // Now before we start everything, make sure we have our state correct given that we just started
-    // up. Every sensor is assumed to be online, but just expiring on initialization, so here we call
-    // the necessary code to trigger the timeout event for every sensor.
-    UpdateSensorsAvailability();
-
     // Finally initialize the controller model (generated MATLAB code)
     controller_initialize();
 
