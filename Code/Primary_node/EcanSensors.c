@@ -36,9 +36,22 @@
 /**
  * This macro update both the 'enabled' and 'active' state for a sensor
  */
-#define SENSOR_STATE_UPDATE(sensor) \
-    SENSOR_STATE_UPDATE_STATE(sensor, enabled); \
-    SENSOR_STATE_UPDATE_STATE(sensor, active);
+#define SENSOR_STATE_UPDATE(sensor)                 \
+    do {                                            \
+        SENSOR_STATE_UPDATE_STATE(sensor, enabled); \
+        SENSOR_STATE_UPDATE_STATE(sensor, active);  \
+    } while (0)
+
+#define SENSOR_STATE_CLEAR_ACTIVE_COUNTER(sensor)               \
+    do {                                                        \
+        sensorAvailability.sensor.active_counter = 0;           \
+        sensorAvailability.sensor.last_active = nodeSystemTime; \
+    } while (0)
+
+#define SENSOR_STATE_CLEAR_ENABLED_COUNTER(sensor)     \
+    do {                                               \
+        sensorAvailability.sensor.enabled_counter = 0; \
+    } while (0)
 
 struct PowerData powerDataStore = {0};
 struct WindData windDataStore = {0};
@@ -144,9 +157,9 @@ uint8_t ProcessAllEcanMessages(void)
             // Process non-NMEA2000 messages here. They're distinguished by having standard frames.
             if (msg.frame_type == CAN_FRAME_STD) {
                 if (msg.id == ACS300_CAN_ID_HRTBT) { // From the ACS300
-                    sensorAvailability.prop.enabled_counter = 0;
+                    SENSOR_STATE_CLEAR_ENABLED_COUNTER(prop);
                     if ((msg.payload[6] & 0x40) == 0) { // Checks the status bit to determine if the ACS300 is enabled.
-                        sensorAvailability.prop.active_counter = 0;
+                        SENSOR_STATE_CLEAR_ACTIVE_COUNTER(prop);
                     }
                     Acs300DecodeHeartbeat(msg.payload, (uint16_t*) & throttleDataStore.rpm, NULL, NULL, NULL);
                     throttleDataStore.newData = true;
@@ -183,16 +196,16 @@ uint8_t ProcessAllEcanMessages(void)
                         // And add some extra logic for integrating the RC node statusAvailability
                         // logic.
                         if (node == CAN_NODE_RC) {
-                            sensorAvailability.rcNode.enabled_counter = 0;
+                            SENSOR_STATE_CLEAR_ENABLED_COUNTER(rcNode);
                             // Only if the RC transmitter is connected and in override mode should the RC node be considered
                             // active.
                             if (status & 0x01) {
-                                sensorAvailability.rcNode.active_counter = 0;
+                                SENSOR_STATE_CLEAR_ACTIVE_COUNTER(rcNode);
                             }
                         }
                     }
                 } else if (msg.id == CAN_MSG_ID_RUDDER_DETAILS) {
-                    sensorAvailability.rudder.enabled_counter = 0;
+                    SENSOR_STATE_CLEAR_ENABLED_COUNTER(rudder);
                     CanMessageDecodeRudderDetails(&msg,
                             &rudderSensorData.RudderPotValue,
                             &rudderSensorData.RudderPotLimitStarboard,
@@ -205,48 +218,48 @@ uint8_t ProcessAllEcanMessages(void)
                     if (rudderSensorData.Enabled &&
                             rudderSensorData.Calibrated &&
                             !rudderSensorData.Calibrating) {
-                        sensorAvailability.rudder.active_counter = 0;
+                        SENSOR_STATE_CLEAR_ACTIVE_COUNTER(rudder);
                     }
                 } else if (msg.id == CAN_MSG_ID_IMU_DATA) {
-                    sensorAvailability.imu.enabled_counter = 0;
-                    sensorAvailability.imu.active_counter = 0;
+                    SENSOR_STATE_CLEAR_ENABLED_COUNTER(imu);
+                    SENSOR_STATE_CLEAR_ACTIVE_COUNTER(imu);
                     CanMessageDecodeImuData(&msg,
                             &tokimecDataStore.yaw,
                             &tokimecDataStore.pitch,
                             &tokimecDataStore.roll);
                 } else if (msg.id == CAN_MSG_ID_GYRO_DATA) {
-                    sensorAvailability.gyro.enabled_counter = 0;
-                    sensorAvailability.gyro.active_counter = 0;
+                    SENSOR_STATE_CLEAR_ENABLED_COUNTER(gyro);
+                    SENSOR_STATE_CLEAR_ACTIVE_COUNTER(gyro);
                     CanMessageDecodeGyroData(&msg, &gyroDataStore.zRate);
                 } else if (msg.id == CAN_MSG_ID_ANG_VEL_DATA) {
-                    sensorAvailability.imu.enabled_counter = 0;
-                    sensorAvailability.imu.active_counter = 0;
+                    SENSOR_STATE_CLEAR_ENABLED_COUNTER(imu);
+                    SENSOR_STATE_CLEAR_ACTIVE_COUNTER(imu);
                     CanMessageDecodeAngularVelocityData(&msg,
                             &tokimecDataStore.x_angle_vel,
                             &tokimecDataStore.y_angle_vel,
                             &tokimecDataStore.z_angle_vel);
                 } else if (msg.id == CAN_MSG_ID_ACCEL_DATA) {
-                    sensorAvailability.imu.enabled_counter = 0;
-                    sensorAvailability.imu.active_counter = 0;
+                    SENSOR_STATE_CLEAR_ENABLED_COUNTER(imu);
+                    SENSOR_STATE_CLEAR_ACTIVE_COUNTER(imu);
                     CanMessageDecodeAccelerationData(&msg,
                             &tokimecDataStore.x_accel,
                             &tokimecDataStore.y_accel,
                             &tokimecDataStore.z_accel);
                 } else if (msg.id == CAN_MSG_ID_GPS_POS_DATA) {
-                    sensorAvailability.imu.enabled_counter = 0;
-                    sensorAvailability.imu.active_counter = 0;
+                    SENSOR_STATE_CLEAR_ENABLED_COUNTER(imu);
+                    SENSOR_STATE_CLEAR_ACTIVE_COUNTER(imu);
                     CanMessageDecodeGpsPosData(&msg,
                             &tokimecDataStore.latitude,
                             &tokimecDataStore.longitude);
                 } else if (msg.id == CAN_MSG_ID_GPS_EST_POS_DATA) {
-                    sensorAvailability.imu.enabled_counter = 0;
-                    sensorAvailability.imu.active_counter = 0;
+                    SENSOR_STATE_CLEAR_ENABLED_COUNTER(imu);
+                    SENSOR_STATE_CLEAR_ACTIVE_COUNTER(imu);
                     CanMessageDecodeGpsPosData(&msg,
                             &tokimecDataStore.est_latitude,
                             &tokimecDataStore.est_longitude);
                 } else if (msg.id == CAN_MSG_ID_GPS_VEL_DATA) {
-                    sensorAvailability.imu.enabled_counter = 0;
-                    sensorAvailability.imu.active_counter = 0;
+                    SENSOR_STATE_CLEAR_ENABLED_COUNTER(imu);
+                    SENSOR_STATE_CLEAR_ACTIVE_COUNTER(imu);
                     CanMessageDecodeGpsVelData(&msg,
                             &tokimecDataStore.gpsDirection,
                             &tokimecDataStore.gpsSpeed,
@@ -258,11 +271,11 @@ uint8_t ProcessAllEcanMessages(void)
                 switch (pgn) {
                 case PGN_SYSTEM_TIME:
                 { // From GPS
-                    sensorAvailability.gps.enabled_counter = 0;
+                    SENSOR_STATE_CLEAR_ENABLED_COUNTER(gps);
                     uint8_t rv = ParsePgn126992(msg.payload, NULL, NULL, &dateTimeDataStore.year, &dateTimeDataStore.month, &dateTimeDataStore.day, &dateTimeDataStore.hour, &dateTimeDataStore.min, &dateTimeDataStore.sec, &dateTimeDataStore.usecSinceEpoch);
                     // Check if all 6 parts of the datetime were successfully decoded before triggering an update
                     if ((rv & 0xFC) == 0xFC) {
-                        sensorAvailability.gps.active_counter = 0;
+                        SENSOR_STATE_CLEAR_ACTIVE_COUNTER(gps);
                         dateTimeDataStore.newData = true;
                     }
                 }
@@ -276,28 +289,28 @@ uint8_t ProcessAllEcanMessages(void)
                 break;
                 case PGN_BATTERY_STATUS:
                 { // From the Power Node
-                    sensorAvailability.power.enabled_counter = 0;
+                    SENSOR_STATE_CLEAR_ENABLED_COUNTER(power);
                     uint8_t rv = ParsePgn127508(msg.payload, NULL, NULL, &powerDataStore.voltage, &powerDataStore.current, &powerDataStore.temperature);
                     if ((rv & 0x0C) == 0xC) {
-                        sensorAvailability.power.active_counter = 0;
+                        SENSOR_STATE_CLEAR_ACTIVE_COUNTER(power);
                         powerDataStore.newData = true;
                     }
                 }
                 break;
                 case PGN_SPEED: // From the DST800
-                    sensorAvailability.dst800.enabled_counter = 0;
+                    SENSOR_STATE_CLEAR_ENABLED_COUNTER(dst800);
                     if (ParsePgn128259(msg.payload, NULL, &waterDataStore.speed)) {
-                        sensorAvailability.dst800.active_counter = 0;
+                        SENSOR_STATE_CLEAR_ACTIVE_COUNTER(dst800);
                         waterDataStore.newData = true;
                     }
                     break;
                 case PGN_WATER_DEPTH:
                 { // From the DST800
-                    sensorAvailability.dst800.enabled_counter = 0;
+                    SENSOR_STATE_CLEAR_ENABLED_COUNTER(dst800);
                     // Only update the data in waterDataStore if an actual depth was returned.
                     uint8_t rv = ParsePgn128267(msg.payload, NULL, &waterDataStore.depth, NULL);
                     if ((rv & 0x02) == 0x02) {
-                        sensorAvailability.dst800.active_counter = 0;
+                        SENSOR_STATE_CLEAR_ACTIVE_COUNTER(dst800);
                         waterDataStore.newData = true;
                     }
                 }
@@ -305,7 +318,7 @@ uint8_t ProcessAllEcanMessages(void)
                 case PGN_POSITION_RAP_UPD:
                 { // From the GPS200
                     // Keep the GPS enabled
-                    sensorAvailability.gps.enabled_counter = 0;
+                    SENSOR_STATE_CLEAR_ENABLED_COUNTER(gps);
 
                     // Decode the position
                     int32_t lat, lon;
@@ -325,7 +338,7 @@ uint8_t ProcessAllEcanMessages(void)
                         gpsDataStore.newData |= GPSDATA_POSITION;
 
                         // Since we've received good data, keep the GPS active
-                        sensorAvailability.gps.active_counter = 0;
+                        SENSOR_STATE_CLEAR_ACTIVE_COUNTER(gps);
 
                         // Finally copy the new data into the GPS struct
                         gpsDataStore.latitude = lat;
@@ -335,7 +348,7 @@ uint8_t ProcessAllEcanMessages(void)
                 break;
                 case PGN_COG_SOG_RAP_UPD:
                 { // From the GPS200
-                    sensorAvailability.gps.enabled_counter = 0;
+                    SENSOR_STATE_CLEAR_ENABLED_COUNTER(gps);
                     uint16_t cog, sog;
                     uint8_t rv = ParsePgn129026(msg.payload, NULL, NULL, &cog, &sog);
 
@@ -347,7 +360,7 @@ uint8_t ProcessAllEcanMessages(void)
                         gpsDataStore.newData |= GPSDATA_VELOCITY;
 
                         // Since we've received good data, keep the GPS active
-                        sensorAvailability.gps.active_counter = 0;
+                        SENSOR_STATE_CLEAR_ACTIVE_COUNTER(gps);
 
                         // Finally copy the new data into the GPS struct
                         gpsDataStore.cog = cog;
@@ -357,7 +370,7 @@ uint8_t ProcessAllEcanMessages(void)
                 break;
                 case PGN_GNSS_DOPS:
                 { // From the GPS200
-                    sensorAvailability.gps.enabled_counter = 0;
+                    SENSOR_STATE_CLEAR_ENABLED_COUNTER(gps);
                     uint8_t rv = ParsePgn129539(msg.payload, NULL, NULL, &gpsDataStore.mode, &gpsDataStore.hdop, &gpsDataStore.vdop, NULL);
 
                     // If there was valid data in the mode and hdop/vdop fields,
@@ -366,7 +379,7 @@ uint8_t ProcessAllEcanMessages(void)
                         gpsDataStore.newData |= GPSDATA_DOP;
 
                         // Since we've received good data, keep the GPS active
-                        sensorAvailability.gps.active_counter = 0;
+                        SENSOR_STATE_CLEAR_ACTIVE_COUNTER(gps);
                     }
                 }
                 break;
@@ -374,23 +387,23 @@ uint8_t ProcessAllEcanMessages(void)
                     ParsePgn127258(msg.payload, NULL, NULL, NULL, &gpsDataStore.variation);
                     break;
                 case PGN_WIND_DATA: // From the WSO100
-                    sensorAvailability.wso100.enabled_counter = 0;
+                    SENSOR_STATE_CLEAR_ENABLED_COUNTER(wso100);
                     if (ParsePgn130306(msg.payload, NULL, &windDataStore.speed, &windDataStore.direction)) {
-                        sensorAvailability.wso100.active_counter = 0;
+                        SENSOR_STATE_CLEAR_ACTIVE_COUNTER(wso100);
                         windDataStore.newData = true;
                     }
                     break;
                 case PGN_ENV_PARAMETERS: // From the DST800
-                    sensorAvailability.dst800.enabled_counter = 0;
+                    SENSOR_STATE_CLEAR_ENABLED_COUNTER(dst800);
                     if (ParsePgn130310(msg.payload, NULL, &waterDataStore.temp, NULL, NULL)) {
                         // The DST800 is only considered active when a water depth is received
                         waterDataStore.newData = true;
                     }
                     break;
                 case PGN_ENV_PARAMETERS2: // From the WSO100
-                    sensorAvailability.wso100.enabled_counter = 0;
+                    SENSOR_STATE_CLEAR_ENABLED_COUNTER(wso100);
                     if (ParsePgn130311(msg.payload, NULL, NULL, NULL, &airDataStore.temp, &airDataStore.humidity, &airDataStore.pressure)) {
-                        sensorAvailability.wso100.active_counter = 0;
+                        SENSOR_STATE_CLEAR_ACTIVE_COUNTER(wso100);
                         airDataStore.newData = true;
                     }
                     break;

@@ -147,6 +147,7 @@ typedef struct {
 	uint8_t enabled_counter : 7; // The timeout counter for this sensor being enabled.
 	bool active             : 1; // If the sensor is active, i.e. receiving valid data.
 	uint8_t active_counter  : 7; // The timeout counter for this sensor being active.
+        uint32_t last_active;        // Track the last time the sensor was active in .01s. @see nodeSystemTime
 } timeoutCounters;
 
 extern struct stc {
