@@ -269,13 +269,13 @@ int main(void)
         }
 
         // Set the GPS disconnected error bit when the GPS has been inactive for too long.
-        if (nodeStatus & PRIMARY_NODE_RESET_GPS_DISCONNECTED) {
+        if (nodeErrors & PRIMARY_NODE_RESET_GPS_DISCONNECTED) {
             if (sensorAvailability.gps.active) {
-                nodeStatus &= ~PRIMARY_NODE_RESET_GPS_DISCONNECTED;
+                nodeErrors &= ~PRIMARY_NODE_RESET_GPS_DISCONNECTED;
             }
         } else {
-            if (sensorAvailability.gps.last_active - nodeSystemTime >= GPS_DISCONNECTION_TIME) {
-                nodeStatus |= PRIMARY_NODE_RESET_GPS_DISCONNECTED;
+            if (nodeSystemTime - sensorAvailability.gps.last_active >= GPS_DISCONNECTION_TIME) {
+                nodeErrors |= PRIMARY_NODE_RESET_GPS_DISCONNECTED;
             }
         }
         if (lastSensorAvailability.gpsActive && !sensorAvailability.gps.active) {
