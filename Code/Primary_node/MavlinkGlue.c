@@ -220,7 +220,7 @@ static struct {
 // Track the last transmission received from the groundstation. This can be used to check for a
 // disconnection. This is in .01s units, the same as that used by the nodeSystemTime variable from
 // the Node.h library.
-static uint32_t gcsLastTimeSeen = UINT16_MAX;
+static uint32_t gcsLastTimeSeen = UINT32_MAX;
 
 // Set up the message scheduler for MAVLink transmission to the groundstation
 #define GROUNDSTATION_SCHEDULE_NUM_MSGS 17
