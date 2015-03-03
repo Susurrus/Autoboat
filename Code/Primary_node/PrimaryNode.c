@@ -214,6 +214,9 @@ int main(void)
     // Report on system status now that initialization is complete.
     MavLinkSendStatusText(MAV_SEVERITY_INFO, "Finished initialization.");
 
+    // Track the last error state that we were in. Used for triggering events on changes
+    static uint16_t lastErrorState = 0;
+
     // Run system tasks when a timer interrupt has been triggered.
     while (true) {
 
@@ -350,6 +353,21 @@ int main(void)
         // but that doesn't really matter, as we were losing that data anyways when we were
         // calling it at 100Hz.
         MavLinkReceive();
+
+        // At this point we check to see if we're in an error state. If this error state is
+        // different than what we were in before, transmit a stop propeller command and a 0deg
+        // rudder command. Retransmitting these commands whenever the error state changes helps make
+        // sure that if the rudder or propeller subsystems go offline and back online that they will
+        // be set to the proper values.
+        if (nodeErrors != lastErrorState) {
+            if (nodeErrors) {
+                ActuatorsTransmitCommands(0.0, 0, true);
+                nodeStatus |= PRIMARY_NODE_STATUS_RTB;
+            } else {
+                nodeStatus &= ~PRIMARY_NODE_STATUS_RTB;
+            }
+            lastErrorState = nodeErrors;
+        }
 
         // Trigger the 100Hz loop when the timer counts past the 0.01s mark.
         if (TMR2 >= F_OSC / 2 / 256 / 100) {
