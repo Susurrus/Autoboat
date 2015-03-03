@@ -45,8 +45,14 @@
 // Define the maximum value of the ADC input
 #define ANmax 4095.0f
 
-// Set the limit for when the GCS is considered disconnected at 30s
+// Set the limit for when the GCS is considered disconnected at 30s. This leaves enough time for the
+// chase boat to respond to when the first disconnection notice is received to prevent the SeaSlug
+// from going into RTB mode.
 #define GCS_DISCONNECTION_TIME 3000
+
+// The time limit (in units of 0.01s) before a GPS disconnection state becomes an unrecoverable
+// error.
+#define GPS_DISCONNECTION_TIME 1000
 
 // Store analog sensor data here
 struct {
@@ -253,12 +259,30 @@ int main(void)
             lastSensorAvailability.gpsEnabled = true;
         }
 
-        // Set the GPS disconnected error bit when that occurs.
+        // Set the GPS invalid status bit when it's no longer active
         if (lastSensorAvailability.gpsActive && !sensorAvailability.gps.active) {
-            nodeErrors |= PRIMARY_NODE_RESET_GPS_DISCONNECTED;
+            nodeErrors |= PRIMARY_NODE_STATUS_GPS_INVALID;
             lastSensorAvailability.gpsActive = false;
         } else if (!lastSensorAvailability.gpsActive && sensorAvailability.gps.active) {
-            nodeErrors &= ~PRIMARY_NODE_RESET_GPS_DISCONNECTED;
+            nodeErrors &= ~PRIMARY_NODE_STATUS_GPS_INVALID;
+            lastSensorAvailability.gpsActive = true;
+        }
+
+        // Set the GPS disconnected error bit when the GPS has been inactive for too long.
+        if (nodeStatus & PRIMARY_NODE_RESET_GPS_DISCONNECTED) {
+            if (sensorAvailability.gps.active) {
+                nodeStatus &= ~PRIMARY_NODE_RESET_GPS_DISCONNECTED;
+            }
+        } else {
+            if (sensorAvailability.gps.last_active - nodeSystemTime >= GPS_DISCONNECTION_TIME) {
+                nodeStatus |= PRIMARY_NODE_RESET_GPS_DISCONNECTED;
+            }
+        }
+        if (lastSensorAvailability.gpsActive && !sensorAvailability.gps.active) {
+            nodeErrors |= PRIMARY_NODE_STATUS_GPS_INVALID;
+            lastSensorAvailability.gpsActive = false;
+        } else if (!lastSensorAvailability.gpsActive && sensorAvailability.gps.active) {
+            nodeErrors &= ~PRIMARY_NODE_STATUS_GPS_INVALID;
             lastSensorAvailability.gpsActive = true;
         }
 
@@ -355,12 +379,13 @@ int main(void)
         MavLinkReceive();
 
         // At this point we check to see if we're in an error state. If this error state is
-        // different than what we were in before, transmit a stop propeller command and a 0deg
-        // rudder command. Retransmitting these commands whenever the error state changes helps make
-        // sure that if the rudder or propeller subsystems go offline and back online that they will
-        // be set to the proper values.
+        // different than what we were in before, and it's one of the error states that should
+        // trigger the return-to-base functionality, then we trigger RTB mode. This is currently
+        // just stopping the propper and a 0deg rudder command. Transmitting these commands are done
+        // whenever the error state changes tomake sure that if the rudder or propeller subsystems
+        // go offline and back online that they will be set to the proper values.
         if (nodeErrors != lastErrorState) {
-            if (nodeErrors) {
+            if (nodeErrors & RTB_RESET_MASK) {
                 ActuatorsTransmitCommands(0.0, 0, true);
                 nodeStatus |= PRIMARY_NODE_STATUS_RTB;
             } else {

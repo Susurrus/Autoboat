@@ -9,7 +9,7 @@ enum PRIMARY_NODE_STATUS {
 	PRIMARY_NODE_STATUS_RTB         = 0x0002, // System is in return-to-base mode
 	PRIMARY_NODE_STATUS_ECAN_TX_ERR = 0x0004, // Error in CAN transmission
 	PRIMARY_NODE_STATUS_ECAN_RX_ERR = 0x0008, // ERROR in CAN reception
-	PRIMARY_NODE_STATUS_UNUSED2     = 0x0010
+	PRIMARY_NODE_STATUS_GPS_INVALID = 0x0010  // The GPS is no longer giving good readings
 };
 
 /**
@@ -17,14 +17,21 @@ enum PRIMARY_NODE_STATUS {
  */
 enum PRIMARY_NODE_RESET {
 	PRIMARY_NODE_RESET_STARTUP          = 0x0001, // Active during the first 5 seconds of bootup.
-	PRIMARY_NODE_RESET_GCS_DISCONNECTED = 0x0002, // The groundcontrol station has been disconnected for too long.
-	PRIMARY_NODE_RESET_GPS_DISCONNECTED = 0x0004, // The GPS unit has had a bad fix for too long.
+	PRIMARY_NODE_RESET_GCS_DISCONNECTED = 0x0002, // The groundcontrol station has been disconnected for >= 30s.
+	PRIMARY_NODE_RESET_GPS_DISCONNECTED = 0x0004, // The GPS unit has had a bad fix for >= 10s.
 	PRIMARY_NODE_RESET_UNUSED           = 0x0008,
 	PRIMARY_NODE_RESET_MANUAL_OVERRIDE  = 0x0010, // Manual override has been engaged by the secondary controller OR the RC node doesn't exist on the CAN bus.
 	PRIMARY_NODE_RESET_CALIBRATING      = 0x0020, // The rudder is undergoing calibration.
 	PRIMARY_NODE_RESET_UNCALIBRATED     = 0x0040, // The rudder is uncalibrated.
 	PRIMARY_NODE_RESET_ESTOP            = 0x0080  // The system is in emergency-stop mode, actuators are centered and stopped, system will not respond to any commands; it's dead in the water.
 };
+
+// Define what reset modes will trigger the return-to-base functionality. In our case it only makes
+// sense to trigger RTB when the groundstation or GPS have been disconnected too long, or when the
+// e-stop is pulled.
+#define RTB_RESET_MASK (PRIMARY_NODE_RESET_GCS_DISCONNECTED | \
+                        PRIMARY_NODE_RESET_GPS_DISCONNECTED | \
+                        PRIMARY_NODE_RESET_ESTOP)
 
 // Calculate the BRG register value necessary for 115200 baud with a 80MHz clock.
 #define BAUD115200_BRG_REG 21
