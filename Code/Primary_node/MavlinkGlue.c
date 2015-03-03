@@ -1792,9 +1792,9 @@ void MavLinkReceive(void)
 				} break;
 
 				case MAVLINK_MSG_ID_SET_MODE: {
-						mavlink_set_mode_t modeMessage;
-						mavlink_msg_set_mode_decode(&rxMessage, &modeMessage);
-						MavLinkReceiveSetMode(&modeMessage);
+                                        mavlink_set_mode_t modeMessage;
+                                        mavlink_msg_set_mode_decode(&rxMessage, &modeMessage);
+                                        MavLinkReceiveSetMode(&modeMessage);
 				} break;
 
 				// Check for manual commands via Joystick from QGC.
