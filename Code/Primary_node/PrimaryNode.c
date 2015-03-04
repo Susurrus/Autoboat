@@ -306,34 +306,30 @@ int main(void)
         }
 
         /// RC Node:
-        // The RC node is considered enabled if it's broadcasting on the CAN bus. If the RC node ever
-        // becomes disabled, then we stay in reset. This means the RC node needs to be on and transmitting
-        // CAN messages properly to the primary node for the primary node to not be in reset. And if the RC
-        // node becomes enabled again, as long as the RC node is not active, we leave reset.
+        // The RC node is considered enabled if it's broadcasting on the CAN bus. If the RC node
+        // ever becomes disabled, we note it. This isn't worthy of a system error or triggering RTB,
+        // but it should be noted in the logs.
         if (lastSensorAvailability.rcNodeEnabled && !sensorAvailability.rcNode.enabled) {
-            nodeErrors |= PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
+            nodeStatus |= PRIMARY_NODE_STATUS_RC_NODE_DISCONNECTED;
             lastSensorAvailability.rcNodeEnabled = false;
         } else if (!lastSensorAvailability.rcNodeEnabled && sensorAvailability.rcNode.enabled) {
-            if (!lastSensorAvailability.rcNodeActive) {
-                nodeErrors &= ~PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
-            }
+            nodeStatus &= ~PRIMARY_NODE_STATUS_RC_NODE_DISCONNECTED;
             lastSensorAvailability.rcNodeEnabled = true;
         }
 
-        // If the RC node stops being active, yet is still enabled, then we aren't in an error state. Otherwise
-        // if the RC node is active, we are.
+        // If the RC node has stopped being active, it means that manual control is no longer being
+        // enforced, so we clear that status and re-transmit the latest autonomous control commands.
+        // Otherwise if the RC node becomes active, that means it's exerting manual override
         if (lastSensorAvailability.rcNodeActive && !sensorAvailability.rcNode.active) {
-            if (lastSensorAvailability.rcNodeEnabled) {
-                nodeErrors &= ~PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
+            nodeErrors &= ~PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
 
-                // Output the command messages for this timestep even if they haven't changed,
-                // because the primary controller is now back in control of the vessel.
-                // FIXME: The storing of this data should not be done in the
-                // *OutputControllerCommands() function.
-                PrimaryNodeMuxAndOutputControllerCommands(currentCommands.autonomousRudderCommand,
-                                                          currentCommands.autonomousThrottleCommand,
-                                                          true);
-            }
+            // Output the command messages for this timestep even if they haven't changed,
+            // because the primary controller is now back in control of the vessel.
+            // FIXME: The storing of this data should not be done in the
+            // *OutputControllerCommands() function.
+            PrimaryNodeMuxAndOutputControllerCommands(currentCommands.autonomousRudderCommand,
+                                                      currentCommands.autonomousThrottleCommand,
+                                                      true);
             lastSensorAvailability.rcNodeActive = false;
         } else if (!lastSensorAvailability.rcNodeActive && sensorAvailability.rcNode.active) {
             nodeErrors |= PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
