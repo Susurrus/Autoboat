@@ -5,7 +5,7 @@ function att_dot = body_rates_to_euler_rates(att, gyro_b)
 % http://www.chrobotics.com/library/understanding-euler-angles for the
 % derivation.
 % att     a 3-vector with the roll-pitch-yaw angle in rads (phi,theta,psi)
-% gyro_b  the body-axis rates (referred to as p,q,r or omega_x,omega_y,omega_x)
+% gyro_b  the body-axis rates (referred to as p,q,r or omega_x,omega_y,omega_z)
 % att_dot The angular rates in the navigation frame (roll-rate,
 %         pitch-rate, yaw-rate)
 
