@@ -799,6 +799,7 @@ void MavLinkSendControllerData(const ImuData *imu, const GpsData *gps, float wat
         controllerVars.Velocity[0] * 1e3, controllerVars.Velocity[1] * 1e3,
         clampedACmd,
         controllerVars.AimPoint[0] * 10, controllerVars.AimPoint[1] * 10,
+        controllerVars.sensedYawRate * 4096.0,
         commandedRudder * 1e4,
         commandedThrottle,
         rudderAngle * 1e4,
