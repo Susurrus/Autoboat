@@ -287,7 +287,7 @@ void MavLinkSendStatus(uint8_t channel);
 void MavLinkSendNodeStatus(uint8_t channel);
 void MavLinkSendRawGps(void);
 void MavLinkSendMainPower(void);
-void MavLinkSendBasicState(void);
+void MavLinkSendBasicState2(void);
 void MavLinkSendAttitude(void);
 void MavLinkSendSystemTime(uint8_t channel);
 void MavLinkSendVfrHud(void);
