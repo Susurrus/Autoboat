@@ -4,16 +4,25 @@
 /**
  * Declare flags for use with checking the `nodeStatus` variable declared in `Node.h`
  */
-enum HIL_STATUS_FLAGS {
-	// If the node is currently receiving UDP telemetry from the PC.
-	NODE_STATUS_FLAG_HIL_ACTIVE    = 0x0001,
-	// Set when the rudder subsystem is actively transmitting. This also indicates when sensor
-	// feedback mode is engaged.
-	NODE_STATUS_FLAG_RUDDER_ACTIVE = 0x0002,
-	// This bit will be set if the ACS300 board is actively transmitting.
-	NODE_STATUS_FLAG_PROP_ACTIVE   = 0x0004,
-	// This bit will be set if the RC board is actively transmitting.
-	NODE_STATUS_FLAG_RC_ACTIVE     = 0x0008
+enum HIL_NODE_STATUS {
+    // If the node is currently receiving UDP telemetry from the PC.
+    HIL_NODE_STATUS_HIL_ACTIVE    = 0x0001,
+    // Set when the rudder subsystem is actively transmitting. This also indicates when sensor
+    // feedback mode is engaged.
+    HIL_NODE_STATUS_RUDDER_ACTIVE = 0x0002,
+    // This bit will be set if the ACS300 board is actively transmitting.
+    HIL_NODE_STATUS_PROP_ACTIVE   = 0x0004,
+    // This bit will be set if the RC board is actively transmitting.
+    HIL_NODE_STATUS_RC_ACTIVE     = 0x0008
+};
+
+enum HIL_NODE_RESET {
+    // The GPS unit is active and transmitting. This will prevent proper HIL operations.
+    HIL_NODE_RESET_GPS_ACTIVE    = 0x0001,
+    // The DST800 is active and broadcasting water speed. This will prevent proper HIL operations.
+    HIL_NODE_RESET_DST800_ACTIVE = 0x0002,
+    // The IMU is active and broadcasting attitude & gyros. This will prevent proper HIL operations.
+    HIL_NODE_RESET_IMU_ACTIVE    = 0x0004
 };
 
 /**
@@ -49,7 +58,7 @@ void HilNodeInit(void);
 /**
  * Callback for Timer4 triggering every 250ms
  */
-void HilNodeBlink(void);
+void SetStatusModeLed(void);
 
 /**
  * Callback for Timer2 triggering every 10ms.
