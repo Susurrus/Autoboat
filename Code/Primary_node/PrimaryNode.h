@@ -10,29 +10,34 @@ enum PRIMARY_NODE_STATUS {
 	PRIMARY_NODE_STATUS_ECAN_TX_ERR          = 0x0004, // Error in CAN transmission
 	PRIMARY_NODE_STATUS_ECAN_RX_ERR          = 0x0008, // ERROR in CAN reception
 	PRIMARY_NODE_STATUS_GPS_INVALID          = 0x0010, // The GPS is no longer giving good readings
-        PRIMARY_NODE_STATUS_RC_NODE_DISCONNECTED = 0x0020  // The RC node is missing from the CAN bus.
+    PRIMARY_NODE_STATUS_RC_NODE_DISCONNECTED = 0x0020  // The RC node is missing from the CAN bus.
 };
 
 /**
  * This enum declares the bitflags used for the nodeErrors variable in Node.h.
  */
 enum PRIMARY_NODE_RESET {
-	PRIMARY_NODE_RESET_STARTUP          = 0x0001, // Active during the first 5 seconds of bootup.
-	PRIMARY_NODE_RESET_GCS_DISCONNECTED = 0x0002, // The groundcontrol station has been disconnected for >= 30s.
-	PRIMARY_NODE_RESET_GPS_DISCONNECTED = 0x0004, // The GPS unit has had a bad fix for >= 10s.
-	PRIMARY_NODE_RESET_UNUSED           = 0x0008,
-	PRIMARY_NODE_RESET_MANUAL_OVERRIDE  = 0x0010, // Manual override has been engaged by the secondary controller.
-	PRIMARY_NODE_RESET_CALIBRATING      = 0x0020, // The rudder is undergoing calibration.
-	PRIMARY_NODE_RESET_UNCALIBRATED     = 0x0040, // The rudder is uncalibrated.
+	PRIMARY_NODE_RESET_STARTUP                = 0x0001, // Active during the first 5 seconds of bootup.
+	PRIMARY_NODE_RESET_GCS_DISCONNECTED       = 0x0002, // The groundcontrol station has been disconnected for >= 30s.
+	PRIMARY_NODE_RESET_GPS_DISCONNECTED       = 0x0004, // The GPS unit has had a bad fix for >= 10s.
+	PRIMARY_NODE_RESET_DST800_DISCONNECTED    = 0x0008, // The DST800 water speed sensor is disconnected
+	PRIMARY_NODE_RESET_MANUAL_OVERRIDE        = 0x0010, // Manual override has been engaged by the secondary controller.
+	PRIMARY_NODE_RESET_CALIBRATING            = 0x0020, // The rudder is undergoing calibration.
+	PRIMARY_NODE_RESET_UNCALIBRATED           = 0x0040, // The rudder is uncalibrated.
 	PRIMARY_NODE_RESET_ESTOP_OR_ACS300_DISCON = 0x0080, // The system is in emergency-stop mode, actuators are centered and stopped, system will not respond to any commands; it's dead in the water. This can also occur if the CAN connection to the ACS300 is lost/unavailable.
+    PRIMARY_NODE_RESET_IMU_DISCONNECTED       = 0x0100, // The IMU is disconnected
+    PRIMARY_NODE_RESET_RUDDER_DISCONNECTED    = 0x0200, // The rudder is disconnected
     PRIMARY_NODE_RESET_RTB                    = 0x0400  // Return-to-base mode has been engaged due to an error condition.
 };
 
 // Define what reset modes will trigger the return-to-base functionality. In our case it only makes
 // sense to trigger RTB when the groundstation or GPS have been disconnected too long, or when the
 // e-stop is pulled.
-#define RTB_RESET_MASK (PRIMARY_NODE_RESET_GCS_DISCONNECTED | \
-                        PRIMARY_NODE_RESET_GPS_DISCONNECTED | \
+#define RTB_RESET_MASK (PRIMARY_NODE_RESET_GCS_DISCONNECTED |    \
+                        PRIMARY_NODE_RESET_GPS_DISCONNECTED |    \
+                        PRIMARY_NODE_RESET_DST800_DISCONNECTED | \
+                        PRIMARY_NODE_RESET_IMU_DISCONNECTED |    \
+                        PRIMARY_NODE_RESET_RUDDER_DISCONNECTED | \
                         PRIMARY_NODE_RESET_ESTOP_OR_ACS300_DISCON)
 
 // Calculate the BRG register value necessary for 115200 baud with a 80MHz clock.
