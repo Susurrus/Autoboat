@@ -377,15 +377,14 @@ int main(void)
         // At this point we check to see if we're in an error state. If this error state is
         // different than what we were in before, and it's one of the error states that should
         // trigger the return-to-base functionality, then we trigger RTB mode. This is currently
-        // just stopping the propper and a 0deg rudder command. Transmitting these commands are done
-        // whenever the error state changes tomake sure that if the rudder or propeller subsystems
-        // go offline and back online that they will be set to the proper values.
+        // done by cutting the throttle, and centering the rudder.
+        // Transmitting these commands is done whenever the error state changes tomake sure that
+        // if the rudder or propeller subsystems go offline and back online that they'll receive
+        // the message and hopefully respond properly.
         if (nodeErrors != lastErrorState) {
             if (nodeErrors & RTB_RESET_MASK) {
                 ActuatorsTransmitCommands(0.0, 0, true);
-                nodeStatus |= PRIMARY_NODE_STATUS_RTB;
-            } else {
-                nodeStatus &= ~PRIMARY_NODE_STATUS_RTB;
+                nodeErrors |= PRIMARY_NODE_RESET_RTB;
             }
             lastErrorState = nodeErrors;
         }
@@ -715,6 +714,9 @@ void SetAutoMode(PrimaryNodeMode newMode)
     } else if (IS_AUTONOMOUS()){
         // Update the vehicle state
         nodeStatus &= ~PRIMARY_NODE_STATUS_AUTOMODE;
+
+        // Also clear the RTB flag since under manual control the RTB flag isn't relevant.
+        nodeErrors &= ~PRIMARY_NODE_RESET_RTB;
 
         // Transmit a HEARTBEAT message to make sure the groundstation knows that we're now manual
         MavLinkSendHeartbeat(MAVLINK_CHAN_GROUNDSTATION);

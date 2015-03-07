@@ -6,7 +6,7 @@
  */
 enum PRIMARY_NODE_STATUS {
 	PRIMARY_NODE_STATUS_AUTOMODE             = 0x0001, // Vehicle is in autonomous mode, versus manual control mode.
-	PRIMARY_NODE_STATUS_RTB                  = 0x0002, // System is in return-to-base mode
+	PRIMARY_NODE_STATUS_UNUSED               = 0x0002, // System is in return-to-base mode
 	PRIMARY_NODE_STATUS_ECAN_TX_ERR          = 0x0004, // Error in CAN transmission
 	PRIMARY_NODE_STATUS_ECAN_RX_ERR          = 0x0008, // ERROR in CAN reception
 	PRIMARY_NODE_STATUS_GPS_INVALID          = 0x0010, // The GPS is no longer giving good readings
@@ -25,6 +25,7 @@ enum PRIMARY_NODE_RESET {
 	PRIMARY_NODE_RESET_CALIBRATING      = 0x0020, // The rudder is undergoing calibration.
 	PRIMARY_NODE_RESET_UNCALIBRATED     = 0x0040, // The rudder is uncalibrated.
 	PRIMARY_NODE_RESET_ESTOP_OR_ACS300_DISCON = 0x0080, // The system is in emergency-stop mode, actuators are centered and stopped, system will not respond to any commands; it's dead in the water. This can also occur if the CAN connection to the ACS300 is lost/unavailable.
+    PRIMARY_NODE_RESET_RTB                    = 0x0400  // Return-to-base mode has been engaged due to an error condition.
 };
 
 // Define what reset modes will trigger the return-to-base functionality. In our case it only makes
