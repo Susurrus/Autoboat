@@ -376,7 +376,7 @@ void MavLinkSendHeartbeat(uint8_t channel)
 	// Update MAVLink state and run mode based on the system state.
 
 	// If the vehicle is in ESTOP switch into emergency mode.
-	if (nodeErrors & PRIMARY_NODE_RESET_ESTOP) {
+	if (nodeErrors & PRIMARY_NODE_RESET_ESTOP_OR_ACS300_DISCON) {
 		mavlink_system.state = MAV_STATE_EMERGENCY;
 		mavlink_system.mode &= ~MAV_MODE_FLAG_SAFETY_ARMED;
 	}
@@ -1072,7 +1072,8 @@ void MavLinkReceiveManualControl(const mavlink_manual_control_t *msg)
 void MavLinkReceiveSetMode(const mavlink_set_mode_t *msg)
 {
     if (msg->target_system == mavlink_system.sysid) {
-        // Set autonomous mode.
+        // Set autonomous mode. Note that all checking on whether the switch can actually happen is
+        // done within SetAutoMode().
         if ((msg->base_mode & MAV_MODE_FLAG_AUTO_ENABLED) &&
             !(msg->base_mode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED)) {
             SetAutoMode(PRIMARY_MODE_AUTONOMOUS);

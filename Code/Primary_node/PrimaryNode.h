@@ -24,7 +24,7 @@ enum PRIMARY_NODE_RESET {
 	PRIMARY_NODE_RESET_MANUAL_OVERRIDE  = 0x0010, // Manual override has been engaged by the secondary controller.
 	PRIMARY_NODE_RESET_CALIBRATING      = 0x0020, // The rudder is undergoing calibration.
 	PRIMARY_NODE_RESET_UNCALIBRATED     = 0x0040, // The rudder is uncalibrated.
-	PRIMARY_NODE_RESET_ESTOP            = 0x0080  // The system is in emergency-stop mode, actuators are centered and stopped, system will not respond to any commands; it's dead in the water.
+	PRIMARY_NODE_RESET_ESTOP_OR_ACS300_DISCON = 0x0080, // The system is in emergency-stop mode, actuators are centered and stopped, system will not respond to any commands; it's dead in the water. This can also occur if the CAN connection to the ACS300 is lost/unavailable.
 };
 
 // Define what reset modes will trigger the return-to-base functionality. In our case it only makes
@@ -32,7 +32,7 @@ enum PRIMARY_NODE_RESET {
 // e-stop is pulled.
 #define RTB_RESET_MASK (PRIMARY_NODE_RESET_GCS_DISCONNECTED | \
                         PRIMARY_NODE_RESET_GPS_DISCONNECTED | \
-                        PRIMARY_NODE_RESET_ESTOP)
+                        PRIMARY_NODE_RESET_ESTOP_OR_ACS300_DISCON)
 
 // Calculate the BRG register value necessary for 115200 baud with a 80MHz clock.
 #define BAUD115200_BRG_REG 21

@@ -288,10 +288,10 @@ int main(void)
 
         // If we ever lose contact with the ACS300, assume it's an e-stop condition.
         if (lastSensorAvailability.propEnabled && !sensorAvailability.prop.enabled) {
-            nodeErrors |= PRIMARY_NODE_RESET_ESTOP;
+            nodeErrors |= PRIMARY_NODE_RESET_ESTOP_OR_ACS300_DISCON;
             lastSensorAvailability.propEnabled = false;
         } else if (!lastSensorAvailability.propEnabled && sensorAvailability.prop.enabled) {
-            nodeErrors &= ~PRIMARY_NODE_RESET_ESTOP;
+            nodeErrors &= ~PRIMARY_NODE_RESET_ESTOP_OR_ACS300_DISCON;
             lastSensorAvailability.propEnabled = true;
         }
 
