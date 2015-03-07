@@ -29,7 +29,7 @@
         } else {\
             sensorAvailability.sensor.state = false;                                                                   \
         }\
-    } else if (!sensorAvailability.sensor.state && sensorAvailability.sensor.state ## _counter < SENSOR_TIMEOUT) { \
+    } else if (sensorAvailability.sensor.state ## _counter < SENSOR_TIMEOUT) { \
         sensorAvailability.sensor.state = true;                                                                    \
     }
 
