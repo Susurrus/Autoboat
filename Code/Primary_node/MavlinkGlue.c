@@ -398,6 +398,7 @@ void MavLinkSendHeartbeat(uint8_t channel)
 	}
 	// Finally we're active if there're no errors. Also indicate within the mode that we're armed.
 	else {
+            mavlink_system.mode |= MAV_MODE_FLAG_SAFETY_ARMED;
             mavlink_system.state = MAV_STATE_ACTIVE;
 	}
 
