@@ -299,9 +299,10 @@ int main(void)
         // the inverse check when it becomes active again, because that will be done when the CAN message
         // is received.
         if (lastSensorAvailability.rudderEnabled && !sensorAvailability.rudder.enabled) {
-            nodeErrors |= PRIMARY_NODE_RESET_UNCALIBRATED;
+            nodeErrors |= PRIMARY_NODE_RESET_RUDDER_DISCONNECTED;
             lastSensorAvailability.rudderEnabled = false;
         } else if (!lastSensorAvailability.rudderEnabled && sensorAvailability.rudder.enabled) {
+            nodeErrors &= ~PRIMARY_NODE_RESET_RUDDER_DISCONNECTED;
             lastSensorAvailability.rudderEnabled = true;
         }
 
