@@ -415,7 +415,13 @@ int main(void)
         if (nodeErrors != lastErrorState) {
             if (IS_AUTONOMOUS() && (nodeErrors & RTB_RESET_MASK)) {
                 ActuatorsTransmitCommands(0.0, 0, true);
-                nodeErrors |= PRIMARY_NODE_RESET_RTB;
+
+                // Make sure the operator is aware we're in RTB mode, but only announce it once.
+                if (!(nodeErrors & PRIMARY_NODE_RESET_RTB)) {
+                    MavLinkSendStatusText(MAV_SEVERITY_EMERGENCY, "Enacting return-to-base protocol");
+
+                    nodeErrors |= PRIMARY_NODE_RESET_RTB;
+                }
             }
             lastErrorState = nodeErrors;
         }
@@ -744,6 +750,9 @@ void SetAutoMode(PrimaryNodeMode newMode)
 
         // Also clear the RTB flag since under manual control the RTB flag isn't relevant.
         nodeErrors &= ~PRIMARY_NODE_RESET_RTB;
+
+        // Make sure the operator is aware we're no longer in RTB mode
+        MavLinkSendStatusText(MAV_SEVERITY_NOTICE, "Exiting return-to-base protocol");
 
         // Transmit a HEARTBEAT message to make sure the groundstation knows that we're now manual
         MavLinkSendHeartbeat(MAVLINK_CHAN_GROUNDSTATION);
