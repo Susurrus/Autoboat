@@ -400,11 +400,13 @@ int main(void)
         // different than what we were in before, and it's one of the error states that should
         // trigger the return-to-base functionality, then we trigger RTB mode. This is currently
         // done by cutting the throttle, and centering the rudder.
+        // Note that RTB mode is only engaged when the vehicle is autonomous, otherwise primary
+        // control should be allowed in almost every circumstance.
         // Transmitting these commands is done whenever the error state changes tomake sure that
         // if the rudder or propeller subsystems go offline and back online that they'll receive
         // the message and hopefully respond properly.
         if (nodeErrors != lastErrorState) {
-            if (nodeErrors & RTB_RESET_MASK) {
+            if (IS_AUTONOMOUS() && (nodeErrors & RTB_RESET_MASK)) {
                 ActuatorsTransmitCommands(0.0, 0, true);
                 nodeErrors |= PRIMARY_NODE_RESET_RTB;
             }
