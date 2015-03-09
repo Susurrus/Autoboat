@@ -322,20 +322,20 @@ int main(void)
         // This is required for the water speed reading, so if it's disconnected, we enter a reset
         // state.
         if (lastSensorAvailability.dst800Enabled && !sensorAvailability.dst800.enabled) {
-            nodeStatus |= PRIMARY_NODE_RESET_DST800_DISCONNECTED;
+            nodeErrors |= PRIMARY_NODE_RESET_DST800_DISCONNECTED;
             lastSensorAvailability.dst800Enabled = false;
         } else if (!lastSensorAvailability.dst800Enabled && sensorAvailability.dst800.enabled) {
-            nodeStatus &= ~PRIMARY_NODE_RESET_DST800_DISCONNECTED;
+            nodeErrors &= ~PRIMARY_NODE_RESET_DST800_DISCONNECTED;
             lastSensorAvailability.dst800Enabled = true;
         }
 
         /// IMU:
         // This is required for heading & turn rate, so if it's disconnected, we enter a reset state.
         if (lastSensorAvailability.imuEnabled && !sensorAvailability.imu.enabled) {
-            nodeStatus |= PRIMARY_NODE_RESET_IMU_DISCONNECTED;
+            nodeErrors |= PRIMARY_NODE_RESET_IMU_DISCONNECTED;
             lastSensorAvailability.imuEnabled = false;
         } else if (!lastSensorAvailability.imuEnabled && sensorAvailability.imu.enabled) {
-            nodeStatus &= ~PRIMARY_NODE_RESET_IMU_DISCONNECTED;
+            nodeErrors &= ~PRIMARY_NODE_RESET_IMU_DISCONNECTED;
             lastSensorAvailability.imuEnabled = true;
         }
 
