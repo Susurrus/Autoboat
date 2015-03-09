@@ -281,10 +281,18 @@ uint8_t ProcessAllEcanMessages(void)
                 }
                 break;
                 case PGN_RUDDER:
-                { // From the Rudder Controller
-                    // Track rudder messages that are either rudder commands OR actual rudder angles. Since the Parse* function only
-                    // stores valid data, we can just pass in both variables to be written to.
-                    ParsePgn127245(msg.payload, NULL, NULL, &currentCommands.secondaryManualRudderCommand, &rudderSensorData.RudderAngle);
+                {
+                    // Overloaded message that can either be commands from the RC node or the rudder
+                    // angle from the rudder node. Since the Parse* function only stores valid data,
+                    // we can just pass in both variables to be written to.
+                    uint8_t rv = ParsePgn127245(msg.payload, NULL, NULL,
+                                                &currentCommands.secondaryManualRudderCommand,
+                                                &rudderSensorData.RudderAngle);
+                    // If a valid rudder angle was received, the rudder node is enabled and active.
+                    if ((rv & 0x08)) {
+                        SENSOR_STATE_CLEAR_ENABLED_COUNTER(rudder);
+                        SENSOR_STATE_CLEAR_ACTIVE_COUNTER(rudder);
+                    }
                 }
                 break;
                 case PGN_BATTERY_STATUS:
