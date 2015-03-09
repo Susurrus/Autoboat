@@ -220,6 +220,13 @@ int main(void)
     // Report on system status now that initialization is complete.
     MavLinkSendStatusText(MAV_SEVERITY_INFO, "Finished initialization.");
 
+    // Broadcast the current mission item. This is useful if the controller has been power-cycled.
+    // In that case, if the system had been running off the built-in default missions, the only
+    // thing that QGC will have out of date is the current mission item. This fixes that case. If
+    // the waypoints are out-of-date, nothing can be done about that, as the mission protocol is a
+    // pull-only protocol.
+    MavLinkSendCurrentMission();
+
     // Track the last error state that we were in. Used for triggering events on changes
     static uint16_t lastErrorState = 0;
 
