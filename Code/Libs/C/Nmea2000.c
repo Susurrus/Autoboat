@@ -243,7 +243,7 @@ uint8_t ParsePgn127245(const uint8_t data[6], uint8_t *instance, uint8_t *direct
 		int16_t x;
 		LEUnpackInt16(&x, &data[4]);
 		*position = (float)x / 10000.0;
-		fieldStatus |= 0x8;
+		fieldStatus |= 0x08;
 	}
 
 	return fieldStatus;
@@ -376,7 +376,7 @@ uint8_t ParsePgn128267(const uint8_t data[7], uint8_t *seqId, float *waterDepth,
 		fieldStatus |= 0x01;
 	}
 
-	// Field 1: Water depth (8-bits). Raw units are centimeters. Converted to meters for output.
+	// Field 1: Water depth (unsigned, 32-bits). Raw units are centimeters. Converted to meters for output.
 	if (waterDepth && (data[1] != 0xFF || data[2] != 0xFF || data[3] != 0xFF || data[4] != 0xFF)) {
 		uint32_t x;
 		LEUnpackUint32(&x, &data[1]);
@@ -384,7 +384,7 @@ uint8_t ParsePgn128267(const uint8_t data[7], uint8_t *seqId, float *waterDepth,
 		fieldStatus |= 0x02;
 	}
 
-	// Field 2: Water depth offset (8-bits). Raw units are centimeters. Converted to meters for output.
+	// Field 2: Water depth offset (signed, 16-bits). Raw units are centimeters. Converted to meters for output.
 	if (offset && (data[5] != 0xFF || data[6] != 0x7F)) {
 		int16_t x;
 		LEUnpackInt16 (&x, &data[5]);
