@@ -107,9 +107,9 @@ float ProcessManualRudderCommand(float rc);
 int16_t ProcessManualThrottleCommand(int16_t tc);
 
 /**
- * Check if the current mission has changed and announce over MAVLink if it has.
+ * Check if the current mission has changed.
  */
-void CheckMissionStatus(void);
+bool MissionChanged(void);
 
 /**
  * Initialize ADC system for detecting power usage.

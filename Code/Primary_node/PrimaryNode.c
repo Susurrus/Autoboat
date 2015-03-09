@@ -462,7 +462,9 @@ void PrimaryNode100HzLoop(void)
     }
 
     // If we've switched to a new waypoint, announce to QGC that we have.
-    CheckMissionStatus();
+    if (MissionChanged()) {
+        MavLinkSendCurrentMission();
+    }
 
     // Update the LEDs
     SetResetModeLed();
@@ -795,16 +797,17 @@ int16_t ProcessManualThrottleCommand(int16_t tc)
     return tc;
 }
 
-void CheckMissionStatus(void)
+bool MissionChanged(void)
 {
     static int8_t lastMission = 0;
 
     int8_t currentMission;
     GetCurrentMission(&currentMission);
     if (currentMission != lastMission) {
-        MavLinkSendCurrentMission();
         lastMission = currentMission;
+        return true;
     }
+    return false;
 }
 
 /**
