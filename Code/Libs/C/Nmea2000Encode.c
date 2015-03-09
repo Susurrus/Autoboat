@@ -115,6 +115,37 @@ void PackagePgn128259(CanMessage *msg, uint8_t sourceDevice, uint8_t sid, float 
 	msg->payload[7] = 0xFF;
 }
 
+void PackagePgn128267(CanMessage *msg, uint8_t sourceDevice, uint8_t sid, float waterDepth, float offset)
+{
+	msg->id = Iso11783Encode(PGN_WATER_DEPTH, sourceDevice, 0xFF, 3);
+	msg->message_type = CAN_MSG_DATA;
+	msg->frame_type = CAN_FRAME_EXT;
+	msg->buffer = 0;
+	msg->validBytes = 8;
+
+	// Field 0: Battery instance
+	msg->payload[0] = sid;
+
+	// Field 1: Water depth (in .01m/s).
+	uint32_t x = 0xFFFF;
+	if (waterDepth == waterDepth) { // Check that it's NOT NaN.
+            waterDepth *= 100.0f;
+            x = (uint32_t)waterDepth;
+	}
+	LEPackUint32(&msg->payload[1], x);
+
+	// Field 2: Water depth offset (in .01m/s).
+	x = 0xFFFF;
+	if (offset == offset) { // Check that it's NOT NaN.
+		offset *= 100.0f;
+		x = (int16_t)offset;
+	}
+	LEPackInt16(&msg->payload[5], x);
+
+	// Null values pack the rest of the message
+	msg->payload[7] = 0xFF;
+}
+
 void PackagePgn129025(CanMessage *msg, uint8_t sourceDevice, int32_t latitude, int32_t longitude)
 {
     // Specify a new CAN message w/ metadata

@@ -42,6 +42,8 @@ typedef enum {
 
 void PackagePgn128259(CanMessage *msg, uint8_t sourceDevice, uint8_t sid, float waterSpeed, float groundSpeed, WaterReferenceType waterRefType);
 
+void PackagePgn128267(CanMessage *msg, uint8_t sourceDevice, uint8_t sid, float waterDepth, float offset);
+
 void PackagePgn129025(CanMessage *msg, uint8_t sourceDevice, int32_t latitude, int32_t longitude);
 
 void PackagePgn129026(CanMessage *msg, uint8_t sourceDevice, uint8_t seqId, uint8_t cogRef, uint16_t cog, uint16_t sog);
