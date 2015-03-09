@@ -74,9 +74,6 @@ enum {
     SCHED_ID_COG_SOG,
     SCHED_ID_GPS_FIX,
 
-    // IMU messages
-    SCHED_ID_ATT_ANGLE,
-
     // DST800 messages
     SCHED_ID_WATER_SPD,
 
@@ -137,7 +134,6 @@ static uint8_t ids[ECAN_MSGS_SIZE] = {
     SCHED_ID_LAT_LON,
     SCHED_ID_COG_SOG,
     SCHED_ID_GPS_FIX,
-    SCHED_ID_ATT_ANGLE,
     SCHED_ID_WATER_SPD,
     SCHED_ID_HIL_STATUS,
     SCHED_ID_IMU
