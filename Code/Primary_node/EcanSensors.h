@@ -163,7 +163,9 @@ extern struct stc {
 } sensorAvailability;
 
 // Set the timeout period for sensors (in units of the call rate of `UpdateSensorsAvailability`)
-#define SENSOR_TIMEOUT 100
+// This is set to a littler longer than 1s to be more forgiving for sensors that only transmit at
+// 1Hz.
+#define SENSOR_TIMEOUT 125
 
 /**
  * Returns the water speed of the vessel in m/s. Also clears the newData member variable.
