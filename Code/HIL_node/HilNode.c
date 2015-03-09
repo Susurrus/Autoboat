@@ -76,6 +76,7 @@ enum {
 
     // DST800 messages
     SCHED_ID_WATER_SPD,
+    SCHED_ID_WATER_DEPTH,
 
     // HIL messages, specifically the NODE_STATUS message
     SCHED_ID_HIL_STATUS,
@@ -135,6 +136,7 @@ static uint8_t ids[ECAN_MSGS_SIZE] = {
     SCHED_ID_COG_SOG,
     SCHED_ID_GPS_FIX,
     SCHED_ID_WATER_SPD,
+    SCHED_ID_WATER_DEPTH,
     SCHED_ID_HIL_STATUS,
     SCHED_ID_IMU
 };
@@ -287,10 +289,16 @@ void HilNodeInit(void)
         HIL_FATAL_ERROR();
     }
 
+    // Transmit water depth at 1Hz
+    if (!AddMessageRepeating(&sched, SCHED_ID_WATER_DEPTH, 1)) {
+        HIL_FATAL_ERROR();
+    }
+
     // Transmit HIL status at 2Hz
     if (!AddMessageRepeating(&sched, SCHED_ID_HIL_STATUS, 2)) {
         HIL_FATAL_ERROR();
     }
+
     // Transmit IMU data at 25Hz
     if (!AddMessageRepeating(&sched, SCHED_ID_IMU, 25)) {
         HIL_FATAL_ERROR();
@@ -504,6 +512,11 @@ void HilNodeTimer100Hz(void)
             // Emulate the DST800 water speed sensor
             case SCHED_ID_WATER_SPD:
                 PackagePgn128259(&msg, nodeId, 0xFF, hilReceivedData.data.waterSpeed, NAN, WATER_REFERENCE_PADDLE_WHEEL);
+                HIL_ECAN_TRY(Ecan1Transmit(&msg));
+                break;
+            // Emulate the DST800 water depth sensor
+            case SCHED_ID_WATER_DEPTH:
+                PackagePgn128267(&msg, nodeId, 0xFF, 0.0, 0.0);
                 HIL_ECAN_TRY(Ecan1Transmit(&msg));
                 break;
             // Emulate the IMU node
