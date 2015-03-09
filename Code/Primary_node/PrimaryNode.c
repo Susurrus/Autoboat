@@ -664,9 +664,6 @@ void TransmitNodeStatus2Hz(void)
 
 void PrimaryNodeMuxAndOutputControllerCommands(float rudderCommand, int16_t throttleCommand, bool forceTransmission)
 {
-    float muxedRc;
-    int16_t muxedTc;
-
     // Obtain and filter the manual control inputs
     float manRc;
     int16_t manTc;
@@ -680,19 +677,15 @@ void PrimaryNodeMuxAndOutputControllerCommands(float rudderCommand, int16_t thro
     currentCommands.autonomousRudderCommand = rudderCommand;
     currentCommands.autonomousThrottleCommand = throttleCommand;
 
-    // Select actuator commands based on vehicle mode.
-    if (IS_AUTONOMOUS()) {
-        muxedRc = rudderCommand;
-        // Throttle command is not managed by the autonomous controller yet
-        muxedTc = manTc;
-    } else {
-        muxedRc = manRc;
-        muxedTc = manTc;
+    // Transmit the actuator commands if the system is autonomous and there're no errors.
+    if (IS_AUTONOMOUS() && !nodeErrors) {
+        // Throttle command is not managed by the autonomous controller yet, so just use the manually
+        // set value.
+        ActuatorsTransmitCommands(rudderCommand, manTc, forceTransmission);
     }
-
-    // Only transmit these commands if there are no errors.
-    if (!nodeErrors) {
-        ActuatorsTransmitCommands(muxedRc, muxedTc, forceTransmission);
+    // But always allow manual control, even if errors exist.
+    else if (!IS_AUTONOMOUS()) {
+        ActuatorsTransmitCommands(manRc, manTc, forceTransmission);
     }
 }
 
