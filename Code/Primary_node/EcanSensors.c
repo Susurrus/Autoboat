@@ -193,15 +193,24 @@ uint8_t ProcessAllEcanMessages(void)
                         // And reset the timeout counter for this node.
                         nodeStatusTimeoutCounters[node - 1] = 0;
 
-                        // And add some extra logic for integrating the RC node statusAvailability
-                        // logic.
-                        if (node == CAN_NODE_RC) {
-                            SENSOR_STATE_CLEAR_ENABLED_COUNTER(rcNode);
-                            // Only if the RC transmitter is connected and in override mode should the RC node be considered
-                            // active.
-                            if (status & 0x01) {
-                                SENSOR_STATE_CLEAR_ACTIVE_COUNTER(rcNode);
-                            }
+                        // And add some extra logic for specific nodes and tracking their
+                        // availability.
+                        switch (node) {
+                            case CAN_NODE_RC:
+                                SENSOR_STATE_CLEAR_ENABLED_COUNTER(rcNode);
+                                // Only if the RC transmitter is connected and in override mode
+                                // should the RC node be considered active.
+                                if (status & 0x01) {
+                                    SENSOR_STATE_CLEAR_ACTIVE_COUNTER(rcNode);
+                                }
+                            break;
+                            case CAN_NODE_RUDDER_CONTROLLER:
+                                SENSOR_STATE_CLEAR_ENABLED_COUNTER(rudder);
+                                // As long as the sensor is done calibrating, it's active too.
+                                if ((status & 0x01) && !(status & 0x02)) {
+                                    SENSOR_STATE_CLEAR_ACTIVE_COUNTER(rudder);
+                                }
+                            break;
                         }
                     }
                 } else if (msg.id == CAN_MSG_ID_RUDDER_DETAILS) {
