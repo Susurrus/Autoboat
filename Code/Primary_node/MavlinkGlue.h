@@ -65,6 +65,13 @@ void MavLinkSendStatusText(enum MAV_SEVERITY severity, const char *text);
 void MavLinkSendCurrentMission(void);
 
 /**
+ * Transmit that the mission item has been reached. This actually broadcasts the mission sequence ID
+ * of the previous mission as this function assumes it's called AFTER the transition to the next
+ * waypoint.
+ */
+void MavLinkSendMissionItemReached(void);
+
+/**
  * Transmit a CONTROLLER_DATA message. This message was not designed to be scheduled as normal, which
  * is why it actually has function arguments. This should be sent explicitly immediately after the
  * controller loop has run.

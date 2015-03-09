@@ -464,6 +464,7 @@ void PrimaryNode100HzLoop(void)
     // If we've switched to a new waypoint, announce to QGC that we have.
     if (MissionChanged()) {
         MavLinkSendCurrentMission();
+        MavLinkSendMissionItemReached();
     }
 
     // Update the LEDs

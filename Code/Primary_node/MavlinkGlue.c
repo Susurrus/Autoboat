@@ -744,6 +744,24 @@ void MavLinkSendCurrentMission(void)
 }
 
 /**
+ * Transmit the current mission index via UART1. GetCurrentMission returns a -1 if there're no missions,
+ * so we check and only transmit valid current missions.
+ */
+void MavLinkSendMissionItemReached(void)
+{
+    int8_t currentMission;
+
+    GetCurrentMission(&currentMission);
+
+    if (currentMission - 1 != -1) {
+        mavlink_msg_mission_item_reached_pack(mavlink_system.sysid, mavlink_system.compid,
+                                              &txMessage, (uint16_t)(currentMission - 1));
+        len = mavlink_msg_to_send_buffer(buf, &txMessage);
+        Uart1WriteData(buf, (uint8_t)len);
+    }
+}
+
+/**
  * Transmit a mission acknowledgement message. The type of message is the sole argument to this
  * function (see enum MAV_MISSIONRESULT).
  */
