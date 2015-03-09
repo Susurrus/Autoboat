@@ -272,17 +272,17 @@ void HilNodeInit(void)
     }
 
     // Transmit latitude/longitude at 5Hz
-    if (!AddMessageRepeating(&sched, SCHED_ID_LAT_LON, 5)) {
+    if (!AddMessageRepeating(&sched, SCHED_ID_LAT_LON, 10)) {
         HIL_FATAL_ERROR();
     }
 
-    // Transmit heading & speed at 5Hz
-    if (!AddMessageRepeating(&sched, SCHED_ID_COG_SOG, 5)) {
+    // Transmit heading & speed at 4Hz
+    if (!AddMessageRepeating(&sched, SCHED_ID_COG_SOG, 4)) {
         HIL_FATAL_ERROR();
     }
 
-    // Transmit heading & speed at 5Hz
-    if (!AddMessageRepeating(&sched, SCHED_ID_GPS_FIX, 5)) {
+    // Transmit GPS fix at 10Hz
+    if (!AddMessageRepeating(&sched, SCHED_ID_GPS_FIX, 10)) {
         HIL_FATAL_ERROR();
     }
 
