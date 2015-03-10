@@ -40,9 +40,6 @@ enum PRIMARY_NODE_RESET {
                         PRIMARY_NODE_RESET_RUDDER_DISCONNECTED | \
                         PRIMARY_NODE_RESET_ESTOP_OR_ACS300_DISCON)
 
-// Calculate the BRG register value necessary for 115200 baud with a 80MHz clock.
-#define BAUD115200_BRG_REG 21
-
 typedef struct {
 	float primaryManualRudderCommand;
 	float secondaryManualRudderCommand;
@@ -57,18 +54,6 @@ typedef enum {
     PRIMARY_MODE_MANUAL,
     PRIMARY_MODE_AUTONOMOUS
 } PrimaryNodeMode;
-
-/**
- * Initialize all of the C-libraries necessary for the Primary Node.
- */
-void PrimaryNodeInit(void);
-
-/**
- * Clear the GPS and Rudder internal data structures when the system goes into reset mode. This is
- * useful primarily when testing the primary controller and the node is left on through multiple
- * test runs.
- */
-void ClearStateWhenErrors(void);
 
 /**
  * Provides a helper function for updating the autonomous mode of the vehicle. Additional actions
@@ -88,33 +73,6 @@ PrimaryNodeMode GetAutoMode(void);
  * This macro provides a shortcut for checking if the vehicle is current in under autonomous control.
  */
 #define IS_AUTONOMOUS() (GetAutoMode() == PRIMARY_MODE_AUTONOMOUS)
-
-/**
- * Call at 100Hz to transmit a NODE_STATUS can message at 2Hz.
- */
-void TransmitNodeStatus2Hz(void);
-
-/**
- * Perform a bunch of processing on a manual rudder angle input including binning the final value.
- * @param rc A rudder angle in radians.
- */
-float ProcessManualRudderCommand(float rc);
-
-/**
- * Perform a bunch of processing on a manual throttle input including binning the final value.
- * @param tc The commanded throttle in units from -1000 (full reverse) to 1000 (full forward)
- */
-int16_t ProcessManualThrottleCommand(int16_t tc);
-
-/**
- * Check if the current mission has changed.
- */
-bool MissionChanged(void);
-
-/**
- * Initialize ADC system for detecting power usage.
- */
-void PrimaryNodeAdcInit(void);
 
 /**
  * Returns the sensed power rail voltage. Accuracy should be about 1%.

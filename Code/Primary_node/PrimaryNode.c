@@ -42,6 +42,9 @@
 // Keep track of the processor's operating frequency.
 #define F_OSC 80000000L
 
+// Calculate the BRG register value necessary for 115200 baud with a 80MHz clock.
+#define BAUD115200_BRG_REG 21
+
 // Define the maximum value of the ADC input
 #define ANmax 4095.0f
 
@@ -102,6 +105,10 @@ void SetStatusModeLed(void);
 void SetAutoModeLed(void);
 void SetResetModeLed(void);
 void SetGpsLed(void);
+void TransmitNodeStatus2Hz(void);
+float ProcessManualRudderCommand(float rc);
+int16_t ProcessManualThrottleCommand(int16_t tc);
+void ClearStateWhenErrors(void);
 
 // Set processor configuration settings
 #ifdef __dsPIC33FJ128MC802__
@@ -760,6 +767,10 @@ void SetAutoMode(PrimaryNodeMode newMode)
     }
 }
 
+/**
+ * Perform a bunch of processing on a manual rudder angle input including binning the final value.
+ * @param rc A rudder angle in radians.
+ */
 float ProcessManualRudderCommand(float rc)
 {
     // Set up 9 bins for binning the rudder command into, broken into (degrees):
@@ -804,6 +815,10 @@ float ProcessManualRudderCommand(float rc)
     }
 }
 
+/**
+ * Perform a bunch of processing on a manual throttle input including binning the final value.
+ * @param tc The commanded throttle in units from -1000 (full reverse) to 1000 (full forward)
+ */
 int16_t ProcessManualThrottleCommand(int16_t tc)
 {
     // Add an 8% deadband
