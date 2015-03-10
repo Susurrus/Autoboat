@@ -61,15 +61,17 @@ void MavLinkSendStatusText(enum MAV_SEVERITY severity, const char *text);
 /**
  * Transmit the current mission index via UART1. GetCurrentMission returns a -1 if there're no missions,
  * so we check and only transmit valid current missions.
+ * @param missionIndex The index of the current mission. -1 indicates an invalid mission
  */
-void MavLinkSendCurrentMission(void);
+void MavLinkSendCurrentMission(int8_t missionIndex);
 
 /**
  * Transmit that the mission item has been reached. This actually broadcasts the mission sequence ID
  * of the previous mission as this function assumes it's called AFTER the transition to the next
  * waypoint.
+ * @param missionIndex The index of the current mission. -1 indicates an invalid mission
  */
-void MavLinkSendMissionItemReached(void);
+void MavLinkSendMissionItemReached(int8_t missionIndex);
 
 /**
  * Transmit a CONTROLLER_DATA message. This message was not designed to be scheduled as normal, which

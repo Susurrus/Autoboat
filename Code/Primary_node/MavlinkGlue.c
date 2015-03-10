@@ -730,32 +730,24 @@ void MavLinkSendGpsGlobalOrigin(void)
  * Transmit the current mission index via UART1. GetCurrentMission returns a -1 if there're no missions,
  * so we check and only transmit valid current missions.
  */
-void MavLinkSendCurrentMission(void)
+void MavLinkSendCurrentMission(int8_t missionIndex)
 {
-	int8_t currentMission;
-
-	GetCurrentMission(&currentMission);
-
-	if (currentMission != -1) {
-		mavlink_msg_mission_current_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage, (uint16_t)currentMission);
-		len = mavlink_msg_to_send_buffer(buf, &txMessage);
-		Uart1WriteData(buf, (uint8_t)len);
-	}
+    if (missionIndex != -1) {
+        mavlink_msg_mission_current_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage, (uint16_t)missionIndex);
+        len = mavlink_msg_to_send_buffer(buf, &txMessage);
+        Uart1WriteData(buf, (uint8_t)len);
+    }
 }
 
 /**
  * Transmit the current mission index via UART1. GetCurrentMission returns a -1 if there're no missions,
  * so we check and only transmit valid current missions.
  */
-void MavLinkSendMissionItemReached(void)
+void MavLinkSendMissionItemReached(int8_t missionIndex)
 {
-    int8_t currentMission;
-
-    GetCurrentMission(&currentMission);
-
-    if (currentMission - 1 != -1) {
+    if (missionIndex != -1) {
         mavlink_msg_mission_item_reached_pack(mavlink_system.sysid, mavlink_system.compid,
-                                              &txMessage, (uint16_t)(currentMission - 1));
+                                              &txMessage, (uint16_t)(missionIndex));
         len = mavlink_msg_to_send_buffer(buf, &txMessage);
         Uart1WriteData(buf, (uint8_t)len);
     }
@@ -1323,9 +1315,10 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 					nextState = MISSION_STATE_INACTIVE;
 				}
 			} else if (event == MISSION_EVENT_SET_CURRENT_RECEIVED) {
-				SetCurrentMission(*(uint8_t*)data);
-				MavLinkSendCurrentMission();
-				nextState = MISSION_STATE_INACTIVE;
+                            uint8_t newCurrentMissionIndex = *(uint8_t*)data;
+                            SetCurrentMission(newCurrentMissionIndex);
+                            MavLinkSendCurrentMission(newCurrentMissionIndex);
+                            nextState = MISSION_STATE_INACTIVE;
 			}
                         // At this point we shouldn't see anything else, so report an error if we do.
                         else if (event > MISSION_EVENT_EXIT_STATE) {

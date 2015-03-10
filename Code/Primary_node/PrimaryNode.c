@@ -225,7 +225,7 @@ int main(void)
     // thing that QGC will have out of date is the current mission item. This fixes that case. If
     // the waypoints are out-of-date, nothing can be done about that, as the mission protocol is a
     // pull-only protocol.
-    MavLinkSendCurrentMission();
+    MavLinkSendCurrentMission(0);
 
     // Track the last error state that we were in. Used for triggering events on changes
     static uint16_t lastErrorState = 0;
@@ -474,12 +474,6 @@ void PrimaryNode100HzLoop(void)
         nodeErrors &= ~PRIMARY_NODE_RESET_STARTUP;
     }
 
-    // If we've switched to a new waypoint, announce to QGC that we have.
-    if (MissionChanged()) {
-        MavLinkSendCurrentMission();
-        MavLinkSendMissionItemReached();
-    }
-
     // Update the LEDs
     SetResetModeLed();
     SetAutoModeLed();
@@ -522,6 +516,12 @@ void PrimaryNode100HzLoop(void)
     // if the system is in a reset state. This can happen from errors, but also when the secondary
     // manual controller is active and controlling the vessel.
     PrimaryNodeMuxAndOutputControllerCommands(rCommand, tCommand, false);
+
+    // If we've switched to a new waypoint, announce to QGC that we have.
+    if (controllerVars.wpReachedIndex != -1) {
+        MavLinkSendCurrentMission(controllerVars.wpReachedIndex);
+        MavLinkSendMissionItemReached(controllerVars.wpReachedIndex);
+    }
 
     // Send any necessary groundstation messages for this timestep.
     MavLinkTransmitGroundstation();
@@ -812,19 +812,6 @@ int16_t ProcessManualThrottleCommand(int16_t tc)
     }
 
     return tc;
-}
-
-bool MissionChanged(void)
-{
-    static int8_t lastMission = 0;
-
-    int8_t currentMission;
-    GetCurrentMission(&currentMission);
-    if (currentMission != lastMission) {
-        lastMission = currentMission;
-        return true;
-    }
-    return false;
 }
 
 /**
