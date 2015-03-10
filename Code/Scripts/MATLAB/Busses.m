@@ -157,6 +157,17 @@ elems(14).SamplingMode = 'Sample based';
 elems(14).Min = [];
 elems(14).Max = [];
 
+elems(15) = Simulink.BusElement;
+elems(15).Name = 'wpReachedIndex';
+elems(15).Dimensions = 1;
+elems(15).DimensionsMode = 'Fixed';
+elems(15).DataType = 'int8';
+elems(15).SampleTime = -1;
+elems(15).Complexity = 'real';
+elems(15).SamplingMode = 'Sample based';
+elems(15).Min = [];
+elems(15).Max = [];
+
 InternalVariables = Simulink.Bus;
 InternalVariables.Description = sprintf('Holds all of the data generated within Simulink code that Mavlink may need access to for transmission.');
 InternalVariables.DataScope = 'Exported';
