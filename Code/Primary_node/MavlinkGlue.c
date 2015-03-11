@@ -223,7 +223,7 @@ static struct {
 static uint32_t gcsLastTimeSeen = UINT32_MAX;
 
 // Set up the message scheduler for MAVLink transmission to the groundstation
-#define GROUNDSTATION_SCHEDULE_NUM_MSGS 17
+#define GROUNDSTATION_SCHEDULE_NUM_MSGS 18
 static uint8_t groundstationMavlinkScheduleIds[GROUNDSTATION_SCHEDULE_NUM_MSGS] = {
 	MAVLINK_MSG_ID_HEARTBEAT,
 	MAVLINK_MSG_ID_SYS_STATUS,
@@ -241,7 +241,8 @@ static uint8_t groundstationMavlinkScheduleIds[GROUNDSTATION_SCHEDULE_NUM_MSGS] 
 	MAVLINK_MSG_ID_WAYPOINT_STATUS,
 	MAVLINK_MSG_ID_TOKIMEC,
 	MAVLINK_MSG_ID_RADIO_STATUS,
-	MAVLINK_MSG_ID_VFR_HUD
+	MAVLINK_MSG_ID_VFR_HUD,
+	MAVLINK_MSG_ID_NAV_CONTROLLER_OUTPUT
 };
 static uint16_t groundstationMavlinkScheduleTSteps[GROUNDSTATION_SCHEDULE_NUM_MSGS][2][8] = {};
 static uint8_t  groundstationMavlinkScheduleSizes[GROUNDSTATION_SCHEDULE_NUM_MSGS];
@@ -314,7 +315,7 @@ void MavLinkInit(void)
         // We only report things that the GUI needs at 2Hz because it only updates at 1 or 2Hz.
         // We output the VFR_HUD message at a fast 5Hz because it has the throttle value and that's
         // nice to have quick response to.
-        const uint8_t const periodicities[GROUNDSTATION_SCHEDULE_NUM_MSGS] = {2, 2, 1, 2, 4, 2, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 5};
+        const uint8_t const periodicities[GROUNDSTATION_SCHEDULE_NUM_MSGS] = {2, 2, 1, 2, 4, 2, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 5, 2};
         for (i = 0; i < GROUNDSTATION_SCHEDULE_NUM_MSGS; ++i) {
             if (periodicities[i] && !AddMessageRepeating(&groundstationMavlinkSchedule, groundstationMavlinkScheduleIds[i], periodicities[i])) {
                 FATAL_ERROR();
@@ -956,6 +957,19 @@ void MavLinkSendGps200Data(void)
 	                        gpsDataStore.variation);
 	len = mavlink_msg_to_send_buffer(buf, &txMessage);
 	Uart1WriteData(buf, (uint8_t)len);
+}
+
+void MavLinkSendNavControllerOutput(void)
+{
+    mavlink_msg_nav_controller_output_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
+            NAN, NAN, INT16_MAX, // Roll, pitch, and yaw not commanded
+            BearingToNextWaypoint(),
+            DistanceToNextWaypoint(),
+            NAN, NAN, // Altitude and airspeed not commanded
+            CrossTrackError()
+    );
+    len = mavlink_msg_to_send_buffer(buf, &txMessage);
+    Uart1WriteData(buf, (uint8_t)len);
 }
 
 void MavLinkSendNodeStatus(uint8_t channel)
@@ -1965,9 +1979,13 @@ void MavLinkTransmitGroundstation(void)
 				MavLinkSendRadioStatus();
 			} break;
 
-                case MAVLINK_MSG_ID_VFR_HUD:
-                    MavLinkSendVfrHud();
-                    break;
+        case MAVLINK_MSG_ID_VFR_HUD:
+            MavLinkSendVfrHud();
+        break;
+
+        case MAVLINK_MSG_ID_NAV_CONTROLLER_OUTPUT:
+            MavLinkSendNavControllerOutput();
+        break;
 
 			/** SeaSlug Messages **/
 
