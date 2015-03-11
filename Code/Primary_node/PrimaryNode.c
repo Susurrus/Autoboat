@@ -931,3 +931,45 @@ void GetCurrentActuatorCommands(float *rudderAngle, int16_t *throttle)
         *throttle = 0;
     }
 }
+
+int16_t BearingToNextWaypoint(void)
+{
+    const float distNorth = controllerVars.wp1[0] - controllerVars.LocalPosition[0];
+    const float distEast = controllerVars.wp1[1] - controllerVars.LocalPosition[1];
+
+    const float waypointAbsBearing = atan2(distNorth, distEast);
+    const float heading = controllerVars.sensedYaw;
+    const float bearing = (heading - waypointAbsBearing) * 180.0 / M_PI;
+
+    return (int16_t)bearing;
+}
+
+uint16_t DistanceToNextWaypoint(void)
+{
+    const float distNorth = controllerVars.wp1[0] - controllerVars.LocalPosition[0];
+    const float distEast = controllerVars.wp1[1] - controllerVars.LocalPosition[1];
+
+    return (uint16_t)sqrt(distNorth * distNorth + distEast * distEast);
+}
+
+float CrossTrackError(void)
+{
+    const float *p1 = controllerVars.wp0;
+    const float *p2 = controllerVars.wp1;
+    const float *p0 = controllerVars.LocalPosition; // The vehicle's position
+
+    // Calculate the denominator, which is just the distance between the waypoints
+    const float denominator = sqrtf((p2[1] - p1[1]) * (p2[1] - p1[1]) +
+                                       (p2[0] - p1[0]) * (p2[0] - p1[0]));
+
+    // And calculate the numerator
+    const float numerator = fabs((p2[0] - p1[0]) * p0[1] - (p2[1] - p1[1]) * p0[0] + p2[1] * p1[0] -
+        p2[0] * p1[1]);
+
+    // Make sure the value is calculatable.
+    if (denominator != 0.0) {
+        return numerator / denominator;
+    } else {
+        return NAN;
+    }
+}

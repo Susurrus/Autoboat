@@ -94,4 +94,24 @@ float GetPowerRailCurrent(void);
  */
 void GetCurrentActuatorCommands(float *rudderAngle, int16_t *throttle);
 
+/**
+ * Calculate the relative bearing of the destination waypoint. This ends up being the difference
+ * from the absolute heading of the own vessel and the relative bearing of the target.
+ * @return The relative bearing angle in meters.
+ */
+int16_t BearingToNextWaypoint(void);
+
+/**
+ * Calculate the distance to the destination waypoint in meters.
+ * @return The meters until the next waypoint or UINT16_MAX if it can't be calculated.
+ */
+uint16_t DistanceToNextWaypoint(void);
+
+/**
+ * Return the crosstrack error.
+ * @see https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line#Line_defined_by_two_points
+ * @return The crosstrack error in meters or NAN if it can't be calculated.
+ */
+float CrossTrackError(void);
+
 #endif // PRIMARY_NODE_H
