@@ -706,8 +706,8 @@ void PrimaryNodeMuxAndOutputControllerCommands(float rudderCommand, int16_t thro
         // set value.
         ActuatorsTransmitCommands(rudderCommand, manTc, forceTransmission);
     }
-    // But always allow manual control, even if errors exist.
-    else if (!IS_AUTONOMOUS()) {
+    // But allow manual control as long as the manual override isn't active.
+    else if (!IS_AUTONOMOUS() && !(nodeErrors & PRIMARY_NODE_RESET_MANUAL_OVERRIDE)) {
         ActuatorsTransmitCommands(manRc, manTc, forceTransmission);
     }
 }
