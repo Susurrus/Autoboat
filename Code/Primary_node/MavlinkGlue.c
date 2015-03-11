@@ -136,12 +136,15 @@ enum MISSION_EVENT {
 // These flags are for use with the SYS_STATUS MAVLink message as a mapping from the Autoboat's
 // sensors to the sensors/controllers available in SYS_STATUS.
 enum ONBOARD_SENSORS {
-	ONBOARD_SENSORS_IMU = (1 << 0) | (1 << 1) | (1 << 2),
-	ONBOARD_SENSORS_WSO100 = 1 << 3,
-	ONBOARD_SENSORS_GPS = 1 << 5,
-	ONBOARD_CONTROL_YAW_POS = 1 << 12,
-	ONBOARD_CONTROL_XY_POS = 1 << 14,
-	ONBOARD_CONTROL_MOTOR = 1 << 15
+    ONBOARD_SENSORS_IMU = MAV_SYS_STATUS_SENSOR_3D_GYRO |
+                          MAV_SYS_STATUS_SENSOR_3D_ACCEL |
+                          MAV_SYS_STATUS_SENSOR_3D_MAG,
+    ONBOARD_SENSORS_WSO100 = MAV_SYS_STATUS_SENSOR_ABSOLUTE_PRESSURE,
+    ONBOARD_SENSORS_GPS = MAV_SYS_STATUS_SENSOR_GPS,
+    ONBOARD_CONTROL_YAW_POS = MAV_SYS_STATUS_SENSOR_YAW_POSITION,
+    ONBOARD_CONTROL_XY_POS = MAV_SYS_STATUS_SENSOR_XY_POSITION_CONTROL,
+    ONBOARD_CONTROL_MOTOR = MAV_SYS_STATUS_SENSOR_MOTOR_OUTPUTS,
+    ONBOARD_CONTROL_RC = MAV_SYS_STATUS_SENSOR_RC_RECEIVER
 };
 
 typedef struct {
@@ -465,12 +468,13 @@ void MavLinkSendStatus(uint8_t channel)
 {
 	// Declare that we have onboard sensors: 3D gyro, 3D accelerometer, 3D magnetometer, absolute pressure, GPS
 	// And that we have the following controllers: yaw position, x/y position control, motor outputs/control.
-	uint32_t systemsPresent = ONBOARD_SENSORS_IMU |
-	                          ONBOARD_SENSORS_WSO100  |
-	                          ONBOARD_SENSORS_GPS     |
-	                          ONBOARD_CONTROL_YAW_POS |
-	                          ONBOARD_CONTROL_XY_POS  |
-	                          ONBOARD_CONTROL_MOTOR;
+    uint32_t systemsPresent = ONBOARD_SENSORS_IMU |
+                              ONBOARD_SENSORS_WSO100 |
+                              ONBOARD_SENSORS_GPS |
+                              ONBOARD_CONTROL_YAW_POS |
+                              ONBOARD_CONTROL_XY_POS |
+                              ONBOARD_CONTROL_MOTOR |
+                              ONBOARD_CONTROL_RC;
 
         // These are systems which are connected.
 	uint32_t systemsEnabled = ONBOARD_CONTROL_YAW_POS;
@@ -480,6 +484,7 @@ void MavLinkSendStatus(uint8_t channel)
 	// The DST800 doesn't map into this bitfield.
 	// The power node doesn't map into this bitfield.
 	systemsEnabled |= sensorAvailability.prop.enabled?(ONBOARD_CONTROL_XY_POS|ONBOARD_CONTROL_MOTOR):0;
+	systemsEnabled |= sensorAvailability.rcNode.enabled?ONBOARD_CONTROL_RC:0;
 
         // And these are systems which are transmitting good data
 	uint32_t systemsActive = ONBOARD_CONTROL_YAW_POS;
@@ -489,6 +494,7 @@ void MavLinkSendStatus(uint8_t channel)
 	// The DST800 doesn't map into this bitfield.
 	// The power node doesn't map into this bitfield.
 	systemsActive |= sensorAvailability.prop.active?(ONBOARD_CONTROL_XY_POS|ONBOARD_CONTROL_MOTOR):0;
+	systemsActive |= sensorAvailability.rcNode.active?ONBOARD_CONTROL_RC:0;
 
 	// Grab the globally-declared battery sensor data and map into the values necessary for transmission.
 	uint16_t voltage = (uint16_t)(GetPowerRailVoltage() * 1000);
