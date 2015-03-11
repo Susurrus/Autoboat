@@ -26,7 +26,7 @@ elems(2).Min = [];
 elems(2).Max = [];
 
 elems(3) = Simulink.BusElement;
-elems(3).Name = 'Heading';
+elems(3).Name = 'Course';
 elems(3).Dimensions = 1;
 elems(3).DimensionsMode = 'Fixed';
 elems(3).DataType = 'single';
