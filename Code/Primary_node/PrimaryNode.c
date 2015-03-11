@@ -355,7 +355,8 @@ int main(void)
 
         // If the RC node has stopped being active, it means that manual control is no longer being
         // enforced, so we clear that status and re-transmit the latest autonomous control commands.
-        // Otherwise if the RC node becomes active, that means it's exerting manual override
+        // Otherwise if the RC node becomes active while it's also enabled, then we have manual
+        // override.
         if (lastSensorAvailability.rcNodeActive && !sensorAvailability.rcNode.active) {
             nodeErrors &= ~PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
 
@@ -367,7 +368,8 @@ int main(void)
                                                       currentCommands.autonomousThrottleCommand,
                                                       true);
             lastSensorAvailability.rcNodeActive = false;
-        } else if (!lastSensorAvailability.rcNodeActive && sensorAvailability.rcNode.active) {
+        } else if (sensorAvailability.rcNode.enabled &&
+                   !lastSensorAvailability.rcNodeActive && sensorAvailability.rcNode.active) {
             nodeErrors |= PRIMARY_NODE_RESET_MANUAL_OVERRIDE;
             lastSensorAvailability.rcNodeActive = true;
         }

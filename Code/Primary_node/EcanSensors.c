@@ -161,7 +161,7 @@ uint8_t ProcessAllEcanMessages(void)
                     if ((msg.payload[6] & 0x40) == 0) { // Checks the status bit to determine if the ACS300 is enabled.
                         SENSOR_STATE_CLEAR_ACTIVE_COUNTER(prop);
                     }
-                    Acs300DecodeHeartbeat(msg.payload, (uint16_t*) & throttleDataStore.rpm, NULL, NULL, NULL);
+                    Acs300DecodeHeartbeat(msg.payload, (uint16_t*)&throttleDataStore.rpm, NULL, NULL, NULL);
                     throttleDataStore.newData = true;
                 } else if (msg.id == ACS300_CAN_ID_WR_PARAM) {
                     // Track the current velocity from the secondary controller.
