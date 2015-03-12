@@ -526,10 +526,13 @@ void PrimaryNode100HzLoop(void)
     // manual controller is active and controlling the vessel.
     PrimaryNodeMuxAndOutputControllerCommands(rCommand, tCommand, false);
 
-    // If we've switched to a new waypoint, announce to QGC that we have.
+    // If we've reached a new waypoint, announce to QGC that we have.
     if (controllerVars.wpReachedIndex != -1) {
-        MavLinkSendCurrentMission(controllerVars.wpReachedIndex);
         MavLinkSendMissionItemReached(controllerVars.wpReachedIndex);
+    }
+    // If we've switched to a new waypoint, announce to QGC that we have.
+    if (controllerVars.wpCurrentIndex != -1) {
+        MavLinkSendCurrentMission(controllerVars.wpCurrentIndex);
     }
 
     // Send any necessary groundstation messages for this timestep.
