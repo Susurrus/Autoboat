@@ -58,14 +58,14 @@
 #define GPS_DISCONNECTION_TIME 1000
 
 // Store analog sensor data here
-struct {
+static struct {
     float powerRailVoltage;
     float powerRailCurrent;
 } analogSensors;
 
 // This is used to store sensor availability from the last sample time in order to trigger on
 // sensor availability changes.
-struct {
+static struct {
     bool gpsEnabled;
     bool gpsActive;
     bool imuEnabled;
@@ -86,7 +86,7 @@ struct {
     bool gyroActive;
 } lastSensorAvailability;
 
-// Store actuator commmands here. Used by the MAVLink code
+// Store actuator commmands here. Used by the MAVLink code.
 ActuatorCommands currentCommands;
 
 // Set up DMA memory for the ADC. But with the scatter- gather mode enabled on the ADC, we reserve
