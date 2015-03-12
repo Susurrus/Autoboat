@@ -1024,23 +1024,12 @@ void MavLinkSendNodeStatus(uint8_t channel)
 
 void MavLinkSendWaypointStatusData(void)
 {
-	int8_t missionIndex;
-	Mission cMission = {}, nMission;
-	boolean_T wasFound; // Using stupid Simulink datatypes to avoid errors
-	GetCurrentMission(&missionIndex);
-	GetMission(missionIndex, &nMission, &wasFound);
-	if (!wasFound) {
-		return; // Error out if we couldn't successfully fetch a mission.
-	}
-	// Fetch either the first waypoint or the starting point depending on what the next waypoint is.
-	if (missionIndex > 0) {
-		GetMission(missionIndex - 1, &cMission, &wasFound);
-	} else {
-		GetStartingPoint(&cMission);
-	}
+    // Don't output the global waypoint coordinates anymore as that requires access to the
+    // MissionManager. I actually never care about those coordinates anyways, so just pull the
+    // coordinates from the controller.
 	mavlink_msg_waypoint_status_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
-	                                 cMission.otherCoordinates[0], cMission.otherCoordinates[1], cMission.coordinates[0], cMission.coordinates[1],
-									 nMission.otherCoordinates[0], nMission.otherCoordinates[1], nMission.coordinates[0], nMission.coordinates[1]);
+	                                 NAN, NAN, controllerVars.wp0[0], controllerVars.wp0[1],
+									 NAN, NAN, controllerVars.wp1[0], controllerVars.wp1[1]);
 	len = mavlink_msg_to_send_buffer(buf, &txMessage);
 	Uart1WriteData(buf, (uint8_t)len);
 }
