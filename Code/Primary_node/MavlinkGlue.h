@@ -83,11 +83,6 @@ void MavLinkSendControllerData(const ImuData *imu, const GpsData *gps, float wat
 void GetMavLinkManualControl(float *rc, int16_t *tc);
 
 /**
- * Set the starting point for the mission manager to the boat's current location.
- */
-void SetStartingPointToCurrentLocation(void);
-
-/**
  * Increments the parameter counter for use within MAVLink's parameter protocol. Should be called at
  * a constant rate.
  */

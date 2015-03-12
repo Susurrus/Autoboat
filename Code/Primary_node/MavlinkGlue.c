@@ -1221,25 +1221,6 @@ void IncrementParameterCounter(void)
 }
 
 /**
- * Set the starting point for the mission manager to the boat's current location.
- */
-void SetStartingPointToCurrentLocation(void)
-{
-	// Update the starting point for the track to be the current vehicle position.
-	// We tack on GPS coordinates if we have some.
-	Mission newStartPoint = {};
-	newStartPoint.coordinates[0] = controllerVars.LocalPosition[0];
-	newStartPoint.coordinates[1] = controllerVars.LocalPosition[1];
-	newStartPoint.coordinates[2] = controllerVars.LocalPosition[2];
-	if (gpsDataStore.mode == 1 || gpsDataStore.mode == 2) {
-		newStartPoint.otherCoordinates[0] = gpsDataStore.latitude;
-		newStartPoint.otherCoordinates[1] = gpsDataStore.longitude;
-		newStartPoint.otherCoordinates[2] = gpsDataStore.altitude;
-	}
-	SetStartingPoint(&newStartPoint);
-}
-
-/**
  * This function implements the mission protocol state machine for the MAVLink protocol.
  * events can be passed as the first argument, or NO_EVENT if desired. data is a pointer
  * to data if there is any to be passed to the state logic. data is not guaranteed to persist
@@ -1296,9 +1277,6 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 					// Clear all the old waypoints.
 					ClearMissionList();
 
-					// Update the starting point to the vehicle's current location
-					SetStartingPointToCurrentLocation();
-
 					// And wait for info on the first mission.
 					currentMissionIndex = 0;
 
@@ -1315,9 +1293,6 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 				else {
 					// Clear the old list
 					ClearMissionList();
-
-					// Update the starting point to the vehicle's current location
-					SetStartingPointToCurrentLocation();
 
 					// And then send our acknowledgement.
 					MavLinkSendMissionAck(MAV_MISSION_ACCEPTED);
