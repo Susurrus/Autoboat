@@ -931,12 +931,14 @@ void GetCurrentActuatorCommands(float *rudderAngle, int16_t *throttle)
 
 int16_t BearingToNextWaypoint(void)
 {
+    // Calculate the desired bearing of the current waypoint segment
     const float distNorth = controllerVars.wp1[0] - controllerVars.LocalPosition[0];
     const float distEast = controllerVars.wp1[1] - controllerVars.LocalPosition[1];
+    const float waypointAbsBearing = atan2(distEast, distNorth);
 
-    const float waypointAbsBearing = atan2(distNorth, distEast);
-    const float heading = controllerVars.sensedYaw;
-    const float bearing = (heading - waypointAbsBearing) * 180.0 / M_PI;
+    // And calculate the difference from the current heading of the boat
+    const float vesselBearing = controllerVars.Course;
+    const float bearing = (waypointAbsBearing - vesselBearing) * 180.0 / M_PI;
 
     return (int16_t)bearing;
 }
