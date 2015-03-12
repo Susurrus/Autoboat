@@ -530,6 +530,7 @@ void PrimaryNode100HzLoop(void)
     if (controllerVars.wpReachedIndex != -1) {
         MavLinkSendMissionItemReached(controllerVars.wpReachedIndex);
     }
+
     // If we've switched to a new waypoint, announce to QGC that we have.
     if (controllerVars.wpCurrentIndex != -1) {
         MavLinkSendCurrentMission(controllerVars.wpCurrentIndex);
@@ -757,11 +758,13 @@ void SetAutoMode(PrimaryNodeMode newMode)
         // Update the vehicle state
         nodeStatus &= ~PRIMARY_NODE_STATUS_AUTOMODE;
 
-        // Also clear the RTB flag since under manual control the RTB flag isn't relevant.
-        nodeErrors &= ~PRIMARY_NODE_RESET_RTB;
+        // And clear the RTB mode if it's enabled. Be sure to alert QGC if that's the case.
+        if (nodeErrors & PRIMARY_NODE_RESET_RTB) {
+            nodeErrors &= ~PRIMARY_NODE_RESET_RTB;
 
-        // Make sure the operator is aware we're no longer in RTB mode
-        MavLinkSendStatusText(MAV_SEVERITY_NOTICE, "Exiting return-to-base protocol");
+            // Make sure the operator is aware we're no longer in RTB mode
+            MavLinkSendStatusText(MAV_SEVERITY_NOTICE, "Exiting return-to-base protocol");
+        }
 
         // Transmit a HEARTBEAT message to make sure the groundstation knows that we're now manual
         MavLinkSendHeartbeat(MAVLINK_CHAN_GROUNDSTATION);
