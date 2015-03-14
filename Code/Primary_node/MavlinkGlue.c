@@ -141,9 +141,8 @@ enum ONBOARD_SENSORS {
                           MAV_SYS_STATUS_SENSOR_3D_MAG,
     ONBOARD_SENSORS_WSO100 = MAV_SYS_STATUS_SENSOR_ABSOLUTE_PRESSURE,
     ONBOARD_SENSORS_GPS = MAV_SYS_STATUS_SENSOR_GPS,
-    ONBOARD_CONTROL_YAW_POS = MAV_SYS_STATUS_SENSOR_YAW_POSITION,
-    ONBOARD_CONTROL_XY_POS = MAV_SYS_STATUS_SENSOR_XY_POSITION_CONTROL,
-    ONBOARD_CONTROL_MOTOR = MAV_SYS_STATUS_SENSOR_MOTOR_OUTPUTS,
+    ONBOARD_CONTROL_RUDDER = MAV_SYS_STATUS_SENSOR_YAW_POSITION,
+    ONBOARD_CONTROL_MOTOR = MAV_SYS_STATUS_SENSOR_MOTOR_OUTPUTS | MAV_SYS_STATUS_SENSOR_XY_POSITION_CONTROL,
     ONBOARD_CONTROL_RC = MAV_SYS_STATUS_SENSOR_RC_RECEIVER
 };
 
@@ -471,29 +470,30 @@ void MavLinkSendStatus(uint8_t channel)
     uint32_t systemsPresent = ONBOARD_SENSORS_IMU |
                               ONBOARD_SENSORS_WSO100 |
                               ONBOARD_SENSORS_GPS |
-                              ONBOARD_CONTROL_YAW_POS |
-                              ONBOARD_CONTROL_XY_POS |
+                              ONBOARD_CONTROL_RUDDER |
                               ONBOARD_CONTROL_MOTOR |
                               ONBOARD_CONTROL_RC;
 
         // These are systems which are connected.
-	uint32_t systemsEnabled = ONBOARD_CONTROL_YAW_POS;
+	uint32_t systemsEnabled = 0;
+	systemsEnabled |= sensorAvailability.rudder.enabled?ONBOARD_CONTROL_RUDDER:0;
 	systemsEnabled |= sensorAvailability.gps.enabled?ONBOARD_SENSORS_GPS:0;
 	systemsEnabled |= sensorAvailability.imu.enabled?ONBOARD_SENSORS_IMU:0;
 	systemsEnabled |= sensorAvailability.wso100.enabled?ONBOARD_SENSORS_WSO100:0;
 	// The DST800 doesn't map into this bitfield.
 	// The power node doesn't map into this bitfield.
-	systemsEnabled |= sensorAvailability.prop.enabled?(ONBOARD_CONTROL_XY_POS|ONBOARD_CONTROL_MOTOR):0;
+	systemsEnabled |= sensorAvailability.prop.enabled?ONBOARD_CONTROL_MOTOR:0;
 	systemsEnabled |= sensorAvailability.rcNode.enabled?ONBOARD_CONTROL_RC:0;
 
         // And these are systems which are transmitting good data
-	uint32_t systemsActive = ONBOARD_CONTROL_YAW_POS;
+	uint32_t systemsActive = 0;
+	systemsActive |= sensorAvailability.rudder.active?ONBOARD_CONTROL_RUDDER:0;
 	systemsActive |= sensorAvailability.gps.active?ONBOARD_SENSORS_GPS:0;
 	systemsActive |= sensorAvailability.imu.active?ONBOARD_SENSORS_IMU:0;
 	systemsActive |= sensorAvailability.wso100.active?ONBOARD_SENSORS_WSO100:0;
 	// The DST800 doesn't map into this bitfield.
 	// The power node doesn't map into this bitfield.
-	systemsActive |= sensorAvailability.prop.active?(ONBOARD_CONTROL_XY_POS|ONBOARD_CONTROL_MOTOR):0;
+	systemsActive |= sensorAvailability.prop.active?ONBOARD_CONTROL_MOTOR:0;
 	systemsActive |= sensorAvailability.rcNode.active?ONBOARD_CONTROL_RC:0;
 
 	// Grab the globally-declared battery sensor data and map into the values necessary for transmission.
