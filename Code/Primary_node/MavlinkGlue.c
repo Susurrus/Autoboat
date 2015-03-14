@@ -260,15 +260,16 @@ static MessageSchedule groundstationMavlinkSchedule = {
 #define DATALOGGER_PARAM_TRANSMIT_COUNT 2
 
 // Set up the message scheduler for MAVLink transmission to the datalogger
-#define DATALOGGER_SCHEDULE_NUM_MSGS 7
+#define DATALOGGER_SCHEDULE_NUM_MSGS 8
 static uint8_t dataloggerMavlinkScheduleIds[DATALOGGER_SCHEDULE_NUM_MSGS] = {
 	MAVLINK_MSG_ID_HEARTBEAT,
 	MAVLINK_MSG_ID_SYS_STATUS,
 	MAVLINK_MSG_ID_NODE_STATUS,
 	MAVLINK_MSG_ID_TOKIMEC_WITH_TIME,
 	MAVLINK_MSG_ID_CONTROLLER_DATA,
-        MAVLINK_MSG_ID_PARAM_VALUE_WITH_TIME,
-        MAVLINK_MSG_ID_SYSTEM_TIME
+    MAVLINK_MSG_ID_PARAM_VALUE_WITH_TIME,
+    MAVLINK_MSG_ID_SYSTEM_TIME,
+    MAVLINK_MSG_ID_GPS_RAW_INT
 };
 static uint16_t dataloggerMavlinkScheduleTSteps[DATALOGGER_SCHEDULE_NUM_MSGS][2][8] = {};
 static uint8_t  dataloggerMavlinkScheduleSizes[DATALOGGER_SCHEDULE_NUM_MSGS];
@@ -346,12 +347,12 @@ void MavLinkInit(void)
         // We want the HEARTBEAT/SYS_STATUS messages so this stream can be used with QGC. And then
         // for datalogging having the status of all nodes at 5Hz + the controller's input/output at
         // 100Hz is awesome.
-        const uint8_t const periodicities[DATALOGGER_SCHEDULE_NUM_MSGS] = {2, 2, 5, 0, 100, 0, 1};
-	for (i = 0; i < DATALOGGER_SCHEDULE_NUM_MSGS; ++i) {
+        const uint8_t const periodicities[DATALOGGER_SCHEDULE_NUM_MSGS] = {2, 2, 5, 0, 100, 0, 1, 1};
+        for (i = 0; i < DATALOGGER_SCHEDULE_NUM_MSGS; ++i) {
             if (periodicities[i] && !AddMessageRepeating(&dataloggerMavlinkSchedule, dataloggerMavlinkScheduleIds[i], periodicities[i])) {
                 FATAL_ERROR();
             }
-	}
+        }
 
         // Make sure that we haven't exceeded the total number of bytes/s available on this connection.
         // We're connecting at 115200, with all bandwidth available to us, almost all are scheduled.
