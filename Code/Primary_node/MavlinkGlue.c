@@ -445,8 +445,8 @@ void MavLinkSendHeartbeat(uint8_t channel)
 void MavLinkSendSystemTime(uint8_t channel)
 {
     // Pack the message
-    mavlink_msg_system_time_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
-        dateTimeDataStore.usecSinceEpoch, nodeSystemTime*10);
+    mavlink_msg_system_time_pack_chan(mavlink_system.sysid, mavlink_system.compid, channel,
+        &txMessage, dateTimeDataStore.usecSinceEpoch, nodeSystemTime*10);
 
     // Copy the message to the send buffer
     len = mavlink_msg_to_send_buffer(buf, &txMessage);
