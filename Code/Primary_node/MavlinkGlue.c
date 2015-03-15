@@ -289,7 +289,7 @@ void MavLinkSendGpsGlobalOrigin(void);
 void MavLinkSendLocalPosition(void);
 void MavLinkSendStatus(uint8_t channel);
 void MavLinkSendNodeStatus(uint8_t channel);
-void MavLinkSendRawGps(void);
+void MavLinkSendRawGps(uint8_t channel);
 void MavLinkSendMainPower(void);
 void MavLinkSendBasicState2(void);
 void MavLinkSendAttitude(void);
@@ -609,7 +609,7 @@ void MavLinkSendRadioStatus(void)
  * Pull the raw GPS sensor data from the gpsDataStore struct within the GPS module and
  * transmit it via MAVLink over UART1.
  */
-void MavLinkSendRawGps(void)
+void MavLinkSendRawGps(uint8_t channel)
 {
 
 	// We need to made the mode received from NMEA2000 messages to NMEA0183 fix type.
@@ -619,7 +619,9 @@ void MavLinkSendRawGps(void)
 	//    1        |   2      | 2D fix
 	uint8_t mavlinkGpsMode = gpsDataStore.mode == 2?3:(gpsDataStore.mode == 1?2:0);
 
-	mavlink_msg_gps_raw_int_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage, ((uint64_t)nodeSystemTime)*10000,
+	mavlink_msg_gps_raw_int_pack_chan(mavlink_system.sysid, mavlink_system.compid, channel,
+        &txMessage,
+        ((uint64_t)nodeSystemTime)*10000,
 		mavlinkGpsMode, gpsDataStore.latitude, gpsDataStore.longitude, gpsDataStore.altitude,
 		gpsDataStore.hdop, gpsDataStore.vdop,
 		gpsDataStore.sog, (uint16_t)(((float)gpsDataStore.cog) * 180 / M_PI / 100),
@@ -627,7 +629,11 @@ void MavLinkSendRawGps(void)
 
 	len = mavlink_msg_to_send_buffer(buf, &txMessage);
 
-	Uart1WriteData(buf, (uint8_t)len);
+    if (channel == MAVLINK_CHAN_DATALOGGER) {
+        Uart2WriteData(buf, (uint8_t)len);
+    } else {
+        Uart1WriteData(buf, (uint8_t)len);
+    }
 }
 
 /**
@@ -1943,7 +1949,7 @@ void MavLinkTransmitGroundstation(void)
 			} break;
 
 			case MAVLINK_MSG_ID_GPS_RAW_INT: {
-				MavLinkSendRawGps();
+				MavLinkSendRawGps(MAVLINK_CHAN_GROUNDSTATION);
 			} break;
 
 			case MAVLINK_MSG_ID_RADIO_STATUS: {
@@ -2032,8 +2038,11 @@ void MavLinkTransmitDatalogger(void)
             case MAVLINK_MSG_ID_PARAM_VALUE_WITH_TIME:
                 MavLinkSendDataloggerParameters(true);
                 break;
-             default:
-                 break;
+            case MAVLINK_MSG_ID_GPS_RAW_INT:
+                MavLinkSendRawGps(MAVLINK_CHAN_DATALOGGER);
+			break;
+            default:
+            break;
          }
      }
 
