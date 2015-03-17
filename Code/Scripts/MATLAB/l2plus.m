@@ -33,7 +33,7 @@ tanIntercept.RTWInfo.Alias = 'tanIntercept';
 % Distance before reaching a waypoint that you will then switch over to the next waypoint
 switchDistance = Simulink.Parameter;
 switchDistance.Description = 'Distance from a waypoint where the vehicle is considered at that waypoint.';
-switchDistance.Value = 10;
+switchDistance.Value = 12;
 switchDistance.DataType = 'single';
 switchDistance.DocUnits = 'm';
 switchDistance.RTWInfo.StorageClass = 'ExportedGlobal';
@@ -42,7 +42,7 @@ switchDistance.RTWInfo.Alias = 'switchDistance';
 % Gain on the feedforward heading rate signal
 KPsiDot = Simulink.Parameter;
 KPsiDot.Description = 'Gain on the heading derivative feedback loop.';
-KPsiDot.Value = 0.3;
+KPsiDot.Value = 0.4;
 KPsiDot.DataType = 'single';
 KPsiDot.DocUnits = '';
 KPsiDot.RTWInfo.StorageClass = 'ExportedGlobal';
