@@ -5,7 +5,7 @@
 % Velocity. Larger values imply lower-gain.
 TStar = Simulink.Parameter;
 TStar.Description = 'The time-constant for the L2+ controller';
-TStar.Value = 10;
+TStar.Value = 12;
 TStar.DataType = 'single';
 TStar.DocUnits = 's';
 TStar.RTWInfo.StorageClass = 'ExportedGlobal';
@@ -33,7 +33,7 @@ tanIntercept.RTWInfo.Alias = 'tanIntercept';
 % Distance before reaching a waypoint that you will then switch over to the next waypoint
 switchDistance = Simulink.Parameter;
 switchDistance.Description = 'Distance from a waypoint where the vehicle is considered at that waypoint.';
-switchDistance.Value = 12;
+switchDistance.Value = 10;
 switchDistance.DataType = 'single';
 switchDistance.DocUnits = 'm';
 switchDistance.RTWInfo.StorageClass = 'ExportedGlobal';
