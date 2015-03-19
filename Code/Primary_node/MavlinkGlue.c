@@ -718,8 +718,8 @@ void MavLinkSendLocalPosition(void)
 {
 	mavlink_msg_local_position_ned_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
 	                                    nodeSystemTime*10,
-	                                    controllerVars.LocalPosition[0], controllerVars.LocalPosition[1], controllerVars.LocalPosition[2],
-	                                    controllerVars.Velocity[0], controllerVars.Velocity[1], controllerVars.Velocity[2]);
+	                                    controllerVars.LocalPosition[0], controllerVars.LocalPosition[1], NAN,
+	                                    controllerVars.Velocity[0], controllerVars.Velocity[1], NAN);
 
 	len = mavlink_msg_to_send_buffer(buf, &txMessage);
 
