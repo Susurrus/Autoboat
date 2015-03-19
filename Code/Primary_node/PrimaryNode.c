@@ -58,13 +58,21 @@
 #define GPS_DISCONNECTION_TIME 1000
 
 // Store analog sensor data here
+
 static struct {
     float powerRailVoltage;
     float powerRailCurrent;
 } analogSensors;
 
+// The trigger limit for when a STATUS_TEXT message should be sent with the current system status.
+// Currently it's every 30s (so in units of 0.01s) after a waypoint has been hit. Additionally, this
+// should trigger when switching to autonomous mode.
+#define SAY_STATUS_COUNTER_LIMIT 3000
+uint16_t sayStatusCounter = 0;
+
 // This is used to store sensor availability from the last sample time in order to trigger on
 // sensor availability changes.
+
 static struct {
     bool gpsEnabled;
     bool gpsActive;
@@ -109,6 +117,7 @@ void TransmitNodeStatus2Hz(void);
 float ProcessManualRudderCommand(float rc);
 int16_t ProcessManualThrottleCommand(int16_t tc);
 void ClearStateWhenErrors(void);
+void SendAudioStatusUpdate(void);
 
 // Set processor configuration settings
 #ifdef __dsPIC33FJ128MC802__
@@ -542,6 +551,20 @@ void PrimaryNode100HzLoop(void)
     // Send any necessary datalogger messages for this timestep.
     MavLinkTransmitDatalogger();
 
+    // Read out status updates when autonomous and not in an error state. The status counter is
+    // reset when a waypoint is reached, otherwise we just count up and output the audio when the
+    // counter limit is hit.
+    if (IS_AUTONOMOUS() && !nodeErrors) {
+        if (controllerVars.wpReachedIndex != -1) {
+            sayStatusCounter = 0;
+        } else if (sayStatusCounter >= SAY_STATUS_COUNTER_LIMIT) {
+            SendAudioStatusUpdate();
+            sayStatusCounter = 0;
+        } else {
+            ++sayStatusCounter;
+        }
+    }
+
     // Update the onboard system time counter. We make sure we don't overflow here as we can
     // run into issues with startup code being executed again.
     if (nodeSystemTime < UINT32_MAX) {
@@ -731,6 +754,45 @@ PrimaryNodeMode GetAutoMode(void)
     }
 }
 
+void SendAudioStatusUpdate(void)
+{
+    const int crosstrackErrorOffset = 12;
+    const int waypointDistanceOffset = 37;
+    char msg[50] = "#crosstrack      , waypoint distance      ";
+
+    // Format the crosstrack error into a numerical XXXX.X format. Use "large" if it's too large
+    float crosstrackError = CrossTrackError();
+    if (crosstrackError < 10000) {
+        uint16_t deciCrosstrackError = crosstrackError * 10.0;
+        char cerrorStr[10];
+        itoa(cerrorStr, deciCrosstrackError, 10);
+        int cerrorStrLen = strlen(cerrorStr);
+        if (cerrorStrLen == 1) { // If there's only 1 digit, special case everything for simplicity.
+            msg[crosstrackErrorOffset] = '0';
+            msg[crosstrackErrorOffset + 1] = '.';
+            msg[crosstrackErrorOffset + 2] = cerrorStr[0];
+        } else {
+            memcpy(&msg[crosstrackErrorOffset], cerrorStr, cerrorStrLen - 1);
+            msg[crosstrackErrorOffset + cerrorStrLen - 1] = '.';
+            msg[crosstrackErrorOffset + cerrorStrLen] = cerrorStr[cerrorStrLen - 1];
+        }
+    } else {
+        memcpy(&msg[crosstrackErrorOffset], "large", 5);
+    }
+
+    // Format the waypoint distance to a numerical XXXX format. Use "large" if it's too large
+    uint16_t distance = DistanceToNextWaypoint();
+    if (distance < 10000) {
+        char distanceStr[10];
+        itoa(distanceStr, distance, 10);
+        memcpy(&msg[waypointDistanceOffset], distanceStr, strlen(distanceStr));
+    } else {
+        memcpy(&msg[waypointDistanceOffset], "large", 5);
+    }
+
+    MavLinkSendStatusText(MAV_SEVERITY_INFO, msg);
+}
+
 /**
  * Provides a helper function for updating the autonomous mode of the vehicle. This updates the
  * internal variable tracking the autonomous state of the controller. But it also does things based
@@ -751,6 +813,10 @@ void SetAutoMode(PrimaryNodeMode newMode)
         // Transmit a HEARTBEAT message to make sure the groundstation knows that we're autonomous
         MavLinkSendHeartbeat(MAVLINK_CHAN_GROUNDSTATION);
         MavLinkSendHeartbeat(MAVLINK_CHAN_DATALOGGER);
+
+        // Send out an audio status update and reset the counter for another update every 30s.
+        SendAudioStatusUpdate();
+        sayStatusCounter = 0;
 
         // Also transmit all parameters so it's easy to verify the config of the vehicle later.
         MavLinkTransmitAllParameters();
