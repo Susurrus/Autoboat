@@ -175,7 +175,7 @@ void RudderSendCustomLimit(void)
 										 rudderCalData.StarLimitValue,
 										 rudderSensorData.PortLimit,
 										 rudderSensorData.StarLimit,
-										 true,
+										 !nodeErrors,
 										 rudderCalData.Calibrated,
 										 rudderCalData.Calibrating
 										 );
