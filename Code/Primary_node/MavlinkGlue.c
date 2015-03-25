@@ -1084,8 +1084,12 @@ void MavLinkReceiveManualControl(const mavlink_manual_control_t *msg)
         // Record the buttons that are pressed
         mavlinkManualControlData.Buttons = msg->buttons;
 
-        // If the rudder calibration button has been pressed, send that command.
-        if (!(lastButtons & RUDDER_CAL_BUTTON) && (msg->buttons & RUDDER_CAL_BUTTON)) {
+        // If the rudder calibration button has been pressed, and we're in manual mode, calibrate
+        // the rudder. Since rudder calibration makes the rudder subsystem inactive, then it causes
+        // RTB mode to trigger if autonomous. There's also no good reason to allow for this to be
+        // done while autonomous, so we disallow it.
+        if (!(lastButtons & RUDDER_CAL_BUTTON) && (msg->buttons & RUDDER_CAL_BUTTON) &&
+            !IS_AUTONOMOUS()) {
             RudderStartCalibration();
         }
 
