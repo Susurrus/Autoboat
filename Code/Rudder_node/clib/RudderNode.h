@@ -21,8 +21,7 @@ enum RUDDER_NODE_STATUS {
  * This enum declares the bitflags used for the nodeErrors variable in Node.h.
  */
 enum RUDDER_NODE_RESET {
-    RUDDER_NODE_NOT_APPLICABLE = 0x0000
-    // None exist
+    RUDDER_NODE_RESET_MOTOR_INOPERABLE = 0x0001
 };
 
 struct RudderCalibrationData {

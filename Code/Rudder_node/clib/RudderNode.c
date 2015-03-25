@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "Ecan1.h"
 #include "rudder_node.h"
 #include "MessageScheduler.h"
@@ -33,6 +35,14 @@ enum {
 
 // Instantiate a struct to store calibration data.
 struct RudderCalibrationData rudderCalData = {};
+
+// The number of ticks (0.01s) that it takes until we consider the motor inoperable. This is set to
+// a large value to prevent false positives.
+// @see RudderCheckForMotorStall().
+#define RUDDER_MOVEMENT_TIMEOUT 50
+
+// Define the expected movement rate of the rudder in radians per second.
+#define RUDDER_RATE 0.343
 
 // Instantiate a struct to store rudder input data.
 struct RudderSensorData rudderSensorData = {};
@@ -278,6 +288,79 @@ void UpdateMessageRate(const uint8_t angleRate, const uint8_t statusRate)
     }
 }
 
+uint8_t RudderCheckForMotorStall(uint8_t direction, uint16_t up)
+{
+    // Keep a counter for when to timeout on the motor being stalled or broken.
+    static uint8_t counter = 0;
+
+    // Track the last rudder angle so we can calculate the derivative. Also track the direction,
+    // because if it changes during a sample then we should reset the internal state
+    static float lastRudderAngle = NAN;
+    static uint8_t lastDirection = 0;
+
+    // If the system isn't calibrated, or is currently calibrating, don't do anything and make sure
+    // the lastRudderAngle is held as a NAN.
+    if (!(nodeStatus & RUDDER_NODE_STATUS_CALIBRATED) ||
+         (nodeStatus & RUDDER_NODE_STATUS_CALIBRATING)) {
+        lastRudderAngle = NAN;
+    }
+    // Once we're calibrated, engage the motor stall checking logic.
+    else {
+        // If the lastRudderAngle isn't set, that means we're entering a calibrated state. So
+        // initialize the counter to 0 and the rudder angle to the current rudder angle. Note that
+        // this will trigger the counter to increase, but only once, so it won't be a problem.
+        if (!(lastRudderAngle == lastRudderAngle)) {
+            lastRudderAngle = rudderSensorData.RudderPositionAngle;
+            counter = 0;
+        }
+
+        // If we're entered a reset state, just output that we're in an error state
+        if (counter > RUDDER_MOVEMENT_TIMEOUT) {
+            return true;
+        }
+        // If the motor's no longer being driven, just reset everything for the next check. This is
+        // done continously because it then accounts for the rudder being moved by external forces,
+        // which shouldn't cause an error. This is also done when the direction value changes so that
+        // we don't trigger false positives.
+        else if (up == 0 || direction != lastDirection) {
+            counter = 0;
+            lastRudderAngle = rudderSensorData.RudderPositionAngle;
+            lastDirection = direction;
+        }
+        // Now if the timeout counter is reached, time to check the rudder motion and make sure it's
+        // doing the correct thing.
+        else if (counter == RUDDER_MOVEMENT_TIMEOUT) {
+            // Set the amount of movement expected during the elapsed period. This is the modeled
+            // rudder rate for a RUDDER_MOVEMENT_TIMEOUT period of centiseconds, but halved, to give
+            // use a little more noise tolerance.
+            const float expectedMovement = RUDDER_RATE / (100 / RUDDER_MOVEMENT_TIMEOUT) / 2;
+
+            // But if the rudder is being commanded and it's not moving in the right direction, increase
+            // the error counter past RUDDER_MOVEMENT_TIMEOUT and indicate that we're now in reset.
+            // Since the error counter is past the timeout, this function will now always return true.
+            if ((direction && (rudderSensorData.RudderPositionAngle - lastRudderAngle) < expectedMovement) ||
+                (!direction && (rudderSensorData.RudderPositionAngle - lastRudderAngle) > -expectedMovement)) {
+                ++counter;
+                return true;
+            } else {
+                counter = 0;
+                lastRudderAngle = rudderSensorData.RudderPositionAngle;
+            }
+        }
+        // Now until the next stall check occurs, just increment the counter if the rudder motor is
+        // still being driven, otherwise reset.
+        else {
+            ++counter;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Calculate the rudder angle in radians from the sensor inputs. Also performs a 4Hz IIR exponential
+ * average on the values to remove a lot of the noise from the potentiometer and analog sensor.
+ */
 void CalculateRudderAngle(void)
 {
     rudderSensorData.RudderPositionAngle = PotToRads(rudderSensorData.PotValue, rudderCalData.StarLimitValue, rudderCalData.PortLimitValue);
