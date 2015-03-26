@@ -812,6 +812,10 @@ void SendAudioStatusUpdate(void)
  * on the change of state. When the vehicle is put into autonomous mode, it logs the current position
  * as the starting position to the 1st waypoint. It also outputs all parameters over MAVLink.
  *
+ * Some conditions are checked before engaging autonomous mode, namely that there are now return-to-
+ * base-triggering reset errors. This prevents the boat from unsafely entering autonomous mode,
+ * though it can inhibit testing in some cases.
+ *
  * This function also checks to see if the mode has changed before changing anything, so it is safely
  * idempotent.
  *
@@ -819,7 +823,7 @@ void SendAudioStatusUpdate(void)
  */
 void SetAutoMode(PrimaryNodeMode newMode)
 {
-    if (newMode == PRIMARY_MODE_AUTONOMOUS && !IS_AUTONOMOUS()) {
+    if (newMode == PRIMARY_MODE_AUTONOMOUS && !IS_AUTONOMOUS() && !(nodeErrors & RTB_RESET_MASK)) {
         // Update the vehicle state
         nodeStatus |= PRIMARY_NODE_STATUS_AUTOMODE;
 
@@ -833,7 +837,7 @@ void SetAutoMode(PrimaryNodeMode newMode)
 
         // Also transmit all parameters so it's easy to verify the config of the vehicle later.
         MavLinkTransmitAllParameters();
-    } else if (IS_AUTONOMOUS()){
+    } else if (IS_AUTONOMOUS()) {
         // Update the vehicle state
         nodeStatus &= ~PRIMARY_NODE_STATUS_AUTOMODE;
 
