@@ -18,7 +18,6 @@ AUTOBOAT_MAVDIR=$AUTOBOAT_DIR/Code/Libs/MAVLink
 
 # Update the MAVLink repository
 cd $MAVLINK_DIR
-git reset --hard HEAD
 git pull upstream master
 
 # Copy over the most recent SeaSlug message definitions
