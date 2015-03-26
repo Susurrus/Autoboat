@@ -206,8 +206,9 @@ uint8_t ProcessAllEcanMessages(void)
                             break;
                             case CAN_NODE_RUDDER_CONTROLLER:
                                 SENSOR_STATE_CLEAR_ENABLED_COUNTER(rudder);
-                                // As long as the sensor is done calibrating, it's active too.
-                                if ((status & 0x01) && !(status & 0x02)) {
+                                // As long as the sensor is done calibrating and hasn't errored out,
+                                // it's active too.
+                                if ((status & 0x01) && !(status & 0x02) && !errors) {
                                     SENSOR_STATE_CLEAR_ACTIVE_COUNTER(rudder);
                                 }
                             break;
@@ -297,10 +298,9 @@ uint8_t ProcessAllEcanMessages(void)
                     uint8_t rv = ParsePgn127245(msg.payload, NULL, NULL,
                                                 &currentCommands.secondaryManualRudderCommand,
                                                 &rudderSensorData.RudderAngle);
-                    // If a valid rudder angle was received, the rudder node is enabled and active.
+                    // If a valid rudder angle was received, the rudder node is enabled.
                     if ((rv & 0x08)) {
                         SENSOR_STATE_CLEAR_ENABLED_COUNTER(rudder);
-                        SENSOR_STATE_CLEAR_ACTIVE_COUNTER(rudder);
                     }
                 }
                 break;

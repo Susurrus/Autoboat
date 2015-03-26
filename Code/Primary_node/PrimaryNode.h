@@ -27,7 +27,8 @@ enum PRIMARY_NODE_RESET {
     PRIMARY_NODE_RESET_ESTOP_OR_ACS300_DISCON = 0x0080, // The system is in emergency-stop mode, actuators are centered and stopped, system will not respond to any commands; it's dead in the water. This can also occur if the CAN connection to the ACS300 is lost/unavailable.
     PRIMARY_NODE_RESET_IMU_DISCONNECTED       = 0x0100, // The IMU is disconnected
     PRIMARY_NODE_RESET_RUDDER_DISCONNECTED    = 0x0200, // The rudder is disconnected
-    PRIMARY_NODE_RESET_RTB                    = 0x0400  // Return-to-base mode has been engaged due to an error condition.
+    PRIMARY_NODE_RESET_RTB                    = 0x0400, // Return-to-base mode has been engaged due to an error condition.
+    PRIMARY_NODE_RESET_RUDDER_ERRORS          = 0x0800  // The rudder is inactive due to internal errors
 };
 
 // Define what reset modes will trigger the return-to-base functionality. In our case it only makes
@@ -38,7 +39,8 @@ enum PRIMARY_NODE_RESET {
                         PRIMARY_NODE_RESET_DST800_DISCONNECTED | \
                         PRIMARY_NODE_RESET_IMU_DISCONNECTED |    \
                         PRIMARY_NODE_RESET_RUDDER_DISCONNECTED | \
-                        PRIMARY_NODE_RESET_ESTOP_OR_ACS300_DISCON)
+                        PRIMARY_NODE_RESET_ESTOP_OR_ACS300_DISCON | \
+                        PRIMARY_NODE_RESET_RUDDER_ERRORS)
 
 typedef struct {
 	float primaryManualRudderCommand;

@@ -383,6 +383,19 @@ int main(void)
             lastSensorAvailability.rcNodeActive = true;
         }
 
+        // If the rudder is no longer active, then the rudder is either in an error state or it's
+        // undergoing calibration. Calibration can only be done while in manual mode, so triggering
+        // a reset state here won't affect manual control but will trigger RTB in autonomous mode,
+        // which is what's desired.
+        if (lastSensorAvailability.rudderActive && !sensorAvailability.rudder.active) {
+            nodeErrors |= PRIMARY_NODE_RESET_RUDDER_ERRORS;
+            lastSensorAvailability.rudderActive = false;
+        } else if (sensorAvailability.rudder.enabled &&
+                   !lastSensorAvailability.rudderActive && sensorAvailability.rudder.active) {
+            nodeErrors &= ~PRIMARY_NODE_RESET_RUDDER_ERRORS;
+            lastSensorAvailability.rudderActive = true;
+        }
+
         // Track transitions in rudder calibrating state.
         if (nodeErrors & PRIMARY_NODE_RESET_CALIBRATING) {
             if (!rudderSensorData.Calibrating) {
