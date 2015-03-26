@@ -4,23 +4,27 @@
 
 typedef struct __mavlink_main_power_t
 {
- uint16_t voltage; ///< The current main battery rail voltage. In units of 0.01V.
- uint16_t current_draw; ///< The current being drawn from the main battery bank. In units of 0.1A.
+ uint16_t electronics_voltage; ///< The voltage for the electronics battery bank. In units of 0.01V.
+ uint16_t electronics_current; ///< The current being drawn from the electronics battery bank. In units of 0.01A.
+ uint16_t actuator_voltage; ///< The voltage of the actuator battery bank. In units of 0.01V.
+ uint16_t actuator_current; ///< The current being drawn from the main battery bank. In units of 0.01A.
 } mavlink_main_power_t;
 
-#define MAVLINK_MSG_ID_MAIN_POWER_LEN 4
-#define MAVLINK_MSG_ID_172_LEN 4
+#define MAVLINK_MSG_ID_MAIN_POWER_LEN 8
+#define MAVLINK_MSG_ID_172_LEN 8
 
-#define MAVLINK_MSG_ID_MAIN_POWER_CRC 171
-#define MAVLINK_MSG_ID_172_CRC 171
+#define MAVLINK_MSG_ID_MAIN_POWER_CRC 43
+#define MAVLINK_MSG_ID_172_CRC 43
 
 
 
 #define MAVLINK_MESSAGE_INFO_MAIN_POWER { \
 	"MAIN_POWER", \
-	2, \
-	{  { "voltage", NULL, MAVLINK_TYPE_UINT16_T, 0, 0, offsetof(mavlink_main_power_t, voltage) }, \
-         { "current_draw", NULL, MAVLINK_TYPE_UINT16_T, 0, 2, offsetof(mavlink_main_power_t, current_draw) }, \
+	4, \
+	{  { "electronics_voltage", NULL, MAVLINK_TYPE_UINT16_T, 0, 0, offsetof(mavlink_main_power_t, electronics_voltage) }, \
+         { "electronics_current", NULL, MAVLINK_TYPE_UINT16_T, 0, 2, offsetof(mavlink_main_power_t, electronics_current) }, \
+         { "actuator_voltage", NULL, MAVLINK_TYPE_UINT16_T, 0, 4, offsetof(mavlink_main_power_t, actuator_voltage) }, \
+         { "actuator_current", NULL, MAVLINK_TYPE_UINT16_T, 0, 6, offsetof(mavlink_main_power_t, actuator_current) }, \
          } \
 }
 
@@ -31,23 +35,29 @@ typedef struct __mavlink_main_power_t
  * @param component_id ID of this component (e.g. 200 for IMU)
  * @param msg The MAVLink message to compress the data into
  *
- * @param voltage The current main battery rail voltage. In units of 0.01V.
- * @param current_draw The current being drawn from the main battery bank. In units of 0.1A.
+ * @param electronics_voltage The voltage for the electronics battery bank. In units of 0.01V.
+ * @param electronics_current The current being drawn from the electronics battery bank. In units of 0.01A.
+ * @param actuator_voltage The voltage of the actuator battery bank. In units of 0.01V.
+ * @param actuator_current The current being drawn from the main battery bank. In units of 0.01A.
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_main_power_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-						       uint16_t voltage, uint16_t current_draw)
+						       uint16_t electronics_voltage, uint16_t electronics_current, uint16_t actuator_voltage, uint16_t actuator_current)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_MAIN_POWER_LEN];
-	_mav_put_uint16_t(buf, 0, voltage);
-	_mav_put_uint16_t(buf, 2, current_draw);
+	_mav_put_uint16_t(buf, 0, electronics_voltage);
+	_mav_put_uint16_t(buf, 2, electronics_current);
+	_mav_put_uint16_t(buf, 4, actuator_voltage);
+	_mav_put_uint16_t(buf, 6, actuator_current);
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_MAIN_POWER_LEN);
 #else
 	mavlink_main_power_t packet;
-	packet.voltage = voltage;
-	packet.current_draw = current_draw;
+	packet.electronics_voltage = electronics_voltage;
+	packet.electronics_current = electronics_current;
+	packet.actuator_voltage = actuator_voltage;
+	packet.actuator_current = actuator_current;
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_MAIN_POWER_LEN);
 #endif
@@ -66,24 +76,30 @@ static inline uint16_t mavlink_msg_main_power_pack(uint8_t system_id, uint8_t co
  * @param component_id ID of this component (e.g. 200 for IMU)
  * @param chan The MAVLink channel this message will be sent over
  * @param msg The MAVLink message to compress the data into
- * @param voltage The current main battery rail voltage. In units of 0.01V.
- * @param current_draw The current being drawn from the main battery bank. In units of 0.1A.
+ * @param electronics_voltage The voltage for the electronics battery bank. In units of 0.01V.
+ * @param electronics_current The current being drawn from the electronics battery bank. In units of 0.01A.
+ * @param actuator_voltage The voltage of the actuator battery bank. In units of 0.01V.
+ * @param actuator_current The current being drawn from the main battery bank. In units of 0.01A.
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_main_power_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
 							   mavlink_message_t* msg,
-						           uint16_t voltage,uint16_t current_draw)
+						           uint16_t electronics_voltage,uint16_t electronics_current,uint16_t actuator_voltage,uint16_t actuator_current)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_MAIN_POWER_LEN];
-	_mav_put_uint16_t(buf, 0, voltage);
-	_mav_put_uint16_t(buf, 2, current_draw);
+	_mav_put_uint16_t(buf, 0, electronics_voltage);
+	_mav_put_uint16_t(buf, 2, electronics_current);
+	_mav_put_uint16_t(buf, 4, actuator_voltage);
+	_mav_put_uint16_t(buf, 6, actuator_current);
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_MAIN_POWER_LEN);
 #else
 	mavlink_main_power_t packet;
-	packet.voltage = voltage;
-	packet.current_draw = current_draw;
+	packet.electronics_voltage = electronics_voltage;
+	packet.electronics_current = electronics_current;
+	packet.actuator_voltage = actuator_voltage;
+	packet.actuator_current = actuator_current;
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_MAIN_POWER_LEN);
 #endif
@@ -106,7 +122,7 @@ static inline uint16_t mavlink_msg_main_power_pack_chan(uint8_t system_id, uint8
  */
 static inline uint16_t mavlink_msg_main_power_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_main_power_t* main_power)
 {
-	return mavlink_msg_main_power_pack(system_id, component_id, msg, main_power->voltage, main_power->current_draw);
+	return mavlink_msg_main_power_pack(system_id, component_id, msg, main_power->electronics_voltage, main_power->electronics_current, main_power->actuator_voltage, main_power->actuator_current);
 }
 
 /**
@@ -120,24 +136,28 @@ static inline uint16_t mavlink_msg_main_power_encode(uint8_t system_id, uint8_t 
  */
 static inline uint16_t mavlink_msg_main_power_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_main_power_t* main_power)
 {
-	return mavlink_msg_main_power_pack_chan(system_id, component_id, chan, msg, main_power->voltage, main_power->current_draw);
+	return mavlink_msg_main_power_pack_chan(system_id, component_id, chan, msg, main_power->electronics_voltage, main_power->electronics_current, main_power->actuator_voltage, main_power->actuator_current);
 }
 
 /**
  * @brief Send a main_power message
  * @param chan MAVLink channel to send the message
  *
- * @param voltage The current main battery rail voltage. In units of 0.01V.
- * @param current_draw The current being drawn from the main battery bank. In units of 0.1A.
+ * @param electronics_voltage The voltage for the electronics battery bank. In units of 0.01V.
+ * @param electronics_current The current being drawn from the electronics battery bank. In units of 0.01A.
+ * @param actuator_voltage The voltage of the actuator battery bank. In units of 0.01V.
+ * @param actuator_current The current being drawn from the main battery bank. In units of 0.01A.
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_main_power_send(mavlink_channel_t chan, uint16_t voltage, uint16_t current_draw)
+static inline void mavlink_msg_main_power_send(mavlink_channel_t chan, uint16_t electronics_voltage, uint16_t electronics_current, uint16_t actuator_voltage, uint16_t actuator_current)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_MAIN_POWER_LEN];
-	_mav_put_uint16_t(buf, 0, voltage);
-	_mav_put_uint16_t(buf, 2, current_draw);
+	_mav_put_uint16_t(buf, 0, electronics_voltage);
+	_mav_put_uint16_t(buf, 2, electronics_current);
+	_mav_put_uint16_t(buf, 4, actuator_voltage);
+	_mav_put_uint16_t(buf, 6, actuator_current);
 
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_MAIN_POWER, buf, MAVLINK_MSG_ID_MAIN_POWER_LEN, MAVLINK_MSG_ID_MAIN_POWER_CRC);
@@ -146,8 +166,10 @@ static inline void mavlink_msg_main_power_send(mavlink_channel_t chan, uint16_t 
 #endif
 #else
 	mavlink_main_power_t packet;
-	packet.voltage = voltage;
-	packet.current_draw = current_draw;
+	packet.electronics_voltage = electronics_voltage;
+	packet.electronics_current = electronics_current;
+	packet.actuator_voltage = actuator_voltage;
+	packet.actuator_current = actuator_current;
 
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_MAIN_POWER, (const char *)&packet, MAVLINK_MSG_ID_MAIN_POWER_LEN, MAVLINK_MSG_ID_MAIN_POWER_CRC);
@@ -165,12 +187,14 @@ static inline void mavlink_msg_main_power_send(mavlink_channel_t chan, uint16_t 
   is usually the receive buffer for the channel, and allows a reply to an
   incoming message with minimum stack space usage.
  */
-static inline void mavlink_msg_main_power_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint16_t voltage, uint16_t current_draw)
+static inline void mavlink_msg_main_power_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint16_t electronics_voltage, uint16_t electronics_current, uint16_t actuator_voltage, uint16_t actuator_current)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char *buf = (char *)msgbuf;
-	_mav_put_uint16_t(buf, 0, voltage);
-	_mav_put_uint16_t(buf, 2, current_draw);
+	_mav_put_uint16_t(buf, 0, electronics_voltage);
+	_mav_put_uint16_t(buf, 2, electronics_current);
+	_mav_put_uint16_t(buf, 4, actuator_voltage);
+	_mav_put_uint16_t(buf, 6, actuator_current);
 
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_MAIN_POWER, buf, MAVLINK_MSG_ID_MAIN_POWER_LEN, MAVLINK_MSG_ID_MAIN_POWER_CRC);
@@ -179,8 +203,10 @@ static inline void mavlink_msg_main_power_send_buf(mavlink_message_t *msgbuf, ma
 #endif
 #else
 	mavlink_main_power_t *packet = (mavlink_main_power_t *)msgbuf;
-	packet->voltage = voltage;
-	packet->current_draw = current_draw;
+	packet->electronics_voltage = electronics_voltage;
+	packet->electronics_current = electronics_current;
+	packet->actuator_voltage = actuator_voltage;
+	packet->actuator_current = actuator_current;
 
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_MAIN_POWER, (const char *)packet, MAVLINK_MSG_ID_MAIN_POWER_LEN, MAVLINK_MSG_ID_MAIN_POWER_CRC);
@@ -197,23 +223,43 @@ static inline void mavlink_msg_main_power_send_buf(mavlink_message_t *msgbuf, ma
 
 
 /**
- * @brief Get field voltage from main_power message
+ * @brief Get field electronics_voltage from main_power message
  *
- * @return The current main battery rail voltage. In units of 0.01V.
+ * @return The voltage for the electronics battery bank. In units of 0.01V.
  */
-static inline uint16_t mavlink_msg_main_power_get_voltage(const mavlink_message_t* msg)
+static inline uint16_t mavlink_msg_main_power_get_electronics_voltage(const mavlink_message_t* msg)
 {
 	return _MAV_RETURN_uint16_t(msg,  0);
 }
 
 /**
- * @brief Get field current_draw from main_power message
+ * @brief Get field electronics_current from main_power message
  *
- * @return The current being drawn from the main battery bank. In units of 0.1A.
+ * @return The current being drawn from the electronics battery bank. In units of 0.01A.
  */
-static inline uint16_t mavlink_msg_main_power_get_current_draw(const mavlink_message_t* msg)
+static inline uint16_t mavlink_msg_main_power_get_electronics_current(const mavlink_message_t* msg)
 {
 	return _MAV_RETURN_uint16_t(msg,  2);
+}
+
+/**
+ * @brief Get field actuator_voltage from main_power message
+ *
+ * @return The voltage of the actuator battery bank. In units of 0.01V.
+ */
+static inline uint16_t mavlink_msg_main_power_get_actuator_voltage(const mavlink_message_t* msg)
+{
+	return _MAV_RETURN_uint16_t(msg,  4);
+}
+
+/**
+ * @brief Get field actuator_current from main_power message
+ *
+ * @return The current being drawn from the main battery bank. In units of 0.01A.
+ */
+static inline uint16_t mavlink_msg_main_power_get_actuator_current(const mavlink_message_t* msg)
+{
+	return _MAV_RETURN_uint16_t(msg,  6);
 }
 
 /**
@@ -225,8 +271,10 @@ static inline uint16_t mavlink_msg_main_power_get_current_draw(const mavlink_mes
 static inline void mavlink_msg_main_power_decode(const mavlink_message_t* msg, mavlink_main_power_t* main_power)
 {
 #if MAVLINK_NEED_BYTE_SWAP
-	main_power->voltage = mavlink_msg_main_power_get_voltage(msg);
-	main_power->current_draw = mavlink_msg_main_power_get_current_draw(msg);
+	main_power->electronics_voltage = mavlink_msg_main_power_get_electronics_voltage(msg);
+	main_power->electronics_current = mavlink_msg_main_power_get_electronics_current(msg);
+	main_power->actuator_voltage = mavlink_msg_main_power_get_actuator_voltage(msg);
+	main_power->actuator_current = mavlink_msg_main_power_get_actuator_current(msg);
 #else
 	memcpy(main_power, _MAV_PAYLOAD(msg), MAVLINK_MSG_ID_MAIN_POWER_LEN);
 #endif
