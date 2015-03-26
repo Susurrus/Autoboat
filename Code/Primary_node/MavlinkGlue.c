@@ -260,7 +260,7 @@ static MessageSchedule groundstationMavlinkSchedule = {
 #define DATALOGGER_PARAM_TRANSMIT_COUNT 2
 
 // Set up the message scheduler for MAVLink transmission to the datalogger
-#define DATALOGGER_SCHEDULE_NUM_MSGS 8
+#define DATALOGGER_SCHEDULE_NUM_MSGS 9
 static uint8_t dataloggerMavlinkScheduleIds[DATALOGGER_SCHEDULE_NUM_MSGS] = {
 	MAVLINK_MSG_ID_HEARTBEAT,
 	MAVLINK_MSG_ID_SYS_STATUS,
@@ -269,7 +269,8 @@ static uint8_t dataloggerMavlinkScheduleIds[DATALOGGER_SCHEDULE_NUM_MSGS] = {
 	MAVLINK_MSG_ID_CONTROLLER_DATA,
     MAVLINK_MSG_ID_PARAM_VALUE_WITH_TIME,
     MAVLINK_MSG_ID_SYSTEM_TIME,
-    MAVLINK_MSG_ID_GPS_RAW_INT
+    MAVLINK_MSG_ID_GPS_RAW_INT,
+    MAVLINK_MSG_ID_MAIN_POWER
 };
 static uint16_t dataloggerMavlinkScheduleTSteps[DATALOGGER_SCHEDULE_NUM_MSGS][2][8] = {};
 static uint8_t  dataloggerMavlinkScheduleSizes[DATALOGGER_SCHEDULE_NUM_MSGS];
@@ -290,7 +291,7 @@ void MavLinkSendLocalPosition(void);
 void MavLinkSendStatus(uint8_t channel);
 void MavLinkSendNodeStatus(uint8_t channel);
 void MavLinkSendRawGps(uint8_t channel);
-void MavLinkSendMainPower(void);
+void MavLinkSendMainPower(uint8_t channel);
 void MavLinkSendBasicState2(void);
 void MavLinkSendAttitude(void);
 void MavLinkSendSystemTime(uint8_t channel);
@@ -318,7 +319,7 @@ void MavLinkInit(void)
         // We only report things that the GUI needs at 2Hz because it only updates at 1 or 2Hz.
         // We output the VFR_HUD message at a fast 5Hz because it has the throttle value and that's
         // nice to have quick response to.
-        const uint8_t const periodicities[GROUNDSTATION_SCHEDULE_NUM_MSGS] = {2, 2, 1, 2, 4, 2, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 5, 2};
+        const uint8_t const periodicities[GROUNDSTATION_SCHEDULE_NUM_MSGS] = {2, 2, 1, 2, 4, 2, 1, 1, 1, 1, 2, 0, 1, 1, 1, 0, 5, 2};
         for (i = 0; i < GROUNDSTATION_SCHEDULE_NUM_MSGS; ++i) {
             if (periodicities[i] && !AddMessageRepeating(&groundstationMavlinkSchedule, groundstationMavlinkScheduleIds[i], periodicities[i])) {
                 FATAL_ERROR();
@@ -347,7 +348,7 @@ void MavLinkInit(void)
         // We want the HEARTBEAT/SYS_STATUS messages so this stream can be used with QGC. And then
         // for datalogging having the status of all nodes at 5Hz + the controller's input/output at
         // 100Hz is awesome.
-        const uint8_t const periodicities[DATALOGGER_SCHEDULE_NUM_MSGS] = {2, 2, 5, 0, 100, 0, 1, 1};
+        const uint8_t const periodicities[DATALOGGER_SCHEDULE_NUM_MSGS] = {2, 2, 5, 0, 100, 0, 1, 1, 10};
         for (i = 0; i < DATALOGGER_SCHEDULE_NUM_MSGS; ++i) {
             if (periodicities[i] && !AddMessageRepeating(&dataloggerMavlinkSchedule, dataloggerMavlinkScheduleIds[i], periodicities[i])) {
                 FATAL_ERROR();
@@ -637,16 +638,22 @@ void MavLinkSendRawGps(uint8_t channel)
 }
 
 /**
-  * Transmit the main battery state as obtained from the power node via the CAN bus.
+  * Transmit the onboard battery state as obtained from the power node via the CAN bus.
   */
-void MavLinkSendMainPower(void)
+void MavLinkSendMainPower(uint8_t channel)
 {
-        mavlink_msg_main_power_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
-		(uint16_t)(powerDataStore.voltage * 100.0f),(uint16_t)(powerDataStore.current * 10.0f));
+    mavlink_msg_main_power_pack_chan(mavlink_system.sysid, mavlink_system.compid, channel,
+        &txMessage,
+        (uint16_t)(GetPowerRailVoltage() * 100.0f), (uint16_t)(GetPowerRailCurrent() * 100.0f),
+        (uint16_t)(powerDataStore.voltage * 100.0f), (uint16_t)(powerDataStore.current * 100.0f));
 
-	len = mavlink_msg_to_send_buffer(buf, &txMessage);
+    len = mavlink_msg_to_send_buffer(buf, &txMessage);
 
-	Uart1WriteData(buf, (uint8_t)len);
+    if (channel == MAVLINK_CHAN_DATALOGGER) {
+        Uart2WriteData(buf, (uint8_t)len);
+    } else {
+        Uart1WriteData(buf, (uint8_t)len);
+    }
 }
 
 /**
@@ -2003,7 +2010,7 @@ void MavLinkTransmitGroundstation(void)
 			break;
 
 			case MAVLINK_MSG_ID_MAIN_POWER:
-				MavLinkSendMainPower();
+				MavLinkSendMainPower(MAVLINK_CHAN_GROUNDSTATION);
 			break;
 
 			default: {
@@ -2044,6 +2051,9 @@ void MavLinkTransmitDatalogger(void)
                 break;
             case MAVLINK_MSG_ID_GPS_RAW_INT:
                 MavLinkSendRawGps(MAVLINK_CHAN_DATALOGGER);
+			break;
+            case MAVLINK_MSG_ID_MAIN_POWER:
+                MavLinkSendMainPower(MAVLINK_CHAN_DATALOGGER);
 			break;
             default:
             break;
