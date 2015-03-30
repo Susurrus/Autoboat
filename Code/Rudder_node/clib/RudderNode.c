@@ -118,6 +118,9 @@ void RudderNodeInit(void)
 	// Initialize our ECAN peripheral
 	Ecan1Init(F_OSC, NODE_CAN_BAUD);
 
+    // Enable the red error LED by setting its driving pin to an output
+    _TRISA3 = 0;
+
 	// Initialize the EEPROM for storing the onboard parameters.
 	enum DATASTORE_INIT x = DataStoreInit();
 	if (x == DATASTORE_INIT_SUCCESS) {
@@ -253,6 +256,9 @@ void RudderSendTemperature(void)
 
 void SendAndReceiveEcan(void)
 {
+    // Track the last error state that we were in. Used for triggering events on changes.
+    static uint16_t lastErrorState = 0;
+
     // First update the sensor status
     UpdateSensorsAvailability();
 
@@ -269,6 +275,9 @@ void SendAndReceiveEcan(void)
                 bool calibrate;
                 CanMessageDecodeRudderSetState(&msg, NULL, NULL, &calibrate);
                 if (calibrate && rudderCalData.Calibrating == false) {
+                    // Also clear the MOTOR_INOPERABLE error if we enter the calibration state. This
+                    // allows the operator to fix the problem and re-enable the rudder by recalibrating.
+                    nodeErrors &= ~RUDDER_NODE_RESET_MOTOR_INOPERABLE;
                     rudderCalData.CalibrationState = RUDDER_CAL_STATE_INIT;
                 }
             // Update send message rates
@@ -320,6 +329,24 @@ void SendAndReceiveEcan(void)
         }
     }
 
+    // At this point we check to see if we're in an error state. If this error state is
+    // different than what we were in before, and it's one of the error states that should
+    // trigger the return-to-base functionality, then we trigger RTB mode. This is currently
+    // done by cutting the throttle, and centering the rudder.
+    // Note that RTB mode is only engaged when the vehicle is autonomous, otherwise primary
+    // control should be allowed in almost every circumstance.
+    // Transmitting these commands is done whenever the error state changes tomake sure that
+    // if the rudder or propeller subsystems go offline and back online that they'll receive
+    // the message and hopefully respond properly.
+    if (nodeErrors != lastErrorState) {
+        if (nodeErrors) {
+            _LATA3 = 1; // Turn on the red LED if there are errors
+        } else {
+            _LATA3 = 0; // And turn it off if there aren't.
+        }
+        lastErrorState = nodeErrors;
+    }
+
     // And now transmit all messages for this timestep
     uint8_t msgs[ECAN_MSGS_SIZE];
     uint8_t count = GetMessagesForTimestep(&sched, msgs);
@@ -368,7 +395,7 @@ void UpdateMessageRate(const uint8_t angleRate, const uint8_t statusRate)
     }
 }
 
-uint8_t RudderCheckForMotorStall(uint8_t direction, uint16_t up)
+void RudderCheckForMotorStall(uint8_t direction, uint16_t up)
 {
     // Keep a counter for when to timeout on the motor being stalled or broken.
     static uint8_t counter = 0;
@@ -394,9 +421,9 @@ uint8_t RudderCheckForMotorStall(uint8_t direction, uint16_t up)
             counter = 0;
         }
 
-        // If we're entered a reset state, just output that we're in an error state
+        // If we're entered a reset state, then there's no reason to do anything here.
         if (counter > RUDDER_MOVEMENT_TIMEOUT) {
-            return true;
+            return;
         }
         // If the motor's no longer being driven, just reset everything for the next check. This is
         // done continously because it then accounts for the rudder being moved by external forces,
@@ -421,7 +448,7 @@ uint8_t RudderCheckForMotorStall(uint8_t direction, uint16_t up)
             if ((direction && (rudderSensorData.RudderPositionAngle - lastRudderAngle) < expectedMovement) ||
                 (!direction && (rudderSensorData.RudderPositionAngle - lastRudderAngle) > -expectedMovement)) {
                 ++counter;
-                return true;
+                nodeErrors |= RUDDER_NODE_RESET_MOTOR_INOPERABLE;
             } else {
                 counter = 0;
                 lastRudderAngle = rudderSensorData.RudderPositionAngle;
@@ -433,8 +460,6 @@ uint8_t RudderCheckForMotorStall(uint8_t direction, uint16_t up)
             ++counter;
         }
     }
-
-    return false;
 }
 
 /**
