@@ -439,8 +439,8 @@ void RudderCheckForMotorStall(uint8_t direction, uint16_t up)
         else if (counter == RUDDER_MOVEMENT_TIMEOUT) {
             // Set the amount of movement expected during the elapsed period. This is the modeled
             // rudder rate for a RUDDER_MOVEMENT_TIMEOUT period of centiseconds, but halved, to give
-            // use a little more noise tolerance.
-            const float expectedMovement = RUDDER_RATE / (100 / RUDDER_MOVEMENT_TIMEOUT) / 2;
+            // a little more noise tolerance.
+            const float expectedMovement = RUDDER_RATE / (100 / RUDDER_MOVEMENT_TIMEOUT) / 4;
 
             // But if the rudder is being commanded and it's not moving in the right direction, increase
             // the error counter past RUDDER_MOVEMENT_TIMEOUT and indicate that we're now in reset.
