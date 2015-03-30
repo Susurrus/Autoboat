@@ -11,6 +11,47 @@
 #include "Types.h"
 #include "DataStore.h"
 
+// Stores all status data from a CANode.
+// Invalid values for every field is the maximum positive value for that datatype.
+struct NodeStatusData {
+	int8_t   temp;
+	uint8_t  voltage;
+	uint8_t  load;
+	uint16_t status;
+	uint16_t errors;
+};
+
+struct NodeStatusData nodeStatusDataStore[NUM_NODES] = {
+    {INT8_MAX, UINT8_MAX, UINT8_MAX, UINT16_MAX, UINT16_MAX},
+    {INT8_MAX, UINT8_MAX, UINT8_MAX, UINT16_MAX, UINT16_MAX},
+    {INT8_MAX, UINT8_MAX, UINT8_MAX, UINT16_MAX, UINT16_MAX},
+    {INT8_MAX, UINT8_MAX, UINT8_MAX, UINT16_MAX, UINT16_MAX},
+    {INT8_MAX, UINT8_MAX, UINT8_MAX, UINT16_MAX, UINT16_MAX},
+    {INT8_MAX, UINT8_MAX, UINT8_MAX, UINT16_MAX, UINT16_MAX},
+    {INT8_MAX, UINT8_MAX, UINT8_MAX, UINT16_MAX, UINT16_MAX}
+};
+
+// Add a helper for getting the NodeStatusData struct for a given node.
+#define NODE_STATUS(node_id) (nodeStatusDataStore[(node_id) - 1])
+
+// Set the timeout period for nodes (in units of centiseconds)
+#define NODE_TIMEOUT 100
+
+/**
+ * This array stores the timeout counters for each node. Once they hit `NODE_TIMEOUT`, the nodes
+ * are considered offline. This transition will reset the `nodeStatusDataStore` array to its default
+ * values.
+ */
+uint8_t nodeStatusTimeoutCounters[NUM_NODES] = {
+    NODE_TIMEOUT,
+    NODE_TIMEOUT,
+    NODE_TIMEOUT,
+    NODE_TIMEOUT,
+    NODE_TIMEOUT,
+    NODE_TIMEOUT,
+    NODE_TIMEOUT
+};
+
 // Declare some constants for use with the message scheduler
 // (don't use PGN or message ID as it must be a uint8)
 enum {
@@ -66,6 +107,9 @@ static MessageSchedule sched = {
 	0,
 	tsteps
 };
+
+// Function prototypes
+void UpdateSensorsAvailability(void);
 
 void RudderNodeInit(void)
 {
@@ -209,6 +253,9 @@ void RudderSendTemperature(void)
 
 void SendAndReceiveEcan(void)
 {
+    // First update the sensor status
+    UpdateSensorsAvailability();
+
     uint8_t messagesLeft = 0;
     CanMessage msg;
     uint32_t pgn;
@@ -229,6 +276,24 @@ void SendAndReceiveEcan(void)
                 uint16_t angleRate, statusRate;
                 CanMessageDecodeRudderSetTxRate(&msg, &angleRate, &statusRate);
                 UpdateMessageRate(angleRate, statusRate);
+            } else if (msg.id == CAN_MSG_ID_STATUS) {
+                uint8_t node, cpuLoad, voltage;
+                int8_t temp;
+                uint16_t status, errors;
+                CanMessageDecodeStatus(&msg, &node, &cpuLoad, &temp, &voltage, &status, &errors);
+
+                // If we've found a valid node, store the data for it.
+                if (node > 0 && node <= NUM_NODES) {
+                    // Update all of the data broadcast by this node.
+                    nodeStatusDataStore[node - 1].load = cpuLoad;
+                    nodeStatusDataStore[node - 1].temp = temp;
+                    nodeStatusDataStore[node - 1].voltage = voltage;
+                    nodeStatusDataStore[node - 1].status = status;
+                    nodeStatusDataStore[node - 1].errors = errors;
+
+                    // And reset the timeout counter for this node.
+                    nodeStatusTimeoutCounters[node - 1] = 0;
+                }
             } else {
                 pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
                 switch (pgn) {
@@ -239,6 +304,21 @@ void SendAndReceiveEcan(void)
             }
         }
     } while (messagesLeft > 0);
+
+    // Sit in e-stop error if the Primary Node is broadcasting it and still exists on the network,
+    // clearing the error when it stops showing e-stop or disappears off the network.
+    if (nodeErrors & RUDDER_NODE_RESET_ESTOP_OR_ACS300_DISCON) {
+        if (NODE_STATUS(CAN_NODE_PRIMARY_CONTROLLER).errors == UINT16_MAX ||
+            (NODE_STATUS(CAN_NODE_PRIMARY_CONTROLLER).errors != UINT16_MAX &&
+            !(NODE_STATUS(CAN_NODE_PRIMARY_CONTROLLER).errors & 0x0080))) {
+            nodeErrors &= ~RUDDER_NODE_RESET_ESTOP_OR_ACS300_DISCON;
+        }
+    } else {
+        if ((NODE_STATUS(CAN_NODE_PRIMARY_CONTROLLER).errors != UINT16_MAX &&
+            (NODE_STATUS(CAN_NODE_PRIMARY_CONTROLLER).errors & 0x0080))) {
+            nodeErrors |= RUDDER_NODE_RESET_ESTOP_OR_ACS300_DISCON;
+        }
+    }
 
     // And now transmit all messages for this timestep
     uint8_t msgs[ECAN_MSGS_SIZE];
@@ -390,4 +470,33 @@ float PotToRads(uint16_t input, uint16_t highSide, uint16_t lowSide)
         rads = -0.7854;
     }
 	return rads;
+}
+
+/**
+ * This function should be called at a constant rate (same units as NODE_TIMEOUT) and updates the
+ * availability of any sensors and onboard nodes. This function is separated from the
+ * `ProcessAllEcanMessages()` function because that function should be called as fast as possible,
+ * while this one should be called at the base tick rate of the system.
+ */
+void UpdateSensorsAvailability(void)
+{
+    // Now if any nodes have timed out, reset their struct data since any data we have for them is
+    // now invalid. Otherwise, keep incrementing their timeout counters. These are reset in
+    // `ProcessAllEcanMessages()`.
+    int i;
+    for (i = 0; i < NUM_NODES; ++i) {
+        // Be sure to not do this for the current node, as it won't ever receive CAN messages from
+        // itself.
+        if (i != nodeId - 1) {
+            if (nodeStatusTimeoutCounters[i] < NODE_TIMEOUT) {
+                ++nodeStatusTimeoutCounters[i];
+            } else {
+                nodeStatusDataStore[i].errors = UINT16_MAX;
+                nodeStatusDataStore[i].load = UINT8_MAX;
+                nodeStatusDataStore[i].status = UINT16_MAX;
+                nodeStatusDataStore[i].temp = INT8_MAX;
+                nodeStatusDataStore[i].voltage = UINT8_MAX;
+            }
+        }
+    }
 }
