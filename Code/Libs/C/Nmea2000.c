@@ -2,10 +2,16 @@
 #include "Packing.h"
 
 #include <math.h>
+#include <string.h>
 
 #ifndef M_PI
 #define M_PI 3.1415926535
 #endif
+
+// Define some constants for the Fast Packet code
+#define FP_FRAME_COUNTER_MASK 0x1F
+#define FP_SEQ_ID_MASK 0xE0
+#define FP_SEQ_ID_OFFSET 5
 
 uint32_t Iso11783Decode(uint32_t can_id, uint8_t *src, uint8_t *dest, uint8_t *pri)
 {
@@ -72,6 +78,43 @@ uint32_t Iso11783Encode(uint32_t pgn, uint8_t src, uint8_t dest, uint8_t pri)
 	}
 
 	return can_id;
+}
+
+bool Nmea2000FastPacketExtract(uint8_t size, const uint8_t data[8], Nmea2000FastPacket *packet)
+{
+    // The first packet is special, so special-case it.
+    const uint8_t frameCounter = data[0] & FP_FRAME_COUNTER_MASK;
+    const uint8_t sequenceId = (data[0] & FP_SEQ_ID_MASK) >> FP_SEQ_ID_OFFSET;
+    if (frameCounter == 0) {
+        packet->frameCounter = 0;
+        packet->seqId = sequenceId;
+        packet->totalBytes = data[1];
+
+        // Copy the remaining bytes in the message making sure to check its size properly.
+        const uint8_t usableBytes = size - 2;
+        if (usableBytes <= 6 && usableBytes > 0) {
+            memcpy(packet->messageBytes, &data[1], usableBytes);
+            packet->bytesReceived = usableBytes;
+        }
+    } else if (frameCounter == packet->frameCounter + 1 && sequenceId == packet->seqId) {
+        const uint8_t usableBytes = size - 1;
+        if (usableBytes <= 7 && usableBytes > 0) {
+            uint8_t messageBytes;
+            if (packet->totalBytes - packet->bytesReceived <= 7) {
+                messageBytes = packet->totalBytes - packet->bytesReceived;
+            } else {
+                messageBytes = usableBytes;
+            }
+            packet->frameCounter = frameCounter;
+            memcpy(packet->messageBytes + packet->bytesReceived, &data[1], messageBytes);
+            packet->bytesReceived += messageBytes;
+            if (packet->bytesReceived == packet->totalBytes) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 void DaysSinceEpochToYMD(uint16_t days, uint16_t *year, uint16_t *month, uint16_t *day)

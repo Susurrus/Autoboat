@@ -22,6 +22,22 @@
  *************************************************************************************************/
 
 #include <stdint.h>
+#include <stdbool.h>
+
+/**
+ * This struct holds all of the state for decoding an NMEA2000 Fast Packet. To use, create an array
+ * and then create an instance of this struct with the messageBytes variable pointing to that array.
+ * Then just feed appropriate messages to the `Nmea2000FastPacketExtract()` function. When that
+ * function returns true, then the `messageBytes` array will be filled with a `totalBytes` number of
+ * bytes for decoding according to the specific message type.
+ */
+typedef struct {
+    uint8_t frameCounter; // The specific message number. For internal use only.
+    uint8_t seqId; // The sequence ID this packet belongs to. Must be the same for all messages. For internal use only.
+    uint8_t totalBytes; // The total number of data bytes that make up this packet.
+    uint8_t bytesReceived; // The number of bytes received while building this packet. For internal use only.
+    uint8_t *messageBytes; // An external uin8_t array that's big enough to hold all data bytes for this packet. Set externally.
+} Nmea2000FastPacket;
 
 /**
  * Helper functions.
@@ -50,6 +66,15 @@ uint32_t Iso11783Decode(uint32_t can_id, uint8_t *src, uint8_t *dest, uint8_t *p
   * @return The encoded 29-bit CAN identifier (as a uint32)
   */
 uint32_t Iso11783Encode(uint32_t pgn, uint8_t src, uint8_t dest, uint8_t pri);
+
+/**
+ * Extract the true bytes from a sequence of fast-packet messages.
+ * @param size The number of bytes in the `data` argument.
+ * @param data The bytes of data making up a single CAN message in this FP sequence
+ * @param dest A byte-array to store the data in.
+ * @return True if a complete packet was decoded, false otherwise.
+ */
+bool Nmea2000FastPacketExtract(uint8_t size, const uint8_t data[8], Nmea2000FastPacket *packet);
 
 // Given a number of days return date. Accounts properly for leap days.
 void DaysSinceEpochToYMD(uint16_t days, uint16_t *year, uint16_t *month, uint16_t *day);
