@@ -8,7 +8,7 @@
 void PackagePgn127245(CanMessage *msg, uint8_t sourceDevice, uint8_t instance, uint8_t dirOrder, float angleOrder, float position)
 {
 	/// Set CAN header information.
-	msg->id = Iso11783Encode(PGN_RUDDER, sourceDevice, 0xFF, 2); // Leave the priority hardcoded to 2.
+	msg->id = Iso11783Encode(PGN_ID_RUDDER, sourceDevice, 0xFF, 2); // Leave the priority hardcoded to 2.
 	msg->buffer = 0; // NOTE: This needs to be changed to the appropriate buffer before transmission.
 	msg->message_type = CAN_MSG_DATA;
 	msg->frame_type = CAN_FRAME_EXT;
@@ -39,7 +39,7 @@ void PackagePgn127245(CanMessage *msg, uint8_t sourceDevice, uint8_t instance, u
 
 void PackagePgn127508(CanMessage *msg, uint8_t sourceDevice, uint8_t battInstance, float voltage, float amperage, float temp, uint8_t sid)
 {
-	msg->id = Iso11783Encode(PGN_BATTERY_STATUS, sourceDevice, 0xFF, 3);
+	msg->id = Iso11783Encode(PGN_ID_BATTERY_STATUS, sourceDevice, 0xFF, 3);
 	msg->message_type = CAN_MSG_DATA;
 	msg->frame_type = CAN_FRAME_EXT;
 	msg->buffer = 0;
@@ -82,7 +82,7 @@ void PackagePgn127508(CanMessage *msg, uint8_t sourceDevice, uint8_t battInstanc
 
 void PackagePgn128259(CanMessage *msg, uint8_t sourceDevice, uint8_t sid, float waterSpeed, float groundSpeed, WaterReferenceType waterRefType)
 {
-	msg->id = Iso11783Encode(PGN_SPEED, sourceDevice, 0xFF, 3);
+	msg->id = Iso11783Encode(PGN_ID_SPEED, sourceDevice, 0xFF, 3);
 	msg->message_type = CAN_MSG_DATA;
 	msg->frame_type = CAN_FRAME_EXT;
 	msg->buffer = 0;
@@ -117,7 +117,7 @@ void PackagePgn128259(CanMessage *msg, uint8_t sourceDevice, uint8_t sid, float 
 
 void PackagePgn128267(CanMessage *msg, uint8_t sourceDevice, uint8_t sid, float waterDepth, float offset)
 {
-	msg->id = Iso11783Encode(PGN_WATER_DEPTH, sourceDevice, 0xFF, 3);
+	msg->id = Iso11783Encode(PGN_ID_WATER_DEPTH, sourceDevice, 0xFF, 3);
 	msg->message_type = CAN_MSG_DATA;
 	msg->frame_type = CAN_FRAME_EXT;
 	msg->buffer = 0;
@@ -149,7 +149,7 @@ void PackagePgn128267(CanMessage *msg, uint8_t sourceDevice, uint8_t sid, float 
 void PackagePgn129025(CanMessage *msg, uint8_t sourceDevice, int32_t latitude, int32_t longitude)
 {
     // Specify a new CAN message w/ metadata
-    msg->id = Iso11783Encode(PGN_POSITION_RAP_UPD, sourceDevice, 0xFF, 2);
+    msg->id = Iso11783Encode(PGN_ID_POSITION_RAP_UPD, sourceDevice, 0xFF, 2);
     msg->buffer = 0;
     msg->message_type = CAN_MSG_DATA;
     msg->frame_type = CAN_FRAME_EXT;
@@ -162,7 +162,7 @@ void PackagePgn129025(CanMessage *msg, uint8_t sourceDevice, int32_t latitude, i
 void PackagePgn129026(CanMessage *msg, uint8_t sourceDevice, uint8_t seqId, uint8_t cogRef, uint16_t cog, uint16_t sog)
 {
     // Specify a new CAN message w/ metadata
-    msg->id = Iso11783Encode(PGN_COG_SOG_RAP_UPD, sourceDevice, 0xFF, 2);
+    msg->id = Iso11783Encode(PGN_ID_COG_SOG_RAP_UPD, sourceDevice, 0xFF, 2);
     msg->buffer = 0;
     msg->message_type = CAN_MSG_DATA;
     msg->frame_type = CAN_FRAME_EXT;
@@ -177,7 +177,7 @@ void PackagePgn129026(CanMessage *msg, uint8_t sourceDevice, uint8_t seqId, uint
 void PackagePgn129539(CanMessage *msg, uint8_t sourceDevice, uint8_t seqId, uint8_t desiredMode, uint8_t actualMode, int16_t hdop, int16_t vdop, int16_t tdop)
 {
     // Specify a new CAN message w/ metadata
-    msg->id = Iso11783Encode(PGN_GNSS_DOPS, sourceDevice, 0xFF, 2);
+    msg->id = Iso11783Encode(PGN_ID_GNSS_DOPS, sourceDevice, 0xFF, 2);
     msg->buffer = 0;
     msg->message_type = CAN_MSG_DATA;
     msg->frame_type = CAN_FRAME_EXT;
@@ -195,7 +195,7 @@ void PackagePgn129539(CanMessage *msg, uint8_t sourceDevice, uint8_t seqId, uint
 void PackagePgn130311(CanMessage *msg, uint8_t sourceDevice, uint8_t sid, uint8_t tempInst, uint8_t humidInst, float temp, float humid, float press)
 {
     // Specify a new CAN message w/ metadata
-    msg->id = Iso11783Encode(PGN_ENV_PARAMETERS2, sourceDevice, 0xFF, 2);
+    msg->id = Iso11783Encode(PGN_ID_ENV_PARAMETERS2, sourceDevice, 0xFF, 2);
     msg->buffer = 0;
     msg->message_type = CAN_MSG_DATA;
     msg->frame_type = CAN_FRAME_EXT;

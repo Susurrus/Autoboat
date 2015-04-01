@@ -508,22 +508,22 @@ uint8_t ParsePgn129539(const uint8_t data[8], uint8_t *seqId, uint8_t *desiredMo
 	}
 
 	// Field 1: Desired mode. Indicates the desired operational mode of this GPS unit.
-	// @see PGN_129539_MODE
+	// @see PGN129539_MODE
 	if (desiredMode) {
 		uint8_t desMode = data[1] & 0x07;
-		if (desMode != PGN_129539_MODE_RES1 && desMode != PGN_129539_MODE_RES2 &&
-		    desMode != PGN_129539_MODE_INV) {
+		if (desMode != PGN129539_MODE_RES1 && desMode != PGN129539_MODE_RES2 &&
+		    desMode != PGN129539_MODE_INV) {
 			*desiredMode = desMode;
 			fieldStatus |= 0x02;
 		}
 	}
 
 	// Field 2: Actual mode. Indicates the actual operational mode of this GPS unit.
-	// @see PGN_129539_MODE
+	// @see PGN129539_MODE
 	if (actualMode) {
 		uint8_t actMode = (data[1] & 0x38) >> 3;
-		if (actMode != PGN_129539_MODE_RES1 && actMode != PGN_129539_MODE_RES2 &&
-		    actMode != PGN_129539_MODE_INV) {
+		if (actMode != PGN129539_MODE_RES1 && actMode != PGN129539_MODE_RES2 &&
+		    actMode != PGN129539_MODE_INV) {
 			*actualMode = actMode;
 			fieldStatus |= 0x04;
 		}

@@ -142,22 +142,56 @@ uint8_t ParsePgn130310(const uint8_t data[8], uint8_t *seqId, float *waterTemp, 
 uint8_t ParsePgn130311(const uint8_t data[8], uint8_t *seqId, uint8_t *tempInstance, uint8_t *humidityInstance, float *temp, float *humidity, float *pressure);
 
 /**
- * Define nice constants for dealing with all the PGN numbers.
+ * Give better names to all of the PGNs.
+ */
+enum PGN_ID {
+    PGN_ID_CHARGER_STATUS                  = 126990,
+    PGN_ID_STATUS                          = 126991,
+    PGN_ID_SYSTEM_TIME                     = 126992,
+    PGN_ID_CHARGER_STATISTICS_BATTERY_DEUX = 127166,
+    PGN_ID_BATTERY_STATUS_DEUX             = 127172,
+    PGN_ID_DC_SOURCE_STATUS                = 127173,
+    PGN_ID_SECONDARY_POWER_SUPPLY_STATUS   = 127174,
+    PGN_ID_MPPT_STATUS                     = 127177,
+    PGN_ID_RUDDER                          = 127245,
+    PGN_ID_MAG_VARIATION                   = 127258,
+    PGN_ID_BATTERY_STATUS                  = 127508,
+    PGN_ID_SPEED                           = 128259,
+    PGN_ID_WATER_DEPTH                     = 128267,
+    PGN_ID_POSITION_RAP_UPD                = 129025,
+    PGN_ID_COG_SOG_RAP_UPD                 = 129026,
+    PGN_ID_TIME_DATE                       = 129033,
+    PGN_ID_GNSS_DOPS                       = 129539,
+    PGN_ID_WIND_DATA                       = 130306,
+    PGN_ID_ENV_PARAMETERS                  = 130310,
+    PGN_ID_ENV_PARAMETERS2                 = 130311
+};
+
+/**
+ * Define the size (in true data bytes) of all PGN messages
+ * Note: Some of these may be wrong, as they haven't all be double-checked.
  */
 enum PGN {
-    PGN_SYSTEM_TIME      = 126992,
-    PGN_RUDDER           = 127245,
-    PGN_MAG_VARIATION    = 127258,
-    PGN_BATTERY_STATUS   = 127508,
-    PGN_SPEED            = 128259,
-    PGN_WATER_DEPTH      = 128267,
-    PGN_POSITION_RAP_UPD = 129025,
-    PGN_COG_SOG_RAP_UPD  = 129026,
-    PGN_TIME_DATE        = 129033,
-    PGN_GNSS_DOPS        = 129539,
-    PGN_WIND_DATA        = 130306,
-    PGN_ENV_PARAMETERS   = 130310,
-    PGN_ENV_PARAMETERS2  = 130311
+    PGN_SIZE_CHARGER_STATUS                  = 17,
+    PGN_SIZE_STATUS                          = 8,
+    PGN_SIZE_SYSTEM_TIME                     = 8,
+    PGN_SIZE_CHARGER_STATISTICS_BATTERY_DEUX = 8,
+    PGN_SIZE_BATTERY_STATUS_DEUX             = 8,
+    PGN_SIZE_DC_SOURCE_STATUS                = 21,
+    PGN_SIZE_SECONDARY_POWER_SUPPLY_STATUS   = 8,
+    PGN_SIZE_MPPT_STATUS                     = 8,
+    PGN_SIZE_RUDDER                          = 6,
+    PGN_SIZE_MAG_VARIATION                   = 8,
+    PGN_SIZE_BATTERY_STATUS                  = 8,
+    PGN_SIZE_SPEED                           = 8,
+    PGN_SIZE_WATER_DEPTH                     = 8,
+    PGN_SIZE_POSITION_RAP_UPD                = 8,
+    PGN_SIZE_COG_SOG_RAP_UPD                 = 8,
+    PGN_SIZE_TIME_DATE                       = 8,
+    PGN_SIZE_GNSS_DOPS                       = 8,
+    PGN_SIZE_WIND_DATA                       = 8,
+    PGN_SIZE_ENV_PARAMETERS                  = 8,
+    PGN_SIZE_ENV_PARAMETERS2                 = 8
 };
 
 /**
@@ -185,36 +219,36 @@ enum PGN127258_VARIATION_SOURCE {
 /**
  * Define constants for PGN129539 indicating the GPS unit's operating mode.
  */
-enum PGN_129539_MODE {
-	PGN_129539_MODE_1D    = 0,
-	PGN_129539_MODE_2D    = 1,
-	PGN_129539_MODE_3D    = 2,
-	PGN_129539_MODE_AUTO  = 3,
-	PGN_129539_MODE_RES1  = 4,
-	PGN_129539_MODE_RES2  = 5,
-	PGN_129539_MODE_ERROR = 6,
-	PGN_129539_MODE_INV   = 7
+enum PGN129539_MODE {
+	PGN129539_MODE_1D    = 0,
+	PGN129539_MODE_2D    = 1,
+	PGN129539_MODE_3D    = 2,
+	PGN129539_MODE_AUTO  = 3,
+	PGN129539_MODE_RES1  = 4,
+	PGN129539_MODE_RES2  = 5,
+	PGN129539_MODE_ERROR = 6,
+	PGN129539_MODE_INV   = 7
 };
 
 /**
  * Define constants for use with the temperature instance field of PGN 130311.
  */
-enum PGN_130311_TEMP_INST {
-    PGN_130311_TEMP_INST_SEA         = 0,
-    PGN_130311_TEMP_INST_OUTSIDE     = 1,
-    PGN_130311_TEMP_INST_INSIDE      = 2,
-    PGN_130311_TEMP_INST_ENGINE_ROOM = 3,
-    PGN_130311_TEMP_INST_MAIN_CABIN  = 4,
-    PGN_130311_TEMP_INST_INVALID     = 0x3F
+enum PGN130311_TEMP_INST {
+    PGN130311_TEMP_INST_SEA         = 0,
+    PGN130311_TEMP_INST_OUTSIDE     = 1,
+    PGN130311_TEMP_INST_INSIDE      = 2,
+    PGN130311_TEMP_INST_ENGINE_ROOM = 3,
+    PGN130311_TEMP_INST_MAIN_CABIN  = 4,
+    PGN130311_TEMP_INST_INVALID     = 0x3F
 };
 
 /**
  * Define constants for use with the humidity instance field of PGN 130311.
  */
-enum PGN_130311_HUMID_INST {
-    PGN_130311_HUMID_INST_INSIDE  = 0,
-    PGN_130311_HUMID_INST_OUTSIDE = 1,
-    PGN_130311_HUMID_INST_INVALID = 3,
+enum PGN130311_HUMID_INST {
+    PGN130311_HUMID_INST_INSIDE  = 0,
+    PGN130311_HUMID_INST_OUTSIDE = 1,
+    PGN130311_HUMID_INST_INVALID = 3,
 };
 
 #endif // NMEA2000_H

@@ -506,7 +506,7 @@ void HilNodeTimer100Hz(void)
                 HIL_ECAN_TRY(Ecan1Transmit(&msg));
                 break;
             case SCHED_ID_GPS_FIX:
-                PackagePgn129539(&msg, nodeId, 0xFF, PGN_129539_MODE_3D, PGN_129539_MODE_3D, 100, 100, 100);
+                PackagePgn129539(&msg, nodeId, 0xFF, PGN129539_MODE_3D, PGN129539_MODE_3D, 100, 100, 100);
                 HIL_ECAN_TRY(Ecan1Transmit(&msg));
                 break;
             // Emulate the DST800 water speed sensor
@@ -610,7 +610,7 @@ uint8_t CanReceiveMessages(void)
                     // Decode the commanded rudder angle from the PGN127245 messages. Either the actual
                     // angle or the commanded angle are decoded as appropriate. This is in order to
                     // support actual sensor mode where the real rudder is used in simulation.
-                    case PGN_RUDDER: {
+                    case PGN_ID_RUDDER: {
                         float angleCommand, angleActual;
                         uint8_t tmp = ParsePgn127245(msg.payload, NULL, NULL, &angleCommand, &angleActual);
                         // Record the commanded angle if it was decoded. This should be from the primary
@@ -625,15 +625,15 @@ uint8_t CanReceiveMessages(void)
                         }
                     } break;
                     // Track all messages from the DST800 to see if it's connected
-                    case PGN_SPEED:
-                    case PGN_ENV_PARAMETERS:
+                    case PGN_ID_SPEED:
+                    case PGN_ID_ENV_PARAMETERS:
                         dst800TimeoutCounter = 0;
                         break;
                     // Track all messages from the GPS to see if it's connected
-                    case PGN_POSITION_RAP_UPD:
-                    case PGN_COG_SOG_RAP_UPD:
-                    case PGN_GNSS_DOPS:
-                    case PGN_MAG_VARIATION:
+                    case PGN_ID_POSITION_RAP_UPD:
+                    case PGN_ID_COG_SOG_RAP_UPD:
+                    case PGN_ID_GNSS_DOPS:
+                    case PGN_ID_MAG_VARIATION:
                         gpsTimeoutCounter = 0;
                         break;
                 }

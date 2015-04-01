@@ -244,8 +244,8 @@ void RudderSendTemperature(void)
 	PackagePgn130311(&msg,
                          nodeId,
                          PGN_SID_INVALID,
-                         PGN_130311_TEMP_INST_INSIDE,
-                         PGN_130311_HUMID_INST_INVALID,
+                         PGN130311_TEMP_INST_INSIDE,
+                         PGN130311_HUMID_INST_INVALID,
                          rudderSensorData.Temperature,
                          NAN,
                          NAN);
@@ -306,7 +306,7 @@ void SendAndReceiveEcan(void)
             } else {
                 pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
                 switch (pgn) {
-                case PGN_RUDDER:
+                case PGN_ID_RUDDER:
                     ParsePgn127245(msg.payload, NULL, NULL, &rudderSensorData.CommandedRudderAngle, NULL);
                 break;
                 }

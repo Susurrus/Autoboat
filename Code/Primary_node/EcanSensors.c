@@ -279,7 +279,7 @@ uint8_t ProcessAllEcanMessages(void)
             } else {
                 pgn = Iso11783Decode(msg.id, NULL, NULL, NULL);
                 switch (pgn) {
-                case PGN_SYSTEM_TIME:
+                case PGN_ID_SYSTEM_TIME:
                 { // From GPS
                     SENSOR_STATE_CLEAR_ENABLED_COUNTER(gps);
                     uint8_t rv = ParsePgn126992(msg.payload, NULL, NULL, &dateTimeDataStore.year, &dateTimeDataStore.month, &dateTimeDataStore.day, &dateTimeDataStore.hour, &dateTimeDataStore.min, &dateTimeDataStore.sec, &dateTimeDataStore.usecSinceEpoch);
@@ -290,7 +290,7 @@ uint8_t ProcessAllEcanMessages(void)
                     }
                 }
                 break;
-                case PGN_RUDDER:
+                case PGN_ID_RUDDER:
                 {
                     // Overloaded message that can either be commands from the RC node or the rudder
                     // angle from the rudder node. Since the Parse* function only stores valid data,
@@ -304,7 +304,7 @@ uint8_t ProcessAllEcanMessages(void)
                     }
                 }
                 break;
-                case PGN_BATTERY_STATUS:
+                case PGN_ID_BATTERY_STATUS:
                 { // From the Power Node
                     SENSOR_STATE_CLEAR_ENABLED_COUNTER(power);
                     uint8_t rv = ParsePgn127508(msg.payload, NULL, NULL, &powerDataStore.voltage, &powerDataStore.current, &powerDataStore.temperature);
@@ -314,14 +314,14 @@ uint8_t ProcessAllEcanMessages(void)
                     }
                 }
                 break;
-                case PGN_SPEED: // From the DST800
+                case PGN_ID_SPEED: // From the DST800
                     SENSOR_STATE_CLEAR_ENABLED_COUNTER(dst800);
                     if (ParsePgn128259(msg.payload, NULL, &waterDataStore.speed)) {
                         SENSOR_STATE_CLEAR_ACTIVE_COUNTER(dst800);
                         waterDataStore.newData = true;
                     }
                     break;
-                case PGN_WATER_DEPTH:
+                case PGN_ID_WATER_DEPTH:
                 { // From the DST800
                     SENSOR_STATE_CLEAR_ENABLED_COUNTER(dst800);
                     // Only update the data in waterDataStore if an actual depth was returned.
@@ -332,7 +332,7 @@ uint8_t ProcessAllEcanMessages(void)
                     }
                 }
                 break;
-                case PGN_POSITION_RAP_UPD:
+                case PGN_ID_POSITION_RAP_UPD:
                 { // From the GPS200
                     // Keep the GPS enabled
                     SENSOR_STATE_CLEAR_ENABLED_COUNTER(gps);
@@ -348,7 +348,7 @@ uint8_t ProcessAllEcanMessages(void)
                     // GPS200 unit being used outputting data at 5Hz, but only internally updating
                     // at 4Hz. To prevent backtracking, ignoring duplicate positions is done.
                     if ((rv & 0x03) == 0x03 &&
-                        (gpsDataStore.mode == PGN_129539_MODE_2D || gpsDataStore.mode == PGN_129539_MODE_3D) &&
+                        (gpsDataStore.mode == PGN129539_MODE_2D || gpsDataStore.mode == PGN129539_MODE_3D) &&
                         (lat != gpsDataStore.latitude && lon != gpsDataStore.longitude) &&
                         (lat != 0 && lon != 0)) {
                         // Mark that we found new position data
@@ -363,7 +363,7 @@ uint8_t ProcessAllEcanMessages(void)
                     }
                 }
                 break;
-                case PGN_COG_SOG_RAP_UPD:
+                case PGN_ID_COG_SOG_RAP_UPD:
                 { // From the GPS200
                     SENSOR_STATE_CLEAR_ENABLED_COUNTER(gps);
                     uint16_t cog, sog;
@@ -372,7 +372,7 @@ uint8_t ProcessAllEcanMessages(void)
                     // Only update if both course-over-ground and speed-over-ground were parsed
                     // and the last reported GPS mode indicates a proper fix.
                     if ((rv & 0x0C) == 0x0C &&
-                        (gpsDataStore.mode == PGN_129539_MODE_2D || gpsDataStore.mode == PGN_129539_MODE_3D)) {
+                        (gpsDataStore.mode == PGN129539_MODE_2D || gpsDataStore.mode == PGN129539_MODE_3D)) {
                         // Mark that we found new velocity data
                         gpsDataStore.newData |= GPSDATA_VELOCITY;
 
@@ -385,7 +385,7 @@ uint8_t ProcessAllEcanMessages(void)
                     }
                 }
                 break;
-                case PGN_GNSS_DOPS:
+                case PGN_ID_GNSS_DOPS:
                 { // From the GPS200
                     SENSOR_STATE_CLEAR_ENABLED_COUNTER(gps);
                     uint8_t rv = ParsePgn129539(msg.payload, NULL, NULL, &gpsDataStore.mode, &gpsDataStore.hdop, &gpsDataStore.vdop, NULL);
@@ -400,24 +400,24 @@ uint8_t ProcessAllEcanMessages(void)
                     }
                 }
                 break;
-                case PGN_MAG_VARIATION: // From the GPS200
+                case PGN_ID_MAG_VARIATION: // From the GPS200
                     ParsePgn127258(msg.payload, NULL, NULL, NULL, &gpsDataStore.variation);
                     break;
-                case PGN_WIND_DATA: // From the WSO100
+                case PGN_ID_WIND_DATA: // From the WSO100
                     SENSOR_STATE_CLEAR_ENABLED_COUNTER(wso100);
                     if (ParsePgn130306(msg.payload, NULL, &windDataStore.speed, &windDataStore.direction)) {
                         SENSOR_STATE_CLEAR_ACTIVE_COUNTER(wso100);
                         windDataStore.newData = true;
                     }
                     break;
-                case PGN_ENV_PARAMETERS: // From the DST800
+                case PGN_ID_ENV_PARAMETERS: // From the DST800
                     SENSOR_STATE_CLEAR_ENABLED_COUNTER(dst800);
                     if (ParsePgn130310(msg.payload, NULL, &waterDataStore.temp, NULL, NULL)) {
                         // The DST800 is only considered active when a water depth is received
                         waterDataStore.newData = true;
                     }
                     break;
-                case PGN_ENV_PARAMETERS2: // From the WSO100
+                case PGN_ID_ENV_PARAMETERS2: // From the WSO100
                     SENSOR_STATE_CLEAR_ENABLED_COUNTER(wso100);
                     if (ParsePgn130311(msg.payload, NULL, NULL, NULL, &airDataStore.temp, &airDataStore.humidity, &airDataStore.pressure)) {
                         SENSOR_STATE_CLEAR_ACTIVE_COUNTER(wso100);

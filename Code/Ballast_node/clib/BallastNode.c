@@ -189,8 +189,8 @@ void BallastSendTemperature(void)
 	PackagePgn130311(&msg,
                          nodeId,
                          PGN_SID_INVALID,
-                         PGN_130311_TEMP_INST_INSIDE,
-                         PGN_130311_HUMID_INST_INVALID,
+                         PGN130311_TEMP_INST_INSIDE,
+                         PGN130311_HUMID_INST_INVALID,
                          ballastSensorData.Temperature,
                          NAN,
                          NAN);
