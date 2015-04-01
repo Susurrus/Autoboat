@@ -24,6 +24,12 @@ struct PowerData {
 };
 extern struct PowerData powerDataStore;
 
+typedef struct {
+    uint16_t voltage; // Voltage from the solar panel in units of 0.001V.
+    uint16_t current; // Current from the solar panel in units of 0.001A.
+} SolarData;
+extern SolarData solarDataStore;
+
 // Store data from the wSO100 air/wind sensor
 struct WindData {
 	float speed;

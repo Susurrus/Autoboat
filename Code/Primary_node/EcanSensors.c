@@ -54,6 +54,7 @@
     } while (0)
 
 struct PowerData powerDataStore = {0};
+SolarData solarDataStore = {0};
 struct WindData windDataStore = {0};
 struct AirData airDataStore = {0};
 struct WaterData waterDataStore = {0};
@@ -114,6 +115,9 @@ struct stc sensorAvailability = {
     {1, SENSOR_TIMEOUT, 1, SENSOR_TIMEOUT, 0},
     {1, SENSOR_TIMEOUT, 1, SENSOR_TIMEOUT, 0}
 };
+
+uint8_t dcSourceStatusBytes[PGN_SIZE_DC_SOURCE_STATUS];
+Nmea2000FastPacket dsSourceStatusPacket = {0, 0, 0, 0, dcSourceStatusBytes};
 
 float GetWaterSpeed(void)
 {
@@ -424,6 +428,24 @@ uint8_t ProcessAllEcanMessages(void)
                         airDataStore.newData = true;
                     }
                     break;
+                case PGN_ID_DC_SOURCE_STATUS:
+                    if (Nmea2000FastPacketExtract(msg.validBytes, msg.payload, &dsSourceStatusPacket)) {
+                        Pgn127173Data data;
+                        ParsePgn127173(dsSourceStatusPacket.messageBytes, &data);
+                        if (data.dcSourceId == DC_SOURCE_SOLAR_ARRAY_1) {
+                            if (data.current >= 0) {
+                                solarDataStore.current = data.current;
+                            } else {
+                                solarDataStore.current = 0;
+                            }
+                            if (data.voltage >= 0) {
+                                solarDataStore.voltage = data.voltage;
+                            } else {
+                                solarDataStore.voltage = 0;
+                            }
+                        }
+                    }
+                break;
                 }
             }
 
