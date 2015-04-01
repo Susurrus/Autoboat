@@ -93,7 +93,7 @@ bool Nmea2000FastPacketExtract(uint8_t size, const uint8_t data[8], Nmea2000Fast
         // Copy the remaining bytes in the message making sure to check its size properly.
         const uint8_t usableBytes = size - 2;
         if (usableBytes <= 6 && usableBytes > 0) {
-            memcpy(packet->messageBytes, &data[1], usableBytes);
+            memcpy(packet->messageBytes, &data[2], usableBytes);
             packet->bytesReceived = usableBytes;
         }
     } else if (frameCounter == packet->frameCounter + 1 && sequenceId == packet->seqId) {
