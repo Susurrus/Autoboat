@@ -170,6 +170,26 @@ uint64_t UsecondsSinceEpoch(uint64_t usecsFromMidnight, uint16_t daysSinceEpoch)
     return usecsFromMidnight + usecsFromDays;
 }
 
+uint16_t ParsePgn126990(const uint8_t *data, Pgn126990Data *out)
+{
+    out->dcSourceId = data[1];
+    LEUnpackInt32(&out->controlVoltage, &data[2]);
+    LEUnpackInt32(&out->controlCurrent, &data[6]);
+    out->controlCurrentPercent = data[10];
+    out->chargingAlgorithm = data[11];
+    return 0; // FIXME:
+}
+
+uint16_t ParsePgn127173(const uint8_t *data, Pgn127173Data *out)
+{
+    out->dcSourceId = data[1];
+    LEUnpackInt32(&out->voltage, &data[2]);
+    LEUnpackInt32(&out->current, &data[6]);
+    LEUnpackUint32(&out->power, &data[10]);
+    LEUnpackUint32(&out->rippleVoltage, &data[14]);
+    return 0; // FIXME:
+}
+
 uint8_t ParsePgn126992(const uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_t *year, uint8_t *month, uint8_t *day, uint8_t *hour, uint8_t *minute, uint8_t *second, uint64_t *usecSinceEpoch)
 {
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.

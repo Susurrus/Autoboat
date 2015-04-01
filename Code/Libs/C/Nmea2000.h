@@ -39,6 +39,32 @@ typedef struct {
     uint8_t *messageBytes; // An external uin8_t array that's big enough to hold all data bytes for this packet. Set externally.
 } Nmea2000FastPacket;
 
+typedef struct {
+    uint8_t messageCount;
+    uint8_t dcSourceId; // Enum {3 = House battery bank 1}
+    int32_t controlVoltage; // Units of .001V
+    int32_t controlCurrent; // Units of .001A
+    uint8_t controlCurrentPercent; // Units of 1%
+    uint8_t chargingAlgorithm;
+    uint16_t operatingState;
+    uint8_t chargerMode;
+    uint8_t chargerEnableDisable;
+    uint8_t batteryTempSensorPresent;
+    uint8_t equalizationPending;
+    uint8_t equalizationTimeRemaining;
+} Pgn126990Data;
+
+typedef struct {
+    uint8_t messageCount;
+    uint8_t dcSourceId; // Enum {3 = House battery bank 1}
+    int32_t voltage; // Units of .001V
+    int32_t current; // Units of .001A
+    uint32_t power; // Units of 1W
+    uint32_t rippleVoltage; // Units of 0.001V
+    uint8_t deratingStatus;
+    uint16_t deratingReason; // Enum
+} Pgn127173Data;
+
 /**
  * Helper functions.
  */
@@ -92,10 +118,13 @@ uint64_t UsecondsSinceEpoch(uint64_t usecsFromMidnight, uint16_t daysSinceEpoch)
 /***
  * PGN Parsers
  */
+uint16_t ParsePgn126990(const uint8_t *data, Pgn126990Data *out);
 
  // Units are year: absolute, month: 1-12, day: 1-31, hour: 0-23, min: 0-59, sec: 0-59, seqId: none, source: 0 (GPS), 1 (GLONASS), 2 (Radio station), 3 (Local cesium clock), 4 (local rubidium clock), 5 (Local crystal clock).
  // NOTE: The usecSinceEpoch value is not part of the return value bitfield and is only valid if the time given within the message was valid.
 uint8_t ParsePgn126992(const uint8_t data[8], uint8_t *seqId, uint8_t *source, uint16_t *year, uint8_t *month, uint8_t *day, uint8_t *hour, uint8_t *minute, uint8_t *second, uint64_t *usecSinceEpoch);
+
+uint16_t ParsePgn127173(const uint8_t *data, Pgn127173Data *out);
 
 // Units are instance: none, direction: none/enum, angleOrder: .0001 Radians, position: .0001 Radians.
 uint8_t ParsePgn127245(const uint8_t data[6], uint8_t *instance, uint8_t *direction, float *angleOrder, float *position);
@@ -199,6 +228,15 @@ enum PGN {
  */
 enum PGN_SID {
     PGN_SID_INVALID = 0xFF
+};
+
+/**
+ * Used by PGNs: 126990, 127173.
+ */
+enum DC_SOURCE {
+    DC_SOURCE_INVALID         = 0,
+    DC_SOURCE_HOUSE_BATTERY_1 = 3,
+    DC_SOURCE_SOLAR_ARRAY_1   = 21
 };
 
 /**
