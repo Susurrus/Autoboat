@@ -824,6 +824,7 @@ void MavLinkSendControllerData(const ImuData *imu, const GpsData *gps, float wat
         controllerVars.wp1[0] * 10, controllerVars.wp1[1] * 10,
         imu->attitude[0] * 8192.0, imu->attitude[1] * 8192.0, imu->attitude[2] * 8192.0,
         imu->gyros[0] * 4096.0, imu->gyros[1] * 4096.0, imu->gyros[2] * 4096.0,
+        imu->accels[0] * 256.0, imu->accels[1] * 256.0, imu->accels[2] * 256.0,
         waterSpeed * 1e4,
         gps->newData, gps->latitude, gps->longitude, gps->sog, gps->cog, gps->hdop,
         reset,

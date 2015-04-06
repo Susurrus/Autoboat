@@ -110,6 +110,7 @@ typedef struct {
     bool newData; // True if newData has arrived and has not been processed yet
     float attitude[3]; // The attitude as Euler angles in yaw,pitch,roll (rads).
     float gyros[3]; // Rotation rate in radians/s in [x y z] format
+    float accels[3]; // Rotation rate in m/s^2 in [x y z] format
 } ImuData;
 
 /**

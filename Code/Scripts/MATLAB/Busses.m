@@ -492,6 +492,17 @@ elems(3).SamplingMode = 'Sample based';
 elems(3).Min = [];
 elems(3).Max = [];
 
+elems(4) = Simulink.BusElement;
+elems(4).Name = 'accels';
+elems(4).Dimensions = 3;
+elems(4).DimensionsMode = 'Fixed';
+elems(4).DataType = 'single';
+elems(4).SampleTime = -1;
+elems(4).Complexity = 'real';
+elems(4).SamplingMode = 'Sample based';
+elems(4).Min = [];
+elems(4).Max = [];
+
 ImuData = Simulink.Bus;
 ImuData.Description = sprintf('Struct storing all IMU data recorded.');
 ImuData.DataScope = 'Imported'; % Specify that the header file declaring this struct is external

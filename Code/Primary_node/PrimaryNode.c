@@ -526,12 +526,15 @@ void PrimaryNode100HzLoop(void)
     ImuData imu = {
         true,
         {(float)tokimecDataStore.yaw / 8192.0, (float)tokimecDataStore.pitch / 8192.0, (float)tokimecDataStore.roll / 8192.0},
-        {(float)tokimecDataStore.x_angle_vel / 4096.0, (float)tokimecDataStore.y_angle_vel / 4096.0, (float)tokimecDataStore.z_angle_vel / 4096.0}
+        {(float)tokimecDataStore.x_angle_vel / 4096.0, (float)tokimecDataStore.y_angle_vel / 4096.0, (float)tokimecDataStore.z_angle_vel / 4096.0},
+        {(float)tokimecDataStore.x_accel / 256.0, (float)tokimecDataStore.y_accel / 256.0, (float)tokimecDataStore.z_accel / 256.0}
     };
 
     // Copy all inputs to the controller here. This makes sure that what we transmit in the
     // CONTROLLER_DATA message is **exactly** what was computed on this timestep. Also we make sure
     // to set their input data to false here.
+    // Note that this is actually unnecessary since the data can only change OUTSIDE of this 100Hz
+    // event loop.
     bool reset = (nodeErrors != 0);
     GpsData controllerGpsIn;
     GetGpsData(&controllerGpsIn);
