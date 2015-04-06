@@ -23,6 +23,7 @@
 #include "Rudder.h"
 #include "Actuators.h"
 #include "MissionManager.h"
+#include "Conversions.h"
 
 // MATLAB-generate code includes
 #include "controller.h"
@@ -444,12 +445,18 @@ int main(void)
         // if the rudder or propeller subsystems go offline and back online that they'll receive
         // the message and hopefully respond properly.
         if (nodeErrors != lastErrorState) {
-            if (IS_AUTONOMOUS() && (nodeErrors & RTB_RESET_MASK)) {
+            const uint16_t rtbErrors = nodeErrors & RTB_RESET_MASK;
+            if (IS_AUTONOMOUS() && rtbErrors) {
                 ActuatorsTransmitCommands(0.0, 0, true);
 
                 // Make sure the operator is aware we're in RTB mode, but only announce it once.
                 if (!(nodeErrors & PRIMARY_NODE_RESET_RTB)) {
-                    MavLinkSendStatusText(MAV_SEVERITY_EMERGENCY, "Enacting return-to-base protocol");
+                    char audioStr[] = "Enacting return-to-base protocol (reason 0x0000)";
+                    audioStr[43] = hex2char((rtbErrors >> 12) & 0xF);
+                    audioStr[44] = hex2char((rtbErrors >> 8) & 0xF);
+                    audioStr[45] = hex2char((rtbErrors >> 4) & 0xF);
+                    audioStr[46] = hex2char(rtbErrors & 0xF);
+                    MavLinkSendStatusText(MAV_SEVERITY_EMERGENCY, audioStr);
 
                     nodeErrors |= PRIMARY_NODE_RESET_RTB;
                 }
