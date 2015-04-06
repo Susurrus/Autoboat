@@ -467,7 +467,7 @@ static void mavlink_test_main_power(uint8_t system_id, uint8_t component_id, mav
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_main_power_t packet_in = {
-		17235,17339,17443,17547
+		17235,17339,17443,17547,17651,17755
     };
 	mavlink_main_power_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -475,6 +475,8 @@ static void mavlink_test_main_power(uint8_t system_id, uint8_t component_id, mav
         	packet1.electronics_current = packet_in.electronics_current;
         	packet1.actuator_voltage = packet_in.actuator_voltage;
         	packet1.actuator_current = packet_in.actuator_current;
+        	packet1.solar_voltage = packet_in.solar_voltage;
+        	packet1.solar_current = packet_in.solar_current;
         
         
 
@@ -484,12 +486,12 @@ static void mavlink_test_main_power(uint8_t system_id, uint8_t component_id, mav
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_main_power_pack(system_id, component_id, &msg , packet1.electronics_voltage , packet1.electronics_current , packet1.actuator_voltage , packet1.actuator_current );
+	mavlink_msg_main_power_pack(system_id, component_id, &msg , packet1.electronics_voltage , packet1.electronics_current , packet1.actuator_voltage , packet1.actuator_current , packet1.solar_voltage , packet1.solar_current );
 	mavlink_msg_main_power_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_main_power_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.electronics_voltage , packet1.electronics_current , packet1.actuator_voltage , packet1.actuator_current );
+	mavlink_msg_main_power_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.electronics_voltage , packet1.electronics_current , packet1.actuator_voltage , packet1.actuator_current , packet1.solar_voltage , packet1.solar_current );
 	mavlink_msg_main_power_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -502,7 +504,7 @@ static void mavlink_test_main_power(uint8_t system_id, uint8_t component_id, mav
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_main_power_send(MAVLINK_COMM_1 , packet1.electronics_voltage , packet1.electronics_current , packet1.actuator_voltage , packet1.actuator_current );
+	mavlink_msg_main_power_send(MAVLINK_COMM_1 , packet1.electronics_voltage , packet1.electronics_current , packet1.actuator_voltage , packet1.actuator_current , packet1.solar_voltage , packet1.solar_current );
 	mavlink_msg_main_power_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }

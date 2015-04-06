@@ -8,23 +8,27 @@ typedef struct __mavlink_main_power_t
  uint16_t electronics_current; ///< The current being drawn from the electronics battery bank. In units of 0.001A.
  uint16_t actuator_voltage; ///< The voltage of the actuator battery bank. In units of 0.001V.
  uint16_t actuator_current; ///< The current being drawn from the main battery bank. In units of 0.001A.
+ uint16_t solar_voltage; ///< The voltage of the solar panel. In units of 0.001V.
+ uint16_t solar_current; ///< The current provided by the solar panel. In units of 0.001A.
 } mavlink_main_power_t;
 
-#define MAVLINK_MSG_ID_MAIN_POWER_LEN 8
-#define MAVLINK_MSG_ID_172_LEN 8
+#define MAVLINK_MSG_ID_MAIN_POWER_LEN 12
+#define MAVLINK_MSG_ID_172_LEN 12
 
-#define MAVLINK_MSG_ID_MAIN_POWER_CRC 43
-#define MAVLINK_MSG_ID_172_CRC 43
+#define MAVLINK_MSG_ID_MAIN_POWER_CRC 138
+#define MAVLINK_MSG_ID_172_CRC 138
 
 
 
 #define MAVLINK_MESSAGE_INFO_MAIN_POWER { \
 	"MAIN_POWER", \
-	4, \
+	6, \
 	{  { "electronics_voltage", NULL, MAVLINK_TYPE_UINT16_T, 0, 0, offsetof(mavlink_main_power_t, electronics_voltage) }, \
          { "electronics_current", NULL, MAVLINK_TYPE_UINT16_T, 0, 2, offsetof(mavlink_main_power_t, electronics_current) }, \
          { "actuator_voltage", NULL, MAVLINK_TYPE_UINT16_T, 0, 4, offsetof(mavlink_main_power_t, actuator_voltage) }, \
          { "actuator_current", NULL, MAVLINK_TYPE_UINT16_T, 0, 6, offsetof(mavlink_main_power_t, actuator_current) }, \
+         { "solar_voltage", NULL, MAVLINK_TYPE_UINT16_T, 0, 8, offsetof(mavlink_main_power_t, solar_voltage) }, \
+         { "solar_current", NULL, MAVLINK_TYPE_UINT16_T, 0, 10, offsetof(mavlink_main_power_t, solar_current) }, \
          } \
 }
 
@@ -39,10 +43,12 @@ typedef struct __mavlink_main_power_t
  * @param electronics_current The current being drawn from the electronics battery bank. In units of 0.001A.
  * @param actuator_voltage The voltage of the actuator battery bank. In units of 0.001V.
  * @param actuator_current The current being drawn from the main battery bank. In units of 0.001A.
+ * @param solar_voltage The voltage of the solar panel. In units of 0.001V.
+ * @param solar_current The current provided by the solar panel. In units of 0.001A.
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_main_power_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-						       uint16_t electronics_voltage, uint16_t electronics_current, uint16_t actuator_voltage, uint16_t actuator_current)
+						       uint16_t electronics_voltage, uint16_t electronics_current, uint16_t actuator_voltage, uint16_t actuator_current, uint16_t solar_voltage, uint16_t solar_current)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_MAIN_POWER_LEN];
@@ -50,6 +56,8 @@ static inline uint16_t mavlink_msg_main_power_pack(uint8_t system_id, uint8_t co
 	_mav_put_uint16_t(buf, 2, electronics_current);
 	_mav_put_uint16_t(buf, 4, actuator_voltage);
 	_mav_put_uint16_t(buf, 6, actuator_current);
+	_mav_put_uint16_t(buf, 8, solar_voltage);
+	_mav_put_uint16_t(buf, 10, solar_current);
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_MAIN_POWER_LEN);
 #else
@@ -58,6 +66,8 @@ static inline uint16_t mavlink_msg_main_power_pack(uint8_t system_id, uint8_t co
 	packet.electronics_current = electronics_current;
 	packet.actuator_voltage = actuator_voltage;
 	packet.actuator_current = actuator_current;
+	packet.solar_voltage = solar_voltage;
+	packet.solar_current = solar_current;
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_MAIN_POWER_LEN);
 #endif
@@ -80,11 +90,13 @@ static inline uint16_t mavlink_msg_main_power_pack(uint8_t system_id, uint8_t co
  * @param electronics_current The current being drawn from the electronics battery bank. In units of 0.001A.
  * @param actuator_voltage The voltage of the actuator battery bank. In units of 0.001V.
  * @param actuator_current The current being drawn from the main battery bank. In units of 0.001A.
+ * @param solar_voltage The voltage of the solar panel. In units of 0.001V.
+ * @param solar_current The current provided by the solar panel. In units of 0.001A.
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_main_power_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
 							   mavlink_message_t* msg,
-						           uint16_t electronics_voltage,uint16_t electronics_current,uint16_t actuator_voltage,uint16_t actuator_current)
+						           uint16_t electronics_voltage,uint16_t electronics_current,uint16_t actuator_voltage,uint16_t actuator_current,uint16_t solar_voltage,uint16_t solar_current)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_MAIN_POWER_LEN];
@@ -92,6 +104,8 @@ static inline uint16_t mavlink_msg_main_power_pack_chan(uint8_t system_id, uint8
 	_mav_put_uint16_t(buf, 2, electronics_current);
 	_mav_put_uint16_t(buf, 4, actuator_voltage);
 	_mav_put_uint16_t(buf, 6, actuator_current);
+	_mav_put_uint16_t(buf, 8, solar_voltage);
+	_mav_put_uint16_t(buf, 10, solar_current);
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_MAIN_POWER_LEN);
 #else
@@ -100,6 +114,8 @@ static inline uint16_t mavlink_msg_main_power_pack_chan(uint8_t system_id, uint8
 	packet.electronics_current = electronics_current;
 	packet.actuator_voltage = actuator_voltage;
 	packet.actuator_current = actuator_current;
+	packet.solar_voltage = solar_voltage;
+	packet.solar_current = solar_current;
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_MAIN_POWER_LEN);
 #endif
@@ -122,7 +138,7 @@ static inline uint16_t mavlink_msg_main_power_pack_chan(uint8_t system_id, uint8
  */
 static inline uint16_t mavlink_msg_main_power_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_main_power_t* main_power)
 {
-	return mavlink_msg_main_power_pack(system_id, component_id, msg, main_power->electronics_voltage, main_power->electronics_current, main_power->actuator_voltage, main_power->actuator_current);
+	return mavlink_msg_main_power_pack(system_id, component_id, msg, main_power->electronics_voltage, main_power->electronics_current, main_power->actuator_voltage, main_power->actuator_current, main_power->solar_voltage, main_power->solar_current);
 }
 
 /**
@@ -136,7 +152,7 @@ static inline uint16_t mavlink_msg_main_power_encode(uint8_t system_id, uint8_t 
  */
 static inline uint16_t mavlink_msg_main_power_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_main_power_t* main_power)
 {
-	return mavlink_msg_main_power_pack_chan(system_id, component_id, chan, msg, main_power->electronics_voltage, main_power->electronics_current, main_power->actuator_voltage, main_power->actuator_current);
+	return mavlink_msg_main_power_pack_chan(system_id, component_id, chan, msg, main_power->electronics_voltage, main_power->electronics_current, main_power->actuator_voltage, main_power->actuator_current, main_power->solar_voltage, main_power->solar_current);
 }
 
 /**
@@ -147,10 +163,12 @@ static inline uint16_t mavlink_msg_main_power_encode_chan(uint8_t system_id, uin
  * @param electronics_current The current being drawn from the electronics battery bank. In units of 0.001A.
  * @param actuator_voltage The voltage of the actuator battery bank. In units of 0.001V.
  * @param actuator_current The current being drawn from the main battery bank. In units of 0.001A.
+ * @param solar_voltage The voltage of the solar panel. In units of 0.001V.
+ * @param solar_current The current provided by the solar panel. In units of 0.001A.
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_main_power_send(mavlink_channel_t chan, uint16_t electronics_voltage, uint16_t electronics_current, uint16_t actuator_voltage, uint16_t actuator_current)
+static inline void mavlink_msg_main_power_send(mavlink_channel_t chan, uint16_t electronics_voltage, uint16_t electronics_current, uint16_t actuator_voltage, uint16_t actuator_current, uint16_t solar_voltage, uint16_t solar_current)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_MAIN_POWER_LEN];
@@ -158,6 +176,8 @@ static inline void mavlink_msg_main_power_send(mavlink_channel_t chan, uint16_t 
 	_mav_put_uint16_t(buf, 2, electronics_current);
 	_mav_put_uint16_t(buf, 4, actuator_voltage);
 	_mav_put_uint16_t(buf, 6, actuator_current);
+	_mav_put_uint16_t(buf, 8, solar_voltage);
+	_mav_put_uint16_t(buf, 10, solar_current);
 
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_MAIN_POWER, buf, MAVLINK_MSG_ID_MAIN_POWER_LEN, MAVLINK_MSG_ID_MAIN_POWER_CRC);
@@ -170,6 +190,8 @@ static inline void mavlink_msg_main_power_send(mavlink_channel_t chan, uint16_t 
 	packet.electronics_current = electronics_current;
 	packet.actuator_voltage = actuator_voltage;
 	packet.actuator_current = actuator_current;
+	packet.solar_voltage = solar_voltage;
+	packet.solar_current = solar_current;
 
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_MAIN_POWER, (const char *)&packet, MAVLINK_MSG_ID_MAIN_POWER_LEN, MAVLINK_MSG_ID_MAIN_POWER_CRC);
@@ -187,7 +209,7 @@ static inline void mavlink_msg_main_power_send(mavlink_channel_t chan, uint16_t 
   is usually the receive buffer for the channel, and allows a reply to an
   incoming message with minimum stack space usage.
  */
-static inline void mavlink_msg_main_power_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint16_t electronics_voltage, uint16_t electronics_current, uint16_t actuator_voltage, uint16_t actuator_current)
+static inline void mavlink_msg_main_power_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint16_t electronics_voltage, uint16_t electronics_current, uint16_t actuator_voltage, uint16_t actuator_current, uint16_t solar_voltage, uint16_t solar_current)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char *buf = (char *)msgbuf;
@@ -195,6 +217,8 @@ static inline void mavlink_msg_main_power_send_buf(mavlink_message_t *msgbuf, ma
 	_mav_put_uint16_t(buf, 2, electronics_current);
 	_mav_put_uint16_t(buf, 4, actuator_voltage);
 	_mav_put_uint16_t(buf, 6, actuator_current);
+	_mav_put_uint16_t(buf, 8, solar_voltage);
+	_mav_put_uint16_t(buf, 10, solar_current);
 
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_MAIN_POWER, buf, MAVLINK_MSG_ID_MAIN_POWER_LEN, MAVLINK_MSG_ID_MAIN_POWER_CRC);
@@ -207,6 +231,8 @@ static inline void mavlink_msg_main_power_send_buf(mavlink_message_t *msgbuf, ma
 	packet->electronics_current = electronics_current;
 	packet->actuator_voltage = actuator_voltage;
 	packet->actuator_current = actuator_current;
+	packet->solar_voltage = solar_voltage;
+	packet->solar_current = solar_current;
 
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_MAIN_POWER, (const char *)packet, MAVLINK_MSG_ID_MAIN_POWER_LEN, MAVLINK_MSG_ID_MAIN_POWER_CRC);
@@ -263,6 +289,26 @@ static inline uint16_t mavlink_msg_main_power_get_actuator_current(const mavlink
 }
 
 /**
+ * @brief Get field solar_voltage from main_power message
+ *
+ * @return The voltage of the solar panel. In units of 0.001V.
+ */
+static inline uint16_t mavlink_msg_main_power_get_solar_voltage(const mavlink_message_t* msg)
+{
+	return _MAV_RETURN_uint16_t(msg,  8);
+}
+
+/**
+ * @brief Get field solar_current from main_power message
+ *
+ * @return The current provided by the solar panel. In units of 0.001A.
+ */
+static inline uint16_t mavlink_msg_main_power_get_solar_current(const mavlink_message_t* msg)
+{
+	return _MAV_RETURN_uint16_t(msg,  10);
+}
+
+/**
  * @brief Decode a main_power message into a struct
  *
  * @param msg The message to decode
@@ -275,6 +321,8 @@ static inline void mavlink_msg_main_power_decode(const mavlink_message_t* msg, m
 	main_power->electronics_current = mavlink_msg_main_power_get_electronics_current(msg);
 	main_power->actuator_voltage = mavlink_msg_main_power_get_actuator_voltage(msg);
 	main_power->actuator_current = mavlink_msg_main_power_get_actuator_current(msg);
+	main_power->solar_voltage = mavlink_msg_main_power_get_solar_voltage(msg);
+	main_power->solar_current = mavlink_msg_main_power_get_solar_current(msg);
 #else
 	memcpy(main_power, _MAV_PAYLOAD(msg), MAVLINK_MSG_ID_MAIN_POWER_LEN);
 #endif

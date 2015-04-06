@@ -645,7 +645,8 @@ void MavLinkSendMainPower(uint8_t channel)
     mavlink_msg_main_power_pack_chan(mavlink_system.sysid, mavlink_system.compid, channel,
         &txMessage,
         (uint16_t)(GetPowerRailVoltage() * 1000.0f), (uint16_t)(GetPowerRailCurrent() * 1000.0f),
-        (uint16_t)(powerDataStore.voltage * 1000.0f), (uint16_t)(powerDataStore.current * 1000.0f));
+        (uint16_t)(powerDataStore.voltage * 1000.0f), (uint16_t)(powerDataStore.current * 1000.0f),
+        powerDataStore.voltage, powerDataStore.current);
 
     len = mavlink_msg_to_send_buffer(buf, &txMessage);
 
