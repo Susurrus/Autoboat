@@ -319,7 +319,7 @@ void MavLinkInit(void)
         // We only report things that the GUI needs at 2Hz because it only updates at 1 or 2Hz.
         // We output the VFR_HUD message at a fast 5Hz because it has the throttle value and that's
         // nice to have quick response to.
-        const uint8_t const periodicities[GROUNDSTATION_SCHEDULE_NUM_MSGS] = {2, 2, 1, 5, 4, 2, 1, 1, 1, 1, 2, 0, 1, 1, 1, 0, 5, 2};
+        const uint8_t const periodicities[GROUNDSTATION_SCHEDULE_NUM_MSGS] = {2, 2, 1, 5, 4, 4, 1, 1, 1, 1, 2, 0, 1, 1, 1, 0, 5, 2};
         for (i = 0; i < GROUNDSTATION_SCHEDULE_NUM_MSGS; ++i) {
             if (periodicities[i] && !AddMessageRepeating(&groundstationMavlinkSchedule, groundstationMavlinkScheduleIds[i], periodicities[i])) {
                 FATAL_ERROR();
