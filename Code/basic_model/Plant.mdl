@@ -44,7 +44,7 @@ Model {
       Name		      "imu"
     }
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.62"
+    ComputedModelVersion    "1.63"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -66,9 +66,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Feb 25 17:47:23 2015"
-  RTWModifiedTimeStamp	  346787236
-  ModelVersionFormat	  "1.%<AutoIncrement:62>"
+  LastModifiedDate	  "Tue Apr 07 14:16:08 2015"
+  RTWModifiedTimeStamp	  350301137
+  ModelVersionFormat	  "1.%<AutoIncrement:63>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -106,6 +106,7 @@ Model {
     $ObjectID		    1
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "Plant"
+    signals_		    []
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
@@ -1032,7 +1033,7 @@ Model {
   System {
     Name		    "Plant"
     Location		    [46, 118, 1243, 769]
-    Open		    on
+    Open		    off
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -1045,7 +1046,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "252"
+    SIDHighWatermark	    "253"
     Block {
       BlockType		      Inport
       Name		      "Commanded Rudder"
@@ -2239,7 +2240,7 @@ Model {
       System {
 	Name			"Generate IMU Data"
 	Location		[292, 223, 1454, 616]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -2272,11 +2273,10 @@ Model {
 	  BlockType		  BusCreator
 	  Name			  "Bus\nCreator"
 	  SID			  "144"
-	  Ports			  [3, 1]
-	  Position		  [540, 147, 545, 223]
+	  Ports			  [4, 1]
+	  Position		  [540, 152, 545, 228]
 	  ZOrder		  -2
 	  ShowName		  off
-	  Inputs		  "3"
 	  DisplayOption		  "bar"
 	  OutDataTypeStr	  "Bus: ImuData"
 	}
@@ -2340,6 +2340,16 @@ Model {
 	  BackgroundColor	  "gray"
 	  ShowName		  off
 	  Value			  "0"
+	  OutDataTypeStr	  "single"
+	}
+	Block {
+	  BlockType		  Constant
+	  Name			  "Initial heading5"
+	  SID			  "253"
+	  Position		  [450, 207, 505, 233]
+	  BackgroundColor	  "gray"
+	  ShowName		  off
+	  Value			  "[0 0 0]"
 	  OutDataTypeStr	  "single"
 	}
 	Block {
@@ -2548,7 +2558,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "IMU"
 	  SID			  "202"
-	  Position		  [570, 178, 600, 192]
+	  Position		  [570, 183, 600, 197]
 	  BackgroundColor	  "yellow"
 	  IconDisplay		  "Port number"
 	}
@@ -2565,7 +2575,7 @@ Model {
 	  Labels		  [2, 0]
 	  SrcBlock		  "Mux"
 	  SrcPort		  1
-	  Points		  [115, 0; 0, -65]
+	  Points		  [115, 0; 0, -75]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  3
 	}
@@ -2587,7 +2597,7 @@ Model {
 	  Labels		  [1, 0]
 	  SrcBlock		  "Mux1"
 	  SrcPort		  1
-	  Points		  [60, 0; 0, 80]
+	  Points		  [60, 0; 0, 75]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  2
 	}
@@ -2641,6 +2651,12 @@ Model {
 	  SrcPort		  1
 	  DstBlock		  "Data Type Conversion2"
 	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Initial heading5"
+	  SrcPort		  1
+	  DstBlock		  "Bus\nCreator"
+	  DstPort		  4
 	}
 	Annotation {
 	  Name			  "Gyro is mounted sideways internally, so:\nx is pointing forward\ny is pointing starboard\nand z pointing "
@@ -2951,7 +2967,7 @@ Model {
 	  Ports			  [1, 1]
 	  Position		  [470, 286, 530, 314]
 	  ShowName		  off
-	  LibraryVersion	  "1.145"
+	  LibraryVersion	  "1.146"
 	  SourceBlock		  "uSimLib/Math/Euclidean\nnorm"
 	  SourceType		  ""
 	  ShowPortLabels	  "FromPortIcon"
@@ -3316,7 +3332,7 @@ Model {
 	  Position		  [240, 538, 350, 587]
 	  ZOrder		  -4
 	  ForegroundColor	  "blue"
-	  LibraryVersion	  "1.145"
+	  LibraryVersion	  "1.146"
 	  SourceBlock		  "uSimLib/Math/Vector rotation"
 	  SourceType		  "Stateflow"
 	}
