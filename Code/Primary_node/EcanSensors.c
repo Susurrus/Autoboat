@@ -54,7 +54,7 @@
     } while (0)
 
 struct PowerData powerDataStore = {0};
-SolarData solarDataStore = {0};
+SolarData solarDataStore = {UINT16_MAX, UINT16_MAX};
 struct WindData windDataStore = {0};
 struct AirData airDataStore = {0};
 struct WaterData waterDataStore = {0};
