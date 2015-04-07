@@ -78,6 +78,22 @@ __attribute__((always_inline)) static inline void LEUnpackUint32(uint32_t *data,
 	        ((uint32_t)container[3] << 24);
 }
 
+__attribute__((always_inline)) static inline void LEUnpackInt64(int64_t *data, const uint8_t container[8])
+{
+    *data = (int64_t)container[0] | ((int64_t)container[1] << 8) | ((int64_t)container[2] << 16) |
+            ((int64_t)container[3] << 24) | ((int64_t)container[4] << 32) |
+            ((int64_t)container[5] << 40) | ((int64_t)container[6] << 48) |
+            ((int64_t)container[7] << 56);
+}
+
+__attribute__((always_inline)) static inline void LEUnpackUint64(uint64_t *data, const uint8_t container[8])
+{
+    *data = (uint64_t)container[0] | ((uint64_t)container[1] << 8) | ((uint64_t)container[2] << 16) |
+            ((uint64_t)container[3] << 24) | ((uint64_t)container[4] << 32) |
+            ((uint64_t)container[5] << 40) | ((uint64_t)container[6] << 48) |
+            ((uint64_t)container[7] << 56);
+}
+
 __attribute__((always_inline)) static inline void LEUnpackReal32(float *data, const uint8_t container[4])
 {
 	conv_union tmp;
