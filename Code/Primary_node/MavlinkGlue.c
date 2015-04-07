@@ -626,7 +626,7 @@ void MavLinkSendRawGps(uint8_t channel)
 		mavlinkGpsMode, gpsDataStore.latitude, gpsDataStore.longitude, gpsDataStore.altitude,
 		gpsDataStore.hdop, gpsDataStore.vdop,
 		gpsDataStore.sog, (uint16_t)(((float)gpsDataStore.cog) * 180 / M_PI / 100),
-		0xFF);
+		gpsDataStore.satellites);
 
 	len = mavlink_msg_to_send_buffer(buf, &txMessage);
 

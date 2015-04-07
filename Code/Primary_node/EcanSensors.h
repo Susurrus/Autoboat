@@ -134,6 +134,7 @@ typedef struct {
 	int32_t longitude; // Longitude in units of 1e-7 degrees
 	int32_t altitude; // Altitude in 1e-6 meters
 	float variation; // Magnetic variation at this GPS coordinate. Units in degrees.
+        uint8_t satellites; // Number of satellites used in solution.
 } GpsData;
 extern GpsData gpsDataStore;
 

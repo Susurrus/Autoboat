@@ -69,6 +69,7 @@ GpsData gpsDataStore = {
     0,
     0,
     0,
+    0,
     0
 };
 struct DateTimeData dateTimeDataStore = {// Initialize our system clock to clearly invalid values.
