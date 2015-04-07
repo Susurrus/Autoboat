@@ -119,6 +119,7 @@ float ProcessManualRudderCommand(float rc);
 int16_t ProcessManualThrottleCommand(int16_t tc);
 void ClearStateWhenErrors(void);
 void SendAudioStatusUpdate(void);
+void TransmitChannelUsage(void);
 
 // Set processor configuration settings
 #ifdef __dsPIC33FJ128MC802__
@@ -185,9 +186,6 @@ int main(void)
     // Initialize ECAN1
     Ecan1Init(F_OSC, NODE_CAN_BAUD);
 
-    // Initialize the MAVLink communications channel
-    MavLinkInit();
-
     // Set up the ADC
     Adc1Init();
 
@@ -231,11 +229,19 @@ int main(void)
     // B15 (output): Amber GPS LED on the CANode Primary Shield, on when GPS is active & receiving good data.
     _TRISB15 = OUTPUT;
 
+    /// At this point all hardware has been initialized.
+
+    // Initialize the MAVLink communications channel
+    MavLinkInit();
+
     // Finally initialize the controller model (generated MATLAB code)
     controller_initialize();
 
     // Report on system status now that initialization is complete.
     MavLinkSendStatusText(MAV_SEVERITY_INFO, "Finished initialization.");
+
+    // Alert the operator to how much bandwidth will be used for each channel
+    TransmitChannelUsage();
 
     // Broadcast the current mission item. This is useful if the controller has been power-cycled.
     // In that case, if the system had been running off the built-in default missions, the only
@@ -1070,4 +1076,39 @@ float CrossTrackError(void)
     } else {
         return NAN;
     }
+}
+
+void TransmitChannelUsage(void)
+{
+    // Get the percentage utilization of the groundstation channel
+    uint8_t gsChannelUsage = MavLinkGetChannelUsage(MAVLINK_CHAN_GROUNDSTATION);
+
+    // Stringify it
+    char gsUsageString[] = "Datalogger channel usage at   0%";
+    if (gsChannelUsage >= 100) {
+        gsUsageString[28] = int2hexchar(gsChannelUsage / 100);
+        gsChannelUsage %= 100;
+    }
+    gsUsageString[29] = int2hexchar(gsChannelUsage / 10);
+    gsChannelUsage %= 10;
+    gsUsageString[30] = int2hexchar(gsChannelUsage);
+
+    // And transmit!
+    MavLinkSendStatusText(MAV_SEVERITY_INFO, gsUsageString);
+
+    // Get the percentage utilization of the groundstation channel
+    uint8_t dlChannelUsage = MavLinkGetChannelUsage(MAVLINK_CHAN_DATALOGGER);
+
+    // Stringify it
+    char dlUsageString[] = "Groundstation channel usage at   0%";
+    if (dlChannelUsage >= 100) {
+        dlUsageString[31] = int2hexchar(dlChannelUsage / 100);
+        dlChannelUsage %= 100;
+    }
+    dlUsageString[32] = int2hexchar(dlChannelUsage / 10);
+    dlChannelUsage %= 10;
+    dlUsageString[33] = int2hexchar(dlChannelUsage);
+
+    // And transmit!
+    MavLinkSendStatusText(MAV_SEVERITY_INFO, dlUsageString);
 }
