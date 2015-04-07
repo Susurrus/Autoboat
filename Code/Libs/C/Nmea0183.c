@@ -36,11 +36,11 @@ void buildAndCheckSentence(unsigned char characterIn, char *sentence, unsigned c
 		}
 	} else if ((*sentenceState) == 2) {
 		// Record the first ASCII-hex character of the checksum byte.
-		(*checksum) = hex2char(characterIn) << 4;
+		(*checksum) = hexchar2int(characterIn) << 4;
 		(*sentenceState) = 3;
 	} else if ((*sentenceState) == 3) {
 		// Record the second ASCII-hex character of the checksum byte.
-		(*checksum) |= hex2char(characterIn);
+		(*checksum) |= hexchar2int(characterIn);
 
 		// Now that we've compiled a complete GPS sentence, let's check the checksum and parse it.
 		// This code currently only supports RMC and GGA messages.

@@ -6,8 +6,8 @@
 #include <assert.h>
 #endif // UNIT_TEST
 
-char hex2char(char halfhex) {
-	char rv;
+uint8_t hexchar2int(char halfhex) {
+	uint8_t rv;
 	// Test for numeric characters
 	if ((rv = halfhex - '0') <= 9 && rv >= 0) {
 		return rv;
@@ -24,6 +24,17 @@ char hex2char(char halfhex) {
 	return -1;
 }
 
+char int2hexchar(uint8_t value) {
+	if (value >= 0 && value <= 9) {
+		return '0' + value;
+	} else if (value >= 10 && value <= 15) {
+		return 'A' + value;
+	}
+
+	// Otherwise return NUL-character as an error
+	return '\0';
+}
+
 float degMinToDeg(unsigned char degrees, float minutes) {
 	return ((float)degrees + minutes/60.0);
 }
@@ -33,23 +44,23 @@ int main() {
 	
 	printf("Testing conversions.c. All errors will be reported as failed assertions.\n");
 	
-	printf("Testing hex2char()\n");
+	printf("Testing hexchar2int()\n");
 	
-	/** Testing hex2char() **/
-	assert(hex2char('!') == -1);
-	assert(hex2char('0') == 0);
-	assert(hex2char('9') == 9);
-	assert(hex2char(':') == -1);
+	/** Testing hexchar2int() **/
+	assert(hexchar2int('!') == -1);
+	assert(hexchar2int('0') == 0);
+	assert(hexchar2int('9') == 9);
+	assert(hexchar2int(':') == -1);
 	
-	assert(hex2char('@') == -1);
-	assert(hex2char('A') == 10);
-	assert(hex2char('F') == 15);
-	assert(hex2char('G') == -1);
+	assert(hexchar2int('@') == -1);
+	assert(hexchar2int('A') == 10);
+	assert(hexchar2int('F') == 15);
+	assert(hexchar2int('G') == -1);
 	
-	assert(hex2char('`') == -1);
-	assert(hex2char('a') == 10);
-	assert(hex2char('f') == 15);
-	assert(hex2char('g') == -1);
+	assert(hexchar2int('`') == -1);
+	assert(hexchar2int('a') == 10);
+	assert(hexchar2int('f') == 15);
+	assert(hexchar2int('g') == -1);
 	
 	/** Testing degMinToDeg() **/
 	printf("Testing degMinToDeg()\n");

@@ -452,10 +452,10 @@ int main(void)
                 // Make sure the operator is aware we're in RTB mode, but only announce it once.
                 if (!(nodeErrors & PRIMARY_NODE_RESET_RTB)) {
                     char audioStr[] = "Enacting return-to-base protocol (reason 0x0000)";
-                    audioStr[43] = hex2char((rtbErrors >> 12) & 0xF);
-                    audioStr[44] = hex2char((rtbErrors >> 8) & 0xF);
-                    audioStr[45] = hex2char((rtbErrors >> 4) & 0xF);
-                    audioStr[46] = hex2char(rtbErrors & 0xF);
+                    audioStr[43] = int2hexchar((rtbErrors >> 12) & 0xF);
+                    audioStr[44] = int2hexchar((rtbErrors >> 8) & 0xF);
+                    audioStr[45] = int2hexchar((rtbErrors >> 4) & 0xF);
+                    audioStr[46] = int2hexchar(rtbErrors & 0xF);
                     MavLinkSendStatusText(MAV_SEVERITY_EMERGENCY, audioStr);
 
                     nodeErrors |= PRIMARY_NODE_RESET_RTB;
