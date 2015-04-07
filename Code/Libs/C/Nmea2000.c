@@ -531,6 +531,17 @@ uint8_t ParsePgn129026(const uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, u
 	return fieldStatus;
 }
 
+uint16_t ParsePgn129029(const uint8_t *data, Pgn129029Data *out)
+{
+    LEUnpackUint16(&out->date, &data[1]);
+    LEUnpackUint32(&out->time, &data[3]);
+    LEUnpackInt64(&out->latitude, &data[7]);
+    LEUnpackInt64(&out->longitude, &data[15]);
+    LEUnpackInt64(&out->altitude, &data[23]);
+    out->satellites = data[33];
+    return 0; // FIXME:
+}
+
 uint8_t ParsePgn129539(const uint8_t data[8], uint8_t *seqId, uint8_t *desiredMode, uint8_t *actualMode, uint16_t *hdop, uint16_t *vdop, uint16_t *tdop)
 {
 	// fieldStatus is a bitfield containing success (1) or failure (0) bits in increasing order for each PGN field.

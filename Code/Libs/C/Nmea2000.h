@@ -66,6 +66,15 @@ typedef struct {
     uint16_t deratingReason; // Enum
 } Pgn127173Data;
 
+typedef struct {
+    uint16_t date; // Days since January 1, 1970
+    uint32_t time; // Seconds since midnight. Units of 0.0001s.
+    int64_t latitude; // Geodetic latitude. Units of 0.0000000000000001 deg.
+    int64_t longitude; // Geodetic latitude. Units of 0.0000000000000001 deg.
+    int64_t altitude; // Geodetic latitude. Units of 1e-6 m.
+    uint8_t satellites; // Number of satellites used in solution.
+} Pgn129029Data;
+
 /**
  * Helper functions.
  */
@@ -159,6 +168,9 @@ uint8_t ParsePgn129025(const uint8_t data[8], int32_t *latitude, int32_t *longit
 // Units are seqId: none, cogRef: 0 (True), 1 (magnetic), cog: radians eastward from north, sog: m/s
 uint8_t ParsePgn129026(const uint8_t data[8], uint8_t *seqId, uint8_t *cogRef, uint16_t *cog, uint16_t *sog);
 
+// Fast Packet message.
+uint16_t ParsePgn129029(const uint8_t *data, Pgn129029Data *out);
+
 // Units are seqId: none, desiredMode: enum PGN_129539_MODE, actualMode: PGN_129539_MODE, hdop: .01 unitless, vdop: .01 unitless, tdop: .01 unitless
 uint8_t ParsePgn129539(const uint8_t data[8], uint8_t *seqId, uint8_t *desiredMode, uint8_t *actualMode, uint16_t *hdop, uint16_t *vdop, uint16_t *tdop);
 
@@ -190,6 +202,7 @@ enum PGN_ID {
     PGN_ID_WATER_DEPTH                     = 128267,
     PGN_ID_POSITION_RAP_UPD                = 129025,
     PGN_ID_COG_SOG_RAP_UPD                 = 129026,
+    PGN_ID_GNSS_POSITION_DATA              = 129029,
     PGN_ID_TIME_DATE                       = 129033,
     PGN_ID_GNSS_DOPS                       = 129539,
     PGN_ID_WIND_DATA                       = 130306,
@@ -217,6 +230,7 @@ enum PGN {
     PGN_SIZE_WATER_DEPTH                     = 8,
     PGN_SIZE_POSITION_RAP_UPD                = 8,
     PGN_SIZE_COG_SOG_RAP_UPD                 = 8,
+    PGN_SIZE_GNSS_POSITION_DATA              = 255, // Variable length
     PGN_SIZE_TIME_DATE                       = 8,
     PGN_SIZE_GNSS_DOPS                       = 8,
     PGN_SIZE_WIND_DATA                       = 8,
