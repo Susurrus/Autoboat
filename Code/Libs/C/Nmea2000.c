@@ -97,17 +97,32 @@ bool Nmea2000FastPacketExtract(uint8_t size, const uint8_t data[8], Nmea2000Fast
             packet->bytesReceived = usableBytes;
         }
     } else if (frameCounter == packet->frameCounter + 1 && sequenceId == packet->seqId) {
+        // Check that the CAN message has data in it (sanity check).
         const uint8_t usableBytes = size - 1;
         if (usableBytes <= 7 && usableBytes > 0) {
+            // Determine how many bytes of actual data are in this message. The last message may not
+            // be entirely useful bytes.
             uint8_t messageBytes;
             if (packet->totalBytes - packet->bytesReceived <= 7) {
                 messageBytes = packet->totalBytes - packet->bytesReceived;
             } else {
                 messageBytes = usableBytes;
             }
-            packet->frameCounter = frameCounter;
+
+            // Fail out if this message exceeds the byte buffer used for this message. This can
+            // happen with variable-length fast-packets.
+            if (packet->bytesReceived + messageBytes > packet->messageBytesSize) {
+                return false;
+            }
+
+            // Copy all the useful data from this packet.
             memcpy(packet->messageBytes + packet->bytesReceived, &data[1], messageBytes);
             packet->bytesReceived += messageBytes;
+
+            // Update the frame counter
+            packet->frameCounter = frameCounter;
+
+            // If we now have as many bytes as we were expecting, we've found the complete packet.
             if (packet->bytesReceived == packet->totalBytes) {
                 return true;
             }

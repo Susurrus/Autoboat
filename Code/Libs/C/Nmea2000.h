@@ -37,6 +37,7 @@ typedef struct {
     uint8_t totalBytes; // The total number of data bytes that make up this packet.
     uint8_t bytesReceived; // The number of bytes received while building this packet. For internal use only.
     uint8_t *messageBytes; // An external uin8_t array that's big enough to hold all data bytes for this packet. Set externally.
+    uint8_t messageBytesSize; // The size of the messageBytes[] array. Important for variable-length packets.
 } Nmea2000FastPacket;
 
 typedef struct {

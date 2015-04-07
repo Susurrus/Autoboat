@@ -117,7 +117,7 @@ struct stc sensorAvailability = {
 };
 
 uint8_t dcSourceStatusBytes[PGN_SIZE_DC_SOURCE_STATUS];
-Nmea2000FastPacket dsSourceStatusPacket = {0, 0, 0, 0, dcSourceStatusBytes};
+Nmea2000FastPacket dsSourceStatusPacket = {0, 0, 0, 0, dcSourceStatusBytes, sizeof(dcSourceStatusBytes)};
 
 float GetWaterSpeed(void)
 {
