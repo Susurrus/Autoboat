@@ -623,7 +623,8 @@ void MavLinkSendRawGps(uint8_t channel)
 	mavlink_msg_gps_raw_int_pack_chan(mavlink_system.sysid, mavlink_system.compid, channel,
         &txMessage,
         ((uint64_t)nodeSystemTime)*10000,
-		mavlinkGpsMode, gpsDataStore.latitude, gpsDataStore.longitude, gpsDataStore.altitude,
+		mavlinkGpsMode, gpsDataStore.latitude, gpsDataStore.longitude,
+        gpsDataStore.altitude, // FIXME: Convert this value to AMSL.
 		gpsDataStore.hdop, gpsDataStore.vdop,
 		gpsDataStore.sog, (uint16_t)(((float)gpsDataStore.cog) * 180 / M_PI / 100),
 		gpsDataStore.satellites);

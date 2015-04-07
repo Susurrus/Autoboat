@@ -130,9 +130,9 @@ typedef struct {
 	uint16_t sog; // Speed over ground in cm/s
 	uint16_t hdop; // Horizontal dilation of precision. Units in .01 (unitless).
 	uint16_t vdop; // Vertical dilation of precision. Units in .01 (unitless).
-	int32_t latitude; // Latitude in units of 1e-7 degrees
-	int32_t longitude; // Longitude in units of 1e-7 degrees
-	int32_t altitude; // Altitude in 1e-6 meters
+	int32_t latitude; // Geodetic latitude in units of 1e-7 degrees
+	int32_t longitude; // Geodetic longitude in units of 1e-7 degrees
+	int32_t altitude; // Altitude referenced to WGS84 in 1e-6 meters
 	float variation; // Magnetic variation at this GPS coordinate. Units in degrees.
         uint8_t satellites; // Number of satellites used in solution.
 } GpsData;

@@ -71,7 +71,7 @@ typedef struct {
     uint32_t time; // Seconds since midnight. Units of 0.0001s.
     int64_t latitude; // Geodetic latitude. Units of 0.0000000000000001 deg.
     int64_t longitude; // Geodetic latitude. Units of 0.0000000000000001 deg.
-    int64_t altitude; // Geodetic latitude. Units of 1e-6 m.
+    int64_t altitude; // Altitude referenced to WGS84. Units of 1e-6 m.
     uint8_t satellites; // Number of satellites used in solution.
 } Pgn129029Data;
 
