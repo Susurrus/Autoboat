@@ -45,6 +45,12 @@ enum SeaslugMavlinkChannel {
 void MavLinkInit(void);
 
 /**
+ * Returns the percent usage of the given channel.
+ * @param channel The channel selected, see enum SeaslugMavlinkChannel
+ */
+uint8_t MavLinkGetChannelUsage(uint8_t channel);
+
+/**
  * This function creates a MAVLink heartbeat message with some basic parameters and
  * caches that message (along with its size) in the module-level variables declared
  * above. This buffer should be transmit at 1Hz back to the groundstation.

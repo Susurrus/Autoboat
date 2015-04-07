@@ -224,6 +224,11 @@ static struct {
 // the Node.h library.
 static uint32_t gcsLastTimeSeen = UINT32_MAX;
 
+// Store how saturated each channel is as a percentage [0..100].
+// Can be retrieved with the MavLinkGetChannelUsage(..) function.
+static uint8_t dataloggerChanUsage = 0;
+static uint8_t groundstationChanUsage = 0;
+
 // Set up the message scheduler for MAVLink transmission to the groundstation
 #define GROUNDSTATION_SCHEDULE_NUM_MSGS 18
 static uint8_t groundstationMavlinkScheduleIds[GROUNDSTATION_SCHEDULE_NUM_MSGS] = {
@@ -332,7 +337,8 @@ void MavLinkInit(void)
         // exceed 80% of that total bandwidth. This makes sure we have space for transient messages like
         // missions, parameters, or waypoint/state changes.
         uint32_t bps = GetBps(&groundstationMavlinkSchedule);
-        if (bps > (64000 / 10) * 4 / 5 / 2) {
+        groundstationChanUsage = (uint8_t)(((float)bps / (64000.0f / 10.0f / 2.0f)) * 100);
+        if (groundstationChanUsage > 80) {
             FATAL_ERROR();
         }
     }
@@ -360,7 +366,8 @@ void MavLinkInit(void)
         // Every so often some SEASLUG_PARAMETER messages will be sent, so if we don't exceed 90%,
         // it'll be fine.
         uint32_t bps = GetBps(&dataloggerMavlinkSchedule);
-        if (bps > (115200 / 10) * 9 / 10) {
+        dataloggerChanUsage = (uint8_t)(((float)bps / (115200.0f / 10.0f)) * 100);
+        if (dataloggerChanUsage > 90) {
             FATAL_ERROR();
         }
     }
@@ -2102,5 +2109,16 @@ void MavLinkSendDataloggerParameters(bool reset)
             // And increment the pid for next time
             ++pid;
         }
+    }
+}
+
+uint8_t MavLinkGetChannelUsage(uint8_t channel)
+{
+    if (channel == MAVLINK_CHAN_DATALOGGER) {
+        return dataloggerChanUsage;
+    } else if (channel == MAVLINK_CHAN_GROUNDSTATION) {
+        return groundstationChanUsage;
+    } else {
+        return 0;
     }
 }
