@@ -1084,7 +1084,6 @@ void TransmitChannelUsage(void)
     uint8_t gsChannelUsage = MavLinkGetChannelUsage(MAVLINK_CHAN_GROUNDSTATION);
 
     // Stringify it
-    char gsUsageString[] = "Datalogger channel usage at   0%";
     if (gsChannelUsage >= 100) {
         gsUsageString[28] = int2hexchar(gsChannelUsage / 100);
         gsChannelUsage %= 100;
