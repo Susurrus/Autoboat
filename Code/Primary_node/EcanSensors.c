@@ -119,6 +119,8 @@ struct stc sensorAvailability = {
 
 uint8_t dcSourceStatusBytes[PGN_SIZE_DC_SOURCE_STATUS];
 Nmea2000FastPacket dsSourceStatusPacket = {0, 0, 0, 0, dcSourceStatusBytes, sizeof(dcSourceStatusBytes)};
+uint8_t gnssPositionDataBytes[PGN_SIZE_GNSS_POSITION_DATA];
+Nmea2000FastPacket gnssPositionDataPacket = {0, 0, 0, 0, gnssPositionDataBytes, sizeof(gnssPositionDataBytes)};
 
 float GetWaterSpeed(void)
 {
@@ -445,6 +447,14 @@ uint8_t ProcessAllEcanMessages(void)
                                 solarDataStore.voltage = 0;
                             }
                         }
+                    }
+                break;
+                case PGN_ID_GNSS_POSITION_DATA:
+                    if (Nmea2000FastPacketExtract(msg.validBytes, msg.payload, &gnssPositionDataPacket)) {
+                        Pgn129029Data data;
+                        ParsePgn129029(gnssPositionDataPacket.messageBytes, &data);
+                        gpsDataStore.altitude = data.altitude; // Units are the same, just precision differs.
+                        gpsDataStore.satellites = data.satellites;
                     }
                 break;
                 }
