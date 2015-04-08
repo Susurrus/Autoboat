@@ -321,7 +321,7 @@ elems(5).Max = [];
 
 elems(6) = Simulink.BusElement;
 elems(6).Name = 'missions';
-elems(6).Dimensions = 16;
+elems(6).Dimensions = 32;
 elems(6).DimensionsMode = 'Fixed';
 elems(6).DataType = 'Bus: Mission';
 elems(6).SampleTime = -1;
