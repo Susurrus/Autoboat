@@ -1084,13 +1084,14 @@ void TransmitChannelUsage(void)
     uint8_t gsChannelUsage = MavLinkGetChannelUsage(MAVLINK_CHAN_GROUNDSTATION);
 
     // Stringify it
+    char gsUsageString[] = "Groundstation channel usage at   0%";
     if (gsChannelUsage >= 100) {
-        gsUsageString[28] = int2hexchar(gsChannelUsage / 100);
+        gsUsageString[31] = int2hexchar(gsChannelUsage / 100);
         gsChannelUsage %= 100;
     }
-    gsUsageString[29] = int2hexchar(gsChannelUsage / 10);
+    gsUsageString[32] = int2hexchar(gsChannelUsage / 10);
     gsChannelUsage %= 10;
-    gsUsageString[30] = int2hexchar(gsChannelUsage);
+    gsUsageString[33] = int2hexchar(gsChannelUsage);
 
     // And transmit!
     MavLinkSendStatusText(MAV_SEVERITY_INFO, gsUsageString);
@@ -1099,14 +1100,14 @@ void TransmitChannelUsage(void)
     uint8_t dlChannelUsage = MavLinkGetChannelUsage(MAVLINK_CHAN_DATALOGGER);
 
     // Stringify it
-    char dlUsageString[] = "Groundstation channel usage at   0%";
+    char dlUsageString[] = "Datalogger channel usage at   0%";
     if (dlChannelUsage >= 100) {
-        dlUsageString[31] = int2hexchar(dlChannelUsage / 100);
+        dlUsageString[28] = int2hexchar(dlChannelUsage / 100);
         dlChannelUsage %= 100;
     }
-    dlUsageString[32] = int2hexchar(dlChannelUsage / 10);
+    dlUsageString[29] = int2hexchar(dlChannelUsage / 10);
     dlChannelUsage %= 10;
-    dlUsageString[33] = int2hexchar(dlChannelUsage);
+    dlUsageString[30] = int2hexchar(dlChannelUsage);
 
     // And transmit!
     MavLinkSendStatusText(MAV_SEVERITY_INFO, dlUsageString);
