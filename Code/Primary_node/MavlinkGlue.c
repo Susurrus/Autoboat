@@ -305,6 +305,17 @@ void MavLinkSendParamValue(uint16_t id);
 int MavLinkAppendMission(const mavlink_mission_item_t *mission);
 void MavLinkSendDataloggerParameters(bool reset);
 
+/**
+ * Inverse of MATLAB's lla2ltp.
+ * @param ltp Coordinates in the local frame. In North-East-Down order. Units of meters.
+ * @param lla Coordinates in the global frame. In North-East-Down order. Units of meters.
+ */
+void ltp2lla(const real32_T ltp[3], int32_T lla[3])
+{
+    lla[0] = (int32_t)(ltp[0] / lla_ltp_gain[0]) + gpsOrigin[0];
+    lla[1] = (int32_t)(ltp[1] / lla_ltp_gain[1]) + gpsOrigin[1];
+    lla[2] = (int32_t)(ltp[2] / lla_ltp_gain[2]) + gpsOrigin[2];
+}
 
 /**
  * Initialize MAVLink transmission. This just sets up the MAVLink scheduler with the basic

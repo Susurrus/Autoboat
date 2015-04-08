@@ -15,10 +15,10 @@ ref_lla = [36.963765; -122.00191; 0];
 ref_lla_rad = ref_lla * pi / 180;
 
 % Stored as an int32 in 1e7 rads and 1e6 meters for dynamic computations.
-% This is set as a Simulink.Parameter so it can be exported as a global
-% variable in compiled C code.
+% This is a parameter so that it's exported globally from the compiled
+% code.
 gpsOrigin = Simulink.Parameter;
-gpsOrigin.Description = 'The reference GPS location for this vehicle.';
+gpsOrigin.Description = 'The reference GPS location for this vehicle. Used for converting from LLA to LTP.';
 gpsOrigin.Value = int32(ref_lla .* [1e7; 1e7; 1e6]);
 gpsOrigin.DataType = 'int32';
 gpsOrigin.DocUnits = '1e-7deg,1e-7deg,1e-6m';
@@ -32,7 +32,15 @@ v = a / sqrt(1 - e2 * sin(ref_lla_rad(1))^2);
 r = v * (1 - e2) / (1 - e2 * sin(ref_lla_rad(1))^2);
 
 % The gain is calculated as normal along with a conversion from 1e-7 degrees to rads
-lla_ltp_gain = [r * (pi / 180 / 1e7); v * cos(ref_lla_rad(1)) * (pi / 180 / 1e7); 1e-6];
+% This is a parameter so that it's exported globally from the compiled
+% code.
+lla_ltp_gain = Simulink.Parameter;
+lla_ltp_gain.Description = 'The conversion multiplier for converting from LLA to LTP.';
+lla_ltp_gain.Value = single([r * (pi / 180 / 1e7); v * cos(ref_lla_rad(1)) * (pi / 180 / 1e7); 1e-6]);
+lla_ltp_gain.DataType = 'single';
+lla_ltp_gain.DocUnits = '1e-7deg,1e-7deg,1e-6m';
+lla_ltp_gain.RTWInfo.StorageClass = 'ExportedGlobal';
+lla_ltp_gain.RTWInfo.Alias = 'lla_ltp_gain';
 
 % The late ncy in the GPS unit (in units of T_step)
 gpsLatency = 150;

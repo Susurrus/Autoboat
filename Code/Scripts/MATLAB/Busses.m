@@ -200,7 +200,7 @@ elems(1).Min = [];
 elems(1).Max = [];
 
 elems(2) = Simulink.BusElement;
-elems(2).Name = 'otherCoordinates'; % local coordinates if refFrame is global and vice-versa
+elems(2).Name = 'otherCoordinates'; % Local if the mission is global and vice versa.
 elems(2).Dimensions = 3;
 elems(2).DimensionsMode = 'Fixed';
 elems(2).DataType = 'single';
