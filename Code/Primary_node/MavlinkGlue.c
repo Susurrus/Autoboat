@@ -302,7 +302,7 @@ void MavLinkSendAttitude(void);
 void MavLinkSendSystemTime(uint8_t channel);
 void MavLinkSendVfrHud(void);
 void MavLinkSendParamValue(uint16_t id);
-int MavLinkAppendMission(const mavlink_mission_item_t *mission);
+int MavLinkAppendMission(const mavlink_mission_item_t *mission, const float refNED[3]);
 void MavLinkSendDataloggerParameters(bool reset);
 
 /**
@@ -891,25 +891,15 @@ void MavLinkSendMissionItem(uint8_t currentMissionIndex)
 		int8_t missionManagerCurrentIndex;
 		GetCurrentMission(&missionManagerCurrentIndex);
 
-                // Try to send the mission back in the global frame. This makes the mission viewable
-                // on the main map, but not on the Horizontal Situation Indicator, which sucks, but
-                // the map is more important.
-                if (m.otherCoordinates[0] || m.otherCoordinates[1] || m.otherCoordinates[2]) {
-                    mavlink_msg_mission_item_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
-                                                  groundStationSystemId, groundStationComponentId, currentMissionIndex,
-                                                  MAV_FRAME_GLOBAL, m.action, (currentMissionIndex == (uint8_t)missionManagerCurrentIndex),
-                                                  m.autocontinue, m.parameters[0], m.parameters[1], m.parameters[2], m.parameters[3],
-                                                  m.otherCoordinates[0], m.otherCoordinates[1], m.otherCoordinates[2]);
-                }
-                // Otherwise, if this message wasn't originally in the global frame, just output it
-                // as we received it.
-                else {
-                    mavlink_msg_mission_item_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
-                                                  groundStationSystemId, groundStationComponentId, currentMissionIndex,
-                                                  m.refFrame, m.action, (currentMissionIndex == (uint8_t)missionManagerCurrentIndex),
-                                                  m.autocontinue, m.parameters[0], m.parameters[1], m.parameters[2], m.parameters[3],
-                                                  m.coordinates[0], m.coordinates[1], m.coordinates[2]);
-                }
+        // Send the mission back in the global frame. This makes the mission viewable
+        // on the main map, but not on the Horizontal Situation Indicator, which sucks, but
+        // the map is more important.
+        mavlink_msg_mission_item_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
+                                      groundStationSystemId, groundStationComponentId, currentMissionIndex,
+                                      MAV_FRAME_GLOBAL, m.action, (currentMissionIndex == (uint8_t)missionManagerCurrentIndex),
+                                      m.autocontinue, m.parameters[0], m.parameters[1], m.parameters[2], m.parameters[3],
+                                      m.otherCoordinates[0], m.otherCoordinates[1], m.otherCoordinates[2]);
+
 		len = mavlink_msg_to_send_buffer(buf, &txMessage);
 		Uart1WriteData(buf, (uint8_t)len);
 	}
@@ -1276,6 +1266,9 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 	// Track the state
 	static uint8_t state = MISSION_STATE_INACTIVE;
 
+    // Store the vessel's local position at the beginning of receiving mission parameters.
+    static float referenceLocalPosition[3];
+
 	// Keep track of the next state to transition into
 	uint8_t nextState = state;
 
@@ -1318,6 +1311,12 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 
 					// And wait for info on the first mission.
 					currentMissionIndex = 0;
+
+                    // Latch the vessel's local position here so that any LOCAL_OFFSET_NED missions
+                    // are all referenced relative to the same vessel position.
+                    referenceLocalPosition[0] = controllerVars.LocalPosition[0];
+                    referenceLocalPosition[1] = controllerVars.LocalPosition[1];
+                    referenceLocalPosition[2] = controllerVars.LocalPosition[2];
 
 					// And finally trigger the proper response.
 					nextState = MISSION_STATE_SEND_MISSION_REQUEST;
@@ -1566,7 +1565,7 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 				// Make sure that they're coming in in the right order, and if they don't return an error in
 				// the acknowledgment response.
 				if (currentMissionIndex == incomingMission->seq) {
-					int missionAddStatus = MavLinkAppendMission(incomingMission);
+					int missionAddStatus = MavLinkAppendMission(incomingMission, referenceLocalPosition);
 					if (missionAddStatus != -1) {
 						// If this is going to be the new current mission, then we should set it as such.
 						if (incomingMission->current) {
@@ -1625,7 +1624,7 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 				// Make sure that they're coming in in the right order, and if they don't return an error in
 				// the acknowledgment response.
 				if (currentMissionIndex == incomingMission->seq) {
-					int missionAddStatus = MavLinkAppendMission(incomingMission);
+					int missionAddStatus = MavLinkAppendMission(incomingMission, referenceLocalPosition);
 					if (missionAddStatus != -1) {
 						// If this is going to be the new current mission, then we should set it as such.
 						if (incomingMission->current) {
@@ -1681,10 +1680,23 @@ void MavLinkEvaluateMissionState(enum MISSION_EVENT event, const void *data)
 			else if (event == MISSION_EVENT_ITEM_RECEIVED) {
 				const mavlink_mission_item_t *incomingMission = (mavlink_mission_item_t *)data;
 
-				// Make sure that they're coming in in the right order, and if they don't return an error in
-				// the acknowledgment response.
-				if (currentMissionIndex == incomingMission->seq) {
-					int missionAddStatus = MavLinkAppendMission(incomingMission);
+				// Make sure the messages are in a supported reference frame.
+                if (incomingMission->frame != MAV_FRAME_LOCAL_NED ||
+                    incomingMission->frame != MAV_FRAME_LOCAL_OFFSET_NED ||
+                    incomingMission->frame != MAV_FRAME_GLOBAL ||
+                    incomingMission->frame != MAV_FRAME_GLOBAL_RELATIVE_ALT) {
+                    MavLinkSendMissionAck(MAV_MISSION_UNSUPPORTED_FRAME);
+                    nextState = MISSION_STATE_INACTIVE;
+                }
+				// Make sure the messages are coming in the right order, ACKing an error if they
+                // aren't.
+                else if (currentMissionIndex != incomingMission->seq) {
+					MavLinkSendMissionAck(MAV_MISSION_INVALID_SEQUENCE);
+					nextState = MISSION_STATE_INACTIVE;
+                }
+				// At this point we have a valid mission, so try to add it.
+                else {
+					int missionAddStatus = MavLinkAppendMission(incomingMission, referenceLocalPosition);
 					if (missionAddStatus != -1) {
 						// If this is going to be the new current mission, then we should set it as such.
 						if (incomingMission->current) {
@@ -1729,7 +1741,13 @@ void IncrementMissionCounter(void)
     }
 }
 
-int MavLinkAppendMission(const mavlink_mission_item_t *mission)
+/**
+ *
+ * @param mission The mission to add to the MissionManager.
+ * @param refNED A reference local position to handle missions that are relative to the current vessel position.
+ * @return A boolean of whether adding the mission succeeded or not. 0 = false, non-zero = true
+ */
+int MavLinkAppendMission(const mavlink_mission_item_t *mission, const float refNED[3])
 {
 	// We first copy the incoming mission data into our version of a Mission struct,
 	// which does not have some fields that are unnecessary.
@@ -1755,12 +1773,14 @@ int MavLinkAppendMission(const mavlink_mission_item_t *mission)
 		mission->autocontinue
 	};
 
+    switch (m.refFrame) {
 	// Attempt to record this mission to the list, recording the result, which will be 0 for failure.
 	// We also map all incoming Global Lat/Long/Alt messages to North-East-Down here.
 	// These can be created in QGroundControl by just double-clicking on the Map. While the NED coordinates
 	// are stored, the global coordinates are as well so that they can be transmit as global coordinates
 	// to QGC, which doesn't display local waypoints on the primary map.
-	if (m.refFrame == MAV_FRAME_GLOBAL || m.refFrame == MAV_FRAME_GLOBAL_RELATIVE_ALT) {
+    case MAV_FRAME_GLOBAL:
+    case MAV_FRAME_GLOBAL_RELATIVE_ALT:
 		m.refFrame = MAV_FRAME_LOCAL_NED;
 		// Preserve the global coordinates in the "otherCoordinates" members.
 		m.otherCoordinates[0] = m.coordinates[0];
@@ -1772,7 +1792,26 @@ int MavLinkAppendMission(const mavlink_mission_item_t *mission)
 			(int32_t)(m.coordinates[2] * 1e3)  // Stored in 1e-3 meters
 		};
 		lla2ltp(x, m.coordinates);
-	}
+    break;
+
+    // If this mission is going to referenced to the vehicle's position and NOT the origin, just add
+    // the reference vehicle position in. This is passed as an argument so it can be latched at the
+    // start of receiving missions and used for all missions in the set.
+    case MAV_FRAME_LOCAL_OFFSET_NED:
+        m.coordinates[0] += refNED[0];
+        m.coordinates[1] += refNED[1];
+        m.coordinates[2] += refNED[2];
+        // break intentionally left out.
+
+    // For both local NED frames, generate global coordinates.
+    case MAV_FRAME_LOCAL_NED: {
+		int32_t x[3];
+        ltp2lla(m.coordinates, x);
+        m.otherCoordinates[0] = (float)x[0] / 1e7f;
+        m.otherCoordinates[1] = (float)x[1] / 1e7f;
+        m.otherCoordinates[2] = (float)x[2] / 1e3f;
+    } break;
+    }
 
 	int8_t missionAddStatus;
 	AppendMission(&m, &missionAddStatus);
