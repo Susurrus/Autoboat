@@ -891,14 +891,22 @@ void MavLinkSendMissionItem(uint8_t currentMissionIndex)
 		int8_t missionManagerCurrentIndex;
 		GetCurrentMission(&missionManagerCurrentIndex);
 
-        // Send the mission back in the global frame. This makes the mission viewable
-        // on the main map, but not on the Horizontal Situation Indicator, which sucks, but
-        // the map is more important.
-        mavlink_msg_mission_item_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
-                                      groundStationSystemId, groundStationComponentId, currentMissionIndex,
-                                      MAV_FRAME_GLOBAL, m.action, (currentMissionIndex == (uint8_t)missionManagerCurrentIndex),
-                                      m.autocontinue, m.parameters[0], m.parameters[1], m.parameters[2], m.parameters[3],
-                                      m.otherCoordinates[0], m.otherCoordinates[1], m.otherCoordinates[2]);
+        // Always send the mission back in the global frame. This makes the mission viewable
+        // on the main map, which doesn't support waypoints in the local frame. It should also be
+        // visibile in the HSI widget.
+        if (m.refFrame == MAV_FRAME_GLOBAL || m.refFrame == MAV_FRAME_GLOBAL_RELATIVE_ALT) {
+            mavlink_msg_mission_item_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
+                                          groundStationSystemId, groundStationComponentId, currentMissionIndex,
+                                          m.refFrame, m.action, (currentMissionIndex == (uint8_t)missionManagerCurrentIndex),
+                                          m.autocontinue, m.parameters[0], m.parameters[1], m.parameters[2], m.parameters[3],
+                                          m.coordinates[0], m.coordinates[1], m.coordinates[2]);
+        } else if (m.refFrame == MAV_FRAME_LOCAL_NED || m.refFrame == MAV_FRAME_LOCAL_OFFSET_NED) {
+            mavlink_msg_mission_item_pack(mavlink_system.sysid, mavlink_system.compid, &txMessage,
+                                          groundStationSystemId, groundStationComponentId, currentMissionIndex,
+                                          MAV_FRAME_GLOBAL, m.action, (currentMissionIndex == (uint8_t)missionManagerCurrentIndex),
+                                          m.autocontinue, m.parameters[0], m.parameters[1], m.parameters[2], m.parameters[3],
+                                          m.otherCoordinates[0], m.otherCoordinates[1], m.otherCoordinates[2]);
+        }
 
 		len = mavlink_msg_to_send_buffer(buf, &txMessage);
 		Uart1WriteData(buf, (uint8_t)len);
