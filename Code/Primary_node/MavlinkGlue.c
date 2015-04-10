@@ -365,7 +365,7 @@ void MavLinkInit(void)
         // We want the HEARTBEAT/SYS_STATUS messages so this stream can be used with QGC. And then
         // for datalogging having the status of all nodes at 5Hz + the controller's input/output at
         // 100Hz is awesome.
-        const uint8_t const periodicities[DATALOGGER_SCHEDULE_NUM_MSGS] = {2, 2, 5, 0, 100, 0, 1, 1, 10};
+        const uint8_t const periodicities[DATALOGGER_SCHEDULE_NUM_MSGS] = {2, 2, 5, 0, 100, 0, 1, 5, 10};
         for (i = 0; i < DATALOGGER_SCHEDULE_NUM_MSGS; ++i) {
             if (periodicities[i] && !AddMessageRepeating(&dataloggerMavlinkSchedule, dataloggerMavlinkScheduleIds[i], periodicities[i])) {
                 FATAL_ERROR();
