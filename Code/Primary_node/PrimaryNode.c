@@ -743,6 +743,12 @@ void TransmitNodeStatus2Hz(void)
     }
 }
 
+/**
+ *
+ * @param rudderCommand The autonomous controller's rudder command.
+ * @param throttleCommand The autonomous throttle command. Currently unused because the controller doesn't command throttle, it will just hold whatever the last manual command was.
+ * @param forceTransmission
+ */
 void PrimaryNodeMuxAndOutputControllerCommands(float rudderCommand, int16_t throttleCommand, bool forceTransmission)
 {
     // Obtain and filter the manual control inputs
@@ -756,17 +762,21 @@ void PrimaryNodeMuxAndOutputControllerCommands(float rudderCommand, int16_t thro
 
     // Track autonomous actuator commands
     currentCommands.autonomousRudderCommand = rudderCommand;
-    currentCommands.autonomousThrottleCommand = throttleCommand;
+    currentCommands.autonomousThrottleCommand = manTc; // Ignore autonomous throttle because there's no control loop around it. Just use manual setting instead.
 
     // Transmit the actuator commands if the system is autonomous and there're no errors.
     if (IS_AUTONOMOUS() && !nodeErrors) {
         // Throttle command is not managed by the autonomous controller yet, so just use the manually
         // set value.
-        ActuatorsTransmitCommands(rudderCommand, manTc, forceTransmission);
+        ActuatorsTransmitCommands(currentCommands.autonomousRudderCommand,
+                                  currentCommands.autonomousThrottleCommand,
+                                  forceTransmission);
     }
     // But allow manual control as long as the manual override isn't active.
     else if (!IS_AUTONOMOUS() && !(nodeErrors & PRIMARY_NODE_RESET_MANUAL_OVERRIDE)) {
-        ActuatorsTransmitCommands(manRc, manTc, forceTransmission);
+        ActuatorsTransmitCommands(currentCommands.primaryManualRudderCommand,
+                                  currentCommands.primaryManualThrottleCommand,
+                                  forceTransmission);
     }
 }
 

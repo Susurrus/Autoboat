@@ -77,6 +77,10 @@ enum {
 // Instantiate a struct to store calibration data.
 struct RudderCalibrationData rudderCalData = {};
 
+// Keep a running average of the rudder angle. This is module-level so it can be reset if the system
+// begins calibration.
+static float rudderAngleAverage = NAN;
+
 // The number of ticks (0.01s) that it takes until we consider the motor inoperable. This is set to
 // a large value to prevent false positives.
 // @see RudderCheckForMotorStall().
@@ -186,6 +190,7 @@ void RudderCalibrate(void)
 			rudderCalData.CalibrationState = RUDDER_CAL_STATE_RECENTER;
 			rudderCalData.CommandedDirection = TO_STARBOARD;
 			rudderCalData.Calibrated = true;
+            rudderAngleAverage = NAN; // Reset the rudder angle filter to improve response
 		}
 	} else if (rudderCalData.CalibrationState == RUDDER_CAL_STATE_SECOND_TO_STARBOARD) {
 		if (rudderSensorData.StarLimit) {
@@ -194,6 +199,7 @@ void RudderCalibrate(void)
 			rudderCalData.CalibrationState = RUDDER_CAL_STATE_RECENTER;
 			rudderCalData.CommandedDirection = TO_PORT;
 			rudderCalData.Calibrated = true;
+            rudderAngleAverage = NAN; // Reset the rudder angle filter to improve response
 		}
 	}else if (rudderCalData.CalibrationState == RUDDER_CAL_STATE_RECENTER) {
 		if (fabs(rudderSensorData.RudderPositionAngle) < 0.1) {
@@ -468,7 +474,26 @@ void RudderCheckForMotorStall(uint8_t direction, uint16_t up)
  */
 void CalculateRudderAngle(void)
 {
-    rudderSensorData.RudderPositionAngle = PotToRads(rudderSensorData.PotValue, rudderCalData.StarLimitValue, rudderCalData.PortLimitValue);
+    // Set the time constant
+    const float sensorSampleTime = 0.01f; // Sampling the potentiometer at 100Hz
+    const float rudderAverageTimeConstant = 1 / 20.0f; // Set the time constant to 20Hz
+    const float alpha = sensorSampleTime / (rudderAverageTimeConstant + sensorSampleTime);
+
+    // Get the new rudder angle.
+    const float newValue = PotToRads(rudderSensorData.PotValue, rudderCalData.StarLimitValue,
+                                     rudderCalData.PortLimitValue);
+    rudderSensorData.RudderPositionAngle = newValue;
+    return; // FIXME: Remove this from debugging
+
+    // Filter and output the new value. NANs are checked for below because the average is initially
+    // set to NANs on initialization and during calibration. This prevents there being too big of a
+    // lag from when the rudder angle is first calibrated and jumps from 0.0.
+    if (rudderAngleAverage == rudderAngleAverage) {
+        rudderAngleAverage = (1.0 - alpha) * rudderAngleAverage + alpha * newValue;
+    } else {
+        rudderAngleAverage = newValue;
+    }
+    rudderSensorData.RudderPositionAngle = rudderAngleAverage;
 }
 
 float PotToRads(uint16_t input, uint16_t highSide, uint16_t lowSide)

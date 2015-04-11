@@ -906,6 +906,8 @@ void MavLinkSendMissionItem(uint8_t currentMissionIndex)
                                           MAV_FRAME_GLOBAL, m.action, (currentMissionIndex == (uint8_t)missionManagerCurrentIndex),
                                           m.autocontinue, m.parameters[0], m.parameters[1], m.parameters[2], m.parameters[3],
                                           m.otherCoordinates[0], m.otherCoordinates[1], m.otherCoordinates[2]);
+        } else {
+            // TODO: This should be handled somehow
         }
 
 		len = mavlink_msg_to_send_buffer(buf, &txMessage);
