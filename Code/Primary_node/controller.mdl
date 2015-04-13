@@ -45,7 +45,7 @@ Model {
       Name		      "internalVars"
     }
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2784"
+    ComputedModelVersion    "1.2816"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -67,9 +67,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Bryant"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun Apr 12 18:13:06 2015"
-  RTWModifiedTimeStamp	  350745819
-  ModelVersionFormat	  "1.%<AutoIncrement:2784>"
+  LastModifiedDate	  "Sun Apr 12 19:47:27 2015"
+  RTWModifiedTimeStamp	  350768671
+  ModelVersionFormat	  "1.%<AutoIncrement:2816>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -801,6 +801,17 @@ Model {
   }
   BlockParameterDefaults {
     Block {
+      BlockType		      Abs
+      ZeroCross		      on
+      SampleTime	      "-1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Same as input"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+    }
+    Block {
       BlockType		      ActionPort
       InitializeStates	      "held"
       PropagateVarSize	      "Only when execution is resumed"
@@ -998,6 +1009,20 @@ Model {
       InputPortOffsets	      "[]"
     }
     Block {
+      BlockType		      MinMax
+      Function		      "min"
+      Inputs		      "1"
+      InputSameDT	      on
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      ZeroCross		      on
+      SampleTime	      "-1"
+    }
+    Block {
       BlockType		      Mux
       Inputs		      "4"
       DisplayOption	      "none"
@@ -1045,10 +1070,30 @@ Model {
       SFunctionDeploymentMode off
     }
     Block {
+      BlockType		      Saturate
+      UpperLimitSource	      "Dialog"
+      UpperLimit	      "0.5"
+      LowerLimitSource	      "Dialog"
+      LowerLimit	      "-0.5"
+      LinearizeAsGain	      on
+      ZeroCross		      on
+      SampleTime	      "-1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Same as input"
+      LockScale		      off
+      RndMeth		      "Floor"
+    }
+    Block {
       BlockType		      Selector
       NumberOfDimensions      "1"
       IndexMode		      "One-based"
       InputPortWidth	      "-1"
+      SampleTime	      "-1"
+    }
+    Block {
+      BlockType		      Signum
+      ZeroCross		      on
       SampleTime	      "-1"
     }
     Block {
@@ -1156,7 +1201,7 @@ Model {
   }
   System {
     Name		    "controller"
-    Location		    [368, 222, 1019, 725]
+    Location		    [271, 182, 1803, 912]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -1170,7 +1215,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "106"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "26012"
+    SIDHighWatermark	    "26142"
     Block {
       BlockType		      Inport
       Name		      "sensors_GPS"
@@ -1253,7 +1298,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Autonomous Controller"
-	Location		[1170, 82, 1910, 994]
+	Location		[351, 276, 1496, 971]
 	Open			off
 	ModelBrowserVisibility	on
 	ModelBrowserWidth	200
@@ -1501,7 +1546,7 @@ Model {
 	  BlockType		  SubSystem
 	  Name			  "Rudder\nCommand"
 	  SID			  "25263"
-	  Ports			  [5, 1]
+	  Ports			  [6, 1]
 	  Position		  [535, 409, 650, 481]
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
@@ -1512,7 +1557,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Rudder\nCommand"
-	    Location		    [249, 238, 1764, 968]
+	    Location		    [351, 276, 1513, 954]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -1529,7 +1574,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "Velocity"
 	      SID		      "25264"
-	      Position		      [60, 368, 90, 382]
+	      Position		      [55, 293, 85, 307]
 	      BackgroundColor	      "darkGreen"
 	      IconDisplay	      "Port number"
 	    }
@@ -1537,7 +1582,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "Reset"
 	      SID		      "25265"
-	      Position		      [960, 343, 990, 357]
+	      Position		      [920, 218, 950, 232]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "2"
 	      IconDisplay	      "Port number"
@@ -1546,7 +1591,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "Local pos"
 	      SID		      "25266"
-	      Position		      [60, 328, 90, 342]
+	      Position		      [55, 253, 85, 267]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "3"
 	      IconDisplay	      "Port number"
@@ -1555,7 +1600,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "psi_dot"
 	      SID		      "25267"
-	      Position		      [55, 413, 85, 427]
+	      Position		      [55, 338, 85, 352]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "4"
 	      IconDisplay	      "Port number"
@@ -1564,9 +1609,18 @@ Model {
 	      BlockType		      Inport
 	      Name		      "waterspeed"
 	      SID		      "25268"
-	      Position		      [55, 453, 85, 467]
+	      Position		      [55, 378, 85, 392]
 	      BackgroundColor	      "darkGreen"
 	      Port		      "5"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "rudder"
+	      SID		      "26039"
+	      Position		      [55, 413, 85, 427]
+	      BackgroundColor	      "darkGreen"
+	      Port		      "6"
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
@@ -1605,7 +1659,7 @@ Model {
 	      BlockType		      Constant
 	      Name		      "Constant1"
 	      SID		      "25271"
-	      Position		      [960, 378, 1020, 402]
+	      Position		      [920, 253, 980, 277]
 	      BackgroundColor	      "gray"
 	      ShowName		      off
 	      Value		      "0"
@@ -1615,7 +1669,7 @@ Model {
 	      BlockType		      Constant
 	      Name		      "Constant2"
 	      SID		      "25868"
-	      Position		      [710, 493, 770, 517]
+	      Position		      [765, 418, 825, 442]
 	      BackgroundColor	      "gray"
 	      ShowName		      off
 	      Value		      "-1"
@@ -1625,7 +1679,7 @@ Model {
 	      BlockType		      Constant
 	      Name		      "Constant3"
 	      SID		      "25987"
-	      Position		      [710, 648, 770, 672]
+	      Position		      [765, 573, 825, 597]
 	      BackgroundColor	      "gray"
 	      ShowName		      off
 	      Value		      "-1"
@@ -1636,7 +1690,7 @@ Model {
 	      Name		      "Detect Fall\nNonpositive"
 	      SID		      "25984"
 	      Ports		      [1, 1]
-	      Position		      [720, 590, 780, 640]
+	      Position		      [775, 515, 835, 565]
 	      ZOrder		      -11
 	      ShowName		      off
 	      LibraryVersion	      "1.256"
@@ -1650,176 +1704,151 @@ Model {
 	      BlockType		      From
 	      Name		      "From"
 	      SID		      "25993"
-	      Position		      [270, 605, 325, 625]
+	      Position		      [325, 530, 380, 550]
 	      ZOrder		      -9
 	      BackgroundColor	      "magenta"
 	      ShowName		      off
 	      GotoTag		      "wp1"
-	      TagVisibility	      "global"
 	    }
 	    Block {
 	      BlockType		      From
 	      Name		      "From1"
 	      SID		      "25994"
-	      Position		      [270, 555, 325, 575]
+	      Position		      [325, 480, 380, 500]
 	      ZOrder		      -9
 	      BackgroundColor	      "magenta"
 	      ShowName		      off
 	      GotoTag		      "wp0"
-	      TagVisibility	      "global"
 	    }
 	    Block {
 	      BlockType		      From
-	      Name		      "From10"
-	      SID		      "26006"
-	      Position		      [450, 169, 535, 191]
+	      Name		      "From16"
+	      SID		      "26033"
+	      Position		      [445, 149, 530, 171]
 	      ZOrder		      -9
 	      BackgroundColor	      "magenta"
 	      ShowName		      off
 	      GotoTag		      "wp1_found"
-	      TagVisibility	      "global"
 	    }
 	    Block {
 	      BlockType		      From
-	      Name		      "From11"
-	      SID		      "26009"
-	      Position		      [450, 249, 535, 271]
+	      Name		      "From17"
+	      SID		      "26034"
+	      Position		      [445, 209, 530, 231]
 	      ZOrder		      -9
 	      BackgroundColor	      "magenta"
 	      ShowName		      off
 	      GotoTag		      "vel"
-	      TagVisibility	      "global"
 	    }
 	    Block {
 	      BlockType		      From
-	      Name		      "From12"
-	      SID		      "26010"
-	      Position		      [765, 244, 850, 266]
+	      Name		      "From18"
+	      SID		      "26035"
+	      Position		      [445, 179, 530, 201]
 	      ZOrder		      -9
 	      BackgroundColor	      "magenta"
 	      ShowName		      off
-	      GotoTag		      "vel"
-	      TagVisibility	      "global"
+	      GotoTag		      "pos"
 	    }
 	    Block {
 	      BlockType		      From
-	      Name		      "From13"
-	      SID		      "26011"
-	      Position		      [765, 264, 850, 286]
+	      Name		      "From19"
+	      SID		      "26036"
+	      Position		      [475, 120, 530, 140]
 	      ZOrder		      -9
 	      BackgroundColor	      "magenta"
 	      ShowName		      off
-	      GotoTag		      "psi_dot"
-	      TagVisibility	      "global"
-	    }
-	    Block {
-	      BlockType		      From
-	      Name		      "From14"
-	      SID		      "26012"
-	      Position		      [765, 284, 850, 306]
-	      ZOrder		      -9
-	      BackgroundColor	      "magenta"
-	      ShowName		      off
-	      GotoTag		      "waterspeed"
-	      TagVisibility	      "global"
+	      GotoTag		      "wp1"
 	    }
 	    Block {
 	      BlockType		      From
 	      Name		      "From2"
 	      SID		      "25995"
-	      Position		      [240, 579, 325, 601]
+	      Position		      [295, 504, 380, 526]
 	      ZOrder		      -9
 	      BackgroundColor	      "magenta"
 	      ShowName		      off
 	      GotoTag		      "wp0_found"
-	      TagVisibility	      "global"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "From20"
+	      SID		      "26037"
+	      Position		      [475, 60, 530, 80]
+	      ZOrder		      -9
+	      BackgroundColor	      "magenta"
+	      ShowName		      off
+	      GotoTag		      "wp0"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "From21"
+	      SID		      "26038"
+	      Position		      [445, 89, 530, 111]
+	      ZOrder		      -9
+	      BackgroundColor	      "magenta"
+	      ShowName		      off
+	      GotoTag		      "wp0_found"
 	    }
 	    Block {
 	      BlockType		      From
 	      Name		      "From3"
 	      SID		      "25996"
-	      Position		      [240, 629, 325, 651]
+	      Position		      [295, 554, 380, 576]
 	      ZOrder		      -9
 	      BackgroundColor	      "magenta"
 	      ShowName		      off
 	      GotoTag		      "wp1_found"
-	      TagVisibility	      "global"
 	    }
 	    Block {
 	      BlockType		      From
 	      Name		      "From4"
 	      SID		      "25997"
-	      Position		      [545, 464, 630, 486]
+	      Position		      [600, 389, 685, 411]
 	      ZOrder		      -9
 	      BackgroundColor	      "magenta"
 	      ShowName		      off
 	      GotoTag		      "wp1_index"
-	      TagVisibility	      "global"
 	    }
 	    Block {
 	      BlockType		      From
 	      Name		      "From5"
 	      SID		      "26001"
-	      Position		      [240, 654, 325, 676]
+	      Position		      [295, 579, 380, 601]
 	      ZOrder		      -9
 	      BackgroundColor	      "magenta"
 	      ShowName		      off
 	      GotoTag		      "pos"
-	      TagVisibility	      "global"
 	    }
 	    Block {
 	      BlockType		      From
 	      Name		      "From6"
-	      SID		      "26002"
-	      Position		      [450, 209, 535, 231]
+	      SID		      "26114"
+	      Position		      [445, 239, 530, 261]
 	      ZOrder		      -9
 	      BackgroundColor	      "magenta"
 	      ShowName		      off
-	      GotoTag		      "pos"
-	      TagVisibility	      "global"
+	      GotoTag		      "rudder"
 	    }
 	    Block {
 	      BlockType		      From
 	      Name		      "From7"
-	      SID		      "26003"
-	      Position		      [480, 130, 535, 150]
+	      SID		      "26135"
+	      Position		      [445, 269, 530, 291]
 	      ZOrder		      -9
 	      BackgroundColor	      "magenta"
 	      ShowName		      off
-	      GotoTag		      "wp1"
-	      TagVisibility	      "global"
+	      GotoTag		      "psi_dot"
 	    }
 	    Block {
 	      BlockType		      From
 	      Name		      "From8"
-	      SID		      "26004"
-	      Position		      [480, 50, 535, 70]
+	      SID		      "26136"
+	      Position		      [440, 299, 525, 321]
 	      ZOrder		      -9
 	      BackgroundColor	      "magenta"
 	      ShowName		      off
-	      GotoTag		      "wp0"
-	      TagVisibility	      "global"
-	    }
-	    Block {
-	      BlockType		      From
-	      Name		      "From9"
-	      SID		      "26005"
-	      Position		      [450, 89, 535, 111]
-	      ZOrder		      -9
-	      BackgroundColor	      "magenta"
-	      ShowName		      off
-	      GotoTag		      "wp0_found"
-	      TagVisibility	      "global"
-	    }
-	    Block {
-	      BlockType		      Goto
-	      Name		      "Goto"
-	      SID		      "25272"
-	      Position		      [795, 72, 860, 98]
-	      BackgroundColor	      "cyan"
-	      ShowName		      off
-	      GotoTag		      "L2"
-	      TagVisibility	      "global"
+	      GotoTag		      "waterspeed"
 	    }
 	    Block {
 	      BlockType		      Goto
@@ -1829,7 +1858,7 @@ Model {
 	      BackgroundColor	      "cyan"
 	      ShowName		      off
 	      GotoTag		      "wp1"
-	      TagVisibility	      "global"
+	      TagVisibility	      "local"
 	    }
 	    Block {
 	      BlockType		      Goto
@@ -1839,47 +1868,57 @@ Model {
 	      BackgroundColor	      "cyan"
 	      ShowName		      off
 	      GotoTag		      "wp1_index"
-	      TagVisibility	      "global"
+	      TagVisibility	      "local"
 	    }
 	    Block {
 	      BlockType		      Goto
 	      Name		      "Goto11"
 	      SID		      "25998"
-	      Position		      [125, 447, 255, 473]
+	      Position		      [125, 372, 255, 398]
 	      BackgroundColor	      "cyan"
 	      ShowName		      off
 	      GotoTag		      "waterspeed"
-	      TagVisibility	      "global"
+	      TagVisibility	      "local"
 	    }
 	    Block {
 	      BlockType		      Goto
 	      Name		      "Goto12"
 	      SID		      "25999"
-	      Position		      [125, 407, 255, 433]
+	      Position		      [125, 332, 255, 358]
 	      BackgroundColor	      "cyan"
 	      ShowName		      off
 	      GotoTag		      "psi_dot"
-	      TagVisibility	      "global"
+	      TagVisibility	      "local"
 	    }
 	    Block {
 	      BlockType		      Goto
 	      Name		      "Goto13"
 	      SID		      "26000"
-	      Position		      [125, 322, 255, 348]
+	      Position		      [125, 247, 255, 273]
 	      BackgroundColor	      "cyan"
 	      ShowName		      off
 	      GotoTag		      "pos"
-	      TagVisibility	      "global"
+	      TagVisibility	      "local"
 	    }
 	    Block {
 	      BlockType		      Goto
 	      Name		      "Goto14"
 	      SID		      "26008"
-	      Position		      [125, 362, 255, 388]
+	      Position		      [125, 287, 255, 313]
 	      BackgroundColor	      "cyan"
 	      ShowName		      off
 	      GotoTag		      "vel"
-	      TagVisibility	      "global"
+	      TagVisibility	      "local"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto15"
+	      SID		      "26040"
+	      Position		      [125, 407, 255, 433]
+	      BackgroundColor	      "cyan"
+	      ShowName		      off
+	      GotoTag		      "rudder"
+	      TagVisibility	      "local"
 	    }
 	    Block {
 	      BlockType		      Goto
@@ -1889,13 +1928,13 @@ Model {
 	      BackgroundColor	      "cyan"
 	      ShowName		      off
 	      GotoTag		      "wp0"
-	      TagVisibility	      "global"
+	      TagVisibility	      "local"
 	    }
 	    Block {
 	      BlockType		      Goto
 	      Name		      "Goto3"
 	      SID		      "25275"
-	      Position		      [1095, 252, 1240, 278]
+	      Position		      [995, 132, 1140, 158]
 	      BackgroundColor	      "cyan"
 	      ShowName		      off
 	      GotoTag		      "autoRudderAngleCommand"
@@ -1903,29 +1942,9 @@ Model {
 	    }
 	    Block {
 	      BlockType		      Goto
-	      Name		      "Goto4"
-	      SID		      "25276"
-	      Position		      [795, 192, 860, 218]
-	      BackgroundColor	      "cyan"
-	      ShowName		      off
-	      GotoTag		      "a_cmd"
-	      TagVisibility	      "global"
-	    }
-	    Block {
-	      BlockType		      Goto
-	      Name		      "Goto5"
-	      SID		      "25836"
-	      Position		      [795, 147, 860, 173]
-	      BackgroundColor	      "cyan"
-	      ShowName		      off
-	      GotoTag		      "AimPoint"
-	      TagVisibility	      "global"
-	    }
-	    Block {
-	      BlockType		      Goto
 	      Name		      "Goto6"
 	      SID		      "25864"
-	      Position		      [900, 477, 1030, 503]
+	      Position		      [955, 402, 1085, 428]
 	      BackgroundColor	      "cyan"
 	      ShowName		      off
 	      GotoTag		      "wpReachedIndex"
@@ -1935,7 +1954,7 @@ Model {
 	      BlockType		      Goto
 	      Name		      "Goto7"
 	      SID		      "25986"
-	      Position		      [905, 602, 1035, 628]
+	      Position		      [960, 527, 1090, 553]
 	      BackgroundColor	      "cyan"
 	      ShowName		      off
 	      GotoTag		      "wpCurrentIndex"
@@ -1949,7 +1968,7 @@ Model {
 	      BackgroundColor	      "cyan"
 	      ShowName		      off
 	      GotoTag		      "wp0_found"
-	      TagVisibility	      "global"
+	      TagVisibility	      "local"
 	    }
 	    Block {
 	      BlockType		      Goto
@@ -1959,245 +1978,14 @@ Model {
 	      BackgroundColor	      "cyan"
 	      ShowName		      off
 	      GotoTag		      "wp1_found"
-	      TagVisibility	      "global"
-	    }
-	    Block {
-	      BlockType		      SubSystem
-	      Name		      "L2 Plus ref WP1"
-	      SID		      "25277"
-	      Ports		      [6, 3]
-	      Position		      [555, 44, 705, 276]
-	      ErrorFcn		      "Stateflow.Translate.translate"
-	      PermitHierarchicalResolution "ExplicitOnly"
-	      TreatAsAtomicUnit	      on
-	      MinAlgLoopOccurrences   off
-	      PropExecContextOutsideSubsystem off
-	      RTWSystemCode	      "Auto"
-	      FunctionWithSeparateData off
-	      Opaque		      off
-	      RequestExecContextInheritance off
-	      MaskHideContents	      off
-	      SFBlockType	      "MATLAB Function"
-	      MaskType		      "Stateflow"
-	      MaskDescription	      "Embedded MATLAB block"
-	      MaskSelfModifiable      on
-	      MaskDisplay	      "bgColor = Simulink.Root.ColorString2Rgb(get_param(gcbh, 'BackgroundColor')); image(imread('p"
-	      "rivate/eml_membrane_16.png','png','BackgroundColor',bgColor(1:3)),'center'); disp([10 10 'L2PlusWP1']);"
-	      MaskIconFrame	      on
-	      MaskIconOpaque	      off
-	      MaskIconRotate	      "none"
-	      MaskPortRotate	      "default"
-	      MaskIconUnits	      "normalized"
-	      System {
-		Name			"L2 Plus ref WP1"
-		Location		[257, 457, 812, 717]
-		Open			off
-		ModelBrowserVisibility	on
-		ModelBrowserWidth	200
-		ScreenColor		"white"
-		PaperOrientation	"landscape"
-		PaperPositionMode	"auto"
-		PaperType		"usletter"
-		PaperUnits		"inches"
-		TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
-		TiledPageScale		1
-		ShowPageBoundaries	off
-		ZoomFactor		"100"
-		SIDHighWatermark	"32"
-		Block {
-		  BlockType		  Inport
-		  Name			  "wp0"
-		  SID			  "25277::22"
-		  Position		  [20, 101, 40, 119]
-		  IconDisplay		  "Port number"
-		}
-		Block {
-		  BlockType		  Inport
-		  Name			  "wp0_found"
-		  SID			  "25277::25"
-		  Position		  [20, 136, 40, 154]
-		  Port			  "2"
-		  IconDisplay		  "Port number"
-		}
-		Block {
-		  BlockType		  Inport
-		  Name			  "wp1"
-		  SID			  "25277::23"
-		  Position		  [20, 171, 40, 189]
-		  Port			  "3"
-		  IconDisplay		  "Port number"
-		}
-		Block {
-		  BlockType		  Inport
-		  Name			  "wp1_found"
-		  SID			  "25277::26"
-		  Position		  [20, 206, 40, 224]
-		  Port			  "4"
-		  IconDisplay		  "Port number"
-		}
-		Block {
-		  BlockType		  Inport
-		  Name			  "Puav"
-		  SID			  "25277::3"
-		  Position		  [20, 246, 40, 264]
-		  Port			  "5"
-		  IconDisplay		  "Port number"
-		}
-		Block {
-		  BlockType		  Inport
-		  Name			  "Vxyz"
-		  SID			  "25277::4"
-		  Position		  [20, 281, 40, 299]
-		  Port			  "6"
-		  IconDisplay		  "Port number"
-		}
-		Block {
-		  BlockType		  Demux
-		  Name			  " Demux "
-		  SID			  "25277::28"
-		  Ports			  [1, 1]
-		  Position		  [270, 270, 320, 310]
-		  Outputs		  "1"
-		}
-		Block {
-		  BlockType		  S-Function
-		  Name			  " SFunction "
-		  SID			  "25277::27"
-		  Tag			  "Stateflow S-Function controller 7"
-		  Ports			  [6, 4]
-		  Position		  [180, 106, 230, 269]
-		  FunctionName		  "sf_sfun"
-		  Parameters		  "MaxDwnPthStar,TStar,switchDistance,tanIntercept"
-		  PortCounts		  "[6 4]"
-		  EnableBusSupport	  on
-		  Port {
-		    PortNumber		    2
-		    Name		    "L2Vec"
-		    RTWStorageClass	    "Auto"
-		    DataLoggingNameMode	    "SignalName"
-		  }
-		  Port {
-		    PortNumber		    3
-		    Name		    "aimPoint"
-		    RTWStorageClass	    "Auto"
-		    DataLoggingNameMode	    "SignalName"
-		  }
-		  Port {
-		    PortNumber		    4
-		    Name		    "as_c"
-		    RTWStorageClass	    "Auto"
-		    DataLoggingNameMode	    "SignalName"
-		  }
-		}
-		Block {
-		  BlockType		  Terminator
-		  Name			  " Terminator "
-		  SID			  "25277::30"
-		  Position		  [460, 281, 480, 299]
-		}
-		Block {
-		  BlockType		  Outport
-		  Name			  "L2Vec"
-		  SID			  "25277::10"
-		  Position		  [460, 101, 480, 119]
-		  IconDisplay		  "Port number"
-		}
-		Block {
-		  BlockType		  Outport
-		  Name			  "aimPoint"
-		  SID			  "25277::31"
-		  Position		  [460, 136, 480, 154]
-		  Port			  "2"
-		  IconDisplay		  "Port number"
-		}
-		Block {
-		  BlockType		  Outport
-		  Name			  "as_c"
-		  SID			  "25277::9"
-		  Position		  [460, 171, 480, 189]
-		  Port			  "3"
-		  IconDisplay		  "Port number"
-		}
-		Line {
-		  SrcBlock		  "wp0"
-		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "wp0_found"
-		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  2
-		}
-		Line {
-		  SrcBlock		  "wp1"
-		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  3
-		}
-		Line {
-		  SrcBlock		  "wp1_found"
-		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  4
-		}
-		Line {
-		  SrcBlock		  "Puav"
-		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  5
-		}
-		Line {
-		  SrcBlock		  "Vxyz"
-		  SrcPort		  1
-		  DstBlock		  " SFunction "
-		  DstPort		  6
-		}
-		Line {
-		  Name			  "L2Vec"
-		  Labels		  [0, 0]
-		  SrcBlock		  " SFunction "
-		  SrcPort		  2
-		  DstBlock		  "L2Vec"
-		  DstPort		  1
-		}
-		Line {
-		  Name			  "aimPoint"
-		  Labels		  [0, 0]
-		  SrcBlock		  " SFunction "
-		  SrcPort		  3
-		  DstBlock		  "aimPoint"
-		  DstPort		  1
-		}
-		Line {
-		  Name			  "as_c"
-		  Labels		  [0, 0]
-		  SrcBlock		  " SFunction "
-		  SrcPort		  4
-		  DstBlock		  "as_c"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  " Demux "
-		  SrcPort		  1
-		  DstBlock		  " Terminator "
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  " SFunction "
-		  SrcPort		  1
-		  DstBlock		  " Demux "
-		  DstPort		  1
-		}
-	      }
+	      TagVisibility	      "local"
 	    }
 	    Block {
 	      BlockType		      Logic
 	      Name		      "Logical\nOperator1"
 	      SID		      "25278"
 	      Ports		      [1, 1]
-	      Position		      [1020, 341, 1050, 359]
+	      Position		      [980, 216, 1010, 234]
 	      ShowName		      off
 	      Operator		      "NOT"
 	      Inputs		      "1"
@@ -3421,10 +3209,2117 @@ Model {
 	      }
 	    }
 	    Block {
+	      BlockType		      SubSystem
+	      Name		      "Run controllers to calculate\ncommanded rudder angle"
+	      SID		      "26043"
+	      Ports		      [9, 1]
+	      Position		      [595, 61, 870, 319]
+	      MinAlgLoopOccurrences   off
+	      PropExecContextOutsideSubsystem off
+	      RTWSystemCode	      "Auto"
+	      FunctionWithSeparateData off
+	      Opaque		      off
+	      RequestExecContextInheritance off
+	      MaskHideContents	      off
+	      System {
+		Name			"Run controllers to calculate\ncommanded rudder angle"
+		Location		[351, 276, 1496, 971]
+		Open			off
+		ModelBrowserVisibility	on
+		ModelBrowserWidth	200
+		ScreenColor		"white"
+		PaperOrientation	"landscape"
+		PaperPositionMode	"auto"
+		PaperType		"usletter"
+		PaperUnits		"inches"
+		TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+		TiledPageScale		1
+		ShowPageBoundaries	off
+		ZoomFactor		"100"
+		Block {
+		  BlockType		  Inport
+		  Name			  "In1"
+		  SID			  "26044"
+		  Position		  [80, 108, 110, 122]
+		  BackgroundColor	  "darkGreen"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "In2"
+		  SID			  "26046"
+		  Position		  [80, 138, 110, 152]
+		  BackgroundColor	  "darkGreen"
+		  Port			  "2"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "In3"
+		  SID			  "26047"
+		  Position		  [80, 168, 110, 182]
+		  BackgroundColor	  "darkGreen"
+		  Port			  "3"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "In4"
+		  SID			  "26048"
+		  Position		  [80, 198, 110, 212]
+		  BackgroundColor	  "darkGreen"
+		  Port			  "4"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "pos"
+		  SID			  "26049"
+		  Position		  [80, 228, 110, 242]
+		  BackgroundColor	  "darkGreen"
+		  Port			  "5"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "vel"
+		  SID			  "26050"
+		  Position		  [80, 258, 110, 272]
+		  BackgroundColor	  "darkGreen"
+		  Port			  "6"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "rudder"
+		  SID			  "26101"
+		  Position		  [80, 288, 110, 302]
+		  BackgroundColor	  "darkGreen"
+		  Port			  "7"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "psi_dot"
+		  SID			  "26131"
+		  Position		  [80, 318, 110, 332]
+		  BackgroundColor	  "darkGreen"
+		  Port			  "8"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Inport
+		  Name			  "waterspeed"
+		  SID			  "26133"
+		  Position		  [80, 348, 110, 362]
+		  BackgroundColor	  "darkGreen"
+		  Port			  "9"
+		  IconDisplay		  "Port number"
+		}
+		Block {
+		  BlockType		  Constant
+		  Name			  "Constant"
+		  SID			  "26103"
+		  Position		  [310, 812, 425, 838]
+		  ZOrder		  -5
+		  BackgroundColor	  "gray"
+		  ShowName		  off
+		  Value			  "ctrl_algo"
+		  OutDataTypeStr	  "uint8"
+		  SampleTime		  ".01"
+		}
+		Block {
+		  BlockType		  From
+		  Name			  "From1"
+		  SID			  "26127"
+		  Position		  [505, 884, 590, 906]
+		  ZOrder		  -9
+		  BackgroundColor	  "magenta"
+		  ShowName		  off
+		  GotoTag		  "l2_r_cmd"
+		  TagVisibility		  "global"
+		}
+		Block {
+		  BlockType		  From
+		  Name			  "From10"
+		  SID			  "26006"
+		  Position		  [315, 179, 400, 201]
+		  ZOrder		  -9
+		  BackgroundColor	  "magenta"
+		  ShowName		  off
+		  GotoTag		  "wp1_found"
+		}
+		Block {
+		  BlockType		  From
+		  Name			  "From11"
+		  SID			  "26009"
+		  Position		  [315, 259, 400, 281]
+		  ZOrder		  -9
+		  BackgroundColor	  "magenta"
+		  ShowName		  off
+		  GotoTag		  "vel"
+		}
+		Block {
+		  BlockType		  From
+		  Name			  "From12"
+		  SID			  "26010"
+		  Position		  [630, 254, 715, 276]
+		  ZOrder		  -9
+		  BackgroundColor	  "magenta"
+		  ShowName		  off
+		  GotoTag		  "vel"
+		}
+		Block {
+		  BlockType		  From
+		  Name			  "From13"
+		  SID			  "26011"
+		  Position		  [630, 274, 715, 296]
+		  ZOrder		  -9
+		  BackgroundColor	  "magenta"
+		  ShowName		  off
+		  GotoTag		  "psi_dot"
+		}
+		Block {
+		  BlockType		  From
+		  Name			  "From14"
+		  SID			  "26012"
+		  Position		  [630, 294, 715, 316]
+		  ZOrder		  -9
+		  BackgroundColor	  "magenta"
+		  ShowName		  off
+		  GotoTag		  "waterspeed"
+		}
+		Block {
+		  BlockType		  From
+		  Name			  "From15"
+		  SID			  "26031"
+		  Position		  [390, 429, 475, 451]
+		  ZOrder		  -9
+		  BackgroundColor	  "magenta"
+		  ShowName		  off
+		  GotoTag		  "vel"
+		}
+		Block {
+		  BlockType		  From
+		  Name			  "From16"
+		  SID			  "26100"
+		  Position		  [320, 489, 405, 511]
+		  ZOrder		  -9
+		  BackgroundColor	  "magenta"
+		  ShowName		  off
+		  GotoTag		  "wp0_found"
+		}
+		Block {
+		  BlockType		  From
+		  Name			  "From17"
+		  SID			  "26098"
+		  Position		  [320, 520, 375, 540]
+		  ZOrder		  -9
+		  BackgroundColor	  "magenta"
+		  ShowName		  off
+		  GotoTag		  "wp1"
+		}
+		Block {
+		  BlockType		  From
+		  Name			  "From18"
+		  SID			  "26099"
+		  Position		  [320, 460, 375, 480]
+		  ZOrder		  -9
+		  BackgroundColor	  "magenta"
+		  ShowName		  off
+		  GotoTag		  "wp0"
+		}
+		Block {
+		  BlockType		  From
+		  Name			  "From2"
+		  SID			  "26128"
+		  Position		  [505, 764, 590, 786]
+		  ZOrder		  -9
+		  BackgroundColor	  "magenta"
+		  ShowName		  off
+		  GotoTag		  "pd_r_cmd"
+		  TagVisibility		  "global"
+		}
+		Block {
+		  BlockType		  From
+		  Name			  "From22"
+		  SID			  "26041"
+		  Position		  [845, 534, 930, 556]
+		  ZOrder		  -9
+		  BackgroundColor	  "magenta"
+		  ShowName		  off
+		  GotoTag		  "rudder"
+		}
+		Block {
+		  BlockType		  From
+		  Name			  "From3"
+		  SID			  "26095"
+		  Position		  [320, 549, 405, 571]
+		  ZOrder		  -9
+		  BackgroundColor	  "magenta"
+		  ShowName		  off
+		  GotoTag		  "wp1_found"
+		}
+		Block {
+		  BlockType		  From
+		  Name			  "From4"
+		  SID			  "26096"
+		  Position		  [320, 609, 405, 631]
+		  ZOrder		  -9
+		  BackgroundColor	  "magenta"
+		  ShowName		  off
+		  GotoTag		  "vel"
+		}
+		Block {
+		  BlockType		  From
+		  Name			  "From5"
+		  SID			  "26097"
+		  Position		  [320, 579, 405, 601]
+		  ZOrder		  -9
+		  BackgroundColor	  "magenta"
+		  ShowName		  off
+		  GotoTag		  "pos"
+		}
+		Block {
+		  BlockType		  From
+		  Name			  "From6"
+		  SID			  "26002"
+		  Position		  [315, 219, 400, 241]
+		  ZOrder		  -9
+		  BackgroundColor	  "magenta"
+		  ShowName		  off
+		  GotoTag		  "pos"
+		}
+		Block {
+		  BlockType		  From
+		  Name			  "From7"
+		  SID			  "26003"
+		  Position		  [345, 140, 400, 160]
+		  ZOrder		  -9
+		  BackgroundColor	  "magenta"
+		  ShowName		  off
+		  GotoTag		  "wp1"
+		}
+		Block {
+		  BlockType		  From
+		  Name			  "From8"
+		  SID			  "26004"
+		  Position		  [345, 60, 400, 80]
+		  ZOrder		  -9
+		  BackgroundColor	  "magenta"
+		  ShowName		  off
+		  GotoTag		  "wp0"
+		}
+		Block {
+		  BlockType		  From
+		  Name			  "From9"
+		  SID			  "26005"
+		  Position		  [315, 99, 400, 121]
+		  ZOrder		  -9
+		  BackgroundColor	  "magenta"
+		  ShowName		  off
+		  GotoTag		  "wp0_found"
+		}
+		Block {
+		  BlockType		  Goto
+		  Name			  "Goto"
+		  SID			  "25272"
+		  Position		  [660, 82, 725, 108]
+		  BackgroundColor	  "cyan"
+		  ShowName		  off
+		  GotoTag		  "L2"
+		  TagVisibility		  "global"
+		}
+		Block {
+		  BlockType		  Goto
+		  Name			  "Goto1"
+		  SID			  "26088"
+		  Position		  [150, 162, 215, 188]
+		  BackgroundColor	  "cyan"
+		  ShowName		  off
+		  GotoTag		  "wp1"
+		  TagVisibility		  "local"
+		}
+		Block {
+		  BlockType		  Goto
+		  Name			  "Goto10"
+		  SID			  "26125"
+		  Position		  [955, 262, 1020, 288]
+		  BackgroundColor	  "cyan"
+		  ShowName		  off
+		  GotoTag		  "l2_r_cmd"
+		  TagVisibility		  "global"
+		}
+		Block {
+		  BlockType		  Goto
+		  Name			  "Goto11"
+		  SID			  "26130"
+		  Position		  [1000, 482, 1065, 508]
+		  BackgroundColor	  "cyan"
+		  ShowName		  off
+		  GotoTag		  "pd_r_cmd"
+		  TagVisibility		  "global"
+		}
+		Block {
+		  BlockType		  Goto
+		  Name			  "Goto12"
+		  SID			  "26132"
+		  Position		  [150, 312, 215, 338]
+		  BackgroundColor	  "cyan"
+		  ShowName		  off
+		  GotoTag		  "psi_dot"
+		  TagVisibility		  "local"
+		}
+		Block {
+		  BlockType		  Goto
+		  Name			  "Goto13"
+		  SID			  "26134"
+		  Position		  [150, 342, 215, 368]
+		  BackgroundColor	  "cyan"
+		  ShowName		  off
+		  GotoTag		  "waterspeed"
+		  TagVisibility		  "local"
+		}
+		Block {
+		  BlockType		  Goto
+		  Name			  "Goto2"
+		  SID			  "26090"
+		  Position		  [150, 102, 215, 128]
+		  BackgroundColor	  "cyan"
+		  ShowName		  off
+		  GotoTag		  "wp0"
+		  TagVisibility		  "local"
+		}
+		Block {
+		  BlockType		  Goto
+		  Name			  "Goto3"
+		  SID			  "26093"
+		  Position		  [150, 222, 215, 248]
+		  BackgroundColor	  "cyan"
+		  ShowName		  off
+		  GotoTag		  "pos"
+		  TagVisibility		  "local"
+		}
+		Block {
+		  BlockType		  Goto
+		  Name			  "Goto4"
+		  SID			  "25276"
+		  Position		  [660, 202, 725, 228]
+		  BackgroundColor	  "cyan"
+		  ShowName		  off
+		  GotoTag		  "a_cmd"
+		  TagVisibility		  "global"
+		}
+		Block {
+		  BlockType		  Goto
+		  Name			  "Goto5"
+		  SID			  "25836"
+		  Position		  [660, 157, 725, 183]
+		  BackgroundColor	  "cyan"
+		  ShowName		  off
+		  GotoTag		  "AimPoint"
+		  TagVisibility		  "global"
+		}
+		Block {
+		  BlockType		  Goto
+		  Name			  "Goto6"
+		  SID			  "26094"
+		  Position		  [150, 252, 215, 278]
+		  BackgroundColor	  "cyan"
+		  ShowName		  off
+		  GotoTag		  "vel"
+		  TagVisibility		  "local"
+		}
+		Block {
+		  BlockType		  Goto
+		  Name			  "Goto7"
+		  SID			  "26102"
+		  Position		  [150, 282, 215, 308]
+		  BackgroundColor	  "cyan"
+		  ShowName		  off
+		  GotoTag		  "rudder"
+		  TagVisibility		  "local"
+		}
+		Block {
+		  BlockType		  Goto
+		  Name			  "Goto8"
+		  SID			  "26091"
+		  Position		  [150, 132, 215, 158]
+		  BackgroundColor	  "cyan"
+		  ShowName		  off
+		  GotoTag		  "wp0_found"
+		  TagVisibility		  "local"
+		}
+		Block {
+		  BlockType		  Goto
+		  Name			  "Goto9"
+		  SID			  "26092"
+		  Position		  [150, 192, 215, 218]
+		  BackgroundColor	  "cyan"
+		  ShowName		  off
+		  GotoTag		  "wp1_found"
+		  TagVisibility		  "local"
+		}
+		Block {
+		  BlockType		  If
+		  Name			  "If"
+		  SID			  "26104"
+		  Ports			  [1, 2]
+		  Position		  [460, 806, 560, 844]
+		  ZOrder		  -15
+		  ShowName		  off
+		  IfExpression		  "u1 == 1"
+		}
+		Block {
+		  BlockType		  SubSystem
+		  Name			  "L2 Plus ref WP1"
+		  SID			  "25277"
+		  Ports			  [6, 3]
+		  Position		  [420, 54, 570, 286]
+		  ErrorFcn		  "Stateflow.Translate.translate"
+		  PermitHierarchicalResolution "ExplicitOnly"
+		  TreatAsAtomicUnit	  on
+		  MinAlgLoopOccurrences	  off
+		  PropExecContextOutsideSubsystem off
+		  RTWSystemCode		  "Auto"
+		  FunctionWithSeparateData off
+		  Opaque		  off
+		  RequestExecContextInheritance	off
+		  MaskHideContents	  off
+		  SFBlockType		  "MATLAB Function"
+		  MaskType		  "Stateflow"
+		  MaskDescription	  "Embedded MATLAB block"
+		  MaskSelfModifiable	  on
+		  MaskDisplay		  "bgColor = Simulink.Root.ColorString2Rgb(get_param(gcbh, 'BackgroundColor')); image(imread('private"
+		  "/eml_membrane_16.png','png','BackgroundColor',bgColor(1:3)),'center'); disp([10 10 'L2PlusWP1']);"
+		  MaskIconFrame		  on
+		  MaskIconOpaque	  off
+		  MaskIconRotate	  "none"
+		  MaskPortRotate	  "default"
+		  MaskIconUnits		  "normalized"
+		  System {
+		    Name		    "L2 Plus ref WP1"
+		    Location		    [257, 457, 812, 717]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    SIDHighWatermark	    "32"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "wp0"
+		    SID			    "25277::22"
+		    Position		    [20, 101, 40, 119]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "wp0_found"
+		    SID			    "25277::25"
+		    Position		    [20, 136, 40, 154]
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "wp1"
+		    SID			    "25277::23"
+		    Position		    [20, 171, 40, 189]
+		    Port		    "3"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "wp1_found"
+		    SID			    "25277::26"
+		    Position		    [20, 206, 40, 224]
+		    Port		    "4"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "Puav"
+		    SID			    "25277::3"
+		    Position		    [20, 246, 40, 264]
+		    Port		    "5"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "Vxyz"
+		    SID			    "25277::4"
+		    Position		    [20, 281, 40, 299]
+		    Port		    "6"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Demux
+		    Name		    " Demux "
+		    SID			    "25277::28"
+		    Ports		    [1, 1]
+		    Position		    [270, 270, 320, 310]
+		    Outputs		    "1"
+		    }
+		    Block {
+		    BlockType		    S-Function
+		    Name		    " SFunction "
+		    SID			    "25277::27"
+		    Tag			    "Stateflow S-Function controller 7"
+		    Ports		    [6, 4]
+		    Position		    [180, 106, 230, 269]
+		    FunctionName	    "sf_sfun"
+		    Parameters		    "MaxDwnPthStar,TStar,switchDistance,tanIntercept"
+		    PortCounts		    "[6 4]"
+		    EnableBusSupport	    on
+		    Port {
+		    PortNumber		    2
+		    Name		    "L2Vec"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    Port {
+		    PortNumber		    3
+		    Name		    "aimPoint"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    Port {
+		    PortNumber		    4
+		    Name		    "as_c"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    }
+		    Block {
+		    BlockType		    Terminator
+		    Name		    " Terminator "
+		    SID			    "25277::30"
+		    Position		    [460, 281, 480, 299]
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "L2Vec"
+		    SID			    "25277::10"
+		    Position		    [460, 101, 480, 119]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "aimPoint"
+		    SID			    "25277::31"
+		    Position		    [460, 136, 480, 154]
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "as_c"
+		    SID			    "25277::9"
+		    Position		    [460, 171, 480, 189]
+		    Port		    "3"
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "wp0"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "wp0_found"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "wp1"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    3
+		    }
+		    Line {
+		    SrcBlock		    "wp1_found"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    4
+		    }
+		    Line {
+		    SrcBlock		    "Puav"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    5
+		    }
+		    Line {
+		    SrcBlock		    "Vxyz"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    6
+		    }
+		    Line {
+		    Name		    "L2Vec"
+		    Labels		    [0, 0]
+		    SrcBlock		    " SFunction "
+		    SrcPort		    2
+		    DstBlock		    "L2Vec"
+		    DstPort		    1
+		    }
+		    Line {
+		    Name		    "aimPoint"
+		    Labels		    [0, 0]
+		    SrcBlock		    " SFunction "
+		    SrcPort		    3
+		    DstBlock		    "aimPoint"
+		    DstPort		    1
+		    }
+		    Line {
+		    Name		    "as_c"
+		    Labels		    [0, 0]
+		    SrcBlock		    " SFunction "
+		    SrcPort		    4
+		    DstBlock		    "as_c"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    " Demux "
+		    SrcPort		    1
+		    DstBlock		    " Terminator "
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    " SFunction "
+		    SrcPort		    1
+		    DstBlock		    " Demux "
+		    DstPort		    1
+		    }
+		  }
+		}
+		Block {
+		  BlockType		  SubSystem
+		  Name			  "L2 Plus ref WP2"
+		  SID			  "26032"
+		  Ports			  [6, 2]
+		  Position		  [430, 460, 585, 630]
+		  ErrorFcn		  "Stateflow.Translate.translate"
+		  PermitHierarchicalResolution "ExplicitOnly"
+		  TreatAsAtomicUnit	  on
+		  MinAlgLoopOccurrences	  off
+		  PropExecContextOutsideSubsystem off
+		  RTWSystemCode		  "Auto"
+		  FunctionWithSeparateData off
+		  Opaque		  off
+		  RequestExecContextInheritance	off
+		  MaskHideContents	  off
+		  SFBlockType		  "MATLAB Function"
+		  MaskType		  "Stateflow"
+		  MaskDescription	  "Embedded MATLAB block"
+		  MaskSelfModifiable	  on
+		  MaskDisplay		  "bgColor = Simulink.Root.ColorString2Rgb(get_param(gcbh, 'BackgroundColor')); image(imread('private"
+		  "/eml_membrane_16.png','png','BackgroundColor',bgColor(1:3)),'center'); disp([10 10 'L2PlusWP1']);"
+		  MaskIconFrame		  on
+		  MaskIconOpaque	  off
+		  MaskIconRotate	  "none"
+		  MaskPortRotate	  "default"
+		  MaskIconUnits		  "normalized"
+		  System {
+		    Name		    "L2 Plus ref WP2"
+		    Location		    [257, 457, 812, 717]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    SIDHighWatermark	    "33"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "wp0"
+		    SID			    "26032::22"
+		    Position		    [20, 101, 40, 119]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "wp0_found"
+		    SID			    "26032::25"
+		    Position		    [20, 136, 40, 154]
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "wp1"
+		    SID			    "26032::23"
+		    Position		    [20, 171, 40, 189]
+		    Port		    "3"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "wp1_found"
+		    SID			    "26032::26"
+		    Position		    [20, 206, 40, 224]
+		    Port		    "4"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "pos"
+		    SID			    "26032::3"
+		    Position		    [20, 246, 40, 264]
+		    Port		    "5"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "vel"
+		    SID			    "26032::33"
+		    Position		    [20, 281, 40, 299]
+		    Port		    "6"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Demux
+		    Name		    " Demux "
+		    SID			    "26032::28"
+		    Ports		    [1, 1]
+		    Position		    [270, 275, 320, 315]
+		    Outputs		    "1"
+		    }
+		    Block {
+		    BlockType		    S-Function
+		    Name		    " SFunction "
+		    SID			    "26032::27"
+		    Tag			    "Stateflow S-Function controller 9"
+		    Ports		    [6, 3]
+		    Position		    [180, 110, 230, 275]
+		    FunctionName	    "sf_sfun"
+		    PortCounts		    "[6 3]"
+		    EnableBusSupport	    on
+		    Port {
+		    PortNumber		    2
+		    Name		    "course_error"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    Port {
+		    PortNumber		    3
+		    Name		    "crosstrack_error"
+		    RTWStorageClass	    "Auto"
+		    DataLoggingNameMode	    "SignalName"
+		    }
+		    }
+		    Block {
+		    BlockType		    Terminator
+		    Name		    " Terminator "
+		    SID			    "26032::30"
+		    Position		    [460, 286, 480, 304]
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "course_error"
+		    SID			    "26032::10"
+		    Position		    [460, 101, 480, 119]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "crosstrack_error"
+		    SID			    "26032::31"
+		    Position		    [460, 136, 480, 154]
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "wp0"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "wp0_found"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "wp1"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    3
+		    }
+		    Line {
+		    SrcBlock		    "wp1_found"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    4
+		    }
+		    Line {
+		    SrcBlock		    "pos"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    5
+		    }
+		    Line {
+		    SrcBlock		    "vel"
+		    SrcPort		    1
+		    DstBlock		    " SFunction "
+		    DstPort		    6
+		    }
+		    Line {
+		    Name		    "course_error"
+		    Labels		    [0, 0]
+		    SrcBlock		    " SFunction "
+		    SrcPort		    2
+		    DstBlock		    "course_error"
+		    DstPort		    1
+		    }
+		    Line {
+		    Name		    "crosstrack_error"
+		    Labels		    [0, 0]
+		    SrcBlock		    " SFunction "
+		    SrcPort		    3
+		    DstBlock		    "crosstrack_error"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    " Demux "
+		    SrcPort		    1
+		    DstBlock		    " Terminator "
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    " SFunction "
+		    SrcPort		    1
+		    DstBlock		    " Demux "
+		    DstPort		    1
+		    }
+		  }
+		}
+		Block {
+		  BlockType		  SubSystem
+		  Name			  "L2+ Controller"
+		  SID			  "26109"
+		  Ports			  [1, 1, 0, 0, 0, 0, 0, 1]
+		  Position		  [615, 874, 685, 916]
+		  ZOrder		  -16
+		  TreatAsAtomicUnit	  on
+		  MinAlgLoopOccurrences	  off
+		  PropExecContextOutsideSubsystem off
+		  RTWSystemCode		  "Auto"
+		  FunctionWithSeparateData off
+		  Opaque		  off
+		  RequestExecContextInheritance	off
+		  MaskHideContents	  off
+		  System {
+		    Name		    "L2+ Controller"
+		    Location		    [351, 276, 1081, 692]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "r_cmd"
+		    SID			    "26126"
+		    Position		    [135, 108, 165, 122]
+		    BackgroundColor	    "darkGreen"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    ActionPort
+		    Name		    "Action Port"
+		    SID			    "26111"
+		    Position		    [170, 15, 229, 43]
+		    ZOrder		    -2
+		    ActionType		    "else"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "r"
+		    SID			    "26112"
+		    Position		    [255, 108, 285, 122]
+		    ZOrder		    -3
+		    BackgroundColor	    "yellow"
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "r_cmd"
+		    SrcPort		    1
+		    DstBlock		    "r"
+		    DstPort		    1
+		    }
+		  }
+		}
+		Block {
+		  BlockType		  Math
+		  Name			  "Math\nFunction"
+		  SID			  "26140"
+		  Ports			  [1, 1]
+		  Position		  [500, 425, 530, 455]
+		  ZOrder		  -13
+		  ShowName		  off
+		  Operator		  "square"
+		}
+		Block {
+		  BlockType		  Merge
+		  Name			  "Merge"
+		  SID			  "26113"
+		  Ports			  [2, 1]
+		  Position		  [755, 805, 795, 845]
+		  ZOrder		  -14
+		}
+		Block {
+		  BlockType		  SubSystem
+		  Name			  "PD Controller"
+		  SID			  "26105"
+		  Ports			  [1, 1, 0, 0, 0, 0, 0, 1]
+		  Position		  [615, 757, 685, 793]
+		  ZOrder		  -16
+		  NamePlacement		  "alternate"
+		  TreatAsAtomicUnit	  on
+		  MinAlgLoopOccurrences	  off
+		  PropExecContextOutsideSubsystem off
+		  RTWSystemCode		  "Auto"
+		  FunctionWithSeparateData off
+		  Opaque		  off
+		  RequestExecContextInheritance	off
+		  MaskHideContents	  off
+		  System {
+		    Name		    "PD Controller"
+		    Location		    [351, 276, 1081, 692]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "r_cmd"
+		    SID			    "26129"
+		    Position		    [145, 118, 175, 132]
+		    BackgroundColor	    "darkGreen"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    ActionPort
+		    Name		    "Action Port"
+		    SID			    "26107"
+		    Position		    [170, 15, 229, 43]
+		    ZOrder		    -2
+		    ActionType		    "then"
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "rudder_cmd"
+		    SID			    "26108"
+		    Position		    [220, 118, 250, 132]
+		    ZOrder		    -3
+		    BackgroundColor	    "yellow"
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "r_cmd"
+		    SrcPort		    1
+		    DstBlock		    "rudder_cmd"
+		    DstPort		    1
+		    }
+		  }
+		}
+		Block {
+		  BlockType		  SubSystem
+		  Name			  "PD Controller1"
+		  SID			  "26013"
+		  Ports			  [3, 1]
+		  Position		  [655, 415, 820, 575]
+		  MinAlgLoopOccurrences	  off
+		  PropExecContextOutsideSubsystem off
+		  RTWSystemCode		  "Auto"
+		  FunctionWithSeparateData off
+		  Opaque		  off
+		  RequestExecContextInheritance	off
+		  MaskHideContents	  off
+		  MaskDescription	  "A PD controller developedby Professor Gabriel Elkaim."
+		  MaskPromptString	  "Crosstrack Error Gain|Course Error Gain|Rudder Error Saturation Limit"
+		  MaskStyleString	  "edit,edit,edit"
+		  MaskVariables		  "Ky=@1;Kpsi=@2;delta_r_lim=@3;"
+		  MaskTunableValueString  "on,on,on"
+		  MaskCallbackString	  "||"
+		  MaskEnableString	  "on,on,on"
+		  MaskVisibilityString	  "on,on,on"
+		  MaskToolTipString	  "on,on,on"
+		  MaskIconFrame		  on
+		  MaskIconOpaque	  on
+		  MaskIconRotate	  "none"
+		  MaskPortRotate	  "default"
+		  MaskIconUnits		  "autoscale"
+		  MaskValueString	  "K_crosstrack|K_course|0"
+		  System {
+		    Name		    "PD Controller1"
+		    Location		    [245, 371, 958, 785]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "Speed [m/s]"
+		    SID			    "26014"
+		    Position		    [215, 283, 245, 297]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "Course Error [rad]"
+		    SID			    "26015"
+		    Position		    [215, 333, 245, 347]
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "CrossTrack Error [m]"
+		    SID			    "26016"
+		    Position		    [215, 378, 245, 392]
+		    Port		    "3"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Abs
+		    Name		    "Abs"
+		    SID			    "26017"
+		    Position		    [235, 210, 265, 240]
+		    BlockMirror		    on
+		    NamePlacement	    "alternate"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "Constant"
+		    SID			    "26020"
+		    Position		    [245, 245, 275, 275]
+		    BlockMirror		    on
+		    NamePlacement	    "alternate"
+		    ShowName		    off
+		    }
+		    Block {
+		    BlockType		    Product
+		    Name		    "Divide"
+		    SID			    "26021"
+		    Ports		    [2, 1]
+		    Position		    [85, 172, 115, 203]
+		    BlockMirror		    on
+		    NamePlacement	    "alternate"
+		    Inputs		    "*/"
+		    InputSameDT		    off
+		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
+		    RndMeth		    "Floor"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Gain
+		    Name		    "Kpsi"
+		    SID			    "26022"
+		    Position		    [395, 264, 440, 296]
+		    BlockMirror		    on
+		    NamePlacement	    "alternate"
+		    Gain		    "Kpsi"
+		    ParamDataTypeStr	    "Inherit: Inherit via internal rule"
+		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Gain
+		    Name		    "Ky"
+		    SID			    "26023"
+		    Position		    [500, 165, 530, 195]
+		    BlockMirror		    on
+		    NamePlacement	    "alternate"
+		    Gain		    "Ky"
+		    ParamDataTypeStr	    "Inherit: Inherit via internal rule"
+		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    MinMax
+		    Name		    "MinMax"
+		    SID			    "26024"
+		    Ports		    [2, 1]
+		    Position		    [165, 217, 195, 248]
+		    BlockMirror		    on
+		    NamePlacement	    "alternate"
+		    Function		    "max"
+		    Inputs		    "2"
+		    InputSameDT		    off
+		    OutDataTypeStr	    "single"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Product
+		    Name		    "Product"
+		    SID			    "26025"
+		    Ports		    [2, 1]
+		    Position		    [357, 205, 388, 235]
+		    BlockRotation	    270
+		    InputSameDT		    off
+		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Saturate
+		    Name		    "Saturation"
+		    SID			    "26026"
+		    Ports		    [1, 1]
+		    Position		    [25, 75, 55, 105]
+		    BlockRotation	    270
+		    InputPortMap	    "u0"
+		    UpperLimit		    "delta_r_lim"
+		    LowerLimit		    "-delta_r_lim"
+		    }
+		    Block {
+		    BlockType		    Signum
+		    Name		    "Sign"
+		    SID			    "26027"
+		    Position		    [305, 275, 335, 305]
+		    }
+		    Block {
+		    BlockType		    Sum
+		    Name		    "Sum"
+		    SID			    "26028"
+		    Ports		    [2, 1]
+		    Position		    [365, 170, 385, 190]
+		    BlockMirror		    on
+		    NamePlacement	    "alternate"
+		    ShowName		    off
+		    IconShape		    "round"
+		    Inputs		    "|++"
+		    InputSameDT		    off
+		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "delta_r[rad]"
+		    SID			    "26029"
+		    Position		    [160, 28, 190, 42]
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "Ky"
+		    SrcPort		    1
+		    DstBlock		    "Sum"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Sum"
+		    SrcPort		    1
+		    DstBlock		    "Divide"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Speed [m/s]"
+		    SrcPort		    1
+		    Points		    [0, 0; 35, 0]
+		    Branch {
+		    DstBlock		    "Sign"
+		    DstPort		    1
+		    }
+		    Branch {
+		    Points		    [0, -65]
+		    DstBlock		    "Abs"
+		    DstPort		    1
+		    }
+		    }
+		    Line {
+		    SrcBlock		    "Product"
+		    SrcPort		    1
+		    DstBlock		    "Sum"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "Kpsi"
+		    SrcPort		    1
+		    Points		    [-10, 0]
+		    DstBlock		    "Product"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "Sign"
+		    SrcPort		    1
+		    Points		    [25, 0]
+		    DstBlock		    "Product"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Course Error [rad]"
+		    SrcPort		    1
+		    Points		    [405, 0; 0, -60]
+		    DstBlock		    "Kpsi"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "CrossTrack Error [m]"
+		    SrcPort		    1
+		    Points		    [435, 0; 0, -205]
+		    DstBlock		    "Ky"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Divide"
+		    SrcPort		    1
+		    Points		    [-40, 0]
+		    DstBlock		    "Saturation"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Abs"
+		    SrcPort		    1
+		    Points		    [0, 0]
+		    DstBlock		    "MinMax"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Constant"
+		    SrcPort		    1
+		    Points		    [-15, 0; 0, -20]
+		    DstBlock		    "MinMax"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "Saturation"
+		    SrcPort		    1
+		    Points		    [0, -35]
+		    DstBlock		    "delta_r[rad]"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "MinMax"
+		    SrcPort		    1
+		    Points		    [-15, 0; 0, -40]
+		    DstBlock		    "Divide"
+		    DstPort		    2
+		    }
+		    Annotation {
+		    Name		    "Crosstrack Error"
+		    Position		    [589, 176]
+		    }
+		    Annotation {
+		    Name		    "Course Error"
+		    Position		    [481, 271]
+		    }
+		  }
+		}
+		Block {
+		  BlockType		  Sqrt
+		  Name			  "Sqrt"
+		  SID			  "26142"
+		  Position		  [600, 425, 630, 455]
+		  ZOrder		  -29
+		  ShowName		  off
+		}
+		Block {
+		  BlockType		  Sum
+		  Name			  "Sum"
+		  SID			  "26042"
+		  Ports			  [2, 1]
+		  Position		  [940, 485, 960, 505]
+		  ZOrder		  -32
+		  ShowName		  off
+		  IconShape		  "round"
+		  Inputs		  "|++"
+		  InputSameDT		  off
+		  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  Sum
+		  Name			  "Sum of\nElements"
+		  SID			  "26141"
+		  Ports			  [1, 1]
+		  Position		  [550, 425, 580, 455]
+		  ZOrder		  -33
+		  ShowName		  off
+		  Inputs		  "+"
+		  InputSameDT		  off
+		  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+		  SaturateOnIntegerOverflow off
+		}
+		Block {
+		  BlockType		  SubSystem
+		  Name			  "Translate a_cmd to\nrudder angle"
+		  SID			  "25337"
+		  Ports			  [4, 1]
+		  Position		  [770, 233, 915, 317]
+		  MinAlgLoopOccurrences	  off
+		  PropExecContextOutsideSubsystem off
+		  RTWSystemCode		  "Auto"
+		  FunctionWithSeparateData off
+		  Opaque		  off
+		  RequestExecContextInheritance	off
+		  MaskHideContents	  off
+		  System {
+		    Name		    "Translate a_cmd to\nrudder angle"
+		    Location		    [801, 353, 1781, 867]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "a_cmd"
+		    SID			    "25338"
+		    Position		    [35, 63, 65, 77]
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "v_ground"
+		    SID			    "25339"
+		    Position		    [35, 198, 65, 212]
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "psi_dot"
+		    SID			    "25340"
+		    Position		    [35, 133, 65, 147]
+		    Port		    "3"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "water_speed"
+		    SID			    "25341"
+		    Position		    [35, 233, 65, 247]
+		    Port		    "4"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Sum
+		    Name		    "Add6"
+		    SID			    "25342"
+		    Ports		    [2, 1]
+		    Position		    [175, 55, 205, 85]
+		    ZOrder		    -2
+		    ShowName		    off
+		    IconShape		    "round"
+		    Inputs		    "|+-"
+		    InputSameDT		    off
+		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "Constant1"
+		    SID			    "25343"
+		    Position		    [60, 103, 120, 127]
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    Value		    "KPsiDot"
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "Constant5"
+		    SID			    "25344"
+		    Position		    [160, 23, 220, 47]
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    Value		    "wheelbase"
+		    }
+		    Block {
+		    BlockType		    Math
+		    Name		    "Math\nFunction1"
+		    SID			    "25345"
+		    Ports		    [1, 1]
+		    Position		    [95, 190, 125, 220]
+		    ShowName		    off
+		    Operator		    "square"
+		    }
+		    Block {
+		    BlockType		    Product
+		    Name		    "Product"
+		    SID			    "25346"
+		    Ports		    [2, 1]
+		    Position		    [260, 24, 290, 71]
+		    ShowName		    off
+		    Inputs		    "**"
+		    InputSameDT		    off
+		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Product
+		    Name		    "Product1"
+		    SID			    "25347"
+		    Ports		    [2, 1]
+		    Position		    [140, 104, 170, 151]
+		    ShowName		    off
+		    Inputs		    "**"
+		    InputSameDT		    off
+		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Product
+		    Name		    "Product2"
+		    SID			    "25348"
+		    Ports		    [2, 1]
+		    Position		    [260, 194, 290, 241]
+		    ShowName		    off
+		    Inputs		    "**"
+		    InputSameDT		    off
+		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Sqrt
+		    Name		    "Sqrt"
+		    SID			    "25349"
+		    Position		    [205, 190, 235, 220]
+		    ZOrder		    -29
+		    ShowName		    off
+		    }
+		    Block {
+		    BlockType		    Sum
+		    Name		    "Sum of\nElements"
+		    SID			    "25350"
+		    Ports		    [1, 1]
+		    Position		    [150, 190, 180, 220]
+		    ZOrder		    -33
+		    ShowName		    off
+		    Inputs		    "+"
+		    InputSameDT		    off
+		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Trigonometry
+		    Name		    "Trigonometric\nFunction"
+		    SID			    "25351"
+		    Ports		    [1, 1]
+		    Position		    [435, 45, 465, 75]
+		    ShowName		    off
+		    Operator		    "atan"
+		    }
+		    Block {
+		    BlockType		    UnaryMinus
+		    Name		    "Unary Minus"
+		    SID			    "25352"
+		    Position		    [500, 45, 530, 75]
+		    ShowName		    off
+		    }
+		    Block {
+		    BlockType		    SubSystem
+		    Name		    "safe_divide"
+		    SID			    "25353"
+		    Ports		    [2, 1]
+		    Position		    [330, 39, 395, 81]
+		    ZOrder		    -5
+		    TreatAsAtomicUnit	    on
+		    MinAlgLoopOccurrences   off
+		    PropExecContextOutsideSubsystem off
+		    RTWSystemCode	    "Reusable function"
+		    RTWFcnNameOpts	    "Use subsystem name"
+		    RTWFileNameOpts	    "Use function name"
+		    FunctionWithSeparateData off
+		    Opaque		    off
+		    RequestExecContextInheritance off
+		    MaskHideContents	    off
+		    System {
+		    Name		    "safe_divide"
+		    Location		    [314, 581, 1021, 881]
+		    Open		    off
+		    ModelBrowserVisibility  on
+		    ModelBrowserWidth	    200
+		    ScreenColor		    "white"
+		    PaperOrientation	    "landscape"
+		    PaperPositionMode	    "auto"
+		    PaperType		    "usletter"
+		    PaperUnits		    "inches"
+		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+		    TiledPageScale	    1
+		    ShowPageBoundaries	    off
+		    ZoomFactor		    "100"
+		    Block {
+		    BlockType		    Inport
+		    Name		    "X"
+		    SID			    "25354"
+		    Position		    [50, 108, 80, 122]
+		    ZOrder		    -1
+		    BackgroundColor	    "darkGreen"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Inport
+		    Name		    "div"
+		    SID			    "25355"
+		    Position		    [50, 153, 80, 167]
+		    ZOrder		    -1
+		    BackgroundColor	    "darkGreen"
+		    Port		    "2"
+		    IconDisplay		    "Port number"
+		    }
+		    Block {
+		    BlockType		    Constant
+		    Name		    "Constant1"
+		    SID			    "25356"
+		    Position		    [160, 183, 195, 207]
+		    BackgroundColor	    "gray"
+		    ShowName		    off
+		    Value		    "0"
+		    OutDataTypeStr	    "Inherit: Inherit via back propagation"
+		    }
+		    Block {
+		    BlockType		    Product
+		    Name		    "Product"
+		    SID			    "25357"
+		    Ports		    [2, 1]
+		    Position		    [165, 121, 195, 154]
+		    ShowName		    off
+		    Inputs		    "*/"
+		    InputSameDT		    off
+		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Switch
+		    Name		    "Switch"
+		    SID			    "25358"
+		    Position		    [250, 155, 280, 185]
+		    ShowName		    off
+		    Criteria		    "u2 ~= 0"
+		    InputSameDT		    off
+		    SaturateOnIntegerOverflow off
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "Out1"
+		    SID			    "25359"
+		    Position		    [345, 163, 375, 177]
+		    ZOrder		    -2
+		    BackgroundColor	    "yellow"
+		    ShowName		    off
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "X"
+		    SrcPort		    1
+		    Points		    [65, 0]
+		    DstBlock		    "Product"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "div"
+		    SrcPort		    1
+		    Points		    [65, 0]
+		    Branch {
+		    DstBlock		    "Product"
+		    DstPort		    2
+		    }
+		    Branch {
+		    Points		    [0, 10]
+		    DstBlock		    "Switch"
+		    DstPort		    2
+		    }
+		    }
+		    Line {
+		    SrcBlock		    "Product"
+		    SrcPort		    1
+		    Points		    [15, 0; 0, 20]
+		    DstBlock		    "Switch"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Constant1"
+		    SrcPort		    1
+		    Points		    [25, 0; 0, -15]
+		    DstBlock		    "Switch"
+		    DstPort		    3
+		    }
+		    Line {
+		    SrcBlock		    "Switch"
+		    SrcPort		    1
+		    DstBlock		    "Out1"
+		    DstPort		    1
+		    }
+		    }
+		    }
+		    Block {
+		    BlockType		    Outport
+		    Name		    "rudder_cmd"
+		    SID			    "25360"
+		    Position		    [555, 53, 585, 67]
+		    IconDisplay		    "Port number"
+		    }
+		    Line {
+		    SrcBlock		    "Constant5"
+		    SrcPort		    1
+		    DstBlock		    "Product"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Product"
+		    SrcPort		    1
+		    DstBlock		    "safe_divide"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Trigonometric\nFunction"
+		    SrcPort		    1
+		    DstBlock		    "Unary Minus"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Math\nFunction1"
+		    SrcPort		    1
+		    DstBlock		    "Sum of\nElements"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Sum of\nElements"
+		    SrcPort		    1
+		    DstBlock		    "Sqrt"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "safe_divide"
+		    SrcPort		    1
+		    DstBlock		    "Trigonometric\nFunction"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Add6"
+		    SrcPort		    1
+		    Points		    [15, 0; 0, -10]
+		    DstBlock		    "Product"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "v_ground"
+		    SrcPort		    1
+		    DstBlock		    "Math\nFunction1"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Unary Minus"
+		    SrcPort		    1
+		    DstBlock		    "rudder_cmd"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "a_cmd"
+		    SrcPort		    1
+		    DstBlock		    "Add6"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "psi_dot"
+		    SrcPort		    1
+		    DstBlock		    "Product1"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "Constant1"
+		    SrcPort		    1
+		    DstBlock		    "Product1"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Sqrt"
+		    SrcPort		    1
+		    DstBlock		    "Product2"
+		    DstPort		    1
+		    }
+		    Line {
+		    SrcBlock		    "Product2"
+		    SrcPort		    1
+		    Points		    [0, -150]
+		    DstBlock		    "safe_divide"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "water_speed"
+		    SrcPort		    1
+		    Points		    [85, 0; 0, -10]
+		    DstBlock		    "Product2"
+		    DstPort		    2
+		    }
+		    Line {
+		    SrcBlock		    "Product1"
+		    SrcPort		    1
+		    Points		    [15, 0]
+		    DstBlock		    "Add6"
+		    DstPort		    2
+		    }
+		    Annotation {
+		    Name		    "Implements a translation between the L2+ lateral acceleration command\nand the rudder angle command."
+		    Position		    [216, 303]
+		    }
+		  }
+		}
+		Block {
+		  BlockType		  Outport
+		  Name			  "rudder_cmd"
+		  SID			  "26045"
+		  Position		  [850, 818, 880, 832]
+		  BackgroundColor	  "yellow"
+		  IconDisplay		  "Port number"
+		}
+		Line {
+		  SrcBlock		  "In1"
+		  SrcPort		  1
+		  DstBlock		  "Goto2"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "In2"
+		  SrcPort		  1
+		  DstBlock		  "Goto8"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "In3"
+		  SrcPort		  1
+		  DstBlock		  "Goto1"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "In4"
+		  SrcPort		  1
+		  DstBlock		  "Goto9"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "pos"
+		  SrcPort		  1
+		  DstBlock		  "Goto3"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "vel"
+		  SrcPort		  1
+		  DstBlock		  "Goto6"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "rudder"
+		  SrcPort		  1
+		  DstBlock		  "Goto7"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Constant"
+		  SrcPort		  1
+		  DstBlock		  "If"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "If"
+		  SrcPort		  1
+		  Points		  [40, 0; 0, -2; 45, 0]
+		  DstBlock		  "PD Controller"
+		  DstPort		  ifaction
+		}
+		Line {
+		  SrcBlock		  "If"
+		  SrcPort		  2
+		  Points		  [85, 0]
+		  DstBlock		  "L2+ Controller"
+		  DstPort		  ifaction
+		}
+		Line {
+		  SrcBlock		  "PD Controller"
+		  SrcPort		  1
+		  Points		  [40, 0; 0, 40]
+		  DstBlock		  "Merge"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Merge"
+		  SrcPort		  1
+		  DstBlock		  "rudder_cmd"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "L2+ Controller"
+		  SrcPort		  1
+		  Points		  [40, 0; 0, -60]
+		  DstBlock		  "Merge"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "L2 Plus ref WP1"
+		  SrcPort		  1
+		  DstBlock		  "Goto"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "L2 Plus ref WP1"
+		  SrcPort		  3
+		  Points		  [70, 0]
+		  Branch {
+		    DstBlock		    "Goto4"
+		    DstPort		    1
+		  }
+		  Branch {
+		    DstBlock		    "Translate a_cmd to\nrudder angle"
+		    DstPort		    1
+		  }
+		}
+		Line {
+		  SrcBlock		  "L2 Plus ref WP1"
+		  SrcPort		  2
+		  DstBlock		  "Goto5"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "From12"
+		  SrcPort		  1
+		  DstBlock		  "Translate a_cmd to\nrudder angle"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "From13"
+		  SrcPort		  1
+		  DstBlock		  "Translate a_cmd to\nrudder angle"
+		  DstPort		  3
+		}
+		Line {
+		  SrcBlock		  "From14"
+		  SrcPort		  1
+		  DstBlock		  "Translate a_cmd to\nrudder angle"
+		  DstPort		  4
+		}
+		Line {
+		  SrcBlock		  "From6"
+		  SrcPort		  1
+		  DstBlock		  "L2 Plus ref WP1"
+		  DstPort		  5
+		}
+		Line {
+		  SrcBlock		  "From8"
+		  SrcPort		  1
+		  DstBlock		  "L2 Plus ref WP1"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "From9"
+		  SrcPort		  1
+		  DstBlock		  "L2 Plus ref WP1"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "From7"
+		  SrcPort		  1
+		  DstBlock		  "L2 Plus ref WP1"
+		  DstPort		  3
+		}
+		Line {
+		  SrcBlock		  "From10"
+		  SrcPort		  1
+		  DstBlock		  "L2 Plus ref WP1"
+		  DstPort		  4
+		}
+		Line {
+		  SrcBlock		  "From11"
+		  SrcPort		  1
+		  DstBlock		  "L2 Plus ref WP1"
+		  DstPort		  6
+		}
+		Line {
+		  SrcBlock		  "Translate a_cmd to\nrudder angle"
+		  SrcPort		  1
+		  DstBlock		  "Goto10"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "From1"
+		  SrcPort		  1
+		  DstBlock		  "L2+ Controller"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "From15"
+		  SrcPort		  1
+		  DstBlock		  "Math\nFunction"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "L2 Plus ref WP2"
+		  SrcPort		  1
+		  Points		  [0, -10]
+		  DstBlock		  "PD Controller1"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "L2 Plus ref WP2"
+		  SrcPort		  2
+		  Points		  [0, -40]
+		  DstBlock		  "PD Controller1"
+		  DstPort		  3
+		}
+		Line {
+		  SrcBlock		  "PD Controller1"
+		  SrcPort		  1
+		  DstBlock		  "Sum"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "From22"
+		  SrcPort		  1
+		  Points		  [15, 0]
+		  DstBlock		  "Sum"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "From5"
+		  SrcPort		  1
+		  DstBlock		  "L2 Plus ref WP2"
+		  DstPort		  5
+		}
+		Line {
+		  SrcBlock		  "From18"
+		  SrcPort		  1
+		  DstBlock		  "L2 Plus ref WP2"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "From16"
+		  SrcPort		  1
+		  DstBlock		  "L2 Plus ref WP2"
+		  DstPort		  2
+		}
+		Line {
+		  SrcBlock		  "From17"
+		  SrcPort		  1
+		  DstBlock		  "L2 Plus ref WP2"
+		  DstPort		  3
+		}
+		Line {
+		  SrcBlock		  "From3"
+		  SrcPort		  1
+		  DstBlock		  "L2 Plus ref WP2"
+		  DstPort		  4
+		}
+		Line {
+		  SrcBlock		  "Sum"
+		  SrcPort		  1
+		  DstBlock		  "Goto11"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "From2"
+		  SrcPort		  1
+		  DstBlock		  "PD Controller"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "From4"
+		  SrcPort		  1
+		  DstBlock		  "L2 Plus ref WP2"
+		  DstPort		  6
+		}
+		Line {
+		  SrcBlock		  "psi_dot"
+		  SrcPort		  1
+		  DstBlock		  "Goto12"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "waterspeed"
+		  SrcPort		  1
+		  DstBlock		  "Goto13"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Sqrt"
+		  SrcPort		  1
+		  DstBlock		  "PD Controller1"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Math\nFunction"
+		  SrcPort		  1
+		  DstBlock		  "Sum of\nElements"
+		  DstPort		  1
+		}
+		Line {
+		  SrcBlock		  "Sum of\nElements"
+		  SrcPort		  1
+		  DstBlock		  "Sqrt"
+		  DstPort		  1
+		}
+		Annotation {
+		  Name			  "Select the PD controller if ctrl_algo is 1,\notherwise select L2+. Safer than only checking\nfor 0 or 1."
+		  Position		  [500, 708]
+		  HorizontalAlignment	  "left"
+		}
+		Annotation {
+		  Name			  "Implements the L_2^+ to rudder angle command logic as shared on pages 171"
+		  Position		  [636, 29]
+		  Interpreter		  "tex"
+		}
+		Annotation {
+		  Name			  "Implements the PD controller as Professor Elkaim has implemented"
+		  Position		  [596, 374]
+		  Interpreter		  "tex"
+		}
+		Annotation {
+		  Name			  "Calculate the magnitude. This is safe\nbecause there's no z-axis velocity in this\nvector."
+		  Position		  [549, 405]
+		}
+	      }
+	    }
+	    Block {
 	      BlockType		      Switch
 	      Name		      "Switch"
 	      SID		      "25311"
-	      Position		      [1095, 335, 1125, 365]
+	      Position		      [1055, 210, 1085, 240]
 	      ShowName		      off
 	      Criteria		      "u2 ~= 0"
 	      InputSameDT	      off
@@ -3435,7 +5330,7 @@ Model {
 	      Name		      "Switch to\nnext waypoint\n(wraparound)"
 	      SID		      "25312"
 	      Ports		      [0, 0, 1]
-	      Position		      [555, 664, 655, 706]
+	      Position		      [610, 589, 710, 631]
 	      ZOrder		      -23
 	      TreatAsAtomicUnit	      on
 	      MinAlgLoopOccurrences   off
@@ -3873,7 +5768,7 @@ Model {
 	      BlockType		      Switch
 	      Name		      "Switch1"
 	      SID		      "25865"
-	      Position		      [800, 470, 850, 510]
+	      Position		      [855, 395, 905, 435]
 	      ZOrder		      -18
 	      NamePlacement	      "alternate"
 	      ShowName		      off
@@ -3885,7 +5780,7 @@ Model {
 	      BlockType		      Switch
 	      Name		      "Switch2"
 	      SID		      "25985"
-	      Position		      [810, 595, 860, 635]
+	      Position		      [865, 520, 915, 560]
 	      ZOrder		      -18
 	      NamePlacement	      "alternate"
 	      ShowName		      off
@@ -3895,432 +5790,10 @@ Model {
 	    }
 	    Block {
 	      BlockType		      SubSystem
-	      Name		      "Translate a_cmd to\nrudder angle"
-	      SID		      "25337"
-	      Ports		      [4, 1]
-	      Position		      [905, 223, 1050, 307]
-	      MinAlgLoopOccurrences   off
-	      PropExecContextOutsideSubsystem off
-	      RTWSystemCode	      "Auto"
-	      FunctionWithSeparateData off
-	      Opaque		      off
-	      RequestExecContextInheritance off
-	      MaskHideContents	      off
-	      System {
-		Name			"Translate a_cmd to\nrudder angle"
-		Location		[801, 353, 1781, 867]
-		Open			off
-		ModelBrowserVisibility	on
-		ModelBrowserWidth	200
-		ScreenColor		"white"
-		PaperOrientation	"landscape"
-		PaperPositionMode	"auto"
-		PaperType		"usletter"
-		PaperUnits		"inches"
-		TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
-		TiledPageScale		1
-		ShowPageBoundaries	off
-		ZoomFactor		"100"
-		Block {
-		  BlockType		  Inport
-		  Name			  "a_cmd"
-		  SID			  "25338"
-		  Position		  [35, 63, 65, 77]
-		  IconDisplay		  "Port number"
-		}
-		Block {
-		  BlockType		  Inport
-		  Name			  "v_ground"
-		  SID			  "25339"
-		  Position		  [35, 198, 65, 212]
-		  Port			  "2"
-		  IconDisplay		  "Port number"
-		}
-		Block {
-		  BlockType		  Inport
-		  Name			  "psi_dot"
-		  SID			  "25340"
-		  Position		  [35, 133, 65, 147]
-		  Port			  "3"
-		  IconDisplay		  "Port number"
-		}
-		Block {
-		  BlockType		  Inport
-		  Name			  "water_speed"
-		  SID			  "25341"
-		  Position		  [35, 233, 65, 247]
-		  Port			  "4"
-		  IconDisplay		  "Port number"
-		}
-		Block {
-		  BlockType		  Sum
-		  Name			  "Add6"
-		  SID			  "25342"
-		  Ports			  [2, 1]
-		  Position		  [175, 55, 205, 85]
-		  ZOrder		  -2
-		  ShowName		  off
-		  IconShape		  "round"
-		  Inputs		  "|+-"
-		  InputSameDT		  off
-		  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-		  SaturateOnIntegerOverflow off
-		}
-		Block {
-		  BlockType		  Constant
-		  Name			  "Constant1"
-		  SID			  "25343"
-		  Position		  [60, 103, 120, 127]
-		  BackgroundColor	  "gray"
-		  ShowName		  off
-		  Value			  "KPsiDot"
-		}
-		Block {
-		  BlockType		  Constant
-		  Name			  "Constant5"
-		  SID			  "25344"
-		  Position		  [160, 23, 220, 47]
-		  BackgroundColor	  "gray"
-		  ShowName		  off
-		  Value			  "wheelbase"
-		}
-		Block {
-		  BlockType		  Math
-		  Name			  "Math\nFunction1"
-		  SID			  "25345"
-		  Ports			  [1, 1]
-		  Position		  [95, 190, 125, 220]
-		  ShowName		  off
-		  Operator		  "square"
-		}
-		Block {
-		  BlockType		  Product
-		  Name			  "Product"
-		  SID			  "25346"
-		  Ports			  [2, 1]
-		  Position		  [260, 24, 290, 71]
-		  ShowName		  off
-		  Inputs		  "**"
-		  InputSameDT		  off
-		  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-		  SaturateOnIntegerOverflow off
-		}
-		Block {
-		  BlockType		  Product
-		  Name			  "Product1"
-		  SID			  "25347"
-		  Ports			  [2, 1]
-		  Position		  [140, 104, 170, 151]
-		  ShowName		  off
-		  Inputs		  "**"
-		  InputSameDT		  off
-		  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-		  SaturateOnIntegerOverflow off
-		}
-		Block {
-		  BlockType		  Product
-		  Name			  "Product2"
-		  SID			  "25348"
-		  Ports			  [2, 1]
-		  Position		  [260, 194, 290, 241]
-		  ShowName		  off
-		  Inputs		  "**"
-		  InputSameDT		  off
-		  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-		  SaturateOnIntegerOverflow off
-		}
-		Block {
-		  BlockType		  Sqrt
-		  Name			  "Sqrt"
-		  SID			  "25349"
-		  Position		  [205, 190, 235, 220]
-		  ZOrder		  -29
-		  ShowName		  off
-		}
-		Block {
-		  BlockType		  Sum
-		  Name			  "Sum of\nElements"
-		  SID			  "25350"
-		  Ports			  [1, 1]
-		  Position		  [150, 190, 180, 220]
-		  ZOrder		  -33
-		  ShowName		  off
-		  Inputs		  "+"
-		  InputSameDT		  off
-		  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-		  SaturateOnIntegerOverflow off
-		}
-		Block {
-		  BlockType		  Trigonometry
-		  Name			  "Trigonometric\nFunction"
-		  SID			  "25351"
-		  Ports			  [1, 1]
-		  Position		  [435, 45, 465, 75]
-		  ShowName		  off
-		  Operator		  "atan"
-		}
-		Block {
-		  BlockType		  UnaryMinus
-		  Name			  "Unary Minus"
-		  SID			  "25352"
-		  Position		  [500, 45, 530, 75]
-		  ShowName		  off
-		}
-		Block {
-		  BlockType		  SubSystem
-		  Name			  "safe_divide"
-		  SID			  "25353"
-		  Ports			  [2, 1]
-		  Position		  [330, 39, 395, 81]
-		  ZOrder		  -5
-		  TreatAsAtomicUnit	  on
-		  MinAlgLoopOccurrences	  off
-		  PropExecContextOutsideSubsystem off
-		  RTWSystemCode		  "Reusable function"
-		  RTWFcnNameOpts	  "Use subsystem name"
-		  RTWFileNameOpts	  "Use function name"
-		  FunctionWithSeparateData off
-		  Opaque		  off
-		  RequestExecContextInheritance	off
-		  MaskHideContents	  off
-		  System {
-		    Name		    "safe_divide"
-		    Location		    [314, 581, 1021, 881]
-		    Open		    off
-		    ModelBrowserVisibility  on
-		    ModelBrowserWidth	    200
-		    ScreenColor		    "white"
-		    PaperOrientation	    "landscape"
-		    PaperPositionMode	    "auto"
-		    PaperType		    "usletter"
-		    PaperUnits		    "inches"
-		    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-		    TiledPageScale	    1
-		    ShowPageBoundaries	    off
-		    ZoomFactor		    "100"
-		    Block {
-		    BlockType		    Inport
-		    Name		    "X"
-		    SID			    "25354"
-		    Position		    [50, 108, 80, 122]
-		    ZOrder		    -1
-		    BackgroundColor	    "darkGreen"
-		    IconDisplay		    "Port number"
-		    }
-		    Block {
-		    BlockType		    Inport
-		    Name		    "div"
-		    SID			    "25355"
-		    Position		    [50, 153, 80, 167]
-		    ZOrder		    -1
-		    BackgroundColor	    "darkGreen"
-		    Port		    "2"
-		    IconDisplay		    "Port number"
-		    }
-		    Block {
-		    BlockType		    Constant
-		    Name		    "Constant1"
-		    SID			    "25356"
-		    Position		    [160, 183, 195, 207]
-		    BackgroundColor	    "gray"
-		    ShowName		    off
-		    Value		    "0"
-		    OutDataTypeStr	    "Inherit: Inherit via back propagation"
-		    }
-		    Block {
-		    BlockType		    Product
-		    Name		    "Product"
-		    SID			    "25357"
-		    Ports		    [2, 1]
-		    Position		    [165, 121, 195, 154]
-		    ShowName		    off
-		    Inputs		    "*/"
-		    InputSameDT		    off
-		    OutDataTypeStr	    "Inherit: Inherit via internal rule"
-		    SaturateOnIntegerOverflow off
-		    }
-		    Block {
-		    BlockType		    Switch
-		    Name		    "Switch"
-		    SID			    "25358"
-		    Position		    [250, 155, 280, 185]
-		    ShowName		    off
-		    Criteria		    "u2 ~= 0"
-		    InputSameDT		    off
-		    SaturateOnIntegerOverflow off
-		    }
-		    Block {
-		    BlockType		    Outport
-		    Name		    "Out1"
-		    SID			    "25359"
-		    Position		    [345, 163, 375, 177]
-		    ZOrder		    -2
-		    BackgroundColor	    "yellow"
-		    ShowName		    off
-		    IconDisplay		    "Port number"
-		    }
-		    Line {
-		    SrcBlock		    "X"
-		    SrcPort		    1
-		    Points		    [65, 0]
-		    DstBlock		    "Product"
-		    DstPort		    1
-		    }
-		    Line {
-		    SrcBlock		    "div"
-		    SrcPort		    1
-		    Points		    [65, 0]
-		    Branch {
-		    DstBlock		    "Product"
-		    DstPort		    2
-		    }
-		    Branch {
-		    Points		    [0, 10]
-		    DstBlock		    "Switch"
-		    DstPort		    2
-		    }
-		    }
-		    Line {
-		    SrcBlock		    "Product"
-		    SrcPort		    1
-		    Points		    [15, 0; 0, 20]
-		    DstBlock		    "Switch"
-		    DstPort		    1
-		    }
-		    Line {
-		    SrcBlock		    "Constant1"
-		    SrcPort		    1
-		    Points		    [25, 0; 0, -15]
-		    DstBlock		    "Switch"
-		    DstPort		    3
-		    }
-		    Line {
-		    SrcBlock		    "Switch"
-		    SrcPort		    1
-		    DstBlock		    "Out1"
-		    DstPort		    1
-		    }
-		  }
-		}
-		Block {
-		  BlockType		  Outport
-		  Name			  "rudder_cmd"
-		  SID			  "25360"
-		  Position		  [555, 53, 585, 67]
-		  IconDisplay		  "Port number"
-		}
-		Line {
-		  SrcBlock		  "Constant5"
-		  SrcPort		  1
-		  DstBlock		  "Product"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Product"
-		  SrcPort		  1
-		  DstBlock		  "safe_divide"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Trigonometric\nFunction"
-		  SrcPort		  1
-		  DstBlock		  "Unary Minus"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Math\nFunction1"
-		  SrcPort		  1
-		  DstBlock		  "Sum of\nElements"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Sum of\nElements"
-		  SrcPort		  1
-		  DstBlock		  "Sqrt"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "safe_divide"
-		  SrcPort		  1
-		  DstBlock		  "Trigonometric\nFunction"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Add6"
-		  SrcPort		  1
-		  Points		  [15, 0; 0, -10]
-		  DstBlock		  "Product"
-		  DstPort		  2
-		}
-		Line {
-		  SrcBlock		  "v_ground"
-		  SrcPort		  1
-		  DstBlock		  "Math\nFunction1"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Unary Minus"
-		  SrcPort		  1
-		  DstBlock		  "rudder_cmd"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "a_cmd"
-		  SrcPort		  1
-		  DstBlock		  "Add6"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "psi_dot"
-		  SrcPort		  1
-		  DstBlock		  "Product1"
-		  DstPort		  2
-		}
-		Line {
-		  SrcBlock		  "Constant1"
-		  SrcPort		  1
-		  DstBlock		  "Product1"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Sqrt"
-		  SrcPort		  1
-		  DstBlock		  "Product2"
-		  DstPort		  1
-		}
-		Line {
-		  SrcBlock		  "Product2"
-		  SrcPort		  1
-		  Points		  [0, -150]
-		  DstBlock		  "safe_divide"
-		  DstPort		  2
-		}
-		Line {
-		  SrcBlock		  "water_speed"
-		  SrcPort		  1
-		  Points		  [85, 0; 0, -10]
-		  DstBlock		  "Product2"
-		  DstPort		  2
-		}
-		Line {
-		  SrcBlock		  "Product1"
-		  SrcPort		  1
-		  Points		  [15, 0]
-		  DstBlock		  "Add6"
-		  DstPort		  2
-		}
-		Annotation {
-		  Name			  "Implements a translation between the L2+ lateral acceleration command\nand the rudder angle command."
-		  Position		  [216, 303]
-		}
-	      }
-	    }
-	    Block {
-	      BlockType		      SubSystem
 	      Name		      "Waypoint transition logic"
 	      SID		      "25989"
 	      Ports		      [5, 1]
-	      Position		      [355, 552, 500, 678]
+	      Position		      [410, 477, 555, 603]
 	      ErrorFcn		      "Stateflow.Translate.translate"
 	      PermitHierarchicalResolution "ExplicitOnly"
 	      TreatAsAtomicUnit	      on
@@ -4493,7 +5966,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "Command"
 	      SID		      "25361"
-	      Position		      [1175, 343, 1205, 357]
+	      Position		      [1135, 218, 1165, 232]
 	      BackgroundColor	      "yellow"
 	      IconDisplay	      "Port number"
 	    }
@@ -4538,25 +6011,6 @@ Model {
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "L2 Plus ref WP1"
-	      SrcPort		      1
-	      DstBlock		      "Goto"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "Translate a_cmd to\nrudder angle"
-	      SrcPort		      1
-	      Points		      [25, 0]
-	      Branch {
-		DstBlock		"Switch"
-		DstPort			1
-	      }
-	      Branch {
-		DstBlock		"Goto3"
-		DstPort			1
-	      }
-	    }
-	    Line {
 	      SrcBlock		      "Reset"
 	      SrcPort		      1
 	      DstBlock		      "Logical\nOperator1"
@@ -4569,19 +6023,6 @@ Model {
 	      DstPort		      2
 	    }
 	    Line {
-	      SrcBlock		      "L2 Plus ref WP1"
-	      SrcPort		      3
-	      Points		      [70, 0]
-	      Branch {
-		DstBlock		"Goto4"
-		DstPort			1
-	      }
-	      Branch {
-		DstBlock		"Translate a_cmd to\nrudder angle"
-		DstPort			1
-	      }
-	    }
-	    Line {
 	      SrcBlock		      "Constant1"
 	      SrcPort		      1
 	      Points		      [55, 0]
@@ -4592,12 +6033,6 @@ Model {
 	      SrcBlock		      "Switch"
 	      SrcPort		      1
 	      DstBlock		      "Command"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "L2 Plus ref WP1"
-	      SrcPort		      2
-	      DstBlock		      "Goto5"
 	      DstPort		      1
 	    }
 	    Line {
@@ -4721,82 +6156,98 @@ Model {
 	      DstPort		      5
 	    }
 	    Line {
-	      SrcBlock		      "From6"
-	      SrcPort		      1
-	      DstBlock		      "L2 Plus ref WP1"
-	      DstPort		      5
-	    }
-	    Line {
-	      SrcBlock		      "From8"
-	      SrcPort		      1
-	      DstBlock		      "L2 Plus ref WP1"
-	      DstPort		      1
-	    }
-	    Line {
-	      SrcBlock		      "From9"
-	      SrcPort		      1
-	      DstBlock		      "L2 Plus ref WP1"
-	      DstPort		      2
-	    }
-	    Line {
-	      SrcBlock		      "From7"
-	      SrcPort		      1
-	      DstBlock		      "L2 Plus ref WP1"
-	      DstPort		      3
-	    }
-	    Line {
-	      SrcBlock		      "From10"
-	      SrcPort		      1
-	      DstBlock		      "L2 Plus ref WP1"
-	      DstPort		      4
-	    }
-	    Line {
 	      SrcBlock		      "Velocity"
 	      SrcPort		      1
 	      DstBlock		      "Goto14"
 	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "From11"
+	      SrcBlock		      "From20"
 	      SrcPort		      1
-	      DstBlock		      "L2 Plus ref WP1"
-	      DstPort		      6
+	      DstBlock		      "Run controllers to calculate\ncommanded rudder angle"
+	      DstPort		      1
 	    }
 	    Line {
-	      SrcBlock		      "From12"
+	      SrcBlock		      "From21"
 	      SrcPort		      1
-	      DstBlock		      "Translate a_cmd to\nrudder angle"
+	      DstBlock		      "Run controllers to calculate\ncommanded rudder angle"
 	      DstPort		      2
 	    }
 	    Line {
-	      SrcBlock		      "From13"
+	      SrcBlock		      "From19"
 	      SrcPort		      1
-	      DstBlock		      "Translate a_cmd to\nrudder angle"
+	      DstBlock		      "Run controllers to calculate\ncommanded rudder angle"
 	      DstPort		      3
 	    }
 	    Line {
-	      SrcBlock		      "From14"
+	      SrcBlock		      "From16"
 	      SrcPort		      1
-	      DstBlock		      "Translate a_cmd to\nrudder angle"
+	      DstBlock		      "Run controllers to calculate\ncommanded rudder angle"
 	      DstPort		      4
 	    }
-	    Annotation {
-	      Position		      [1180, 336]
+	    Line {
+	      SrcBlock		      "From18"
+	      SrcPort		      1
+	      DstBlock		      "Run controllers to calculate\ncommanded rudder angle"
+	      DstPort		      5
+	    }
+	    Line {
+	      SrcBlock		      "From17"
+	      SrcPort		      1
+	      DstBlock		      "Run controllers to calculate\ncommanded rudder angle"
+	      DstPort		      6
+	    }
+	    Line {
+	      SrcBlock		      "rudder"
+	      SrcPort		      1
+	      DstBlock		      "Goto15"
+	      DstPort		      1
+	    }
+	    Line {
+	      SrcBlock		      "From6"
+	      SrcPort		      1
+	      DstBlock		      "Run controllers to calculate\ncommanded rudder angle"
+	      DstPort		      7
+	    }
+	    Line {
+	      SrcBlock		      "Run controllers to calculate\ncommanded rudder angle"
+	      SrcPort		      1
+	      Points		      [70, 0]
+	      Branch {
+		Points			[0, 25]
+		DstBlock		"Switch"
+		DstPort			1
+	      }
+	      Branch {
+		Points			[0, -45]
+		DstBlock		"Goto3"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      SrcBlock		      "From7"
+	      SrcPort		      1
+	      DstBlock		      "Run controllers to calculate\ncommanded rudder angle"
+	      DstPort		      8
+	    }
+	    Line {
+	      SrcBlock		      "From8"
+	      SrcPort		      1
+	      DstBlock		      "Run controllers to calculate\ncommanded rudder angle"
+	      DstPort		      9
 	    }
 	    Annotation {
-	      Name		      "Implements the L_2^+ to rudder angle command logic as shared on pages 171"
-	      Position		      [1046, 204]
-	      Interpreter	      "tex"
+	      Position		      [1140, 211]
 	    }
 	    Annotation {
 	      Name		      "Output the index of a waypoint when it's been reached.\nThe output will be -1 when a waypoint has "
 	      "not been reached\nand >= 0, corresponding to the index of the waypoint,\nwhen it has."
-	      Position		      [881, 551]
+	      Position		      [936, 476]
 	    }
 	    Annotation {
 	      Name		      "Output the index of the curent waypoint when it's changed\nfrom a waypoint transition. We do this "
 	      "on the falling-edge\nof the transition signal so that the wp1 index value has\nupdated."
-	      Position		      [877, 706]
+	      Position		      [932, 631]
 	    }
 	  }
 	}
@@ -4815,7 +6266,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "State Keeper &\nEstimator"
-	    Location		    [272, 289, 1541, 883]
+	    Location		    [351, 276, 1513, 971]
 	    Open		    off
 	    ModelBrowserVisibility  on
 	    ModelBrowserWidth	    200
@@ -7390,13 +8841,6 @@ Model {
 	  }
 	}
 	Block {
-	  BlockType		  Terminator
-	  Name			  "Terminator1"
-	  SID			  "25447"
-	  Position		  [145, 675, 165, 695]
-	  ShowName		  off
-	}
-	Block {
 	  BlockType		  SubSystem
 	  Name			  "Throttle\nCommand"
 	  SID			  "25448"
@@ -7586,7 +9030,7 @@ Model {
 	Line {
 	  SrcBlock		  "State Keeper &\nEstimator"
 	  SrcPort		  3
-	  Points		  [0, -30]
+	  Points		  [0, -35]
 	  DstBlock		  "Rudder\nCommand"
 	  DstPort		  3
 	}
@@ -7600,6 +9044,7 @@ Model {
 	Line {
 	  SrcBlock		  "State Keeper &\nEstimator"
 	  SrcPort		  2
+	  Points		  [85, 0]
 	  DstBlock		  "Rudder\nCommand"
 	  DstPort		  1
 	}
@@ -7625,8 +9070,9 @@ Model {
 	Line {
 	  SrcBlock		  "sensors_r"
 	  SrcPort		  1
-	  DstBlock		  "Terminator1"
-	  DstPort		  1
+	  Points		  [425, 0]
+	  DstBlock		  "Rudder\nCommand"
+	  DstPort		  6
 	}
 	Line {
 	  SrcBlock		  "sensors_t"
@@ -7637,14 +9083,14 @@ Model {
 	Line {
 	  SrcBlock		  "State Keeper &\nEstimator"
 	  SrcPort		  4
-	  Points		  [40, 0; 0, -75]
+	  Points		  [40, 0; 0, -85]
 	  DstBlock		  "Rudder\nCommand"
 	  DstPort		  4
 	}
 	Line {
 	  SrcBlock		  "sensors_w"
 	  SrcPort		  1
-	  Points		  [425, 0]
+	  Points		  [400, 0; 0, -150]
 	  DstBlock		  "Rudder\nCommand"
 	  DstPort		  5
 	}
@@ -7806,7 +9252,6 @@ Model {
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "wp0"
-	  TagVisibility		  "global"
 	}
 	Block {
 	  BlockType		  From
@@ -7816,7 +9261,6 @@ Model {
 	  BackgroundColor	  "magenta"
 	  ShowName		  off
 	  GotoTag		  "wp1"
-	  TagVisibility		  "global"
 	}
 	Block {
 	  BlockType		  From
@@ -8086,7 +9530,7 @@ Stateflow {
     name		    "controller"
     created		    "20-Jul-2010 14:18:50"
     isLibrary		    0
-    firstTarget		    82
+    firstTarget		    95
     sfVersion		    76014001.0002
   }
   chart {
@@ -9014,8 +10458,9 @@ Stateflow {
   }
   chart {
     id			    52
-    name		    "Autonomous Controller/Rudder\nCommand/L2 Plus ref WP1"
-    windowPosition	    [767.101 -171 200.25 189.75]
+    name		    "Autonomous Controller/Rudder\nCommand/Run controllers to calculate\ncommanded rudder angle/L2 Plus ref "
+    "WP1"
+    windowPosition	    [812.101 -171 200.25 189.75]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1920 1080 1.333333333333333]
     treeNode		    [0 53 0 0]
@@ -9411,7 +10856,8 @@ Stateflow {
   }
   instance {
     id			    69
-    name		    "Autonomous Controller/Rudder\nCommand/L2 Plus ref WP1"
+    name		    "Autonomous Controller/Rudder\nCommand/Run controllers to calculate\ncommanded rudder angle/L2 Plus ref "
+    "WP1"
     machine		    1
     chart		    52
   }
@@ -9426,8 +10872,6 @@ Stateflow {
     firstJunction	    72
     viewObj		    70
     machine		    1
-    subviewS {
-    }
     ssIdHighWaterMark	    33
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
@@ -9661,17 +11105,286 @@ Stateflow {
     machine		    1
     chart		    70
   }
-  target {
+  chart {
     id			    82
+    name		    "Autonomous Controller/Rudder\nCommand/Run controllers to calculate\ncommanded rudder angle/L2 Plus ref "
+    "WP2"
+    windowPosition	    [812.101 -171 200.25 189.75]
+    viewLimits		    [0 156.75 0 153.75]
+    screen		    [1 1 1920 1080 1.333333333333333]
+    treeNode		    [0 83 0 0]
+    firstTransition	    85
+    firstJunction	    84
+    viewObj		    82
+    machine		    1
+    ssIdHighWaterMark	    35
+    decomposition	    CLUSTER_CHART
+    type		    EML_CHART
+    firstData		    86
+    chartFileNumber	    9
+    disableImplicitCasting  1
+    eml {
+      name		      "L2PlusWP1"
+    }
+    supportVariableSizing   0
+  }
+  state {
+    id			    83
+    labelString		    "eML_blk_kernel()"
+    position		    [18 64.5 118 66]
+    fontSize		    12
+    chart		    82
+    treeNode		    [82 0 0 0]
+    superState		    SUBCHART
+    subviewer		    82
+    ssIdNumber		    1
+    type		    FUNC_STATE
+    decomposition	    CLUSTER_STATE
+    eml {
+      isEML		      1
+      script		      "function [course_error, crosstrack_error] = L2PlusWP1(wp0, wp0_found, wp1, wp1_found, pos, vel)\n"
+      "%     Calculates the course and crosstrack error for the vehicle.\n%\n%         INPUTS\n%             wp0       "
+      "    Waypoint 0 position in North-East-Down meters\n%             wp0_found     Boolean indicating if wp0 is a va"
+      "lid waypoint\n%             wp1           Waypoint 1 position in North-East-Down meters\n%             wp1_found"
+      "     Boolean indicating if wp1 is a valid waypoint\n%             pos           Vehicle position in North-East-D"
+      "own meters\n%             vel           Vehicle velocity in North-East-Down meters\n%             \n%         OU"
+      "TPUTS\n%             course_error         Course error.\n%             crosstrack_error     Position error perpe"
+      "ndicular to the\n%                                  desired line.\n    \n    % Initialize the outputs. These are"
+      " sensible defaults, which lets error\n    % handling just \"return\" instead of having to re-specify these value"
+      "s.\n    course_error = nan('single');\n    crosstrack_error = nan('single');\n    \n    % Sanitize the altitude "
+      "from the waypoints, as L2+ is currently only\n    % 2-dimensional.\n    wp0(3) = single(0);\n    wp1(3) = single"
+      "(0);\n    pos(3) = single(0);\n    vel(3) = single(0);\n    \n    % If either waypoint is invalid then don't do "
+      "anything\n    if ~wp0_found || ~wp1_found\n        return;\n    end\n    \n    % Calculate T1 (unit vector point"
+      "ing from wp0 to wp1) and N1 \n    % (right-hand orthogonal to T1) \n    T1 = wp1 - wp0;\n    T1 = T1 / norm(T1);"
+      "\n    N1 = [-T1(2); T1(1); 0];\n    \n    % And calculate the vector pointing from wp1 to the vehicle.\n    Pwp1"
+      " = pos - wp1;\n    \n    % Calculate the crosstrack error\n    crosstrack_error = single(abs(Pwp1'*N1));\n    \n"
+      "    % And the course error\n    waypoint_bearing = atan2(-Pwp1(2), -Pwp1(1));\n    course = atan2(vel(2), vel(1)"
+      ");\n    course_error = waypoint_bearing - course;\nend"
+      editorLayout	      "100 M4x1[54 114 1936 1056]"
+      fimathString	      "fimath(...\n'RoundMode', 'floor',...\n'OverflowMode', 'wrap',...\n'ProductMode', 'KeepLSB', "
+      "'ProductWordLength', 32,...\n'SumMode', 'KeepLSB', 'SumWordLength', 32,...\n'CastBeforeSum', true)"
+      emlDefaultFimath	      FimathUserSpecified
+    }
+  }
+  junction {
+    id			    84
+    position		    [23.5747 49.5747 7]
+    chart		    82
+    linkNode		    [82 0 0]
+    subviewer		    82
+    ssIdNumber		    3
+    type		    CONNECTIVE_JUNCTION
+  }
+  transition {
+    id			    85
+    labelString		    "{eML_blk_kernel();}"
+    labelPosition	    [32.125 19.875 102.544 14.964]
+    fontSize		    12
+    src {
+      intersection	      [0 0 1 0 23.5747 14.625 0 0]
+    }
+    dst {
+      id		      84
+      intersection	      [7 0 -1 -1 23.5747 42.5747 0 0]
+    }
+    midPoint		    [23.5747 24.9468]
+    chart		    82
+    linkNode		    [82 0 0]
+    dataLimits		    [23.575 23.575 14.625 34.575]
+    subviewer		    82
+    drawStyle		    SMART
+    executionOrder	    1
+    ssIdNumber		    2
+  }
+  data {
+    id			    86
+    ssIdNumber		    24
+    name		    "wp0"
+    linkNode		    [82 0 87]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"3"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+	busObject		"Mission"
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    87
+    ssIdNumber		    31
+    name		    "wp0_found"
+    linkNode		    [82 86 88]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_BOOLEAN_TYPE
+	isSigned		1
+	wordLength		"16"
+	fixpt {
+	  scalingMode		  SF_FIXPT_BINARY_POINT
+	  fractionLength	  "0"
+	  slope			  "2^0"
+	  bias			  "0"
+	}
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "boolean"
+  }
+  data {
+    id			    88
+    ssIdNumber		    25
+    name		    "wp1"
+    linkNode		    [82 87 89]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"3"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+	busObject		"Mission"
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    89
+    ssIdNumber		    32
+    name		    "wp1_found"
+    linkNode		    [82 88 90]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_BOOLEAN_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "boolean"
+  }
+  data {
+    id			    90
+    ssIdNumber		    17
+    name		    "course_error"
+    linkNode		    [82 89 91]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    91
+    ssIdNumber		    33
+    name		    "crosstrack_error"
+    linkNode		    [82 90 92]
+    scope		    OUTPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"1"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_NO
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    92
+    ssIdNumber		    6
+    name		    "pos"
+    linkNode		    [82 91 93]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"3"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+      }
+    }
+    dataType		    "single"
+  }
+  data {
+    id			    93
+    ssIdNumber		    35
+    name		    "vel"
+    linkNode		    [82 92 0]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	primitive		SF_SINGLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "single"
+  }
+  instance {
+    id			    94
+    name		    "Autonomous Controller/Rudder\nCommand/Run controllers to calculate\ncommanded rudder angle/L2 Plus ref "
+    "WP2"
+    machine		    1
+    chart		    82
+  }
+  target {
+    id			    95
     name		    "sfun"
     description		    "Default Simulink S-Function Target."
     machine		    1
-    linkNode		    [1 0 83]
+    linkNode		    [1 0 96]
   }
   target {
-    id			    83
+    id			    96
     name		    "rtw"
     machine		    1
-    linkNode		    [1 82 0]
+    linkNode		    [1 95 0]
   }
 }

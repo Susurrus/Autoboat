@@ -44,3 +44,12 @@ lla_ltp_gain.RTWInfo.Alias = 'lla_ltp_gain';
 
 % The late ncy in the GPS unit (in units of T_step)
 gpsLatency = 150;
+
+% Sets which controller the system should use. 0 for L2+, 1 for PD.
+ctrl_algo = Simulink.Parameter;
+ctrl_algo.Description = 'The controller that should be used for autonomous control.';
+ctrl_algo.Value = uint8(0);
+ctrl_algo.DataType = 'uint8';
+ctrl_algo.DocUnits = '';
+ctrl_algo.RTWInfo.StorageClass = 'ExportedGlobal';
+ctrl_algo.RTWInfo.Alias = 'ctrl_algo';

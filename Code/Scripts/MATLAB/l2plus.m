@@ -56,3 +56,22 @@ GpsOffsetCorrectionEnable.DataType = 'boolean';
 GpsOffsetCorrectionEnable.DocUnits = '';
 GpsOffsetCorrectionEnable.RTWInfo.StorageClass = 'ExportedGlobal';
 GpsOffsetCorrectionEnable.RTWInfo.Alias = 'GpsOffsetCorrectionEnable';
+
+%% Also throw in some variables here for the PD controller
+% The gain on the course error
+K_course = Simulink.Parameter;
+K_course.Description = 'Course error gain for the PD controller.';
+K_course.Value = single(1.0);
+K_course.DataType = 'single';
+K_course.DocUnits = '';
+K_course.RTWInfo.StorageClass = 'ExportedGlobal';
+K_course.RTWInfo.Alias = 'K_course';
+
+% Gain on the crosstrack error
+K_crosstrack = Simulink.Parameter;
+K_crosstrack.Description = 'Crosstrack error gain for the PD controller.';
+K_crosstrack.Value = single(1.0);
+K_crosstrack.DataType = 'single';
+K_crosstrack.DocUnits = '';
+K_crosstrack.RTWInfo.StorageClass = 'ExportedGlobal';
+K_crosstrack.RTWInfo.Alias = 'K_crosstrack';
