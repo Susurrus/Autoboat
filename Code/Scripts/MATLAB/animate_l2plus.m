@@ -29,7 +29,7 @@ aim_point_n = AimPoint(valid_range, 1);
 aim_point_e = AimPoint(valid_range, 2);
 
 % And finally course-over-ground data
-cog = sensedHeading(valid_range);
+cog = sensedCourse(valid_range);
 
 % Clean up the commanded rudder data (for some reason it's negated)
 commanded_rudder_angle = -180/pi*commands_rudder_angle(valid_range);
@@ -45,7 +45,7 @@ if saveVideo
 end
 
 % Get the coordinates for icons for the boat and rudder
-[boat_coords, rudder_coords] = icon_coords();
+[boat_coords, rudder_coords] = icon_coords(2);
 
 % Set whether the animation is playing or not. Setting this to true
 % pauses the rendering loop.
