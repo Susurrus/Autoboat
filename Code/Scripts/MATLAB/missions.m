@@ -64,7 +64,7 @@ figure8.waypoints = [-1200  -800 0;
 figure8.refFrame = 1; % Set a local NED reference frame
 
 % Set this variable to the waypoint struct that you'd like to use
-test_coordinates = basic_test;
+test_coordinates = harbor_slalom;
 mission_count = length(test_coordinates.waypoints);
 
 % The following line just initializes an array of structs
