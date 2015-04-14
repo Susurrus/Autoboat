@@ -2,7 +2,8 @@
 
 % Don't plot every data point to speed things up
 speed = 50;
-valid_range = 1:speed:length(sensedPosition);
+start = find(globalPosition(:,1) ~= 0, 1); % Don't start plotting data until the GPS has locked on.
+valid_range = start:speed:length(sensedPosition);
 
 % Grab position data
 x = sensedPosition(valid_range, 1);
@@ -37,5 +38,9 @@ ylabel('North (m)');
 figure;
 subplot(2,1,1);
 hold on;
-plot(rudder_angle_command, 'r-');
-plot(rudder_angle, 'k-');
+plot(180/pi*rudder_angle_command, 'r-');
+plot(180/pi*rudder_angle, 'k-');
+title('Rudder angle command');
+legend({'Commanded', 'Actual'});
+xlabel('Time (s)');
+ylabel('Rudder angle (deg)');
