@@ -25,9 +25,6 @@ enum {
     // IMU messages (defined by the VSAS-2GM)
     CAN_MSG_ID_IMU_DATA            = 0x102,
 
-    // Gyro messages (for use with Z-only DSP-3000 gyro)
-    CAN_MSG_ID_GYRO_DATA           = 0x105,
-
     // Gyro messages (for use with Tokimec VSAS-2GM)
     CAN_MSG_ID_ANG_VEL_DATA        = 0x106,
     CAN_MSG_ID_ACCEL_DATA          = 0x107,
@@ -79,22 +76,6 @@ void CanMessageDecodeRudderSetTxRate(const CanMessage *msg, uint16_t *angleRate,
 void CanMessagePackageRudderDetails(CanMessage *msg, uint16_t potVal, uint16_t portLimitVal, uint16_t sbLimitVal, bool portLimitTrig, bool sbLimitTrig, bool enabled, bool calibrated, bool calibrating);
 
 void CanMessageDecodeRudderDetails(const CanMessage *msg, uint16_t *potVal, uint16_t *portLimitVal, uint16_t *sbLimitVal, bool *portLimitTrig, bool *sbLimitTrig, bool *enabled, bool *calibrated, bool *calibrating);
-
-/**
- * The gyro data messages are based on the NMEA2000 PGN127251 message, which indicates vehicle rate. This gyro
- * message doesn't indicate vessel turn rate, however, merely the z-axis turn rate. It uses the little-endian storage format
- * to be consistent with the NMEA2000 standard.
- * @param zRate Rotation rate around the z-axis. Units are in degrees/s. Positive indicates clockwise rotation.
- */
-void CanMessagePackageGyroData(CanMessage *msg, float zRate);
-
-/**
- * The gyro data messages are based on the NMEA2000 PGN127251 message, which indicates vehicle rate. This gyro
- * message doesn't indicate vessel turn rate, however, merely the z-axis turn rate. It uses the little-endian storage format
- * to be consistent with the NMEA2000 standard.
- * @param zRate Rotation rate around the z-axis. Units are in degrees/s. Positive indicates clockwise rotation.
- */
-void CanMessageDecodeGyroData(const CanMessage *msg, float *zRate);
 
 // The IMU data messages are based on the Direction/Attitude messages from the VSAS-2GM, which uses
 // a big-endian storage format. All units are in radians.

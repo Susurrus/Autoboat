@@ -173,28 +173,6 @@ void CanMessageDecodeImuData(const CanMessage *msg, int16_t *direction, int16_t 
     }
 }
 
-void CanMessagePackageGyroData(CanMessage *msg, float zRate)
-{
-    msg->id = CAN_MSG_ID_GYRO_DATA;
-    msg->buffer = 0;
-    msg->message_type = CAN_MSG_DATA;
-    msg->frame_type = CAN_FRAME_STD;
-    msg->validBytes = CAN_MSG_SIZE_GYRO_DATA;
-
-    // Now fill in the data.
-    int32_t intZRate = (int32_t)(zRate * 1e8);
-    LEPackInt32(&msg->payload[0], intZRate);
-}
-
-void CanMessageDecodeGyroData(const CanMessage *msg, float *zRate)
-{
-    if (zRate) {
-        int32_t tmp;
-        LEUnpackInt32(&tmp, &msg->payload[0]);
-        *zRate = (float)tmp / 1e8;
-    }
-}
-
 void CanMessagePackageAngularVelocityData(CanMessage *msg, int16_t xAngleVel, int16_t yAngleVel, int16_t zAngleVel)
 {
     msg->id = CAN_MSG_ID_ANG_VEL_DATA;
