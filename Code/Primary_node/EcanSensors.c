@@ -407,9 +407,6 @@ uint8_t ProcessAllEcanMessages(void)
                     }
                 }
                 break;
-                case PGN_ID_MAG_VARIATION: // From the GPS200
-                    ParsePgn127258(msg.payload, NULL, NULL, NULL, &gpsDataStore.variation);
-                    break;
                 case PGN_ID_WIND_DATA: // From the WSO100
                     SENSOR_STATE_CLEAR_ENABLED_COUNTER(wso100);
                     if (ParsePgn130306(msg.payload, NULL, &windDataStore.speed, &windDataStore.direction)) {
