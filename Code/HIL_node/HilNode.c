@@ -595,7 +595,6 @@ uint8_t CanReceiveMessages(void)
                     } break;
                     // Track all messages from the IMU to see if it's connected
                     case CAN_MSG_ID_IMU_DATA:
-                    case CAN_MSG_ID_GYRO_DATA:
                     case CAN_MSG_ID_ANG_VEL_DATA:
                     case CAN_MSG_ID_ACCEL_DATA:
                     case CAN_MSG_ID_GPS_POS_DATA:

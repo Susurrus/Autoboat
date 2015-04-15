@@ -24,8 +24,6 @@ enum {
 
     // IMU messages (defined by the VSAS-2GM)
     CAN_MSG_ID_IMU_DATA            = 0x102,
-
-    // Gyro messages (for use with Tokimec VSAS-2GM)
     CAN_MSG_ID_ANG_VEL_DATA        = 0x106,
     CAN_MSG_ID_ACCEL_DATA          = 0x107,
     CAN_MSG_ID_GPS_POS_DATA        = 0x108,

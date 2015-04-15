@@ -244,10 +244,6 @@ uint8_t ProcessAllEcanMessages(void)
                             &tokimecDataStore.yaw,
                             &tokimecDataStore.pitch,
                             &tokimecDataStore.roll);
-                } else if (msg.id == CAN_MSG_ID_GYRO_DATA) {
-                    SENSOR_STATE_CLEAR_ENABLED_COUNTER(gyro);
-                    SENSOR_STATE_CLEAR_ACTIVE_COUNTER(gyro);
-                    CanMessageDecodeGyroData(&msg, &gyroDataStore.zRate);
                 } else if (msg.id == CAN_MSG_ID_ANG_VEL_DATA) {
                     SENSOR_STATE_CLEAR_ENABLED_COUNTER(imu);
                     SENSOR_STATE_CLEAR_ACTIVE_COUNTER(imu);
