@@ -17,6 +17,7 @@ static const Parameter params[] = {
     {"ControlAlgo", &ctrl_algo, NULL, NULL, PARAMETERS_DATATYPE_UINT8},
     {"PD_Kpsi", &K_course, NULL, NULL, PARAMETERS_DATATYPE_REAL32},
     {"PD_Ky", &K_crosstrack, NULL, NULL, PARAMETERS_DATATYPE_REAL32},
+    {"PD_KPsiDot", &PD_KPsiDot, NULL, NULL, PARAMETERS_DATATYPE_REAL32},
     {"L2+_T*", &tStar, NULL, NULL, PARAMETERS_DATATYPE_REAL32},
     {"L2+_MaxDownPath*", &maxDwnPthStar, NULL, NULL, PARAMETERS_DATATYPE_REAL32},
     {"L2+_TanInter", &tanIntercept, NULL, NULL, PARAMETERS_DATATYPE_REAL32},

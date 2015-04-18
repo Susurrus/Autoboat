@@ -70,8 +70,17 @@ K_course.RTWInfo.Alias = 'K_course';
 % Gain on the crosstrack error
 K_crosstrack = Simulink.Parameter;
 K_crosstrack.Description = 'Crosstrack error gain for the PD controller.';
-K_crosstrack.Value = single(1.0);
+K_crosstrack.Value = single(0.01);
 K_crosstrack.DataType = 'single';
 K_crosstrack.DocUnits = '';
 K_crosstrack.RTWInfo.StorageClass = 'ExportedGlobal';
 K_crosstrack.RTWInfo.Alias = 'K_crosstrack';
+
+% Gain on the feedforward heading rate signal
+PD_KPsiDot = Simulink.Parameter;
+PD_KPsiDot.Description = 'Gain on the heading derivative feedback loop for the PD controller.';
+PD_KPsiDot.Value = 0.0;
+PD_KPsiDot.DataType = 'single';
+PD_KPsiDot.DocUnits = '';
+PD_KPsiDot.RTWInfo.StorageClass = 'ExportedGlobal';
+PD_KPsiDot.RTWInfo.Alias = 'PD_KPsiDot';
