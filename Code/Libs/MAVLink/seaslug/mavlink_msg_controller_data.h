@@ -34,23 +34,24 @@ typedef struct __mavlink_controller_data_t
  int16_t yaw_rate; ///< Euler angle rate for yaw. Converted from the raw gyro data. (rad/s * 2^12)
  int16_t commanded_rudder_angle; ///< This is the rudder angle command as commanded by the onboard autonomous controller, positive indicates port-side (rad * 1e4)
  int16_t commanded_throttle; ///< This is the throttle command as commanded by the onboard autonomous controller. It's in units of 1/1023*100% of max current and positive values propel the vehicle forward.
+ int16_t actual_commanded_rudder_angle; ///< This is the rudder angle command output commanding the rudder. This is the final output of the muxing of all control inputs. Positive indicates port-side (rad * 1e4)
+ int16_t actual_commanded_throttle; ///< This is the throttle command output commanding the rudder. This is the final output of the muxing of all control inputs. It's in units of 1/1023*100% of max current and positive values propel the vehicle forward.
  int16_t rudder_angle; ///< The current rudder angle (rad * 1e4)
- int16_t prop_speed; ///< Propeller speed, positive values mean the vessel will be propelled forward. (rpm * 100)
  uint8_t new_gps_fix; ///< 0: no fix, 1: valid position, 2:valid velocity. These fields are only set if GPS has a valid 2D or 3D fix.
  uint8_t reset; ///< 0 indicates system is operating normally, 1 indicates it's held in reset.
 } mavlink_controller_data_t;
 
-#define MAVLINK_MSG_ID_CONTROLLER_DATA_LEN 76
-#define MAVLINK_MSG_ID_180_LEN 76
+#define MAVLINK_MSG_ID_CONTROLLER_DATA_LEN 78
+#define MAVLINK_MSG_ID_180_LEN 78
 
-#define MAVLINK_MSG_ID_CONTROLLER_DATA_CRC 127
-#define MAVLINK_MSG_ID_180_CRC 127
+#define MAVLINK_MSG_ID_CONTROLLER_DATA_CRC 107
+#define MAVLINK_MSG_ID_180_CRC 107
 
 
 
 #define MAVLINK_MESSAGE_INFO_CONTROLLER_DATA { \
 	"CONTROLLER_DATA", \
-	34, \
+	35, \
 	{  { "lat", NULL, MAVLINK_TYPE_INT32_T, 0, 0, offsetof(mavlink_controller_data_t, lat) }, \
          { "lon", NULL, MAVLINK_TYPE_INT32_T, 0, 4, offsetof(mavlink_controller_data_t, lon) }, \
          { "time_boot_ms", NULL, MAVLINK_TYPE_UINT32_T, 0, 8, offsetof(mavlink_controller_data_t, time_boot_ms) }, \
@@ -81,10 +82,11 @@ typedef struct __mavlink_controller_data_t
          { "yaw_rate", NULL, MAVLINK_TYPE_INT16_T, 0, 64, offsetof(mavlink_controller_data_t, yaw_rate) }, \
          { "commanded_rudder_angle", NULL, MAVLINK_TYPE_INT16_T, 0, 66, offsetof(mavlink_controller_data_t, commanded_rudder_angle) }, \
          { "commanded_throttle", NULL, MAVLINK_TYPE_INT16_T, 0, 68, offsetof(mavlink_controller_data_t, commanded_throttle) }, \
-         { "rudder_angle", NULL, MAVLINK_TYPE_INT16_T, 0, 70, offsetof(mavlink_controller_data_t, rudder_angle) }, \
-         { "prop_speed", NULL, MAVLINK_TYPE_INT16_T, 0, 72, offsetof(mavlink_controller_data_t, prop_speed) }, \
-         { "new_gps_fix", NULL, MAVLINK_TYPE_UINT8_T, 0, 74, offsetof(mavlink_controller_data_t, new_gps_fix) }, \
-         { "reset", NULL, MAVLINK_TYPE_UINT8_T, 0, 75, offsetof(mavlink_controller_data_t, reset) }, \
+         { "actual_commanded_rudder_angle", NULL, MAVLINK_TYPE_INT16_T, 0, 70, offsetof(mavlink_controller_data_t, actual_commanded_rudder_angle) }, \
+         { "actual_commanded_throttle", NULL, MAVLINK_TYPE_INT16_T, 0, 72, offsetof(mavlink_controller_data_t, actual_commanded_throttle) }, \
+         { "rudder_angle", NULL, MAVLINK_TYPE_INT16_T, 0, 74, offsetof(mavlink_controller_data_t, rudder_angle) }, \
+         { "new_gps_fix", NULL, MAVLINK_TYPE_UINT8_T, 0, 76, offsetof(mavlink_controller_data_t, new_gps_fix) }, \
+         { "reset", NULL, MAVLINK_TYPE_UINT8_T, 0, 77, offsetof(mavlink_controller_data_t, reset) }, \
          } \
 }
 
@@ -127,12 +129,13 @@ typedef struct __mavlink_controller_data_t
  * @param yaw_rate Euler angle rate for yaw. Converted from the raw gyro data. (rad/s * 2^12)
  * @param commanded_rudder_angle This is the rudder angle command as commanded by the onboard autonomous controller, positive indicates port-side (rad * 1e4)
  * @param commanded_throttle This is the throttle command as commanded by the onboard autonomous controller. It's in units of 1/1023*100% of max current and positive values propel the vehicle forward.
+ * @param actual_commanded_rudder_angle This is the rudder angle command output commanding the rudder. This is the final output of the muxing of all control inputs. Positive indicates port-side (rad * 1e4)
+ * @param actual_commanded_throttle This is the throttle command output commanding the rudder. This is the final output of the muxing of all control inputs. It's in units of 1/1023*100% of max current and positive values propel the vehicle forward.
  * @param rudder_angle The current rudder angle (rad * 1e4)
- * @param prop_speed Propeller speed, positive values mean the vessel will be propelled forward. (rpm * 100)
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_controller_data_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-						       int16_t last_wp_north, int16_t last_wp_east, int16_t next_wp_north, int16_t next_wp_east, int16_t yaw, int16_t pitch, int16_t roll, int16_t x_angle_vel, int16_t y_angle_vel, int16_t z_angle_vel, int16_t x_accel, int16_t y_accel, int16_t z_accel, uint16_t water_speed, uint8_t new_gps_fix, int32_t lat, int32_t lon, uint16_t sog, uint16_t cog, uint16_t hdop, uint8_t reset, uint32_t time_boot_ms, int32_t north, int32_t east, int16_t north_speed, int16_t east_speed, int16_t a_cmd, int16_t aim_point_n, int16_t aim_point_e, int16_t yaw_rate, int16_t commanded_rudder_angle, int16_t commanded_throttle, int16_t rudder_angle, int16_t prop_speed)
+						       int16_t last_wp_north, int16_t last_wp_east, int16_t next_wp_north, int16_t next_wp_east, int16_t yaw, int16_t pitch, int16_t roll, int16_t x_angle_vel, int16_t y_angle_vel, int16_t z_angle_vel, int16_t x_accel, int16_t y_accel, int16_t z_accel, uint16_t water_speed, uint8_t new_gps_fix, int32_t lat, int32_t lon, uint16_t sog, uint16_t cog, uint16_t hdop, uint8_t reset, uint32_t time_boot_ms, int32_t north, int32_t east, int16_t north_speed, int16_t east_speed, int16_t a_cmd, int16_t aim_point_n, int16_t aim_point_e, int16_t yaw_rate, int16_t commanded_rudder_angle, int16_t commanded_throttle, int16_t actual_commanded_rudder_angle, int16_t actual_commanded_throttle, int16_t rudder_angle)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_CONTROLLER_DATA_LEN];
@@ -166,10 +169,11 @@ static inline uint16_t mavlink_msg_controller_data_pack(uint8_t system_id, uint8
 	_mav_put_int16_t(buf, 64, yaw_rate);
 	_mav_put_int16_t(buf, 66, commanded_rudder_angle);
 	_mav_put_int16_t(buf, 68, commanded_throttle);
-	_mav_put_int16_t(buf, 70, rudder_angle);
-	_mav_put_int16_t(buf, 72, prop_speed);
-	_mav_put_uint8_t(buf, 74, new_gps_fix);
-	_mav_put_uint8_t(buf, 75, reset);
+	_mav_put_int16_t(buf, 70, actual_commanded_rudder_angle);
+	_mav_put_int16_t(buf, 72, actual_commanded_throttle);
+	_mav_put_int16_t(buf, 74, rudder_angle);
+	_mav_put_uint8_t(buf, 76, new_gps_fix);
+	_mav_put_uint8_t(buf, 77, reset);
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_CONTROLLER_DATA_LEN);
 #else
@@ -204,8 +208,9 @@ static inline uint16_t mavlink_msg_controller_data_pack(uint8_t system_id, uint8
 	packet.yaw_rate = yaw_rate;
 	packet.commanded_rudder_angle = commanded_rudder_angle;
 	packet.commanded_throttle = commanded_throttle;
+	packet.actual_commanded_rudder_angle = actual_commanded_rudder_angle;
+	packet.actual_commanded_throttle = actual_commanded_throttle;
 	packet.rudder_angle = rudder_angle;
-	packet.prop_speed = prop_speed;
 	packet.new_gps_fix = new_gps_fix;
 	packet.reset = reset;
 
@@ -258,13 +263,14 @@ static inline uint16_t mavlink_msg_controller_data_pack(uint8_t system_id, uint8
  * @param yaw_rate Euler angle rate for yaw. Converted from the raw gyro data. (rad/s * 2^12)
  * @param commanded_rudder_angle This is the rudder angle command as commanded by the onboard autonomous controller, positive indicates port-side (rad * 1e4)
  * @param commanded_throttle This is the throttle command as commanded by the onboard autonomous controller. It's in units of 1/1023*100% of max current and positive values propel the vehicle forward.
+ * @param actual_commanded_rudder_angle This is the rudder angle command output commanding the rudder. This is the final output of the muxing of all control inputs. Positive indicates port-side (rad * 1e4)
+ * @param actual_commanded_throttle This is the throttle command output commanding the rudder. This is the final output of the muxing of all control inputs. It's in units of 1/1023*100% of max current and positive values propel the vehicle forward.
  * @param rudder_angle The current rudder angle (rad * 1e4)
- * @param prop_speed Propeller speed, positive values mean the vessel will be propelled forward. (rpm * 100)
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_controller_data_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
 							   mavlink_message_t* msg,
-						           int16_t last_wp_north,int16_t last_wp_east,int16_t next_wp_north,int16_t next_wp_east,int16_t yaw,int16_t pitch,int16_t roll,int16_t x_angle_vel,int16_t y_angle_vel,int16_t z_angle_vel,int16_t x_accel,int16_t y_accel,int16_t z_accel,uint16_t water_speed,uint8_t new_gps_fix,int32_t lat,int32_t lon,uint16_t sog,uint16_t cog,uint16_t hdop,uint8_t reset,uint32_t time_boot_ms,int32_t north,int32_t east,int16_t north_speed,int16_t east_speed,int16_t a_cmd,int16_t aim_point_n,int16_t aim_point_e,int16_t yaw_rate,int16_t commanded_rudder_angle,int16_t commanded_throttle,int16_t rudder_angle,int16_t prop_speed)
+						           int16_t last_wp_north,int16_t last_wp_east,int16_t next_wp_north,int16_t next_wp_east,int16_t yaw,int16_t pitch,int16_t roll,int16_t x_angle_vel,int16_t y_angle_vel,int16_t z_angle_vel,int16_t x_accel,int16_t y_accel,int16_t z_accel,uint16_t water_speed,uint8_t new_gps_fix,int32_t lat,int32_t lon,uint16_t sog,uint16_t cog,uint16_t hdop,uint8_t reset,uint32_t time_boot_ms,int32_t north,int32_t east,int16_t north_speed,int16_t east_speed,int16_t a_cmd,int16_t aim_point_n,int16_t aim_point_e,int16_t yaw_rate,int16_t commanded_rudder_angle,int16_t commanded_throttle,int16_t actual_commanded_rudder_angle,int16_t actual_commanded_throttle,int16_t rudder_angle)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_CONTROLLER_DATA_LEN];
@@ -298,10 +304,11 @@ static inline uint16_t mavlink_msg_controller_data_pack_chan(uint8_t system_id, 
 	_mav_put_int16_t(buf, 64, yaw_rate);
 	_mav_put_int16_t(buf, 66, commanded_rudder_angle);
 	_mav_put_int16_t(buf, 68, commanded_throttle);
-	_mav_put_int16_t(buf, 70, rudder_angle);
-	_mav_put_int16_t(buf, 72, prop_speed);
-	_mav_put_uint8_t(buf, 74, new_gps_fix);
-	_mav_put_uint8_t(buf, 75, reset);
+	_mav_put_int16_t(buf, 70, actual_commanded_rudder_angle);
+	_mav_put_int16_t(buf, 72, actual_commanded_throttle);
+	_mav_put_int16_t(buf, 74, rudder_angle);
+	_mav_put_uint8_t(buf, 76, new_gps_fix);
+	_mav_put_uint8_t(buf, 77, reset);
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_CONTROLLER_DATA_LEN);
 #else
@@ -336,8 +343,9 @@ static inline uint16_t mavlink_msg_controller_data_pack_chan(uint8_t system_id, 
 	packet.yaw_rate = yaw_rate;
 	packet.commanded_rudder_angle = commanded_rudder_angle;
 	packet.commanded_throttle = commanded_throttle;
+	packet.actual_commanded_rudder_angle = actual_commanded_rudder_angle;
+	packet.actual_commanded_throttle = actual_commanded_throttle;
 	packet.rudder_angle = rudder_angle;
-	packet.prop_speed = prop_speed;
 	packet.new_gps_fix = new_gps_fix;
 	packet.reset = reset;
 
@@ -362,7 +370,7 @@ static inline uint16_t mavlink_msg_controller_data_pack_chan(uint8_t system_id, 
  */
 static inline uint16_t mavlink_msg_controller_data_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_controller_data_t* controller_data)
 {
-	return mavlink_msg_controller_data_pack(system_id, component_id, msg, controller_data->last_wp_north, controller_data->last_wp_east, controller_data->next_wp_north, controller_data->next_wp_east, controller_data->yaw, controller_data->pitch, controller_data->roll, controller_data->x_angle_vel, controller_data->y_angle_vel, controller_data->z_angle_vel, controller_data->x_accel, controller_data->y_accel, controller_data->z_accel, controller_data->water_speed, controller_data->new_gps_fix, controller_data->lat, controller_data->lon, controller_data->sog, controller_data->cog, controller_data->hdop, controller_data->reset, controller_data->time_boot_ms, controller_data->north, controller_data->east, controller_data->north_speed, controller_data->east_speed, controller_data->a_cmd, controller_data->aim_point_n, controller_data->aim_point_e, controller_data->yaw_rate, controller_data->commanded_rudder_angle, controller_data->commanded_throttle, controller_data->rudder_angle, controller_data->prop_speed);
+	return mavlink_msg_controller_data_pack(system_id, component_id, msg, controller_data->last_wp_north, controller_data->last_wp_east, controller_data->next_wp_north, controller_data->next_wp_east, controller_data->yaw, controller_data->pitch, controller_data->roll, controller_data->x_angle_vel, controller_data->y_angle_vel, controller_data->z_angle_vel, controller_data->x_accel, controller_data->y_accel, controller_data->z_accel, controller_data->water_speed, controller_data->new_gps_fix, controller_data->lat, controller_data->lon, controller_data->sog, controller_data->cog, controller_data->hdop, controller_data->reset, controller_data->time_boot_ms, controller_data->north, controller_data->east, controller_data->north_speed, controller_data->east_speed, controller_data->a_cmd, controller_data->aim_point_n, controller_data->aim_point_e, controller_data->yaw_rate, controller_data->commanded_rudder_angle, controller_data->commanded_throttle, controller_data->actual_commanded_rudder_angle, controller_data->actual_commanded_throttle, controller_data->rudder_angle);
 }
 
 /**
@@ -376,7 +384,7 @@ static inline uint16_t mavlink_msg_controller_data_encode(uint8_t system_id, uin
  */
 static inline uint16_t mavlink_msg_controller_data_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_controller_data_t* controller_data)
 {
-	return mavlink_msg_controller_data_pack_chan(system_id, component_id, chan, msg, controller_data->last_wp_north, controller_data->last_wp_east, controller_data->next_wp_north, controller_data->next_wp_east, controller_data->yaw, controller_data->pitch, controller_data->roll, controller_data->x_angle_vel, controller_data->y_angle_vel, controller_data->z_angle_vel, controller_data->x_accel, controller_data->y_accel, controller_data->z_accel, controller_data->water_speed, controller_data->new_gps_fix, controller_data->lat, controller_data->lon, controller_data->sog, controller_data->cog, controller_data->hdop, controller_data->reset, controller_data->time_boot_ms, controller_data->north, controller_data->east, controller_data->north_speed, controller_data->east_speed, controller_data->a_cmd, controller_data->aim_point_n, controller_data->aim_point_e, controller_data->yaw_rate, controller_data->commanded_rudder_angle, controller_data->commanded_throttle, controller_data->rudder_angle, controller_data->prop_speed);
+	return mavlink_msg_controller_data_pack_chan(system_id, component_id, chan, msg, controller_data->last_wp_north, controller_data->last_wp_east, controller_data->next_wp_north, controller_data->next_wp_east, controller_data->yaw, controller_data->pitch, controller_data->roll, controller_data->x_angle_vel, controller_data->y_angle_vel, controller_data->z_angle_vel, controller_data->x_accel, controller_data->y_accel, controller_data->z_accel, controller_data->water_speed, controller_data->new_gps_fix, controller_data->lat, controller_data->lon, controller_data->sog, controller_data->cog, controller_data->hdop, controller_data->reset, controller_data->time_boot_ms, controller_data->north, controller_data->east, controller_data->north_speed, controller_data->east_speed, controller_data->a_cmd, controller_data->aim_point_n, controller_data->aim_point_e, controller_data->yaw_rate, controller_data->commanded_rudder_angle, controller_data->commanded_throttle, controller_data->actual_commanded_rudder_angle, controller_data->actual_commanded_throttle, controller_data->rudder_angle);
 }
 
 /**
@@ -415,12 +423,13 @@ static inline uint16_t mavlink_msg_controller_data_encode_chan(uint8_t system_id
  * @param yaw_rate Euler angle rate for yaw. Converted from the raw gyro data. (rad/s * 2^12)
  * @param commanded_rudder_angle This is the rudder angle command as commanded by the onboard autonomous controller, positive indicates port-side (rad * 1e4)
  * @param commanded_throttle This is the throttle command as commanded by the onboard autonomous controller. It's in units of 1/1023*100% of max current and positive values propel the vehicle forward.
+ * @param actual_commanded_rudder_angle This is the rudder angle command output commanding the rudder. This is the final output of the muxing of all control inputs. Positive indicates port-side (rad * 1e4)
+ * @param actual_commanded_throttle This is the throttle command output commanding the rudder. This is the final output of the muxing of all control inputs. It's in units of 1/1023*100% of max current and positive values propel the vehicle forward.
  * @param rudder_angle The current rudder angle (rad * 1e4)
- * @param prop_speed Propeller speed, positive values mean the vessel will be propelled forward. (rpm * 100)
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_controller_data_send(mavlink_channel_t chan, int16_t last_wp_north, int16_t last_wp_east, int16_t next_wp_north, int16_t next_wp_east, int16_t yaw, int16_t pitch, int16_t roll, int16_t x_angle_vel, int16_t y_angle_vel, int16_t z_angle_vel, int16_t x_accel, int16_t y_accel, int16_t z_accel, uint16_t water_speed, uint8_t new_gps_fix, int32_t lat, int32_t lon, uint16_t sog, uint16_t cog, uint16_t hdop, uint8_t reset, uint32_t time_boot_ms, int32_t north, int32_t east, int16_t north_speed, int16_t east_speed, int16_t a_cmd, int16_t aim_point_n, int16_t aim_point_e, int16_t yaw_rate, int16_t commanded_rudder_angle, int16_t commanded_throttle, int16_t rudder_angle, int16_t prop_speed)
+static inline void mavlink_msg_controller_data_send(mavlink_channel_t chan, int16_t last_wp_north, int16_t last_wp_east, int16_t next_wp_north, int16_t next_wp_east, int16_t yaw, int16_t pitch, int16_t roll, int16_t x_angle_vel, int16_t y_angle_vel, int16_t z_angle_vel, int16_t x_accel, int16_t y_accel, int16_t z_accel, uint16_t water_speed, uint8_t new_gps_fix, int32_t lat, int32_t lon, uint16_t sog, uint16_t cog, uint16_t hdop, uint8_t reset, uint32_t time_boot_ms, int32_t north, int32_t east, int16_t north_speed, int16_t east_speed, int16_t a_cmd, int16_t aim_point_n, int16_t aim_point_e, int16_t yaw_rate, int16_t commanded_rudder_angle, int16_t commanded_throttle, int16_t actual_commanded_rudder_angle, int16_t actual_commanded_throttle, int16_t rudder_angle)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_CONTROLLER_DATA_LEN];
@@ -454,10 +463,11 @@ static inline void mavlink_msg_controller_data_send(mavlink_channel_t chan, int1
 	_mav_put_int16_t(buf, 64, yaw_rate);
 	_mav_put_int16_t(buf, 66, commanded_rudder_angle);
 	_mav_put_int16_t(buf, 68, commanded_throttle);
-	_mav_put_int16_t(buf, 70, rudder_angle);
-	_mav_put_int16_t(buf, 72, prop_speed);
-	_mav_put_uint8_t(buf, 74, new_gps_fix);
-	_mav_put_uint8_t(buf, 75, reset);
+	_mav_put_int16_t(buf, 70, actual_commanded_rudder_angle);
+	_mav_put_int16_t(buf, 72, actual_commanded_throttle);
+	_mav_put_int16_t(buf, 74, rudder_angle);
+	_mav_put_uint8_t(buf, 76, new_gps_fix);
+	_mav_put_uint8_t(buf, 77, reset);
 
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_CONTROLLER_DATA, buf, MAVLINK_MSG_ID_CONTROLLER_DATA_LEN, MAVLINK_MSG_ID_CONTROLLER_DATA_CRC);
@@ -496,8 +506,9 @@ static inline void mavlink_msg_controller_data_send(mavlink_channel_t chan, int1
 	packet.yaw_rate = yaw_rate;
 	packet.commanded_rudder_angle = commanded_rudder_angle;
 	packet.commanded_throttle = commanded_throttle;
+	packet.actual_commanded_rudder_angle = actual_commanded_rudder_angle;
+	packet.actual_commanded_throttle = actual_commanded_throttle;
 	packet.rudder_angle = rudder_angle;
-	packet.prop_speed = prop_speed;
 	packet.new_gps_fix = new_gps_fix;
 	packet.reset = reset;
 
@@ -517,7 +528,7 @@ static inline void mavlink_msg_controller_data_send(mavlink_channel_t chan, int1
   is usually the receive buffer for the channel, and allows a reply to an
   incoming message with minimum stack space usage.
  */
-static inline void mavlink_msg_controller_data_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  int16_t last_wp_north, int16_t last_wp_east, int16_t next_wp_north, int16_t next_wp_east, int16_t yaw, int16_t pitch, int16_t roll, int16_t x_angle_vel, int16_t y_angle_vel, int16_t z_angle_vel, int16_t x_accel, int16_t y_accel, int16_t z_accel, uint16_t water_speed, uint8_t new_gps_fix, int32_t lat, int32_t lon, uint16_t sog, uint16_t cog, uint16_t hdop, uint8_t reset, uint32_t time_boot_ms, int32_t north, int32_t east, int16_t north_speed, int16_t east_speed, int16_t a_cmd, int16_t aim_point_n, int16_t aim_point_e, int16_t yaw_rate, int16_t commanded_rudder_angle, int16_t commanded_throttle, int16_t rudder_angle, int16_t prop_speed)
+static inline void mavlink_msg_controller_data_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  int16_t last_wp_north, int16_t last_wp_east, int16_t next_wp_north, int16_t next_wp_east, int16_t yaw, int16_t pitch, int16_t roll, int16_t x_angle_vel, int16_t y_angle_vel, int16_t z_angle_vel, int16_t x_accel, int16_t y_accel, int16_t z_accel, uint16_t water_speed, uint8_t new_gps_fix, int32_t lat, int32_t lon, uint16_t sog, uint16_t cog, uint16_t hdop, uint8_t reset, uint32_t time_boot_ms, int32_t north, int32_t east, int16_t north_speed, int16_t east_speed, int16_t a_cmd, int16_t aim_point_n, int16_t aim_point_e, int16_t yaw_rate, int16_t commanded_rudder_angle, int16_t commanded_throttle, int16_t actual_commanded_rudder_angle, int16_t actual_commanded_throttle, int16_t rudder_angle)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char *buf = (char *)msgbuf;
@@ -551,10 +562,11 @@ static inline void mavlink_msg_controller_data_send_buf(mavlink_message_t *msgbu
 	_mav_put_int16_t(buf, 64, yaw_rate);
 	_mav_put_int16_t(buf, 66, commanded_rudder_angle);
 	_mav_put_int16_t(buf, 68, commanded_throttle);
-	_mav_put_int16_t(buf, 70, rudder_angle);
-	_mav_put_int16_t(buf, 72, prop_speed);
-	_mav_put_uint8_t(buf, 74, new_gps_fix);
-	_mav_put_uint8_t(buf, 75, reset);
+	_mav_put_int16_t(buf, 70, actual_commanded_rudder_angle);
+	_mav_put_int16_t(buf, 72, actual_commanded_throttle);
+	_mav_put_int16_t(buf, 74, rudder_angle);
+	_mav_put_uint8_t(buf, 76, new_gps_fix);
+	_mav_put_uint8_t(buf, 77, reset);
 
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_CONTROLLER_DATA, buf, MAVLINK_MSG_ID_CONTROLLER_DATA_LEN, MAVLINK_MSG_ID_CONTROLLER_DATA_CRC);
@@ -593,8 +605,9 @@ static inline void mavlink_msg_controller_data_send_buf(mavlink_message_t *msgbu
 	packet->yaw_rate = yaw_rate;
 	packet->commanded_rudder_angle = commanded_rudder_angle;
 	packet->commanded_throttle = commanded_throttle;
+	packet->actual_commanded_rudder_angle = actual_commanded_rudder_angle;
+	packet->actual_commanded_throttle = actual_commanded_throttle;
 	packet->rudder_angle = rudder_angle;
-	packet->prop_speed = prop_speed;
 	packet->new_gps_fix = new_gps_fix;
 	packet->reset = reset;
 
@@ -759,7 +772,7 @@ static inline uint16_t mavlink_msg_controller_data_get_water_speed(const mavlink
  */
 static inline uint8_t mavlink_msg_controller_data_get_new_gps_fix(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  74);
+	return _MAV_RETURN_uint8_t(msg,  76);
 }
 
 /**
@@ -819,7 +832,7 @@ static inline uint16_t mavlink_msg_controller_data_get_hdop(const mavlink_messag
  */
 static inline uint8_t mavlink_msg_controller_data_get_reset(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  75);
+	return _MAV_RETURN_uint8_t(msg,  77);
 }
 
 /**
@@ -933,23 +946,33 @@ static inline int16_t mavlink_msg_controller_data_get_commanded_throttle(const m
 }
 
 /**
+ * @brief Get field actual_commanded_rudder_angle from controller_data message
+ *
+ * @return This is the rudder angle command output commanding the rudder. This is the final output of the muxing of all control inputs. Positive indicates port-side (rad * 1e4)
+ */
+static inline int16_t mavlink_msg_controller_data_get_actual_commanded_rudder_angle(const mavlink_message_t* msg)
+{
+	return _MAV_RETURN_int16_t(msg,  70);
+}
+
+/**
+ * @brief Get field actual_commanded_throttle from controller_data message
+ *
+ * @return This is the throttle command output commanding the rudder. This is the final output of the muxing of all control inputs. It's in units of 1/1023*100% of max current and positive values propel the vehicle forward.
+ */
+static inline int16_t mavlink_msg_controller_data_get_actual_commanded_throttle(const mavlink_message_t* msg)
+{
+	return _MAV_RETURN_int16_t(msg,  72);
+}
+
+/**
  * @brief Get field rudder_angle from controller_data message
  *
  * @return The current rudder angle (rad * 1e4)
  */
 static inline int16_t mavlink_msg_controller_data_get_rudder_angle(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_int16_t(msg,  70);
-}
-
-/**
- * @brief Get field prop_speed from controller_data message
- *
- * @return Propeller speed, positive values mean the vessel will be propelled forward. (rpm * 100)
- */
-static inline int16_t mavlink_msg_controller_data_get_prop_speed(const mavlink_message_t* msg)
-{
-	return _MAV_RETURN_int16_t(msg,  72);
+	return _MAV_RETURN_int16_t(msg,  74);
 }
 
 /**
@@ -991,8 +1014,9 @@ static inline void mavlink_msg_controller_data_decode(const mavlink_message_t* m
 	controller_data->yaw_rate = mavlink_msg_controller_data_get_yaw_rate(msg);
 	controller_data->commanded_rudder_angle = mavlink_msg_controller_data_get_commanded_rudder_angle(msg);
 	controller_data->commanded_throttle = mavlink_msg_controller_data_get_commanded_throttle(msg);
+	controller_data->actual_commanded_rudder_angle = mavlink_msg_controller_data_get_actual_commanded_rudder_angle(msg);
+	controller_data->actual_commanded_throttle = mavlink_msg_controller_data_get_actual_commanded_throttle(msg);
 	controller_data->rudder_angle = mavlink_msg_controller_data_get_rudder_angle(msg);
-	controller_data->prop_speed = mavlink_msg_controller_data_get_prop_speed(msg);
 	controller_data->new_gps_fix = mavlink_msg_controller_data_get_new_gps_fix(msg);
 	controller_data->reset = mavlink_msg_controller_data_get_reset(msg);
 #else

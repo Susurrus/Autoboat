@@ -38,6 +38,15 @@ basic_test_local.waypoints = [-1243    -747.1    0;
                              ];
 basic_test_local.refFrame = 1; % Set a local NED reference frame
 
+% Debugging local test
+debug_local.waypoints = [0 40 0;
+                              1000 40 0;
+                              1000 1040 0;
+                              0 1040 0;
+                              0 40 0;
+                             ];
+debug_local.refFrame = 1; % Set a local NED reference frame
+
 % A slalom path through the harbor
 harbor_slalom.waypoints = [36.9638319535983655 -122.002068758010864  0;
                            36.9642177152830627 -122.002433538436890  0;
@@ -64,7 +73,7 @@ figure8.waypoints = [-1200  -800 0;
 figure8.refFrame = 1; % Set a local NED reference frame
 
 % Set this variable to the waypoint struct that you'd like to use
-test_coordinates = harbor_slalom;
+test_coordinates = basic_test;
 mission_count = length(test_coordinates.waypoints);
 
 % The following line just initializes an array of structs

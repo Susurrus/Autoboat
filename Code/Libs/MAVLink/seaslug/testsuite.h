@@ -692,7 +692,7 @@ static void mavlink_test_controller_data(uint8_t system_id, uint8_t component_id
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_controller_data_t packet_in = {
-		963497464,963497672,963497880,963498088,963498296,18275,18379,18483,18587,18691,18795,18899,19003,19107,19211,19315,19419,19523,19627,19731,19835,19939,20043,20147,20251,20355,20459,20563,20667,20771,20875,20979,99,166
+		963497464,963497672,963497880,963498088,963498296,18275,18379,18483,18587,18691,18795,18899,19003,19107,19211,19315,19419,19523,19627,19731,19835,19939,20043,20147,20251,20355,20459,20563,20667,20771,20875,20979,21083,233,44
     };
 	mavlink_controller_data_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -726,8 +726,9 @@ static void mavlink_test_controller_data(uint8_t system_id, uint8_t component_id
         	packet1.yaw_rate = packet_in.yaw_rate;
         	packet1.commanded_rudder_angle = packet_in.commanded_rudder_angle;
         	packet1.commanded_throttle = packet_in.commanded_throttle;
+        	packet1.actual_commanded_rudder_angle = packet_in.actual_commanded_rudder_angle;
+        	packet1.actual_commanded_throttle = packet_in.actual_commanded_throttle;
         	packet1.rudder_angle = packet_in.rudder_angle;
-        	packet1.prop_speed = packet_in.prop_speed;
         	packet1.new_gps_fix = packet_in.new_gps_fix;
         	packet1.reset = packet_in.reset;
         
@@ -739,12 +740,12 @@ static void mavlink_test_controller_data(uint8_t system_id, uint8_t component_id
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_controller_data_pack(system_id, component_id, &msg , packet1.last_wp_north , packet1.last_wp_east , packet1.next_wp_north , packet1.next_wp_east , packet1.yaw , packet1.pitch , packet1.roll , packet1.x_angle_vel , packet1.y_angle_vel , packet1.z_angle_vel , packet1.x_accel , packet1.y_accel , packet1.z_accel , packet1.water_speed , packet1.new_gps_fix , packet1.lat , packet1.lon , packet1.sog , packet1.cog , packet1.hdop , packet1.reset , packet1.time_boot_ms , packet1.north , packet1.east , packet1.north_speed , packet1.east_speed , packet1.a_cmd , packet1.aim_point_n , packet1.aim_point_e , packet1.yaw_rate , packet1.commanded_rudder_angle , packet1.commanded_throttle , packet1.rudder_angle , packet1.prop_speed );
+	mavlink_msg_controller_data_pack(system_id, component_id, &msg , packet1.last_wp_north , packet1.last_wp_east , packet1.next_wp_north , packet1.next_wp_east , packet1.yaw , packet1.pitch , packet1.roll , packet1.x_angle_vel , packet1.y_angle_vel , packet1.z_angle_vel , packet1.x_accel , packet1.y_accel , packet1.z_accel , packet1.water_speed , packet1.new_gps_fix , packet1.lat , packet1.lon , packet1.sog , packet1.cog , packet1.hdop , packet1.reset , packet1.time_boot_ms , packet1.north , packet1.east , packet1.north_speed , packet1.east_speed , packet1.a_cmd , packet1.aim_point_n , packet1.aim_point_e , packet1.yaw_rate , packet1.commanded_rudder_angle , packet1.commanded_throttle , packet1.actual_commanded_rudder_angle , packet1.actual_commanded_throttle , packet1.rudder_angle );
 	mavlink_msg_controller_data_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_controller_data_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.last_wp_north , packet1.last_wp_east , packet1.next_wp_north , packet1.next_wp_east , packet1.yaw , packet1.pitch , packet1.roll , packet1.x_angle_vel , packet1.y_angle_vel , packet1.z_angle_vel , packet1.x_accel , packet1.y_accel , packet1.z_accel , packet1.water_speed , packet1.new_gps_fix , packet1.lat , packet1.lon , packet1.sog , packet1.cog , packet1.hdop , packet1.reset , packet1.time_boot_ms , packet1.north , packet1.east , packet1.north_speed , packet1.east_speed , packet1.a_cmd , packet1.aim_point_n , packet1.aim_point_e , packet1.yaw_rate , packet1.commanded_rudder_angle , packet1.commanded_throttle , packet1.rudder_angle , packet1.prop_speed );
+	mavlink_msg_controller_data_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.last_wp_north , packet1.last_wp_east , packet1.next_wp_north , packet1.next_wp_east , packet1.yaw , packet1.pitch , packet1.roll , packet1.x_angle_vel , packet1.y_angle_vel , packet1.z_angle_vel , packet1.x_accel , packet1.y_accel , packet1.z_accel , packet1.water_speed , packet1.new_gps_fix , packet1.lat , packet1.lon , packet1.sog , packet1.cog , packet1.hdop , packet1.reset , packet1.time_boot_ms , packet1.north , packet1.east , packet1.north_speed , packet1.east_speed , packet1.a_cmd , packet1.aim_point_n , packet1.aim_point_e , packet1.yaw_rate , packet1.commanded_rudder_angle , packet1.commanded_throttle , packet1.actual_commanded_rudder_angle , packet1.actual_commanded_throttle , packet1.rudder_angle );
 	mavlink_msg_controller_data_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -757,7 +758,7 @@ static void mavlink_test_controller_data(uint8_t system_id, uint8_t component_id
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_controller_data_send(MAVLINK_COMM_1 , packet1.last_wp_north , packet1.last_wp_east , packet1.next_wp_north , packet1.next_wp_east , packet1.yaw , packet1.pitch , packet1.roll , packet1.x_angle_vel , packet1.y_angle_vel , packet1.z_angle_vel , packet1.x_accel , packet1.y_accel , packet1.z_accel , packet1.water_speed , packet1.new_gps_fix , packet1.lat , packet1.lon , packet1.sog , packet1.cog , packet1.hdop , packet1.reset , packet1.time_boot_ms , packet1.north , packet1.east , packet1.north_speed , packet1.east_speed , packet1.a_cmd , packet1.aim_point_n , packet1.aim_point_e , packet1.yaw_rate , packet1.commanded_rudder_angle , packet1.commanded_throttle , packet1.rudder_angle , packet1.prop_speed );
+	mavlink_msg_controller_data_send(MAVLINK_COMM_1 , packet1.last_wp_north , packet1.last_wp_east , packet1.next_wp_north , packet1.next_wp_east , packet1.yaw , packet1.pitch , packet1.roll , packet1.x_angle_vel , packet1.y_angle_vel , packet1.z_angle_vel , packet1.x_accel , packet1.y_accel , packet1.z_accel , packet1.water_speed , packet1.new_gps_fix , packet1.lat , packet1.lon , packet1.sog , packet1.cog , packet1.hdop , packet1.reset , packet1.time_boot_ms , packet1.north , packet1.east , packet1.north_speed , packet1.east_speed , packet1.a_cmd , packet1.aim_point_n , packet1.aim_point_e , packet1.yaw_rate , packet1.commanded_rudder_angle , packet1.commanded_throttle , packet1.actual_commanded_rudder_angle , packet1.actual_commanded_throttle , packet1.rudder_angle );
 	mavlink_msg_controller_data_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }

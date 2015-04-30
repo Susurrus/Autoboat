@@ -10,9 +10,9 @@
 
 // Macro to define packed structures
 #ifdef __GNUC__
-  #define MAVPACKED( decl ) decl __attribute__((packed))
+  #define MAVPACKED( __Declaration__ ) __Declaration__ __attribute__((packed))
 #else
-  #define MAVPACKED( decl ) __pragma( pack(push, 1) ) decl  __pragma( pack(pop) )
+  #define MAVPACKED( __Declaration__ ) __pragma( pack(push, 1) ) __Declaration__ __pragma( pack(pop) )
 #endif
 
 #ifndef MAVLINK_MAX_PAYLOAD_LEN
@@ -80,8 +80,9 @@ typedef struct param_union {
  * and the bits pulled out using the shifts/masks.
 */
 MAVPACKED(
-typedef union {
-    struct __data{
+typedef struct param_union_extended {
+    union {
+    struct {
         uint8_t is_double:1;
         uint8_t mavlink_type:7;
         union {
@@ -95,8 +96,9 @@ typedef union {
             float f;
             uint8_t align[7];
         };
-    } data;
-    uint8_t bytes[8];
+    };
+    uint8_t data[8];
+    };
 }) mavlink_param_union_double_t;
 
 /**
@@ -198,8 +200,15 @@ typedef enum {
     MAVLINK_PARSE_STATE_GOT_COMPID,
     MAVLINK_PARSE_STATE_GOT_MSGID,
     MAVLINK_PARSE_STATE_GOT_PAYLOAD,
-    MAVLINK_PARSE_STATE_GOT_CRC1
+    MAVLINK_PARSE_STATE_GOT_CRC1,
+    MAVLINK_PARSE_STATE_GOT_BAD_CRC1
 } mavlink_parse_state_t; ///< The state machine for the comm parser
+
+typedef enum {
+    MAVLINK_FRAMING_INCOMPLETE=0,
+    MAVLINK_FRAMING_OK=1,
+    MAVLINK_FRAMING_BAD_CRC=2
+} mavlink_framing_t;
 
 typedef struct __mavlink_status {
     uint8_t msg_received;               ///< Number of received messages

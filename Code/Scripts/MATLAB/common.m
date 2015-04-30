@@ -27,6 +27,7 @@ gpsOrigin.RTWInfo.Alias = 'gpsOrigin';
 
 % Precompute some values for LLA -> LTP conversion
 a = 6378137; % Earth semi-major axis in WGS84.
+b = 6356752.3142; % Earth semi-minor axis in WGS84 (unused, just here for reference).
 e2 = 0.00669437999014;
 v = a / sqrt(1 - e2 * sin(ref_lla_rad(1))^2);
 r = v * (1 - e2) / (1 - e2 * sin(ref_lla_rad(1))^2);

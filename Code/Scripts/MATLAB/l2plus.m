@@ -61,7 +61,7 @@ GpsOffsetCorrectionEnable.RTWInfo.Alias = 'GpsOffsetCorrectionEnable';
 % The gain on the course error
 K_course = Simulink.Parameter;
 K_course.Description = 'Course error gain for the PD controller.';
-K_course.Value = single(1.0);
+K_course.Value = single(1);
 K_course.DataType = 'single';
 K_course.DocUnits = '';
 K_course.RTWInfo.StorageClass = 'ExportedGlobal';

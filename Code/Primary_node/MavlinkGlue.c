@@ -837,6 +837,9 @@ void MavLinkSendControllerData(const ImuData *imu, const GpsData *gps, float wat
     }
 
     // Note that GPS mode checking is already done for us when new GPS messages are received
+    float actRudderAngleCommand;
+    int16_t actThrottleCommand;
+    GetCurrentActuatorCommands(&actRudderAngleCommand, &actThrottleCommand);
     mavlink_msg_controller_data_pack_chan(
         mavlink_system.sysid, mavlink_system.compid, MAVLINK_CHAN_DATALOGGER, &txMessage,
         controllerVars.wp0[0] * 10, controllerVars.wp0[1] * 10,
@@ -855,8 +858,9 @@ void MavLinkSendControllerData(const ImuData *imu, const GpsData *gps, float wat
         controllerVars.sensedYawRate * 4096.0,
         commandedRudder * 1e4,
         commandedThrottle,
-        rudderAngle * 1e4,
-        propSpeed * 100
+        actRudderAngleCommand * 1e4,
+        actThrottleCommand,
+        rudderAngle * 1e4
     );
 
     len = mavlink_msg_to_send_buffer(buf, &txMessage);
