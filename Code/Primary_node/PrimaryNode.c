@@ -940,7 +940,10 @@ int16_t ProcessManualThrottleCommand(int16_t tc)
         tc = 0;
     }
 
-    return tc;
+    // Scale the throttle command to only 70%. This is to give more control to the operator and
+    // won't reduce their control. The integer math of (x*7/10) shouldn't overflow for the input
+    // ranges this function assumes.
+    return tc * 7 / 10;
 }
 
 /**
