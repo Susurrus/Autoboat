@@ -12,9 +12,11 @@ emptyMission = Simulink.Bus.createMATLABStruct('Mission');
 % commented-out matrices are the original test ones. Overrides are
 % implemented below for the in-harbor boat test.
 
-% Basic harbor line test, 2 waypoints roughly north-south:
-basic_test.waypoints = [36.963863   -122.0022458   0;
-                        36.9673037   -122.0026910   0;
+% Basic harbor line test, short run up the harbor and back down.
+basic_test.waypoints = [36.963947682309005	-122.002106308937073   0;
+                        36.9673337407818536	-122.002589106559753   0;
+                        36.9665751053294471	-122.002717852592468   0;
+                        36.9639219648329558	-122.002363801002502   0;
                        ];
 basic_test.refFrame = 0; % Set a global lat/long/alt reference frame
 
