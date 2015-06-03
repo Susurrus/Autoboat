@@ -13,12 +13,18 @@ emptyMission = Simulink.Bus.createMATLABStruct('Mission');
 % implemented below for the in-harbor boat test.
 
 % Basic harbor line test, short run up the harbor and back down.
-basic_test.waypoints = [36.963947682309005	-122.002106308937073   0;
-                        36.9673337407818536	-122.002589106559753   0;
-                        36.9665751053294471	-122.002717852592468   0;
-                        36.9639219648329558	-122.002363801002502   0;
-                       ];
-basic_test.refFrame = 0; % Set a global lat/long/alt reference frame
+basic_line_test.waypoints = [36.96393815909822   -122.0022534291855   0
+                             36.96732293180727   -122.0026826376485   0
+                            ];
+basic_line_test.refFrame = 0; % Set a global lat/long/alt reference frame
+
+% Basic harbor test, short run up the harbor and back down.
+basic_harbor_test.waypoints = [36.963947682309005	-122.002106308937073   0;
+                               36.9673337407818536	-122.002589106559753   0;
+                               36.9665751053294471	-122.002717852592468   0;
+                               36.9639219648329558	-122.002363801002502   0;
+                              ];
+basic_harbor_test.refFrame = 0; % Set a global lat/long/alt reference frame
 
 % Basic first test:
 basic_multiwaypoint_test.waypoints = [36.9525669    -122.0102978    0;
@@ -61,21 +67,24 @@ harbor_slalom.waypoints = [36.9638319535983655 -122.002068758010864  0;
                           ];
 harbor_slalom.refFrame = 0; % Set a global lat/long/alt reference frame
 
-% A simple 6-point figure 8
-figure8.waypoints = [-1200  -800 0;
-                     -1300  -700 0;
-                     -1200  -600 0;
-                     -1100  -700 0;
-                     -1200  -800 0;
-                     -1300  -900 0;
-                     -1200 -1000 0;
-                     -1100  -900 0;
-                     -1200  -800 0;
-                    ];
-figure8.refFrame = 1; % Set a local NED reference frame
+% A simple 12-point figure 8
+figure8.waypoints = [36.9653 -122.0013 0;
+                     36.9666 -122.0000 0;
+                     36.9666 -121.9987 0;
+                     36.9653 -121.9974 0;
+                     36.9640 -121.9987 0;
+                     36.9640 -122.0000 0;
+                     36.9627 -122.0013 0;
+                     36.9614 -122.0000 0;
+                     36.9614 -121.9987 0;
+                     36.9627 -121.9974 0;
+                     36.9640 -121.9987 0;
+                     36.9640 -122.0000 0;
+];
+figure8.refFrame = 0; % Set a global lat/long/alt reference frame
 
 % Set this variable to the waypoint struct that you'd like to use
-test_coordinates = basic_test;
+test_coordinates = basic_line_test;
 mission_count = length(test_coordinates.waypoints);
 
 % The following line just initializes an array of structs
