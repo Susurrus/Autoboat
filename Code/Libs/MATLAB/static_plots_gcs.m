@@ -4,15 +4,10 @@ function static_plots_gcs(data)
     %% Determine periods of autonomous control
     % Check for both autonomous mode from HEARTBEAT @ 10Hz
     valid_autodata_data = ~isnan(data.HEARTBEAT.base_mode);
-    rad = bitand(data.HEARTBEAT.base_mode(valid_autodata_data), 4) ~= 0;
+    automode = bitand(data.HEARTBEAT.base_mode(valid_autodata_data), 4) ~= 0;
     mode_time = data.timestamp(valid_autodata_data);
     [mode_time, i] = unique(mode_time);
-    rad = rad(i);
-
-    figure;
-    hold on;
-    plot(mode_time, rad);
-    title('Autonomous control over time');
+    automode = automode(i);
 
     figure;
     hold on;

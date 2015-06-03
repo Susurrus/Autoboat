@@ -36,7 +36,6 @@ function static_plots_cdata(data)
     mode_with_cdata = interp1(mode_time, auto_mode, cdata_time, 'nearest');
     mode_with_cdata(isnan(mode_with_cdata)) = 0;
     mode_with_cdata = logical(mode_with_cdata);
-    figure;plot(mode_with_cdata)
 
     % Split this data into groups based on the mode of autonomousity.
     start_indices = find(diff(mode_with_cdata) > 0);
