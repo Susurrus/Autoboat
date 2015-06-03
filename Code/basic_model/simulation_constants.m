@@ -3,7 +3,7 @@
 
 % Initial latitude & longitude. This provides the baseline for the plant
 % to generate GPS data.
-initial_LL = [36.964; -122.0013];
+initial_LL = [36.96393815909822;   -122.0022534291855]; %[36.964; -122.0013];
 phi_0 = 0;              % Initial heading (radians, eastward positive from north)
 v_0 = 0;                % Initial speed (m/s)
 battery_tray_angle = 0; % Initial battery tray angle
