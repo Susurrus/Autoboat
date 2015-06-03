@@ -44,7 +44,7 @@ lla_ltp_gain.RTWInfo.StorageClass = 'ExportedGlobal';
 lla_ltp_gain.RTWInfo.Alias = 'lla_ltp_gain';
 
 % The late ncy in the GPS unit (in units of T_step)
-gpsLatency = 150;
+gpsLatency = 100;
 
 % Sets which controller the system should use. 0 for L2+, 1 for PD.
 ctrl_algo = Simulink.Parameter;
